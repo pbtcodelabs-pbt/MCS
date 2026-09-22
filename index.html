@@ -166,7 +166,7 @@
   /* ===== Glitter version badge ===== */
   .ver-glitter{
     position:relative;display:flex;align-items:center;justify-content:center;gap:10px;
-    margin:14px auto 0;padding:8px 18px;border-radius:999px;width:fit-content;max-width:100%;
+    margin:12px auto 0;padding:3px 14px;border-radius:999px;width:fit-content;max-width:100%;
     background:linear-gradient(135deg,rgba(8,20,40,.78),rgba(20,30,60,.78));
     border:1.5px solid transparent;
     background-clip:padding-box;
@@ -228,23 +228,54 @@
     display:flex;align-items:center;justify-content:center;
   }
   .add-circle:active{transform:scale(0.95);}
+  .add-circle.pick-contact{background:var(--primary);}
+  .add-circle.pick-contact svg{width:22px;height:22px;}
 
   /* ===== List ===== */
-  .list-item{
-    background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:10px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.06);border:1px solid #e5e7eb;
+  /* ===== Doctor cards (compact, raised 3D) ===== */
+  #screen-doctor-list, #screen-user-browse{
+    background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;
   }
-  .list-item .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;}
-  .list-item b{font-size:14px;}
-  .list-item .tag{font-size:11px;background:#ecfdf5;color:var(--primary-dark);padding:2px 8px;border-radius:8px;white-space:nowrap;}
-  .list-item .meta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.7;}
-  .list-item .actions{display:flex;gap:8px;margin-top:8px;}
-  .list-item .actions button{
-    flex:1;padding:8px;border-radius:8px;border:none;font-size:12px;font-weight:600;
+  .doc-card{
+    position:relative;display:flex;gap:12px;align-items:center;
+    background:linear-gradient(145deg,#ffffff,#f3f7f8);
+    border-radius:16px;padding:8px 12px;margin-bottom:10px;
+    border:1px solid rgba(255,255,255,.9);
+    box-shadow:0 1px 0 #fff inset,0 -2px 0 rgba(15,118,110,.06) inset,
+               0 2px 3px rgba(15,23,42,.06),0 8px 18px rgba(13,59,102,.12),0 16px 28px -14px rgba(13,59,102,.25);
   }
-  .act-call{background:#dcfce7;color:#166534;}
-  .act-edit{background:#dbeafe;color:#1e40af;}
-  .act-del{background:#fee2e2;color:#991b1b;}
+  .doc-card::before{content:"";position:absolute;right:0;top:12px;bottom:12px;width:4px;border-radius:4px 0 0 4px;
+    background:linear-gradient(180deg,#0f766e,#0d3b66);}
+  .doc-avatar{width:44px;height:44px;min-width:44px;border-radius:14px;
+    background:linear-gradient(145deg,#14a394,#0d3b66);color:#fff;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 10px rgba(13,59,102,.3),inset 0 1px 0 rgba(255,255,255,.35);}
+  .doc-avatar svg{width:26px;height:26px;}
+  .doc-body{flex:1;min-width:0;}
+  .doc-top{display:flex;align-items:center;gap:6px;}
+  .doc-name{flex:1;min-width:0;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;
+    font-size:20px;line-height:1.45;color:#0b2a44;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    text-shadow:0 1px 0 #fff;}
+  .doc-mini{display:flex;gap:4px;}
+  .doc-mini button{width:30px;height:24px;border-radius:8px;border:none;padding:0;background:#eef2f5;color:#64748b;
+    display:flex;align-items:center;justify-content:center;}
+  .doc-mini button svg{width:15px;height:15px;}
+  .doc-mini .mini-del{color:#dc2626;background:#fdecec;}
+  .doc-sub{font-size:13.5px;color:#475569;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .doc-sub .dot{color:#cbd5e1;margin:0 4px;}
+  .doc-bottom{display:flex;align-items:center;gap:8px;margin-top:2px;}
+  .doc-num{direction:ltr;unicode-bidi:isolate;text-align:right;font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    font-size:13.5px;font-weight:600;color:#0f766e;letter-spacing:.4px;line-height:1.5;}
+  .doc-side{display:flex;flex-direction:column;align-items:center;gap:6px;align-self:center;}
+  .doc-acts{display:flex;gap:6px;}
+  .doc-side .doc-mini{gap:8px;}
+  .doc-acts a{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
+    box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.35);}
+  .doc-acts a svg{width:17px;height:17px;}
+  .doc-acts a:active{transform:scale(.92);}
+  .a-call{background:linear-gradient(145deg,#1f9d55,#15803d);}
+  .a-wa{background:linear-gradient(145deg,#2fd16b,#1da851);}
+  .a-sms{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+  .num-ltr{direction:ltr;unicode-bidi:isolate;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
 
   .empty-state{text-align:center;color:var(--muted);padding:40px 10px;font-size:13px;}
   .empty-state .e-emoji{font-size:40px;display:block;margin-bottom:10px;}
@@ -253,7 +284,13 @@
   .screen-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
   .back-btn{width:38px;height:38px;border-radius:10px;border:none;background:#fff;
     box-shadow:0 2px 6px rgba(0,0,0,0.08);font-size:18px;display:flex;align-items:center;justify-content:center;}
-  .screen-head h2{font-size:17px;margin:0;flex:1;}
+  .screen-head h2{font-size:19px;margin:0;flex:1;line-height:1.6;}
+  .screen-head{position:sticky;top:0;z-index:40;margin:-16px -16px 14px;padding:10px 16px;
+    background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    box-shadow:0 2px 10px rgba(13,59,102,.08);}
+  .back-btn{color:var(--primary-dark);padding:0;}
+  .back-btn svg{width:20px;height:20px;}
+  .nav-home{background:linear-gradient(145deg,#14a394,#0d3b66);color:#fff;}
 
   .fab{
     position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
@@ -399,8 +436,9 @@
   <div id="screen-specialist-categories" class="screen">
     <div class="inner">
       <div class="screen-head">
-        <button class="back-btn" onclick="goScreen('home')">›</button>
+        <button class="back-btn nav-back" onclick="goBack()" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
         <h2>اسپیشلسٹ / پیشہ ور — شعبہ منتخب کریں</h2>
+        <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
       <div class="cat-grid">
         <div class="cat-item" onclick="goScreen('doctor-list')">
@@ -419,8 +457,9 @@
   <div id="screen-doctor-list" class="screen">
     <div class="inner">
       <div class="screen-head">
-        <button class="back-btn" onclick="goScreen('specialist-categories')">›</button>
+        <button class="back-btn nav-back" onclick="goBack()" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
         <h2>ڈاکٹرز کی فہرست</h2>
+        <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
       <div id="doctorListWrap"></div>
     </div>
@@ -431,8 +470,9 @@
   <div id="screen-user-browse" class="screen">
     <div class="inner">
       <div class="screen-head">
-        <button class="back-btn" onclick="goScreen('home')">›</button>
+        <button class="back-btn nav-back" onclick="goBack()" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
         <h2>تلاش کریں</h2>
+        <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
       <div class="field">
         <input type="text" id="searchBox" placeholder="نام، شعبہ یا ہسپتال لکھیں..." oninput="renderDoctorList('search')">
@@ -474,7 +514,10 @@
 
     <div class="field">
       <label>واٹس ایپ نمبر</label>
-      <input type="tel" id="docWhatsapp" placeholder="03xx-xxxxxxx">
+      <div class="field-with-add">
+        <input type="tel" id="docWhatsapp" placeholder="0300-1234567" dir="ltr" inputmode="tel" style="flex:1;text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;letter-spacing:.5px;" onblur="this.value=normalizePkNumber(this.value)">
+        <button class="add-circle pick-contact" onclick="pickFromContacts('docWhatsapp','docName')" aria-label="فون بک سے نمبر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></button>
+      </div>
     </div>
 
     <div class="field">
@@ -572,8 +615,8 @@
    already present on every record so it's ready for that).
    ========================================================= */
 
-const APP_VERSION = "MCS 1.7.1";
-const APP_BUILD = "منگل 22 ستمبر 0950PM";
+const APP_VERSION = "MCS 1.7.3";
+const APP_BUILD = "منگل 22 ستمبر 1007PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Storage helpers ---------- */
@@ -603,7 +646,15 @@ function saveStore(){ localStorage.setItem('mcsData', JSON.stringify(store)); }
 let store = loadStore();
 
 /* ---------- Navigation ---------- */
-function goScreen(name){
+const navStack = ['home'];
+let currentScreen = 'home';
+function goScreen(name, fromHistory){
+  if(!fromHistory && name!==currentScreen){
+    if(name==='home'){ navStack.length=0; navStack.push('home'); }
+    else { navStack.push(name); try{ history.pushState({s:name},''); }catch(e){} }
+  }
+  currentScreen = name;
+  window.scrollTo(0,0);
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   if(name==='doctor-list') renderDoctorList('list');
@@ -614,6 +665,54 @@ function openSearch(){
   goScreen('user-browse');
   setTimeout(()=>{ const b=document.getElementById('searchBox'); if(b) b.focus(); }, 150);
 }
+
+/* ---------- Phone book (Contact Picker) ---------- */
+function normalizePkNumber(raw){
+  let n = (raw||'').replace(/[^0-9+]/g,'');
+  if(n.startsWith('+92')) n = '0' + n.slice(3);
+  else if(n.startsWith('0092')) n = '0' + n.slice(4);
+  else if(n.startsWith('92') && n.length===12) n = '0' + n.slice(2);
+  n = n.replace(/\+/g,'');
+  if(/^03\d{9}$/.test(n)) n = n.slice(0,4) + '-' + n.slice(4);
+  return n;
+}
+async function pickFromContacts(numId, nameId){
+  if(!('contacts' in navigator) || !('select' in navigator.contacts)){
+    showToast('یہ فون/براؤزر فون بک کی سہولت نہیں دیتا — نمبر خود لکھیں');
+    return;
+  }
+  try{
+    const res = await navigator.contacts.select(['name','tel'], {multiple:false});
+    if(!res || !res.length) return;
+    const c = res[0];
+    const tels = (c.tel||[]).filter(Boolean);
+    if(!tels.length){ showToast('اس رابطے میں کوئی نمبر محفوظ نہیں'); return; }
+    let num = tels.map(normalizePkNumber).find(x=>/^03\d{2}-\d{7}$/.test(x)) || normalizePkNumber(tels[0]);
+    document.getElementById(numId).value = num;
+    const nameEl = nameId && document.getElementById(nameId);
+    if(nameEl && !nameEl.value.trim() && c.name && c.name[0]) nameEl.value = c.name[0];
+    showToast('نمبر فون بک سے لے لیا گیا ✓');
+  }catch(e){
+    if(e && e.name!=='AbortError') showToast('فون بک نہیں کھل سکی');
+  }
+}
+
+function goBack(){
+  if(navStack.length>1){ try{ history.back(); return; }catch(e){} }
+  goHome();
+}
+function goHome(){
+  document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active'));
+  const steps = navStack.length-1;
+  navStack.length=0; navStack.push('home');
+  goScreen('home', true);
+  if(steps>0){ try{ history.go(-steps); }catch(e){} }
+}
+window.addEventListener('popstate', ()=>{
+  const open = document.querySelector('.modal-overlay.active');
+  if(open){ open.classList.remove('active'); }
+  if(navStack.length>1){ navStack.pop(); goScreen(navStack[navStack.length-1], true); }
+});
 
 /* ---------- Dropdown populate ---------- */
 function populateDropdown(selectId, arr){
@@ -669,7 +768,7 @@ function openDoctorForm(id){
 }
 function saveDoctor(){
   const name = document.getElementById('docName').value.trim();
-  const whatsapp = document.getElementById('docWhatsapp').value.trim();
+  const whatsapp = normalizePkNumber(document.getElementById('docWhatsapp').value.trim());
   if(!name){ showToast('ڈاکٹر کا نام لکھیں'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
   const data = {
@@ -719,21 +818,35 @@ function renderDoctorList(mode){
     listWrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🩺</span>ابھی کوئی ڈاکٹر شامل نہیں کیا گیا</div>`;
     return;
   }
-  listWrap.innerHTML = items.map(d=>`
-    <div class="list-item">
-      <div class="row1"><b>${escapeHtml(d.name)}</b><span class="tag">${escapeHtml(d.dept||'')}</span></div>
-      <div class="meta">
-        🎯 ${escapeHtml(d.specialty||'—')}<br>
-        🏥 ${escapeHtml(d.hospital||'—')}<br>
-        📱 ${escapeHtml(d.whatsapp||'—')}
+  listWrap.innerHTML = items.map(d=>{
+    const num = normalizePkNumber(d.whatsapp||'');
+    const digits = num.replace(/[^0-9]/g,'');
+    const intl = '92' + digits.replace(/^0/,'');
+    const sub = [d.specialty, d.hospital].filter(Boolean).map(escapeHtml).join('<span class="dot">•</span>');
+    return `
+    <div class="doc-card">
+      <div class="doc-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
+      <div class="doc-body">
+        <div class="doc-top">
+          <div class="doc-name">${escapeHtml(d.name)}</div>
+
+        </div>
+        <div class="doc-sub">${sub || escapeHtml(d.dept||'')}</div>
+        <div class="doc-num">${escapeHtml(num||'—')}</div>
       </div>
-      <div class="actions">
-        <button class="act-call" onclick="callWhatsapp('${escapeAttr(d.whatsapp)}')">📞 رابطہ</button>
-        ${mode==='list' ? `<button class="act-edit" onclick="openDoctorForm('${escapeAttr(d.id)}')">✏️ ترمیم</button>
-        <button class="act-del" onclick="deleteDoctor('${escapeAttr(d.id)}')">🗑️ حذف</button>` : ``}
+<div class="doc-side">
+            ${digits ? `<div class="doc-acts">
+            <a class="a-call" href="tel:${digits}" aria-label="کال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
+            <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
+            <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
+          </div>` : ``}
+      ${mode==='list' ? `<div class="doc-mini">
+            <button onclick="openDoctorForm('${escapeAttr(d.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+            <button class="mini-del" onclick="deleteDoctor('${escapeAttr(d.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+          </div>` : ``}
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 function callWhatsapp(num){
   const clean = (num||'').replace(/[^0-9]/g,'');
@@ -1074,7 +1187,7 @@ window.addEventListener('offline', updateVersionBadge);
 /* ---------- Glitter version in header ---------- */
 function renderGlitterVersion(){
   const el = document.getElementById('verGlitterText');
-  if(el) el.innerHTML = `${APP_VERSION} &nbsp;·&nbsp; <span class="ur">${escapeHtml(APP_BUILD)}</span>`;
+  if(el) el.innerHTML = `<span class="ur">${escapeHtml(APP_BUILD)}</span>`;
 }
 
 /* ---------- Init ---------- */
