@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>مائی سٹی شائنز</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#0d3b66">
+<style>
+  @font-face{
+    font-family:'Jameel Noori Nastaleeq Regular';
+    src:url('./fonts/JameelNooriNastaleeqRegular.ttf') format('truetype');
+    font-weight:normal;
+    font-style:normal;
+    font-display:swap;
+  }
+  @font-face{
+    font-family:'Jameel Noori Nastaleeq Kasheeda';
+    src:url('./fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype');
+    font-weight:normal;
+    font-style:normal;
+    font-display:swap;
+  }
+  :root{
+    --primary:#0f766e;
+    --primary-dark:#0b5c56;
+    --accent:#f59e0b;
+    --bg:#f4f7f6;
+    --card:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --danger:#dc2626;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Jameel Noori Nastaleeq Regular','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+  }
+  .topbar h1, .welcome h2, .screen-head h2, .lock-title, .doctorFormTitle, h3{
+    font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular','Segoe UI',sans-serif;
+  }
+  #app{min-height:100vh;display:flex;flex-direction:column;}
+
+  /* ===== Version Badge ===== */
+  .version-badge{
+    position:fixed;
+    bottom:8px;
+    left:8px;
+    background:rgba(15,118,110,0.92);
+    color:#fff;
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:10px;
+    z-index:9999;
+    line-height:1.6;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+    max-width:220px;
+  }
+  .version-badge b{display:block;font-size:12px;}
+  .offline-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:#22c55e;}
+  .offline-dot.off{background:#ef4444;}
+
+  /* ===== Top Bar ===== */
+  .topbar{
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  }
+  .topbar h1{font-size:18px;margin:0;}
+  .topbar .icon-btn{
+    background:rgba(255,255,255,0.15);
+    border:none;color:#fff;
+    width:38px;height:38px;border-radius:10px;
+    font-size:18px;display:flex;align-items:center;justify-content:center;
+  }
+
+  /* ===== Screens ===== */
+  .screen{display:none;flex:1;padding-bottom:70px;animation:fadeIn .25s ease;}
+  .screen.active{display:flex;flex-direction:column;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .link-btn{background:none;border:none;color:var(--primary);font-size:13px;text-decoration:underline;padding:8px;}
+
+  /* ===== Buttons general ===== */
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--primary);color:#fff;border:none;
+    border-radius:var(--radius);padding:14px;font-size:15px;font-weight:600;
+    box-shadow:0 3px 8px rgba(15,118,110,0.25);
+  }
+  .btn.secondary{background:#fff;color:var(--primary);border:2px solid var(--primary);box-shadow:none;}
+  .btn.accent{background:var(--accent);}
+  .btn.danger{background:var(--danger);}
+  .btn.block{width:100%;}
+  .btn:active{transform:scale(0.98);}
+
+  /* ===== Home / Entry ===== */
+  #screen-home .inner, #screen-specialist-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner{
+    padding:16px;
+  }
+  #screen-home .welcome{
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;border-radius:var(--radius);padding:20px;margin-bottom:18px;
+  }
+  #screen-home .welcome h2{margin:0 0 6px;font-size:19px;}
+  #screen-home .welcome p{margin:0;font-size:13px;opacity:.9;}
+
+  .entry-card{
+    background:var(--card);border-radius:var(--radius);
+    padding:18px;margin-bottom:14px;
+    display:flex;align-items:center;gap:14px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.06);
+    border:1px solid #e5e7eb;
+  }
+  .entry-card .emoji{font-size:30px;width:52px;height:52px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;background:#ecfdf5;}
+  .entry-card .txt{flex:1;}
+  .entry-card .txt b{display:block;font-size:15px;margin-bottom:2px;}
+  .entry-card .txt span{font-size:12px;color:var(--muted);}
+  .entry-card .arrow{font-size:20px;color:var(--primary);}
+
+  /* ===== Category grid ===== */
+  .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .cat-item{
+    background:var(--card);border-radius:var(--radius);padding:16px 10px;
+    text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid #e5e7eb;
+  }
+  .cat-item .emoji{font-size:28px;margin-bottom:6px;}
+  .cat-item span{font-size:13px;font-weight:600;display:block;}
+  .cat-item small{font-size:10px;color:var(--muted);}
+  .cat-item.soon{opacity:.55;}
+  .badge-soon{display:inline-block;background:#fde68a;color:#92400e;font-size:9px;
+    padding:2px 6px;border-radius:6px;margin-top:4px;}
+
+  /* ===== Form ===== */
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text);}
+  .field input, .field select{
+    width:100%;padding:12px;border-radius:10px;border:1.5px solid #d1d5db;
+    font-size:14px;background:#fff;color:var(--text);
+  }
+  .field-with-add{display:flex;gap:8px;}
+  .field-with-add select{flex:1;}
+  .add-circle{
+    width:44px;height:44px;min-width:44px;border-radius:10px;border:none;
+    background:var(--accent);color:#fff;font-size:22px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .add-circle:active{transform:scale(0.95);}
+
+  /* ===== List ===== */
+  .list-item{
+    background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.06);border:1px solid #e5e7eb;
+  }
+  .list-item .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .list-item b{font-size:14px;}
+  .list-item .tag{font-size:11px;background:#ecfdf5;color:var(--primary-dark);padding:2px 8px;border-radius:8px;white-space:nowrap;}
+  .list-item .meta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.7;}
+  .list-item .actions{display:flex;gap:8px;margin-top:8px;}
+  .list-item .actions button{
+    flex:1;padding:8px;border-radius:8px;border:none;font-size:12px;font-weight:600;
+  }
+  .act-call{background:#dcfce7;color:#166534;}
+  .act-edit{background:#dbeafe;color:#1e40af;}
+  .act-del{background:#fee2e2;color:#991b1b;}
+
+  .empty-state{text-align:center;color:var(--muted);padding:40px 10px;font-size:13px;}
+  .empty-state .e-emoji{font-size:40px;display:block;margin-bottom:10px;}
+
+  /* ===== Header row with back ===== */
+  .screen-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .back-btn{width:38px;height:38px;border-radius:10px;border:none;background:#fff;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);font-size:18px;display:flex;align-items:center;justify-content:center;}
+  .screen-head h2{font-size:17px;margin:0;flex:1;}
+
+  .fab{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    background:var(--accent);color:#fff;border:none;border-radius:30px;
+    padding:14px 26px;font-size:14px;font-weight:700;box-shadow:0 4px 14px rgba(245,158,11,0.4);
+    display:flex;align-items:center;gap:8px;z-index:50;
+  }
+
+  /* ===== Modal ===== */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;
+    display:none;align-items:flex-end;justify-content:center;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal-box{
+    background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;
+    padding:20px;max-height:88vh;overflow-y:auto;animation:slideUp .25s ease;
+  }
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .modal-box h3{margin:0 0 14px;font-size:16px;}
+  .modal-close{float:left;background:#f3f4f6;border:none;width:32px;height:32px;border-radius:8px;font-size:16px;}
+
+  .toast{
+    position:fixed;top:14px;left:50%;transform:translateX(-50%);
+    background:#1f2937;color:#fff;padding:10px 18px;border-radius:10px;
+    font-size:13px;z-index:2000;opacity:0;transition:opacity .3s;pointer-events:none;
+    max-width:90%;text-align:center;
+  }
+  .toast.show{opacity:1;}
+
+  .dev-chat-row{display:flex;gap:10px;margin-top:6px;}
+  .dev-chat-row a{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:12px;font-weight:600;text-decoration:none;}
+  .wa-link{background:#dcfce7;color:#166534;}
+  .sms-link{background:#dbeafe;color:#1e40af;}
+  .mail-link{background:#fee2e2;color:#991b1b;}
+
+  /* ===== Backup / Restore ===== */
+  .backup-strip{
+    position:fixed;top:0;left:0;right:0;z-index:9998;
+    background:#fff;padding:10px 16px 12px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.12);
+    transform:translateY(-100%);
+    transition:transform .3s ease;
+  }
+  .backup-strip.active{transform:translateY(0);}
+  .backup-strip-label{font-size:12px;font-weight:600;color:var(--primary-dark);margin-bottom:6px;text-align:center;}
+  .backup-progress-track{
+    height:7px;border-radius:999px;background:#e5e7eb;overflow:hidden;
+  }
+  .backup-progress-fill{
+    height:100%;width:0%;border-radius:999px;
+    background:linear-gradient(90deg,#22c55e,#16a34a);
+    transition:width .25s ease;
+  }
+  .backup-progress-pct{font-size:11px;color:var(--muted);text-align:center;margin-top:4px;}
+
+  .cp-section-title{font-size:13px;font-weight:700;color:var(--primary-dark);margin:18px 0 10px;}
+  .cp-btn-row{display:flex;gap:10px;margin-bottom:8px;}
+  .cp-btn-row .btn{font-size:13px;padding:12px 8px;}
+  .cp-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.7;}
+
+  .backup-card{
+    background:linear-gradient(135deg,#ecfdf5,#f0fdfa);
+    border:1.5px solid #99e6d3;border-radius:var(--radius);
+    padding:16px;margin-top:4px;
+  }
+  .backup-card-title{font-size:14px;font-weight:700;color:var(--primary-dark);margin-bottom:10px;}
+
+  .snap-item{
+    background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.06);border:1px solid #e5e7eb;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .snap-item .snap-meta b{display:block;font-size:13px;}
+  .snap-item .snap-meta span{font-size:11px;color:var(--muted);}
+  .snap-item button{padding:8px 12px;border-radius:8px;border:none;font-size:12px;font-weight:600;background:#dbeafe;color:#1e40af;white-space:nowrap;}
+</style>
+</head>
+<body>
+<div class="backup-strip" id="backupStrip">
+  <div class="backup-strip-label" id="backupStripLabel">بیک اپ ہو رہا ہے...</div>
+  <div class="backup-progress-track"><div class="backup-progress-fill" id="backupProgressFill"></div></div>
+  <div class="backup-progress-pct" id="backupProgressPct">۰٪</div>
+</div>
+
+<div id="app">
+
+  <!-- ===================== HOME ===================== -->
+  <div id="screen-home" class="screen active">
+    <div class="topbar">
+      <h1>🏙️ مائی سٹی شائنز</h1>
+      <div style="display:flex;gap:8px;">
+        <button class="icon-btn" onclick="openDevChat()">📞</button>
+        <button class="icon-btn" onclick="openControlPanel()">⚙️</button>
+      </div>
+    </div>
+    <div class="inner">
+      <div class="welcome">
+        <h2>خوش آمدید 👋</h2>
+        <p>اپنے شہر کی معلومات دیکھیں یا اپنا اندراج شامل کریں</p>
+      </div>
+
+      <div class="entry-card" onclick="goScreen('specialist-categories')">
+        <div class="emoji">🩺</div>
+        <div class="txt"><b>اسپیشلسٹ / پیشہ ور</b><span>ڈاکٹرز، دکاندار، مزدور، استاد وغیرہ کا اندراج کریں</span></div>
+        <div class="arrow">‹</div>
+      </div>
+
+      <div class="entry-card" onclick="showToast('بزنس سیکشن جلد شامل کیا جائے گا')">
+        <div class="emoji">🏬</div>
+        <div class="txt"><b>بزنس</b><span>اپنی دکان یا کاروبار رجسٹر کریں</span></div>
+        <div class="arrow">‹</div>
+      </div>
+
+      <div class="entry-card" onclick="goScreen('user-browse')">
+        <div class="emoji">🔎</div>
+        <div class="txt"><b>یوزر (تلاش کریں)</b><span>سروسز اور دکانیں تلاش کریں</span></div>
+        <div class="arrow">‹</div>
+      </div>
+
+      <div class="backup-card">
+        <div class="backup-card-title">☁️ بیک اپ اور بحالی</div>
+        <div class="cp-btn-row">
+          <button class="btn accent" style="flex:1;" onclick="startBackup()">⬆️ بیک اپ بنائیں</button>
+          <button class="btn secondary" style="flex:1;" onclick="startRestore()">⬇️ بحال کریں</button>
+        </div>
+        <button class="link-btn" style="padding:6px 0 0;" onclick="openAutoSnapshots()">🕒 خودکار محفوظ کاپیاں دیکھیں</button>
+        <div class="cp-hint" id="lastBackupHint"></div>
+        <div class="cp-hint" id="autoBackupHint"></div>
+        <input type="file" id="restoreFileInput" accept="application/json,.json" style="display:none;">
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SPECIALIST CATEGORIES ===================== -->
+  <div id="screen-specialist-categories" class="screen">
+    <div class="inner">
+      <div class="screen-head">
+        <button class="back-btn" onclick="goScreen('home')">›</button>
+        <h2>اسپیشلسٹ / پیشہ ور — شعبہ منتخب کریں</h2>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-item" onclick="goScreen('doctor-list')">
+          <div class="emoji">🩺</div><span>ڈاکٹرز</span><small>ہسپتال، اسپیشلٹی</small>
+        </div>
+        <div class="cat-item soon"><div class="emoji">💊</div><span>میڈیکل سٹور</span><span class="badge-soon">جلد آ رہا ہے</span></div>
+        <div class="cat-item soon"><div class="emoji">🌿</div><span>ہومیوپیتھک</span><span class="badge-soon">جلد آ رہا ہے</span></div>
+        <div class="cat-item soon"><div class="emoji">🧪</div><span>ٹیسٹنگ لیب</span><span class="badge-soon">جلد آ رہا ہے</span></div>
+        <div class="cat-item soon"><div class="emoji">🔧</div><span>پلمبر / الیکٹریشن</span><span class="badge-soon">جلد آ رہا ہے</span></div>
+        <div class="cat-item soon"><div class="emoji">📚</div><span>ٹیوشن استاد</span><span class="badge-soon">جلد آ رہا ہے</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== DOCTOR LIST ===================== -->
+  <div id="screen-doctor-list" class="screen">
+    <div class="inner">
+      <div class="screen-head">
+        <button class="back-btn" onclick="goScreen('specialist-categories')">›</button>
+        <h2>ڈاکٹرز کی فہرست</h2>
+      </div>
+      <div id="doctorListWrap"></div>
+    </div>
+    <button class="fab" onclick="openDoctorForm()">➕ نیا ڈاکٹر شامل کریں</button>
+  </div>
+
+  <!-- ===================== USER BROWSE (read-only, reuses doctor list) ===================== -->
+  <div id="screen-user-browse" class="screen">
+    <div class="inner">
+      <div class="screen-head">
+        <button class="back-btn" onclick="goScreen('home')">›</button>
+        <h2>تلاش کریں</h2>
+      </div>
+      <div class="field">
+        <input type="text" id="searchBox" placeholder="نام، شعبہ یا ہسپتال لکھیں..." oninput="renderDoctorList('search')">
+      </div>
+      <div id="searchResultsWrap"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== VERSION BADGE ===================== -->
+<div class="version-badge" id="versionBadge"></div>
+
+<!-- ===================== DOCTOR FORM MODAL ===================== -->
+<div class="modal-overlay" id="doctorFormModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('doctorFormModal')">×</button>
+    <h3 id="doctorFormTitle">نیا ڈاکٹر شامل کریں</h3>
+    <div style="clear:both;"></div>
+
+    <div class="field">
+      <label>ڈاکٹر کا نام</label>
+      <input type="text" id="docName" placeholder="مثلاً ڈاکٹر محمد علی">
+    </div>
+
+    <div class="field">
+      <label>شعبہ (Department)</label>
+      <div class="field-with-add">
+        <select id="docDept"></select>
+        <button class="add-circle" onclick="promptAddOption('department','docDept')">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>اسپیشلٹی (Specialty)</label>
+      <div class="field-with-add">
+        <select id="docSpecialty"></select>
+        <button class="add-circle" onclick="promptAddOption('specialty','docSpecialty')">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>واٹس ایپ نمبر</label>
+      <input type="tel" id="docWhatsapp" placeholder="03xx-xxxxxxx">
+    </div>
+
+    <div class="field">
+      <label>منسلک ہسپتال</label>
+      <div class="field-with-add">
+        <select id="docHospital"></select>
+        <button class="add-circle" onclick="promptAddOption('hospital','docHospital')">+</button>
+      </div>
+    </div>
+
+    <button class="btn block" onclick="saveDoctor()">💾 محفوظ کریں</button>
+  </div>
+</div>
+
+<!-- ===================== ADD OPTION MODAL ===================== -->
+<div class="modal-overlay" id="addOptionModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('addOptionModal')">×</button>
+    <h3 id="addOptionTitle">نئی چیز شامل کریں</h3>
+    <div style="clear:both;"></div>
+    <div class="field">
+      <input type="text" id="addOptionInput" placeholder="یہاں نام لکھیں">
+    </div>
+    <button class="btn block accent" onclick="confirmAddOption()">➕ شامل کریں</button>
+  </div>
+</div>
+
+<!-- ===================== DEV CHAT MODAL ===================== -->
+<div class="modal-overlay" id="devChatModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('devChatModal')">×</button>
+    <h3>ڈویلپر سے رابطہ</h3>
+    <div style="clear:both;"></div>
+    <div class="dev-chat-row" id="devChatLinks"></div>
+  </div>
+</div>
+
+<!-- ===================== CONTROL PANEL MODAL ===================== -->
+<div class="modal-overlay" id="controlPanelModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('controlPanelModal')">×</button>
+    <h3>⚙️ کنٹرول پینل</h3>
+    <div style="clear:both;"></div>
+
+    <div id="cpContent">
+      <div class="field">
+        <label>واٹس ایپ / ایس ایم ایس نمبر</label>
+        <input type="text" id="cpWhatsapp">
+      </div>
+      <div class="field">
+        <label>جی میل</label>
+        <input type="text" id="cpGmail">
+      </div>
+      <button class="btn block secondary" onclick="saveDevContact()">رابطہ محفوظ کریں</button>
+      <div class="cp-hint">بیک اپ اور بحالی کے بٹن اب ہوم پیج پر موجود ہیں۔</div>
+
+      <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
+      <div class="field">
+        <label>ڈیٹا کا خلاصہ</label>
+        <div id="cpDataSummary" style="font-size:13px;color:var(--muted);"></div>
+      </div>
+      <button class="btn block danger" onclick="resetAllData()">🗑️ سارا ڈیٹا صاف کریں</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== AUTO SNAPSHOTS MODAL ===================== -->
+<div class="modal-overlay" id="autoSnapshotsModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('autoSnapshotsModal')">×</button>
+    <h3>🕒 خودکار محفوظ کاپیاں</h3>
+    <div style="clear:both;"></div>
+    <div class="cp-hint" style="margin-bottom:10px;">یہ کاپیاں دن میں خودکار طور پر (صبح ۸، دوپہر ۱۲، رات ۸ بجے ایپ کھلنے پر) اور بڑی تبدیلیوں سے پہلے فون کے اندر ہی محفوظ ہوتی ہیں — ڈاؤن لوڈ فولڈر میں نہیں جاتیں۔</div>
+    <div id="autoSnapshotsListWrap"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   MAI CITY SHINES — offline-first, localStorage based
+   Firebase sync will be layered on top later (syncStatus field
+   already present on every record so it's ready for that).
+   ========================================================= */
+
+const APP_VERSION = "MCS 1.6.0";
+const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
+
+/* ---------- Storage helpers ---------- */
+function loadStore(){
+  let raw = localStorage.getItem('mcsData');
+  if(!raw){
+    return {
+      doctors: [],
+      departments: ["میڈیسن","سرجری","امراضِ چشم","امراضِ اطفال","امراضِ نسواں","جلدی امراض","دل کے امراض","دانتوں کے امراض","ہڈیوں کے امراض","نفسیاتی امراض"],
+      specialties: ["جنرل فزیشن","سرجن","سکن اسپیشلسٹ","چائلڈ اسپیشلسٹ","ہارٹ اسپیشلسٹ","بون اسپیشلسٹ","آئی اسپیشلسٹ","گائناکالوجسٹ"],
+      hospitals: ["سول ہسپتال","ڈی ایچ کیو ہسپتال","نجی کلینک"],
+      contact: {...DEFAULT_CONTACT}
+    };
+  }
+  try{
+    const parsed = JSON.parse(raw);
+    parsed.contact = parsed.contact || {...DEFAULT_CONTACT};
+    return parsed;
+  }catch(e){
+    return loadStoreFallback();
+  }
+}
+function loadStoreFallback(){
+  return { doctors:[], departments:[], specialties:[], hospitals:[], contact:{...DEFAULT_CONTACT} };
+}
+function saveStore(){ localStorage.setItem('mcsData', JSON.stringify(store)); }
+let store = loadStore();
+
+/* ---------- Navigation ---------- */
+function goScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  if(name==='doctor-list') renderDoctorList('list');
+  if(name==='user-browse') renderDoctorList('search');
+}
+
+/* ---------- Dropdown populate ---------- */
+function populateDropdown(selectId, arr){
+  const sel = document.getElementById(selectId);
+  sel.innerHTML = arr.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+}
+function refreshAllDropdowns(){
+  populateDropdown('docDept', store.departments);
+  populateDropdown('docSpecialty', store.specialties);
+  populateDropdown('docHospital', store.hospitals);
+}
+
+/* ---------- Add-option (plus button) flow ---------- */
+let addOptionTargetKey = null, addOptionTargetSelect = null;
+function promptAddOption(key, selectId){
+  addOptionTargetKey = key; addOptionTargetSelect = selectId;
+  const labels = {department:'نیا شعبہ', specialty:'نئی اسپیشلٹی', hospital:'نیا ہسپتال'};
+  document.getElementById('addOptionTitle').textContent = labels[key] || 'نئی چیز شامل کریں';
+  document.getElementById('addOptionInput').value = '';
+  openModal('addOptionModal');
+}
+function confirmAddOption(){
+  const val = document.getElementById('addOptionInput').value.trim();
+  if(!val){ showToast('نام لکھیں'); return; }
+  const mapKey = {department:'departments', specialty:'specialties', hospital:'hospitals'}[addOptionTargetKey];
+  if(!store[mapKey].includes(val)) store[mapKey].push(val);
+  saveStore();
+  populateDropdown(addOptionTargetSelect, store[mapKey]);
+  document.getElementById(addOptionTargetSelect).value = val;
+  closeModal('addOptionModal');
+  showToast('شامل کر دیا گیا ✓');
+}
+
+/* ---------- Doctor CRUD ---------- */
+let editingDoctorId = null;
+function openDoctorForm(id){
+  editingDoctorId = id || null;
+  refreshAllDropdowns();
+  if(id){
+    const d = store.doctors.find(x=>x.id===id);
+    document.getElementById('doctorFormTitle').textContent = 'ڈاکٹر میں ترمیم کریں';
+    document.getElementById('docName').value = d.name;
+    document.getElementById('docDept').value = d.dept;
+    document.getElementById('docSpecialty').value = d.specialty;
+    document.getElementById('docWhatsapp').value = d.whatsapp;
+    document.getElementById('docHospital').value = d.hospital;
+  } else {
+    document.getElementById('doctorFormTitle').textContent = 'نیا ڈاکٹر شامل کریں';
+    document.getElementById('docName').value = '';
+    document.getElementById('docWhatsapp').value = '';
+  }
+  openModal('doctorFormModal');
+}
+function saveDoctor(){
+  const name = document.getElementById('docName').value.trim();
+  const whatsapp = document.getElementById('docWhatsapp').value.trim();
+  if(!name){ showToast('ڈاکٹر کا نام لکھیں'); return; }
+  if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
+  const data = {
+    name, whatsapp,
+    dept: document.getElementById('docDept').value,
+    specialty: document.getElementById('docSpecialty').value,
+    hospital: document.getElementById('docHospital').value,
+  };
+  if(editingDoctorId){
+    const d = store.doctors.find(x=>x.id===editingDoctorId);
+    Object.assign(d, data);
+    d.updatedAt = Date.now();
+  } else {
+    data.id = 'doc_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+    data.createdAt = Date.now();
+    data.updatedAt = Date.now();
+    data.syncStatus = 'local'; // ready for future Firebase sync layer
+    store.doctors.push(data);
+  }
+  saveStore();
+  closeModal('doctorFormModal');
+  showToast('محفوظ ہو گیا ✓');
+  renderDoctorList('list');
+}
+function deleteDoctor(id){
+  if(!confirm('کیا واقعی حذف کرنا چاہتے ہیں؟')) return;
+  store.doctors = store.doctors.filter(x=>x.id!==id);
+  saveStore();
+  renderDoctorList('list');
+  showToast('حذف کر دیا گیا');
+}
+function renderDoctorList(mode){
+  const listWrap = mode==='list' ? document.getElementById('doctorListWrap') : document.getElementById('searchResultsWrap');
+  let items = store.doctors;
+  if(mode==='search'){
+    const q = (document.getElementById('searchBox').value||'').trim().toLowerCase();
+    if(q){
+      items = items.filter(d =>
+        d.name.toLowerCase().includes(q) ||
+        (d.dept||'').toLowerCase().includes(q) ||
+        (d.specialty||'').toLowerCase().includes(q) ||
+        (d.hospital||'').toLowerCase().includes(q)
+      );
+    }
+  }
+  if(items.length===0){
+    listWrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🩺</span>ابھی کوئی ڈاکٹر شامل نہیں کیا گیا</div>`;
+    return;
+  }
+  listWrap.innerHTML = items.map(d=>`
+    <div class="list-item">
+      <div class="row1"><b>${escapeHtml(d.name)}</b><span class="tag">${escapeHtml(d.dept||'')}</span></div>
+      <div class="meta">
+        🎯 ${escapeHtml(d.specialty||'—')}<br>
+        🏥 ${escapeHtml(d.hospital||'—')}<br>
+        📱 ${escapeHtml(d.whatsapp||'—')}
+      </div>
+      <div class="actions">
+        <button class="act-call" onclick="callWhatsapp('${escapeAttr(d.whatsapp)}')">📞 رابطہ</button>
+        ${mode==='list' ? `<button class="act-edit" onclick="openDoctorForm('${escapeAttr(d.id)}')">✏️ ترمیم</button>
+        <button class="act-del" onclick="deleteDoctor('${escapeAttr(d.id)}')">🗑️ حذف</button>` : ``}
+      </div>
+    </div>
+  `).join('');
+}
+function callWhatsapp(num){
+  const clean = (num||'').replace(/[^0-9]/g,'');
+  window.open('https://wa.me/92'+clean.replace(/^0/,''), '_blank');
+}
+
+/* ---------- Dev chat ---------- */
+function openDevChat(){
+  const c = store.contact || DEFAULT_CONTACT;
+  let html = '';
+  if(c.whatsapp) html += `<a class="wa-link" href="https://wa.me/92${c.whatsapp.replace(/[^0-9]/g,'').replace(/^0/,'')}" target="_blank">واٹس ایپ</a>`;
+  if(c.whatsapp) html += `<a class="sms-link" href="sms:${c.whatsapp}">ایس ایم ایس</a>`;
+  if(c.gmail) html += `<a class="mail-link" href="mailto:${c.gmail}">ای میل</a>`;
+  document.getElementById('devChatLinks').innerHTML = html || '<span style="font-size:13px;color:var(--muted);">کوئی رابطہ محفوظ نہیں</span>';
+  openModal('devChatModal');
+}
+
+/* ---------- Control Panel ---------- */
+function openControlPanel(){
+  document.getElementById('cpWhatsapp').value = store.contact.whatsapp;
+  document.getElementById('cpGmail').value = store.contact.gmail;
+  document.getElementById('cpDataSummary').textContent =
+    `کل ڈاکٹرز: ${store.doctors.length} | شعبے: ${store.departments.length} | ہسپتال: ${store.hospitals.length}`;
+  openModal('controlPanelModal');
+}
+
+/* ---------- Backup / Restore ---------- */
+function showBackupProgress(label){
+  document.getElementById('backupStripLabel').textContent = label;
+  document.getElementById('backupProgressFill').style.width = '0%';
+  document.getElementById('backupProgressPct').textContent = '۰٪';
+  document.getElementById('backupStrip').classList.add('active');
+}
+function setBackupProgress(pct){
+  document.getElementById('backupProgressFill').style.width = pct + '%';
+  document.getElementById('backupProgressPct').textContent = urduDigits(pct) + '٪';
+}
+function animateProgress(from, to, duration){
+  return new Promise(resolve=>{
+    const start = performance.now();
+    function step(now){
+      const t = Math.min(1, (now-start)/duration);
+      setBackupProgress(Math.round(from + (to-from)*t));
+      if(t<1) requestAnimationFrame(step); else resolve();
+    }
+    requestAnimationFrame(step);
+  });
+}
+function finishBackupProgress(label){
+  document.getElementById('backupStripLabel').textContent = label;
+  setTimeout(()=>{ document.getElementById('backupStrip').classList.remove('active'); }, 2600);
+}
+function hideBackupProgress(){
+  document.getElementById('backupStrip').classList.remove('active');
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+function buildBackupFilename(){
+  const now = new Date();
+  const monthsEn = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return `MCS_Backup_${pad2(now.getDate())}${monthsEn[now.getMonth()]}${now.getFullYear()}_${pad2(now.getHours())}${pad2(now.getMinutes())}.json`;
+}
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+}
+function renderLastBackupHint(){
+  const el = document.getElementById('lastBackupHint');
+  if(!el) return;
+  const last = localStorage.getItem('mcsLastBackupAt');
+  el.textContent = last ? ('آخری بیک اپ: ' + last) : 'ابھی تک کوئی بیک اپ نہیں بنایا گیا';
+}
+async function startBackup(){
+  showBackupProgress('بیک اپ تیار ہو رہا ہے...');
+  await animateProgress(0, 35, 300);
+  const payload = {
+    app: 'My City Shines',
+    version: APP_VERSION,
+    backupAt: new Date().toISOString(),
+    data: store
+  };
+  const json = JSON.stringify(payload, null, 2);
+  const filename = buildBackupFilename();
+  const blob = new Blob([json], {type:'application/json'});
+  await animateProgress(35, 70, 300);
+  let shared = false;
+  try{
+    const file = new File([blob], filename, {type:'application/json'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      document.getElementById('backupStripLabel').textContent = 'گوگل ڈرائیو منتخب کریں...';
+      await navigator.share({ files:[file], title:'مائی سٹی شائنز بیک اپ', text:'محفوظ کرنے کے لیے Drive چنیں' });
+      shared = true;
+    }
+  }catch(err){
+    if(err && err.name === 'AbortError'){
+      hideBackupProgress();
+      return; // user cancelled the share sheet — no error, no fake success
+    }
+    shared = false;
+  }
+  if(!shared){
+    downloadBlob(blob, filename);
+  }
+  await animateProgress(70, 100, 300);
+  const now = new Date();
+  const stamp = `${pad2(now.getDate())}/${pad2(now.getMonth()+1)}/${now.getFullYear()} ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+  localStorage.setItem('mcsLastBackupAt', stamp);
+  renderLastBackupHint();
+  finishBackupProgress(shared ? 'بیک اپ مکمل ہو گیا ✅' : 'فائل ڈاؤن لوڈ ہو گئی — گوگل ڈرائیو ایپ میں اپلوڈ کر دیں ✅');
+}
+function startRestore(){
+  document.getElementById('restoreFileInput').click();
+}
+document.getElementById('restoreFileInput').addEventListener('change', async (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  showBackupProgress('فائل پڑھی جا رہی ہے...');
+  try{
+    await animateProgress(0, 30, 250);
+    const text = await f.text();
+    await animateProgress(30, 60, 250);
+    const parsed = JSON.parse(text);
+    const incoming = parsed && parsed.data ? parsed.data : parsed;
+    if(!incoming || !Array.isArray(incoming.doctors)){
+      throw new Error('invalid-backup');
+    }
+    hideBackupProgress();
+    if(!confirm('موجودہ ڈیٹا اس بیک اپ فائل سے تبدیل ہو جائے گا۔ کیا آپ یقینی طور پر جاری رکھنا چاہتے ہیں؟')){
+      e.target.value = '';
+      return;
+    }
+    saveAutoSnapshot('بحالی سے پہلے (حفاظتی کاپی)'); // safety net in case the restore was a mistake
+    showBackupProgress('بحال ہو رہا ہے...');
+    await animateProgress(60, 90, 250);
+    store.doctors = incoming.doctors || [];
+    store.departments = incoming.departments || [];
+    store.specialties = incoming.specialties || [];
+    store.hospitals = incoming.hospitals || [];
+    store.contact = incoming.contact || {...DEFAULT_CONTACT};
+    saveStore();
+    refreshAllDropdowns();
+    renderDoctorList('list');
+    document.getElementById('cpDataSummary').textContent =
+      `کل ڈاکٹرز: ${store.doctors.length} | شعبے: ${store.departments.length} | ہسپتال: ${store.hospitals.length}`;
+    await animateProgress(90, 100, 250);
+    finishBackupProgress('بحالی مکمل ہو گئی ✅ (' + f.name + ')');
+  }catch(err){
+    hideBackupProgress();
+    showToast('یہ فائل درست بیک اپ نہیں ہے');
+  }
+  e.target.value = '';
+});
+function saveDevContact(){
+  store.contact.whatsapp = document.getElementById('cpWhatsapp').value.trim();
+  store.contact.gmail = document.getElementById('cpGmail').value.trim();
+  saveStore();
+  showToast('رابطہ محفوظ ہو گیا ✓');
+}
+function resetAllData(){
+  if(!confirm('یہ عمل واپس نہیں ہو سکتا — سارا ڈیٹا صاف کر دیا جائے گا۔ جاری رکھیں؟')) return;
+  saveAutoSnapshot('ری سیٹ سے پہلے (حفاظتی کاپی)'); // safety net before wiping
+  localStorage.removeItem('mcsData');
+  store = loadStore();
+  showToast('ڈیٹا صاف کر دیا گیا');
+  closeModal('controlPanelModal');
+  refreshAllDropdowns();
+  renderDoctorList('list');
+}
+
+/* =========================================================
+   AUTOMATIC LOCAL SNAPSHOTS
+   - Runs entirely inside the browser's own storage (never the
+     Downloads folder), so clearing Downloads can never touch it.
+   - Fires automatically at 3 daily checkpoints (8am, 12pm, 8pm)
+     whenever the app happens to be open at/after that time, plus
+     right before any destructive action (reset / restore-overwrite)
+     as an extra safety net.
+   - Keeps a rolling history so a bad edit or accidental reset can
+     be undone by restoring an earlier snapshot.
+   - Limitation: since this is a plain web app with no background
+     service, a checkpoint only fires when the app is actually open
+     at or after that time — not while the phone is idle/app closed.
+   ========================================================= */
+const AUTO_BACKUP_HOURS = [8, 12, 20]; // 8am, 12pm, 8pm
+const AUTO_SNAPSHOT_LIMIT = 15;
+
+function todayKey(){
+  const n = new Date();
+  return `${n.getFullYear()}-${pad2(n.getMonth()+1)}-${pad2(n.getDate())}`;
+}
+function loadAutoBackupLog(){
+  try{ return JSON.parse(localStorage.getItem('mcsAutoBackupLog') || '{}'); }
+  catch(e){ return {}; }
+}
+function saveAutoBackupLog(log){
+  try{ localStorage.setItem('mcsAutoBackupLog', JSON.stringify(log)); }catch(e){ /* best-effort */ }
+}
+function loadAutoSnapshots(){
+  try{ return JSON.parse(localStorage.getItem('mcsAutoSnapshots') || '[]'); }
+  catch(e){ return []; }
+}
+function saveAutoSnapshot(label){
+  let list = loadAutoSnapshots();
+  list.unshift({
+    ts: Date.now(),
+    label,
+    data: {
+      doctors: store.doctors,
+      departments: store.departments,
+      specialties: store.specialties,
+      hospitals: store.hospitals,
+      contact: store.contact
+    }
+  });
+  if(list.length > AUTO_SNAPSHOT_LIMIT) list = list.slice(0, AUTO_SNAPSHOT_LIMIT);
+  try{
+    localStorage.setItem('mcsAutoSnapshots', JSON.stringify(list));
+  }catch(e){
+    // storage quota hit — drop older half and retry once rather than losing the newest snapshot
+    list = list.slice(0, Math.ceil(list.length/2));
+    try{ localStorage.setItem('mcsAutoSnapshots', JSON.stringify(list)); }catch(e2){ /* give up silently */ }
+  }
+  renderAutoBackupHint();
+}
+function renderAutoBackupHint(){
+  const el = document.getElementById('autoBackupHint');
+  if(!el) return;
+  const list = loadAutoSnapshots();
+  if(list.length===0){ el.textContent = 'ابھی تک کوئی خودکار کاپی نہیں بنی'; return; }
+  const last = new Date(list[0].ts);
+  el.textContent = `آخری خودکار کاپی: ${pad2(last.getDate())}/${pad2(last.getMonth()+1)} ${pad2(last.getHours())}:${pad2(last.getMinutes())} — کل ${urduDigits(list.length)} کاپیاں محفوظ`;
+}
+function checkAutoBackupCheckpoints(){
+  const log = loadAutoBackupLog();
+  const key = todayKey();
+  const done = log[key] || [];
+  const hour = new Date().getHours();
+  let changed = false;
+  AUTO_BACKUP_HOURS.forEach(h=>{
+    if(hour >= h && !done.includes(h)){
+      saveAutoSnapshot(`خودکار بیک اپ (${h<12?h+' صبح':(h===12?'12 دوپہر':(h-12)+' شام')})`);
+      done.push(h);
+      changed = true;
+    }
+  });
+  if(changed){
+    log[key] = done;
+    saveAutoBackupLog(log);
+    showToast('آج کا خودکار بیک اپ فون کے اندر محفوظ ہو گیا ✓');
+  }
+}
+function openAutoSnapshots(){
+  renderAutoSnapshotsList();
+  openModal('autoSnapshotsModal');
+}
+function renderAutoSnapshotsList(){
+  const wrap = document.getElementById('autoSnapshotsListWrap');
+  const list = loadAutoSnapshots();
+  if(list.length===0){
+    wrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🕒</span>ابھی تک کوئی خودکار کاپی نہیں بنی</div>`;
+    return;
+  }
+  wrap.innerHTML = list.map((snap, idx)=>{
+    const d = new Date(snap.ts);
+    const stamp = `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()} — ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    return `
+      <div class="snap-item">
+        <div class="snap-meta">
+          <b>${escapeHtml(snap.label||'خودکار کاپی')}</b>
+          <span>${stamp} | ڈاکٹرز: ${urduDigits((snap.data.doctors||[]).length)}</span>
+        </div>
+        <button onclick="restoreAutoSnapshot(${idx})">بحال کریں</button>
+      </div>`;
+  }).join('');
+}
+function restoreAutoSnapshot(idx){
+  const list = loadAutoSnapshots();
+  const snap = list[idx];
+  if(!snap) return;
+  if(!confirm('موجودہ ڈیٹا اس خودکار کاپی سے تبدیل ہو جائے گا۔ جاری رکھیں؟')) return;
+  saveAutoSnapshot('اس بحالی سے پہلے (حفاظتی کاپی)');
+  store.doctors = snap.data.doctors || [];
+  store.departments = snap.data.departments || [];
+  store.specialties = snap.data.specialties || [];
+  store.hospitals = snap.data.hospitals || [];
+  store.contact = snap.data.contact || {...DEFAULT_CONTACT};
+  saveStore();
+  refreshAllDropdowns();
+  renderDoctorList('list');
+  closeModal('autoSnapshotsModal');
+  showToast('خودکار کاپی بحال ہو گئی ✅');
+}
+
+/* ---------- Modal helpers ---------- */
+function openModal(id){ document.getElementById(id).classList.add('active'); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+
+/* ---------- Toast ---------- */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+/* ---------- Escape helpers ---------- */
+function escapeHtml(str){
+  return (str||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(str){
+  return (str||'').replace(/'/g, "\\'");
+}
+
+/* ---------- Version badge + online/offline ---------- */
+function urduDigits(n){
+  const map = {'0':'۰','1':'۱','2':'۲','3':'۳','4':'۴','5':'۵','6':'۶','7':'۷','8':'۸','9':'۹'};
+  return String(n).replace(/[0-9]/g, d=>map[d]);
+}
+const urduMonths = ["جنوری","فروری","مارچ","اپریل","مئی","جون","جولائی","اگست","ستمبر","اکتوبر","نومبر","دسمبر"];
+function updateVersionBadge(){
+  const now = new Date();
+  const d = urduDigits(now.getDate());
+  const m = urduMonths[now.getMonth()];
+  const y = urduDigits(now.getFullYear());
+  let h = now.getHours(); const ampm = h>=12 ? 'شام' : 'صبح';
+  h = h%12; if(h===0) h=12;
+  const hh = urduDigits(h);
+  const mm = urduDigits(String(now.getMinutes()).padStart(2,'0'));
+  const online = navigator.onLine;
+  document.getElementById('versionBadge').innerHTML =
+    `<b>${APP_VERSION}</b>آخری بار لوڈ: ${d} ${m} ${y}، ${hh}:${mm} ${ampm}<br><span class="offline-dot ${online?'':'off'}"></span>${online?'آن لائن':'آف لائن موڈ'}`;
+}
+window.addEventListener('online', updateVersionBadge);
+window.addEventListener('offline', updateVersionBadge);
+
+/* ---------- Init ---------- */
+updateVersionBadge();
+refreshAllDropdowns();
+renderLastBackupHint();
+renderAutoBackupHint();
+checkAutoBackupCheckpoints();
+setInterval(checkAutoBackupCheckpoints, 5*60*1000); // re-check every 5 min in case app stays open across a checkpoint
+
+/* ---------- Service worker registration ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{ /* offline-first: ignore reg failure */ });
+  });
+}
+</script>
+</body>
+</html>
