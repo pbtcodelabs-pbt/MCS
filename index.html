@@ -199,17 +199,24 @@
   @media (prefers-reduced-motion:reduce){.ver-glitter,.ver-glitter *,.ver-glitter::before{animation:none!important;}}
 
   /* ===== Category grid ===== */
-  .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  #screen-specialist-categories{background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;}
+  .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .cat-item{
-    background:var(--card);border-radius:var(--radius);padding:16px 10px;
-    text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid #e5e7eb;
+    position:relative;background:linear-gradient(150deg,#ffffff,#f3f7f8);border-radius:14px;padding:14px 8px 10px;
+    text-align:center;border:1px solid rgba(255,255,255,.9);
+    box-shadow:0 1px 0 #fff inset,0 2px 4px rgba(15,23,42,.05),0 6px 14px rgba(13,59,102,.1);
   }
-  .cat-item .emoji{font-size:28px;margin-bottom:6px;}
-  .cat-item span{font-size:13px;font-weight:600;display:block;}
+  .cat-item .emoji{
+    width:44px;height:44px;margin:0 auto 8px;border-radius:14px;font-size:22px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(145deg,#ffffff,#e6f6f4);
+    box-shadow:0 3px 6px rgba(13,59,102,.18),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 3px rgba(0,0,0,.05);
+  }
+  .cat-item span{font-size:13.5px;font-weight:700;display:block;color:#0b2a44;line-height:1.5;}
   .cat-item small{font-size:10px;color:var(--muted);}
-  .cat-item.soon{opacity:.55;}
+  .cat-item.soon{opacity:.6;}
   .badge-soon{display:inline-block;background:#fde68a;color:#92400e;font-size:9px;
-    padding:2px 6px;border-radius:6px;margin-top:4px;}
+    padding:2px 6px;border-radius:6px;margin-top:5px;}
 
   /* ===== Form ===== */
   .field{margin-bottom:14px;}
@@ -613,8 +620,8 @@
    already present on every record so it's ready for that).
    ========================================================= */
 
-const APP_VERSION = "MCS 1.8.0";
-const APP_BUILD = "بدھ 23 ستمبر 0549AM";
+const APP_VERSION = "MCS 1.8.2"; // internal only — not shown on screen (kept in code for our own tracking)
+const APP_BUILD = "بدھ 23 ستمبر 0640AM"; // shown on home page badge — freshness date/time
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Storage helpers ---------- */
@@ -809,16 +816,21 @@ function renderDoctorList(mode){
   const listWrap = mode==='list' ? document.getElementById('doctorListWrap') : document.getElementById('searchResultsWrap');
   let items = store.doctors;
   if(mode==='search'){
-    const q = (document.getElementById('searchBox').value||'').trim().toLowerCase();
+    const qRaw = (document.getElementById('searchBox').value||'').trim();
+    const q = qRaw.toLowerCase();
+    const qDigits = qRaw.replace(/[^0-9]/g,'');
+    const genericDoctorWords = ['ڈاکٹر','doctor','dr','dr.'];
     if(q){
-      items = items.filter(d =>
-        (d.nameUr||d.name||'').toLowerCase().includes(q) ||
+      items = items.filter(d => {
+        if(genericDoctorWords.includes(q)) return true; // typing just "doctor/ڈاکٹر" shows all doctors (only category live so far)
+        if(qDigits.length>=3 && (d.whatsapp||'').replace(/[^0-9]/g,'').includes(qDigits)) return true;
+        return (d.nameUr||d.name||'').toLowerCase().includes(q) ||
         (d.nameEn||'').toLowerCase().includes(q) ||
         (d.address||'').toLowerCase().includes(q) ||
         (d.dept||'').toLowerCase().includes(q) ||
         (d.specialty||'').toLowerCase().includes(q) ||
-        (d.hospital||'').toLowerCase().includes(q)
-      );
+        (d.hospital||'').toLowerCase().includes(q);
+      });
     }
   }
   if(items.length===0){
@@ -1188,7 +1200,7 @@ function updateVersionBadge(){
   const mm = urduDigits(String(now.getMinutes()).padStart(2,'0'));
   const online = navigator.onLine;
   document.getElementById('homeFooter').innerHTML =
-    `<span class="offline-dot ${online?'':'off'}"></span>${online?'آن لائن':'آف لائن موڈ'} · آخری بار لوڈ: ${d} ${m} ${y}، ${hh}:${mm} ${ampm}<br><span class="ver">${APP_VERSION} · pbtcodelabs</span>`;
+    `<span class="offline-dot ${online?'':'off'}"></span>${online?'آن لائن':'آف لائن موڈ'} · آخری بار لوڈ: ${d} ${m} ${y}، ${hh}:${mm} ${ampm}<br><span class="ver">pbtcodelabs</span>`;
 }
 window.addEventListener('online', updateVersionBadge);
 window.addEventListener('offline', updateVersionBadge);
