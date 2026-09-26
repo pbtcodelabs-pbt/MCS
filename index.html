@@ -236,6 +236,40 @@
   .add-circle.pick-contact{background:var(--primary);}
   .add-circle.pick-contact svg{width:22px;height:22px;}
 
+  /* ===== Bilingual capsule dropdown (replaces native <select> popup, which
+     ignores our fonts on Android and shows plain Arial) ===== */
+  .csel-wrap{position:relative;width:100%;}
+  .field-with-add .csel-wrap{flex:1;}
+  .csel-btn{
+    width:100%;padding:12px 14px;border-radius:999px;border:1.5px solid #d1d5db;
+    background:linear-gradient(180deg,#ffffff,#f3f6f5);color:var(--text);
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    font-size:14px;text-align:right;cursor:pointer;
+  }
+  .csel-btn .csel-chevron{color:var(--muted);font-size:12px;flex:none;}
+  .csel-btn .csel-placeholder{color:var(--muted);}
+  .csel-label{display:flex;align-items:center;gap:8px;flex:1;min-width:0;justify-content:flex-end;}
+  .csel-label .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:12px;color:#0f766e;
+    background:#e6f6f4;padding:2px 8px;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .csel-label .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .csel-panel{
+    position:absolute;top:calc(100% + 6px);right:0;left:0;z-index:60;
+    background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22);
+    max-height:280px;overflow-y:auto;padding:8px;border:1px solid #e5e7eb;
+  }
+  .csel-opt{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:#f3f6f5;border-radius:999px;padding:9px 14px;margin-bottom:6px;cursor:pointer;
+  }
+  .csel-opt:last-child{margin-bottom:0;}
+  .csel-opt.active{background:linear-gradient(90deg,#0d3b66,#0f766e);}
+  .csel-opt.active .csel-ur{color:#fff;}
+  .csel-opt.active .csel-en{background:rgba(255,255,255,.25);color:#fff;}
+  .csel-opt .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:12px;color:#0f766e;
+    background:#e6f6f4;padding:2px 8px;border-radius:999px;white-space:nowrap;}
+  .csel-opt .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:15px;}
+  .csel-opt .csel-ur.solo{width:100%;text-align:right;}
+
   /* ===== List ===== */
   /* ===== Doctor cards (compact, raised 3D) ===== */
   #screen-doctor-list, #screen-user-browse{
@@ -676,7 +710,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS26SEPSA0750PM";
+const APP_VERSION = "MCS26SEPSA0912PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -709,6 +743,43 @@ const DISTRICTS = {
   'گلگت بلتستان': ['گلگت', 'سکردو', 'ہنزہ', 'غذر', 'استور', 'دیامر', 'شگر', 'کھرمنگ']
 };
 const CUSTOM_OPTION = '__custom__';
+/* English names for provinces/districts, keyed by the Urdu name above —
+   used by the bilingual capsule dropdown so each pill shows English + Urdu. */
+const LOCATION_EN = {
+  'پاکستان':'Pakistan',
+  'پنجاب':'Punjab','سندھ':'Sindh','خیبر پختونخوا':'Khyber Pakhtunkhwa','بلوچستان':'Balochistan',
+  'اسلام آباد':'Islamabad','آزاد کشمیر':'Azad Kashmir','گلگت بلتستان':'Gilgit-Baltistan',
+  'اٹک':'Attock','بہاولنگر':'Bahawalnagar','بہاولپور':'Bahawalpur','بھکر':'Bhakkar','چکوال':'Chakwal',
+  'چنیوٹ':'Chiniot','ڈیرہ غازی خان':'Dera Ghazi Khan','فیصل آباد':'Faisalabad','گوجرانوالہ':'Gujranwala',
+  'گجرات':'Gujrat','حافظ آباد':'Hafizabad','جھنگ':'Jhang','جہلم':'Jhelum','قصور':'Kasur',
+  'خانیوال':'Khanewal','خوشاب':'Khushab','لاہور':'Lahore','لیہ':'Layyah','لودھراں':'Lodhran',
+  'منڈی بہاؤالدین':'Mandi Bahauddin','میانوالی':'Mianwali','ملتان':'Multan','مظفر گڑھ':'Muzaffargarh',
+  'نارووال':'Narowal','ننکانہ صاحب':'Nankana Sahib','اوکاڑہ':'Okara','پاکپتن':'Pakpattan',
+  'راولپنڈی':'Rawalpindi','مری':'Murree','رحیم یار خان':'Rahim Yar Khan','راجن پور':'Rajanpur',
+  'ساہیوال':'Sahiwal','سرگودھا':'Sargodha','شیخوپورہ':'Sheikhupura','سیالکوٹ':'Sialkot',
+  'ٹوبہ ٹیک سنگھ':'Toba Tek Singh','وہاڑی':'Vehari','وزیرآباد':'Wazirabad','کوٹ ادو':'Kot Addu',
+  'تونسہ شریف':'Taunsa Sharif',
+  'کراچی':'Karachi','حیدرآباد':'Hyderabad','سکھر':'Sukkur','لاڑکانہ':'Larkana','میرپورخاص':'Mirpur Khas',
+  'نواب شاہ (شہید بینظیر آباد)':'Nawabshah (Shaheed Benazirabad)','دادو':'Dadu','جامشورو':'Jamshoro',
+  'تھرپارکر':'Tharparkar','ٹنڈو الہ یار':'Tando Allahyar','ٹنڈو محمد خان':'Tando Muhammad Khan',
+  'بدین':'Badin','ٹھٹھہ':'Thatta','سجاول':'Sujawal','مٹیاری':'Matiari','شکارپور':'Shikarpur',
+  'گھوٹکی':'Ghotki','خیرپور':'Khairpur','قمبر شہدادکوٹ':'Qambar Shahdadkot','جیکب آباد':'Jacobabad',
+  'کشمور':'Kashmore','سانگھڑ':'Sanghar','عمرکوٹ':'Umerkot',
+  'پشاور':'Peshawar','مردان':'Mardan','ایبٹ آباد':'Abbottabad','سوات':'Swat',
+  'ڈیرہ اسماعیل خان':'Dera Ismail Khan','کوہاٹ':'Kohat','بنوں':'Bannu','ہری پور':'Haripur',
+  'مانسہرہ':'Mansehra','صوابی':'Swabi','نوشہرہ':'Nowshera','چارسدہ':'Charsadda','کرک':'Karak',
+  'ملاکنڈ':'Malakand','بونیر':'Buner','شانگلہ':'Shangla','باجوڑ':'Bajaur','خیبر':'Khyber',
+  'مہمند':'Mohmand','اورکزئی':'Orakzai','کرم':'Kurram','شمالی وزیرستان':'North Waziristan',
+  'جنوبی وزیرستان':'South Waziristan','ٹانک':'Tank','لکی مروت':'Lakki Marwat','بٹگرام':'Battagram',
+  'کوہستان':'Kohistan',
+  'کوئٹہ':'Quetta','گوادر':'Gwadar','تربت':'Turbat','سبی':'Sibi','خضدار':'Khuzdar','چمن':'Chaman',
+  'ژوب':'Zhob','لورالائی':'Loralai','ڈیرہ بگٹی':'Dera Bugti','نصیرآباد':'Nasirabad','پشین':'Pishin',
+  'قلات':'Kalat','مستونگ':'Mastung','زیارت':'Ziarat','اوتھل':'Uthal',
+  'مظفر آباد':'Muzaffarabad','میرپور':'Mirpur','راولاکوٹ':'Rawalakot','کوٹلی':'Kotli','باغ':'Bagh',
+  'بھمبر':'Bhimber','نیلم':'Neelum','حویلی':'Haveli',
+  'گلگت':'Gilgit','سکردو':'Skardu','ہنزہ':'Hunza','غذر':'Ghizer','استور':'Astore','دیامر':'Diamer',
+  'شگر':'Shigar','کھرمنگ':'Kharmang'
+};
 
 /* ---------- Storage helpers ---------- */
 function loadStore(){
@@ -810,9 +881,24 @@ window.addEventListener('popstate', ()=>{
 });
 
 /* ---------- Dropdown populate ---------- */
+function optionHtml(v, en){
+  const enAttr = en ? ` data-en="${escapeHtml(en)}"` : '';
+  return `<option value="${escapeHtml(v)}"${enAttr}>${escapeHtml(v)}</option>`;
+}
+/* A-Z order everywhere: sort by English name when we have one (provinces/
+   districts); city/area/department/specialty/hospital have no English
+   translation (people type them freely), so those fall back to Urdu order. */
+function sortOptionValues(arr){
+  return [...arr].sort((a,b)=>{
+    const ea = LOCATION_EN[a], eb = LOCATION_EN[b];
+    if(ea && eb) return ea.localeCompare(eb);
+    return a.localeCompare(b, 'ur');
+  });
+}
 function populateDropdown(selectId, arr){
   const sel = document.getElementById(selectId);
-  sel.innerHTML = arr.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+  sel.innerHTML = sortOptionValues(arr).map(v=>optionHtml(v, LOCATION_EN[v])).join('');
+  resyncCapsuleSelect(selectId);
 }
 function refreshAllDropdowns(){
   populateDropdown('docDept', store.departments);
@@ -826,16 +912,18 @@ function refreshAllDropdowns(){
 /* ---------- Location cascading (Province -> District) ---------- */
 function populateProvinceDropdown(){
   const sel = document.getElementById('docProvince');
-  const list = PROVINCES['پاکستان'] || [];
-  sel.innerHTML = list.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('')
-    + `<option value="${CUSTOM_OPTION}">دیگر (خود لکھیں)</option>`;
+  const list = sortOptionValues(PROVINCES['پاکستان'] || []);
+  sel.innerHTML = list.map(v=>optionHtml(v, LOCATION_EN[v])).join('')
+    + `<option value="${CUSTOM_OPTION}" data-en="Other">دیگر (خود لکھیں)</option>`;
+  resyncCapsuleSelect('docProvince');
 }
 function populateDistrictDropdown(province, selectedValue){
   const sel = document.getElementById('docDistrict');
-  const list = DISTRICTS[province] || [];
-  sel.innerHTML = list.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('')
-    + `<option value="${CUSTOM_OPTION}">دیگر (خود لکھیں)</option>`;
+  const list = sortOptionValues(DISTRICTS[province] || []);
+  sel.innerHTML = list.map(v=>optionHtml(v, LOCATION_EN[v])).join('')
+    + `<option value="${CUSTOM_OPTION}" data-en="Other">دیگر (خود لکھیں)</option>`;
   if(selectedValue) sel.value = selectedValue;
+  resyncCapsuleSelect('docDistrict');
 }
 function onProvinceChange(){
   const province = document.getElementById('docProvince').value;
@@ -849,6 +937,7 @@ function setLocationFormValues(d){
   document.getElementById('docProvince').value = inList ? province : (province ? CUSTOM_OPTION : (PROVINCES['پاکستان']||[])[0]||'');
   document.getElementById('docProvinceCustom').style.display = (!inList && province) ? 'block' : 'none';
   document.getElementById('docProvinceCustom').value = (!inList && province) ? province : '';
+  resyncCapsuleSelect('docProvince');
   populateDistrictDropdown(inList ? province : '');
   const district = d.district || '';
   const districtList = DISTRICTS[inList ? province : ''] || [];
@@ -856,14 +945,17 @@ function setLocationFormValues(d){
   document.getElementById('docDistrict').value = districtInList ? district : (district ? CUSTOM_OPTION : '');
   document.getElementById('docDistrictCustom').style.display = (!districtInList && district) ? 'block' : 'none';
   document.getElementById('docDistrictCustom').value = (!districtInList && district) ? district : '';
+  resyncCapsuleSelect('docDistrict');
   if(d.city) document.getElementById('docCity').value = d.city;
   if(d.area) document.getElementById('docArea').value = d.area;
+  resyncCapsuleSelect('docCity'); resyncCapsuleSelect('docArea');
 }
 function resetLocationFormValues(){
   populateProvinceDropdown();
   document.getElementById('docProvince').value = (PROVINCES['پاکستان']||[])[0] || '';
   document.getElementById('docProvinceCustom').style.display = 'none';
   document.getElementById('docProvinceCustom').value = '';
+  resyncCapsuleSelect('docProvince');
   populateDistrictDropdown(document.getElementById('docProvince').value);
   document.getElementById('docDistrictCustom').style.display = 'none';
   document.getElementById('docDistrictCustom').value = '';
@@ -879,6 +971,83 @@ function readLocationFormValues(){
     city: document.getElementById('docCity').value,
     area: document.getElementById('docArea').value
   };
+}
+
+/* ---------- Bilingual capsule dropdown engine ----------
+   A native <select>'s popup list is rendered by the phone's OS on Android,
+   which ignores our Urdu font and shows plain Arial/system font — this
+   replaces that popup with our own styled panel (capsule pills, proper
+   Nastaleeq font, English+Urdu side by side) while the original <select>
+   stays in the DOM (hidden) so all existing value/onchange code keeps working. */
+function csel_optLabel(opt){
+  const en = opt.getAttribute('data-en');
+  const ur = opt.textContent;
+  if(en) return `<span class="csel-en">${escapeHtml(en)}</span><span class="csel-ur">${escapeHtml(ur)}</span>`;
+  return `<span class="csel-ur solo">${escapeHtml(ur)}</span>`;
+}
+function enhanceCapsuleSelect(selectId){
+  const sel = document.getElementById(selectId);
+  if(!sel || sel.dataset.cselDone) return;
+  sel.dataset.cselDone = '1';
+  sel.style.display = 'none';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'csel-wrap';
+  sel.parentNode.insertBefore(wrap, sel);
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'csel-btn';
+  const panel = document.createElement('div');
+  panel.className = 'csel-panel';
+  panel.style.display = 'none';
+
+  wrap.appendChild(sel);
+  wrap.appendChild(btn);
+  wrap.appendChild(panel);
+
+  function closePanel(){
+    panel.style.display = 'none';
+    document.removeEventListener('click', outsideClick, true);
+  }
+  function outsideClick(e){ if(!wrap.contains(e.target)) closePanel(); }
+  function openPanel(){
+    panel.innerHTML = '';
+    Array.from(sel.options).forEach(opt=>{
+      const row = document.createElement('div');
+      row.className = 'csel-opt' + (opt.value===sel.value ? ' active' : '');
+      row.innerHTML = csel_optLabel(opt);
+      row.onclick = ()=>{
+        sel.value = opt.value;
+        sel.dispatchEvent(new Event('change', {bubbles:true}));
+        syncBtn();
+        closePanel();
+      };
+      panel.appendChild(row);
+    });
+    panel.style.display = 'block';
+    document.addEventListener('click', outsideClick, true);
+  }
+  function syncBtn(){
+    const opt = sel.options[sel.selectedIndex];
+    btn.innerHTML = opt
+      ? `<span class="csel-label">${csel_optLabel(opt)}</span><span class="csel-chevron">▾</span>`
+      : `<span class="csel-placeholder">منتخب کریں</span><span class="csel-chevron">▾</span>`;
+  }
+  btn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    if(panel.style.display==='block') closePanel(); else openPanel();
+  });
+  sel._cselSync = syncBtn;
+  syncBtn();
+}
+function resyncCapsuleSelect(selectId){
+  const sel = document.getElementById(selectId);
+  if(sel && sel._cselSync) sel._cselSync();
+}
+function enhanceAllCapsuleSelects(){
+  ['docProvince','docDistrict','docCity','docArea','docDept','docSpecialty','docHospital']
+    .forEach(enhanceCapsuleSelect);
 }
 
 /* ---------- Add-option (plus button) flow ---------- */
@@ -898,6 +1067,7 @@ function confirmAddOption(){
   saveStore();
   populateDropdown(addOptionTargetSelect, store[mapKey]);
   document.getElementById(addOptionTargetSelect).value = val;
+  resyncCapsuleSelect(addOptionTargetSelect);
   closeModal('addOptionModal');
   showToast('شامل کر دیا گیا ✓');
 }
@@ -918,6 +1088,7 @@ function openDoctorForm(id){
     document.getElementById('docWhatsapp').value = d.whatsapp;
     document.getElementById('docHospital').value = d.hospital;
     setLocationFormValues(d);
+    resyncCapsuleSelect('docDept'); resyncCapsuleSelect('docSpecialty'); resyncCapsuleSelect('docHospital');
   } else {
     document.getElementById('doctorFormTitle').textContent = 'نیا ڈاکٹر شامل کریں';
     document.getElementById('docNameUr').value = '';
@@ -925,6 +1096,7 @@ function openDoctorForm(id){
     document.getElementById('docAddress').value = '';
     document.getElementById('docWhatsapp').value = '';
     resetLocationFormValues();
+    resyncCapsuleSelect('docDept'); resyncCapsuleSelect('docSpecialty'); resyncCapsuleSelect('docHospital');
   }
   openModal('doctorFormModal');
 }
@@ -936,6 +1108,8 @@ function saveDoctor(){
   if(!nameUr){ showToast('ڈاکٹر کا نام اردو میں لکھیں'); return; }
   if(!nameEn){ showToast('Doctor name in English likhein'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
+  const dup = store.doctors.find(x=>x.whatsapp===whatsapp && x.id!==editingDoctorId);
+  if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr||dup.name}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
   const loc = readLocationFormValues();
   const data = {
     nameUr, nameEn, name: nameUr, address, whatsapp,
@@ -1444,6 +1618,10 @@ function stopPendingApprovalsListener(){
   pendingApprovals = [];
   renderPendingApprovals();
 }
+let pendingEditFsId = null;
+function isDuplicateWhatsapp(d){
+  return store.doctors.some(x=>x.approved!==false && x.fsId!==d.fsId && x.whatsapp===d.whatsapp);
+}
 function renderPendingApprovals(){
   const wrap = document.getElementById('pendingApprovalsWrap');
   if(!wrap) return;
@@ -1454,18 +1632,51 @@ function renderPendingApprovals(){
   wrap.innerHTML = pendingApprovals.map(d=>{
     const nameUr = d.nameUr || d.name || '(بلا نام)';
     const sub = [d.specialty, d.hospital, d.city].filter(Boolean).map(escapeHtml).join(' • ');
+    const dupWarn = isDuplicateWhatsapp(d) ? `<div class="doc-pending-badge" style="background:#fecaca;color:#7f1d1d;">⚠️ یہ نمبر پہلے سے منظور شدہ لسٹ میں موجود ہے</div>` : ``;
+    if(pendingEditFsId === d.fsId){
+      return `
+      <div class="snap-item" style="display:block;">
+        <div class="snap-meta" style="margin-bottom:8px;"><b>${escapeHtml(nameUr)} — ترمیم</b></div>
+        <div class="field"><label>شعبہ</label><input type="text" id="pe_dept_${escapeAttr(d.fsId)}" value="${escapeAttr(d.dept||'')}"></div>
+        <div class="field"><label>اسپیشلٹی</label><input type="text" id="pe_spec_${escapeAttr(d.fsId)}" value="${escapeAttr(d.specialty||'')}"></div>
+        <div class="field"><label>ہسپتال</label><input type="text" id="pe_hosp_${escapeAttr(d.fsId)}" value="${escapeAttr(d.hospital||'')}"></div>
+        <div class="field"><label>شہر</label><input type="text" id="pe_city_${escapeAttr(d.fsId)}" value="${escapeAttr(d.city||'')}"></div>
+        <div class="field"><label>علاقہ</label><input type="text" id="pe_area_${escapeAttr(d.fsId)}" value="${escapeAttr(d.area||'')}"></div>
+        <div class="field"><label>پتہ</label><input type="text" id="pe_addr_${escapeAttr(d.fsId)}" value="${escapeAttr(d.address||'')}"></div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="savePendingEdit('${escapeAttr(d.fsId)}', true)" style="background:#dcfce7;color:#166534;">محفوظ و منظور</button>
+          <button onclick="savePendingEdit('${escapeAttr(d.fsId)}', false)" style="background:#dbeafe;color:#1e40af;">صرف محفوظ کریں</button>
+          <button onclick="pendingEditFsId=null; renderPendingApprovals();" style="background:#f3f4f6;color:#374151;">منسوخ</button>
+        </div>
+      </div>`;
+    }
     return `
       <div class="snap-item">
         <div class="snap-meta">
           <b>${escapeHtml(nameUr)}</b>
           <span>${sub}${d.whatsapp ? ' • '+escapeHtml(d.whatsapp) : ''}</span>
+          ${dupWarn}
         </div>
         <div style="display:flex;gap:6px;">
+          <button onclick="pendingEditFsId='${escapeAttr(d.fsId)}'; renderPendingApprovals();" style="background:#e6f6f4;color:#0f766e;">ترمیم</button>
           <button onclick="approveDoctor('${escapeAttr(d.fsId)}')" style="background:#dcfce7;color:#166534;">منظور</button>
           <button onclick="rejectDoctor('${escapeAttr(d.fsId)}')" style="background:#fee2e2;color:#991b1b;">حذف</button>
         </div>
       </div>`;
   }).join('');
+}
+function savePendingEdit(fsId, alsoApprove){
+  const FB = window.MCSFirebase;
+  if(!FB) return;
+  const g = id=>document.getElementById(id).value.trim();
+  const payload = {
+    dept: g('pe_dept_'+fsId), specialty: g('pe_spec_'+fsId), hospital: g('pe_hosp_'+fsId),
+    city: g('pe_city_'+fsId), area: g('pe_area_'+fsId), address: g('pe_addr_'+fsId)
+  };
+  if(alsoApprove) payload.approved = true;
+  FB.updateDoc(FB.doc(FB.db,'doctors',fsId), payload)
+    .then(()=>{ showToast(alsoApprove ? 'محفوظ اور منظور کر دیا گیا ✓' : 'محفوظ کر دیا گیا ✓'); pendingEditFsId=null; })
+    .catch(()=>showToast('خرابی — دوبارہ کوشش کریں'));
 }
 function adminLogin(){
   const FB = window.MCSFirebase;
@@ -1536,6 +1747,7 @@ renderLastBackupHint();
 renderAutoBackupHint();
 checkAutoBackupCheckpoints();
 setInterval(checkAutoBackupCheckpoints, 5*60*1000); // re-check every 5 min in case app stays open across a checkpoint
+enhanceAllCapsuleSelects();
 startFirebaseSyncWhenReady();
 
 /* ---------- Service worker registration ---------- */
