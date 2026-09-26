@@ -273,6 +273,8 @@
   .doc-bottom{display:flex;align-items:center;gap:8px;margin-top:2px;}
   .doc-num{direction:ltr;unicode-bidi:isolate;text-align:right;font-family:'Segoe UI',Roboto,Arial,sans-serif;
     font-size:13.5px;font-weight:700;color:#ffe4a8;letter-spacing:.4px;line-height:1.5;}
+  .doc-pending-badge{display:inline-block;background:#fde68a;color:#7c4a03;font-size:10.5px;font-weight:700;
+    padding:2px 8px;border-radius:8px;margin-top:2px;}
   .doc-side{display:flex;flex-direction:column;align-items:center;gap:6px;align-self:center;}
   .doc-acts{display:flex;gap:6px;}
   .doc-side .doc-mini{gap:8px;}
@@ -621,6 +623,26 @@
       </div>
 
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
+
+      <div class="backup-card" id="adminLoginBox">
+        <div class="backup-card-title">🛡️ ایڈمن لاگ ان (صرف منظوری کے لیے)</div>
+        <div class="field" style="margin-bottom:8px;">
+          <input type="text" id="adminEmail" placeholder="ایڈمن ای میل" dir="ltr" style="text-align:left;">
+        </div>
+        <div class="field" style="margin-bottom:8px;">
+          <input type="password" id="adminPassword" placeholder="پاس ورڈ" dir="ltr" style="text-align:left;">
+        </div>
+        <button class="btn block secondary" onclick="adminLogin()">لاگ ان</button>
+        <div class="cp-hint" id="adminSyncHint"></div>
+      </div>
+
+      <div class="backup-card" id="adminPanelBox" style="display:none;">
+        <div class="backup-card-title">🛡️ زیر منظوری اندراجات</div>
+        <div id="pendingApprovalsWrap"></div>
+        <button class="btn block secondary" style="margin-top:10px;" onclick="adminLogout()">لاگ آؤٹ</button>
+      </div>
+
+      <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
       <div class="field">
         <label>ڈیٹا کا خلاصہ</label>
         <div id="cpDataSummary" style="font-size:13px;color:var(--muted);"></div>
@@ -650,8 +672,11 @@
    already present on every record so it's ready for that).
    ========================================================= */
 
-const APP_VERSION = "MCS 1.9.0"; // internal only — not shown on screen (kept in code for our own tracking)
-const APP_BUILD = "ہفتہ 26 ستمبر 0710PM"; // shown on home page badge — freshness date/time
+/* Single version string, same style as the release zip filename
+   (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
+   home page badge, so the on-screen text always matches the zip/GitHub
+   file that produced it. Update this to match the zip name on every release. */
+const APP_VERSION = "MCS26SEPSA0750PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -924,12 +949,14 @@ function saveDoctor(){
     const d = store.doctors.find(x=>x.id===editingDoctorId);
     Object.assign(d, data);
     d.updatedAt = Date.now();
+    syncDoctorUpdateToFirebase(d);
   } else {
     data.id = 'doc_' + Date.now() + '_' + Math.floor(Math.random()*1000);
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
-    data.syncStatus = 'local'; // ready for future Firebase sync layer
+    data.approved = false; // shown locally right away; visible to OTHER devices once admin approves
     store.doctors.push(data);
+    syncDoctorCreateToFirebase(data);
   }
   saveStore();
   closeModal('doctorFormModal');
@@ -986,6 +1013,7 @@ function renderDoctorList(mode){
           <div class="doc-name">${escapeHtml(nameUr)}</div>
         </div>
         ${d.nameEn ? `<div class="doc-name-en">${escapeHtml(d.nameEn)}</div>` : ``}
+        ${d.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
         <div class="doc-sub">${sub || escapeHtml(d.dept||'')}</div>
         ${(d.city||d.area) ? `<div class="doc-address">📍 ${[d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
         ${d.address ? `<div class="doc-address">${escapeHtml(d.address)}</div>` : ``}
@@ -1350,7 +1378,154 @@ window.addEventListener('offline', updateVersionBadge);
 /* ---------- Glitter version in header ---------- */
 function renderGlitterVersion(){
   const el = document.getElementById('verGlitterText');
-  if(el) el.innerHTML = `<span class="ur">${escapeHtml(APP_BUILD)}</span>`;
+  if(el) el.innerHTML = `<span class="ur">${escapeHtml(APP_VERSION)}</span>`;
+}
+
+/* =========================================================
+   FIREBASE SYNC (multi-device, real-time, approval workflow)
+   The app stays fully offline-first: everything above this
+   still works with zero internet via localStorage. Firebase is
+   an ADDITIVE layer — window.MCSFirebase only exists once the
+   module script below has loaded (needs internet at least once).
+   Every call into it is guarded, so a missing/slow connection
+   never breaks the local experience.
+   ========================================================= */
+let isAdminSignedIn = false;
+let pendingApprovals = [];
+let pendingUnsub = null;
+
+function startFirebaseSyncWhenReady(){
+  if(window.MCSFirebase){ initFirebaseSync(); }
+  else { window.addEventListener('mcs-firebase-ready', initFirebaseSync, {once:true}); }
+}
+
+function initFirebaseSync(){
+  const FB = window.MCSFirebase;
+  const doctorsCol = FB.collection(FB.db, 'doctors');
+
+  // Live-merge approved doctors from ALL devices into our local list.
+  const approvedQ = FB.query(doctorsCol, FB.where('approved','==', true));
+  FB.onSnapshot(approvedQ, (snap)=>{
+    snap.docChanges().forEach(change=>{
+      const fsId = change.doc.id;
+      if(change.type==='removed'){
+        store.doctors = store.doctors.filter(d=>d.fsId!==fsId);
+      } else {
+        const data = change.doc.data();
+        let existing = store.doctors.find(d=>d.fsId===fsId);
+        if(existing){ Object.assign(existing, data, {fsId, approved:true}); }
+        else { store.doctors.push({...data, fsId, approved:true, id: data.id || ('fs_'+fsId)}); }
+      }
+    });
+    saveStore();
+    if(currentScreen==='doctor-list') renderDoctorList('list');
+    if(currentScreen==='user-browse') renderDoctorList('search');
+  }, ()=>{ /* offline/permission issue — local data still works */ });
+
+  FB.onAuthStateChanged(FB.auth, (user)=>{
+    isAdminSignedIn = !!user;
+    document.getElementById('adminLoginBox').style.display = isAdminSignedIn ? 'none' : 'block';
+    document.getElementById('adminPanelBox').style.display = isAdminSignedIn ? 'block' : 'none';
+    if(isAdminSignedIn) startPendingApprovalsListener(); else stopPendingApprovalsListener();
+  });
+}
+
+function startPendingApprovalsListener(){
+  const FB = window.MCSFirebase;
+  const doctorsCol = FB.collection(FB.db, 'doctors');
+  const pendingQ = FB.query(doctorsCol, FB.where('approved','==', false));
+  pendingUnsub = FB.onSnapshot(pendingQ, (snap)=>{
+    pendingApprovals = snap.docs.map(d=>({fsId:d.id, ...d.data()}));
+    renderPendingApprovals();
+  });
+}
+function stopPendingApprovalsListener(){
+  if(pendingUnsub){ pendingUnsub(); pendingUnsub = null; }
+  pendingApprovals = [];
+  renderPendingApprovals();
+}
+function renderPendingApprovals(){
+  const wrap = document.getElementById('pendingApprovalsWrap');
+  if(!wrap) return;
+  if(pendingApprovals.length===0){
+    wrap.innerHTML = `<div class="cp-hint">ابھی کوئی نئی اندراج منظوری کے لیے نہیں آئی</div>`;
+    return;
+  }
+  wrap.innerHTML = pendingApprovals.map(d=>{
+    const nameUr = d.nameUr || d.name || '(بلا نام)';
+    const sub = [d.specialty, d.hospital, d.city].filter(Boolean).map(escapeHtml).join(' • ');
+    return `
+      <div class="snap-item">
+        <div class="snap-meta">
+          <b>${escapeHtml(nameUr)}</b>
+          <span>${sub}${d.whatsapp ? ' • '+escapeHtml(d.whatsapp) : ''}</span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="approveDoctor('${escapeAttr(d.fsId)}')" style="background:#dcfce7;color:#166534;">منظور</button>
+          <button onclick="rejectDoctor('${escapeAttr(d.fsId)}')" style="background:#fee2e2;color:#991b1b;">حذف</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+function adminLogin(){
+  const FB = window.MCSFirebase;
+  if(!FB){ showToast('انٹرنیٹ کنکشن درکار ہے — دوبارہ کوشش کریں'); return; }
+  const email = document.getElementById('adminEmail').value.trim();
+  const pass = document.getElementById('adminPassword').value;
+  if(!email || !pass){ showToast('ای میل اور پاس ورڈ لکھیں'); return; }
+  FB.signInWithEmailAndPassword(FB.auth, email, pass)
+    .then(()=>{ showToast('ایڈمن لاگ ان ہو گیا ✓'); document.getElementById('adminPassword').value=''; })
+    .catch(()=>{ showToast('لاگ ان ناکام — ای میل یا پاس ورڈ غلط'); });
+}
+function adminLogout(){
+  const FB = window.MCSFirebase;
+  if(FB) FB.signOut(FB.auth);
+}
+function approveDoctor(fsId){
+  const FB = window.MCSFirebase;
+  if(!FB) return;
+  FB.updateDoc(FB.doc(FB.db,'doctors',fsId), {approved:true})
+    .then(()=>showToast('منظور کر دیا گیا ✓'))
+    .catch(()=>showToast('خرابی — دوبارہ کوشش کریں'));
+}
+function rejectDoctor(fsId){
+  if(!confirm('یہ اندراج مستقل حذف کر دی جائے؟')) return;
+  const FB = window.MCSFirebase;
+  if(!FB) return;
+  FB.deleteDoc(FB.doc(FB.db,'doctors',fsId))
+    .then(()=>showToast('حذف کر دیا گیا'))
+    .catch(()=>showToast('خرابی — دوبارہ کوشش کریں'));
+}
+/* Push a newly-created doctor to Firestore (approved:false) so it can
+   reach other devices once an admin approves it. Fully non-blocking —
+   if there's no internet right now, the local copy already saved above
+   is what the submitter sees; Firestore's own offline queue re-tries
+   this automatically once the SDK is online again. */
+function syncDoctorCreateToFirebase(localDoctor){
+  const FB = window.MCSFirebase;
+  if(!FB) return;
+  const payload = {
+    nameUr:localDoctor.nameUr, nameEn:localDoctor.nameEn, name:localDoctor.name,
+    address:localDoctor.address, whatsapp:localDoctor.whatsapp,
+    dept:localDoctor.dept, specialty:localDoctor.specialty, hospital:localDoctor.hospital,
+    country:localDoctor.country, province:localDoctor.province, district:localDoctor.district,
+    city:localDoctor.city, area:localDoctor.area,
+    approved:false, createdAt: FB.serverTimestamp()
+  };
+  FB.addDoc(FB.collection(FB.db,'doctors'), payload)
+    .then(ref=>{ localDoctor.fsId = ref.id; saveStore(); })
+    .catch(()=>{ /* will retry via Firestore's own offline queue */ });
+}
+function syncDoctorUpdateToFirebase(localDoctor){
+  const FB = window.MCSFirebase;
+  if(!FB || !localDoctor.fsId) return;
+  FB.updateDoc(FB.doc(FB.db,'doctors', localDoctor.fsId), {
+    nameUr:localDoctor.nameUr, nameEn:localDoctor.nameEn, name:localDoctor.name,
+    address:localDoctor.address, whatsapp:localDoctor.whatsapp,
+    dept:localDoctor.dept, specialty:localDoctor.specialty, hospital:localDoctor.hospital,
+    country:localDoctor.country, province:localDoctor.province, district:localDoctor.district,
+    city:localDoctor.city, area:localDoctor.area
+  }).catch(()=>{ /* admin-only per Firestore rules; ignore if not signed in */ });
 }
 
 /* ---------- Init ---------- */
@@ -1361,6 +1536,7 @@ renderLastBackupHint();
 renderAutoBackupHint();
 checkAutoBackupCheckpoints();
 setInterval(checkAutoBackupCheckpoints, 5*60*1000); // re-check every 5 min in case app stays open across a checkpoint
+startFirebaseSyncWhenReady();
 
 /* ---------- Service worker registration ---------- */
 if('serviceWorker' in navigator){
@@ -1368,6 +1544,40 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(()=>{ /* offline-first: ignore reg failure */ });
   });
 }
+</script>
+
+<!-- ===================== FIREBASE (module, additive — app works fully without it) ===================== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import {
+    initializeFirestore, persistentLocalCache,
+    collection, addDoc, doc, updateDoc, deleteDoc,
+    onSnapshot, query, where, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+  import {
+    getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAvu8ymIZAGEPaYwd_LBJzKS2lZ3Q4_Mog",
+    authDomain: "my-city-shines.firebaseapp.com",
+    projectId: "my-city-shines",
+    storageBucket: "my-city-shines.firebasestorage.app",
+    messagingSenderId: "900809897514",
+    appId: "1:900809897514:web:c6cf155c7afd8009527553"
+  };
+
+  try{
+    const fbApp = initializeApp(firebaseConfig);
+    const db = initializeFirestore(fbApp, { localCache: persistentLocalCache() });
+    const auth = getAuth(fbApp);
+    window.MCSFirebase = {
+      db, auth, collection, addDoc, doc, updateDoc, deleteDoc,
+      onSnapshot, query, where, serverTimestamp,
+      signInWithEmailAndPassword, signOut, onAuthStateChanged
+    };
+    window.dispatchEvent(new Event('mcs-firebase-ready'));
+  }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
 </body>
 </html>
