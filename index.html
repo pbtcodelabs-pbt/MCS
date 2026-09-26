@@ -11,14 +11,14 @@
 <style>
   @font-face{
     font-family:'Jameel Noori Nastaleeq Regular';
-    src:url('./JameelNooriNastaleeqRegular.ttf') format('truetype'),url('./fonts/JameelNooriNastaleeqRegular.ttf') format('truetype');
+    src:url('./fonts/JameelNooriNastaleeqRegular.ttf') format('truetype');
     font-weight:normal;
     font-style:normal;
     font-display:swap;
   }
   @font-face{
     font-family:'Jameel Noori Nastaleeq Kasheeda';
-    src:url('./JameelNooriNastaleeqKasheeda.ttf') format('truetype'),url('./fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype');
+    src:url('./fonts/JameelNooriNastaleeqKasheeda.ttf') format('truetype');
     font-weight:normal;
     font-style:normal;
     font-display:swap;
@@ -108,7 +108,7 @@
   .btn:active{transform:scale(0.98);}
 
   /* ===== Home (v1.7 professional) ===== */
-  #screen-specialist-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner, #screen-service-list .inner{padding:16px;}
+  #screen-specialist-categories .inner, #screen-business-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner, #screen-service-list .inner{padding:16px;}
   #screen-home{padding-bottom:24px;background:var(--bg);}
   .hero{
     position:relative;overflow:hidden;
@@ -199,7 +199,7 @@
   @media (prefers-reduced-motion:reduce){.ver-glitter,.ver-glitter *,.ver-glitter::before{animation:none!important;}}
 
   /* ===== Category grid ===== */
-  #screen-specialist-categories{background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;}
+  #screen-specialist-categories,#screen-business-categories{background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;}
   .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .cat-item{
     position:relative;background:linear-gradient(150deg,#ffffff,#f3f7f8);border-radius:14px;padding:14px 8px 10px;
@@ -453,7 +453,7 @@
         <div class="entry-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></div>
       </div>
 
-      <div class="entry-card e-amber" onclick="showToast('بزنس سیکشن جلد شامل کیا جائے گا')">
+      <div class="entry-card e-amber" onclick="goScreen('business-categories')">
         <div class="txt"><b>بزنس</b></div>
         <div class="entry-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></div>
       </div>
@@ -484,7 +484,31 @@
         <div class="cat-item" onclick="openServiceCategory('testingLab')"><div class="emoji">🧪</div><span>ٹیسٹنگ لیب</span></div>
         <div class="cat-item" onclick="openServiceCategory('plumberElectrician')"><div class="emoji">🔧</div><span>پلمبر / الیکٹریشن</span></div>
         <div class="cat-item" onclick="openServiceCategory('tuitionTeacher')"><div class="emoji">📚</div><span>ٹیوشن استاد</span></div>
-        <span id="customCatTiles" style="display:contents;"></span>
+        <span id="customCatTilesProfessional" style="display:contents;"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BUSINESS CATEGORIES ===================== -->
+  <div id="screen-business-categories" class="screen">
+    <div class="inner">
+      <div class="screen-head">
+        <button class="back-btn nav-back" onclick="goBack()" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+        <h2>کاروبار / دکانیں — قسم منتخب کریں</h2>
+        <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-item" onclick="openServiceCategory('groceryStore')"><div class="emoji">🛒</div><span>کریانہ سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('clothesShop')"><div class="emoji">👗</div><span>کپڑوں کی دکان</span></div>
+        <div class="cat-item" onclick="openServiceCategory('mobileElectronics')"><div class="emoji">📱</div><span>موبائل و الیکٹرانکس</span></div>
+        <div class="cat-item" onclick="openServiceCategory('hardwareStore')"><div class="emoji">🔩</div><span>ہارڈویئر سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('bakery')"><div class="emoji">🍞</div><span>بیکری</span></div>
+        <div class="cat-item" onclick="openServiceCategory('jewelryShop')"><div class="emoji">💍</div><span>جیولری شاپ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('furnitureShop')"><div class="emoji">🛋️</div><span>فرنیچر شاپ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('autoParts')"><div class="emoji">🚗</div><span>آٹو پارٹس</span></div>
+        <div class="cat-item" onclick="openServiceCategory('beautyParlor')"><div class="emoji">💇</div><span>بیوٹی پارلر / سیلون</span></div>
+        <div class="cat-item" onclick="openServiceCategory('restaurant')"><div class="emoji">🍽️</div><span>ہوٹل / ریسٹورنٹ</span></div>
+        <span id="customCatTilesBusiness" style="display:contents;"></span>
       </div>
     </div>
   </div>
@@ -511,7 +535,7 @@
         <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
       <div class="field">
-        <input type="text" id="searchBox" placeholder="نام، شعبہ یا ہسپتال لکھیں..." oninput="renderDoctorList('search')">
+        <input type="text" id="searchBox" placeholder="نام، شعبہ یا ہسپتال لکھیں..." oninput="onUserSearchInput(this.value)">
       </div>
       <div id="searchResultsWrap"></div>
     </div>
@@ -772,6 +796,12 @@
       <div class="backup-card" id="adminAddCategoryBox" style="display:none;">
         <div class="backup-card-title">🗂️ نئی کیٹگری شامل کریں (ہوم پیج پر خودکار آ جائے گی)</div>
         <div class="field" style="margin-bottom:8px;">
+          <select id="newCatGroup" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;">
+            <option value="professional">پروفیشنلز سیکشن میں شامل کریں</option>
+            <option value="business">بزنس سیکشن میں شامل کریں</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:8px;">
           <input type="text" id="newCatUr" placeholder="کیٹگری کا نام (اردو) — مثلاً بیکری">
         </div>
         <div class="field" style="margin-bottom:8px;">
@@ -784,6 +814,7 @@
           <input type="text" id="newCatTypeLabel" placeholder="قسم کے فیلڈ کا لیبل — مثلاً پراڈکٹ کی قسم">
         </div>
         <button class="btn block accent" onclick="addNewCategory()">➕ کیٹگری شامل کریں</button>
+        <div id="customCatAdminList" style="margin-top:12px;"></div>
       </div>
 
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
@@ -820,7 +851,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS26SEPSA0950PM";
+const APP_VERSION = "MCS27SEPSU0435AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -859,13 +890,25 @@ const CUSTOM_OPTION = '__custom__';
    module five times — each category just supplies its own labels and its own
    "+"-addable type list (store.serviceTypes[key]). */
 const CATEGORY_META = {
-  medicalStore:      {emoji:'💊', ur:'میڈیکل سٹور',        nameLabel:'میڈیکل سٹور کا نام',  typeLabel:'زمرہ (مثلاً جنرل / ہومیو سٹور)', listTitle:'میڈیکل سٹورز کی فہرست', addBtn:'نیا میڈیکل سٹور شامل کریں', addOptLabel:'نیا زمرہ'},
-  homeopathic:       {emoji:'🌿', ur:'ہومیوپیتھک',          nameLabel:'حکیم/ڈاکٹر کا نام',   typeLabel:'اسپیشلٹی',                     listTitle:'ہومیوپیتھک کی فہرست',    addBtn:'نیا اندراج شامل کریں',       addOptLabel:'نئی اسپیشلٹی'},
-  testingLab:        {emoji:'🧪', ur:'ٹیسٹنگ لیب',          nameLabel:'لیب کا نام',          typeLabel:'ٹیسٹ کی قسم',                  listTitle:'ٹیسٹنگ لیبز کی فہرست',    addBtn:'نئی لیب شامل کریں',          addOptLabel:'نئی قسم'},
-  plumberElectrician:{emoji:'🔧', ur:'پلمبر / الیکٹریشن',   nameLabel:'کاریگر کا نام',       typeLabel:'سروس کی قسم',                  listTitle:'پلمبر / الیکٹریشن کی فہرست', addBtn:'نیا کاریگر شامل کریں',    addOptLabel:'نئی سروس'},
-  tuitionTeacher:    {emoji:'📚', ur:'ٹیوشن استاد',         nameLabel:'استاد کا نام',        typeLabel:'مضمون / کلاس',                 listTitle:'ٹیوشن اساتذہ کی فہرست',   addBtn:'نیا استاد شامل کریں',        addOptLabel:'نیا مضمون'}
+  medicalStore:      {group:'professional', emoji:'💊', ur:'میڈیکل سٹور',        nameLabel:'میڈیکل سٹور کا نام',  typeLabel:'زمرہ (مثلاً جنرل / ہومیو سٹور)', listTitle:'میڈیکل سٹورز کی فہرست', addBtn:'نیا میڈیکل سٹور شامل کریں', addOptLabel:'نیا زمرہ'},
+  homeopathic:       {group:'professional', emoji:'🌿', ur:'ہومیوپیتھک',          nameLabel:'حکیم/ڈاکٹر کا نام',   typeLabel:'اسپیشلٹی',                     listTitle:'ہومیوپیتھک کی فہرست',    addBtn:'نیا اندراج شامل کریں',       addOptLabel:'نئی اسپیشلٹی'},
+  testingLab:        {group:'professional', emoji:'🧪', ur:'ٹیسٹنگ لیب',          nameLabel:'لیب کا نام',          typeLabel:'ٹیسٹ کی قسم',                  listTitle:'ٹیسٹنگ لیبز کی فہرست',    addBtn:'نئی لیب شامل کریں',          addOptLabel:'نئی قسم'},
+  plumberElectrician:{group:'professional', emoji:'🔧', ur:'پلمبر / الیکٹریشن',   nameLabel:'کاریگر کا نام',       typeLabel:'سروس کی قسم',                  listTitle:'پلمبر / الیکٹریشن کی فہرست', addBtn:'نیا کاریگر شامل کریں',    addOptLabel:'نئی سروس'},
+  tuitionTeacher:    {group:'professional', emoji:'📚', ur:'ٹیوشن استاد',         nameLabel:'استاد کا نام',        typeLabel:'مضمون / کلاس',                 listTitle:'ٹیوشن اساتذہ کی فہرست',   addBtn:'نیا استاد شامل کریں',        addOptLabel:'نیا مضمون'},
+  /* ---- Business / shop categories (کاروبار سیکشن) — same generic engine ---- */
+  groceryStore:      {group:'business', emoji:'🛒', ur:'کریانہ سٹور',           nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً جنرل / سبزی / گوشت)', listTitle:'کریانہ سٹورز کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  clothesShop:       {group:'business', emoji:'👗', ur:'کپڑوں کی دکان',         nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً مردانہ / زنانہ / بچوں)', listTitle:'کپڑوں کی دکانوں کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  mobileElectronics: {group:'business', emoji:'📱', ur:'موبائل و الیکٹرانکس',   nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً موبائل / لیپ ٹاپ / مرمت)', listTitle:'موبائل و الیکٹرانکس دکانوں کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  hardwareStore:     {group:'business', emoji:'🔩', ur:'ہارڈویئر سٹور',         nameLabel:'دکان کا نام', typeLabel:'زمرہ', listTitle:'ہارڈویئر سٹورز کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  bakery:            {group:'business', emoji:'🍞', ur:'بیکری',                 nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً نان / کیک / پیسٹری)', listTitle:'بیکریوں کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  jewelryShop:       {group:'business', emoji:'💍', ur:'جیولری شاپ',            nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً سونا / چاندی / آرٹیفیشل)', listTitle:'جیولری شاپس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  furnitureShop:     {group:'business', emoji:'🛋️', ur:'فرنیچر شاپ',           nameLabel:'دکان کا نام', typeLabel:'زمرہ', listTitle:'فرنیچر شاپس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  autoParts:         {group:'business', emoji:'🚗', ur:'آٹو پارٹس',             nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً گاڑی / موٹر سائیکل)', listTitle:'آٹو پارٹس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  beautyParlor:      {group:'business', emoji:'💇', ur:'بیوٹی پارلر / سیلون',   nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً مردانہ / زنانہ)', listTitle:'بیوٹی پارلرز کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  restaurant:        {group:'business', emoji:'🍽️', ur:'ہوٹل / ریسٹورنٹ',     nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً فاسٹ فوڈ / دیسی کھانا)', listTitle:'ہوٹلز / ریسٹورنٹس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'}
 };
 const CATEGORY_KEYS = Object.keys(CATEGORY_META);
+const BUILT_IN_CATEGORY_KEYS = Object.keys(CATEGORY_META);
 let currentServiceCategory = null;
 
 /* English names for provinces/districts, keyed by the Urdu name above —
@@ -918,7 +961,7 @@ function loadStore(){
       cities: [],
       areas: [],
       services: [],
-      serviceTypes: {medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]},
+      serviceTypes: emptyServiceTypes(),
       customCategories: [],
       contact: {...DEFAULT_CONTACT}
     };
@@ -929,7 +972,7 @@ function loadStore(){
     parsed.cities = parsed.cities || [];
     parsed.areas = parsed.areas || [];
     parsed.services = parsed.services || [];
-    parsed.serviceTypes = parsed.serviceTypes || {medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]};
+    parsed.serviceTypes = parsed.serviceTypes || emptyServiceTypes();
     parsed.customCategories = parsed.customCategories || [];
     CATEGORY_KEYS.forEach(k=>{ if(!parsed.serviceTypes[k]) parsed.serviceTypes[k] = []; });
     return parsed;
@@ -937,9 +980,14 @@ function loadStore(){
     return loadStoreFallback();
   }
 }
+function emptyServiceTypes(){
+  const obj = {};
+  CATEGORY_KEYS.forEach(k=>{ obj[k] = []; });
+  return obj;
+}
 function loadStoreFallback(){
   return { doctors:[], departments:[], specialties:[], hospitals:[], cities:[], areas:[],
-    services:[], serviceTypes:{medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]},
+    services:[], serviceTypes:emptyServiceTypes(),
     customCategories:[],
     contact:{...DEFAULT_CONTACT} };
 }
@@ -966,6 +1014,24 @@ function goScreen(name, fromHistory){
 function openSearch(){
   goScreen('user-browse');
   setTimeout(()=>{ const b=document.getElementById('searchBox'); if(b) b.focus(); }, 150);
+}
+
+/* Typing this PIN into the "یوزر" search box jumps straight to the admin
+   panel — a quick shortcut only; it does NOT replace the real Firebase
+   email/password login that Firestore's security rules actually check. */
+const ADMIN_QUICK_PIN = '857766';
+function onUserSearchInput(val){
+  if(val === ADMIN_QUICK_PIN){
+    const box = document.getElementById('searchBox');
+    if(box) box.value = '';
+    openControlPanel();
+    setTimeout(()=>{
+      const target = document.getElementById(isAdminSignedIn ? 'adminPanelBox' : 'adminLoginBox');
+      if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 250);
+    return;
+  }
+  renderDoctorList('search');
 }
 
 /* ---------- Phone book (Contact Picker) ---------- */
@@ -1392,14 +1458,54 @@ function applyCustomCategories(list){
   if(changed) renderCustomCategoryTiles();
 }
 function renderCustomCategoryTiles(){
-  const wrap = document.getElementById('customCatTiles');
+  const extra = CATEGORY_KEYS.filter(k=>!BUILT_IN_CATEGORY_KEYS.includes(k));
+  [['customCatTilesProfessional','professional'],['customCatTilesBusiness','business']].forEach(([wrapId, grp])=>{
+    const wrap = document.getElementById(wrapId);
+    if(!wrap) return;
+    wrap.innerHTML = extra.filter(k=>(CATEGORY_META[k].group||'professional')===grp).map(k=>{
+      const c = CATEGORY_META[k];
+      return `<div class="cat-item" onclick="openServiceCategory('${escapeAttr(k)}')"><div class="emoji">${c.emoji||'🏷️'}</div><span>${escapeHtml(c.ur)}</span></div>`;
+    }).join('');
+  });
+  renderAdminCategoryList();
+}
+/* Admin list of self-added categories, each with a delete button. Only
+   admin-added (custom) categories can be deleted — the built-in ones are
+   part of the app itself and stay put. */
+function renderAdminCategoryList(){
+  const wrap = document.getElementById('customCatAdminList');
   if(!wrap) return;
-  const builtIn = ['medicalStore','homeopathic','testingLab','plumberElectrician','tuitionTeacher'];
-  const extra = CATEGORY_KEYS.filter(k=>!builtIn.includes(k));
-  wrap.innerHTML = extra.map(k=>{
-    const c = CATEGORY_META[k];
-    return `<div class="cat-item" onclick="openServiceCategory('${escapeAttr(k)}')"><div class="emoji">${c.emoji||'🏷️'}</div><span>${escapeHtml(c.ur)}</span></div>`;
-  }).join('');
+  const extra = CATEGORY_KEYS.filter(k=>!BUILT_IN_CATEGORY_KEYS.includes(k));
+  if(!extra.length){ wrap.innerHTML = ''; return; }
+  wrap.innerHTML = '<div class="cp-hint" style="margin-bottom:6px;">شامل کی گئی کیٹگریز:</div>' +
+    extra.map(k=>{
+      const c = CATEGORY_META[k];
+      const count = store.services.filter(s=>s.category===k).length;
+      return `<div style="display:flex;align-items:center;justify-content:space-between;background:#f6f7f9;border-radius:10px;padding:8px 10px;margin-bottom:6px;">
+        <span>${c.emoji||'🏷️'} ${escapeHtml(c.ur)}${count?` <small style="color:var(--muted);">(${count} اندراجات)</small>`:''}</span>
+        <button class="btn secondary" style="padding:4px 10px;font-size:12px;" onclick="deleteCustomCategory('${escapeAttr(k)}')">🗑️ ڈیلیٹ</button>
+      </div>`;
+    }).join('');
+}
+function deleteCustomCategory(key){
+  const c = CATEGORY_META[key];
+  if(!c) return;
+  const count = store.services.filter(s=>s.category===key).length;
+  const warn = count ? `\n\nتوجہ: اس کیٹگری میں ${count} اندراجات موجود ہیں، وہ فہرست سے چھپ جائیں گے۔` : '';
+  if(!confirm(`کیا آپ "${c.ur}" کیٹگری ڈیلیٹ کرنا چاہتے ہیں؟${warn}`)) return;
+  delete CATEGORY_META[key];
+  const idx = CATEGORY_KEYS.indexOf(key);
+  if(idx>-1) CATEGORY_KEYS.splice(idx,1);
+  delete store.serviceTypes[key];
+  store.customCategories = FB_arrayOfCategories();
+  saveStore();
+  renderCustomCategoryTiles();
+  const FB = window.MCSFirebase;
+  if(FB){
+    const ref = FB.doc(FB.db,'appConfig','categories');
+    FB.setDoc(ref, {list: FB_arrayOfCategories()}).catch(()=>{});
+  }
+  showToast('کیٹگری ڈیلیٹ ہو گئی ✓');
 }
 /* Admin adds a whole new category from inside the app (Control Panel) —
    writes to ONE shared Firestore document, so this never needs a Firestore
@@ -1409,11 +1515,12 @@ function addNewCategory(){
   const emoji = document.getElementById('newCatEmoji').value.trim() || '🏷️';
   const nameLabel = document.getElementById('newCatNameLabel').value.trim() || 'نام';
   const typeLabel = document.getElementById('newCatTypeLabel').value.trim() || 'قسم';
+  const group = document.getElementById('newCatGroup').value || 'professional';
   if(!ur){ showToast('کیٹگری کا نام لکھیں'); return; }
   const FB = window.MCSFirebase;
   if(!FB){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
   const key = 'cat_' + Date.now();
-  const cat = {key, emoji, ur, nameLabel, typeLabel,
+  const cat = {key, group, emoji, ur, nameLabel, typeLabel,
     listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں', addOptLabel: 'نئی قسم'};
   applyCustomCategories([cat]); // shows on this device immediately, even before the write confirms
   const ref = FB.doc(FB.db,'appConfig','categories');
@@ -1426,8 +1533,7 @@ function addNewCategory(){
   showToast('نئی کیٹگری شامل ہو گئی ✓');
 }
 function FB_arrayOfCategories(){
-  const builtIn = ['medicalStore','homeopathic','testingLab','plumberElectrician','tuitionTeacher'];
-  return CATEGORY_KEYS.filter(k=>!builtIn.includes(k)).map(k=>({key:k, ...CATEGORY_META[k]}));
+  return CATEGORY_KEYS.filter(k=>!BUILT_IN_CATEGORY_KEYS.includes(k)).map(k=>({key:k, ...CATEGORY_META[k]}));
 }
 function openServiceCategory(key){
   currentServiceCategory = key;
@@ -1725,7 +1831,8 @@ document.getElementById('restoreFileInput').addEventListener('change', async (e)
     store.cities = incoming.cities || [];
     store.areas = incoming.areas || [];
     store.services = incoming.services || [];
-    store.serviceTypes = incoming.serviceTypes || {medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]};
+    store.serviceTypes = incoming.serviceTypes || emptyServiceTypes();
+    CATEGORY_KEYS.forEach(k=>{ if(!store.serviceTypes[k]) store.serviceTypes[k] = []; });
     store.contact = incoming.contact || {...DEFAULT_CONTACT};
     saveStore();
     refreshAllDropdowns();
@@ -1880,7 +1987,8 @@ function restoreAutoSnapshot(idx){
   store.cities = snap.data.cities || [];
   store.areas = snap.data.areas || [];
   store.services = snap.data.services || [];
-  store.serviceTypes = snap.data.serviceTypes || {medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]};
+  store.serviceTypes = snap.data.serviceTypes || emptyServiceTypes();
+  CATEGORY_KEYS.forEach(k=>{ if(!store.serviceTypes[k]) store.serviceTypes[k] = []; });
   store.contact = snap.data.contact || {...DEFAULT_CONTACT};
   saveStore();
   refreshAllDropdowns();
@@ -1999,7 +2107,7 @@ function initFirebaseSync(){
     document.getElementById('adminLoginBox').style.display = isAdminSignedIn ? 'none' : 'block';
     document.getElementById('adminPanelBox').style.display = isAdminSignedIn ? 'block' : 'none';
     document.getElementById('adminAddCategoryBox').style.display = isAdminSignedIn ? 'block' : 'none';
-    if(isAdminSignedIn) startPendingApprovalsListener(); else stopPendingApprovalsListener();
+    if(isAdminSignedIn){ startPendingApprovalsListener(); renderAdminCategoryList(); } else stopPendingApprovalsListener();
   });
 }
 
