@@ -781,7 +781,10 @@
           <input type="text" id="adminEmail" placeholder="ایڈمن ای میل" dir="ltr" style="text-align:left;">
         </div>
         <div class="field" style="margin-bottom:8px;">
-          <input type="password" id="adminPassword" placeholder="پاس ورڈ" dir="ltr" style="text-align:left;">
+          <div style="position:relative;">
+            <input type="password" id="adminPassword" placeholder="پاس ورڈ" dir="ltr" style="text-align:left;padding-left:38px;width:100%;box-sizing:border-box;">
+            <button type="button" onclick="toggleAdminPasswordVisibility()" aria-label="پاسورڈ دکھائیں" style="position:absolute;left:6px;top:50%;transform:translateY(-50%);background:none;border:none;padding:4px;cursor:pointer;font-size:18px;line-height:1;">👁️</button>
+          </div>
         </div>
         <button class="btn block secondary" onclick="adminLogin()">لاگ ان</button>
         <div class="cp-hint" id="adminSyncHint"></div>
@@ -851,7 +854,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0435AM";
+const APP_VERSION = "MCS27SEPSU0450AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1706,6 +1709,10 @@ function openDevChat(){
 }
 
 /* ---------- Control Panel ---------- */
+function toggleAdminPasswordVisibility(){
+  const f = document.getElementById('adminPassword');
+  f.type = (f.type==='password') ? 'text' : 'password';
+}
 function openControlPanel(){
   document.getElementById('cpWhatsapp').value = store.contact.whatsapp;
   document.getElementById('cpGmail').value = store.contact.gmail;
