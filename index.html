@@ -108,7 +108,7 @@
   .btn:active{transform:scale(0.98);}
 
   /* ===== Home (v1.7 professional) ===== */
-  #screen-specialist-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner{padding:16px;}
+  #screen-specialist-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner, #screen-service-list .inner{padding:16px;}
   #screen-home{padding-bottom:24px;background:var(--bg);}
   .hero{
     position:relative;overflow:hidden;
@@ -248,9 +248,13 @@
   }
   .csel-btn .csel-chevron{color:var(--muted);font-size:12px;flex:none;}
   .csel-btn .csel-placeholder{color:var(--muted);}
-  .csel-label{display:flex;align-items:center;gap:8px;flex:1;min-width:0;justify-content:flex-end;}
-  .csel-label .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:12px;color:#0f766e;
-    background:#e6f6f4;padding:2px 8px;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  /* DOM order is [Urdu, English] everywhere — in this RTL page that puts Urdu
+     on its natural (right) side and English on its natural (left) side, and
+     with justify-content:flex-start the two stay bunched together as one
+     small compact capsule instead of stretching across the whole row. */
+  .csel-label{display:flex;align-items:center;gap:6px;flex:1;min-width:0;justify-content:flex-start;overflow:hidden;}
+  .csel-label .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:10.5px;color:#9a4b06;
+    background:#fbdfb4;padding:1px 7px;border-radius:999px;white-space:nowrap;flex:none;}
   .csel-label .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .csel-panel{
     position:absolute;top:calc(100% + 6px);right:0;left:0;z-index:60;
@@ -258,21 +262,21 @@
     max-height:280px;overflow-y:auto;padding:8px;border:1px solid #e5e7eb;
   }
   .csel-opt{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    background:#f3f6f5;border-radius:999px;padding:9px 14px;margin-bottom:6px;cursor:pointer;
+    display:flex;align-items:center;justify-content:flex-start;gap:6px;
+    background:#f3f6f5;border-radius:999px;padding:7px 12px;margin-bottom:6px;cursor:pointer;
   }
   .csel-opt:last-child{margin-bottom:0;}
   .csel-opt.active{background:linear-gradient(90deg,#0d3b66,#0f766e);}
   .csel-opt.active .csel-ur{color:#fff;}
-  .csel-opt.active .csel-en{background:rgba(255,255,255,.25);color:#fff;}
-  .csel-opt .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:12px;color:#0f766e;
-    background:#e6f6f4;padding:2px 8px;border-radius:999px;white-space:nowrap;}
-  .csel-opt .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:15px;}
+  .csel-opt.active .csel-en{background:rgba(255,255,255,.3);color:#fff;}
+  .csel-opt .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:10.5px;color:#9a4b06;
+    background:#fbdfb4;padding:1px 7px;border-radius:999px;white-space:nowrap;flex:none;}
+  .csel-opt .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:14.5px;}
   .csel-opt .csel-ur.solo{width:100%;text-align:right;}
 
   /* ===== List ===== */
   /* ===== Doctor cards (compact, raised 3D) ===== */
-  #screen-doctor-list, #screen-user-browse{
+  #screen-doctor-list, #screen-user-browse, #screen-service-list{
     background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;
   }
   .doc-card{
@@ -475,11 +479,12 @@
         <div class="cat-item" onclick="goScreen('doctor-list')">
           <div class="emoji">🩺</div><span>ڈاکٹرز</span><small>ہسپتال، اسپیشلٹی</small>
         </div>
-        <div class="cat-item soon"><div class="emoji">💊</div><span>میڈیکل سٹور</span><span class="badge-soon">جلد آ رہا ہے</span></div>
-        <div class="cat-item soon"><div class="emoji">🌿</div><span>ہومیوپیتھک</span><span class="badge-soon">جلد آ رہا ہے</span></div>
-        <div class="cat-item soon"><div class="emoji">🧪</div><span>ٹیسٹنگ لیب</span><span class="badge-soon">جلد آ رہا ہے</span></div>
-        <div class="cat-item soon"><div class="emoji">🔧</div><span>پلمبر / الیکٹریشن</span><span class="badge-soon">جلد آ رہا ہے</span></div>
-        <div class="cat-item soon"><div class="emoji">📚</div><span>ٹیوشن استاد</span><span class="badge-soon">جلد آ رہا ہے</span></div>
+        <div class="cat-item" onclick="openServiceCategory('medicalStore')"><div class="emoji">💊</div><span>میڈیکل سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('homeopathic')"><div class="emoji">🌿</div><span>ہومیوپیتھک</span></div>
+        <div class="cat-item" onclick="openServiceCategory('testingLab')"><div class="emoji">🧪</div><span>ٹیسٹنگ لیب</span></div>
+        <div class="cat-item" onclick="openServiceCategory('plumberElectrician')"><div class="emoji">🔧</div><span>پلمبر / الیکٹریشن</span></div>
+        <div class="cat-item" onclick="openServiceCategory('tuitionTeacher')"><div class="emoji">📚</div><span>ٹیوشن استاد</span></div>
+        <span id="customCatTiles" style="display:contents;"></span>
       </div>
     </div>
   </div>
@@ -512,6 +517,22 @@
     </div>
   </div>
 
+  <!-- ===================== SERVICE LIST (generic — reused for all non-Doctor categories) ===================== -->
+  <div id="screen-service-list" class="screen">
+    <div class="inner">
+      <div class="screen-head">
+        <button class="back-btn nav-back" onclick="goBack()" aria-label="واپس"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+        <h2 id="serviceListTitle">فہرست</h2>
+        <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
+      </div>
+      <div class="field">
+        <input type="text" id="serviceSearchBox" placeholder="نام، قسم یا پتہ لکھیں..." oninput="renderServiceList('list')">
+      </div>
+      <div id="serviceListWrap"></div>
+    </div>
+    <button class="fab" id="serviceFab" onclick="openServiceForm()">➕ نیا شامل کریں</button>
+  </div>
+
 </div>
 
 
@@ -536,7 +557,7 @@
 
     <div class="field">
       <label>صوبہ (Province)</label>
-      <select id="docProvince" onchange="onProvinceChange()"></select>
+      <select id="docProvince" onchange="onProvinceChange('doc')"></select>
       <input type="text" id="docProvinceCustom" placeholder="صوبے کا نام لکھیں" style="display:none;margin-top:8px;">
     </div>
 
@@ -600,6 +621,78 @@
     </div>
 
     <button class="btn block" onclick="saveDoctor()">💾 محفوظ کریں</button>
+  </div>
+</div>
+
+<!-- ===================== SERVICE FORM MODAL (generic — reused for all non-Doctor categories) ===================== -->
+<div class="modal-overlay" id="serviceFormModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('serviceFormModal')">×</button>
+    <h3 id="serviceFormTitle">نیا اندراج شامل کریں</h3>
+    <div style="clear:both;"></div>
+
+    <div class="field">
+      <label id="svcNameUrLabel">نام (اردو)</label>
+      <input type="text" id="svcNameUr">
+    </div>
+
+    <div class="field">
+      <label>Name (English)</label>
+      <input type="text" id="svcNameEn" dir="ltr" style="text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;">
+    </div>
+
+    <div class="field">
+      <label id="svcTypeLabel">قسم</label>
+      <div class="field-with-add">
+        <select id="svcType"></select>
+        <button class="add-circle" onclick="promptAddOption('serviceType','svcType')">+</button>
+      </div>
+    </div>
+
+    <div class="cp-section-title" style="margin-top:6px;">📍 مقام</div>
+
+    <div class="field">
+      <label>صوبہ (Province)</label>
+      <select id="svcProvince" onchange="onProvinceChange('svc')"></select>
+      <input type="text" id="svcProvinceCustom" placeholder="صوبے کا نام لکھیں" style="display:none;margin-top:8px;">
+    </div>
+
+    <div class="field">
+      <label>ضلع (District)</label>
+      <select id="svcDistrict"></select>
+      <input type="text" id="svcDistrictCustom" placeholder="ضلع کا نام لکھیں" style="display:none;margin-top:8px;">
+    </div>
+
+    <div class="field">
+      <label>شہر (City)</label>
+      <div class="field-with-add">
+        <select id="svcCity"></select>
+        <button class="add-circle" onclick="promptAddOption('city','svcCity')">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>علاقہ (Area)</label>
+      <div class="field-with-add">
+        <select id="svcArea"></select>
+        <button class="add-circle" onclick="promptAddOption('area','svcArea')">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>پتہ (Address) — گلی، دکان نمبر، لینڈ مارک وغیرہ</label>
+      <input type="text" id="svcAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
+    </div>
+
+    <div class="field">
+      <label>واٹس ایپ نمبر</label>
+      <div class="field-with-add">
+        <input type="tel" id="svcWhatsapp" placeholder="0300-1234567" dir="ltr" inputmode="tel" style="flex:1;text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;letter-spacing:.5px;" onblur="this.value=normalizePkNumber(this.value)">
+        <button class="add-circle pick-contact" onclick="pickFromContacts('svcWhatsapp','svcNameEn')" aria-label="فون بک سے نمبر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></button>
+      </div>
+    </div>
+
+    <button class="btn block" onclick="saveService()">💾 محفوظ کریں</button>
   </div>
 </div>
 
@@ -676,6 +769,23 @@
         <button class="btn block secondary" style="margin-top:10px;" onclick="adminLogout()">لاگ آؤٹ</button>
       </div>
 
+      <div class="backup-card" id="adminAddCategoryBox" style="display:none;">
+        <div class="backup-card-title">🗂️ نئی کیٹگری شامل کریں (ہوم پیج پر خودکار آ جائے گی)</div>
+        <div class="field" style="margin-bottom:8px;">
+          <input type="text" id="newCatUr" placeholder="کیٹگری کا نام (اردو) — مثلاً بیکری">
+        </div>
+        <div class="field" style="margin-bottom:8px;">
+          <input type="text" id="newCatEmoji" placeholder="ایموجی (اختیاری) — مثلاً 🍞" style="text-align:center;">
+        </div>
+        <div class="field" style="margin-bottom:8px;">
+          <input type="text" id="newCatNameLabel" placeholder="نام کے فیلڈ کا لیبل — مثلاً دکان کا نام">
+        </div>
+        <div class="field" style="margin-bottom:8px;">
+          <input type="text" id="newCatTypeLabel" placeholder="قسم کے فیلڈ کا لیبل — مثلاً پراڈکٹ کی قسم">
+        </div>
+        <button class="btn block accent" onclick="addNewCategory()">➕ کیٹگری شامل کریں</button>
+      </div>
+
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
       <div class="field">
         <label>ڈیٹا کا خلاصہ</label>
@@ -710,7 +820,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS26SEPSA0916PM";
+const APP_VERSION = "MCS26SEPSA0950PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -743,6 +853,21 @@ const DISTRICTS = {
   'گلگت بلتستان': ['گلگت', 'سکردو', 'ہنزہ', 'غذر', 'استور', 'دیامر', 'شگر', 'کھرمنگ']
 };
 const CUSTOM_OPTION = '__custom__';
+/* ---------- Generic "service" categories (Medical Store, Homeopathic, etc.) ----------
+   One shared form + list screen serves all of these (see openServiceCategory /
+   renderServiceList / saveService below) instead of duplicating the Doctor
+   module five times — each category just supplies its own labels and its own
+   "+"-addable type list (store.serviceTypes[key]). */
+const CATEGORY_META = {
+  medicalStore:      {emoji:'💊', ur:'میڈیکل سٹور',        nameLabel:'میڈیکل سٹور کا نام',  typeLabel:'زمرہ (مثلاً جنرل / ہومیو سٹور)', listTitle:'میڈیکل سٹورز کی فہرست', addBtn:'نیا میڈیکل سٹور شامل کریں', addOptLabel:'نیا زمرہ'},
+  homeopathic:       {emoji:'🌿', ur:'ہومیوپیتھک',          nameLabel:'حکیم/ڈاکٹر کا نام',   typeLabel:'اسپیشلٹی',                     listTitle:'ہومیوپیتھک کی فہرست',    addBtn:'نیا اندراج شامل کریں',       addOptLabel:'نئی اسپیشلٹی'},
+  testingLab:        {emoji:'🧪', ur:'ٹیسٹنگ لیب',          nameLabel:'لیب کا نام',          typeLabel:'ٹیسٹ کی قسم',                  listTitle:'ٹیسٹنگ لیبز کی فہرست',    addBtn:'نئی لیب شامل کریں',          addOptLabel:'نئی قسم'},
+  plumberElectrician:{emoji:'🔧', ur:'پلمبر / الیکٹریشن',   nameLabel:'کاریگر کا نام',       typeLabel:'سروس کی قسم',                  listTitle:'پلمبر / الیکٹریشن کی فہرست', addBtn:'نیا کاریگر شامل کریں',    addOptLabel:'نئی سروس'},
+  tuitionTeacher:    {emoji:'📚', ur:'ٹیوشن استاد',         nameLabel:'استاد کا نام',        typeLabel:'مضمون / کلاس',                 listTitle:'ٹیوشن اساتذہ کی فہرست',   addBtn:'نیا استاد شامل کریں',        addOptLabel:'نیا مضمون'}
+};
+const CATEGORY_KEYS = Object.keys(CATEGORY_META);
+let currentServiceCategory = null;
+
 /* English names for provinces/districts, keyed by the Urdu name above —
    used by the bilingual capsule dropdown so each pill shows English + Urdu. */
 const LOCATION_EN = {
@@ -792,6 +917,9 @@ function loadStore(){
       hospitals: ["سول ہسپتال","ڈی ایچ کیو ہسپتال","نجی کلینک"],
       cities: [],
       areas: [],
+      services: [],
+      serviceTypes: {medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]},
+      customCategories: [],
       contact: {...DEFAULT_CONTACT}
     };
   }
@@ -800,13 +928,20 @@ function loadStore(){
     parsed.contact = parsed.contact || {...DEFAULT_CONTACT};
     parsed.cities = parsed.cities || [];
     parsed.areas = parsed.areas || [];
+    parsed.services = parsed.services || [];
+    parsed.serviceTypes = parsed.serviceTypes || {medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]};
+    parsed.customCategories = parsed.customCategories || [];
+    CATEGORY_KEYS.forEach(k=>{ if(!parsed.serviceTypes[k]) parsed.serviceTypes[k] = []; });
     return parsed;
   }catch(e){
     return loadStoreFallback();
   }
 }
 function loadStoreFallback(){
-  return { doctors:[], departments:[], specialties:[], hospitals:[], cities:[], areas:[], contact:{...DEFAULT_CONTACT} };
+  return { doctors:[], departments:[], specialties:[], hospitals:[], cities:[], areas:[],
+    services:[], serviceTypes:{medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]},
+    customCategories:[],
+    contact:{...DEFAULT_CONTACT} };
 }
 function saveStore(){ localStorage.setItem('mcsData', JSON.stringify(store)); }
 let store = loadStore();
@@ -825,6 +960,7 @@ function goScreen(name, fromHistory){
   document.getElementById('screen-'+name).classList.add('active');
   if(name==='doctor-list') renderDoctorList('list');
   if(name==='user-browse') renderDoctorList('search');
+  if(name==='service-list' && currentServiceCategory) renderServiceList('list');
 }
 
 function openSearch(){
@@ -909,67 +1045,76 @@ function refreshAllDropdowns(){
   populateProvinceDropdown();
 }
 
-/* ---------- Location cascading (Province -> District) ---------- */
-function populateProvinceDropdown(){
-  const sel = document.getElementById('docProvince');
+/* ---------- Location cascading (Province -> District) ----------
+   prefix lets the SAME functions serve both the Doctor form (prefix 'doc' —
+   docProvince/docDistrict/...) and the generic Service form (prefix 'svc' —
+   svcProvince/svcDistrict/...) without duplicating this logic per category. */
+function populateProvinceDropdown(prefix){
+  prefix = prefix || 'doc';
+  const sel = document.getElementById(prefix+'Province');
   const list = sortOptionValues(PROVINCES['پاکستان'] || []);
   sel.innerHTML = list.map(v=>optionHtml(v, LOCATION_EN[v])).join('')
     + `<option value="${CUSTOM_OPTION}" data-en="Other">دیگر (خود لکھیں)</option>`;
-  resyncCapsuleSelect('docProvince');
+  resyncCapsuleSelect(prefix+'Province');
 }
-function populateDistrictDropdown(province, selectedValue){
-  const sel = document.getElementById('docDistrict');
+function populateDistrictDropdown(prefix, province, selectedValue){
+  prefix = prefix || 'doc';
+  const sel = document.getElementById(prefix+'District');
   const list = sortOptionValues(DISTRICTS[province] || []);
   sel.innerHTML = list.map(v=>optionHtml(v, LOCATION_EN[v])).join('')
     + `<option value="${CUSTOM_OPTION}" data-en="Other">دیگر (خود لکھیں)</option>`;
   if(selectedValue) sel.value = selectedValue;
-  resyncCapsuleSelect('docDistrict');
+  resyncCapsuleSelect(prefix+'District');
 }
-function onProvinceChange(){
-  const province = document.getElementById('docProvince').value;
-  const customEl = document.getElementById('docProvinceCustom');
+function onProvinceChange(prefix){
+  prefix = prefix || 'doc';
+  const province = document.getElementById(prefix+'Province').value;
+  const customEl = document.getElementById(prefix+'ProvinceCustom');
   customEl.style.display = (province===CUSTOM_OPTION) ? 'block' : 'none';
-  populateDistrictDropdown(province==='__custom__' ? '' : province);
+  populateDistrictDropdown(prefix, province===CUSTOM_OPTION ? '' : province);
 }
-function setLocationFormValues(d){
+function setLocationFormValues(prefix, d){
+  prefix = prefix || 'doc';
   const province = d.province || '';
   const inList = (PROVINCES['پاکستان']||[]).includes(province);
-  document.getElementById('docProvince').value = inList ? province : (province ? CUSTOM_OPTION : (PROVINCES['پاکستان']||[])[0]||'');
-  document.getElementById('docProvinceCustom').style.display = (!inList && province) ? 'block' : 'none';
-  document.getElementById('docProvinceCustom').value = (!inList && province) ? province : '';
-  resyncCapsuleSelect('docProvince');
-  populateDistrictDropdown(inList ? province : '');
+  document.getElementById(prefix+'Province').value = inList ? province : (province ? CUSTOM_OPTION : (PROVINCES['پاکستان']||[])[0]||'');
+  document.getElementById(prefix+'ProvinceCustom').style.display = (!inList && province) ? 'block' : 'none';
+  document.getElementById(prefix+'ProvinceCustom').value = (!inList && province) ? province : '';
+  resyncCapsuleSelect(prefix+'Province');
+  populateDistrictDropdown(prefix, inList ? province : '');
   const district = d.district || '';
   const districtList = DISTRICTS[inList ? province : ''] || [];
   const districtInList = districtList.includes(district);
-  document.getElementById('docDistrict').value = districtInList ? district : (district ? CUSTOM_OPTION : '');
-  document.getElementById('docDistrictCustom').style.display = (!districtInList && district) ? 'block' : 'none';
-  document.getElementById('docDistrictCustom').value = (!districtInList && district) ? district : '';
-  resyncCapsuleSelect('docDistrict');
-  if(d.city) document.getElementById('docCity').value = d.city;
-  if(d.area) document.getElementById('docArea').value = d.area;
-  resyncCapsuleSelect('docCity'); resyncCapsuleSelect('docArea');
+  document.getElementById(prefix+'District').value = districtInList ? district : (district ? CUSTOM_OPTION : '');
+  document.getElementById(prefix+'DistrictCustom').style.display = (!districtInList && district) ? 'block' : 'none';
+  document.getElementById(prefix+'DistrictCustom').value = (!districtInList && district) ? district : '';
+  resyncCapsuleSelect(prefix+'District');
+  if(d.city) document.getElementById(prefix+'City').value = d.city;
+  if(d.area) document.getElementById(prefix+'Area').value = d.area;
+  resyncCapsuleSelect(prefix+'City'); resyncCapsuleSelect(prefix+'Area');
 }
-function resetLocationFormValues(){
-  populateProvinceDropdown();
-  document.getElementById('docProvince').value = (PROVINCES['پاکستان']||[])[0] || '';
-  document.getElementById('docProvinceCustom').style.display = 'none';
-  document.getElementById('docProvinceCustom').value = '';
-  resyncCapsuleSelect('docProvince');
-  populateDistrictDropdown(document.getElementById('docProvince').value);
-  document.getElementById('docDistrictCustom').style.display = 'none';
-  document.getElementById('docDistrictCustom').value = '';
+function resetLocationFormValues(prefix){
+  prefix = prefix || 'doc';
+  populateProvinceDropdown(prefix);
+  document.getElementById(prefix+'Province').value = (PROVINCES['پاکستان']||[])[0] || '';
+  document.getElementById(prefix+'ProvinceCustom').style.display = 'none';
+  document.getElementById(prefix+'ProvinceCustom').value = '';
+  resyncCapsuleSelect(prefix+'Province');
+  populateDistrictDropdown(prefix, document.getElementById(prefix+'Province').value);
+  document.getElementById(prefix+'DistrictCustom').style.display = 'none';
+  document.getElementById(prefix+'DistrictCustom').value = '';
 }
-function readLocationFormValues(){
-  const provinceSel = document.getElementById('docProvince').value;
-  const province = provinceSel===CUSTOM_OPTION ? document.getElementById('docProvinceCustom').value.trim() : provinceSel;
-  const districtSel = document.getElementById('docDistrict').value;
-  const district = districtSel===CUSTOM_OPTION ? document.getElementById('docDistrictCustom').value.trim() : districtSel;
+function readLocationFormValues(prefix){
+  prefix = prefix || 'doc';
+  const provinceSel = document.getElementById(prefix+'Province').value;
+  const province = provinceSel===CUSTOM_OPTION ? document.getElementById(prefix+'ProvinceCustom').value.trim() : provinceSel;
+  const districtSel = document.getElementById(prefix+'District').value;
+  const district = districtSel===CUSTOM_OPTION ? document.getElementById(prefix+'DistrictCustom').value.trim() : districtSel;
   return {
     country: 'پاکستان',
     province, district,
-    city: document.getElementById('docCity').value,
-    area: document.getElementById('docArea').value
+    city: document.getElementById(prefix+'City').value,
+    area: document.getElementById(prefix+'Area').value
   };
 }
 
@@ -982,7 +1127,7 @@ function readLocationFormValues(){
 function csel_optLabel(opt){
   const en = opt.getAttribute('data-en');
   const ur = opt.textContent;
-  if(en) return `<span class="csel-en">${escapeHtml(en)}</span><span class="csel-ur">${escapeHtml(ur)}</span>`;
+  if(en) return `<span class="csel-ur">${escapeHtml(ur)}</span><span class="csel-en">${escapeHtml(en)}</span>`;
   return `<span class="csel-ur solo">${escapeHtml(ur)}</span>`;
 }
 function enhanceCapsuleSelect(selectId){
@@ -1046,7 +1191,8 @@ function resyncCapsuleSelect(selectId){
   if(sel && sel._cselSync) sel._cselSync();
 }
 function enhanceAllCapsuleSelects(){
-  ['docProvince','docDistrict','docCity','docArea','docDept','docSpecialty','docHospital']
+  ['docProvince','docDistrict','docCity','docArea','docDept','docSpecialty','docHospital',
+   'svcProvince','svcDistrict','svcCity','svcArea','svcType']
     .forEach(enhanceCapsuleSelect);
 }
 
@@ -1054,7 +1200,8 @@ function enhanceAllCapsuleSelects(){
 let addOptionTargetKey = null, addOptionTargetSelect = null;
 function promptAddOption(key, selectId){
   addOptionTargetKey = key; addOptionTargetSelect = selectId;
-  const labels = {department:'نیا شعبہ', specialty:'نئی اسپیشلٹی', hospital:'نیا ہسپتال', city:'نیا شہر', area:'نیا علاقہ'};
+  const labels = {department:'نیا شعبہ', specialty:'نئی اسپیشلٹی', hospital:'نیا ہسپتال', city:'نیا شہر', area:'نیا علاقہ',
+    serviceType: (CATEGORY_META[currentServiceCategory]||{}).addOptLabel || 'نئی چیز'};
   document.getElementById('addOptionTitle').textContent = labels[key] || 'نئی چیز شامل کریں';
   document.getElementById('addOptionInput').value = '';
   openModal('addOptionModal');
@@ -1062,10 +1209,16 @@ function promptAddOption(key, selectId){
 function confirmAddOption(){
   const val = document.getElementById('addOptionInput').value.trim();
   if(!val){ showToast('نام لکھیں'); return; }
-  const mapKey = {department:'departments', specialty:'specialties', hospital:'hospitals', city:'cities', area:'areas'}[addOptionTargetKey];
-  if(!store[mapKey].includes(val)) store[mapKey].push(val);
+  let arr;
+  if(addOptionTargetKey==='serviceType'){
+    arr = store.serviceTypes[currentServiceCategory];
+  } else {
+    const mapKey = {department:'departments', specialty:'specialties', hospital:'hospitals', city:'cities', area:'areas'}[addOptionTargetKey];
+    arr = store[mapKey];
+  }
+  if(!arr.includes(val)) arr.push(val);
   saveStore();
-  populateDropdown(addOptionTargetSelect, store[mapKey]);
+  populateDropdown(addOptionTargetSelect, arr);
   document.getElementById(addOptionTargetSelect).value = val;
   resyncCapsuleSelect(addOptionTargetSelect);
   closeModal('addOptionModal');
@@ -1087,7 +1240,7 @@ function openDoctorForm(id){
     document.getElementById('docSpecialty').value = d.specialty;
     document.getElementById('docWhatsapp').value = d.whatsapp;
     document.getElementById('docHospital').value = d.hospital;
-    setLocationFormValues(d);
+    setLocationFormValues('doc', d);
     resyncCapsuleSelect('docDept'); resyncCapsuleSelect('docSpecialty'); resyncCapsuleSelect('docHospital');
   } else {
     document.getElementById('doctorFormTitle').textContent = 'نیا ڈاکٹر شامل کریں';
@@ -1095,7 +1248,7 @@ function openDoctorForm(id){
     document.getElementById('docNameEn').value = '';
     document.getElementById('docAddress').value = '';
     document.getElementById('docWhatsapp').value = '';
-    resetLocationFormValues();
+    resetLocationFormValues('doc');
     resyncCapsuleSelect('docDept'); resyncCapsuleSelect('docSpecialty'); resyncCapsuleSelect('docHospital');
   }
   openModal('doctorFormModal');
@@ -1110,7 +1263,7 @@ function saveDoctor(){
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
   const dup = store.doctors.find(x=>x.whatsapp===whatsapp && x.id!==editingDoctorId);
   if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr||dup.name}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
-  const loc = readLocationFormValues();
+  const loc = readLocationFormValues('doc');
   const data = {
     nameUr, nameEn, name: nameUr, address, whatsapp,
     dept: document.getElementById('docDept').value,
@@ -1210,6 +1363,229 @@ function renderDoctorList(mode){
 function callWhatsapp(num){
   const clean = (num||'').replace(/[^0-9]/g,'');
   window.open('https://wa.me/92'+clean.replace(/^0/,''), '_blank');
+}
+
+/* ---------- Generic Service module (Medical Store / Homeopathic / Testing Lab /
+   Plumber-Electrician / Tuition Teacher) — one shared form + list, driven by
+   CATEGORY_META + currentServiceCategory, instead of copy-pasting the Doctor
+   module per category. ---------- */
+/* Admin-added categories (from Firestore appConfig/categories) get merged
+   into the same CATEGORY_META the 5 built-in categories use, so they
+   automatically get the full generic form/list/search/sync/admin-approval
+   behavior with zero extra code per category. */
+function applyCustomCategories(list){
+  let changed = false;
+  list.forEach(cat=>{
+    if(!cat || !cat.key) return;
+    if(!CATEGORY_META[cat.key]){
+      CATEGORY_META[cat.key] = cat;
+      CATEGORY_KEYS.push(cat.key);
+      changed = true;
+    } else {
+      Object.assign(CATEGORY_META[cat.key], cat);
+    }
+    if(!store.serviceTypes[cat.key]) store.serviceTypes[cat.key] = [];
+  });
+  // cache locally so custom categories still show up next time even with zero internet
+  store.customCategories = FB_arrayOfCategories();
+  saveStore();
+  if(changed) renderCustomCategoryTiles();
+}
+function renderCustomCategoryTiles(){
+  const wrap = document.getElementById('customCatTiles');
+  if(!wrap) return;
+  const builtIn = ['medicalStore','homeopathic','testingLab','plumberElectrician','tuitionTeacher'];
+  const extra = CATEGORY_KEYS.filter(k=>!builtIn.includes(k));
+  wrap.innerHTML = extra.map(k=>{
+    const c = CATEGORY_META[k];
+    return `<div class="cat-item" onclick="openServiceCategory('${escapeAttr(k)}')"><div class="emoji">${c.emoji||'🏷️'}</div><span>${escapeHtml(c.ur)}</span></div>`;
+  }).join('');
+}
+/* Admin adds a whole new category from inside the app (Control Panel) —
+   writes to ONE shared Firestore document, so this never needs a Firestore
+   Rules change again after the one-time /appConfig rule he adds once. */
+function addNewCategory(){
+  const ur = document.getElementById('newCatUr').value.trim();
+  const emoji = document.getElementById('newCatEmoji').value.trim() || '🏷️';
+  const nameLabel = document.getElementById('newCatNameLabel').value.trim() || 'نام';
+  const typeLabel = document.getElementById('newCatTypeLabel').value.trim() || 'قسم';
+  if(!ur){ showToast('کیٹگری کا نام لکھیں'); return; }
+  const FB = window.MCSFirebase;
+  if(!FB){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
+  const key = 'cat_' + Date.now();
+  const cat = {key, emoji, ur, nameLabel, typeLabel,
+    listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں', addOptLabel: 'نئی قسم'};
+  applyCustomCategories([cat]); // shows on this device immediately, even before the write confirms
+  const ref = FB.doc(FB.db,'appConfig','categories');
+  FB.updateDoc(ref, {list: FB_arrayOfCategories()})
+    .catch(()=> FB.setDoc(ref, {list: FB_arrayOfCategories()})); // doc doesn't exist yet on first-ever category
+  document.getElementById('newCatUr').value = '';
+  document.getElementById('newCatEmoji').value = '';
+  document.getElementById('newCatNameLabel').value = '';
+  document.getElementById('newCatTypeLabel').value = '';
+  showToast('نئی کیٹگری شامل ہو گئی ✓');
+}
+function FB_arrayOfCategories(){
+  const builtIn = ['medicalStore','homeopathic','testingLab','plumberElectrician','tuitionTeacher'];
+  return CATEGORY_KEYS.filter(k=>!builtIn.includes(k)).map(k=>({key:k, ...CATEGORY_META[k]}));
+}
+function openServiceCategory(key){
+  currentServiceCategory = key;
+  const meta = CATEGORY_META[key];
+  document.getElementById('serviceListTitle').textContent = meta.listTitle;
+  document.getElementById('serviceFab').textContent = '➕ ' + meta.addBtn;
+  document.getElementById('serviceSearchBox').value = '';
+  goScreen('service-list');
+}
+let editingServiceId = null;
+function openServiceForm(id){
+  editingServiceId = id || null;
+  const meta = CATEGORY_META[currentServiceCategory];
+  document.getElementById('svcNameUrLabel').textContent = meta.nameLabel + ' (اردو)';
+  document.getElementById('svcTypeLabel').textContent = meta.typeLabel;
+  populateDropdown('svcType', store.serviceTypes[currentServiceCategory]);
+  populateDropdown('svcCity', store.cities);
+  populateDropdown('svcArea', store.areas);
+  populateProvinceDropdown('svc');
+  if(id){
+    const s = store.services.find(x=>x.id===id);
+    document.getElementById('serviceFormTitle').textContent = meta.nameLabel + ' میں ترمیم کریں';
+    document.getElementById('svcNameUr').value = s.nameUr || '';
+    document.getElementById('svcNameEn').value = s.nameEn || '';
+    document.getElementById('svcType').value = s.type || '';
+    document.getElementById('svcAddress').value = s.address || '';
+    document.getElementById('svcWhatsapp').value = s.whatsapp || '';
+    setLocationFormValues('svc', s);
+    resyncCapsuleSelect('svcType');
+  } else {
+    document.getElementById('serviceFormTitle').textContent = 'نیا ' + meta.nameLabel + ' شامل کریں';
+    document.getElementById('svcNameUr').value = '';
+    document.getElementById('svcNameEn').value = '';
+    document.getElementById('svcAddress').value = '';
+    document.getElementById('svcWhatsapp').value = '';
+    resetLocationFormValues('svc');
+    resyncCapsuleSelect('svcType');
+  }
+  openModal('serviceFormModal');
+}
+function saveService(){
+  const nameUr = document.getElementById('svcNameUr').value.trim();
+  const nameEn = document.getElementById('svcNameEn').value.trim();
+  const address = document.getElementById('svcAddress').value.trim();
+  const whatsapp = normalizePkNumber(document.getElementById('svcWhatsapp').value.trim());
+  if(!nameUr){ showToast('نام اردو میں لکھیں'); return; }
+  if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
+  const dup = store.services.find(x=>x.whatsapp===whatsapp && x.category===currentServiceCategory && x.id!==editingServiceId);
+  if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
+  const loc = readLocationFormValues('svc');
+  const data = {
+    category: currentServiceCategory, nameUr, nameEn, address, whatsapp,
+    type: document.getElementById('svcType').value,
+    country: loc.country, province: loc.province, district: loc.district,
+    city: loc.city, area: loc.area,
+  };
+  if(editingServiceId){
+    const s = store.services.find(x=>x.id===editingServiceId);
+    Object.assign(s, data);
+    s.updatedAt = Date.now();
+    syncServiceUpdateToFirebase(s);
+  } else {
+    data.id = 'svc_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+    data.createdAt = Date.now();
+    data.updatedAt = Date.now();
+    data.approved = false;
+    store.services.push(data);
+    syncServiceCreateToFirebase(data);
+  }
+  saveStore();
+  closeModal('serviceFormModal');
+  showToast('محفوظ ہو گیا ✓');
+  renderServiceList('list');
+}
+function deleteService(id){
+  if(!confirm('کیا واقعی حذف کرنا چاہتے ہیں؟')) return;
+  store.services = store.services.filter(x=>x.id!==id);
+  saveStore();
+  renderServiceList('list');
+  showToast('حذف کر دیا گیا');
+}
+function renderServiceList(mode){
+  const wrap = document.getElementById('serviceListWrap');
+  const meta = CATEGORY_META[currentServiceCategory];
+  let items = store.services.filter(x=>x.category===currentServiceCategory);
+  const qRaw = (document.getElementById('serviceSearchBox').value||'').trim();
+  const q = qRaw.toLowerCase();
+  const qDigits = qRaw.replace(/[^0-9]/g,'');
+  if(q){
+    items = items.filter(s=>{
+      if(qDigits.length>=3 && (s.whatsapp||'').replace(/[^0-9]/g,'').includes(qDigits)) return true;
+      return (s.nameUr||'').toLowerCase().includes(q) ||
+      (s.nameEn||'').toLowerCase().includes(q) ||
+      (s.type||'').toLowerCase().includes(q) ||
+      (s.address||'').toLowerCase().includes(q) ||
+      (s.city||'').toLowerCase().includes(q) ||
+      (s.area||'').toLowerCase().includes(q) ||
+      (s.district||'').toLowerCase().includes(q) ||
+      (s.province||'').toLowerCase().includes(q);
+    });
+  }
+  if(items.length===0){
+    wrap.innerHTML = `<div class="empty-state"><span class="e-emoji">${meta.emoji}</span>ابھی کوئی اندراج شامل نہیں کیا گیا</div>`;
+    return;
+  }
+  wrap.innerHTML = items.map(s=>{
+    const num = normalizePkNumber(s.whatsapp||'');
+    const digits = num.replace(/[^0-9]/g,'');
+    const intl = '92' + digits.replace(/^0/,'');
+    return `
+    <div class="doc-card">
+      <div class="doc-avatar"><span style="font-size:20px;">${meta.emoji}</span></div>
+      <div class="doc-body">
+        <div class="doc-top"><div class="doc-name">${escapeHtml(s.nameUr)}</div></div>
+        ${s.nameEn ? `<div class="doc-name-en">${escapeHtml(s.nameEn)}</div>` : ``}
+        ${s.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
+        <div class="doc-sub">${escapeHtml(s.type||'')}</div>
+        ${(s.city||s.area) ? `<div class="doc-address">📍 ${[s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
+        ${s.address ? `<div class="doc-address">${escapeHtml(s.address)}</div>` : ``}
+        <div class="doc-num">${escapeHtml(num||'—')}</div>
+      </div>
+      <div class="doc-side">
+        ${digits ? `<div class="doc-acts">
+        <a class="a-call" href="tel:${digits}" aria-label="کال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
+        <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
+        <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
+        </div>` : ``}
+        <div class="doc-mini">
+          <button onclick="openServiceForm('${escapeAttr(s.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+          <button class="mini-del" onclick="deleteService('${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function syncServiceCreateToFirebase(local){
+  const FB = window.MCSFirebase;
+  if(!FB) return;
+  const payload = {
+    category: local.category, nameUr: local.nameUr, nameEn: local.nameEn, type: local.type,
+    address: local.address, whatsapp: local.whatsapp,
+    country: local.country, province: local.province, district: local.district,
+    city: local.city, area: local.area,
+    approved:false, createdAt: FB.serverTimestamp()
+  };
+  FB.addDoc(FB.collection(FB.db,'services'), payload)
+    .then(ref=>{ local.fsId = ref.id; saveStore(); })
+    .catch(()=>{ /* will retry via Firestore's own offline queue */ });
+}
+function syncServiceUpdateToFirebase(local){
+  const FB = window.MCSFirebase;
+  if(!FB || !local.fsId) return;
+  FB.updateDoc(FB.doc(FB.db,'services', local.fsId), {
+    category: local.category, nameUr: local.nameUr, nameEn: local.nameEn, type: local.type,
+    address: local.address, whatsapp: local.whatsapp,
+    country: local.country, province: local.province, district: local.district,
+    city: local.city, area: local.area
+  }).catch(()=>{ /* admin-only per Firestore rules; ignore if not signed in */ });
 }
 
 /* ---------- Dev chat ---------- */
@@ -1348,6 +1724,8 @@ document.getElementById('restoreFileInput').addEventListener('change', async (e)
     store.hospitals = incoming.hospitals || [];
     store.cities = incoming.cities || [];
     store.areas = incoming.areas || [];
+    store.services = incoming.services || [];
+    store.serviceTypes = incoming.serviceTypes || {medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]};
     store.contact = incoming.contact || {...DEFAULT_CONTACT};
     saveStore();
     refreshAllDropdowns();
@@ -1423,6 +1801,8 @@ function saveAutoSnapshot(label){
       hospitals: store.hospitals,
       cities: store.cities,
       areas: store.areas,
+      services: store.services,
+      serviceTypes: store.serviceTypes,
       contact: store.contact
     }
   });
@@ -1499,6 +1879,8 @@ function restoreAutoSnapshot(idx){
   store.hospitals = snap.data.hospitals || [];
   store.cities = snap.data.cities || [];
   store.areas = snap.data.areas || [];
+  store.services = snap.data.services || [];
+  store.serviceTypes = snap.data.serviceTypes || {medicalStore:[], homeopathic:[], testingLab:[], plumberElectrician:[], tuitionTeacher:[]};
   store.contact = snap.data.contact || {...DEFAULT_CONTACT};
   saveStore();
   refreshAllDropdowns();
@@ -1566,61 +1948,87 @@ function renderGlitterVersion(){
    ========================================================= */
 let isAdminSignedIn = false;
 let pendingApprovals = [];
-let pendingUnsub = null;
 
 function startFirebaseSyncWhenReady(){
   if(window.MCSFirebase){ initFirebaseSync(); }
   else { window.addEventListener('mcs-firebase-ready', initFirebaseSync, {once:true}); }
 }
 
+/* Collections synced the same way: 'doctors' -> store.doctors, 'services' -> store.services
+   (services also carry their own `category` field to tell the 5 sub-types apart). */
+const SYNCED_COLLECTIONS = ['doctors','services'];
+function localArrayFor(col){ return col==='services' ? store.services : store.doctors; }
+
 function initFirebaseSync(){
   const FB = window.MCSFirebase;
-  const doctorsCol = FB.collection(FB.db, 'doctors');
 
-  // Live-merge approved doctors from ALL devices into our local list.
-  const approvedQ = FB.query(doctorsCol, FB.where('approved','==', true));
-  FB.onSnapshot(approvedQ, (snap)=>{
-    snap.docChanges().forEach(change=>{
-      const fsId = change.doc.id;
-      if(change.type==='removed'){
-        store.doctors = store.doctors.filter(d=>d.fsId!==fsId);
-      } else {
-        const data = change.doc.data();
-        let existing = store.doctors.find(d=>d.fsId===fsId);
-        if(existing){ Object.assign(existing, data, {fsId, approved:true}); }
-        else { store.doctors.push({...data, fsId, approved:true, id: data.id || ('fs_'+fsId)}); }
-      }
-    });
-    saveStore();
-    if(currentScreen==='doctor-list') renderDoctorList('list');
-    if(currentScreen==='user-browse') renderDoctorList('search');
-  }, ()=>{ /* offline/permission issue — local data still works */ });
+  SYNCED_COLLECTIONS.forEach(col=>{
+    const colRef = FB.collection(FB.db, col);
+    const approvedQ = FB.query(colRef, FB.where('approved','==', true));
+    FB.onSnapshot(approvedQ, (snap)=>{
+      const arr = localArrayFor(col);
+      snap.docChanges().forEach(change=>{
+        const fsId = change.doc.id;
+        if(change.type==='removed'){
+          const idx = arr.findIndex(x=>x.fsId===fsId);
+          if(idx>-1) arr.splice(idx,1);
+        } else {
+          const data = change.doc.data();
+          let existing = arr.find(x=>x.fsId===fsId);
+          if(existing){ Object.assign(existing, data, {fsId, approved:true}); }
+          else { arr.push({...data, fsId, approved:true, id: data.id || ('fs_'+fsId)}); }
+        }
+      });
+      saveStore();
+      if(currentScreen==='doctor-list') renderDoctorList('list');
+      if(currentScreen==='user-browse') renderDoctorList('search');
+      if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
+    }, ()=>{ /* offline/permission issue — local data still works */ });
+  });
+
+  // Admin-added categories (see addNewCategory) sync here to every device —
+  // no Firestore Rules edit is ever needed again after the one-time
+  // /appConfig rule, because every future category reuses this same document.
+  FB.onSnapshot(FB.doc(FB.db,'appConfig','categories'), (snap)=>{
+    const list = (snap.exists() && snap.data().list) || [];
+    applyCustomCategories(list);
+  }, ()=>{ /* offline/permission issue — built-in categories still work */ });
 
   FB.onAuthStateChanged(FB.auth, (user)=>{
     isAdminSignedIn = !!user;
     document.getElementById('adminLoginBox').style.display = isAdminSignedIn ? 'none' : 'block';
     document.getElementById('adminPanelBox').style.display = isAdminSignedIn ? 'block' : 'none';
+    document.getElementById('adminAddCategoryBox').style.display = isAdminSignedIn ? 'block' : 'none';
     if(isAdminSignedIn) startPendingApprovalsListener(); else stopPendingApprovalsListener();
   });
 }
 
+let pendingByCollection = {doctors:[], services:[]};
 function startPendingApprovalsListener(){
   const FB = window.MCSFirebase;
-  const doctorsCol = FB.collection(FB.db, 'doctors');
-  const pendingQ = FB.query(doctorsCol, FB.where('approved','==', false));
-  pendingUnsub = FB.onSnapshot(pendingQ, (snap)=>{
-    pendingApprovals = snap.docs.map(d=>({fsId:d.id, ...d.data()}));
-    renderPendingApprovals();
+  SYNCED_COLLECTIONS.forEach(col=>{
+    const colRef = FB.collection(FB.db, col);
+    const pendingQ = FB.query(colRef, FB.where('approved','==', false));
+    const unsub = FB.onSnapshot(pendingQ, (snap)=>{
+      pendingByCollection[col] = snap.docs.map(d=>({fsId:d.id, _col:col, ...d.data()}));
+      pendingApprovals = [...pendingByCollection.doctors, ...pendingByCollection.services];
+      renderPendingApprovals();
+    });
+    pendingUnsubList.push(unsub);
   });
 }
+let pendingUnsubList = [];
 function stopPendingApprovalsListener(){
-  if(pendingUnsub){ pendingUnsub(); pendingUnsub = null; }
+  pendingUnsubList.forEach(u=>u());
+  pendingUnsubList = [];
+  pendingByCollection = {doctors:[], services:[]};
   pendingApprovals = [];
   renderPendingApprovals();
 }
 let pendingEditFsId = null;
 function isDuplicateWhatsapp(d){
-  return store.doctors.some(x=>x.approved!==false && x.fsId!==d.fsId && x.whatsapp===d.whatsapp);
+  const arr = localArrayFor(d._col || 'doctors');
+  return arr.some(x=>x.approved!==false && x.fsId!==d.fsId && x.whatsapp===d.whatsapp);
 }
 function renderPendingApprovals(){
   const wrap = document.getElementById('pendingApprovalsWrap');
@@ -1630,22 +2038,27 @@ function renderPendingApprovals(){
     return;
   }
   wrap.innerHTML = pendingApprovals.map(d=>{
+    const isService = d._col==='services';
+    const catUr = isService ? (CATEGORY_META[d.category]||{}).ur : 'ڈاکٹر';
     const nameUr = d.nameUr || d.name || '(بلا نام)';
-    const sub = [d.specialty, d.hospital, d.city].filter(Boolean).map(escapeHtml).join(' • ');
+    const sub = [catUr, d.specialty||d.type, d.hospital, d.city].filter(Boolean).map(escapeHtml).join(' • ');
     const dupWarn = isDuplicateWhatsapp(d) ? `<div class="doc-pending-badge" style="background:#fecaca;color:#7f1d1d;">⚠️ یہ نمبر پہلے سے منظور شدہ لسٹ میں موجود ہے</div>` : ``;
     if(pendingEditFsId === d.fsId){
+      const typeField = isService
+        ? `<div class="field"><label>${escapeHtml((CATEGORY_META[d.category]||{}).typeLabel||'قسم')}</label><input type="text" id="pe_type_${escapeAttr(d.fsId)}" value="${escapeAttr(d.type||'')}"></div>`
+        : `<div class="field"><label>شعبہ</label><input type="text" id="pe_dept_${escapeAttr(d.fsId)}" value="${escapeAttr(d.dept||'')}"></div>
+        <div class="field"><label>اسپیشلٹی</label><input type="text" id="pe_spec_${escapeAttr(d.fsId)}" value="${escapeAttr(d.specialty||'')}"></div>
+        <div class="field"><label>ہسپتال</label><input type="text" id="pe_hosp_${escapeAttr(d.fsId)}" value="${escapeAttr(d.hospital||'')}"></div>`;
       return `
       <div class="snap-item" style="display:block;">
         <div class="snap-meta" style="margin-bottom:8px;"><b>${escapeHtml(nameUr)} — ترمیم</b></div>
-        <div class="field"><label>شعبہ</label><input type="text" id="pe_dept_${escapeAttr(d.fsId)}" value="${escapeAttr(d.dept||'')}"></div>
-        <div class="field"><label>اسپیشلٹی</label><input type="text" id="pe_spec_${escapeAttr(d.fsId)}" value="${escapeAttr(d.specialty||'')}"></div>
-        <div class="field"><label>ہسپتال</label><input type="text" id="pe_hosp_${escapeAttr(d.fsId)}" value="${escapeAttr(d.hospital||'')}"></div>
+        ${typeField}
         <div class="field"><label>شہر</label><input type="text" id="pe_city_${escapeAttr(d.fsId)}" value="${escapeAttr(d.city||'')}"></div>
         <div class="field"><label>علاقہ</label><input type="text" id="pe_area_${escapeAttr(d.fsId)}" value="${escapeAttr(d.area||'')}"></div>
         <div class="field"><label>پتہ</label><input type="text" id="pe_addr_${escapeAttr(d.fsId)}" value="${escapeAttr(d.address||'')}"></div>
         <div style="display:flex;gap:6px;">
-          <button onclick="savePendingEdit('${escapeAttr(d.fsId)}', true)" style="background:#dcfce7;color:#166534;">محفوظ و منظور</button>
-          <button onclick="savePendingEdit('${escapeAttr(d.fsId)}', false)" style="background:#dbeafe;color:#1e40af;">صرف محفوظ کریں</button>
+          <button onclick="savePendingEdit('${escapeAttr(d.fsId)}','${d._col}', true)" style="background:#dcfce7;color:#166534;">محفوظ و منظور</button>
+          <button onclick="savePendingEdit('${escapeAttr(d.fsId)}','${d._col}', false)" style="background:#dbeafe;color:#1e40af;">صرف محفوظ کریں</button>
           <button onclick="pendingEditFsId=null; renderPendingApprovals();" style="background:#f3f4f6;color:#374151;">منسوخ</button>
         </div>
       </div>`;
@@ -1660,22 +2073,25 @@ function renderPendingApprovals(){
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button onclick="pendingEditFsId='${escapeAttr(d.fsId)}'; renderPendingApprovals();" style="background:#e6f6f4;color:#0f766e;">ترمیم</button>
           ${d.whatsapp ? `<button onclick="messageSubmitter('${escapeAttr(d.whatsapp)}','${escapeAttr(nameUr)}')" style="background:#dbeafe;color:#1e40af;">📩 پیغام بھیجیں</button>` : ``}
-          <button onclick="approveDoctor('${escapeAttr(d.fsId)}')" style="background:#dcfce7;color:#166534;">منظور</button>
-          <button onclick="rejectDoctor('${escapeAttr(d.fsId)}')" style="background:#fee2e2;color:#991b1b;">حذف</button>
+          <button onclick="approvePending('${escapeAttr(d.fsId)}','${d._col}')" style="background:#dcfce7;color:#166534;">منظور</button>
+          <button onclick="rejectPending('${escapeAttr(d.fsId)}','${d._col}')" style="background:#fee2e2;color:#991b1b;">حذف</button>
         </div>
       </div>`;
   }).join('');
 }
-function savePendingEdit(fsId, alsoApprove){
+function savePendingEdit(fsId, col, alsoApprove){
   const FB = window.MCSFirebase;
   if(!FB) return;
-  const g = id=>document.getElementById(id).value.trim();
-  const payload = {
-    dept: g('pe_dept_'+fsId), specialty: g('pe_spec_'+fsId), hospital: g('pe_hosp_'+fsId),
-    city: g('pe_city_'+fsId), area: g('pe_area_'+fsId), address: g('pe_addr_'+fsId)
-  };
+  const g = id=>{ const el = document.getElementById(id); return el ? el.value.trim() : undefined; };
+  let payload;
+  if(col==='services'){
+    payload = { type: g('pe_type_'+fsId), city: g('pe_city_'+fsId), area: g('pe_area_'+fsId), address: g('pe_addr_'+fsId) };
+  } else {
+    payload = { dept: g('pe_dept_'+fsId), specialty: g('pe_spec_'+fsId), hospital: g('pe_hosp_'+fsId),
+      city: g('pe_city_'+fsId), area: g('pe_area_'+fsId), address: g('pe_addr_'+fsId) };
+  }
   if(alsoApprove) payload.approved = true;
-  FB.updateDoc(FB.doc(FB.db,'doctors',fsId), payload)
+  FB.updateDoc(FB.doc(FB.db,col,fsId), payload)
     .then(()=>{ showToast(alsoApprove ? 'محفوظ اور منظور کر دیا گیا ✓' : 'محفوظ کر دیا گیا ✓'); pendingEditFsId=null; })
     .catch(()=>showToast('خرابی — دوبارہ کوشش کریں'));
 }
@@ -1693,18 +2109,18 @@ function adminLogout(){
   const FB = window.MCSFirebase;
   if(FB) FB.signOut(FB.auth);
 }
-function approveDoctor(fsId){
+function approvePending(fsId, col){
   const FB = window.MCSFirebase;
   if(!FB) return;
-  FB.updateDoc(FB.doc(FB.db,'doctors',fsId), {approved:true})
+  FB.updateDoc(FB.doc(FB.db,col,fsId), {approved:true})
     .then(()=>showToast('منظور کر دیا گیا ✓'))
     .catch(()=>showToast('خرابی — دوبارہ کوشش کریں'));
 }
-function rejectDoctor(fsId){
+function rejectPending(fsId, col){
   if(!confirm('یہ اندراج مستقل حذف کر دی جائے؟')) return;
   const FB = window.MCSFirebase;
   if(!FB) return;
-  FB.deleteDoc(FB.doc(FB.db,'doctors',fsId))
+  FB.deleteDoc(FB.doc(FB.db,col,fsId))
     .then(()=>showToast('حذف کر دیا گیا'))
     .catch(()=>showToast('خرابی — دوبارہ کوشش کریں'));
 }
@@ -1756,6 +2172,8 @@ renderAutoBackupHint();
 checkAutoBackupCheckpoints();
 setInterval(checkAutoBackupCheckpoints, 5*60*1000); // re-check every 5 min in case app stays open across a checkpoint
 enhanceAllCapsuleSelects();
+applyCustomCategories(store.customCategories || []); // offline-cached custom categories show immediately
+renderCustomCategoryTiles();
 startFirebaseSyncWhenReady();
 
 /* ---------- Service worker registration ---------- */
@@ -1771,7 +2189,7 @@ if('serviceWorker' in navigator){
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
   import {
     initializeFirestore, persistentLocalCache,
-    collection, addDoc, doc, updateDoc, deleteDoc,
+    collection, addDoc, doc, setDoc, updateDoc, deleteDoc,
     onSnapshot, query, where, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
   import {
@@ -1792,7 +2210,7 @@ if('serviceWorker' in navigator){
     const db = initializeFirestore(fbApp, { localCache: persistentLocalCache() });
     const auth = getAuth(fbApp);
     window.MCSFirebase = {
-      db, auth, collection, addDoc, doc, updateDoc, deleteDoc,
+      db, auth, collection, addDoc, doc, setDoc, updateDoc, deleteDoc,
       onSnapshot, query, where, serverTimestamp,
       signInWithEmailAndPassword, signOut, onAuthStateChanged
     };
