@@ -234,15 +234,6 @@
   }
   .add-circle:active{transform:scale(0.95);}
   .add-circle.pick-contact{background:var(--primary);}
-  .loc-filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px;}
-  .loc-filter-bar select{
-    flex:1;min-width:82px;padding:9px 6px;border-radius:10px;border:1.5px solid #d1d5db;
-    font-size:12.5px;background:#fff;color:var(--text);
-  }
-  .loc-filter-bar .lf-clear{
-    flex:0 0 auto;padding:9px 10px;border-radius:10px;border:1.5px solid #d1d5db;
-    background:#fff;color:var(--muted);font-size:12.5px;
-  }
   .add-circle.pick-contact svg{width:22px;height:22px;}
 
   /* ===== List ===== */
@@ -465,14 +456,6 @@
         <h2>ڈاکٹرز کی فہرست</h2>
         <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
-      <div class="loc-filter-bar">
-        <select id="f_country_list" onchange="onFilterChange('list','country')"></select>
-        <select id="f_province_list" onchange="onFilterChange('list','province')"></select>
-        <select id="f_district_list" onchange="onFilterChange('list','district')"></select>
-        <select id="f_city_list" onchange="onFilterChange('list','city')"></select>
-        <select id="f_area_list" onchange="onFilterChange('list','area')"></select>
-        <button class="lf-clear" onclick="clearLocFilter('list')">صاف کریں</button>
-      </div>
       <div id="doctorListWrap"></div>
     </div>
     <button class="fab" onclick="openDoctorForm()">➕ نیا ڈاکٹر شامل کریں</button>
@@ -488,14 +471,6 @@
       </div>
       <div class="field">
         <input type="text" id="searchBox" placeholder="نام، شعبہ یا ہسپتال لکھیں..." oninput="renderDoctorList('search')">
-      </div>
-      <div class="loc-filter-bar">
-        <select id="f_country_search" onchange="onFilterChange('search','country')"></select>
-        <select id="f_province_search" onchange="onFilterChange('search','province')"></select>
-        <select id="f_district_search" onchange="onFilterChange('search','district')"></select>
-        <select id="f_city_search" onchange="onFilterChange('search','city')"></select>
-        <select id="f_area_search" onchange="onFilterChange('search','area')"></select>
-        <button class="lf-clear" onclick="clearLocFilter('search')">صاف کریں</button>
       </div>
       <div id="searchResultsWrap"></div>
     </div>
@@ -521,49 +496,39 @@
       <input type="text" id="docNameEn" placeholder="e.g. Dr. Muhammad Ali" dir="ltr" style="text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;">
     </div>
 
-    <div class="field">
-      <label>ملک (Country)</label>
-      <div class="field-with-add">
-        <select id="docCountry" onchange="onLocChange('country')"></select>
-        <button class="add-circle" onclick="promptAddLocationOption('country')">+</button>
-      </div>
-    </div>
+    <div class="cp-section-title" style="margin-top:6px;">📍 مقام</div>
 
     <div class="field">
       <label>صوبہ (Province)</label>
-      <div class="field-with-add">
-        <select id="docProvince" onchange="onLocChange('province')"></select>
-        <button class="add-circle" onclick="promptAddLocationOption('province')">+</button>
-      </div>
+      <select id="docProvince" onchange="onProvinceChange()"></select>
+      <input type="text" id="docProvinceCustom" placeholder="صوبے کا نام لکھیں" style="display:none;margin-top:8px;">
     </div>
 
     <div class="field">
       <label>ضلع (District)</label>
-      <div class="field-with-add">
-        <select id="docDistrict" onchange="onLocChange('district')"></select>
-        <button class="add-circle" onclick="promptAddLocationOption('district')">+</button>
-      </div>
+      <select id="docDistrict"></select>
+      <input type="text" id="docDistrictCustom" placeholder="ضلع کا نام لکھیں" style="display:none;margin-top:8px;">
     </div>
 
     <div class="field">
       <label>شہر (City)</label>
       <div class="field-with-add">
-        <select id="docCity" onchange="onLocChange('city')"></select>
-        <button class="add-circle" onclick="promptAddLocationOption('city')">+</button>
+        <select id="docCity"></select>
+        <button class="add-circle" onclick="promptAddOption('city','docCity')">+</button>
       </div>
     </div>
 
     <div class="field">
-      <label>علاقہ / بازار (Area)</label>
+      <label>علاقہ (Area)</label>
       <div class="field-with-add">
-        <select id="docArea" onchange="onLocChange('area')"></select>
-        <button class="add-circle" onclick="promptAddLocationOption('area')">+</button>
+        <select id="docArea"></select>
+        <button class="add-circle" onclick="promptAddOption('area','docArea')">+</button>
       </div>
     </div>
 
     <div class="field">
-      <label>مکمل پتہ (تفصیل)</label>
-      <input type="text" id="docAddress" placeholder="مثلاً دکان/کلینک نمبر، قریبی نشانی وغیرہ">
+      <label>پتہ (Address) — گلی، دکان نمبر، لینڈ مارک وغیرہ</label>
+      <input type="text" id="docAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
     </div>
 
     <div class="field">
@@ -686,8 +651,39 @@
    ========================================================= */
 
 const APP_VERSION = "MCS 1.9.0"; // internal only — not shown on screen (kept in code for our own tracking)
-const APP_BUILD = "بدھ 23 ستمبر 0729AM"; // shown on home page badge — freshness date/time
+const APP_BUILD = "ہفتہ 26 ستمبر 0710PM"; // shown on home page badge — freshness date/time
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
+
+/* ---------- Location data: Country > Province > District (fixed geography) ----------
+   City and Area stay free-text/"+"-addable since the app is deliberately not
+   tied to one city. Every province/district select gets a "خود لکھیں" custom
+   option so a missing place can always be typed in. */
+const COUNTRIES = ['پاکستان'];
+const PROVINCES = {
+  'پاکستان': ['پنجاب', 'سندھ', 'خیبر پختونخوا', 'بلوچستان', 'اسلام آباد', 'آزاد کشمیر', 'گلگت بلتستان']
+};
+const DISTRICTS = {
+  'پنجاب': ['اٹک', 'بہاولنگر', 'بہاولپور', 'بھکر', 'چکوال', 'چنیوٹ', 'ڈیرہ غازی خان',
+    'فیصل آباد', 'گوجرانوالہ', 'گجرات', 'حافظ آباد', 'جھنگ', 'جہلم', 'قصور',
+    'خانیوال', 'خوشاب', 'لاہور', 'لیہ', 'لودھراں', 'منڈی بہاؤالدین', 'میانوالی',
+    'ملتان', 'مظفر گڑھ', 'نارووال', 'ننکانہ صاحب', 'اوکاڑہ', 'پاکپتن',
+    'راولپنڈی', 'مری', 'رحیم یار خان', 'راجن پور', 'ساہیوال', 'سرگودھا',
+    'شیخوپورہ', 'سیالکوٹ', 'ٹوبہ ٹیک سنگھ', 'وہاڑی', 'وزیرآباد', 'کوٹ ادو', 'تونسہ شریف'],
+  'سندھ': ['کراچی', 'حیدرآباد', 'سکھر', 'لاڑکانہ', 'میرپورخاص', 'نواب شاہ (شہید بینظیر آباد)',
+    'دادو', 'جامشورو', 'تھرپارکر', 'ٹنڈو الہ یار', 'ٹنڈو محمد خان', 'بدین',
+    'ٹھٹھہ', 'سجاول', 'مٹیاری', 'شکارپور', 'گھوٹکی', 'خیرپور', 'قمبر شہدادکوٹ',
+    'جیکب آباد', 'کشمور', 'سانگھڑ', 'عمرکوٹ'],
+  'خیبر پختونخوا': ['پشاور', 'مردان', 'ایبٹ آباد', 'سوات', 'ڈیرہ اسماعیل خان', 'کوہاٹ',
+    'بنوں', 'ہری پور', 'مانسہرہ', 'صوابی', 'نوشہرہ', 'چارسدہ', 'کرک',
+    'ملاکنڈ', 'بونیر', 'شانگلہ', 'باجوڑ', 'خیبر', 'مہمند', 'اورکزئی', 'کرم',
+    'شمالی وزیرستان', 'جنوبی وزیرستان', 'ٹانک', 'لکی مروت', 'بٹگرام', 'کوہستان'],
+  'بلوچستان': ['کوئٹہ', 'گوادر', 'تربت', 'سبی', 'خضدار', 'چمن', 'ژوب', 'لورالائی',
+    'ڈیرہ بگٹی', 'نصیرآباد', 'پشین', 'قلات', 'مستونگ', 'زیارت', 'اوتھل'],
+  'اسلام آباد': ['اسلام آباد'],
+  'آزاد کشمیر': ['مظفر آباد', 'میرپور', 'راولاکوٹ', 'کوٹلی', 'باغ', 'بھمبر', 'نیلم', 'حویلی'],
+  'گلگت بلتستان': ['گلگت', 'سکردو', 'ہنزہ', 'غذر', 'استور', 'دیامر', 'شگر', 'کھرمنگ']
+};
+const CUSTOM_OPTION = '__custom__';
 
 /* ---------- Storage helpers ---------- */
 function loadStore(){
@@ -698,21 +694,23 @@ function loadStore(){
       departments: ["میڈیسن","سرجری","امراضِ چشم","امراضِ اطفال","امراضِ نسواں","جلدی امراض","دل کے امراض","دانتوں کے امراض","ہڈیوں کے امراض","نفسیاتی امراض"],
       specialties: ["جنرل فزیشن","سرجن","سکن اسپیشلسٹ","چائلڈ اسپیشلسٹ","ہارٹ اسپیشلسٹ","بون اسپیشلسٹ","آئی اسپیشلسٹ","گائناکالوجسٹ"],
       hospitals: ["سول ہسپتال","ڈی ایچ کیو ہسپتال","نجی کلینک"],
-      locations: { countries:[], provinces:{}, districts:{}, cities:{}, areas:{} },
+      cities: [],
+      areas: [],
       contact: {...DEFAULT_CONTACT}
     };
   }
   try{
     const parsed = JSON.parse(raw);
     parsed.contact = parsed.contact || {...DEFAULT_CONTACT};
-    parsed.locations = parsed.locations || { countries:[], provinces:{}, districts:{}, cities:{}, areas:{} };
+    parsed.cities = parsed.cities || [];
+    parsed.areas = parsed.areas || [];
     return parsed;
   }catch(e){
     return loadStoreFallback();
   }
 }
 function loadStoreFallback(){
-  return { doctors:[], departments:[], specialties:[], hospitals:[], locations:{ countries:[], provinces:{}, districts:{}, cities:{}, areas:{} }, contact:{...DEFAULT_CONTACT} };
+  return { doctors:[], departments:[], specialties:[], hospitals:[], cities:[], areas:[], contact:{...DEFAULT_CONTACT} };
 }
 function saveStore(){ localStorage.setItem('mcsData', JSON.stringify(store)); }
 let store = loadStore();
@@ -729,8 +727,8 @@ function goScreen(name, fromHistory){
   window.scrollTo(0,0);
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
-  if(name==='doctor-list'){ initFilterBar('list'); renderDoctorList('list'); }
-  if(name==='user-browse'){ initFilterBar('search'); renderDoctorList('search'); }
+  if(name==='doctor-list') renderDoctorList('list');
+  if(name==='user-browse') renderDoctorList('search');
 }
 
 function openSearch(){
@@ -795,14 +793,74 @@ function refreshAllDropdowns(){
   populateDropdown('docDept', store.departments);
   populateDropdown('docSpecialty', store.specialties);
   populateDropdown('docHospital', store.hospitals);
+  populateDropdown('docCity', store.cities);
+  populateDropdown('docArea', store.areas);
+  populateProvinceDropdown();
+}
+
+/* ---------- Location cascading (Province -> District) ---------- */
+function populateProvinceDropdown(){
+  const sel = document.getElementById('docProvince');
+  const list = PROVINCES['پاکستان'] || [];
+  sel.innerHTML = list.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('')
+    + `<option value="${CUSTOM_OPTION}">دیگر (خود لکھیں)</option>`;
+}
+function populateDistrictDropdown(province, selectedValue){
+  const sel = document.getElementById('docDistrict');
+  const list = DISTRICTS[province] || [];
+  sel.innerHTML = list.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('')
+    + `<option value="${CUSTOM_OPTION}">دیگر (خود لکھیں)</option>`;
+  if(selectedValue) sel.value = selectedValue;
+}
+function onProvinceChange(){
+  const province = document.getElementById('docProvince').value;
+  const customEl = document.getElementById('docProvinceCustom');
+  customEl.style.display = (province===CUSTOM_OPTION) ? 'block' : 'none';
+  populateDistrictDropdown(province==='__custom__' ? '' : province);
+}
+function setLocationFormValues(d){
+  const province = d.province || '';
+  const inList = (PROVINCES['پاکستان']||[]).includes(province);
+  document.getElementById('docProvince').value = inList ? province : (province ? CUSTOM_OPTION : (PROVINCES['پاکستان']||[])[0]||'');
+  document.getElementById('docProvinceCustom').style.display = (!inList && province) ? 'block' : 'none';
+  document.getElementById('docProvinceCustom').value = (!inList && province) ? province : '';
+  populateDistrictDropdown(inList ? province : '');
+  const district = d.district || '';
+  const districtList = DISTRICTS[inList ? province : ''] || [];
+  const districtInList = districtList.includes(district);
+  document.getElementById('docDistrict').value = districtInList ? district : (district ? CUSTOM_OPTION : '');
+  document.getElementById('docDistrictCustom').style.display = (!districtInList && district) ? 'block' : 'none';
+  document.getElementById('docDistrictCustom').value = (!districtInList && district) ? district : '';
+  if(d.city) document.getElementById('docCity').value = d.city;
+  if(d.area) document.getElementById('docArea').value = d.area;
+}
+function resetLocationFormValues(){
+  populateProvinceDropdown();
+  document.getElementById('docProvince').value = (PROVINCES['پاکستان']||[])[0] || '';
+  document.getElementById('docProvinceCustom').style.display = 'none';
+  document.getElementById('docProvinceCustom').value = '';
+  populateDistrictDropdown(document.getElementById('docProvince').value);
+  document.getElementById('docDistrictCustom').style.display = 'none';
+  document.getElementById('docDistrictCustom').value = '';
+}
+function readLocationFormValues(){
+  const provinceSel = document.getElementById('docProvince').value;
+  const province = provinceSel===CUSTOM_OPTION ? document.getElementById('docProvinceCustom').value.trim() : provinceSel;
+  const districtSel = document.getElementById('docDistrict').value;
+  const district = districtSel===CUSTOM_OPTION ? document.getElementById('docDistrictCustom').value.trim() : districtSel;
+  return {
+    country: 'پاکستان',
+    province, district,
+    city: document.getElementById('docCity').value,
+    area: document.getElementById('docArea').value
+  };
 }
 
 /* ---------- Add-option (plus button) flow ---------- */
 let addOptionTargetKey = null, addOptionTargetSelect = null;
 function promptAddOption(key, selectId){
-  addOptionMode = 'flat';
   addOptionTargetKey = key; addOptionTargetSelect = selectId;
-  const labels = {department:'نیا شعبہ', specialty:'نئی اسپیشلٹی', hospital:'نیا ہسپتال'};
+  const labels = {department:'نیا شعبہ', specialty:'نئی اسپیشلٹی', hospital:'نیا ہسپتال', city:'نیا شہر', area:'نیا علاقہ'};
   document.getElementById('addOptionTitle').textContent = labels[key] || 'نئی چیز شامل کریں';
   document.getElementById('addOptionInput').value = '';
   openModal('addOptionModal');
@@ -810,130 +868,13 @@ function promptAddOption(key, selectId){
 function confirmAddOption(){
   const val = document.getElementById('addOptionInput').value.trim();
   if(!val){ showToast('نام لکھیں'); return; }
-
-  if(addOptionMode==='location'){
-    const level = addOptionLocLevel;
-    const pLevel = locParentLevel(level);
-    const parentVal = pLevel ? document.getElementById(LOC_FORM_SEL[pLevel]).value : null;
-    locAddValue(level, parentVal, val);
-    saveStore();
-    populateFormLocLevel(level);
-    document.getElementById(LOC_FORM_SEL[level]).value = val;
-    onLocChange(level); // reset/populate everything below this level
-    closeModal('addOptionModal');
-    showToast('شامل کر دیا گیا ✓');
-    return;
-  }
-
-  addOptionMode = 'flat';
-  const mapKey = {department:'departments', specialty:'specialties', hospital:'hospitals'}[addOptionTargetKey];
+  const mapKey = {department:'departments', specialty:'specialties', hospital:'hospitals', city:'cities', area:'areas'}[addOptionTargetKey];
   if(!store[mapKey].includes(val)) store[mapKey].push(val);
   saveStore();
   populateDropdown(addOptionTargetSelect, store[mapKey]);
   document.getElementById(addOptionTargetSelect).value = val;
   closeModal('addOptionModal');
   showToast('شامل کر دیا گیا ✓');
-}
-
-/* ---------- Location cascade (Country > Province > District > City > Area) ---------- */
-const LOC_ORDER = ['country','province','district','city','area'];
-const LOC_LABELS = { country:'نیا ملک', province:'نیا صوبہ', district:'نیا ضلع', city:'نیا شہر', area:'نیا علاقہ / بازار' };
-const LOC_FORM_SEL = { country:'docCountry', province:'docProvince', district:'docDistrict', city:'docCity', area:'docArea' };
-
-// Strict list: only the exact children of the given parent value (used by the FORM, so saved records are accurate).
-function locListStrict(level, parentVal){
-  const L = store.locations;
-  if(level==='country') return L.countries;
-  const map = { province:L.provinces, district:L.districts, city:L.cities, area:L.areas };
-  return (map[level] && map[level][parentVal]) || [];
-}
-// Lenient list: if no parent chosen, show the union of all children (used by browsing FILTERS, so people can filter by e.g. an area without first picking every level above it).
-function locListLenient(level, parentVal){
-  const L = store.locations;
-  if(level==='country') return L.countries;
-  const map = { province:L.provinces, district:L.districts, city:L.cities, area:L.areas };
-  if(parentVal) return map[level][parentVal] || [];
-  return [...new Set(Object.values(map[level]).flat())];
-}
-function locAddValue(level, parentVal, val){
-  const L = store.locations;
-  if(level==='country'){ if(!L.countries.includes(val)) L.countries.push(val); return; }
-  const map = { province:L.provinces, district:L.districts, city:L.cities, area:L.areas };
-  map[level][parentVal] = map[level][parentVal] || [];
-  if(!map[level][parentVal].includes(val)) map[level][parentVal].push(val);
-}
-function locParentLevel(level){ const i=LOC_ORDER.indexOf(level); return i>0 ? LOC_ORDER[i-1] : null; }
-
-/* ---- Form cascade ---- */
-function populateFormLocLevel(level){
-  const pLevel = locParentLevel(level);
-  const parentVal = pLevel ? document.getElementById(LOC_FORM_SEL[pLevel]).value : null;
-  populateDropdown(LOC_FORM_SEL[level], locListStrict(level, parentVal));
-}
-function refreshLocDropdowns(d){
-  LOC_ORDER.forEach(level=>{
-    populateFormLocLevel(level);
-    const val = d ? d[level] : null;
-    if(val) document.getElementById(LOC_FORM_SEL[level]).value = val;
-  });
-}
-function onLocChange(level){
-  const idx = LOC_ORDER.indexOf(level);
-  for(let i=idx+1;i<LOC_ORDER.length;i++) populateFormLocLevel(LOC_ORDER[i]);
-}
-
-/* ---- "+" quick-add for location levels ---- */
-let addOptionMode = 'flat'; // 'flat' | 'location'
-let addOptionLocLevel = null;
-function promptAddLocationOption(level){
-  const pLevel = locParentLevel(level);
-  if(pLevel && !document.getElementById(LOC_FORM_SEL[pLevel]).value.trim()){
-    showToast('پہلے اوپر والا خانہ منتخب یا شامل کریں');
-    return;
-  }
-  addOptionMode = 'location';
-  addOptionLocLevel = level;
-  document.getElementById('addOptionTitle').textContent = LOC_LABELS[level] || 'نئی چیز شامل کریں';
-  document.getElementById('addOptionInput').value = '';
-  openModal('addOptionModal');
-}
-
-/* ---- Browse filter bar (Province > District > City > Area, plus Country) ---- */
-function filterSelId(mode, level){ return 'f_'+level+'_'+mode; }
-function populateFilterLevel(mode, level){
-  const el = document.getElementById(filterSelId(mode, level));
-  if(!el) return;
-  const pLevel = locParentLevel(level);
-  const parentVal = pLevel ? document.getElementById(filterSelId(mode, pLevel)).value : null;
-  const arr = locListLenient(level, parentVal);
-  const cur = el.value;
-  const allLabel = level==='country' ? 'ملک — ہر' : level==='province' ? 'صوبہ — ہر' : level==='district' ? 'ضلع — ہر' : level==='city' ? 'شہر — ہر' : 'علاقہ — ہر';
-  el.innerHTML = `<option value="">${allLabel}</option>` + arr.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
-  if(arr.includes(cur)) el.value = cur;
-}
-function initFilterBar(mode){
-  LOC_ORDER.forEach(level=>populateFilterLevel(mode, level));
-}
-function onFilterChange(mode, level){
-  const idx = LOC_ORDER.indexOf(level);
-  for(let i=idx+1;i<LOC_ORDER.length;i++){
-    document.getElementById(filterSelId(mode, LOC_ORDER[i])).value = '';
-    populateFilterLevel(mode, LOC_ORDER[i]);
-  }
-  renderDoctorList(mode);
-}
-function clearLocFilter(mode){
-  LOC_ORDER.forEach(level=>{ document.getElementById(filterSelId(mode, level)).value=''; });
-  LOC_ORDER.forEach(level=>populateFilterLevel(mode, level));
-  renderDoctorList(mode);
-}
-function getActiveLocFilter(mode){
-  const vals = {};
-  LOC_ORDER.forEach(level=>{
-    const el = document.getElementById(filterSelId(mode, level));
-    vals[level] = el ? el.value : '';
-  });
-  return vals;
 }
 
 /* ---------- Doctor CRUD ---------- */
@@ -951,14 +892,14 @@ function openDoctorForm(id){
     document.getElementById('docSpecialty').value = d.specialty;
     document.getElementById('docWhatsapp').value = d.whatsapp;
     document.getElementById('docHospital').value = d.hospital;
-    refreshLocDropdowns(d);
+    setLocationFormValues(d);
   } else {
     document.getElementById('doctorFormTitle').textContent = 'نیا ڈاکٹر شامل کریں';
     document.getElementById('docNameUr').value = '';
     document.getElementById('docNameEn').value = '';
     document.getElementById('docAddress').value = '';
     document.getElementById('docWhatsapp').value = '';
-    refreshLocDropdowns(null);
+    resetLocationFormValues();
   }
   openModal('doctorFormModal');
 }
@@ -970,16 +911,14 @@ function saveDoctor(){
   if(!nameUr){ showToast('ڈاکٹر کا نام اردو میں لکھیں'); return; }
   if(!nameEn){ showToast('Doctor name in English likhein'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
+  const loc = readLocationFormValues();
   const data = {
     nameUr, nameEn, name: nameUr, address, whatsapp,
     dept: document.getElementById('docDept').value,
     specialty: document.getElementById('docSpecialty').value,
     hospital: document.getElementById('docHospital').value,
-    country: document.getElementById('docCountry').value,
-    province: document.getElementById('docProvince').value,
-    district: document.getElementById('docDistrict').value,
-    city: document.getElementById('docCity').value,
-    area: document.getElementById('docArea').value,
+    country: loc.country, province: loc.province, district: loc.district,
+    city: loc.city, area: loc.area,
   };
   if(editingDoctorId){
     const d = store.doctors.find(x=>x.id===editingDoctorId);
@@ -1007,17 +946,6 @@ function deleteDoctor(id){
 function renderDoctorList(mode){
   const listWrap = mode==='list' ? document.getElementById('doctorListWrap') : document.getElementById('searchResultsWrap');
   let items = store.doctors;
-  const locF = getActiveLocFilter(mode);
-  if(locF.country || locF.province || locF.district || locF.city || locF.area){
-    items = items.filter(d=>{
-      if(locF.country && d.country!==locF.country) return false;
-      if(locF.province && d.province!==locF.province) return false;
-      if(locF.district && d.district!==locF.district) return false;
-      if(locF.city && d.city!==locF.city) return false;
-      if(locF.area && d.area!==locF.area) return false;
-      return true;
-    });
-  }
   if(mode==='search'){
     const qRaw = (document.getElementById('searchBox').value||'').trim();
     const q = qRaw.toLowerCase();
@@ -1033,8 +961,8 @@ function renderDoctorList(mode){
         (d.dept||'').toLowerCase().includes(q) ||
         (d.specialty||'').toLowerCase().includes(q) ||
         (d.hospital||'').toLowerCase().includes(q) ||
-        (d.area||'').toLowerCase().includes(q) ||
         (d.city||'').toLowerCase().includes(q) ||
+        (d.area||'').toLowerCase().includes(q) ||
         (d.district||'').toLowerCase().includes(q) ||
         (d.province||'').toLowerCase().includes(q);
       });
@@ -1050,8 +978,6 @@ function renderDoctorList(mode){
     const intl = '92' + digits.replace(/^0/,'');
     const sub = [d.specialty, d.hospital].filter(Boolean).map(escapeHtml).join('<span class="dot">•</span>');
     const nameUr = d.nameUr || d.name || '';
-    const locLine = [d.area, d.city].filter(Boolean).join('، ');
-    const addrLine = [locLine, d.address].filter(Boolean).join(' — ');
     return `
     <div class="doc-card">
       <div class="doc-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
@@ -1061,7 +987,8 @@ function renderDoctorList(mode){
         </div>
         ${d.nameEn ? `<div class="doc-name-en">${escapeHtml(d.nameEn)}</div>` : ``}
         <div class="doc-sub">${sub || escapeHtml(d.dept||'')}</div>
-        ${addrLine ? `<div class="doc-address">📍 ${escapeHtml(addrLine)}</div>` : ``}
+        ${(d.city||d.area) ? `<div class="doc-address">📍 ${[d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
+        ${d.address ? `<div class="doc-address">${escapeHtml(d.address)}</div>` : ``}
         <div class="doc-num">${escapeHtml(num||'—')}</div>
       </div>
 <div class="doc-side">
@@ -1217,6 +1144,8 @@ document.getElementById('restoreFileInput').addEventListener('change', async (e)
     store.departments = incoming.departments || [];
     store.specialties = incoming.specialties || [];
     store.hospitals = incoming.hospitals || [];
+    store.cities = incoming.cities || [];
+    store.areas = incoming.areas || [];
     store.contact = incoming.contact || {...DEFAULT_CONTACT};
     saveStore();
     refreshAllDropdowns();
@@ -1290,6 +1219,8 @@ function saveAutoSnapshot(label){
       departments: store.departments,
       specialties: store.specialties,
       hospitals: store.hospitals,
+      cities: store.cities,
+      areas: store.areas,
       contact: store.contact
     }
   });
@@ -1364,6 +1295,8 @@ function restoreAutoSnapshot(idx){
   store.departments = snap.data.departments || [];
   store.specialties = snap.data.specialties || [];
   store.hospitals = snap.data.hospitals || [];
+  store.cities = snap.data.cities || [];
+  store.areas = snap.data.areas || [];
   store.contact = snap.data.contact || {...DEFAULT_CONTACT};
   saveStore();
   refreshAllDropdowns();
