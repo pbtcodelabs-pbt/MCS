@@ -112,6 +112,16 @@
   /* ===== Home (v1.7 professional) ===== */
   #screen-specialist-categories .inner, #screen-business-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner, #screen-service-list .inner{padding:16px;}
   #screen-home{padding-bottom:24px;background:var(--bg);}
+  /* ===== ٹکر پٹی — رنگ یہاں سے بدلیں ===== */
+  :root{ --ticker-bg1:#0d3b66; --ticker-bg2:#123a5e; --ticker-text:#f4d58d; --ticker-h:26px; }
+  .mcs-ticker{position:fixed;top:0;left:0;right:0;z-index:9999;overflow:hidden;
+    background:linear-gradient(90deg,var(--ticker-bg1),var(--ticker-bg2));border-bottom:1px solid #d4a017;
+    padding:6px 0;white-space:nowrap;height:var(--ticker-h);box-sizing:border-box;
+    box-shadow:0 2px 6px rgba(0,0,0,.25);}
+  .mcs-ticker-track{display:inline-flex;gap:48px;animation:mcsTickerMove 30s linear infinite;will-change:transform;}
+  .mcs-ticker-track span{font-size:12.5px;color:var(--ticker-text);font-weight:600;white-space:nowrap;}
+  @keyframes mcsTickerMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  #app{padding-top:var(--ticker-h);}
   .hero{
     position:relative;overflow:hidden;
     background:linear-gradient(160deg,#0d3b66 0%,#0f766e 70%,#11897f 100%);
@@ -392,7 +402,7 @@
 
   /* ===== Backup / Restore ===== */
   .backup-strip{
-    position:fixed;top:0;left:0;right:0;z-index:9998;
+    position:fixed;top:26px;left:0;right:0;z-index:9998;
     background:#fff;padding:10px 16px 12px;
     box-shadow:0 3px 10px rgba(0,0,0,0.12);
     transform:translateY(-100%);
@@ -433,6 +443,7 @@
 </style>
 </head>
 <body>
+<div class="mcs-ticker" id="mcsTicker"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
 <div class="backup-strip" id="backupStrip">
   <div class="backup-strip-label" id="backupStripLabel">بیک اپ ہو رہا ہے...</div>
   <div class="backup-progress-track"><div class="backup-progress-fill" id="backupProgressFill"></div></div>
@@ -767,15 +778,17 @@
     <div style="clear:both;"></div>
 
     <div id="cpContent">
-      <div class="field">
-        <label>واٹس ایپ / ایس ایم ایس نمبر</label>
-        <input type="text" id="cpWhatsapp">
+      <div id="cpContactBox" style="display:none;">
+        <div class="field">
+          <label>واٹس ایپ / ایس ایم ایس نمبر</label>
+          <input type="text" id="cpWhatsapp">
+        </div>
+        <div class="field">
+          <label>جی میل</label>
+          <input type="text" id="cpGmail">
+        </div>
+        <button class="btn block secondary" onclick="saveDevContact()">رابطہ محفوظ کریں</button>
       </div>
-      <div class="field">
-        <label>جی میل</label>
-        <input type="text" id="cpGmail">
-      </div>
-      <button class="btn block secondary" onclick="saveDevContact()">رابطہ محفوظ کریں</button>
 
       <div class="backup-card" style="margin-top:16px;">
         <div class="backup-card-title">☁️ بیک اپ اور بحالی</div>
@@ -873,7 +886,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0815AM";
+const APP_VERSION = "MCS27SEPSU0845AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1882,9 +1895,32 @@ function renderAdminCategoryList(){
       const count = store.services.filter(s=>s.category===k).length;
       return `<div style="display:flex;align-items:center;justify-content:space-between;background:#f6f7f9;border-radius:10px;padding:8px 10px;margin-bottom:6px;">
         <span>${c.emoji||'🏷️'} ${escapeHtml(c.ur)}${count?` <small style="color:var(--muted);">(${count} اندراجات)</small>`:''}</span>
-        <button class="btn secondary" style="padding:4px 10px;font-size:12px;" onclick="deleteCustomCategory('${escapeAttr(k)}')">🗑️ ڈیلیٹ</button>
+        <span>
+          <button class="btn secondary" style="padding:4px 10px;font-size:12px;" onclick="editCustomCategory('${escapeAttr(k)}')">✏️ ایڈٹ</button>
+          <button class="btn secondary" style="padding:4px 10px;font-size:12px;" onclick="deleteCustomCategory('${escapeAttr(k)}')">🗑️ ڈیلیٹ</button>
+        </span>
       </div>`;
     }).join('');
+}
+function editCustomCategory(key){
+  const c = CATEGORY_META[key];
+  if(!c) return;
+  const newUr = prompt('کیٹگری کا نام:', c.ur);
+  if(newUr===null) return;
+  const newEmoji = prompt('ایموجی:', c.emoji||'🏷️');
+  if(newEmoji===null) return;
+  const ur = newUr.trim() || c.ur;
+  const emoji = newEmoji.trim() || c.emoji || '🏷️';
+  Object.assign(c, {ur, emoji, listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں'});
+  store.customCategories = FB_arrayOfCategories();
+  saveStore();
+  renderCustomCategoryTiles();
+  const FB = window.MCSFirebase;
+  if(FB){
+    const ref = FB.doc(FB.db,'appConfig','categories');
+    FB.setDoc(ref, {list: FB_arrayOfCategories()}).catch(()=>{});
+  }
+  showToast('کیٹگری اپ ڈیٹ ہو گئی ✓');
 }
 function deleteCustomCategory(key){
   const c = CATEGORY_META[key];
@@ -2117,6 +2153,7 @@ function toggleAdminPasswordVisibility(){
 function openControlPanel(){
   document.getElementById('cpWhatsapp').value = store.contact.whatsapp;
   document.getElementById('cpGmail').value = store.contact.gmail;
+  document.getElementById('cpContactBox').style.display = isAdminSignedIn ? 'block' : 'none';
   document.getElementById('cpDataSummary').textContent =
     `کل ڈاکٹرز: ${store.doctors.length} | شعبے: ${store.departments.length} | ہسپتال: ${store.hospitals.length}`;
   openModal('controlPanelModal');
@@ -2446,6 +2483,19 @@ function updateVersionBadge(){
 window.addEventListener('online', updateVersionBadge);
 window.addEventListener('offline', updateVersionBadge);
 
+const TICKER_MESSAGES = [
+  '🌟 یہ آپ کی اپنی ایپ ہے — جتنا پھیلائیں گے، اتنا آپ کے لیے آسانی ہوگی!',
+  '📲 اپنے جاننے والوں کا ڈیٹا بھی خود شامل کریں — ایک ساتھ کئی لوگوں کے لیے!',
+  '🔗 اپنی پروفائل شیئر کریں اور نئے لوگوں کو ایپ سے جوڑیں!',
+  '🏙️ اپنے شہر کی مکمل ڈائریکٹری — ہر ضرورت ایک ہی جگہ!'
+];
+function renderTicker(){
+  const el = document.getElementById('tickerTrack');
+  if(!el) return;
+  const line = TICKER_MESSAGES.map(m=>`<span>${escapeHtml(m)}</span>`).join('<span>•</span>');
+  el.innerHTML = line + line; // duplicated once for seamless 50% loop
+}
+
 /* ---------- Glitter version in header ---------- */
 function renderGlitterVersion(){
   const el = document.getElementById('verGlitterText');
@@ -2514,6 +2564,7 @@ function initFirebaseSync(){
     document.getElementById('adminLoginBox').style.display = isAdminSignedIn ? 'none' : 'block';
     document.getElementById('adminPanelBox').style.display = isAdminSignedIn ? 'block' : 'none';
     document.getElementById('adminAddCategoryBox').style.display = isAdminSignedIn ? 'block' : 'none';
+    document.getElementById('cpContactBox').style.display = isAdminSignedIn ? 'block' : 'none';
     if(isAdminSignedIn){ startPendingApprovalsListener(); renderAdminCategoryList(); } else stopPendingApprovalsListener();
     if(currentScreen==='doctor-list') renderDoctorList('list');
     if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
@@ -2689,6 +2740,7 @@ function syncDoctorUpdateToFirebase(localDoctor){
 /* ---------- Init ---------- */
 renderGlitterVersion();
 updateVersionBadge();
+renderTicker();
 refreshAllDropdowns();
 renderLastBackupHint();
 renderAutoBackupHint();
