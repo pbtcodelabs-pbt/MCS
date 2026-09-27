@@ -44,7 +44,9 @@ jobs:
           cat "$HOME/.bubblewrap/config.json"
 
       - name: Restore signing keystore
-        run: echo "${{ secrets.MCS_KEYSTORE_BASE64 }}" | base64 -d > mcs-release.keystore
+        run: |
+          printf '%s' "${{ secrets.MCS_KEYSTORE_BASE64 }}" | tr -d '\n\r ' | base64 -d --ignore-garbage > mcs-release.keystore
+          ls -la mcs-release.keystore
 
       - name: Work out the next version code
         id: ver
