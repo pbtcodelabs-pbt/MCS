@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS27SEPSU0300PM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS27SEPSU0300PM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -118,16 +118,17 @@
   :root{
     --ticker-mid-bg1:#0d3b66; --ticker-mid-bg2:#123a5e; --ticker-text:#f4d58d;
     --ticker-border-color:#d4a017; --ticker-h:34px; --ticker-font-size:14px;
-    --ticker-font-family:'Jameel Noori Nastaleeq Regular';
+    --ticker-font-family:'Jameel Noori Nastaleeq Regular'; --ticker-gap:48px;
   }
   .mcs-ticker{position:fixed;top:0;left:0;right:0;z-index:9999;
     height:var(--ticker-h);box-sizing:border-box;
     box-shadow:0 2px 6px rgba(0,0,0,.25);}
+  .mcs-ticker.tkr-off{display:none;}
   .mcs-ticker-middle{width:100%;height:100%;overflow:hidden;position:relative;box-sizing:border-box;
     background:linear-gradient(90deg,var(--ticker-mid-bg1),var(--ticker-mid-bg2));
     border-top:3px solid var(--ticker-border-color);border-bottom:3px solid var(--ticker-border-color);
     display:flex;align-items:center;}
-  .mcs-ticker-track{display:inline-flex;gap:48px;align-items:center;
+  .mcs-ticker-track{display:inline-flex;gap:var(--ticker-gap);align-items:center;
     animation:mcsTickerMove 30s linear infinite;will-change:transform;
     padding:0 6px;box-sizing:border-box;height:100%;}
   .mcs-ticker-track span{font-size:var(--ticker-font-size);font-family:var(--ticker-font-family),'Segoe UI',sans-serif;
@@ -539,7 +540,7 @@
       <svg class="hero-skyline" viewBox="0 0 400 70" preserveAspectRatio="none" fill="#fff"><path d="M0 70V48h18V30h14v18h10V20h16v28h8V38h12v10h14V12h6V4h4v8h6v36h12V28h18v20h10V36h8V22h14v26h12V8l10-6 10 6v40h14V32h16v16h8V26h12v22h14V16h18v32h10V40h12v8h14V30h16v18h12V22h14v26h12V36h10v34z"/></svg>
       <div class="hero-top">
         <div class="hero-brand">
-          <img class="hero-logo" src="icons/icon-192.png" alt="">
+          <img class="hero-logo" src="icons/icon-192.png?v=MCS27SEPSU0300PM" alt="">
           <small>MY CITY SHINES</small>
         </div>
         <div class="hero-actions">
@@ -548,7 +549,7 @@
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS27SEPSU0300PM" alt="مائی سٹی شائنز">
       <div class="ver-glitter" id="verGlitter">
         <i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i>
         <span class="vg-text" id="verGlitterText"></span>
@@ -947,6 +948,12 @@
 
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
       <div class="backup-card">
+        <div class="backup-card-title">📰 خبروں کی پٹی</div>
+        <button class="btn block secondary" onclick="closeModal('controlPanelModal'); openTickerAdmin();">⚙️ پٹی ترتیب دیں (آن/آف، رفتار، وقفہ، پیغامات)</button>
+      </div>
+
+      <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
+      <div class="backup-card">
         <div class="backup-card-title">🎴 کارڈز کی تحریر (فونٹ اور سائز)</div>
         <div class="field" style="margin-bottom:8px;">
           <label>فونٹ</label>
@@ -1059,6 +1066,10 @@
     </div>
 
     <div class="tk-modal-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#f8f9fa;border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;margin-bottom:12px;">
+        <label for="tkEnabled" style="font-size:12.5px;font-weight:700;">📰 پٹی چلائیں</label>
+        <input type="checkbox" id="tkEnabled" style="width:20px;height:20px;" onchange="updateTickerPreview({enabled:this.checked})">
+      </div>
       <div class="backup-card-title" style="margin:6px 0 4px;font-size:12px;">🎨 تیار رنگ سکیمیں (ٹچ کریں)</div>
       <div id="tkPresetRow" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;"></div>
 
@@ -1096,6 +1107,13 @@
           <label>رفتار</label>
           <input type="range" id="tkSpeed" min="10" max="60" step="2" style="flex:1;" oninput="updateTickerPreview({speed:Number(this.value)}); document.getElementById('tkSpeedVal').textContent=this.value">
           <span id="tkSpeedVal" style="font-size:10.5px;color:var(--muted);"></span>
+        </div>
+      </div>
+      <div class="tk-compact-grid" style="grid-template-columns:1fr;">
+        <div class="tk-swatch-row">
+          <label>پیغامات کا وقفہ</label>
+          <input type="range" id="tkGap" min="16" max="160" step="4" style="flex:1;" oninput="updateTickerPreview({gap:Number(this.value)}); document.getElementById('tkGapVal').textContent=this.value+'px'">
+          <span id="tkGapVal" style="font-size:10.5px;color:var(--muted);"></span>
         </div>
       </div>
 
@@ -1138,7 +1156,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0243PM";
+const APP_VERSION = "MCS27SEPSU0300PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2178,7 +2196,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png';
+    headerLogo.src = 'icons/icon-192.png?v=MCS27SEPSU0300PM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -2330,7 +2348,7 @@ function buildAppPromoCanvas(){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png';
+    headerLogo.src = 'icons/icon-192.png?v=MCS27SEPSU0300PM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -3181,12 +3199,15 @@ const DEFAULT_TICKER_MESSAGES = [
    own optional color overrides: {text, textColor, bgColor, borderColor}.
    Any override left null/undefined simply inherits the ticker's global look. */
 function tickerMsgNorm(m){
-  if(typeof m === 'string') return {text:m, textColor:null, bgColor:null, borderColor:null};
-  return {text:m.text||'', textColor:m.textColor||null, bgColor:m.bgColor||null, borderColor:m.borderColor||null};
+  if(typeof m === 'string') return {text:m, textColor:null, bgColor:null, borderColor:null, enabled:true};
+  return {text:m.text||'', textColor:m.textColor||null, bgColor:m.bgColor||null, borderColor:m.borderColor||null, enabled:(m.enabled!==false)};
 }
-function tickerMessages(){
+function tickerMessagesAll(){
   const raw = (store.tickerMessages && store.tickerMessages.length) ? store.tickerMessages : DEFAULT_TICKER_MESSAGES;
   return raw.map(tickerMsgNorm);
+}
+function tickerMessages(){
+  return tickerMessagesAll().filter(m=>m.enabled!==false);
 }
 function tickerMsgSpanHtml(m){
   const custom = !!(m.bgColor || m.borderColor);
@@ -3209,7 +3230,8 @@ function renderTicker(){
 const DEFAULT_TICKER_SETTINGS = {
   fontSize: 14, fontFamily: 'Jameel Noori Nastaleeq Regular',
   textColor: '#f4d58d', midBg1: '#0d3b66', midBg2: '#123a5e',
-  borderColor: '#d4a017', borderTemplate: 'thin', borderWidth: 3, speed: 30
+  borderColor: '#d4a017', borderTemplate: 'thin', borderWidth: 3, speed: 30,
+  enabled: true, gap: 48
 };
 const TICKER_FONT_OPTIONS = ['Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq Kasheeda','Segoe UI'];
 /* Horizontal top/bottom border templates for the ticker strip (like the
@@ -3269,9 +3291,16 @@ function applyTickerSettings(){
   root.setProperty('--ticker-mid-bg1', s.midBg1);
   root.setProperty('--ticker-mid-bg2', s.midBg2);
   root.setProperty('--ticker-border-color', s.borderColor);
+  root.setProperty('--ticker-gap', (s.gap!=null?s.gap:48)+'px');
   tickerApplyBorder(document.getElementById('tickerMiddle'), s.borderTemplate, s.borderColor, s.borderWidth);
   const track = document.getElementById('tickerTrack');
   if(track) track.style.animationDuration = s.speed + 's';
+  const strip = document.getElementById('mcsTicker');
+  if(strip){
+    const off = (s.enabled===false);
+    strip.classList.toggle('tkr-off', off);
+    document.documentElement.style.setProperty('--ticker-h', off ? '0px' : '34px');
+  }
 }
 function saveTickerSettings(patch){
   store.tickerSettings = {...tickerSettings(), ...patch};
@@ -3313,11 +3342,19 @@ function tickerApplyLive(pending){
   root.setProperty('--ticker-text', s.textColor);
   root.setProperty('--ticker-mid-bg1', s.midBg1);
   root.setProperty('--ticker-mid-bg2', s.midBg2);
+  root.setProperty('--ticker-gap', (s.gap!=null?s.gap:48)+'px');
   tickerApplyBorder(document.getElementById('tickerMiddle'), s.borderTemplate, s.borderColor, s.borderWidth);
+  const strip = document.getElementById('mcsTicker');
+  if(strip){
+    const off = (s.enabled===false);
+    strip.classList.toggle('tkr-off', off);
+    root.setProperty('--ticker-h', off ? '0px' : '34px');
+  }
   const track = document.getElementById('tickerTrack');
   if(track){
     track.style.animationDuration = s.speed+'s';
-    const line = pending.messages.map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
+    const visible = pending.messages.filter(m=>m.enabled!==false);
+    const line = visible.map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
     track.innerHTML = line + line;
   }
 }
@@ -3343,7 +3380,7 @@ function applyTickerPreset(i){
   document.getElementById('tkBorderColor').value = p.borderColor;
 }
 function openTickerAdmin(){
-  tickerPending = { settings: {...tickerSettings()}, messages: tickerMessages().map(m=>({...m})) };
+  tickerPending = { settings: {...tickerSettings()}, messages: tickerMessagesAll().map(m=>({...m})) };
   const s = tickerPending.settings;
   document.getElementById('tkFontFamily').value = s.fontFamily;
   document.getElementById('tkFontSize').value = s.fontSize;
@@ -3356,6 +3393,9 @@ function openTickerAdmin(){
   document.getElementById('tkBorderWidthVal').textContent = s.borderWidth+'px';
   document.getElementById('tkBg1').value = s.midBg1;
   document.getElementById('tkBg2').value = s.midBg2;
+  document.getElementById('tkGap').value = (s.gap!=null?s.gap:48);
+  document.getElementById('tkGapVal').textContent = (s.gap!=null?s.gap:48)+'px';
+  document.getElementById('tkEnabled').checked = (s.enabled!==false);
   renderTkPresetRow();
   renderTkBorderTmplRow();
   renderTickerAdminList();
@@ -3393,7 +3433,8 @@ function renderTickerAdminList(){
   if(!wrap) return;
   const msgs = tickerPending.messages;
   wrap.innerHTML = msgs.map((m,idx)=>`
-    <div class="tk-msg-row">
+    <div class="tk-msg-row" style="${m.enabled===false?'opacity:.45;':''}">
+      <input type="checkbox" title="چلائیں/بند کریں" style="width:18px;height:18px;flex:0 0 auto;" ${m.enabled!==false?'checked':''} onchange="updateTickerMsgPending(${idx},'enabled',this.checked)">
       <input type="text" value="${escapeAttr(m.text)}" oninput="updateTickerMsgPending(${idx},'text',this.value)">
       <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="لکھائی" value="${m.textColor||tickerPending.settings.textColor}" oninput="updateTickerMsgPending(${idx},'textColor',this.value)">
       <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بیک گراؤنڈ" value="${m.bgColor||tickerPending.settings.midBg1}" oninput="updateTickerMsgPending(${idx},'bgColor',this.value)">
@@ -3406,6 +3447,7 @@ function updateTickerMsgPending(idx, field, val){
   const m = tickerPending.messages[idx];
   if(!m) return;
   m[field] = val;
+  if(field==='enabled') renderTickerAdminList();
   tickerApplyLive(tickerPending);
 }
 function resetTickerMsgColor(idx){
