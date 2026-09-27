@@ -537,7 +537,7 @@
         <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
       <div class="field">
-        <input type="text" id="searchBox" placeholder="نام، شعبہ یا ہسپتال لکھیں..." oninput="onUserSearchInput(this.value)">
+        <input type="text" id="searchBox" placeholder="نام، دکان، شعبہ یا شہر لکھیں..." oninput="onUserSearchInput(this.value)">
       </div>
       <div id="searchResultsWrap"></div>
     </div>
@@ -859,7 +859,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0500AM";
+const APP_VERSION = "MCS27SEPSU0520AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1015,7 +1015,7 @@ function goScreen(name, fromHistory){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   if(name==='doctor-list') renderDoctorList('list');
-  if(name==='user-browse') renderDoctorList('search');
+  if(name==='user-browse') renderUserSearch();
   if(name==='service-list' && currentServiceCategory) renderServiceList('list');
 }
 
@@ -1039,7 +1039,78 @@ function onUserSearchInput(val){
     }, 250);
     return;
   }
-  renderDoctorList('search');
+  renderUserSearch();
+}
+
+/* ---------- "یوزر" combined search — ڈاکٹرز + پروفیشنلز + بزنس، سب ایک ساتھ ---------- */
+function renderUserSearch(){
+  const wrap = document.getElementById('searchResultsWrap');
+  const qRaw = (document.getElementById('searchBox').value||'').trim();
+  const q = qRaw.toLowerCase();
+  const qDigits = qRaw.replace(/[^0-9]/g,'');
+  const genericDoctorWords = ['ڈاکٹر','doctor','dr','dr.'];
+  const textMatch = (fields) => fields.some(f => (f||'').toLowerCase().includes(q));
+
+  const doctorResults = store.doctors.filter(d=>{
+    if(!q) return true;
+    if(genericDoctorWords.includes(q)) return true;
+    if(qDigits.length>=3 && (d.whatsapp||'').replace(/[^0-9]/g,'').includes(qDigits)) return true;
+    return textMatch([d.nameUr||d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.city, d.area, d.district, d.province]);
+  });
+
+  const serviceResults = store.services.filter(s=>{
+    if(!q) return true;
+    if(qDigits.length>=3 && (s.whatsapp||'').replace(/[^0-9]/g,'').includes(qDigits)) return true;
+    const catName = (CATEGORY_META[s.category]||{}).ur || '';
+    if(catName.toLowerCase().includes(q)) return true;
+    return textMatch([s.nameUr, s.nameEn, s.type, s.address, s.city, s.area, s.district, s.province]);
+  });
+
+  if(!doctorResults.length && !serviceResults.length){
+    wrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🔎</span>کچھ نہیں ملا</div>`;
+    return;
+  }
+
+  const doctorCards = doctorResults.map(d=>userResultCard({
+    nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
+    sub: [d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''),
+    city:d.city, area:d.area, address:d.address, whatsapp:d.whatsapp, approved:d.approved
+  })).join('');
+
+  const serviceCards = serviceResults.map(s=>{
+    const meta = CATEGORY_META[s.category]||{};
+    return userResultCard({
+      nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
+      sub:s.type||'', city:s.city, area:s.area, address:s.address, whatsapp:s.whatsapp, approved:s.approved
+    });
+  }).join('');
+
+  wrap.innerHTML = doctorCards + serviceCards;
+}
+function userResultCard(item){
+  const num = normalizePkNumber(item.whatsapp||'');
+  const digits = num.replace(/[^0-9]/g,'');
+  const intl = '92' + digits.replace(/^0/,'');
+  return `
+    <div class="doc-card">
+      <div class="doc-avatar"><span style="font-size:20px;">${item.emoji}</span></div>
+      <div class="doc-body">
+        <div class="doc-top"><div class="doc-name">${escapeHtml(item.nameUr||'')}</div></div>
+        ${item.nameEn ? `<div class="doc-name-en">${escapeHtml(item.nameEn)}</div>` : ``}
+        ${item.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
+        <div class="doc-sub">${item.tag?`<b>${escapeHtml(item.tag)}</b>`:''}${(item.tag&&item.sub)?' • ':''}${escapeHtml(item.sub||'')}</div>
+        ${(item.city||item.area) ? `<div class="doc-address">📍 ${[item.area,item.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
+        ${item.address ? `<div class="doc-address">${escapeHtml(item.address)}</div>` : ``}
+        <div class="doc-num">${escapeHtml(num||'—')}</div>
+      </div>
+      <div class="doc-side">
+        ${digits ? `<div class="doc-acts">
+        <a class="a-call" href="tel:${digits}" aria-label="کال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
+        <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
+        <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
+        </div>` : ``}
+      </div>
+    </div>`;
 }
 
 /* ---------- Phone book (Contact Picker) ---------- */
@@ -2045,8 +2116,7 @@ function updateVersionBadge(){
   const hh = urduDigits(h);
   const mm = urduDigits(String(now.getMinutes()).padStart(2,'0'));
   const online = navigator.onLine;
-  document.getElementById('homeFooter').innerHTML =
-    `<span class="offline-dot ${online?'':'off'}"></span>${online?'آن لائن':'آف لائن موڈ'} · آخری بار لوڈ: ${d} ${m} ${y}، ${hh}:${mm} ${ampm}<br><span class="ver">pbtcodelabs</span>`;
+  document.getElementById('homeFooter').innerHTML = `<span class="ver">pbtcodelabs</span>`;
 }
 window.addEventListener('online', updateVersionBadge);
 window.addEventListener('offline', updateVersionBadge);
@@ -2101,7 +2171,7 @@ function initFirebaseSync(){
       });
       saveStore();
       if(currentScreen==='doctor-list') renderDoctorList('list');
-      if(currentScreen==='user-browse') renderDoctorList('search');
+      if(currentScreen==='user-browse') renderUserSearch();
       if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
     }, ()=>{ /* offline/permission issue — local data still works */ });
   });
