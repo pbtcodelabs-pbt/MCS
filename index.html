@@ -443,7 +443,7 @@
 </style>
 </head>
 <body>
-<div class="mcs-ticker" id="mcsTicker"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
+<div class="mcs-ticker" id="mcsTicker" onclick="tickerTap()"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
 <div class="backup-strip" id="backupStrip">
   <div class="backup-strip-label" id="backupStripLabel">بیک اپ ہو رہا ہے...</div>
   <div class="backup-progress-track"><div class="backup-progress-fill" id="backupProgressFill"></div></div>
@@ -862,6 +862,20 @@
   </div>
 </div>
 
+<!-- ===================== TICKER ADMIN MODAL (7-tap secret) ===================== -->
+<div class="modal-overlay" id="tickerAdminModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('tickerAdminModal')">×</button>
+    <h3>📰 پٹی کے پیغامات</h3>
+    <div style="clear:both;"></div>
+    <div id="tickerAdminList"></div>
+    <div style="display:flex;gap:6px;margin-top:10px;">
+      <input type="text" id="tickerNewMsg" placeholder="نیا پیغام لکھیں" style="flex:1;padding:8px;border-radius:8px;border:1px solid #d8dee4;">
+      <button class="btn accent" style="padding:6px 14px;" onclick="addTickerMsg()">➕ شامل کریں</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== AUTO SNAPSHOTS MODAL ===================== -->
 <div class="modal-overlay" id="autoSnapshotsModal">
   <div class="modal-box">
@@ -886,7 +900,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0845AM";
+const APP_VERSION = "MCS27SEPSU0855AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1598,9 +1612,9 @@ function buildShareCanvas(kind, item){
     Promise.all([
       document.fonts.load('800 48px "Jameel Noori Nastaleeq Regular"'),
       document.fonts.load('700 34px "Jameel Noori Nastaleeq Regular"'),
-      document.fonts.load('400 28px "Jameel Noori Nastaleeq Regular"')
+      document.fonts.load('700 28px "Jameel Noori Nastaleeq Regular"')
     ]).catch(()=>{}).finally(()=>{
-    const W=960, H=1280;
+    const W=880, H=960;
     const canvas = document.createElement('canvas');
     canvas.width=W; canvas.height=H;
     const ctx = canvas.getContext('2d');
@@ -1609,119 +1623,124 @@ function buildShareCanvas(kind, item){
     const g = ctx.createLinearGradient(0,0,0,H);
     g.addColorStop(0,'#0a2e52'); g.addColorStop(.5,'#0d3b66'); g.addColorStop(1,'#081f39');
     ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
-    const glow = ctx.createRadialGradient(W/2,140,10,W/2,140,520);
+    const glow = ctx.createRadialGradient(W/2,110,10,W/2,110,460);
     glow.addColorStop(0,'rgba(244,213,141,.22)'); glow.addColorStop(1,'rgba(244,213,141,0)');
     ctx.fillStyle = glow; ctx.fillRect(0,0,W,H);
 
     ctx.direction='rtl'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
 
-    // gold embossed brand header
-    ctx.font = '800 52px "Jameel Noori Nastaleeq Regular", sans-serif';
-    const hg = ctx.createLinearGradient(0,50,0,110);
-    hg.addColorStop(0,'#fff2c9'); hg.addColorStop(.5,'#f4d58d'); hg.addColorStop(1,'#c99a34');
-    ctx.save();
-    ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=6; ctx.shadowOffsetY=4;
-    ctx.fillStyle = hg;
-    ctx.fillText('مائی سٹی شائنز', W/2, 100);
-    ctx.restore();
-    ctx.direction='ltr';
-    ctx.fillStyle = 'rgba(207,224,238,.85)';
-    ctx.font = '700 22px sans-serif';
-    ctx.fillText('M Y   C I T Y   S H I N E S', W/2, 136);
-    ctx.direction='rtl';
+    // ===== top brand row — ONE line: logo + name, neatly aligned =====
+    const headerLogo = new Image();
+    const drawRest = ()=>{
+      ctx.font = '800 40px "Jameel Noori Nastaleeq Regular", sans-serif';
+      const hg = ctx.createLinearGradient(0,50,0,90);
+      hg.addColorStop(0,'#fff2c9'); hg.addColorStop(.5,'#f4d58d'); hg.addColorStop(1,'#c99a34');
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=5; ctx.shadowOffsetY=3;
+      ctx.fillStyle = hg;
+      ctx.fillText('مائی سٹی شائنز', W/2, 82);
+      ctx.restore();
 
-    // white card panel with soft 3D shadow
-    ctx.save();
-    ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=30; ctx.shadowOffsetY=14;
-    const cardG = ctx.createLinearGradient(0,180,0,880);
-    cardG.addColorStop(0,'#ffffff'); cardG.addColorStop(1,'#f4f6f9');
-    ctx.fillStyle = cardG;
-    shareRoundRect(ctx, 60, 180, W-120, 690, 32); ctx.fill();
-    ctx.restore();
-    ctx.strokeStyle='#f0dfa8'; ctx.lineWidth=2;
-    shareRoundRect(ctx, 60, 180, W-120, 690, 32); ctx.stroke();
+      // white card panel with soft 3D shadow
+      const cardTop=130, cardH=520;
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=26; ctx.shadowOffsetY=12;
+      const cardG = ctx.createLinearGradient(0,cardTop,0,cardTop+cardH);
+      cardG.addColorStop(0,'#ffffff'); cardG.addColorStop(1,'#f4f6f9');
+      ctx.fillStyle = cardG;
+      shareRoundRect(ctx, 50, cardTop, W-100, cardH, 30); ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle='#f0dfa8'; ctx.lineWidth=2;
+      shareRoundRect(ctx, 50, cardTop, W-100, cardH, 30); ctx.stroke();
 
-    const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
-    const emoji = kind==='doctor' ? '🩺' : ((CATEGORY_META[item.category]||{}).emoji || '🏷️');
+      const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
+      const emoji = kind==='doctor' ? '🩺' : ((CATEGORY_META[item.category]||{}).emoji || '🏷️');
 
-    // emoji badge circle (3D bubble)
-    const bx=W/2, by=290, br=72;
-    const bg2 = ctx.createLinearGradient(bx,by-br,bx,by+br);
-    bg2.addColorStop(0,'#fff6df'); bg2.addColorStop(1,'#f4d58d');
-    ctx.save();
-    ctx.shadowColor='rgba(180,130,20,.4)'; ctx.shadowBlur=18; ctx.shadowOffsetY=8;
-    ctx.fillStyle = bg2;
-    ctx.beginPath(); ctx.arc(bx,by,br,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-    ctx.font = '76px sans-serif';
-    ctx.fillText(emoji, bx, by+27);
+      // ===== ONE line: category emoji badge + category label, side by side =====
+      ctx.font = '700 30px "Jameel Noori Nastaleeq Regular", sans-serif';
+      const catTextW = ctx.measureText(catLabel).width;
+      const rowY = cardTop+70, badgeR=32;
+      const rowW = badgeR*2 + 14 + catTextW;
+      const rowStartX = W/2 + rowW/2; // rtl: rightmost edge
+      const bx = rowStartX - badgeR;
+      const bg2 = ctx.createLinearGradient(bx,rowY-badgeR,bx,rowY+badgeR);
+      bg2.addColorStop(0,'#fff6df'); bg2.addColorStop(1,'#f4d58d');
+      ctx.save();
+      ctx.shadowColor='rgba(180,130,20,.4)'; ctx.shadowBlur=10; ctx.shadowOffsetY=4;
+      ctx.fillStyle = bg2;
+      ctx.beginPath(); ctx.arc(bx,rowY,badgeR,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      ctx.font = '34px sans-serif';
+      ctx.fillText(emoji, bx, rowY+12);
+      ctx.fillStyle = '#946200';
+      ctx.font = '700 30px "Jameel Noori Nastaleeq Regular", sans-serif';
+      ctx.fillText(catLabel, bx - badgeR - 14 - catTextW/2, rowY+11);
 
-    // name — bold embossed navy
-    ctx.font = '800 54px "Jameel Noori Nastaleeq Regular", sans-serif';
-    const nameLines = [];
-    (function(){
-      const words = (item.nameUr||item.name||'').split(' ');
-      let line='', y=420;
-      const tmp=[];
-      for(let i=0;i<words.length;i++){
-        const test=line+words[i]+' ';
-        if(ctx.measureText(test).width > W-260 && line){ tmp.push(line.trim()); line=words[i]+' '; }
-        else line=test;
+      // name — bold embossed navy
+      ctx.font = '800 50px "Jameel Noori Nastaleeq Regular", sans-serif';
+      (function(){
+        const words = (item.nameUr||item.name||'').split(' ');
+        let line='', y=cardTop+165;
+        const tmp=[];
+        for(let i=0;i<words.length;i++){
+          const test=line+words[i]+' ';
+          if(ctx.measureText(test).width > W-200 && line){ tmp.push(line.trim()); line=words[i]+' '; }
+          else line=test;
+        }
+        tmp.push(line.trim());
+        tmp.forEach((l,idx)=> shareEmbossText(ctx, l, W/2, y+idx*58, '#0b2a44'));
+      })();
+
+      const addrY = cardTop+270;
+      if(item.city||item.area){
+        ctx.fillStyle = '#22303f';
+        ctx.font = '700 32px "Jameel Noori Nastaleeq Regular", sans-serif';
+        ctx.fillText('📍 ' + [item.area,item.city].filter(Boolean).join('، '), W/2, addrY);
       }
-      tmp.push(line.trim());
-      tmp.forEach((l,idx)=> shareEmbossText(ctx, l, W/2, y+idx*62, '#0b2a44'));
-    })();
 
-    // category pill
-    ctx.font = '700 28px "Jameel Noori Nastaleeq Regular", sans-serif';
-    const catW = ctx.measureText(catLabel).width + 60;
-    const catY = 500;
-    const catG = ctx.createLinearGradient(0,catY-30,0,catY+12);
-    catG.addColorStop(0,'#f4d58d'); catG.addColorStop(1,'#c99a34');
-    ctx.save();
-    ctx.shadowColor='rgba(0,0,0,.25)'; ctx.shadowBlur=8; ctx.shadowOffsetY=3;
-    ctx.fillStyle = catG;
-    shareRoundRect(ctx, W/2-catW/2, catY-34, catW, 46, 23); ctx.fill();
-    ctx.restore();
-    ctx.fillStyle = '#4a3300';
-    ctx.fillText(catLabel, W/2, catY-2);
+      // phone capsule with WhatsApp icon
+      if(item.whatsapp){
+        const num = normalizePkNumber(item.whatsapp);
+        ctx.font = '800 36px sans-serif';
+        const numW = ctx.measureText(num).width;
+        const pillW = numW + 130, pillH = 74, pillY = cardTop+330, pillX = W/2 - pillW/2;
+        const pg = ctx.createLinearGradient(0,pillY,0,pillY+pillH);
+        pg.addColorStop(0,'#2fd66b'); pg.addColorStop(1,'#1aa851');
+        ctx.save();
+        ctx.shadowColor='rgba(20,120,60,.5)'; ctx.shadowBlur=14; ctx.shadowOffsetY=5;
+        ctx.fillStyle = pg;
+        shareRoundRect(ctx, pillX, pillY, pillW, pillH, pillH/2); ctx.fill();
+        ctx.restore();
+        shareWaIcon(ctx, pillX+48, pillY+pillH/2, 24);
+        ctx.direction='ltr';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 36px sans-serif';
+        ctx.save();
+        ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=2; ctx.shadowOffsetY=2;
+        ctx.fillText(num, pillX+pillW/2+28, pillY+pillH/2+12);
+        ctx.restore();
+        ctx.direction='rtl';
+      }
 
-    if(item.city||item.area){
-      ctx.fillStyle = '#3a4657';
-      ctx.font = '400 30px "Jameel Noori Nastaleeq Regular", sans-serif';
-      ctx.fillText('📍 ' + [item.area,item.city].filter(Boolean).join('، '), W/2, 580);
-    }
+      ctx.fillStyle = '#5a6472';
+      ctx.font = '700 26px "Jameel Noori Nastaleeq Regular", sans-serif';
+      ctx.fillText('کال یا واٹس ایپ کریں', W/2, cardTop+470);
 
-    // phone capsule with WhatsApp icon
-    if(item.whatsapp){
-      const num = normalizePkNumber(item.whatsapp);
-      ctx.font = '800 38px sans-serif';
-      const numW = ctx.measureText(num).width;
-      const pillW = numW + 140, pillH = 78, pillY = 650, pillX = W/2 - pillW/2;
-      const pg = ctx.createLinearGradient(0,pillY,0,pillY+pillH);
-      pg.addColorStop(0,'#2fd66b'); pg.addColorStop(1,'#1aa851');
+      finishFooter();
+    };
+    headerLogo.onload = ()=>{
       ctx.save();
-      ctx.shadowColor='rgba(20,120,60,.5)'; ctx.shadowBlur=16; ctx.shadowOffsetY=6;
-      ctx.fillStyle = pg;
-      shareRoundRect(ctx, pillX, pillY, pillW, pillH, pillH/2); ctx.fill();
+      ctx.beginPath(); ctx.arc(W/2+150, 68, 30, 0, Math.PI*2); ctx.clip();
+      ctx.drawImage(headerLogo, W/2+150-30, 68-30, 60, 60);
       ctx.restore();
-      shareWaIcon(ctx, pillX+52, pillY+pillH/2, 26);
-      ctx.direction='ltr';
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '800 38px sans-serif';
-      ctx.save();
-      ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=2; ctx.shadowOffsetY=2;
-      ctx.fillText(num, pillX+pillW/2+30, pillY+pillH/2+13);
-      ctx.restore();
-      ctx.direction='rtl';
-    }
+      drawRest();
+    };
+    headerLogo.onerror = drawRest;
+    headerLogo.src = 'icons/icon-192.png';
 
-    ctx.fillStyle = '#7a8494';
-    ctx.font = '400 24px "Jameel Noori Nastaleeq Regular", sans-serif';
-    ctx.fillText('کال یا واٹس ایپ کریں', W/2, 800);
-
+    function finishFooter(){
     // footer CTA banner — bold gold ribbon
-    const fY = 940, fH = 200;
+    const fY = 690, fH = 200;
     const fg = ctx.createLinearGradient(0,fY,0,fY+fH);
     fg.addColorStop(0,'#f7dd9c'); fg.addColorStop(1,'#c99a34');
     ctx.save();
@@ -1731,36 +1750,22 @@ function buildShareCanvas(kind, item){
     ctx.restore();
 
     ctx.fillStyle = '#3a2600';
-    ctx.font = '800 34px "Jameel Noori Nastaleeq Regular", sans-serif';
-    shareWrapText(ctx, 'اپنے شہر کی مکمل ڈائریکٹری — ابھی ایپ حاصل کریں!', W/2, fY+52, W-200, 42);
+    ctx.font = '800 32px "Jameel Noori Nastaleeq Regular", sans-serif';
+    shareWrapText(ctx, 'اپنے شہر کی مکمل ڈائریکٹری — ابھی ایپ حاصل کریں!', W/2, fY+50, W-160, 40);
 
-    // app link badge
+    // app link badge — single, in one line, no separate scattered logo
     ctx.direction='ltr';
-    ctx.font = '800 26px sans-serif';
+    ctx.font = '800 24px sans-serif';
     const linkTxt = 'pbtcodelabs-pbt.github.io/MCS';
-    const linkW = ctx.measureText(linkTxt).width + 50;
+    const linkW = ctx.measureText(linkTxt).width + 46;
     ctx.fillStyle = '#0d3b66';
-    shareRoundRect(ctx, W/2-linkW/2, fY+120, linkW, 50, 25); ctx.fill();
+    shareRoundRect(ctx, W/2-linkW/2, fY+115, linkW, 48, 24); ctx.fill();
     ctx.fillStyle = '#f4d58d';
-    ctx.fillText(linkTxt, W/2, fY+153);
+    ctx.fillText(linkTxt, W/2, fY+146);
     ctx.direction='rtl';
 
-    const logo = new Image();
-    logo.onload = ()=>{
-      const size=76;
-      ctx.save();
-      ctx.shadowColor='rgba(0,0,0,.4)'; ctx.shadowBlur=10;
-      ctx.beginPath(); ctx.arc(W/2, H-70, size/2+4, 0, Math.PI*2);
-      ctx.fillStyle='#fff'; ctx.fill();
-      ctx.restore();
-      ctx.save();
-      ctx.beginPath(); ctx.arc(W/2, H-70, size/2, 0, Math.PI*2); ctx.clip();
-      ctx.drawImage(logo, W/2-size/2, H-70-size/2, size, size);
-      ctx.restore();
-      resolve(canvas);
-    };
-    logo.onerror = ()=> resolve(canvas);
-    logo.src = 'icons/icon-192.png';
+    resolve(canvas);
+    } // end finishFooter
     });
   });
 }
@@ -2483,17 +2488,76 @@ function updateVersionBadge(){
 window.addEventListener('online', updateVersionBadge);
 window.addEventListener('offline', updateVersionBadge);
 
-const TICKER_MESSAGES = [
+const DEFAULT_TICKER_MESSAGES = [
   '🌟 یہ آپ کی اپنی ایپ ہے — جتنا پھیلائیں گے، اتنا آپ کے لیے آسانی ہوگی!',
   '📲 اپنے جاننے والوں کا ڈیٹا بھی خود شامل کریں — ایک ساتھ کئی لوگوں کے لیے!',
   '🔗 اپنی پروفائل شیئر کریں اور نئے لوگوں کو ایپ سے جوڑیں!',
   '🏙️ اپنے شہر کی مکمل ڈائریکٹری — ہر ضرورت ایک ہی جگہ!'
 ];
+function tickerMessages(){ return (store.tickerMessages && store.tickerMessages.length) ? store.tickerMessages : DEFAULT_TICKER_MESSAGES; }
 function renderTicker(){
   const el = document.getElementById('tickerTrack');
   if(!el) return;
-  const line = TICKER_MESSAGES.map(m=>`<span>${escapeHtml(m)}</span>`).join('<span>•</span>');
+  const line = tickerMessages().map(m=>`<span>${escapeHtml(m)}</span>`).join('<span>•</span>');
   el.innerHTML = line + line; // duplicated once for seamless 50% loop
+}
+
+/* ---------- Ticker admin (7-tap secret, no code editing needed) ---------- */
+let tickerTapCount = 0, tickerTapTimer = null;
+function tickerTap(){
+  tickerTapCount++;
+  clearTimeout(tickerTapTimer);
+  tickerTapTimer = setTimeout(()=>{ tickerTapCount = 0; }, 1500);
+  if(tickerTapCount>=7){
+    tickerTapCount = 0;
+    openTickerAdmin();
+  }
+}
+function openTickerAdmin(){
+  renderTickerAdminList();
+  openModal('tickerAdminModal');
+}
+function renderTickerAdminList(){
+  const wrap = document.getElementById('tickerAdminList');
+  if(!wrap) return;
+  const msgs = tickerMessages();
+  wrap.innerHTML = msgs.map((m,idx)=>`
+    <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;">
+      <input type="text" value="${escapeAttr(m)}" style="flex:1;padding:8px;border-radius:8px;border:1px solid #d8dee4;" onchange="updateTickerMsg(${idx}, this.value)">
+      <button class="btn secondary" style="padding:6px 10px;" onclick="deleteTickerMsg(${idx})">🗑️</button>
+    </div>`).join('');
+}
+function updateTickerMsg(idx, val){
+  const msgs = tickerMessages().slice();
+  msgs[idx] = val.trim() || msgs[idx];
+  saveTickerMessages(msgs);
+}
+function deleteTickerMsg(idx){
+  const msgs = tickerMessages().slice();
+  msgs.splice(idx,1);
+  saveTickerMessages(msgs);
+  renderTickerAdminList();
+}
+function addTickerMsg(){
+  const input = document.getElementById('tickerNewMsg');
+  const val = (input.value||'').trim();
+  if(!val) return;
+  const msgs = tickerMessages().slice();
+  msgs.push(val);
+  saveTickerMessages(msgs);
+  input.value = '';
+  renderTickerAdminList();
+}
+function saveTickerMessages(msgs){
+  store.tickerMessages = msgs;
+  saveStore();
+  renderTicker();
+  const FB = window.MCSFirebase;
+  if(FB){
+    const ref = FB.doc(FB.db,'appConfig','ticker');
+    FB.setDoc(ref, {list: msgs}).catch(()=>{});
+  }
+  showToast('پیغام محفوظ ہو گیا ✓');
 }
 
 /* ---------- Glitter version in header ---------- */
@@ -2558,6 +2622,15 @@ function initFirebaseSync(){
     const list = (snap.exists() && snap.data().list) || [];
     applyCustomCategories(list);
   }, ()=>{ /* offline/permission issue — built-in categories still work */ });
+
+  // Ticker messages (edited via 7-tap secret on the ticker strip) sync here to every device
+  FB.onSnapshot(FB.doc(FB.db,'appConfig','ticker'), (snap)=>{
+    if(snap.exists() && Array.isArray(snap.data().list) && snap.data().list.length){
+      store.tickerMessages = snap.data().list;
+      saveStore();
+      renderTicker();
+    }
+  }, ()=>{ /* offline/permission issue — local/default messages still work */ });
 
   FB.onAuthStateChanged(FB.auth, (user)=>{
     isAdminSignedIn = !!user;
