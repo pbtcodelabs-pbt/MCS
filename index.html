@@ -361,10 +361,10 @@
   .doc-body{flex:1;min-width:0;}
   .doc-top{display:flex;align-items:center;gap:6px;}
   .doc-name{flex:1;min-width:0;font-family:var(--docCardFont);
-    font-size:calc(22px*var(--docCardScale));line-height:1.45;color:#fff;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-size:calc(22px*var(--docCardScale));line-height:1.45;color:#fff;font-weight:bold;white-space:normal;overflow-wrap:break-word;
     text-shadow:0 1px 2px rgba(0,0,0,.4);}
   .doc-name-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;text-align:left;unicode-bidi:isolate;
-    font-size:calc(13px*var(--docCardScale));font-weight:600;letter-spacing:.3px;color:#ffe4a8;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    font-size:calc(13px*var(--docCardScale));font-weight:600;letter-spacing:.3px;color:#ffe4a8;line-height:1.5;white-space:normal;overflow-wrap:break-word;}
   .doc-mini{display:flex;gap:4px;}
   .doc-mini button{width:26px;height:22px;border-radius:8px;border:none;padding:0;background:rgba(255,255,255,.15);color:#fff;
     display:flex;align-items:center;justify-content:center;}
@@ -382,7 +382,10 @@
     font-size:calc(13.5px*var(--docCardScale));font-weight:700;color:#ffe4a8;letter-spacing:.4px;line-height:1.5;}
   .doc-pending-badge{display:inline-block;background:#fde68a;color:#7c4a03;font-size:10.5px;font-weight:700;
     padding:2px 8px;border-radius:8px;margin-top:2px;}
-  .doc-side{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:center;gap:5px;align-self:center;}
+  .doc-pending-line{display:block;width:100%;box-sizing:border-box;text-align:center;background:#fde68a;color:#7c4a03;
+    font-size:10.5px;font-weight:700;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;
+    padding:4px 8px;border-radius:8px;margin-top:6px;}
+  .doc-side{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;width:100%;margin:6px 0 2px;}
   .doc-acts{display:flex;flex-wrap:nowrap;gap:5px;}
   .doc-side .doc-mini{gap:5px;}
   .doc-acts a{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
@@ -1135,7 +1138,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0148PM";
+const APP_VERSION = "MCS27SEPSU0208PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1375,9 +1378,9 @@ function userResultCard(item){
       <div class="doc-body">
         <div class="doc-top"><div class="doc-name">${escapeHtml(item.nameUr||'')}</div></div>
         ${item.nameEn ? `<div class="doc-name-en">${escapeHtml(item.nameEn)}</div>` : ``}
-        ${item.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
         <div class="doc-sub">${item.tag?`<b>${escapeHtml(item.tag)}</b>`:''}${(item.tag&&item.sub)?' • ':''}${escapeHtml(item.sub||'')}</div>
         <div class="doc-num">${escapeHtml(num||'—')}</div>
+      </div>
       </div>
       <div class="doc-side">
         ${digits ? `<div class="doc-acts">
@@ -1388,11 +1391,11 @@ function userResultCard(item){
         ${item.id ? `<button class="a-share" onclick="shareProfileCardById('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>` : ``}
         ${item.id ? (isAdminSignedIn ? `<button onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم" style="width:32px;height:32px;border-radius:50%;border:none;background:#eef2f6;">✏️</button>` : `<button class="a-reqadmin" onclick="requestAdminAction('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : ``}
       </div>
-      </div>
       ${item.intro ? `<div class="doc-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
       ${(item.city||item.area) ? `<div class="doc-address">📍 ${[item.area,item.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
       ${item.address ? `<div class="doc-address">${escapeHtml(item.address)}</div>` : ``}
       ${item.id ? `<div class="doc-recid">ID: ${escapeHtml(shortRecordId(item.kind,item))}</div>` : ``}
+      ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
     </div>`;
 }
 
@@ -1720,6 +1723,7 @@ function saveDoctor(){
   if(!nameUr){ showToast('ڈاکٹر کا نام اردو میں لکھیں'); return; }
   if(!nameEn){ showToast('Doctor name in English likhein'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
+  if(!/^03\d{2}-\d{7}$/.test(whatsapp)){ showToast('نمبر درست نہیں — 11 ہندسوں کا نمبر لکھیں جو 03 سے شروع ہو، مثلاً 0300-1234567'); return; }
   const dup = store.doctors.find(x=>x.whatsapp===whatsapp && x.id!==editingDoctorId);
   if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr||dup.name}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
   const loc = readLocationFormValues('doc');
@@ -2437,9 +2441,9 @@ function renderDoctorList(mode){
           <div class="doc-name">${escapeHtml(nameUr)}</div>
         </div>
         ${d.nameEn ? `<div class="doc-name-en">${escapeHtml(d.nameEn)}</div>` : ``}
-        ${d.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
         <div class="doc-sub">${sub || escapeHtml(d.dept||'')}</div>
         <div class="doc-num">${escapeHtml(num||'—')}</div>
+      </div>
       </div>
 <div class="doc-side">
             ${digits ? `<div class="doc-acts">
@@ -2453,11 +2457,11 @@ function renderDoctorList(mode){
             <button class="mini-del" onclick="deleteDoctor('${escapeAttr(d.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
           </div>` : `<button class="a-reqadmin" onclick="requestAdminAction('doctor','${escapeAttr(d.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : ``}
       </div>
-      </div>
       ${d.intro ? `<div class="doc-intro">💬 ${escapeHtml(d.intro)}</div>` : ``}
       ${(d.city||d.area) ? `<div class="doc-address">📍 ${[d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
       ${d.address ? `<div class="doc-address">${escapeHtml(d.address)}</div>` : ``}
       <div class="doc-recid">ID: ${escapeHtml(shortRecordId('doctor',d))}</div>
+      ${d.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
     </div>`;
   }).join('');
 }
@@ -2651,6 +2655,7 @@ function saveService(){
   const whatsapp = normalizePkNumber(document.getElementById('svcWhatsapp').value.trim());
   if(!nameUr){ showToast('نام اردو میں لکھیں'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
+  if(!/^03\d{2}-\d{7}$/.test(whatsapp)){ showToast('نمبر درست نہیں — 11 ہندسوں کا نمبر لکھیں جو 03 سے شروع ہو، مثلاً 0300-1234567'); return; }
   const dup = store.services.find(x=>x.whatsapp===whatsapp && x.category===currentServiceCategory && x.id!==editingServiceId);
   if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
   const loc = readLocationFormValues('svc');
@@ -2723,9 +2728,9 @@ function renderServiceList(mode){
       <div class="doc-body">
         <div class="doc-top"><div class="doc-name">${escapeHtml(s.nameUr)}</div></div>
         ${s.nameEn ? `<div class="doc-name-en">${escapeHtml(s.nameEn)}</div>` : ``}
-        ${s.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
         <div class="doc-sub">${escapeHtml(s.type||'')}</div>
         <div class="doc-num">${escapeHtml(num||'—')}</div>
+      </div>
       </div>
       <div class="doc-side">
         ${digits ? `<div class="doc-acts">
@@ -2739,11 +2744,11 @@ function renderServiceList(mode){
           <button class="mini-del" onclick="deleteService('${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>` : `<button class="a-reqadmin" onclick="requestAdminAction('service','${escapeAttr(s.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`}
       </div>
-      </div>
       ${s.intro ? `<div class="doc-intro">💬 ${escapeHtml(s.intro)}</div>` : ``}
       ${(s.city||s.area) ? `<div class="doc-address">📍 ${[s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
       ${s.address ? `<div class="doc-address">${escapeHtml(s.address)}</div>` : ``}
       <div class="doc-recid">ID: ${escapeHtml(shortRecordId('service',s))}</div>
+      ${s.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
     </div>`;
   }).join('');
 }
