@@ -217,6 +217,9 @@
   .cat-item span{font-size:13.5px;font-weight:700;display:block;color:#0b2a44;line-height:1.5;}
   .cat-item small{font-size:10px;color:var(--muted);}
   .cat-item.soon{opacity:.6;}
+  .cat-count{position:absolute;top:6px;left:6px;background:linear-gradient(145deg,#d4a017,#a97c0a);color:#fff;
+    font-size:10.5px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;
+    justify-content:center;padding:0 5px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
   .badge-soon{display:inline-block;background:#fde68a;color:#92400e;font-size:9px;
     padding:2px 6px;border-radius:6px;margin-top:5px;}
 
@@ -325,6 +328,16 @@
   .a-call{background:linear-gradient(145deg,#1f9d55,#15803d);}
   .a-wa{background:linear-gradient(145deg,#2fd16b,#1da851);}
   .a-sms{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+  .a-share{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
+    background:linear-gradient(145deg,#d4a017,#a97c0a);border:none;cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.35);}
+  .a-share svg{width:16px;height:16px;}
+  .a-share:active{transform:scale(.92);}
+  .a-reqadmin{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(145deg,#8a94a3,#5c6675);border:none;cursor:pointer;font-size:14px;color:#fff;
+    box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.25);}
+  .a-reqadmin:active{transform:scale(.92);}
+  .doc-recid{font-size:10px;color:var(--muted);direction:ltr;unicode-bidi:isolate;display:inline-block;margin-top:2px;}
   .num-ltr{direction:ltr;unicode-bidi:isolate;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
 
   .empty-state{text-align:center;color:var(--muted);padding:40px 10px;font-size:13px;}
@@ -479,13 +492,14 @@
       </div>
       <div class="cat-grid">
         <div class="cat-item" onclick="goScreen('doctor-list')">
+          <span class="cat-count" id="catCount_doctor">۰</span>
           <div class="emoji">🩺</div><span>ڈاکٹرز</span><small>ہسپتال، اسپیشلٹی</small>
         </div>
-        <div class="cat-item" onclick="openServiceCategory('medicalStore')"><div class="emoji">💊</div><span>میڈیکل سٹور</span></div>
-        <div class="cat-item" onclick="openServiceCategory('homeopathic')"><div class="emoji">🌿</div><span>ہومیوپیتھک</span></div>
-        <div class="cat-item" onclick="openServiceCategory('testingLab')"><div class="emoji">🧪</div><span>ٹیسٹنگ لیب</span></div>
-        <div class="cat-item" onclick="openServiceCategory('plumberElectrician')"><div class="emoji">🔧</div><span>پلمبر / الیکٹریشن</span></div>
-        <div class="cat-item" onclick="openServiceCategory('tuitionTeacher')"><div class="emoji">📚</div><span>ٹیوشن استاد</span></div>
+        <div class="cat-item" onclick="openServiceCategory('medicalStore')"><span class="cat-count" id="catCount_medicalStore">۰</span><div class="emoji">💊</div><span>میڈیکل سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('homeopathic')"><span class="cat-count" id="catCount_homeopathic">۰</span><div class="emoji">🌿</div><span>ہومیوپیتھک</span></div>
+        <div class="cat-item" onclick="openServiceCategory('testingLab')"><span class="cat-count" id="catCount_testingLab">۰</span><div class="emoji">🧪</div><span>ٹیسٹنگ لیب</span></div>
+        <div class="cat-item" onclick="openServiceCategory('plumberElectrician')"><span class="cat-count" id="catCount_plumberElectrician">۰</span><div class="emoji">🔧</div><span>پلمبر / الیکٹریشن</span></div>
+        <div class="cat-item" onclick="openServiceCategory('tuitionTeacher')"><span class="cat-count" id="catCount_tuitionTeacher">۰</span><div class="emoji">📚</div><span>ٹیوشن استاد</span></div>
         <span id="customCatTilesProfessional" style="display:contents;"></span>
       </div>
     </div>
@@ -500,16 +514,16 @@
         <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
       <div class="cat-grid">
-        <div class="cat-item" onclick="openServiceCategory('groceryStore')"><div class="emoji">🛒</div><span>کریانہ سٹور</span></div>
-        <div class="cat-item" onclick="openServiceCategory('clothesShop')"><div class="emoji">👗</div><span>کپڑوں کی دکان</span></div>
-        <div class="cat-item" onclick="openServiceCategory('mobileElectronics')"><div class="emoji">📱</div><span>موبائل و الیکٹرانکس</span></div>
-        <div class="cat-item" onclick="openServiceCategory('hardwareStore')"><div class="emoji">🔩</div><span>ہارڈویئر سٹور</span></div>
-        <div class="cat-item" onclick="openServiceCategory('bakery')"><div class="emoji">🍞</div><span>بیکری</span></div>
-        <div class="cat-item" onclick="openServiceCategory('jewelryShop')"><div class="emoji">💍</div><span>جیولری شاپ</span></div>
-        <div class="cat-item" onclick="openServiceCategory('furnitureShop')"><div class="emoji">🛋️</div><span>فرنیچر شاپ</span></div>
-        <div class="cat-item" onclick="openServiceCategory('autoParts')"><div class="emoji">🚗</div><span>آٹو پارٹس</span></div>
-        <div class="cat-item" onclick="openServiceCategory('beautyParlor')"><div class="emoji">💇</div><span>بیوٹی پارلر / سیلون</span></div>
-        <div class="cat-item" onclick="openServiceCategory('restaurant')"><div class="emoji">🍽️</div><span>ہوٹل / ریسٹورنٹ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('groceryStore')"><span class="cat-count" id="catCount_groceryStore">۰</span><div class="emoji">🛒</div><span>کریانہ سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('clothesShop')"><span class="cat-count" id="catCount_clothesShop">۰</span><div class="emoji">👗</div><span>کپڑوں کی دکان</span></div>
+        <div class="cat-item" onclick="openServiceCategory('mobileElectronics')"><span class="cat-count" id="catCount_mobileElectronics">۰</span><div class="emoji">📱</div><span>موبائل و الیکٹرانکس</span></div>
+        <div class="cat-item" onclick="openServiceCategory('hardwareStore')"><span class="cat-count" id="catCount_hardwareStore">۰</span><div class="emoji">🔩</div><span>ہارڈویئر سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('bakery')"><span class="cat-count" id="catCount_bakery">۰</span><div class="emoji">🍞</div><span>بیکری</span></div>
+        <div class="cat-item" onclick="openServiceCategory('jewelryShop')"><span class="cat-count" id="catCount_jewelryShop">۰</span><div class="emoji">💍</div><span>جیولری شاپ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('furnitureShop')"><span class="cat-count" id="catCount_furnitureShop">۰</span><div class="emoji">🛋️</div><span>فرنیچر شاپ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('autoParts')"><span class="cat-count" id="catCount_autoParts">۰</span><div class="emoji">🚗</div><span>آٹو پارٹس</span></div>
+        <div class="cat-item" onclick="openServiceCategory('beautyParlor')"><span class="cat-count" id="catCount_beautyParlor">۰</span><div class="emoji">💇</div><span>بیوٹی پارلر / سیلون</span></div>
+        <div class="cat-item" onclick="openServiceCategory('restaurant')"><span class="cat-count" id="catCount_restaurant">۰</span><div class="emoji">🍽️</div><span>ہوٹل / ریسٹورنٹ</span></div>
         <span id="customCatTilesBusiness" style="display:contents;"></span>
       </div>
     </div>
@@ -859,7 +873,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0520AM";
+const APP_VERSION = "MCS27SEPSU0815AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -999,7 +1013,7 @@ function loadStoreFallback(){
     customCategories:[],
     contact:{...DEFAULT_CONTACT} };
 }
-function saveStore(){ localStorage.setItem('mcsData', JSON.stringify(store)); }
+function saveStore(){ localStorage.setItem('mcsData', JSON.stringify(store)); if(typeof updateCategoryCounts==='function') updateCategoryCounts(); }
 let store = loadStore();
 
 /* ---------- Navigation ---------- */
@@ -1072,7 +1086,7 @@ function renderUserSearch(){
   }
 
   const doctorCards = doctorResults.map(d=>userResultCard({
-    nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
+    kind:'doctor', id:d.id, fsId:d.fsId, nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
     sub: [d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''),
     city:d.city, area:d.area, address:d.address, whatsapp:d.whatsapp, approved:d.approved
   })).join('');
@@ -1080,7 +1094,7 @@ function renderUserSearch(){
   const serviceCards = serviceResults.map(s=>{
     const meta = CATEGORY_META[s.category]||{};
     return userResultCard({
-      nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
+      kind:'service', id:s.id, fsId:s.fsId, category:s.category, nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
       sub:s.type||'', city:s.city, area:s.area, address:s.address, whatsapp:s.whatsapp, approved:s.approved
     });
   }).join('');
@@ -1102,6 +1116,7 @@ function userResultCard(item){
         ${(item.city||item.area) ? `<div class="doc-address">📍 ${[item.area,item.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
         ${item.address ? `<div class="doc-address">${escapeHtml(item.address)}</div>` : ``}
         <div class="doc-num">${escapeHtml(num||'—')}</div>
+        ${item.id ? `<div class="doc-recid">ID: ${escapeHtml(shortRecordId(item.kind,item))}</div>` : ``}
       </div>
       <div class="doc-side">
         ${digits ? `<div class="doc-acts">
@@ -1109,6 +1124,8 @@ function userResultCard(item){
         <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
         <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
         </div>` : ``}
+        ${item.id ? `<button class="a-share" onclick="shareProfileCardById('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>` : ``}
+        ${item.id ? (isAdminSignedIn ? `<button onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم" style="width:32px;height:32px;border-radius:50%;border:none;background:#eef2f6;">✏️</button>` : `<button class="a-reqadmin" onclick="requestAdminAction('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : ``}
       </div>
     </div>`;
 }
@@ -1434,6 +1451,9 @@ function saveDoctor(){
   closeModal('doctorFormModal');
   showToast('محفوظ ہو گیا ✓');
   renderDoctorList('list');
+  if(!editingDoctorId && confirm('محفوظ ہو گیا! کیا آپ ابھی اپنی پروفائل دوستوں کو شیئر کرنا چاہتے ہیں؟')){
+    shareProfileCardById('doctor', data.id);
+  }
 }
 function deleteDoctor(id){
   if(!confirm('کیا واقعی حذف کرنا چاہتے ہیں؟')) return;
@@ -1441,6 +1461,295 @@ function deleteDoctor(id){
   saveStore();
   renderDoctorList('list');
   showToast('حذف کر دیا گیا');
+}
+
+/* ---------- Share own profile card (image) to WhatsApp/friends — also promotes
+   the app itself, so the app spreads through the people who list themselves. ---------- */
+const MCS_APP_URL = 'https://pbtcodelabs-pbt.github.io/MCS/';
+
+/* ---------- Short, human-readable record ID (e.g. BKY-04821) — shown on
+   cards so people/admin can identify a specific record, and used in the
+   "request admin" message below. ---------- */
+const CATEGORY_CODE_MAP = { medicalStore:'MED', homeopathic:'HOM', testingLab:'LAB', plumberElectrician:'PLE',
+  tuitionTeacher:'TUT', groceryStore:'GRO', clothesShop:'CLO', mobileElectronics:'MOB', hardwareStore:'HRD',
+  bakery:'BKY', jewelryShop:'JWL', furnitureShop:'FUR', autoParts:'ATP', beautyParlor:'BTY', restaurant:'RES' };
+function categoryCode(kind, category){
+  if(kind==='doctor') return 'DR';
+  return CATEGORY_CODE_MAP[category] || (category||'CAT').replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase() || 'CAT';
+}
+function shortRecordId(kind, item){
+  const digits = String(item.fsId || item.id || '').replace(/[^0-9]/g,'');
+  const tail = (digits.slice(-5) || '00000').padStart(5,'0');
+  return categoryCode(kind, item.category) + '-' + tail;
+}
+
+/* ---------- General users can't delete/edit records directly (Firestore only
+   allows that for the signed-in admin) — instead they send the admin a
+   ready-made WhatsApp request naming the exact record by its short ID. ---------- */
+function requestAdminAction(kind, id){
+  const item = kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id);
+  if(!item){ showToast('اندراج نہیں ملا'); return; }
+  const sid = shortRecordId(kind, item);
+  const name = item.nameUr || item.name || '';
+  const waRaw = normalizePkNumber((store.contact && store.contact.whatsapp) || DEFAULT_CONTACT.whatsapp);
+  const digits = waRaw.replace(/[^0-9]/g,'');
+  const intl = '92' + digits.replace(/^0/,'');
+  const msg = `السلام علیکم،\nمیں اپنے اس اندراج میں تبدیلی یا حذف کروانا چاہتا ہوں:\n\nنام: ${name}\nآئی ڈی: ${sid}\n\nازراہ کرم رابطہ کریں۔ شکریہ۔`;
+  window.open('https://wa.me/'+intl+'?text='+encodeURIComponent(msg), '_blank');
+}
+function shareProfileCardById(kind, id){
+  const item = kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id);
+  if(!item){ showToast('اندراج نہیں ملا'); return; }
+  shareProfileCard(kind, item);
+}
+async function shareProfileCard(kind, item){
+  showToast('کارڈ بن رہا ہے...');
+  try{
+    const canvas = await buildShareCanvas(kind, item);
+    const caption = shareCaptionText(kind, item);
+    canvas.toBlob(async (blob)=>{
+      if(!blob){ shareTextFallback(caption); return; }
+      const file = new File([blob], 'my-city-shines.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        try{ await navigator.share({files:[file], title:'مائی سٹی شائنز', text: caption}); return; }
+        catch(e){ /* user cancelled — fall back to plain WhatsApp text */ }
+      }
+      shareTextFallback(caption);
+    }, 'image/png');
+  }catch(e){
+    shareTextFallback(shareCaptionText(kind, item));
+  }
+}
+function shareTextFallback(caption){
+  window.open('https://wa.me/?text=' + encodeURIComponent(caption), '_blank');
+}
+function shareCaptionText(kind, item){
+  const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
+  const lines = ['🌟 میری پروفائل "مائی سٹی شائنز" ایپ میں شامل ہو گئی ہے!', '',
+    `👤 ${item.nameUr||item.name||''}${catLabel?' — '+catLabel:''}`];
+  if(item.city||item.area) lines.push('📍 ' + [item.area,item.city].filter(Boolean).join('، '));
+  if(item.whatsapp) lines.push('📞 ' + normalizePkNumber(item.whatsapp));
+  lines.push('', 'یہ ایپ آپ کے پورے شہر کی مکمل ڈائریکٹری ہے — ڈاکٹرز، دکانیں اور ہر طرح کی ضروریات ایک ہی جگہ۔ ون سٹاپ پلیٹ فارم — مائی سٹی شائنز۔', '', '📲 ابھی ایپ حاصل کریں:', MCS_APP_URL);
+  return lines.join('\n');
+}
+function shareRoundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+function shareWrapText(ctx, text, x, y, maxWidth, lineHeight){
+  const words = (text||'').split(' ');
+  let line = '', curY = y;
+  const lines = [];
+  for(let i=0;i<words.length;i++){
+    const test = line + words[i] + ' ';
+    if(ctx.measureText(test).width > maxWidth && line){ lines.push(line); line = words[i] + ' '; }
+    else line = test;
+  }
+  lines.push(line);
+  lines.forEach((l,idx)=> ctx.fillText(l.trim(), x, curY + idx*lineHeight));
+}
+function shareEmbossText(ctx, text, x, y, fillStyle, shadowColor){
+  ctx.save();
+  ctx.fillStyle = shadowColor || 'rgba(0,0,0,.35)';
+  ctx.fillText(text, x, y+3);
+  ctx.restore();
+  ctx.save();
+  ctx.fillStyle = fillStyle;
+  ctx.shadowColor = 'rgba(255,255,255,.5)';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetY = -1;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+function shareWaIcon(ctx, cx, cy, r){
+  ctx.save();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#25d366'; ctx.lineWidth = r*0.22;
+  ctx.beginPath(); ctx.arc(cx, cy, r*0.62, Math.PI*0.15, Math.PI*1.65); ctx.stroke();
+  ctx.fillStyle = '#25d366';
+  ctx.beginPath();
+  ctx.moveTo(cx-r*0.05, cy+r*0.55);
+  ctx.lineTo(cx-r*0.35, cy+r*0.7);
+  ctx.lineTo(cx-r*0.2, cy+r*0.35);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function buildShareCanvas(kind, item){
+  return new Promise((resolve)=>{
+    Promise.all([
+      document.fonts.load('800 48px "Jameel Noori Nastaleeq Regular"'),
+      document.fonts.load('700 34px "Jameel Noori Nastaleeq Regular"'),
+      document.fonts.load('400 28px "Jameel Noori Nastaleeq Regular"')
+    ]).catch(()=>{}).finally(()=>{
+    const W=960, H=1280;
+    const canvas = document.createElement('canvas');
+    canvas.width=W; canvas.height=H;
+    const ctx = canvas.getContext('2d');
+
+    // background — deep navy with gold vignette glow
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0a2e52'); g.addColorStop(.5,'#0d3b66'); g.addColorStop(1,'#081f39');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    const glow = ctx.createRadialGradient(W/2,140,10,W/2,140,520);
+    glow.addColorStop(0,'rgba(244,213,141,.22)'); glow.addColorStop(1,'rgba(244,213,141,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0,0,W,H);
+
+    ctx.direction='rtl'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+
+    // gold embossed brand header
+    ctx.font = '800 52px "Jameel Noori Nastaleeq Regular", sans-serif';
+    const hg = ctx.createLinearGradient(0,50,0,110);
+    hg.addColorStop(0,'#fff2c9'); hg.addColorStop(.5,'#f4d58d'); hg.addColorStop(1,'#c99a34');
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=6; ctx.shadowOffsetY=4;
+    ctx.fillStyle = hg;
+    ctx.fillText('مائی سٹی شائنز', W/2, 100);
+    ctx.restore();
+    ctx.direction='ltr';
+    ctx.fillStyle = 'rgba(207,224,238,.85)';
+    ctx.font = '700 22px sans-serif';
+    ctx.fillText('M Y   C I T Y   S H I N E S', W/2, 136);
+    ctx.direction='rtl';
+
+    // white card panel with soft 3D shadow
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=30; ctx.shadowOffsetY=14;
+    const cardG = ctx.createLinearGradient(0,180,0,880);
+    cardG.addColorStop(0,'#ffffff'); cardG.addColorStop(1,'#f4f6f9');
+    ctx.fillStyle = cardG;
+    shareRoundRect(ctx, 60, 180, W-120, 690, 32); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle='#f0dfa8'; ctx.lineWidth=2;
+    shareRoundRect(ctx, 60, 180, W-120, 690, 32); ctx.stroke();
+
+    const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
+    const emoji = kind==='doctor' ? '🩺' : ((CATEGORY_META[item.category]||{}).emoji || '🏷️');
+
+    // emoji badge circle (3D bubble)
+    const bx=W/2, by=290, br=72;
+    const bg2 = ctx.createLinearGradient(bx,by-br,bx,by+br);
+    bg2.addColorStop(0,'#fff6df'); bg2.addColorStop(1,'#f4d58d');
+    ctx.save();
+    ctx.shadowColor='rgba(180,130,20,.4)'; ctx.shadowBlur=18; ctx.shadowOffsetY=8;
+    ctx.fillStyle = bg2;
+    ctx.beginPath(); ctx.arc(bx,by,br,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    ctx.font = '76px sans-serif';
+    ctx.fillText(emoji, bx, by+27);
+
+    // name — bold embossed navy
+    ctx.font = '800 54px "Jameel Noori Nastaleeq Regular", sans-serif';
+    const nameLines = [];
+    (function(){
+      const words = (item.nameUr||item.name||'').split(' ');
+      let line='', y=420;
+      const tmp=[];
+      for(let i=0;i<words.length;i++){
+        const test=line+words[i]+' ';
+        if(ctx.measureText(test).width > W-260 && line){ tmp.push(line.trim()); line=words[i]+' '; }
+        else line=test;
+      }
+      tmp.push(line.trim());
+      tmp.forEach((l,idx)=> shareEmbossText(ctx, l, W/2, y+idx*62, '#0b2a44'));
+    })();
+
+    // category pill
+    ctx.font = '700 28px "Jameel Noori Nastaleeq Regular", sans-serif';
+    const catW = ctx.measureText(catLabel).width + 60;
+    const catY = 500;
+    const catG = ctx.createLinearGradient(0,catY-30,0,catY+12);
+    catG.addColorStop(0,'#f4d58d'); catG.addColorStop(1,'#c99a34');
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,.25)'; ctx.shadowBlur=8; ctx.shadowOffsetY=3;
+    ctx.fillStyle = catG;
+    shareRoundRect(ctx, W/2-catW/2, catY-34, catW, 46, 23); ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = '#4a3300';
+    ctx.fillText(catLabel, W/2, catY-2);
+
+    if(item.city||item.area){
+      ctx.fillStyle = '#3a4657';
+      ctx.font = '400 30px "Jameel Noori Nastaleeq Regular", sans-serif';
+      ctx.fillText('📍 ' + [item.area,item.city].filter(Boolean).join('، '), W/2, 580);
+    }
+
+    // phone capsule with WhatsApp icon
+    if(item.whatsapp){
+      const num = normalizePkNumber(item.whatsapp);
+      ctx.font = '800 38px sans-serif';
+      const numW = ctx.measureText(num).width;
+      const pillW = numW + 140, pillH = 78, pillY = 650, pillX = W/2 - pillW/2;
+      const pg = ctx.createLinearGradient(0,pillY,0,pillY+pillH);
+      pg.addColorStop(0,'#2fd66b'); pg.addColorStop(1,'#1aa851');
+      ctx.save();
+      ctx.shadowColor='rgba(20,120,60,.5)'; ctx.shadowBlur=16; ctx.shadowOffsetY=6;
+      ctx.fillStyle = pg;
+      shareRoundRect(ctx, pillX, pillY, pillW, pillH, pillH/2); ctx.fill();
+      ctx.restore();
+      shareWaIcon(ctx, pillX+52, pillY+pillH/2, 26);
+      ctx.direction='ltr';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 38px sans-serif';
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=2; ctx.shadowOffsetY=2;
+      ctx.fillText(num, pillX+pillW/2+30, pillY+pillH/2+13);
+      ctx.restore();
+      ctx.direction='rtl';
+    }
+
+    ctx.fillStyle = '#7a8494';
+    ctx.font = '400 24px "Jameel Noori Nastaleeq Regular", sans-serif';
+    ctx.fillText('کال یا واٹس ایپ کریں', W/2, 800);
+
+    // footer CTA banner — bold gold ribbon
+    const fY = 940, fH = 200;
+    const fg = ctx.createLinearGradient(0,fY,0,fY+fH);
+    fg.addColorStop(0,'#f7dd9c'); fg.addColorStop(1,'#c99a34');
+    ctx.save();
+    ctx.shadowColor='rgba(0,0,0,.35)'; ctx.shadowBlur=16; ctx.shadowOffsetY=6;
+    ctx.fillStyle = fg;
+    shareRoundRect(ctx, 60, fY, W-120, fH, 26); ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle = '#3a2600';
+    ctx.font = '800 34px "Jameel Noori Nastaleeq Regular", sans-serif';
+    shareWrapText(ctx, 'اپنے شہر کی مکمل ڈائریکٹری — ابھی ایپ حاصل کریں!', W/2, fY+52, W-200, 42);
+
+    // app link badge
+    ctx.direction='ltr';
+    ctx.font = '800 26px sans-serif';
+    const linkTxt = 'pbtcodelabs-pbt.github.io/MCS';
+    const linkW = ctx.measureText(linkTxt).width + 50;
+    ctx.fillStyle = '#0d3b66';
+    shareRoundRect(ctx, W/2-linkW/2, fY+120, linkW, 50, 25); ctx.fill();
+    ctx.fillStyle = '#f4d58d';
+    ctx.fillText(linkTxt, W/2, fY+153);
+    ctx.direction='rtl';
+
+    const logo = new Image();
+    logo.onload = ()=>{
+      const size=76;
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.4)'; ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.arc(W/2, H-70, size/2+4, 0, Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.restore();
+      ctx.save();
+      ctx.beginPath(); ctx.arc(W/2, H-70, size/2, 0, Math.PI*2); ctx.clip();
+      ctx.drawImage(logo, W/2-size/2, H-70-size/2, size, size);
+      ctx.restore();
+      resolve(canvas);
+    };
+    logo.onerror = ()=> resolve(canvas);
+    logo.src = 'icons/icon-192.png';
+    });
+  });
 }
 function renderDoctorList(mode){
   const listWrap = mode==='list' ? document.getElementById('doctorListWrap') : document.getElementById('searchResultsWrap');
@@ -1490,6 +1799,7 @@ function renderDoctorList(mode){
         ${(d.city||d.area) ? `<div class="doc-address">📍 ${[d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
         ${d.address ? `<div class="doc-address">${escapeHtml(d.address)}</div>` : ``}
         <div class="doc-num">${escapeHtml(num||'—')}</div>
+        <div class="doc-recid">ID: ${escapeHtml(shortRecordId('doctor',d))}</div>
       </div>
 <div class="doc-side">
             ${digits ? `<div class="doc-acts">
@@ -1497,10 +1807,11 @@ function renderDoctorList(mode){
             <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
             <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
           </div>` : ``}
-      ${mode==='list' ? `<div class="doc-mini">
+      <button class="a-share" onclick="shareProfileCardById('doctor','${escapeAttr(d.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>
+      ${mode==='list' ? (isAdminSignedIn ? `<div class="doc-mini">
             <button onclick="openDoctorForm('${escapeAttr(d.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
             <button class="mini-del" onclick="deleteDoctor('${escapeAttr(d.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
-          </div>` : ``}
+          </div>` : `<button class="a-reqadmin" onclick="requestAdminAction('doctor','${escapeAttr(d.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : ``}
       </div>
     </div>`;
   }).join('');
@@ -1543,10 +1854,19 @@ function renderCustomCategoryTiles(){
     if(!wrap) return;
     wrap.innerHTML = extra.filter(k=>(CATEGORY_META[k].group||'professional')===grp).map(k=>{
       const c = CATEGORY_META[k];
-      return `<div class="cat-item" onclick="openServiceCategory('${escapeAttr(k)}')"><div class="emoji">${c.emoji||'🏷️'}</div><span>${escapeHtml(c.ur)}</span></div>`;
+      return `<div class="cat-item" onclick="openServiceCategory('${escapeAttr(k)}')"><span class="cat-count" id="catCount_${escapeAttr(k)}">۰</span><div class="emoji">${c.emoji||'🏷️'}</div><span>${escapeHtml(c.ur)}</span></div>`;
     }).join('');
   });
   renderAdminCategoryList();
+  updateCategoryCounts();
+}
+function updateCategoryCounts(){
+  const dc = document.getElementById('catCount_doctor');
+  if(dc) dc.textContent = urduDigits(store.doctors.length);
+  CATEGORY_KEYS.forEach(k=>{
+    const el = document.getElementById('catCount_'+k);
+    if(el) el.textContent = urduDigits(store.services.filter(s=>s.category===k).length);
+  });
 }
 /* Admin list of self-added categories, each with a delete button. Only
    admin-added (custom) categories can be deleted — the built-in ones are
@@ -1686,6 +2006,9 @@ function saveService(){
   closeModal('serviceFormModal');
   showToast('محفوظ ہو گیا ✓');
   renderServiceList('list');
+  if(!editingServiceId && confirm('محفوظ ہو گیا! کیا آپ ابھی اپنی پروفائل دوستوں کو شیئر کرنا چاہتے ہیں؟')){
+    shareProfileCardById('service', data.id);
+  }
 }
 function deleteService(id){
   if(!confirm('کیا واقعی حذف کرنا چاہتے ہیں؟')) return;
@@ -1733,6 +2056,7 @@ function renderServiceList(mode){
         ${(s.city||s.area) ? `<div class="doc-address">📍 ${[s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
         ${s.address ? `<div class="doc-address">${escapeHtml(s.address)}</div>` : ``}
         <div class="doc-num">${escapeHtml(num||'—')}</div>
+        <div class="doc-recid">ID: ${escapeHtml(shortRecordId('service',s))}</div>
       </div>
       <div class="doc-side">
         ${digits ? `<div class="doc-acts">
@@ -1740,10 +2064,11 @@ function renderServiceList(mode){
         <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
         <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
         </div>` : ``}
-        <div class="doc-mini">
+        <button class="a-share" onclick="shareProfileCardById('service','${escapeAttr(s.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>
+        ${isAdminSignedIn ? `<div class="doc-mini">
           <button onclick="openServiceForm('${escapeAttr(s.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
           <button class="mini-del" onclick="deleteService('${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
-        </div>
+        </div>` : `<button class="a-reqadmin" onclick="requestAdminAction('service','${escapeAttr(s.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`}
       </div>
     </div>`;
   }).join('');
@@ -2190,6 +2515,8 @@ function initFirebaseSync(){
     document.getElementById('adminPanelBox').style.display = isAdminSignedIn ? 'block' : 'none';
     document.getElementById('adminAddCategoryBox').style.display = isAdminSignedIn ? 'block' : 'none';
     if(isAdminSignedIn){ startPendingApprovalsListener(); renderAdminCategoryList(); } else stopPendingApprovalsListener();
+    if(currentScreen==='doctor-list') renderDoctorList('list');
+    if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
   });
 }
 
@@ -2218,7 +2545,13 @@ function stopPendingApprovalsListener(){
 let pendingEditFsId = null;
 function isDuplicateWhatsapp(d){
   const arr = localArrayFor(d._col || 'doctors');
-  return arr.some(x=>x.approved!==false && x.fsId!==d.fsId && x.whatsapp===d.whatsapp);
+  return arr.some(x=>{
+    if(x.approved===false || x.fsId===d.fsId || x.whatsapp!==d.whatsapp) return false;
+    // for services, only count it a duplicate within the SAME category —
+    // one person can legitimately run a plumber shop and a bakery, say.
+    if(d._col==='services' && x.category!==d.category) return false;
+    return true;
+  });
 }
 function renderPendingApprovals(){
   const wrap = document.getElementById('pendingApprovalsWrap');
