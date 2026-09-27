@@ -131,6 +131,8 @@
   .mcs-ticker-track span{font-size:var(--ticker-font-size);font-family:var(--ticker-font-family),'Segoe UI',sans-serif;
     color:var(--ticker-text);font-weight:600;white-space:nowrap;line-height:1.6;
     display:inline-flex;align-items:center;padding-top:2px;}
+  .mcs-ticker-track span.tkr-pill-custom{padding:2px 12px;border-radius:999px;border:1.5px solid transparent;}
+  .mcs-ticker-track span.tkr-dot{opacity:.55;padding:0;}
   @keyframes mcsTickerMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   #app{padding-top:var(--ticker-h);}
   .hero{
@@ -250,10 +252,12 @@
   .cat-item span{font-size:13.5px;font-weight:700;display:block;color:#0b2a44;line-height:1.5;}
   .cat-item small{font-size:10px;color:var(--muted);}
   .cat-item.soon{opacity:.6;}
-  .cat-count{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
-    background:linear-gradient(145deg,#0d3b66,#123a5e);color:#f4d58d;
-    font-size:10px;font-weight:800;border-radius:8px;display:inline-flex;align-items:center;white-space:nowrap;
-    justify-content:center;padding:3px 10px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.15);}
+  .cat-count{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(145deg,#ffe9a8,#d4a017);color:#5a3d00;
+    font-size:11px;font-weight:800;border-radius:999px;display:inline-flex;align-items:center;white-space:nowrap;
+    justify-content:center;min-width:22px;height:22px;padding:0 7px;box-sizing:border-box;
+    border:1px solid rgba(255,255,255,.6);
+    box-shadow:0 2px 4px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.7);}
   .badge-soon{display:inline-block;background:#fde68a;color:#92400e;font-size:9px;
     padding:2px 6px;border-radius:6px;margin-top:5px;}
 
@@ -560,7 +564,8 @@
         <div class="cat-item" onclick="openServiceCategory('jewelryShop')"><span class="cat-count" id="catCount_jewelryShop">۰</span><div class="emoji">💍</div><span>جیولری شاپ</span></div>
         <div class="cat-item" onclick="openServiceCategory('furnitureShop')"><span class="cat-count" id="catCount_furnitureShop">۰</span><div class="emoji">🛋️</div><span>فرنیچر شاپ</span></div>
         <div class="cat-item" onclick="openServiceCategory('autoParts')"><span class="cat-count" id="catCount_autoParts">۰</span><div class="emoji">🚗</div><span>آٹو پارٹس</span></div>
-        <div class="cat-item" onclick="openServiceCategory('beautyParlor')"><span class="cat-count" id="catCount_beautyParlor">۰</span><div class="emoji">💇</div><span>بیوٹی پارلر / سیلون</span></div>
+        <div class="cat-item" style="display:none;" onclick="openServiceCategory('beautyParlor')"><span class="cat-count" id="catCount_beautyParlor">۰</span><div class="emoji">💇</div><span>بیوٹی پارلر / سیلون</span></div>
+        <!-- بیوٹی پارلر فی الحال چھپا دیا گیا ہے — ضرورت پر یہ display:none ہٹا دیں، ڈیٹا/کوڈ محفوظ ہے -->
         <div class="cat-item" onclick="openServiceCategory('restaurant')"><span class="cat-count" id="catCount_restaurant">۰</span><div class="emoji">🍽️</div><span>ہوٹل / ریسٹورنٹ</span></div>
         <span id="customCatTilesBusiness" style="display:contents;"></span>
       </div>
@@ -936,70 +941,73 @@
 
 <!-- ===================== TICKER ADMIN MODAL (7-tap secret) ===================== -->
 <div class="modal-overlay" id="tickerAdminModal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('tickerAdminModal')">×</button>
-    <h3>📰 پٹی کی سیٹنگز</h3>
-    <div style="clear:both;"></div>
-
-    <div class="backup-card-title" style="margin-top:4px;">پیش منظر (نمونہ) — یہاں فوری تبدیلی نظر آئے گی</div>
-    <div style="border-radius:8px;overflow:hidden;margin-bottom:14px;">
-      <div class="mcs-ticker" id="tkPreviewBar" style="position:relative;height:34px;">
-        <div class="mcs-ticker-border" id="tkPvBorderL" style="flex:0 0 14px;"></div>
-        <div class="mcs-ticker-middle" id="tkPvMiddle" style="flex:1;overflow:hidden;display:flex;align-items:center;">
-          <div class="mcs-ticker-track" id="tkPvTrack" style="display:inline-flex;gap:48px;align-items:center;padding:0 6px;height:100%;"></div>
+  <div class="modal-box" style="padding-top:0;">
+    <div id="tkStickyTop" style="position:sticky;top:0;background:#fff;z-index:5;padding:14px 20px 8px;margin:0 -20px;box-shadow:0 4px 8px rgba(0,0,0,.06);">
+      <button class="modal-close" onclick="closeModal('tickerAdminModal')">×</button>
+      <h3 style="margin:0 0 8px;">📰 پٹی کی سیٹنگز</h3>
+      <div style="clear:both;"></div>
+      <div style="border-radius:8px;overflow:hidden;">
+        <div class="mcs-ticker" id="tkPreviewBar" style="position:relative;height:34px;">
+          <div class="mcs-ticker-border" id="tkPvBorderL" style="flex:0 0 14px;"></div>
+          <div class="mcs-ticker-middle" id="tkPvMiddle" style="flex:1;overflow:hidden;display:flex;align-items:center;">
+            <div class="mcs-ticker-track" id="tkPvTrack" style="display:inline-flex;gap:36px;align-items:center;padding:0 6px;height:100%;"></div>
+          </div>
+          <div class="mcs-ticker-border" id="tkPvBorderR" style="flex:0 0 14px;"></div>
         </div>
-        <div class="mcs-ticker-border" id="tkPvBorderR" style="flex:0 0 14px;"></div>
       </div>
+      <div style="font-size:10.5px;color:var(--muted);margin-top:4px;">☝️ نمونہ — یہاں فوری نظر آئے گا، "لاگو کریں" دبانے تک اصل پٹی محفوظ رہے گی</div>
     </div>
 
-    <div class="backup-card-title">پیغامات</div>
+    <div style="padding-top:12px;">
+    <div class="backup-card-title">پیغامات — ہر پیغام کا اپنا رنگ سیٹ کریں</div>
     <div id="tickerAdminList"></div>
-    <div style="display:flex;gap:6px;margin-top:6px;margin-bottom:16px;">
+    <div style="display:flex;gap:6px;margin-top:6px;margin-bottom:14px;">
       <input type="text" id="tickerNewMsg" placeholder="نیا پیغام لکھیں" style="flex:1;padding:8px;border-radius:8px;border:1px solid #d8dee4;">
-      <button class="btn accent" style="padding:6px 14px;" onclick="addTickerMsg()">➕ شامل کریں</button>
+      <button class="btn accent" style="padding:6px 14px;" onclick="addTickerMsgPending()">➕ شامل کریں</button>
     </div>
 
-    <hr style="margin:14px 0;border:none;border-top:1px solid #e5e7eb;">
-    <div class="backup-card-title">ظاہری شکل — تبدیل کریں، اوپر نمونے میں دیکھیں، پھر "لاگو کریں" دبائیں</div>
+    <hr style="margin:12px 0;border:none;border-top:1px solid #e5e7eb;">
+    <div class="backup-card-title">عمومی ظاہری شکل (پوری پٹی)</div>
 
-    <div class="field">
+    <div class="field" style="margin-bottom:8px;">
       <label>فونٹ</label>
-      <select id="tkFontFamily" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;" onchange="updateTickerPreview({fontFamily:this.value})">
+      <select id="tkFontFamily" style="width:100%;padding:8px;border-radius:10px;border:1px solid #d8dee4;" onchange="updateTickerPreview({fontFamily:this.value})">
         <option value="Jameel Noori Nastaleeq Regular">جمیل نوری نستعلیق</option>
         <option value="Jameel Noori Nastaleeq Kasheeda">جمیل نوری نستعلیق (کشیدہ)</option>
         <option value="Segoe UI">سادہ انگریزی فونٹ</option>
       </select>
     </div>
-    <div class="field">
+    <div class="field" style="margin-bottom:8px;">
       <label>لکھائی کا سائز: <span id="tkFontSizeVal"></span></label>
       <input type="range" id="tkFontSize" min="10" max="22" step="1" style="width:100%;" oninput="updateTickerPreview({fontSize:Number(this.value)})">
     </div>
-    <div class="field">
+    <div class="field" style="margin-bottom:8px;">
       <label>رفتار (سست ← تیز): <span id="tkSpeedVal"></span></label>
       <input type="range" id="tkSpeed" min="10" max="60" step="2" style="width:100%;" oninput="updateTickerPreview({speed:Number(this.value)})">
     </div>
-    <div class="cp-btn-row" style="margin-top:8px;">
+    <div class="cp-btn-row" style="margin-top:4px;">
       <div class="field" style="flex:1;">
         <label>لکھائی کا رنگ</label>
-        <input type="color" id="tkTextColor" style="width:100%;height:40px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({textColor:this.value})">
+        <input type="color" id="tkTextColor" style="width:100%;height:36px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({textColor:this.value})">
       </div>
       <div class="field" style="flex:1;">
         <label>بارڈر کا رنگ</label>
-        <input type="color" id="tkBorderColor" style="width:100%;height:40px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({borderColor:this.value})">
+        <input type="color" id="tkBorderColor" style="width:100%;height:36px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({borderColor:this.value})">
       </div>
     </div>
     <div class="cp-btn-row">
       <div class="field" style="flex:1;">
         <label>بیک گراؤنڈ (شروع)</label>
-        <input type="color" id="tkBg1" style="width:100%;height:40px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({midBg1:this.value})">
+        <input type="color" id="tkBg1" style="width:100%;height:36px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({midBg1:this.value})">
       </div>
       <div class="field" style="flex:1;">
         <label>بیک گراؤنڈ (اختتام)</label>
-        <input type="color" id="tkBg2" style="width:100%;height:40px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({midBg2:this.value})">
+        <input type="color" id="tkBg2" style="width:100%;height:36px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({midBg2:this.value})">
       </div>
     </div>
 
     <button class="btn block accent" style="margin-top:14px;" onclick="applyTickerPending()">✅ لاگو کریں (اصل پٹی میں چلے گا)</button>
+    </div>
   </div>
 </div>
 
@@ -1027,7 +1035,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0935AM";
+const APP_VERSION = "MCS27SEPSU1010AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2152,10 +2160,10 @@ function renderCustomCategoryTiles(){
 }
 function updateCategoryCounts(){
   const dc = document.getElementById('catCount_doctor');
-  if(dc) dc.textContent = urduDigits(store.doctors.length) + ' اندراجات';
+  if(dc) dc.textContent = urduDigits(store.doctors.length);
   CATEGORY_KEYS.forEach(k=>{
     const el = document.getElementById('catCount_'+k);
-    if(el) el.textContent = urduDigits(store.services.filter(s=>s.category===k).length) + ' اندراجات';
+    if(el) el.textContent = urduDigits(store.services.filter(s=>s.category===k).length);
   });
 }
 /* Admin list of self-added categories, each with a delete button. Only
@@ -2766,11 +2774,30 @@ const DEFAULT_TICKER_MESSAGES = [
   '🔗 اپنی پروفائل شیئر کریں اور نئے لوگوں کو ایپ سے جوڑیں!',
   '🏙️ اپنے شہر کی مکمل ڈائریکٹری — ہر ضرورت ایک ہی جگہ!'
 ];
-function tickerMessages(){ return (store.tickerMessages && store.tickerMessages.length) ? store.tickerMessages : DEFAULT_TICKER_MESSAGES; }
+/* A ticker message can be a plain string (legacy) or an object carrying its
+   own optional color overrides: {text, textColor, bgColor, borderColor}.
+   Any override left null/undefined simply inherits the ticker's global look. */
+function tickerMsgNorm(m){
+  if(typeof m === 'string') return {text:m, textColor:null, bgColor:null, borderColor:null};
+  return {text:m.text||'', textColor:m.textColor||null, bgColor:m.bgColor||null, borderColor:m.borderColor||null};
+}
+function tickerMessages(){
+  const raw = (store.tickerMessages && store.tickerMessages.length) ? store.tickerMessages : DEFAULT_TICKER_MESSAGES;
+  return raw.map(tickerMsgNorm);
+}
+function tickerMsgSpanHtml(m){
+  const custom = !!(m.bgColor || m.borderColor);
+  const styles = [];
+  if(m.textColor) styles.push('color:'+m.textColor);
+  if(m.bgColor) styles.push('background:'+m.bgColor);
+  if(m.borderColor) styles.push('border-color:'+m.borderColor);
+  const cls = custom ? 'tkr-pill-custom' : '';
+  return `<span class="${cls}"${styles.length?` style="${styles.join(';')}"`:''}>${escapeHtml(m.text)}</span>`;
+}
 function renderTicker(){
   const el = document.getElementById('tickerTrack');
   if(!el) return;
-  const line = tickerMessages().map(m=>`<span>${escapeHtml(m)}</span>`).join('<span>•</span>');
+  const line = tickerMessages().map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
   el.innerHTML = line + line; // duplicated once for seamless 50% loop
   applyTickerSettings();
 }
@@ -2802,11 +2829,14 @@ function saveTickerSettings(patch){
   const FB = window.MCSFirebase;
   if(FB){
     const ref = FB.doc(FB.db,'appConfig','ticker');
-    FB.setDoc(ref, {list: tickerMessages(), settings: store.tickerSettings}, {merge:true}).catch(()=>{});
+    FB.setDoc(ref, {list: store.tickerMessages||tickerMessages(), settings: store.tickerSettings}, {merge:true}).catch(()=>{});
   }
 }
 
-/* ---------- Ticker admin (7-tap secret, no code editing needed) ---------- */
+/* ---------- Ticker admin (7-tap secret, no code editing needed) ----------
+   Everything — global look AND each message's own colors — is staged in
+   tickerPending first and only written to the real ticker when "لاگو کریں"
+   is pressed, so the panel can be experimented with freely. */
 let tickerTapCount = 0, tickerTapTimer = null;
 function tickerTap(){
   tickerTapCount++;
@@ -2819,9 +2849,8 @@ function tickerTap(){
 }
 let tickerPending = null;
 function openTickerAdmin(){
-  renderTickerAdminList();
-  tickerPending = {...tickerSettings()};
-  const s = tickerPending;
+  tickerPending = { settings: {...tickerSettings()}, messages: tickerMessages().map(m=>({...m})) };
+  const s = tickerPending.settings;
   document.getElementById('tkFontFamily').value = s.fontFamily;
   document.getElementById('tkFontSize').value = s.fontSize;
   document.getElementById('tkFontSizeVal').textContent = s.fontSize+'px';
@@ -2831,19 +2860,20 @@ function openTickerAdmin(){
   document.getElementById('tkBorderColor').value = s.borderColor;
   document.getElementById('tkBg1').value = s.midBg1;
   document.getElementById('tkBg2').value = s.midBg2;
+  renderTickerAdminList();
   renderTickerPreview();
   openModal('tickerAdminModal');
 }
 function updateTickerPreview(patch){
-  tickerPending = {...tickerPending, ...patch};
+  tickerPending.settings = {...tickerPending.settings, ...patch};
   if('fontSize' in patch) document.getElementById('tkFontSizeVal').textContent = patch.fontSize+'px';
   if('speed' in patch) document.getElementById('tkSpeedVal').textContent = patch.speed+' سیکنڈ';
   renderTickerPreview();
 }
 function renderTickerPreview(){
-  const s = tickerPending || tickerSettings();
-  const msgs = tickerMessages();
-  const line = msgs.map(m=>`<span>${escapeHtml(m)}</span>`).join('<span>•</span>');
+  const s = tickerPending.settings;
+  const msgs = tickerPending.messages;
+  const line = msgs.map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
   const track = document.getElementById('tkPvTrack');
   track.innerHTML = line + line;
   track.style.fontFamily = `'${s.fontFamily}','Segoe UI',sans-serif`;
@@ -2857,42 +2887,65 @@ function renderTickerPreview(){
   document.getElementById('tkPvBorderR').style.background = s.borderColor;
 }
 function applyTickerPending(){
-  saveTickerSettings(tickerPending);
+  store.tickerMessages = tickerPending.messages.map(tickerMsgNorm);
+  store.tickerSettings = {...tickerPending.settings};
+  saveStore();
+  renderTicker();
+  applyTickerSettings();
+  const FB = window.MCSFirebase;
+  if(FB){
+    const ref = FB.doc(FB.db,'appConfig','ticker');
+    FB.setDoc(ref, {list: store.tickerMessages, settings: store.tickerSettings}, {merge:true}).catch(()=>{});
+  }
   showToast('پٹی کی نئی شکل لاگو ہو گئی ✓');
 }
 function renderTickerAdminList(){
   const wrap = document.getElementById('tickerAdminList');
   if(!wrap) return;
-  const msgs = tickerMessages();
+  const msgs = tickerPending.messages;
   wrap.innerHTML = msgs.map((m,idx)=>`
-    <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;">
-      <input type="text" value="${escapeAttr(m)}" style="flex:1;padding:8px;border-radius:8px;border:1px solid #d8dee4;" onchange="updateTickerMsg(${idx}, this.value)">
-      <button class="btn secondary" style="padding:6px 10px;" onclick="deleteTickerMsg(${idx})">🗑️</button>
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:8px;margin-bottom:8px;">
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+        <input type="text" value="${escapeAttr(m.text)}" style="flex:1;padding:8px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerMsgPending(${idx},'text',this.value)">
+        <button class="btn secondary" style="padding:6px 10px;" onclick="deleteTickerMsgPending(${idx})">🗑️</button>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <label style="font-size:10.5px;color:var(--muted);">لکھائی</label>
+        <input type="color" value="${m.textColor||tickerPending.settings.textColor}" style="width:30px;height:26px;border-radius:6px;border:1px solid #d8dee4;padding:0;" oninput="updateTickerMsgPending(${idx},'textColor',this.value)">
+        <label style="font-size:10.5px;color:var(--muted);">بیک گراؤنڈ</label>
+        <input type="color" value="${m.bgColor||tickerPending.settings.midBg1}" style="width:30px;height:26px;border-radius:6px;border:1px solid #d8dee4;padding:0;" oninput="updateTickerMsgPending(${idx},'bgColor',this.value)">
+        <label style="font-size:10.5px;color:var(--muted);">بارڈر</label>
+        <input type="color" value="${m.borderColor||tickerPending.settings.borderColor}" style="width:30px;height:26px;border-radius:6px;border:1px solid #d8dee4;padding:0;" oninput="updateTickerMsgPending(${idx},'borderColor',this.value)">
+        <button class="btn secondary" style="padding:4px 8px;font-size:11px;margin-right:auto;" onclick="resetTickerMsgColor(${idx})">↺ ڈیفالٹ رنگ</button>
+      </div>
     </div>`).join('');
 }
-function updateTickerMsg(idx, val){
-  const msgs = tickerMessages().slice();
-  msgs[idx] = val.trim() || msgs[idx];
-  saveTickerMessages(msgs);
-  if(tickerPending) renderTickerPreview();
+function updateTickerMsgPending(idx, field, val){
+  const m = tickerPending.messages[idx];
+  if(!m) return;
+  m[field] = val;
+  renderTickerPreview();
 }
-function deleteTickerMsg(idx){
-  const msgs = tickerMessages().slice();
-  msgs.splice(idx,1);
-  saveTickerMessages(msgs);
+function resetTickerMsgColor(idx){
+  const m = tickerPending.messages[idx];
+  if(!m) return;
+  m.textColor = null; m.bgColor = null; m.borderColor = null;
   renderTickerAdminList();
-  if(tickerPending) renderTickerPreview();
+  renderTickerPreview();
 }
-function addTickerMsg(){
+function deleteTickerMsgPending(idx){
+  tickerPending.messages.splice(idx,1);
+  renderTickerAdminList();
+  renderTickerPreview();
+}
+function addTickerMsgPending(){
   const input = document.getElementById('tickerNewMsg');
   const val = (input.value||'').trim();
   if(!val) return;
-  const msgs = tickerMessages().slice();
-  msgs.push(val);
-  saveTickerMessages(msgs);
+  tickerPending.messages.push({text:val, textColor:null, bgColor:null, borderColor:null});
   input.value = '';
   renderTickerAdminList();
-  if(tickerPending) renderTickerPreview();
+  renderTickerPreview();
 }
 function saveTickerMessages(msgs){
   store.tickerMessages = msgs;
