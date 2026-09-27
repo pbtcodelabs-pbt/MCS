@@ -255,10 +255,11 @@
   .cat-item small{font-size:10px;color:var(--muted);}
   .cat-item.soon{opacity:.6;}
   .cat-count{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
-    background:linear-gradient(145deg,#ffe9a8,#d4a017);color:#5a3d00;
-    font-size:11px;font-weight:800;border-radius:999px;display:inline-flex;align-items:center;white-space:nowrap;
+    background:#ffffff;color:#000000;direction:ltr;unicode-bidi:isolate;
+    font-family:'Arial Black','Arial Bold',Gadget,sans-serif;
+    font-size:11px;font-weight:900;border-radius:999px;display:inline-flex;align-items:center;white-space:nowrap;
     justify-content:center;min-width:22px;height:22px;padding:0 7px;box-sizing:border-box;
-    border:1px solid rgba(255,255,255,.6);
+    border:1px solid #d8dee4;
     box-shadow:0 2px 4px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.7);}
   .badge-soon{display:inline-block;background:#fde68a;color:#92400e;font-size:9px;
     padding:2px 6px;border-radius:6px;margin-top:5px;}
@@ -306,10 +307,16 @@
     background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22);
     max-height:280px;overflow-y:auto;padding:8px;border:1px solid #e5e7eb;
   }
+  /* space-between (not flex-start) pins the English badge to the row's fixed
+     left edge and the Urdu name to its fixed right edge on EVERY row,
+     regardless of how long either name is — so the English badges line up
+     in one straight column instead of drifting left/right per row. */
   .csel-opt{
-    display:flex;align-items:center;justify-content:flex-start;gap:6px;
-    background:#f3f6f5;border-radius:999px;padding:7px 12px;margin-bottom:6px;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    background:#f3f6f5;border-radius:14px;padding:9px 14px;margin-bottom:6px;cursor:pointer;
+    border:1px solid #e5e7eb;
   }
+  .csel-opt .csel-ur{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .csel-opt:last-child{margin-bottom:0;}
   .csel-opt.active{background:linear-gradient(90deg,#0d3b66,#0f766e);}
   .csel-opt.active .csel-ur{color:#fff;}
@@ -588,6 +595,7 @@
         <div class="cat-item" style="display:none;" onclick="openServiceCategory('beautyParlor')"><span class="cat-count" id="catCount_beautyParlor">۰</span><div class="emoji">💇</div><span>بیوٹی پارلر / سیلون</span></div>
         <!-- بیوٹی پارلر فی الحال چھپا دیا گیا ہے — ضرورت پر یہ display:none ہٹا دیں، ڈیٹا/کوڈ محفوظ ہے -->
         <div class="cat-item" onclick="openServiceCategory('restaurant')"><span class="cat-count" id="catCount_restaurant">۰</span><div class="emoji">🍽️</div><span>ہوٹل / ریسٹورنٹ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('otherShop')"><span class="cat-count" id="catCount_otherShop">۰</span><div class="emoji">🏬</div><span>دیگر / جنرل سٹور</span></div>
         <span id="customCatTilesBusiness" style="display:contents;"></span>
       </div>
     </div>
@@ -1050,7 +1058,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU1107AM";
+const APP_VERSION = "MCS27SEPSU1145AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1104,7 +1112,8 @@ const CATEGORY_META = {
   furnitureShop:     {group:'business', emoji:'🛋️', ur:'فرنیچر شاپ',           nameLabel:'دکان کا نام', typeLabel:'زمرہ', listTitle:'فرنیچر شاپس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
   autoParts:         {group:'business', emoji:'🚗', ur:'آٹو پارٹس',             nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً گاڑی / موٹر سائیکل)', listTitle:'آٹو پارٹس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
   beautyParlor:      {group:'business', emoji:'💇', ur:'بیوٹی پارلر / سیلون',   nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً مردانہ / زنانہ)', listTitle:'بیوٹی پارلرز کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
-  restaurant:        {group:'business', emoji:'🍽️', ur:'ہوٹل / ریسٹورنٹ',     nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً فاسٹ فوڈ / دیسی کھانا)', listTitle:'ہوٹلز / ریسٹورنٹس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'}
+  restaurant:        {group:'business', emoji:'🍽️', ur:'ہوٹل / ریسٹورنٹ',     nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً فاسٹ فوڈ / دیسی کھانا)', listTitle:'ہوٹلز / ریسٹورنٹس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  otherShop:         {group:'business', emoji:'🏬', ur:'دیگر / جنرل سٹور',      nameLabel:'دکان کا نام', typeLabel:'یہ دکان کس چیز کی ہے؟ (مثلاً گھڑیوں کی دکان، کٹلری، نائیوں کا سامان)', listTitle:'دیگر دکانوں کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'}
 };
 const CATEGORY_KEYS = Object.keys(CATEGORY_META);
 const BUILT_IN_CATEGORY_KEYS = Object.keys(CATEGORY_META);
@@ -1660,7 +1669,7 @@ const MCS_APP_URL = 'https://pbtcodelabs-pbt.github.io/MCS/';
    "request admin" message below. ---------- */
 const CATEGORY_CODE_MAP = { medicalStore:'MED', homeopathic:'HOM', testingLab:'LAB', plumberElectrician:'PLE',
   tuitionTeacher:'TUT', groceryStore:'GRO', clothesShop:'CLO', mobileElectronics:'MOB', hardwareStore:'HRD',
-  bakery:'BKY', jewelryShop:'JWL', furnitureShop:'FUR', autoParts:'ATP', beautyParlor:'BTY', restaurant:'RES' };
+  bakery:'BKY', jewelryShop:'JWL', furnitureShop:'FUR', autoParts:'ATP', beautyParlor:'BTY', restaurant:'RES', otherShop:'OTH' };
 function categoryCode(kind, category){
   if(kind==='doctor') return 'DR';
   return CATEGORY_CODE_MAP[category] || (category||'CAT').replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase() || 'CAT';
@@ -2360,10 +2369,10 @@ function renderCustomCategoryTiles(){
 }
 function updateCategoryCounts(){
   const dc = document.getElementById('catCount_doctor');
-  if(dc) dc.textContent = urduDigits(store.doctors.length);
+  if(dc) dc.textContent = String(store.doctors.length);
   CATEGORY_KEYS.forEach(k=>{
     const el = document.getElementById('catCount_'+k);
-    if(el) el.textContent = urduDigits(store.services.filter(s=>s.category===k).length);
+    if(el) el.textContent = String(store.services.filter(s=>s.category===k).length);
   });
 }
 /* Admin list of self-added categories, each with a delete button. Only
