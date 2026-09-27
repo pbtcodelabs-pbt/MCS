@@ -119,11 +119,11 @@
     --ticker-font-family:'Jameel Noori Nastaleeq Regular';
   }
   .mcs-ticker{position:fixed;top:0;left:0;right:0;z-index:9999;
-    height:var(--ticker-h);box-sizing:border-box;display:flex;align-items:stretch;
+    height:var(--ticker-h);box-sizing:border-box;
     box-shadow:0 2px 6px rgba(0,0,0,.25);}
-  .mcs-ticker-border{flex:0 0 14px;background:var(--ticker-border-color);}
-  .mcs-ticker-middle{flex:1;overflow:hidden;position:relative;
+  .mcs-ticker-middle{width:100%;height:100%;overflow:hidden;position:relative;box-sizing:border-box;
     background:linear-gradient(90deg,var(--ticker-mid-bg1),var(--ticker-mid-bg2));
+    border-top:3px solid var(--ticker-border-color);border-bottom:3px solid var(--ticker-border-color);
     display:flex;align-items:center;}
   .mcs-ticker-track{display:inline-flex;gap:48px;align-items:center;
     animation:mcsTickerMove 30s linear infinite;will-change:transform;
@@ -149,6 +149,8 @@
     background:rgba(255,255,255,.12);color:#fff;display:flex;align-items:center;justify-content:center;padding:0;}
   .hero-btn svg{width:20px;height:20px;}
   .hero-btn:active{background:rgba(255,255,255,.25);}
+  .hero-btn-share{background:linear-gradient(145deg,#f4d58d,#d4a017);border-color:rgba(255,255,255,.4);color:#3a2600;}
+  .hero-btn-share:active{background:linear-gradient(145deg,#e8c674,#c2930f);}
   .hero-brand{display:flex;align-items:center;gap:10px;}
   .hero-logo{width:42px;height:42px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.25);background:#fff;object-fit:cover;}
   .hero-brand small{display:block;font-size:11px;opacity:.75;letter-spacing:.5px;font-family:'Segoe UI',Roboto,sans-serif;line-height:1.2;}
@@ -416,6 +418,26 @@
   .modal-box h3{margin:0 0 14px;font-size:16px;}
   .modal-close{float:left;background:#f3f4f6;border:none;width:32px;height:32px;border-radius:8px;font-size:16px;}
 
+  /* Ticker settings modal: header+footer fixed, only the middle scrolls, and
+     the whole box height tracks the visible area above the on-screen
+     keyboard (--vvh, kept live by JS) so the Apply button and every slider
+     always stay above the keyboard, never hidden behind it. */
+  .tk-modal-box{background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;
+    max-height:min(85vh, calc(var(--vvh, 100vh) * .85));
+    display:flex;flex-direction:column;animation:slideUp .25s ease;overflow:hidden;}
+  .tk-modal-head{flex:0 0 auto;padding:12px 14px 8px;border-bottom:1px solid #eee;}
+  .tk-modal-body{flex:1 1 auto;overflow-y:auto;padding:8px 14px;}
+  .tk-modal-foot{flex:0 0 auto;padding:10px 14px;border-top:1px solid #eee;}
+  .tk-compact-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-bottom:8px;}
+  .tk-swatch-row{display:flex;align-items:center;gap:5px;}
+  .tk-swatch-row label{font-size:9.5px;color:var(--muted);white-space:nowrap;}
+  .tk-swatch{width:26px;height:26px;border-radius:6px;border:1px solid #d8dee4;padding:0;flex:0 0 auto;}
+  .tk-tmpl-btn{padding:5px 9px;font-size:10.5px;border-radius:8px;border:1.5px solid #d8dee4;background:#f8f9fa;white-space:nowrap;}
+  .tk-tmpl-btn.active{border-color:#d4a017;background:#fff8e1;font-weight:700;}
+  .tk-preset-dot{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d8dee4;flex:0 0 auto;}
+  .tk-msg-row{display:flex;align-items:center;gap:5px;border:1px solid #e5e7eb;border-radius:9px;padding:5px;margin-bottom:6px;}
+  .tk-msg-row input[type=text]{flex:1;min-width:0;padding:6px 8px;border-radius:7px;border:1px solid #d8dee4;font-size:12.5px;}
+
   .toast{
     position:fixed;top:14px;left:50%;transform:translateX(-50%);
     background:#1f2937;color:#fff;padding:10px 18px;border-radius:10px;
@@ -474,9 +496,7 @@
 </head>
 <body>
 <div class="mcs-ticker" id="mcsTicker" onclick="tickerTap()">
-  <div class="mcs-ticker-border"></div>
-  <div class="mcs-ticker-middle"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
-  <div class="mcs-ticker-border"></div>
+  <div class="mcs-ticker-middle" id="tickerMiddle"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
 </div>
 <div class="backup-strip" id="backupStrip">
   <div class="backup-strip-label" id="backupStripLabel">بیک اپ ہو رہا ہے...</div>
@@ -496,6 +516,7 @@
           <small>MY CITY SHINES</small>
         </div>
         <div class="hero-actions">
+          <button class="hero-btn hero-btn-share" onclick="shareAppPromo()" aria-label="ایپ شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg></button>
           <button class="hero-btn" onclick="openDevChat()" aria-label="رابطہ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></button>
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
         </div>
@@ -941,72 +962,66 @@
 
 <!-- ===================== TICKER ADMIN MODAL (7-tap secret) ===================== -->
 <div class="modal-overlay" id="tickerAdminModal">
-  <div class="modal-box" style="padding-top:0;">
-    <div id="tkStickyTop" style="position:sticky;top:0;background:#fff;z-index:5;padding:14px 20px 8px;margin:0 -20px;box-shadow:0 4px 8px rgba(0,0,0,.06);">
-      <button class="modal-close" onclick="closeModal('tickerAdminModal')">×</button>
-      <h3 style="margin:0 0 8px;">📰 پٹی کی سیٹنگز</h3>
+  <div class="tk-modal-box">
+    <div class="tk-modal-head">
+      <button class="modal-close" onclick="closeTickerAdmin()">×</button>
+      <h3 style="margin:0;font-size:15px;">📰 پٹی کی سیٹنگز</h3>
       <div style="clear:both;"></div>
-      <div style="border-radius:8px;overflow:hidden;">
-        <div class="mcs-ticker" id="tkPreviewBar" style="position:relative;height:34px;">
-          <div class="mcs-ticker-border" id="tkPvBorderL" style="flex:0 0 14px;"></div>
-          <div class="mcs-ticker-middle" id="tkPvMiddle" style="flex:1;overflow:hidden;display:flex;align-items:center;">
-            <div class="mcs-ticker-track" id="tkPvTrack" style="display:inline-flex;gap:36px;align-items:center;padding:0 6px;height:100%;"></div>
-          </div>
-          <div class="mcs-ticker-border" id="tkPvBorderR" style="flex:0 0 14px;"></div>
+      <div style="font-size:10px;color:var(--muted);">☝️ اوپر اصل پٹی پر فوری اثر — "لاگو کریں" تک محفوظ نہیں ہوگا</div>
+    </div>
+
+    <div class="tk-modal-body">
+      <div class="backup-card-title" style="margin:6px 0 4px;font-size:12px;">🎨 تیار رنگ سکیمیں (ٹچ کریں)</div>
+      <div id="tkPresetRow" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;"></div>
+
+      <div class="backup-card-title" style="font-size:12px;margin-bottom:4px;">بارڈر (پٹی کے اوپر/نیچے باریک لائن)</div>
+      <div id="tkBorderTmplRow" style="display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px;"></div>
+      <div class="tk-compact-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:10px;">
+        <div class="tk-swatch-row"><label>بارڈر رنگ</label><input type="color" id="tkBorderColor" class="tk-swatch" oninput="updateTickerPreview({borderColor:this.value})"></div>
+        <div class="tk-swatch-row" style="grid-column:span 2;">
+          <label>موٹائی</label>
+          <input type="range" id="tkBorderWidth" min="1" max="8" step="1" style="flex:1;" oninput="updateTickerPreview({borderWidth:Number(this.value)}); document.getElementById('tkBorderWidthVal').textContent=this.value+'px'">
+          <span id="tkBorderWidthVal" style="font-size:10.5px;color:var(--muted);"></span>
         </div>
       </div>
-      <div style="font-size:10.5px;color:var(--muted);margin-top:4px;">☝️ نمونہ — یہاں فوری نظر آئے گا، "لاگو کریں" دبانے تک اصل پٹی محفوظ رہے گی</div>
-    </div>
 
-    <div style="padding-top:12px;">
-    <div class="backup-card-title">پیغامات — ہر پیغام کا اپنا رنگ سیٹ کریں</div>
-    <div id="tickerAdminList"></div>
-    <div style="display:flex;gap:6px;margin-top:6px;margin-bottom:14px;">
-      <input type="text" id="tickerNewMsg" placeholder="نیا پیغام لکھیں" style="flex:1;padding:8px;border-radius:8px;border:1px solid #d8dee4;">
-      <button class="btn accent" style="padding:6px 14px;" onclick="addTickerMsgPending()">➕ شامل کریں</button>
-    </div>
+      <div class="tk-compact-grid">
+        <div class="tk-swatch-row"><label>لکھائی رنگ</label><input type="color" id="tkTextColor" class="tk-swatch" oninput="updateTickerPreview({textColor:this.value})"></div>
+        <div class="tk-swatch-row"><label>بیک گراؤنڈ شروع</label><input type="color" id="tkBg1" class="tk-swatch" oninput="updateTickerPreview({midBg1:this.value})"></div>
+        <div class="tk-swatch-row"><label>بیک گراؤنڈ اختتام</label><input type="color" id="tkBg2" class="tk-swatch" oninput="updateTickerPreview({midBg2:this.value})"></div>
+        <div class="tk-swatch-row">
+          <label>فونٹ</label>
+          <select id="tkFontFamily" style="flex:1;padding:5px;border-radius:7px;border:1px solid #d8dee4;font-size:11px;" onchange="updateTickerPreview({fontFamily:this.value})">
+            <option value="Jameel Noori Nastaleeq Regular">نستعلیق</option>
+            <option value="Jameel Noori Nastaleeq Kasheeda">نستعلیق کشیدہ</option>
+            <option value="Segoe UI">انگریزی</option>
+          </select>
+        </div>
+      </div>
+      <div class="tk-compact-grid">
+        <div class="tk-swatch-row">
+          <label>سائز</label>
+          <input type="range" id="tkFontSize" min="10" max="22" step="1" style="flex:1;" oninput="updateTickerPreview({fontSize:Number(this.value)}); document.getElementById('tkFontSizeVal').textContent=this.value+'px'">
+          <span id="tkFontSizeVal" style="font-size:10.5px;color:var(--muted);"></span>
+        </div>
+        <div class="tk-swatch-row">
+          <label>رفتار</label>
+          <input type="range" id="tkSpeed" min="10" max="60" step="2" style="flex:1;" oninput="updateTickerPreview({speed:Number(this.value)}); document.getElementById('tkSpeedVal').textContent=this.value">
+          <span id="tkSpeedVal" style="font-size:10.5px;color:var(--muted);"></span>
+        </div>
+      </div>
 
-    <hr style="margin:12px 0;border:none;border-top:1px solid #e5e7eb;">
-    <div class="backup-card-title">عمومی ظاہری شکل (پوری پٹی)</div>
-
-    <div class="field" style="margin-bottom:8px;">
-      <label>فونٹ</label>
-      <select id="tkFontFamily" style="width:100%;padding:8px;border-radius:10px;border:1px solid #d8dee4;" onchange="updateTickerPreview({fontFamily:this.value})">
-        <option value="Jameel Noori Nastaleeq Regular">جمیل نوری نستعلیق</option>
-        <option value="Jameel Noori Nastaleeq Kasheeda">جمیل نوری نستعلیق (کشیدہ)</option>
-        <option value="Segoe UI">سادہ انگریزی فونٹ</option>
-      </select>
-    </div>
-    <div class="field" style="margin-bottom:8px;">
-      <label>لکھائی کا سائز: <span id="tkFontSizeVal"></span></label>
-      <input type="range" id="tkFontSize" min="10" max="22" step="1" style="width:100%;" oninput="updateTickerPreview({fontSize:Number(this.value)})">
-    </div>
-    <div class="field" style="margin-bottom:8px;">
-      <label>رفتار (سست ← تیز): <span id="tkSpeedVal"></span></label>
-      <input type="range" id="tkSpeed" min="10" max="60" step="2" style="width:100%;" oninput="updateTickerPreview({speed:Number(this.value)})">
-    </div>
-    <div class="cp-btn-row" style="margin-top:4px;">
-      <div class="field" style="flex:1;">
-        <label>لکھائی کا رنگ</label>
-        <input type="color" id="tkTextColor" style="width:100%;height:36px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({textColor:this.value})">
-      </div>
-      <div class="field" style="flex:1;">
-        <label>بارڈر کا رنگ</label>
-        <input type="color" id="tkBorderColor" style="width:100%;height:36px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({borderColor:this.value})">
-      </div>
-    </div>
-    <div class="cp-btn-row">
-      <div class="field" style="flex:1;">
-        <label>بیک گراؤنڈ (شروع)</label>
-        <input type="color" id="tkBg1" style="width:100%;height:36px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({midBg1:this.value})">
-      </div>
-      <div class="field" style="flex:1;">
-        <label>بیک گراؤنڈ (اختتام)</label>
-        <input type="color" id="tkBg2" style="width:100%;height:36px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({midBg2:this.value})">
+      <hr style="margin:10px 0;border:none;border-top:1px solid #e5e7eb;">
+      <div class="backup-card-title" style="font-size:12px;margin-bottom:4px;">پیغامات — ہر ایک کا اپنا رنگ</div>
+      <div id="tickerAdminList"></div>
+      <div style="display:flex;gap:6px;margin-top:4px;">
+        <input type="text" id="tickerNewMsg" placeholder="نیا پیغام لکھیں" style="flex:1;padding:7px;border-radius:8px;border:1px solid #d8dee4;font-size:12.5px;">
+        <button class="btn accent" style="padding:6px 12px;font-size:12px;" onclick="addTickerMsgPending()">➕</button>
       </div>
     </div>
 
-    <button class="btn block accent" style="margin-top:14px;" onclick="applyTickerPending()">✅ لاگو کریں (اصل پٹی میں چلے گا)</button>
+    <div class="tk-modal-foot">
+      <button class="btn block accent" onclick="applyTickerPending()">✅ لاگو کریں (اصل پٹی میں محفوظ ہو جائے گا)</button>
     </div>
   </div>
 </div>
@@ -1035,7 +1050,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU1010AM";
+const APP_VERSION = "MCS27SEPSU1115AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2049,6 +2064,189 @@ function buildShareCanvas(kind, item, opts){
     });
   });
 }
+
+/* ---------- Standalone "share the APP itself" card ----------
+   Independent of any individual profile — for the owner (or anyone) to send
+   to as many contacts as possible: what the app is, an invitation to add
+   their own/friends'/relatives' business, a contact number for questions,
+   and the install link. Reuses the exact same canvas techniques as the
+   profile share card (navy/gold theme, embossed text, rounded panel). */
+function buildAppPromoCanvas(){
+  const FF = 'Jameel Noori Nastaleeq Regular';
+  return new Promise((resolve)=>{
+    Promise.all([
+      document.fonts.load(`800 48px "${FF}"`),
+      document.fonts.load(`700 34px "${FF}"`),
+      document.fonts.load(`700 28px "${FF}"`)
+    ]).catch(()=>{}).finally(()=>{
+    const W=880, H=1040;
+    const canvas = document.createElement('canvas');
+    canvas.width=W; canvas.height=H;
+    const ctx = canvas.getContext('2d');
+
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0a2e52'); g.addColorStop(.5,'#0d3b66'); g.addColorStop(1,'#081f39');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    const glow = ctx.createRadialGradient(W/2,110,10,W/2,110,460);
+    glow.addColorStop(0,'rgba(244,213,141,.22)'); glow.addColorStop(1,'rgba(244,213,141,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0,0,W,H);
+
+    ctx.direction='rtl'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+
+    const headerLogo = new Image();
+    const drawRest = ()=>{
+      ctx.font = `800 40px "${FF}", sans-serif`;
+      const hg = ctx.createLinearGradient(0,50,0,90);
+      hg.addColorStop(0,'#fff2c9'); hg.addColorStop(.5,'#f4d58d'); hg.addColorStop(1,'#c99a34');
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=5; ctx.shadowOffsetY=3;
+      ctx.fillStyle = hg;
+      ctx.fillText('مائی سٹی شائنز', W/2, 82);
+      ctx.restore();
+
+      const cardTop=130, cardH=600;
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=26; ctx.shadowOffsetY=12;
+      const cardG = ctx.createLinearGradient(0,cardTop,0,cardTop+cardH);
+      cardG.addColorStop(0,'#0f4a7a'); cardG.addColorStop(1,'#0a3562');
+      ctx.fillStyle = cardG;
+      shareRoundRect(ctx, 50, cardTop, W-100, cardH, 30); ctx.fill();
+      ctx.restore();
+      shareDrawBorderTemplate(ctx, 'thin', 50, cardTop, W-100, cardH, 30, '#d4a017');
+
+      // headline
+      ctx.fillStyle = '#fff';
+      shareFitAndDraw(ctx, 'اپنے شہر کی مکمل ڈائریکٹری', W/2, cardTop+65, W-160, 44, 28, 800, FF, 1.2,
+        (c,l,x,y)=> shareEmbossText(c, l, x, y, '#ffffff', 'rgba(0,0,0,.5)'));
+
+      // feature row: three quick emoji+label chips, one line
+      const feats = [['🩺','ڈاکٹرز'],['🏪','دکانیں'],['🔧','ہر خدمت']];
+      ctx.font = `700 24px "${FF}", sans-serif`;
+      const chipGap = 18;
+      const chipWs = feats.map(([e,l])=> 56 + ctx.measureText(l).width + 14);
+      const totalW = chipWs.reduce((a,b)=>a+b,0) + chipGap*(feats.length-1);
+      let cx = W/2 + totalW/2;
+      const chipY = cardTop+140, chipH=54;
+      feats.forEach(([emoji,label],i)=>{
+        const cw = chipWs[i];
+        const x0 = cx - cw;
+        ctx.save();
+        ctx.fillStyle = 'rgba(244,213,141,.16)';
+        shareRoundRect(ctx, x0, chipY-chipH/2, cw, chipH, chipH/2); ctx.fill();
+        ctx.restore();
+        ctx.font = '26px sans-serif';
+        ctx.fillText(emoji, cx-28, chipY+9);
+        ctx.font = `700 24px "${FF}", sans-serif`;
+        ctx.fillStyle = '#f4d58d';
+        ctx.fillText(label, x0 + (cw-56)/2 + 4, chipY+8);
+        cx = x0 - chipGap;
+      });
+
+      // invitation paragraph
+      ctx.fillStyle = '#e7ecf2';
+      shareFitAndDraw(ctx, 'یہ آپ کی اپنی ایپ ہے — اپنا کاروبار، دوستوں اور رشتہ داروں کا کاروبار بھی شامل کریں۔ جتنا زیادہ حصہ لیں گے، اتنی ہی سب کے لیے سہولت اور آپ کے لیے ترقی ہوگی!', W/2, cardTop+235, W-190, 30, 18, 700, FF, 1.5,
+        (c,l,x,y)=>{ c.fillStyle='#e7ecf2'; c.fillText(l,x,y); });
+
+      // contact capsule (questions/suggestions)
+      const waRaw = normalizePkNumber((store.contact && store.contact.whatsapp) || DEFAULT_CONTACT.whatsapp);
+      ctx.font = '800 34px sans-serif';
+      const numW = ctx.measureText(waRaw).width;
+      const maxPillW = W-160;
+      const pillW = Math.min(numW + 130, maxPillW), pillH = 70, pillY = cardTop+430, pillX = W/2 - pillW/2;
+      const pg = ctx.createLinearGradient(0,pillY,0,pillY+pillH);
+      pg.addColorStop(0,'#2fd66b'); pg.addColorStop(1,'#1aa851');
+      ctx.save();
+      ctx.shadowColor='rgba(20,120,60,.5)'; ctx.shadowBlur=14; ctx.shadowOffsetY=5;
+      ctx.fillStyle = pg;
+      shareRoundRect(ctx, pillX, pillY, pillW, pillH, pillH/2); ctx.fill();
+      ctx.restore();
+      shareWaIcon(ctx, pillX+46, pillY+pillH/2, 23);
+      ctx.direction='ltr';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 34px sans-serif';
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=2; ctx.shadowOffsetY=2;
+      ctx.fillText(waRaw, pillX+pillW/2+26, pillY+pillH/2+11);
+      ctx.restore();
+      ctx.direction='rtl';
+      ctx.fillStyle = '#cfd7e0';
+      ctx.font = `700 22px "${FF}", sans-serif`;
+      ctx.fillText('سوالات یا تجاویز کے لیے رابطہ کریں', W/2, cardTop+545);
+
+      finishFooter();
+    };
+    headerLogo.onload = ()=>{
+      ctx.save();
+      ctx.beginPath(); ctx.arc(W/2+150, 68, 30, 0, Math.PI*2); ctx.clip();
+      ctx.drawImage(headerLogo, W/2+150-30, 68-30, 60, 60);
+      ctx.restore();
+      drawRest();
+    };
+    headerLogo.onerror = drawRest;
+    headerLogo.src = 'icons/icon-192.png';
+
+    function finishFooter(){
+      const fY = 770, fH = 220;
+      const fg = ctx.createLinearGradient(0,fY,0,fY+fH);
+      fg.addColorStop(0,'#f7dd9c'); fg.addColorStop(1,'#c99a34');
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.35)'; ctx.shadowBlur=16; ctx.shadowOffsetY=6;
+      ctx.fillStyle = fg;
+      shareRoundRect(ctx, 60, fY, W-120, fH, 26); ctx.fill();
+      ctx.restore();
+
+      ctx.fillStyle = '#3a2600';
+      ctx.font = `800 30px "${FF}", sans-serif`;
+      shareWrapText(ctx, 'اپنا شہر، اپنی سہولت — ابھی ایپ حاصل کریں!', W/2, fY+48, W-160, 38);
+
+      ctx.direction='ltr';
+      ctx.font = '800 24px sans-serif';
+      const linkTxt = 'pbtcodelabs-pbt.github.io/MCS';
+      const linkW = ctx.measureText(linkTxt).width + 46;
+      ctx.fillStyle = '#0d3b66';
+      shareRoundRect(ctx, W/2-linkW/2, fY+135, linkW, 48, 24); ctx.fill();
+      ctx.fillStyle = '#f4d58d';
+      ctx.fillText(linkTxt, W/2, fY+166);
+      ctx.direction='rtl';
+
+      resolve(canvas);
+    }
+    });
+  });
+}
+function appPromoCaptionText(){
+  const waRaw = normalizePkNumber((store.contact && store.contact.whatsapp) || DEFAULT_CONTACT.whatsapp);
+  return [
+    '🌟 "مائی سٹی شائنز" — اپنے شہر کی مکمل ڈائریکٹری!',
+    '',
+    '🩺 ڈاکٹرز   🏪 دکانیں   🔧 ہر طرح کی خدمات — سب ایک ہی جگہ۔',
+    '',
+    'یہ آپ کی اپنی ایپ ہے — اپنا کاروبار، دوستوں اور رشتہ داروں کا کاروبار بھی شامل کریں۔ جتنا زیادہ حصہ لیں گے، اتنی ہی سب کے لیے سہولت اور آپ کے لیے ترقی ہوگی!',
+    '',
+    '📞 سوالات یا تجاویز کے لیے رابطہ: ' + waRaw,
+    '',
+    '📲 ابھی ایپ حاصل کریں:',
+    MCS_APP_URL
+  ].join('\n');
+}
+async function shareAppPromo(){
+  showToast('کارڈ بن رہا ہے...');
+  try{
+    const canvas = await buildAppPromoCanvas();
+    const caption = appPromoCaptionText();
+    canvas.toBlob(async (blob)=>{
+      if(!blob){ shareTextFallback(caption); return; }
+      const file = new File([blob], 'my-city-shines-app.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        try{ await navigator.share({files:[file], title:'مائی سٹی شائنز', text: caption}); return; }
+        catch(e){ /* user cancelled — fall back to plain WhatsApp text */ }
+      }
+      shareTextFallback(caption);
+    }, 'image/png');
+  }catch(e){
+    shareTextFallback(appPromoCaptionText());
+  }
+}
 function renderDoctorList(mode){
   const listWrap = mode==='list' ? document.getElementById('doctorListWrap') : document.getElementById('searchResultsWrap');
   let items = store.doctors;
@@ -2728,6 +2926,16 @@ function restoreAutoSnapshot(idx){
 }
 
 /* ---------- Modal helpers ---------- */
+/* Keeps --vvh in sync with the visible area above the on-screen keyboard,
+   so any modal built to respect it (see .tk-modal-box) never gets covered
+   by the keyboard when a text field inside it is focused. */
+function setVvh(){
+  const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+  document.documentElement.style.setProperty('--vvh', h+'px');
+}
+setVvh();
+window.addEventListener('resize', setVvh);
+if(window.visualViewport) window.visualViewport.addEventListener('resize', setVvh);
 function openModal(id){ document.getElementById(id).classList.add('active'); }
 function closeModal(id){ document.getElementById(id).classList.remove('active'); }
 
@@ -2806,10 +3014,57 @@ function renderTicker(){
 const DEFAULT_TICKER_SETTINGS = {
   fontSize: 14, fontFamily: 'Jameel Noori Nastaleeq Regular',
   textColor: '#f4d58d', midBg1: '#0d3b66', midBg2: '#123a5e',
-  borderColor: '#d4a017', speed: 30
+  borderColor: '#d4a017', borderTemplate: 'thin', borderWidth: 3, speed: 30
 };
 const TICKER_FONT_OPTIONS = ['Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq Kasheeda','Segoe UI'];
+/* Horizontal top/bottom border templates for the ticker strip (like the
+   share-card border templates, but drawn as a real CSS border on the strip
+   itself rather than on a canvas). */
+const TICKER_BORDER_TEMPLATES = [
+  {key:'thin',     label:'پتلا سادہ'},
+  {key:'thick',    label:'موٹا سادہ'},
+  {key:'double',   label:'ڈبل لائن'},
+  {key:'dashed',   label:'ڈیش'},
+  {key:'dotted',   label:'ڈاٹڈ'},
+  {key:'glow',     label:'چمکیلا گلو'},
+  {key:'gradient', label:'گریڈینٹ لائن'}
+];
+const TICKER_COLOR_PRESETS = [
+  {label:'گولڈ / نیوی', textColor:'#f4d58d', midBg1:'#0d3b66', midBg2:'#123a5e', borderColor:'#d4a017'},
+  {label:'سبز / سفید',  textColor:'#ffffff', midBg1:'#0f5132', midBg2:'#14532d', borderColor:'#8ee6a8'},
+  {label:'سرخ / گولڈ',  textColor:'#ffe9a8', midBg1:'#7a1212', midBg2:'#5c0f0f', borderColor:'#ffd166'},
+  {label:'شاہی جامنی',  textColor:'#f1e6ff', midBg1:'#3b1a63', midBg2:'#2a1145', borderColor:'#c9a6ff'},
+  {label:'فیروزی',      textColor:'#062b2b', midBg1:'#c9f0ea', midBg2:'#9fe0d4', borderColor:'#0d9488'},
+  {label:'کلاسک سفید',  textColor:'#1a1a1a', midBg1:'#ffffff', midBg2:'#f1f1f1', borderColor:'#d4a017'}
+];
 function tickerSettings(){ return {...DEFAULT_TICKER_SETTINGS, ...(store.tickerSettings||{})}; }
+function tickerApplyBorder(el, tmpl, color, width){
+  if(!el) return;
+  width = Number(width)||3;
+  el.style.borderImage = 'none';
+  el.style.boxShadow = 'none';
+  el.style.borderTopColor = color; el.style.borderBottomColor = color;
+  el.style.borderLeft = 'none'; el.style.borderRight = 'none';
+  let w = width, style = 'solid';
+  switch(tmpl){
+    case 'thick':    w = Math.max(width,5); style='solid'; break;
+    case 'double':   w = Math.max(width,7); style='double'; break;
+    case 'dashed':   style='dashed'; break;
+    case 'dotted':   style='dotted'; break;
+    case 'glow':
+      style='solid';
+      el.style.boxShadow = `0 0 8px ${color}, inset 0 0 8px ${color}`;
+      break;
+    case 'gradient':
+      style='solid';
+      el.style.borderImageSource = `linear-gradient(90deg, transparent, ${color}, transparent)`;
+      el.style.borderImageSlice = '1';
+      break;
+    default: style='solid';
+  }
+  el.style.borderTopWidth = w+'px'; el.style.borderBottomWidth = w+'px';
+  el.style.borderTopStyle = style; el.style.borderBottomStyle = style;
+}
 function applyTickerSettings(){
   const s = tickerSettings();
   const root = document.documentElement.style;
@@ -2819,6 +3074,7 @@ function applyTickerSettings(){
   root.setProperty('--ticker-mid-bg1', s.midBg1);
   root.setProperty('--ticker-mid-bg2', s.midBg2);
   root.setProperty('--ticker-border-color', s.borderColor);
+  tickerApplyBorder(document.getElementById('tickerMiddle'), s.borderTemplate, s.borderColor, s.borderWidth);
   const track = document.getElementById('tickerTrack');
   if(track) track.style.animationDuration = s.speed + 's';
 }
@@ -2848,6 +3104,49 @@ function tickerTap(){
   }
 }
 let tickerPending = null;
+/* Applies the staged (unsaved) settings + messages directly onto the REAL
+   ticker strip — the one fixed at the very top of the screen, always
+   visible above this modal (it has a higher z-index than the dark overlay
+   scrim). So the person sees the true, full-width result immediately,
+   instead of a separate small demo strip. Nothing here touches storage —
+   only applyTickerPending() below commits it for real. */
+function tickerApplyLive(pending){
+  const s = pending.settings;
+  const root = document.documentElement.style;
+  root.setProperty('--ticker-font-size', s.fontSize+'px');
+  root.setProperty('--ticker-font-family', `'${s.fontFamily}'`);
+  root.setProperty('--ticker-text', s.textColor);
+  root.setProperty('--ticker-mid-bg1', s.midBg1);
+  root.setProperty('--ticker-mid-bg2', s.midBg2);
+  tickerApplyBorder(document.getElementById('tickerMiddle'), s.borderTemplate, s.borderColor, s.borderWidth);
+  const track = document.getElementById('tickerTrack');
+  if(track){
+    track.style.animationDuration = s.speed+'s';
+    const line = pending.messages.map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
+    track.innerHTML = line + line;
+  }
+}
+function renderTkBorderTmplRow(){
+  const wrap = document.getElementById('tkBorderTmplRow');
+  wrap.innerHTML = TICKER_BORDER_TEMPLATES.map(t=>
+    `<button type="button" class="tk-tmpl-btn${tickerPending.settings.borderTemplate===t.key?' active':''}" onclick="updateTickerPreview({borderTemplate:'${t.key}'});renderTkBorderTmplRow();">${t.label}</button>`
+  ).join('');
+}
+function renderTkPresetRow(){
+  const wrap = document.getElementById('tkPresetRow');
+  wrap.innerHTML = TICKER_COLOR_PRESETS.map((p,i)=>
+    `<button type="button" title="${escapeAttr(p.label)}" class="tk-preset-dot" style="background:linear-gradient(135deg,${p.midBg1},${p.midBg2});" onclick="applyTickerPreset(${i})"></button>`
+  ).join('');
+}
+function applyTickerPreset(i){
+  const p = TICKER_COLOR_PRESETS[i];
+  if(!p) return;
+  updateTickerPreview({textColor:p.textColor, midBg1:p.midBg1, midBg2:p.midBg2, borderColor:p.borderColor});
+  document.getElementById('tkTextColor').value = p.textColor;
+  document.getElementById('tkBg1').value = p.midBg1;
+  document.getElementById('tkBg2').value = p.midBg2;
+  document.getElementById('tkBorderColor').value = p.borderColor;
+}
 function openTickerAdmin(){
   tickerPending = { settings: {...tickerSettings()}, messages: tickerMessages().map(m=>({...m})) };
   const s = tickerPending.settings;
@@ -2855,36 +3154,30 @@ function openTickerAdmin(){
   document.getElementById('tkFontSize').value = s.fontSize;
   document.getElementById('tkFontSizeVal').textContent = s.fontSize+'px';
   document.getElementById('tkSpeed').value = s.speed;
-  document.getElementById('tkSpeedVal').textContent = s.speed+' سیکنڈ';
+  document.getElementById('tkSpeedVal').textContent = s.speed;
   document.getElementById('tkTextColor').value = s.textColor;
   document.getElementById('tkBorderColor').value = s.borderColor;
+  document.getElementById('tkBorderWidth').value = s.borderWidth;
+  document.getElementById('tkBorderWidthVal').textContent = s.borderWidth+'px';
   document.getElementById('tkBg1').value = s.midBg1;
   document.getElementById('tkBg2').value = s.midBg2;
+  renderTkPresetRow();
+  renderTkBorderTmplRow();
   renderTickerAdminList();
-  renderTickerPreview();
+  tickerApplyLive(tickerPending);
   openModal('tickerAdminModal');
+}
+function closeTickerAdmin(){
+  applyTickerSettings(); // revert the real ticker back to the last saved look
+  renderTicker();
+  closeModal('tickerAdminModal');
 }
 function updateTickerPreview(patch){
   tickerPending.settings = {...tickerPending.settings, ...patch};
   if('fontSize' in patch) document.getElementById('tkFontSizeVal').textContent = patch.fontSize+'px';
-  if('speed' in patch) document.getElementById('tkSpeedVal').textContent = patch.speed+' سیکنڈ';
-  renderTickerPreview();
-}
-function renderTickerPreview(){
-  const s = tickerPending.settings;
-  const msgs = tickerPending.messages;
-  const line = msgs.map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
-  const track = document.getElementById('tkPvTrack');
-  track.innerHTML = line + line;
-  track.style.fontFamily = `'${s.fontFamily}','Segoe UI',sans-serif`;
-  track.style.fontSize = s.fontSize+'px';
-  track.style.color = s.textColor;
-  track.style.fontWeight = '600';
-  track.style.animation = `mcsTickerMove ${s.speed}s linear infinite`;
-  Array.from(track.children).forEach(sp=>{ sp.style.whiteSpace='nowrap'; sp.style.lineHeight='1.6'; });
-  document.getElementById('tkPvMiddle').style.background = `linear-gradient(90deg,${s.midBg1},${s.midBg2})`;
-  document.getElementById('tkPvBorderL').style.background = s.borderColor;
-  document.getElementById('tkPvBorderR').style.background = s.borderColor;
+  if('speed' in patch) document.getElementById('tkSpeedVal').textContent = patch.speed;
+  if('borderWidth' in patch) document.getElementById('tkBorderWidthVal').textContent = patch.borderWidth+'px';
+  tickerApplyLive(tickerPending);
 }
 function applyTickerPending(){
   store.tickerMessages = tickerPending.messages.map(tickerMsgNorm);
@@ -2898,45 +3191,39 @@ function applyTickerPending(){
     FB.setDoc(ref, {list: store.tickerMessages, settings: store.tickerSettings}, {merge:true}).catch(()=>{});
   }
   showToast('پٹی کی نئی شکل لاگو ہو گئی ✓');
+  closeModal('tickerAdminModal');
 }
 function renderTickerAdminList(){
   const wrap = document.getElementById('tickerAdminList');
   if(!wrap) return;
   const msgs = tickerPending.messages;
   wrap.innerHTML = msgs.map((m,idx)=>`
-    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:8px;margin-bottom:8px;">
-      <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
-        <input type="text" value="${escapeAttr(m.text)}" style="flex:1;padding:8px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerMsgPending(${idx},'text',this.value)">
-        <button class="btn secondary" style="padding:6px 10px;" onclick="deleteTickerMsgPending(${idx})">🗑️</button>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <label style="font-size:10.5px;color:var(--muted);">لکھائی</label>
-        <input type="color" value="${m.textColor||tickerPending.settings.textColor}" style="width:30px;height:26px;border-radius:6px;border:1px solid #d8dee4;padding:0;" oninput="updateTickerMsgPending(${idx},'textColor',this.value)">
-        <label style="font-size:10.5px;color:var(--muted);">بیک گراؤنڈ</label>
-        <input type="color" value="${m.bgColor||tickerPending.settings.midBg1}" style="width:30px;height:26px;border-radius:6px;border:1px solid #d8dee4;padding:0;" oninput="updateTickerMsgPending(${idx},'bgColor',this.value)">
-        <label style="font-size:10.5px;color:var(--muted);">بارڈر</label>
-        <input type="color" value="${m.borderColor||tickerPending.settings.borderColor}" style="width:30px;height:26px;border-radius:6px;border:1px solid #d8dee4;padding:0;" oninput="updateTickerMsgPending(${idx},'borderColor',this.value)">
-        <button class="btn secondary" style="padding:4px 8px;font-size:11px;margin-right:auto;" onclick="resetTickerMsgColor(${idx})">↺ ڈیفالٹ رنگ</button>
-      </div>
+    <div class="tk-msg-row">
+      <input type="text" value="${escapeAttr(m.text)}" oninput="updateTickerMsgPending(${idx},'text',this.value)">
+      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="لکھائی" value="${m.textColor||tickerPending.settings.textColor}" oninput="updateTickerMsgPending(${idx},'textColor',this.value)">
+      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بیک گراؤنڈ" value="${m.bgColor||tickerPending.settings.midBg1}" oninput="updateTickerMsgPending(${idx},'bgColor',this.value)">
+      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بارڈر" value="${m.borderColor||tickerPending.settings.borderColor}" oninput="updateTickerMsgPending(${idx},'borderColor',this.value)">
+      <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="resetTickerMsgColor(${idx})">↺</button>
+      <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="deleteTickerMsgPending(${idx})">🗑️</button>
     </div>`).join('');
 }
 function updateTickerMsgPending(idx, field, val){
   const m = tickerPending.messages[idx];
   if(!m) return;
   m[field] = val;
-  renderTickerPreview();
+  tickerApplyLive(tickerPending);
 }
 function resetTickerMsgColor(idx){
   const m = tickerPending.messages[idx];
   if(!m) return;
   m.textColor = null; m.bgColor = null; m.borderColor = null;
   renderTickerAdminList();
-  renderTickerPreview();
+  tickerApplyLive(tickerPending);
 }
 function deleteTickerMsgPending(idx){
   tickerPending.messages.splice(idx,1);
   renderTickerAdminList();
-  renderTickerPreview();
+  tickerApplyLive(tickerPending);
 }
 function addTickerMsgPending(){
   const input = document.getElementById('tickerNewMsg');
@@ -2945,7 +3232,7 @@ function addTickerMsgPending(){
   tickerPending.messages.push({text:val, textColor:null, bgColor:null, borderColor:null});
   input.value = '';
   renderTickerAdminList();
-  renderTickerPreview();
+  tickerApplyLive(tickerPending);
 }
 function saveTickerMessages(msgs){
   store.tickerMessages = msgs;
