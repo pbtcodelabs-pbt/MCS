@@ -1070,7 +1070,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU1159AM";
+const APP_VERSION = "MCS27SEPSU0109PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1337,6 +1337,23 @@ function normalizePkNumber(raw){
   n = n.replace(/\+/g,'');
   if(/^03\d{9}$/.test(n)) n = n.slice(0,4) + '-' + n.slice(4);
   return n;
+}
+/* Plain-text WhatsApp captions (app-promo/profile share text) embed an
+   LTR phone number inside an RTL Urdu paragraph. WhatsApp's bidi engine
+   can then reverse the digit groups around the hyphen (e.g. "0320-6793793"
+   shows as "6793793-0320"). Fix: space-group the digits (no hyphen) in the
+   exact "0320 6 793 793" form and wrap them in Unicode LRI/PDI isolation
+   marks so the number's own left-to-right order is locked regardless of
+   the surrounding RTL text. */
+function waPhoneDisplay(raw){
+  let n = (raw||'').replace(/[^0-9+]/g,'');
+  if(n.startsWith('+92')) n = '0' + n.slice(3);
+  else if(n.startsWith('0092')) n = '0' + n.slice(4);
+  else if(n.startsWith('92') && n.length===12) n = '0' + n.slice(2);
+  n = n.replace(/\+/g,'');
+  let grouped = n;
+  if(/^03\d{9}$/.test(n)) grouped = n.slice(0,4) + ' ' + n.slice(4,5) + ' ' + n.slice(5,8) + ' ' + n.slice(8,11);
+  return '⁦' + grouped + '⁩';
 }
 async function pickFromContacts(numId, nameId){
   if(!('contacts' in navigator) || !('select' in navigator.contacts)){
@@ -1717,16 +1734,20 @@ async function shareProfileCard(kind, item, opts){
     const canvas = await buildShareCanvas(kind, item, opts);
     const caption = shareCaptionText(kind, item);
     canvas.toBlob(async (blob)=>{
-      if(!blob){ shareTextFallback(caption); return; }
+      if(!blob){ shareTextAndImageFallback(caption, null, 'my-city-shines.png'); return; }
       const file = new File([blob], 'my-city-shines.png', {type:'image/png'});
       if(navigator.canShare && navigator.canShare({files:[file]})){
         try{ await navigator.share({files:[file], title:'مائی سٹی شائنز', text: caption}); return; }
-        catch(e){ /* user cancelled — fall back to plain WhatsApp text */ }
+        catch(e){
+          if(e && e.name==='AbortError') return; /* user cancelled the share sheet themselves */
+          shareTextAndImageFallback(caption, blob, 'my-city-shines.png');
+          return;
+        }
       }
-      shareTextFallback(caption);
+      shareTextAndImageFallback(caption, blob, 'my-city-shines.png');
     }, 'image/png');
   }catch(e){
-    shareTextFallback(shareCaptionText(kind, item));
+    shareTextAndImageFallback(shareCaptionText(kind, item), null, 'my-city-shines.png');
   }
 }
 
@@ -1774,12 +1795,39 @@ function finalizeCardShare(){
 function shareTextFallback(caption){
   window.open('https://wa.me/?text=' + encodeURIComponent(caption), '_blank');
 }
+/* When the device can't do a proper file+text native share (navigator.canShare
+   with files unsupported, or the share itself failed), text-only WhatsApp
+   used to be sent with the poster image silently dropped. Instead: save the
+   poster image to the device (Downloads/Gallery) AND copy the full caption
+   text to the clipboard, then open WhatsApp with the same text pre-filled —
+   so nothing is missing, the person just attaches the already-saved image
+   alongside the already-filled/copied text. */
+function shareTextAndImageFallback(caption, blob, filename){
+  if(blob){
+    try{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename || 'my-city-shines.png';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(url), 4000);
+    }catch(e){ /* ignore — text/whatsapp part still proceeds */ }
+  }
+  const openWa = ()=> window.open('https://wa.me/?text=' + encodeURIComponent(caption), '_blank');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(caption)
+      .then(()=>{ showToast('📷 تصویر محفوظ ہو گئی، 📋 متن کاپی ہو گیا — واٹس ایپ میں تصویر لگا کر متن پیسٹ کر دیں', 4500); openWa(); })
+      .catch(()=>{ showToast('📷 تصویر محفوظ ہو گئی — واٹس ایپ میں لگا کر بھیج دیں', 3500); openWa(); });
+  } else {
+    showToast('📷 تصویر محفوظ ہو گئی — واٹس ایپ میں لگا کر بھیج دیں', 3500);
+    openWa();
+  }
+}
 function shareCaptionText(kind, item){
   const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
   const lines = ['🌟 میری پروفائل "مائی سٹی شائنز" ایپ میں شامل ہو گئی ہے!', '',
     `👤 ${item.nameUr||item.name||''}${catLabel?' — '+catLabel:''}`];
   if(item.city||item.area) lines.push('📍 ' + [item.area,item.city].filter(Boolean).join('، '));
-  if(item.whatsapp) lines.push('📞 ' + normalizePkNumber(item.whatsapp));
+  if(item.whatsapp) lines.push('📞 ' + waPhoneDisplay(item.whatsapp));
   lines.push('', 'یہ ایپ آپ کے پورے شہر کی مکمل ڈائریکٹری ہے — ڈاکٹرز، دکانیں اور ہر طرح کی ضروریات ایک ہی جگہ۔ ون سٹاپ پلیٹ فارم — مائی سٹی شائنز۔', '', '📲 ابھی ایپ حاصل کریں:', MCS_APP_URL);
   return lines.join('\n');
 }
@@ -2236,7 +2284,7 @@ function buildAppPromoCanvas(){
   });
 }
 function appPromoCaptionText(){
-  const waRaw = normalizePkNumber((store.contact && store.contact.whatsapp) || DEFAULT_CONTACT.whatsapp);
+  const waRaw = waPhoneDisplay((store.contact && store.contact.whatsapp) || DEFAULT_CONTACT.whatsapp);
   return [
     '🌟 "مائی سٹی شائنز" — اپنے شہر کی مکمل ڈائریکٹری!',
     '',
@@ -2258,16 +2306,20 @@ async function shareAppPromo(){
     const canvas = await buildAppPromoCanvas();
     const caption = appPromoCaptionText();
     canvas.toBlob(async (blob)=>{
-      if(!blob){ shareTextFallback(caption); return; }
+      if(!blob){ shareTextAndImageFallback(caption, null, 'my-city-shines-app.png'); return; }
       const file = new File([blob], 'my-city-shines-app.png', {type:'image/png'});
       if(navigator.canShare && navigator.canShare({files:[file]})){
         try{ await navigator.share({files:[file], title:'مائی سٹی شائنز', text: caption}); return; }
-        catch(e){ /* user cancelled — fall back to plain WhatsApp text */ }
+        catch(e){
+          if(e && e.name==='AbortError') return; /* user cancelled the share sheet themselves */
+          shareTextAndImageFallback(caption, blob, 'my-city-shines-app.png');
+          return;
+        }
       }
-      shareTextFallback(caption);
+      shareTextAndImageFallback(caption, blob, 'my-city-shines-app.png');
     }, 'image/png');
   }catch(e){
-    shareTextFallback(appPromoCaptionText());
+    shareTextAndImageFallback(appPromoCaptionText(), null, 'my-city-shines-app.png');
   }
 }
 function renderDoctorList(mode){
@@ -2963,11 +3015,11 @@ function openModal(id){ document.getElementById(id).classList.add('active'); }
 function closeModal(id){ document.getElementById(id).classList.remove('active'); }
 
 /* ---------- Toast ---------- */
-function showToast(msg){
+function showToast(msg, ms){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2000);
+  setTimeout(()=>t.classList.remove('show'), ms||2000);
 }
 
 /* ---------- Escape helpers ---------- */
