@@ -165,20 +165,22 @@
   .home-section-title{font-size:19px;margin:0 4px 12px;color:var(--text);display:flex;align-items:center;gap:8px;}
   .home-section-title::before{content:"";width:4px;height:20px;border-radius:4px;background:var(--accent);}
   .entry-card{
-    position:relative;background:var(--card);border-radius:18px;
-    padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:14px;
-    box-shadow:0 2px 10px rgba(15,23,42,.06);border:1px solid #edf0f2;overflow:hidden;
-    transition:transform .12s ease;
+    position:relative;margin:0 auto 14px;width:76%;max-width:320px;
+    border-radius:16px;padding:15px 18px;text-align:center;cursor:pointer;
+    background:linear-gradient(145deg,var(--c1),var(--c2));
+    box-shadow:0 7px 14px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -3px 5px rgba(0,0,0,.18);
+    transition:transform .1s ease,box-shadow .1s ease;
   }
-  .entry-card:active{transform:scale(.985);}
-  .entry-card::after{content:"";position:absolute;right:0;top:14px;bottom:14px;width:4px;border-radius:4px 0 0 4px;background:var(--c);}
-  .entry-card .txt{flex:1;min-width:0;}
-  .entry-card .txt b{display:block;font-size:21px;font-weight:normal;line-height:1.7;color:var(--text);}
-  .entry-chev{width:32px;height:32px;min-width:32px;border-radius:10px;background:#f3f5f7;color:var(--muted);display:flex;align-items:center;justify-content:center;}
-  .entry-chev svg{width:18px;height:18px;}
-  .e-teal{--c:#0f766e;--cbg:#e6f6f4;}
-  .e-amber{--c:#d97706;--cbg:#fff4e0;}
-  .e-blue{--c:#1d4ed8;--cbg:#e8efff;}
+  .entry-card:active{
+    transform:translateY(2px);
+    box-shadow:inset 0 3px 7px rgba(0,0,0,.35),inset 0 -1px 0 rgba(255,255,255,.15);
+  }
+  .entry-card .txt{width:100%;}
+  .entry-card .txt b{display:block;font-size:18px;font-weight:800;letter-spacing:.4px;color:#fff;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .entry-en{display:block;font-family:'Segoe UI',Roboto,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.85);margin-top:1px;}
+  .e-teal{--c1:#22c1b0;--c2:#0f766e;}
+  .e-amber{--c1:#f6ad3c;--c2:#c2740a;}
+  .e-blue{--c1:#4f7ff0;--c2:#1d4ed8;}
   .home-logo-big{display:block;width:88px;height:88px;border-radius:24px;margin:6px auto 0;
     box-shadow:0 10px 26px rgba(0,0,0,.3);object-fit:cover;}
   .home-footer{text-align:center;padding:18px 16px 4px;font-size:12px;color:#9aa3ad;line-height:1.8;}
@@ -225,22 +227,33 @@
   #screen-specialist-categories,#screen-business-categories{background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;}
   .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .cat-item{
-    position:relative;background:linear-gradient(150deg,#ffffff,#f3f7f8);border-radius:14px;padding:14px 8px 10px;
-    text-align:center;border:1px solid rgba(255,255,255,.9);
-    box-shadow:0 1px 0 #fff inset,0 2px 4px rgba(15,23,42,.05),0 6px 14px rgba(13,59,102,.1);
+    position:relative;--cc1:#e9f6f4;--cc2:#c9ece6;border-radius:14px;padding:14px 8px 30px;
+    background:linear-gradient(150deg,var(--cc1),var(--cc2));
+    text-align:center;border:1px solid rgba(255,255,255,.7);
+    box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 2px 4px rgba(15,23,42,.08),0 8px 16px rgba(13,59,102,.16);
   }
+  /* colourful rotating palette so the grid doesn't look flat white */
+  .cat-grid .cat-item:nth-child(8n+1){--cc1:#e9f6f4;--cc2:#bfe9e0;}
+  .cat-grid .cat-item:nth-child(8n+2){--cc1:#fff3e0;--cc2:#ffdba8;}
+  .cat-grid .cat-item:nth-child(8n+3){--cc1:#e8f0ff;--cc2:#c6d9ff;}
+  .cat-grid .cat-item:nth-child(8n+4){--cc1:#ffe9ef;--cc2:#ffc7d6;}
+  .cat-grid .cat-item:nth-child(8n+5){--cc1:#f1eaff;--cc2:#dcc7ff;}
+  .cat-grid .cat-item:nth-child(8n+6){--cc1:#e7f7e3;--cc2:#c3edb8;}
+  .cat-grid .cat-item:nth-child(8n+7){--cc1:#ffece0;--cc2:#ffc9a8;}
+  .cat-grid .cat-item:nth-child(8n+0){--cc1:#e5f2ff;--cc2:#b9d9ff;}
   .cat-item .emoji{
     width:44px;height:44px;margin:0 auto 8px;border-radius:14px;font-size:22px;
     display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(145deg,#ffffff,#e6f6f4);
+    background:linear-gradient(145deg,#ffffff,var(--cc1));
     box-shadow:0 3px 6px rgba(13,59,102,.18),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 3px rgba(0,0,0,.05);
   }
   .cat-item span{font-size:13.5px;font-weight:700;display:block;color:#0b2a44;line-height:1.5;}
   .cat-item small{font-size:10px;color:var(--muted);}
   .cat-item.soon{opacity:.6;}
-  .cat-count{position:absolute;top:6px;left:6px;background:linear-gradient(145deg,#d4a017,#a97c0a);color:#fff;
-    font-size:10.5px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;
-    justify-content:center;padding:0 5px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .cat-count{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(145deg,#0d3b66,#123a5e);color:#f4d58d;
+    font-size:10px;font-weight:800;border-radius:8px;display:inline-flex;align-items:center;white-space:nowrap;
+    justify-content:center;padding:3px 10px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.15);}
   .badge-soon{display:inline-block;background:#fde68a;color:#92400e;font-size:9px;
     padding:2px 6px;border-radius:6px;margin-top:5px;}
 
@@ -359,6 +372,8 @@
     box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.25);}
   .a-reqadmin:active{transform:scale(.92);}
   .doc-recid{font-size:10px;color:var(--muted);direction:ltr;unicode-bidi:isolate;display:inline-block;margin-top:2px;}
+  .cc-tmpl-btn{padding:8px 12px;border-radius:20px;border:1px solid #d8dee4;background:#f6f7f9;font-size:12px;color:#334;cursor:pointer;}
+  .cc-tmpl-btn.active{background:#0d3b66;color:#f4d58d;border-color:#0d3b66;font-weight:700;}
   .num-ltr{direction:ltr;unicode-bidi:isolate;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
 
   .empty-state{text-align:center;color:var(--muted);padding:40px 10px;font-size:13px;}
@@ -490,18 +505,15 @@
 
     <section class="home-section">
       <div class="entry-card e-teal" onclick="goScreen('specialist-categories')">
-        <div class="txt"><b>پروفیشنلز</b></div>
-        <div class="entry-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></div>
+        <div class="txt"><b>پروفیشنلز <span class="entry-en">PROFESSIONALS</span></b></div>
       </div>
 
       <div class="entry-card e-amber" onclick="goScreen('business-categories')">
-        <div class="txt"><b>بزنس</b></div>
-        <div class="entry-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></div>
+        <div class="txt"><b>بزنس <span class="entry-en">BUSINESS</span></b></div>
       </div>
 
       <div class="entry-card e-blue" onclick="openSearch()">
-        <div class="txt"><b>یوزر</b></div>
-        <div class="entry-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></div>
+        <div class="txt"><b>یوزر <span class="entry-en">SEARCH</span></b></div>
       </div>
     </section>
 
@@ -877,6 +889,51 @@
   </div>
 </div>
 
+<!-- ===================== CARD CUSTOMIZE MODAL (before sharing) ===================== -->
+<div class="modal-overlay" id="cardCustomizeModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('cardCustomizeModal')">×</button>
+    <h3>🎨 اپنا کارڈ بنائیں</h3>
+    <div style="clear:both;"></div>
+
+    <div id="ccPreviewHolder" style="margin-bottom:14px;background:#eee;border-radius:10px;min-height:120px;"></div>
+
+    <div class="field">
+      <label>فونٹ</label>
+      <select id="ccFontFamily" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;" onchange="setCardOpt('fontFamily',this.value)">
+        <option value="Jameel Noori Nastaleeq Regular">جمیل نوری نستعلیق</option>
+        <option value="Jameel Noori Nastaleeq Kasheeda">جمیل نوری نستعلیق (کشیدہ)</option>
+      </select>
+    </div>
+
+    <div class="backup-card-title">بارڈر ٹمپلیٹ</div>
+    <div id="ccBorderTemplates" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
+
+    <div class="cp-btn-row">
+      <div class="field" style="flex:1;">
+        <label>بارڈر کا رنگ (ہیو)</label>
+        <input type="range" id="ccBorderHue" min="0" max="360" step="1" style="width:100%;" oninput="setCardOpt('borderHue',Number(this.value))">
+      </div>
+      <div class="field" style="flex:1;">
+        <label>بارڈر ہلکا ← گہرا</label>
+        <input type="range" id="ccBorderLight" min="20" max="80" step="1" style="width:100%;" oninput="setCardOpt('borderLight',Number(this.value))">
+      </div>
+    </div>
+    <div class="cp-btn-row">
+      <div class="field" style="flex:1;">
+        <label>بیک گراؤنڈ کا رنگ (ہیو)</label>
+        <input type="range" id="ccBgHue" min="0" max="360" step="1" style="width:100%;" oninput="setCardOpt('bgHue',Number(this.value))">
+      </div>
+      <div class="field" style="flex:1;">
+        <label>بیک گراؤنڈ ہلکا ← گہرا</label>
+        <input type="range" id="ccBgLight" min="15" max="100" step="1" style="width:100%;" oninput="setCardOpt('bgLight',Number(this.value))">
+      </div>
+    </div>
+
+    <button class="btn block accent" style="margin-top:10px;" onclick="finalizeCardShare()">📤 شیئر کریں</button>
+  </div>
+</div>
+
 <!-- ===================== TICKER ADMIN MODAL (7-tap secret) ===================== -->
 <div class="modal-overlay" id="tickerAdminModal">
   <div class="modal-box">
@@ -970,7 +1027,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0915AM";
+const APP_VERSION = "MCS27SEPSU0935AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1608,12 +1665,12 @@ function requestAdminAction(kind, id){
 function shareProfileCardById(kind, id){
   const item = kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id);
   if(!item){ showToast('اندراج نہیں ملا'); return; }
-  shareProfileCard(kind, item);
+  openCardCustomize(kind, item);
 }
-async function shareProfileCard(kind, item){
+async function shareProfileCard(kind, item, opts){
   showToast('کارڈ بن رہا ہے...');
   try{
-    const canvas = await buildShareCanvas(kind, item);
+    const canvas = await buildShareCanvas(kind, item, opts);
     const caption = shareCaptionText(kind, item);
     canvas.toBlob(async (blob)=>{
       if(!blob){ shareTextFallback(caption); return; }
@@ -1627,6 +1684,48 @@ async function shareProfileCard(kind, item){
   }catch(e){
     shareTextFallback(shareCaptionText(kind, item));
   }
+}
+
+/* ---------- Card customize screen (border/background/font) before sharing ---------- */
+let cardCustomState = null;
+function openCardCustomize(kind, item){
+  cardCustomState = { kind, item, opts: {...DEFAULT_CARD_OPTS, ...(store.cardCustomOpts||{})} };
+  const o = cardCustomState.opts;
+  document.getElementById('ccBorderTemplates').innerHTML = SHARE_BORDER_TEMPLATES.map(t=>
+    `<button type="button" class="cc-tmpl-btn${o.borderTemplate===t.key?' active':''}" data-key="${t.key}" onclick="setCardOpt('borderTemplate','${t.key}')">${escapeHtml(t.label)}</button>`
+  ).join('');
+  document.getElementById('ccBgHue').value = o.bgHue;
+  document.getElementById('ccBgLight').value = o.bgLight;
+  document.getElementById('ccBorderHue').value = o.borderHue;
+  document.getElementById('ccBorderLight').value = o.borderLight;
+  document.getElementById('ccFontFamily').value = o.fontFamily;
+  renderCardPreview();
+  openModal('cardCustomizeModal');
+}
+function setCardOpt(key, val){
+  cardCustomState.opts[key] = val;
+  if(key==='borderTemplate'){
+    document.querySelectorAll('.cc-tmpl-btn').forEach(b=> b.classList.toggle('active', b.dataset.key===val));
+  }
+  renderCardPreview();
+}
+let cardPreviewDebounce = null;
+function renderCardPreview(){
+  clearTimeout(cardPreviewDebounce);
+  cardPreviewDebounce = setTimeout(async ()=>{
+    const canvas = await buildShareCanvas(cardCustomState.kind, cardCustomState.item, cardCustomState.opts);
+    const holder = document.getElementById('ccPreviewHolder');
+    holder.innerHTML = '';
+    canvas.style.width = '100%';
+    canvas.style.borderRadius = '10px';
+    holder.appendChild(canvas);
+  }, 120);
+}
+function finalizeCardShare(){
+  store.cardCustomOpts = {...cardCustomState.opts};
+  saveStore();
+  closeModal('cardCustomizeModal');
+  shareProfileCard(cardCustomState.kind, cardCustomState.item, cardCustomState.opts);
 }
 function shareTextFallback(caption){
   window.open('https://wa.me/?text=' + encodeURIComponent(caption), '_blank');
@@ -1648,6 +1747,96 @@ function shareRoundRect(ctx,x,y,w,h,r){
   ctx.arcTo(x,y+h,x,y,r);
   ctx.arcTo(x,y,x+w,y,r);
   ctx.closePath();
+}
+function shareWrapLines(ctx, text, maxWidth){
+  const words = (text||'').split(' ');
+  let line = '';
+  const lines = [];
+  for(let i=0;i<words.length;i++){
+    const test = line + words[i] + ' ';
+    if(ctx.measureText(test).width > maxWidth && line){ lines.push(line.trim()); line = words[i] + ' '; }
+    else line = test;
+  }
+  lines.push(line.trim());
+  return lines;
+}
+function hslToHex(h,s,l){
+  s/=100; l/=100;
+  const k=n=>(n+h/30)%12;
+  const a=s*Math.min(l,1-l);
+  const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+  const toHex=x=>Math.round(255*x).toString(16).padStart(2,'0');
+  return '#'+toHex(f(0))+toHex(f(8))+toHex(f(4));
+}
+/* Shrinks font size until every wrapped line fits maxWidth — text NEVER
+   overflows the card, whatever font/name length the user picks. */
+function shareFitAndDraw(ctx, text, cx, y0, maxWidth, maxFontSize, minFontSize, weight, fontFamily, lineHeightRatio, drawFn){
+  let fontSize = maxFontSize, lines;
+  while(fontSize >= minFontSize){
+    ctx.font = `${weight} ${fontSize}px "${fontFamily}", sans-serif`;
+    lines = shareWrapLines(ctx, text, maxWidth);
+    const widest = Math.max(...lines.map(l=>ctx.measureText(l).width));
+    if(widest <= maxWidth) break;
+    fontSize -= 2;
+  }
+  const lineHeight = fontSize*lineHeightRatio;
+  lines.forEach((l,idx)=> drawFn(ctx, l, cx, y0+idx*lineHeight, fontSize));
+  return {fontSize, lineCount:lines.length, lineHeight};
+}
+const SHARE_BORDER_TEMPLATES = [
+  {key:'thin', label:'باریک لائن'},
+  {key:'thick', label:'موٹی لائن'},
+  {key:'double', label:'ڈبل لائن'},
+  {key:'dashed', label:'ڈیش والی'},
+  {key:'dotted', label:'نقطے والی'},
+  {key:'corners', label:'صرف کونے'},
+  {key:'ornate', label:'کونوں پہ نقطے'}
+];
+function shareDrawBorderTemplate(ctx, tmpl, x, y, w, h, r, color){
+  ctx.save();
+  ctx.strokeStyle = color;
+  switch(tmpl){
+    case 'thick':
+      ctx.lineWidth = 6;
+      shareRoundRect(ctx, x, y, w, h, r); ctx.stroke();
+      break;
+    case 'double':
+      ctx.lineWidth = 2;
+      shareRoundRect(ctx, x, y, w, h, r); ctx.stroke();
+      shareRoundRect(ctx, x+8, y+8, w-16, h-16, Math.max(r-8,6)); ctx.stroke();
+      break;
+    case 'dashed':
+      ctx.lineWidth = 3; ctx.setLineDash([14,10]);
+      shareRoundRect(ctx, x, y, w, h, r); ctx.stroke();
+      break;
+    case 'dotted':
+      ctx.lineWidth = 4; ctx.lineCap='round'; ctx.setLineDash([1,10]);
+      shareRoundRect(ctx, x, y, w, h, r); ctx.stroke();
+      break;
+    case 'corners': {
+      const L = Math.min(60, w*0.15);
+      ctx.lineWidth = 6; ctx.lineCap='round';
+      const corners = [[x,y,1,1],[x+w,y,-1,1],[x,y+h,1,-1],[x+w,y+h,-1,-1]];
+      corners.forEach(([cx,cy,dx,dy])=>{
+        ctx.beginPath();
+        ctx.moveTo(cx, cy+dy*(r+L)); ctx.lineTo(cx, cy+dy*r);
+        ctx.moveTo(cx+dx*(r+L), cy); ctx.lineTo(cx+dx*r, cy);
+        ctx.stroke();
+      });
+      break;
+    }
+    case 'ornate':
+      ctx.lineWidth = 2;
+      shareRoundRect(ctx, x, y, w, h, r); ctx.stroke();
+      [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(([cx,cy])=>{
+        ctx.beginPath(); ctx.arc(cx,cy,7,0,Math.PI*2); ctx.fillStyle=color; ctx.fill();
+      });
+      break;
+    default: // thin
+      ctx.lineWidth = 2;
+      shareRoundRect(ctx, x, y, w, h, r); ctx.stroke();
+  }
+  ctx.restore();
 }
 function shareWrapText(ctx, text, x, y, maxWidth, lineHeight){
   const words = (text||'').split(' ');
@@ -1688,12 +1877,15 @@ function shareWaIcon(ctx, cx, cy, r){
   ctx.closePath(); ctx.fill();
   ctx.restore();
 }
-function buildShareCanvas(kind, item){
+const DEFAULT_CARD_OPTS = { bgHue:40, bgLight:97, borderHue:42, borderLight:55, borderTemplate:'thin', fontFamily:'Jameel Noori Nastaleeq Regular' };
+function buildShareCanvas(kind, item, opts){
+  const o = {...DEFAULT_CARD_OPTS, ...(opts||{})};
+  const FF = o.fontFamily;
   return new Promise((resolve)=>{
     Promise.all([
-      document.fonts.load('800 48px "Jameel Noori Nastaleeq Regular"'),
-      document.fonts.load('700 34px "Jameel Noori Nastaleeq Regular"'),
-      document.fonts.load('700 28px "Jameel Noori Nastaleeq Regular"')
+      document.fonts.load(`800 48px "${FF}"`),
+      document.fonts.load(`700 34px "${FF}"`),
+      document.fonts.load(`700 28px "${FF}"`)
     ]).catch(()=>{}).finally(()=>{
     const W=880, H=960;
     const canvas = document.createElement('canvas');
@@ -1710,10 +1902,20 @@ function buildShareCanvas(kind, item){
 
     ctx.direction='rtl'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
 
+    // card background + text color computed from the chosen lightness —
+    // dark background auto-switches to light text so it's always readable
+    const cardBase = hslToHex(o.bgHue, 22, o.bgLight);
+    const cardBase2 = hslToHex(o.bgHue, 22, Math.max(o.bgLight-8,0));
+    const borderColor = hslToHex(o.borderHue, 65, o.borderLight);
+    const isDarkCard = o.bgLight < 55;
+    const nameColor = isDarkCard ? '#ffffff' : '#0b2a44';
+    const addrColor = isDarkCard ? '#e7ecf2' : '#22303f';
+    const embossShadow = isDarkCard ? 'rgba(0,0,0,.55)' : 'rgba(0,0,0,.35)';
+
     // ===== top brand row — ONE line: logo + name, neatly aligned =====
     const headerLogo = new Image();
     const drawRest = ()=>{
-      ctx.font = '800 40px "Jameel Noori Nastaleeq Regular", sans-serif';
+      ctx.font = `800 40px "${FF}", sans-serif`;
       const hg = ctx.createLinearGradient(0,50,0,90);
       hg.addColorStop(0,'#fff2c9'); hg.addColorStop(.5,'#f4d58d'); hg.addColorStop(1,'#c99a34');
       ctx.save();
@@ -1722,23 +1924,22 @@ function buildShareCanvas(kind, item){
       ctx.fillText('مائی سٹی شائنز', W/2, 82);
       ctx.restore();
 
-      // white card panel with soft 3D shadow
+      // card panel with soft 3D shadow + chosen background/border template
       const cardTop=130, cardH=520;
       ctx.save();
       ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=26; ctx.shadowOffsetY=12;
       const cardG = ctx.createLinearGradient(0,cardTop,0,cardTop+cardH);
-      cardG.addColorStop(0,'#ffffff'); cardG.addColorStop(1,'#f4f6f9');
+      cardG.addColorStop(0,cardBase); cardG.addColorStop(1,cardBase2);
       ctx.fillStyle = cardG;
       shareRoundRect(ctx, 50, cardTop, W-100, cardH, 30); ctx.fill();
       ctx.restore();
-      ctx.strokeStyle='#f0dfa8'; ctx.lineWidth=2;
-      shareRoundRect(ctx, 50, cardTop, W-100, cardH, 30); ctx.stroke();
+      shareDrawBorderTemplate(ctx, o.borderTemplate, 50, cardTop, W-100, cardH, 30, borderColor);
 
       const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
       const emoji = kind==='doctor' ? '🩺' : ((CATEGORY_META[item.category]||{}).emoji || '🏷️');
 
       // ===== ONE line: category emoji badge + category label, side by side =====
-      ctx.font = '700 30px "Jameel Noori Nastaleeq Regular", sans-serif';
+      ctx.font = `700 30px "${FF}", sans-serif`;
       const catTextW = ctx.measureText(catLabel).width;
       const rowY = cardTop+70, badgeR=32;
       const rowW = badgeR*2 + 14 + catTextW;
@@ -1754,29 +1955,18 @@ function buildShareCanvas(kind, item){
       ctx.font = '34px sans-serif';
       ctx.fillText(emoji, bx, rowY+12);
       ctx.fillStyle = '#946200';
-      ctx.font = '700 30px "Jameel Noori Nastaleeq Regular", sans-serif';
+      ctx.font = `700 30px "${FF}", sans-serif`;
       ctx.fillText(catLabel, bx - badgeR - 14 - catTextW/2, rowY+11);
 
-      // name — bold embossed navy
-      ctx.font = '800 50px "Jameel Noori Nastaleeq Regular", sans-serif';
-      (function(){
-        const words = (item.nameUr||item.name||'').split(' ');
-        let line='', y=cardTop+165;
-        const tmp=[];
-        for(let i=0;i<words.length;i++){
-          const test=line+words[i]+' ';
-          if(ctx.measureText(test).width > W-200 && line){ tmp.push(line.trim()); line=words[i]+' '; }
-          else line=test;
-        }
-        tmp.push(line.trim());
-        tmp.forEach((l,idx)=> shareEmbossText(ctx, l, W/2, y+idx*58, '#0b2a44'));
-      })();
+      // name — bold embossed, auto-shrinks so it NEVER overflows the card
+      shareFitAndDraw(ctx, item.nameUr||item.name||'', W/2, cardTop+165, W-200, 50, 26, 800, FF, 1.16,
+        (c,l,x,y)=> shareEmbossText(c, l, x, y, nameColor, embossShadow));
 
       const addrY = cardTop+270;
       if(item.city||item.area){
-        ctx.fillStyle = '#22303f';
-        ctx.font = '700 32px "Jameel Noori Nastaleeq Regular", sans-serif';
-        ctx.fillText('📍 ' + [item.area,item.city].filter(Boolean).join('، '), W/2, addrY);
+        ctx.fillStyle = addrColor;
+        shareFitAndDraw(ctx, '📍 ' + [item.area,item.city].filter(Boolean).join('، '), W/2, addrY, W-160, 32, 20, 700, FF, 1.3,
+          (c,l,x,y)=>{ c.fillStyle=addrColor; c.fillText(l,x,y); });
       }
 
       // phone capsule with WhatsApp icon
@@ -1784,7 +1974,8 @@ function buildShareCanvas(kind, item){
         const num = normalizePkNumber(item.whatsapp);
         ctx.font = '800 36px sans-serif';
         const numW = ctx.measureText(num).width;
-        const pillW = numW + 130, pillH = 74, pillY = cardTop+330, pillX = W/2 - pillW/2;
+        const maxPillW = W-160;
+        const pillW = Math.min(numW + 130, maxPillW), pillH = 74, pillY = cardTop+330, pillX = W/2 - pillW/2;
         const pg = ctx.createLinearGradient(0,pillY,0,pillY+pillH);
         pg.addColorStop(0,'#2fd66b'); pg.addColorStop(1,'#1aa851');
         ctx.save();
@@ -1803,8 +1994,8 @@ function buildShareCanvas(kind, item){
         ctx.direction='rtl';
       }
 
-      ctx.fillStyle = '#5a6472';
-      ctx.font = '700 26px "Jameel Noori Nastaleeq Regular", sans-serif';
+      ctx.fillStyle = isDarkCard ? '#cfd7e0' : '#5a6472';
+      ctx.font = `700 26px "${FF}", sans-serif`;
       ctx.fillText('کال یا واٹس ایپ کریں', W/2, cardTop+470);
 
       finishFooter();
@@ -1831,7 +2022,7 @@ function buildShareCanvas(kind, item){
     ctx.restore();
 
     ctx.fillStyle = '#3a2600';
-    ctx.font = '800 32px "Jameel Noori Nastaleeq Regular", sans-serif';
+    ctx.font = `800 32px "${FF}", sans-serif`;
     shareWrapText(ctx, 'اپنے شہر کی مکمل ڈائریکٹری — ابھی ایپ حاصل کریں!', W/2, fY+50, W-160, 40);
 
     // app link badge — single, in one line, no separate scattered logo
@@ -1961,10 +2152,10 @@ function renderCustomCategoryTiles(){
 }
 function updateCategoryCounts(){
   const dc = document.getElementById('catCount_doctor');
-  if(dc) dc.textContent = urduDigits(store.doctors.length);
+  if(dc) dc.textContent = urduDigits(store.doctors.length) + ' اندراجات';
   CATEGORY_KEYS.forEach(k=>{
     const el = document.getElementById('catCount_'+k);
-    if(el) el.textContent = urduDigits(store.services.filter(s=>s.category===k).length);
+    if(el) el.textContent = urduDigits(store.services.filter(s=>s.category===k).length) + ' اندراجات';
   });
 }
 /* Admin list of self-added categories, each with a delete button. Only
