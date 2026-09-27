@@ -38,7 +38,7 @@ jobs:
         run: npm install -g @bubblewrap/cli
 
       - name: Point Bubblewrap at the JDK/Android SDK (no install prompts)
-        run: bubblewrap updateConfig --jdkPath="$JAVA_HOME" --androidSdkPath="$ANDROID_HOME"
+        run: printf 'no\nno\n' | bubblewrap updateConfig --jdkPath="$JAVA_HOME" --androidSdkPath="$ANDROID_HOME"
 
       - name: Restore signing keystore
         run: echo "${{ secrets.MCS_KEYSTORE_BASE64 }}" | base64 -d > mcs-release.keystore
