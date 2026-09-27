@@ -1,1 +1,69 @@
 
+name: Build Signed Android Package (APK + AAB)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: Point Bubblewrap at the JDK/Android SDK (no install prompts)
+        run: bubblewrap updateConfig --jdkPath="$JAVA_HOME" --androidSdkPath="$ANDROID_HOME"
+
+      - name: Restore signing keystore
+        run: echo "${{ secrets.MCS_KEYSTORE_BASE64 }}" | base64 -d > mcs-release.keystore
+
+      - name: Work out the next version code
+        id: ver
+        run: echo "code=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      - name: Set version code/name for this build
+        run: |
+          node -e "
+            const fs=require('fs');
+            const m=JSON.parse(fs.readFileSync('twa-manifest.json','utf8'));
+            m.appVersionCode = ${{ steps.ver.outputs.code }};
+            m.signingKey.path = './mcs-release.keystore';
+            fs.writeFileSync('twa-manifest.json', JSON.stringify(m, null, 2));
+          "
+
+      - name: Generate the Android project from twa-manifest.json
+        run: yes "" | bubblewrap init --manifest=./twa-manifest.json --directory=./android-build || true
+
+      - name: Build signed APK + AAB
+        working-directory: ./android-build
+        env:
+          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.MCS_KEYSTORE_PASSWORD }}
+          BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.MCS_KEY_PASSWORD }}
+        run: bubblewrap build --skipPwaValidation
+
+      - name: Remove keystore file (keep it out of the uploaded artifact)
+        if: always()
+        run: rm -f mcs-release.keystore android-build/mcs-release.keystore
+
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-city-shines-android-v${{ steps.ver.outputs.code }}
+          path: |
+            android-build/app-release-signed.apk
+            android-build/app-release-bundle.aab
+          retention-days: 90
