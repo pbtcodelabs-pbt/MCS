@@ -112,14 +112,25 @@
   /* ===== Home (v1.7 professional) ===== */
   #screen-specialist-categories .inner, #screen-business-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner, #screen-service-list .inner{padding:16px;}
   #screen-home{padding-bottom:24px;background:var(--bg);}
-  /* ===== ٹکر پٹی — رنگ یہاں سے بدلیں ===== */
-  :root{ --ticker-bg1:#0d3b66; --ticker-bg2:#123a5e; --ticker-text:#f4d58d; --ticker-h:26px; }
-  .mcs-ticker{position:fixed;top:0;left:0;right:0;z-index:9999;overflow:hidden;
-    background:linear-gradient(90deg,var(--ticker-bg1),var(--ticker-bg2));border-bottom:1px solid #d4a017;
-    padding:6px 0;white-space:nowrap;height:var(--ticker-h);box-sizing:border-box;
+  /* ===== ٹکر پٹی — سیٹنگز پینل سے تبدیل ہوتی ہیں (7 دفعہ ٹچ) ===== */
+  :root{
+    --ticker-mid-bg1:#0d3b66; --ticker-mid-bg2:#123a5e; --ticker-text:#f4d58d;
+    --ticker-border-color:#d4a017; --ticker-h:34px; --ticker-font-size:14px;
+    --ticker-font-family:'Jameel Noori Nastaleeq Regular';
+  }
+  .mcs-ticker{position:fixed;top:0;left:0;right:0;z-index:9999;
+    height:var(--ticker-h);box-sizing:border-box;display:flex;align-items:stretch;
     box-shadow:0 2px 6px rgba(0,0,0,.25);}
-  .mcs-ticker-track{display:inline-flex;gap:48px;animation:mcsTickerMove 30s linear infinite;will-change:transform;}
-  .mcs-ticker-track span{font-size:12.5px;color:var(--ticker-text);font-weight:600;white-space:nowrap;}
+  .mcs-ticker-border{flex:0 0 14px;background:var(--ticker-border-color);}
+  .mcs-ticker-middle{flex:1;overflow:hidden;position:relative;
+    background:linear-gradient(90deg,var(--ticker-mid-bg1),var(--ticker-mid-bg2));
+    display:flex;align-items:center;}
+  .mcs-ticker-track{display:inline-flex;gap:48px;align-items:center;
+    animation:mcsTickerMove 30s linear infinite;will-change:transform;
+    padding:0 6px;box-sizing:border-box;height:100%;}
+  .mcs-ticker-track span{font-size:var(--ticker-font-size);font-family:var(--ticker-font-family),'Segoe UI',sans-serif;
+    color:var(--ticker-text);font-weight:600;white-space:nowrap;line-height:1.6;
+    display:inline-flex;align-items:center;padding-top:2px;}
   @keyframes mcsTickerMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   #app{padding-top:var(--ticker-h);}
   .hero{
@@ -443,7 +454,11 @@
 </style>
 </head>
 <body>
-<div class="mcs-ticker" id="mcsTicker" onclick="tickerTap()"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
+<div class="mcs-ticker" id="mcsTicker" onclick="tickerTap()">
+  <div class="mcs-ticker-border"></div>
+  <div class="mcs-ticker-middle"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
+  <div class="mcs-ticker-border"></div>
+</div>
 <div class="backup-strip" id="backupStrip">
   <div class="backup-strip-label" id="backupStripLabel">بیک اپ ہو رہا ہے...</div>
   <div class="backup-progress-track"><div class="backup-progress-fill" id="backupProgressFill"></div></div>
@@ -866,13 +881,68 @@
 <div class="modal-overlay" id="tickerAdminModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('tickerAdminModal')">×</button>
-    <h3>📰 پٹی کے پیغامات</h3>
+    <h3>📰 پٹی کی سیٹنگز</h3>
     <div style="clear:both;"></div>
+
+    <div class="backup-card-title" style="margin-top:4px;">پیش منظر (نمونہ) — یہاں فوری تبدیلی نظر آئے گی</div>
+    <div style="border-radius:8px;overflow:hidden;margin-bottom:14px;">
+      <div class="mcs-ticker" id="tkPreviewBar" style="position:relative;height:34px;">
+        <div class="mcs-ticker-border" id="tkPvBorderL" style="flex:0 0 14px;"></div>
+        <div class="mcs-ticker-middle" id="tkPvMiddle" style="flex:1;overflow:hidden;display:flex;align-items:center;">
+          <div class="mcs-ticker-track" id="tkPvTrack" style="display:inline-flex;gap:48px;align-items:center;padding:0 6px;height:100%;"></div>
+        </div>
+        <div class="mcs-ticker-border" id="tkPvBorderR" style="flex:0 0 14px;"></div>
+      </div>
+    </div>
+
+    <div class="backup-card-title">پیغامات</div>
     <div id="tickerAdminList"></div>
-    <div style="display:flex;gap:6px;margin-top:10px;">
+    <div style="display:flex;gap:6px;margin-top:6px;margin-bottom:16px;">
       <input type="text" id="tickerNewMsg" placeholder="نیا پیغام لکھیں" style="flex:1;padding:8px;border-radius:8px;border:1px solid #d8dee4;">
       <button class="btn accent" style="padding:6px 14px;" onclick="addTickerMsg()">➕ شامل کریں</button>
     </div>
+
+    <hr style="margin:14px 0;border:none;border-top:1px solid #e5e7eb;">
+    <div class="backup-card-title">ظاہری شکل — تبدیل کریں، اوپر نمونے میں دیکھیں، پھر "لاگو کریں" دبائیں</div>
+
+    <div class="field">
+      <label>فونٹ</label>
+      <select id="tkFontFamily" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;" onchange="updateTickerPreview({fontFamily:this.value})">
+        <option value="Jameel Noori Nastaleeq Regular">جمیل نوری نستعلیق</option>
+        <option value="Jameel Noori Nastaleeq Kasheeda">جمیل نوری نستعلیق (کشیدہ)</option>
+        <option value="Segoe UI">سادہ انگریزی فونٹ</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>لکھائی کا سائز: <span id="tkFontSizeVal"></span></label>
+      <input type="range" id="tkFontSize" min="10" max="22" step="1" style="width:100%;" oninput="updateTickerPreview({fontSize:Number(this.value)})">
+    </div>
+    <div class="field">
+      <label>رفتار (سست ← تیز): <span id="tkSpeedVal"></span></label>
+      <input type="range" id="tkSpeed" min="10" max="60" step="2" style="width:100%;" oninput="updateTickerPreview({speed:Number(this.value)})">
+    </div>
+    <div class="cp-btn-row" style="margin-top:8px;">
+      <div class="field" style="flex:1;">
+        <label>لکھائی کا رنگ</label>
+        <input type="color" id="tkTextColor" style="width:100%;height:40px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({textColor:this.value})">
+      </div>
+      <div class="field" style="flex:1;">
+        <label>بارڈر کا رنگ</label>
+        <input type="color" id="tkBorderColor" style="width:100%;height:40px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({borderColor:this.value})">
+      </div>
+    </div>
+    <div class="cp-btn-row">
+      <div class="field" style="flex:1;">
+        <label>بیک گراؤنڈ (شروع)</label>
+        <input type="color" id="tkBg1" style="width:100%;height:40px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({midBg1:this.value})">
+      </div>
+      <div class="field" style="flex:1;">
+        <label>بیک گراؤنڈ (اختتام)</label>
+        <input type="color" id="tkBg2" style="width:100%;height:40px;border-radius:8px;border:1px solid #d8dee4;" oninput="updateTickerPreview({midBg2:this.value})">
+      </div>
+    </div>
+
+    <button class="btn block accent" style="margin-top:14px;" onclick="applyTickerPending()">✅ لاگو کریں (اصل پٹی میں چلے گا)</button>
   </div>
 </div>
 
@@ -900,7 +970,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0855AM";
+const APP_VERSION = "MCS27SEPSU0905AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2500,6 +2570,38 @@ function renderTicker(){
   if(!el) return;
   const line = tickerMessages().map(m=>`<span>${escapeHtml(m)}</span>`).join('<span>•</span>');
   el.innerHTML = line + line; // duplicated once for seamless 50% loop
+  applyTickerSettings();
+}
+
+/* ---------- Ticker appearance (font/size/colors/speed) ---------- */
+const DEFAULT_TICKER_SETTINGS = {
+  fontSize: 14, fontFamily: 'Jameel Noori Nastaleeq Regular',
+  textColor: '#f4d58d', midBg1: '#0d3b66', midBg2: '#123a5e',
+  borderColor: '#d4a017', speed: 30
+};
+const TICKER_FONT_OPTIONS = ['Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq Kasheeda','Segoe UI'];
+function tickerSettings(){ return {...DEFAULT_TICKER_SETTINGS, ...(store.tickerSettings||{})}; }
+function applyTickerSettings(){
+  const s = tickerSettings();
+  const root = document.documentElement.style;
+  root.setProperty('--ticker-font-size', s.fontSize+'px');
+  root.setProperty('--ticker-font-family', `'${s.fontFamily}'`);
+  root.setProperty('--ticker-text', s.textColor);
+  root.setProperty('--ticker-mid-bg1', s.midBg1);
+  root.setProperty('--ticker-mid-bg2', s.midBg2);
+  root.setProperty('--ticker-border-color', s.borderColor);
+  const track = document.getElementById('tickerTrack');
+  if(track) track.style.animationDuration = s.speed + 's';
+}
+function saveTickerSettings(patch){
+  store.tickerSettings = {...tickerSettings(), ...patch};
+  saveStore();
+  applyTickerSettings();
+  const FB = window.MCSFirebase;
+  if(FB){
+    const ref = FB.doc(FB.db,'appConfig','ticker');
+    FB.setDoc(ref, {list: tickerMessages(), settings: store.tickerSettings}, {merge:true}).catch(()=>{});
+  }
 }
 
 /* ---------- Ticker admin (7-tap secret, no code editing needed) ---------- */
@@ -2513,9 +2615,48 @@ function tickerTap(){
     openTickerAdmin();
   }
 }
+let tickerPending = null;
 function openTickerAdmin(){
   renderTickerAdminList();
+  tickerPending = {...tickerSettings()};
+  const s = tickerPending;
+  document.getElementById('tkFontFamily').value = s.fontFamily;
+  document.getElementById('tkFontSize').value = s.fontSize;
+  document.getElementById('tkFontSizeVal').textContent = s.fontSize+'px';
+  document.getElementById('tkSpeed').value = s.speed;
+  document.getElementById('tkSpeedVal').textContent = s.speed+' سیکنڈ';
+  document.getElementById('tkTextColor').value = s.textColor;
+  document.getElementById('tkBorderColor').value = s.borderColor;
+  document.getElementById('tkBg1').value = s.midBg1;
+  document.getElementById('tkBg2').value = s.midBg2;
+  renderTickerPreview();
   openModal('tickerAdminModal');
+}
+function updateTickerPreview(patch){
+  tickerPending = {...tickerPending, ...patch};
+  if('fontSize' in patch) document.getElementById('tkFontSizeVal').textContent = patch.fontSize+'px';
+  if('speed' in patch) document.getElementById('tkSpeedVal').textContent = patch.speed+' سیکنڈ';
+  renderTickerPreview();
+}
+function renderTickerPreview(){
+  const s = tickerPending || tickerSettings();
+  const msgs = tickerMessages();
+  const line = msgs.map(m=>`<span>${escapeHtml(m)}</span>`).join('<span>•</span>');
+  const track = document.getElementById('tkPvTrack');
+  track.innerHTML = line + line;
+  track.style.fontFamily = `'${s.fontFamily}','Segoe UI',sans-serif`;
+  track.style.fontSize = s.fontSize+'px';
+  track.style.color = s.textColor;
+  track.style.fontWeight = '600';
+  track.style.animation = `mcsTickerMove ${s.speed}s linear infinite`;
+  Array.from(track.children).forEach(sp=>{ sp.style.whiteSpace='nowrap'; sp.style.lineHeight='1.6'; });
+  document.getElementById('tkPvMiddle').style.background = `linear-gradient(90deg,${s.midBg1},${s.midBg2})`;
+  document.getElementById('tkPvBorderL').style.background = s.borderColor;
+  document.getElementById('tkPvBorderR').style.background = s.borderColor;
+}
+function applyTickerPending(){
+  saveTickerSettings(tickerPending);
+  showToast('پٹی کی نئی شکل لاگو ہو گئی ✓');
 }
 function renderTickerAdminList(){
   const wrap = document.getElementById('tickerAdminList');
@@ -2531,12 +2672,14 @@ function updateTickerMsg(idx, val){
   const msgs = tickerMessages().slice();
   msgs[idx] = val.trim() || msgs[idx];
   saveTickerMessages(msgs);
+  if(tickerPending) renderTickerPreview();
 }
 function deleteTickerMsg(idx){
   const msgs = tickerMessages().slice();
   msgs.splice(idx,1);
   saveTickerMessages(msgs);
   renderTickerAdminList();
+  if(tickerPending) renderTickerPreview();
 }
 function addTickerMsg(){
   const input = document.getElementById('tickerNewMsg');
@@ -2547,6 +2690,7 @@ function addTickerMsg(){
   saveTickerMessages(msgs);
   input.value = '';
   renderTickerAdminList();
+  if(tickerPending) renderTickerPreview();
 }
 function saveTickerMessages(msgs){
   store.tickerMessages = msgs;
@@ -2555,7 +2699,7 @@ function saveTickerMessages(msgs){
   const FB = window.MCSFirebase;
   if(FB){
     const ref = FB.doc(FB.db,'appConfig','ticker');
-    FB.setDoc(ref, {list: msgs}).catch(()=>{});
+    FB.setDoc(ref, {list: msgs, settings: tickerSettings()}, {merge:true}).catch(()=>{});
   }
   showToast('پیغام محفوظ ہو گیا ✓');
 }
@@ -2623,12 +2767,14 @@ function initFirebaseSync(){
     applyCustomCategories(list);
   }, ()=>{ /* offline/permission issue — built-in categories still work */ });
 
-  // Ticker messages (edited via 7-tap secret on the ticker strip) sync here to every device
+  // Ticker messages + appearance (edited via 7-tap secret on the ticker strip) sync here to every device
   FB.onSnapshot(FB.doc(FB.db,'appConfig','ticker'), (snap)=>{
-    if(snap.exists() && Array.isArray(snap.data().list) && snap.data().list.length){
-      store.tickerMessages = snap.data().list;
-      saveStore();
-      renderTicker();
+    if(snap.exists()){
+      const d = snap.data();
+      let changed = false;
+      if(Array.isArray(d.list) && d.list.length){ store.tickerMessages = d.list; changed = true; }
+      if(d.settings){ store.tickerSettings = d.settings; changed = true; }
+      if(changed){ saveStore(); renderTicker(); }
     }
   }, ()=>{ /* offline/permission issue — local/default messages still work */ });
 
