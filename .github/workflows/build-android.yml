@@ -39,7 +39,9 @@ jobs:
 
       - name: Point Bubblewrap at the JDK/Android SDK (no install prompts)
         run: |
-          printf 'no\n%s\nno\n%s\n' "$JAVA_HOME" "$ANDROID_HOME" | bubblewrap updateConfig --jdkPath="$JAVA_HOME" --androidSdkPath="$ANDROID_HOME"
+          mkdir -p "$HOME/.bubblewrap"
+          printf '{"jdkPath":"%s","androidSdkPath":"%s"}' "$JAVA_HOME" "$ANDROID_HOME" > "$HOME/.bubblewrap/config.json"
+          cat "$HOME/.bubblewrap/config.json"
 
       - name: Restore signing keystore
         run: echo "${{ secrets.MCS_KEYSTORE_BASE64 }}" | base64 -d > mcs-release.keystore
