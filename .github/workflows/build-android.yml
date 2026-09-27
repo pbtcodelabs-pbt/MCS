@@ -59,12 +59,14 @@ jobs:
             const fs=require('fs');
             const m=JSON.parse(fs.readFileSync('twa-manifest.json','utf8'));
             m.appVersionCode = ${{ steps.ver.outputs.code }};
-            m.signingKey.path = './mcs-release.keystore';
+            m.signingKey.path = require('path').resolve('mcs-release.keystore');
             fs.writeFileSync('twa-manifest.json', JSON.stringify(m, null, 2));
           "
 
       - name: Generate the Android project from twa-manifest.json
-        run: yes "" | bubblewrap init --manifest=./twa-manifest.json --directory=./android-build || true
+        run: |
+          yes "" | bubblewrap init --manifest=./twa-manifest.json --directory=./android-build
+          ls -la ./android-build
 
       - name: Build signed APK + AAB
         working-directory: ./android-build
