@@ -970,7 +970,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0905AM";
+const APP_VERSION = "MCS27SEPSU0915AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1468,12 +1468,15 @@ function promptAddOption(key, selectId){
 function confirmAddOption(){
   const val = document.getElementById('addOptionInput').value.trim();
   if(!val){ showToast('نام لکھیں'); return; }
-  let arr;
+  let arr, fbField, svcCat=null;
   if(addOptionTargetKey==='serviceType'){
-    arr = store.serviceTypes[currentServiceCategory];
+    svcCat = currentServiceCategory;
+    arr = store.serviceTypes[svcCat];
+    fbField = 'serviceTypes.' + svcCat;
   } else {
     const mapKey = {department:'departments', specialty:'specialties', hospital:'hospitals', city:'cities', area:'areas'}[addOptionTargetKey];
     arr = store[mapKey];
+    fbField = mapKey;
   }
   if(!arr.includes(val)) arr.push(val);
   saveStore();
@@ -1481,7 +1484,15 @@ function confirmAddOption(){
   document.getElementById(addOptionTargetSelect).value = val;
   resyncCapsuleSelect(addOptionTargetSelect);
   closeModal('addOptionModal');
-  showToast('شامل کر دیا گیا ✓');
+  showToast('شامل کر دیا گیا — آئندہ سب کے لیے محفوظ ✓');
+  // Sync to Firestore so this new option shows up for EVERYONE, permanently —
+  // not just remembered on this one phone. Same appConfig pattern as categories/ticker.
+  const FB = window.MCSFirebase;
+  if(FB){
+    const ref = FB.doc(FB.db,'appConfig','dropdowns');
+    const nested = svcCat ? {serviceTypes: {[svcCat]: arr}} : {[fbField]: arr};
+    FB.updateDoc(ref, {[fbField]: arr}).catch(()=> FB.setDoc(ref, nested, {merge:true}).catch(()=>{}));
+  }
 }
 
 /* ---------- Doctor CRUD ---------- */
@@ -2766,6 +2777,27 @@ function initFirebaseSync(){
     const list = (snap.exists() && snap.data().list) || [];
     applyCustomCategories(list);
   }, ()=>{ /* offline/permission issue — built-in categories still work */ });
+
+  // Dropdown options (city/area/department/specialty/hospital/service-type, added via the
+  // "+" button on any form) sync here so once ANYONE adds a new option, everyone's dropdown
+  // has it forever — union-merge (never overwrite/shrink) so offline additions are never lost.
+  function unionMerge(a, b){ const set = new Set([...(a||[]), ...(b||[])]); return Array.from(set); }
+  FB.onSnapshot(FB.doc(FB.db,'appConfig','dropdowns'), (snap)=>{
+    if(!snap.exists()) return;
+    const d = snap.data();
+    let changed = false;
+    ['departments','specialties','hospitals','cities','areas'].forEach(k=>{
+      if(Array.isArray(d[k])){ const merged = unionMerge(store[k], d[k]); if(merged.length!==store[k].length){ store[k]=merged; changed=true; } }
+    });
+    if(d.serviceTypes){
+      Object.keys(d.serviceTypes).forEach(catKey=>{
+        if(!store.serviceTypes[catKey]) store.serviceTypes[catKey] = [];
+        const merged = unionMerge(store.serviceTypes[catKey], d.serviceTypes[catKey]);
+        if(merged.length!==store.serviceTypes[catKey].length){ store.serviceTypes[catKey]=merged; changed=true; }
+      });
+    }
+    if(changed){ saveStore(); refreshAllDropdowns(); }
+  }, ()=>{ /* offline/permission issue — locally-added options still work on this device */ });
 
   // Ticker messages + appearance (edited via 7-tap secret on the ticker strip) sync here to every device
   FB.onSnapshot(FB.doc(FB.db,'appConfig','ticker'), (snap)=>{
