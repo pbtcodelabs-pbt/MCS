@@ -36,7 +36,9 @@ jobs:
           ln -s "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" "$ANDROID_SDK_ROOT/bin"
 
       - name: Install Bubblewrap CLI
-        run: npm install -g @bubblewrap/cli
+        run: |
+          npm install -g @bubblewrap/cli
+          npm install --no-save @bubblewrap/core
 
       - name: Point Bubblewrap at the JDK/Android SDK (no install prompts)
         run: |
@@ -63,9 +65,20 @@ jobs:
             fs.writeFileSync('twa-manifest.json', JSON.stringify(m, null, 2));
           "
 
-      - name: Generate the Android project from twa-manifest.json
+      - name: Generate the Android project from twa-manifest.json (no interactive prompts)
         run: |
-          yes "" | bubblewrap init --manifest=./twa-manifest.json --directory=./android-build
+          node -e "
+            const path = require('path');
+            const { TwaManifest, TwaGenerator, ConsoleLog } = require('@bubblewrap/core');
+            (async () => {
+              const manifest = await TwaManifest.fromFile('./twa-manifest.json');
+              const generator = new TwaGenerator();
+              const log = new ConsoleLog('build');
+              await generator.createTwaProject('./android-build', manifest, log);
+              await manifest.saveToFile(path.join('./android-build', 'twa-manifest.json'));
+              console.log('Android project generated successfully.');
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
           ls -la ./android-build
 
       - name: Build signed APK + AAB
