@@ -1138,7 +1138,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0208PM";
+const APP_VERSION = "MCS27SEPSU0243PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1724,6 +1724,9 @@ function saveDoctor(){
   if(!nameEn){ showToast('Doctor name in English likhein'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
   if(!/^03\d{2}-\d{7}$/.test(whatsapp)){ showToast('نمبر درست نہیں — 11 ہندسوں کا نمبر لکھیں جو 03 سے شروع ہو، مثلاً 0300-1234567'); return; }
+  if(!document.getElementById('docCity').value){ showToast('شہر منتخب کریں'); return; }
+  if(!document.getElementById('docDept').value){ showToast('شعبہ منتخب کریں'); return; }
+  if(!document.getElementById('docSpecialty').value){ showToast('اسپیشلٹی منتخب کریں'); return; }
   const dup = store.doctors.find(x=>x.whatsapp===whatsapp && x.id!==editingDoctorId);
   if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr||dup.name}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
   const loc = readLocationFormValues('doc');
@@ -2656,6 +2659,8 @@ function saveService(){
   if(!nameUr){ showToast('نام اردو میں لکھیں'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
   if(!/^03\d{2}-\d{7}$/.test(whatsapp)){ showToast('نمبر درست نہیں — 11 ہندسوں کا نمبر لکھیں جو 03 سے شروع ہو، مثلاً 0300-1234567'); return; }
+  if(!document.getElementById('svcCity').value){ showToast('شہر منتخب کریں'); return; }
+  if(!document.getElementById('svcType').value){ showToast(((CATEGORY_META[currentServiceCategory]||{}).typeLabel || 'قسم') + ' منتخب کریں'); return; }
   const dup = store.services.find(x=>x.whatsapp===whatsapp && x.category===currentServiceCategory && x.id!==editingServiceId);
   if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
   const loc = readLocationFormValues('svc');
