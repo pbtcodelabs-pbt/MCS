@@ -35,6 +35,8 @@
     --muted:#6b7280;
     --danger:#dc2626;
     --radius:14px;
+    --docCardFont:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;
+    --docCardScale:1;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   button,input,select,textarea{font-family:inherit;}
@@ -342,56 +344,61 @@
     background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;
   }
   .doc-card{
-    position:relative;display:flex;gap:12px;align-items:center;
+    position:relative;
     background:linear-gradient(150deg,#0d3b66 0%,#0f766e 60%,#0b5c56 100%);
-    border-radius:18px;padding:12px 14px;margin-bottom:12px;
+    border-radius:16px;padding:10px 12px;margin-bottom:12px;
     border:1px solid rgba(255,255,255,.08);
     box-shadow:0 1px 0 rgba(255,255,255,.15) inset,0 -3px 10px rgba(0,0,0,.25) inset,
                0 3px 4px rgba(0,0,0,.15),0 10px 20px rgba(13,59,102,.35),0 18px 30px -14px rgba(13,59,102,.45);
   }
+  .doc-toprow{display:flex;gap:10px;align-items:center;}
   .doc-card::before{content:"";position:absolute;right:0;top:12px;bottom:12px;width:4px;border-radius:4px 0 0 4px;
     background:linear-gradient(180deg,#f59e0b,#d97706);}
-  .doc-avatar{width:46px;height:46px;min-width:46px;border-radius:14px;
+  .doc-avatar{width:40px;height:40px;min-width:40px;border-radius:12px;
     background:linear-gradient(145deg,#ffd27a,#f59e0b);color:#5c3a06;display:flex;align-items:center;justify-content:center;
     box-shadow:0 4px 10px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.55);}
-  .doc-avatar svg{width:26px;height:26px;}
+  .doc-avatar svg{width:22px;height:22px;}
   .doc-body{flex:1;min-width:0;}
   .doc-top{display:flex;align-items:center;gap:6px;}
-  .doc-name{flex:1;min-width:0;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;
-    font-size:22px;line-height:1.45;color:#fff;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  .doc-name{flex:1;min-width:0;font-family:var(--docCardFont);
+    font-size:calc(22px*var(--docCardScale));line-height:1.45;color:#fff;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
     text-shadow:0 1px 2px rgba(0,0,0,.4);}
   .doc-name-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;text-align:left;unicode-bidi:isolate;
-    font-size:13px;font-weight:600;letter-spacing:.3px;color:#ffe4a8;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    font-size:calc(13px*var(--docCardScale));font-weight:600;letter-spacing:.3px;color:#ffe4a8;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .doc-mini{display:flex;gap:4px;}
-  .doc-mini button{width:30px;height:24px;border-radius:8px;border:none;padding:0;background:rgba(255,255,255,.15);color:#fff;
+  .doc-mini button{width:26px;height:22px;border-radius:8px;border:none;padding:0;background:rgba(255,255,255,.15);color:#fff;
     display:flex;align-items:center;justify-content:center;}
-  .doc-mini button svg{width:15px;height:15px;}
+  .doc-mini button svg{width:13px;height:13px;}
   .doc-mini .mini-del{color:#fff;background:rgba(220,38,38,.55);}
-  .doc-sub{font-size:13.5px;font-weight:600;color:#e0f2f1;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .doc-sub{font-size:calc(13.5px*var(--docCardScale));font-weight:600;color:#e0f2f1;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .doc-sub .dot{color:#7dd3c8;margin:0 4px;}
-  .doc-address{font-size:12.5px;color:#cfe8e4;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .doc-address{font-size:calc(12.5px*var(--docCardScale));color:#cfe8e4;line-height:1.6;text-align:center;white-space:normal;overflow-wrap:break-word;}
+  .doc-intro{display:block;width:100%;box-sizing:border-box;font-family:var(--docCardFont);
+    font-size:calc(12.5px*var(--docCardScale));color:#5a3d00;text-align:center;
+    background:linear-gradient(145deg,#fff3cd,#ffe082);border:1px solid rgba(180,130,20,.35);border-radius:999px;
+    padding:5px 16px;margin:7px 0 4px;line-height:1.45;white-space:normal;overflow-wrap:break-word;}
   .doc-bottom{display:flex;align-items:center;gap:8px;margin-top:2px;}
   .doc-num{direction:ltr;unicode-bidi:isolate;text-align:right;font-family:'Segoe UI',Roboto,Arial,sans-serif;
-    font-size:13.5px;font-weight:700;color:#ffe4a8;letter-spacing:.4px;line-height:1.5;}
+    font-size:calc(13.5px*var(--docCardScale));font-weight:700;color:#ffe4a8;letter-spacing:.4px;line-height:1.5;}
   .doc-pending-badge{display:inline-block;background:#fde68a;color:#7c4a03;font-size:10.5px;font-weight:700;
     padding:2px 8px;border-radius:8px;margin-top:2px;}
-  .doc-side{display:flex;flex-direction:column;align-items:center;gap:6px;align-self:center;}
-  .doc-acts{display:flex;gap:6px;}
-  .doc-side .doc-mini{gap:8px;}
-  .doc-acts a{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
+  .doc-side{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:center;gap:5px;align-self:center;}
+  .doc-acts{display:flex;flex-wrap:nowrap;gap:5px;}
+  .doc-side .doc-mini{gap:5px;}
+  .doc-acts a{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
     box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.35);}
-  .doc-acts a svg{width:17px;height:17px;}
+  .doc-acts a svg{width:15px;height:15px;}
   .doc-acts a:active{transform:scale(.92);}
   .a-call{background:linear-gradient(145deg,#1f9d55,#15803d);}
   .a-wa{background:linear-gradient(145deg,#2fd16b,#1da851);}
   .a-sms{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-  .a-share{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
+  .a-share{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
     background:linear-gradient(145deg,#d4a017,#a97c0a);border:none;cursor:pointer;
     box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.35);}
-  .a-share svg{width:16px;height:16px;}
+  .a-share svg{width:14px;height:14px;}
   .a-share:active{transform:scale(.92);}
-  .a-reqadmin{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(145deg,#8a94a3,#5c6675);border:none;cursor:pointer;font-size:14px;color:#fff;
+  .a-reqadmin{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(145deg,#8a94a3,#5c6675);border:none;cursor:pointer;font-size:13px;color:#fff;
     box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.25);}
   .a-reqadmin:active{transform:scale(.92);}
   .doc-recid{font-size:10px;color:var(--muted);direction:ltr;unicode-bidi:isolate;display:inline-block;margin-top:2px;}
@@ -713,6 +720,11 @@
     </div>
 
     <div class="field">
+      <label>مختصر تعارف (اختیاری) — ایک جملے میں بتائیں یہ کس چیز کے ماہر ہیں</label>
+      <textarea id="docIntro" rows="2" placeholder="مثلاً: یہ ہر قسم کے امراض کے ماہر ہیں، بچوں کا خصوصی علاج بھی کرتے ہیں" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+    </div>
+
+    <div class="field">
       <label>شعبہ (Department)</label>
       <div class="field-with-add">
         <select id="docDept"></select>
@@ -806,6 +818,11 @@
     <div class="field">
       <label>پتہ (Address) — گلی، دکان نمبر، لینڈ مارک وغیرہ</label>
       <input type="text" id="svcAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
+    </div>
+
+    <div class="field">
+      <label>مختصر تعارف (اختیاری) — ایک جملے میں بتائیں یہاں کیا ملتا ہے</label>
+      <textarea id="svcIntro" rows="2" placeholder="مثلاً: یہاں نئے پرانے موبائل سیل اور مرمت دونوں کیے جاتے ہیں / دیسی مرغی کا گوشت اور ہوم ڈیلیوری دستیاب ہے" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
     </div>
 
     <div class="field">
@@ -926,11 +943,59 @@
       </div>
 
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
+      <div class="backup-card">
+        <div class="backup-card-title">🎴 کارڈز کی تحریر (فونٹ اور سائز)</div>
+        <div class="field" style="margin-bottom:8px;">
+          <label>فونٹ</label>
+          <select id="cardTextFont" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;" onchange="setCardTextPref('font', this.value)">
+            <option value="kasheeda">جمیل نوری نستعلیق (کشیدہ)</option>
+            <option value="regular">جمیل نوری نستعلیق (سادہ)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>تحریر کا سائز</label>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="cc-tmpl-btn" id="cardSizeBtn_s" onclick="setCardTextPref('scale', 0.88)" style="flex:1;">چھوٹا</button>
+            <button type="button" class="cc-tmpl-btn" id="cardSizeBtn_m" onclick="setCardTextPref('scale', 1)" style="flex:1;">درمیانہ</button>
+            <button type="button" class="cc-tmpl-btn" id="cardSizeBtn_l" onclick="setCardTextPref('scale', 1.18)" style="flex:1;">بڑا</button>
+          </div>
+        </div>
+      </div>
+
+      <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
       <div class="field">
         <label>ڈیٹا کا خلاصہ</label>
         <div id="cpDataSummary" style="font-size:13px;color:var(--muted);"></div>
       </div>
       <button class="btn block danger" onclick="resetAllData()">🗑️ سارا ڈیٹا صاف کریں</button>
+
+      <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
+      <button class="btn block secondary" onclick="openPrivacyPolicy()">🔒 پرائیویسی پالیسی دیکھیں</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PRIVACY POLICY MODAL ===================== -->
+<div class="modal-overlay" id="privacyPolicyModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('privacyPolicyModal')">×</button>
+    <h3>🔒 پرائیویسی پالیسی</h3>
+    <div style="clear:both;"></div>
+    <div style="font-size:13.5px;line-height:1.9;color:#2b2f36;max-height:60vh;overflow-y:auto;padding-left:2px;">
+      <p><b>مائی سٹی شائنز (My City Shines)</b> ایک آفلائن ڈائریکٹری ایپ ہے جو pbtcodelabs نے بنائی ہے۔ یہ پالیسی بتاتی ہے کہ ایپ کون سی معلومات جمع کرتی ہے اور ان کا استعمال کیسے ہوتا ہے۔</p>
+      <p><b>1. کون سی معلومات جمع ہوتی ہیں؟</b><br>
+      جب آپ کسی ڈاکٹر، دکان یا خدمت کا اندراج شامل کرتے ہیں تو صرف وہی معلومات (نام، شہر/علاقہ، واٹس ایپ نمبر، کیٹگری وغیرہ) محفوظ ہوتی ہیں جو آپ خود فارم میں لکھتے ہیں۔ ایپ خود بخود آپ کا ذاتی ڈیٹا، لوکیشن یا رابطوں کی فہرست حاصل نہیں کرتی۔</p>
+      <p><b>2. ڈیٹا کہاں محفوظ ہوتا ہے؟</b><br>
+      اندراجات آپ کے موبائل پر (آفلائن) اور Google Firebase (Firestore) کے سرور پر محفوظ ہوتے ہیں تاکہ سب صارفین ایک ہی ڈائریکٹری دیکھ سکیں۔ نئے اندراجات پہلے ایڈمن کی منظوری کے بعد ہی عام صارفین کو نظر آتے ہیں۔</p>
+      <p><b>3. معلومات کا استعمال</b><br>
+      جمع شدہ معلومات صرف ڈائریکٹری دکھانے اور رابطہ کرنے (واٹس ایپ/کال) کے لیے استعمال ہوتی ہیں۔ یہ ڈیٹا کسی تیسرے فریق کو فروخت یا اشتہارات کے لیے شیئر نہیں کیا جاتا۔</p>
+      <p><b>4. اجازتیں (Permissions)</b><br>
+      ایپ صرف رابطے منتخب کرنے (Contacts، اختیاری) اور فائل/تصویر شیئر یا محفوظ کرنے کی اجازت مانگ سکتی ہے، تاکہ آپ آسانی سے نمبر شامل کر سکیں یا کارڈ شیئر کر سکیں۔</p>
+      <p><b>5. بچوں کی رازداری</b><br>
+      یہ ایپ عمومی استعمال کے لیے ہے اور خاص طور پر بچوں سے ڈیٹا اکٹھا نہیں کرتی۔</p>
+      <p><b>6. رابطہ</b><br>
+      پرائیویسی سے متعلق کسی بھی سوال یا اپنا ڈیٹا ہٹوانے کی درخواست کے لیے رابطہ کریں: <span dir="ltr" style="unicode-bidi:isolate;">pbtcodelabs@gmail.com</span></p>
+      <p style="color:#8a8f98;font-size:12px;">آخری تازہ کاری: ستمبر 2026</p>
     </div>
   </div>
 </div>
@@ -1070,7 +1135,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0109PM";
+const APP_VERSION = "MCS27SEPSU0148PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1286,14 +1351,14 @@ function renderUserSearch(){
   const doctorCards = doctorResults.map(d=>userResultCard({
     kind:'doctor', id:d.id, fsId:d.fsId, nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
     sub: [d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''),
-    city:d.city, area:d.area, address:d.address, whatsapp:d.whatsapp, approved:d.approved
+    city:d.city, area:d.area, address:d.address, intro:d.intro, whatsapp:d.whatsapp, approved:d.approved
   })).join('');
 
   const serviceCards = serviceResults.map(s=>{
     const meta = CATEGORY_META[s.category]||{};
     return userResultCard({
       kind:'service', id:s.id, fsId:s.fsId, category:s.category, nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
-      sub:s.type||'', city:s.city, area:s.area, address:s.address, whatsapp:s.whatsapp, approved:s.approved
+      sub:s.type||'', city:s.city, area:s.area, address:s.address, intro:s.intro, whatsapp:s.whatsapp, approved:s.approved
     });
   }).join('');
 
@@ -1305,16 +1370,14 @@ function userResultCard(item){
   const intl = '92' + digits.replace(/^0/,'');
   return `
     <div class="doc-card">
+      <div class="doc-toprow">
       <div class="doc-avatar"><span style="font-size:20px;">${item.emoji}</span></div>
       <div class="doc-body">
         <div class="doc-top"><div class="doc-name">${escapeHtml(item.nameUr||'')}</div></div>
         ${item.nameEn ? `<div class="doc-name-en">${escapeHtml(item.nameEn)}</div>` : ``}
         ${item.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
         <div class="doc-sub">${item.tag?`<b>${escapeHtml(item.tag)}</b>`:''}${(item.tag&&item.sub)?' • ':''}${escapeHtml(item.sub||'')}</div>
-        ${(item.city||item.area) ? `<div class="doc-address">📍 ${[item.area,item.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
-        ${item.address ? `<div class="doc-address">${escapeHtml(item.address)}</div>` : ``}
         <div class="doc-num">${escapeHtml(num||'—')}</div>
-        ${item.id ? `<div class="doc-recid">ID: ${escapeHtml(shortRecordId(item.kind,item))}</div>` : ``}
       </div>
       <div class="doc-side">
         ${digits ? `<div class="doc-acts">
@@ -1325,6 +1388,11 @@ function userResultCard(item){
         ${item.id ? `<button class="a-share" onclick="shareProfileCardById('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>` : ``}
         ${item.id ? (isAdminSignedIn ? `<button onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم" style="width:32px;height:32px;border-radius:50%;border:none;background:#eef2f6;">✏️</button>` : `<button class="a-reqadmin" onclick="requestAdminAction('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : ``}
       </div>
+      </div>
+      ${item.intro ? `<div class="doc-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
+      ${(item.city||item.area) ? `<div class="doc-address">📍 ${[item.area,item.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
+      ${item.address ? `<div class="doc-address">${escapeHtml(item.address)}</div>` : ``}
+      ${item.id ? `<div class="doc-recid">ID: ${escapeHtml(shortRecordId(item.kind,item))}</div>` : ``}
     </div>`;
 }
 
@@ -1624,6 +1692,7 @@ function openDoctorForm(id){
     document.getElementById('docNameUr').value = d.nameUr || d.name || '';
     document.getElementById('docNameEn').value = d.nameEn || '';
     document.getElementById('docAddress').value = d.address || '';
+    document.getElementById('docIntro').value = d.intro || '';
     document.getElementById('docDept').value = d.dept;
     document.getElementById('docSpecialty').value = d.specialty;
     document.getElementById('docWhatsapp').value = d.whatsapp;
@@ -1635,6 +1704,7 @@ function openDoctorForm(id){
     document.getElementById('docNameUr').value = '';
     document.getElementById('docNameEn').value = '';
     document.getElementById('docAddress').value = '';
+    document.getElementById('docIntro').value = '';
     document.getElementById('docWhatsapp').value = '';
     resetLocationFormValues('doc');
     resyncCapsuleSelect('docDept'); resyncCapsuleSelect('docSpecialty'); resyncCapsuleSelect('docHospital');
@@ -1645,6 +1715,7 @@ function saveDoctor(){
   const nameUr = document.getElementById('docNameUr').value.trim();
   const nameEn = document.getElementById('docNameEn').value.trim();
   const address = document.getElementById('docAddress').value.trim();
+  const intro = document.getElementById('docIntro').value.trim();
   const whatsapp = normalizePkNumber(document.getElementById('docWhatsapp').value.trim());
   if(!nameUr){ showToast('ڈاکٹر کا نام اردو میں لکھیں'); return; }
   if(!nameEn){ showToast('Doctor name in English likhein'); return; }
@@ -1653,7 +1724,7 @@ function saveDoctor(){
   if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr||dup.name}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
   const loc = readLocationFormValues('doc');
   const data = {
-    nameUr, nameEn, name: nameUr, address, whatsapp,
+    nameUr, nameEn, name: nameUr, address, intro, whatsapp,
     dept: document.getElementById('docDept').value,
     specialty: document.getElementById('docSpecialty').value,
     hospital: document.getElementById('docHospital').value,
@@ -2359,6 +2430,7 @@ function renderDoctorList(mode){
     const nameUr = d.nameUr || d.name || '';
     return `
     <div class="doc-card">
+      <div class="doc-toprow">
       <div class="doc-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
       <div class="doc-body">
         <div class="doc-top">
@@ -2367,10 +2439,7 @@ function renderDoctorList(mode){
         ${d.nameEn ? `<div class="doc-name-en">${escapeHtml(d.nameEn)}</div>` : ``}
         ${d.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
         <div class="doc-sub">${sub || escapeHtml(d.dept||'')}</div>
-        ${(d.city||d.area) ? `<div class="doc-address">📍 ${[d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
-        ${d.address ? `<div class="doc-address">${escapeHtml(d.address)}</div>` : ``}
         <div class="doc-num">${escapeHtml(num||'—')}</div>
-        <div class="doc-recid">ID: ${escapeHtml(shortRecordId('doctor',d))}</div>
       </div>
 <div class="doc-side">
             ${digits ? `<div class="doc-acts">
@@ -2384,6 +2453,11 @@ function renderDoctorList(mode){
             <button class="mini-del" onclick="deleteDoctor('${escapeAttr(d.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
           </div>` : `<button class="a-reqadmin" onclick="requestAdminAction('doctor','${escapeAttr(d.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : ``}
       </div>
+      </div>
+      ${d.intro ? `<div class="doc-intro">💬 ${escapeHtml(d.intro)}</div>` : ``}
+      ${(d.city||d.area) ? `<div class="doc-address">📍 ${[d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
+      ${d.address ? `<div class="doc-address">${escapeHtml(d.address)}</div>` : ``}
+      <div class="doc-recid">ID: ${escapeHtml(shortRecordId('doctor',d))}</div>
     </div>`;
   }).join('');
 }
@@ -2553,6 +2627,7 @@ function openServiceForm(id){
     document.getElementById('svcNameEn').value = s.nameEn || '';
     document.getElementById('svcType').value = s.type || '';
     document.getElementById('svcAddress').value = s.address || '';
+    document.getElementById('svcIntro').value = s.intro || '';
     document.getElementById('svcWhatsapp').value = s.whatsapp || '';
     setLocationFormValues('svc', s);
     resyncCapsuleSelect('svcType');
@@ -2561,6 +2636,7 @@ function openServiceForm(id){
     document.getElementById('svcNameUr').value = '';
     document.getElementById('svcNameEn').value = '';
     document.getElementById('svcAddress').value = '';
+    document.getElementById('svcIntro').value = '';
     document.getElementById('svcWhatsapp').value = '';
     resetLocationFormValues('svc');
     resyncCapsuleSelect('svcType');
@@ -2571,6 +2647,7 @@ function saveService(){
   const nameUr = document.getElementById('svcNameUr').value.trim();
   const nameEn = document.getElementById('svcNameEn').value.trim();
   const address = document.getElementById('svcAddress').value.trim();
+  const intro = document.getElementById('svcIntro').value.trim();
   const whatsapp = normalizePkNumber(document.getElementById('svcWhatsapp').value.trim());
   if(!nameUr){ showToast('نام اردو میں لکھیں'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
@@ -2578,7 +2655,7 @@ function saveService(){
   if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
   const loc = readLocationFormValues('svc');
   const data = {
-    category: currentServiceCategory, nameUr, nameEn, address, whatsapp,
+    category: currentServiceCategory, nameUr, nameEn, address, intro, whatsapp,
     type: document.getElementById('svcType').value,
     country: loc.country, province: loc.province, district: loc.district,
     city: loc.city, area: loc.area,
@@ -2641,16 +2718,14 @@ function renderServiceList(mode){
     const intl = '92' + digits.replace(/^0/,'');
     return `
     <div class="doc-card">
+      <div class="doc-toprow">
       <div class="doc-avatar"><span style="font-size:20px;">${meta.emoji}</span></div>
       <div class="doc-body">
         <div class="doc-top"><div class="doc-name">${escapeHtml(s.nameUr)}</div></div>
         ${s.nameEn ? `<div class="doc-name-en">${escapeHtml(s.nameEn)}</div>` : ``}
         ${s.approved===false ? `<div class="doc-pending-badge">⏳ زیر منظوری</div>` : ``}
         <div class="doc-sub">${escapeHtml(s.type||'')}</div>
-        ${(s.city||s.area) ? `<div class="doc-address">📍 ${[s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
-        ${s.address ? `<div class="doc-address">${escapeHtml(s.address)}</div>` : ``}
         <div class="doc-num">${escapeHtml(num||'—')}</div>
-        <div class="doc-recid">ID: ${escapeHtml(shortRecordId('service',s))}</div>
       </div>
       <div class="doc-side">
         ${digits ? `<div class="doc-acts">
@@ -2664,6 +2739,11 @@ function renderServiceList(mode){
           <button class="mini-del" onclick="deleteService('${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>` : `<button class="a-reqadmin" onclick="requestAdminAction('service','${escapeAttr(s.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`}
       </div>
+      </div>
+      ${s.intro ? `<div class="doc-intro">💬 ${escapeHtml(s.intro)}</div>` : ``}
+      ${(s.city||s.area) ? `<div class="doc-address">📍 ${[s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
+      ${s.address ? `<div class="doc-address">${escapeHtml(s.address)}</div>` : ``}
+      <div class="doc-recid">ID: ${escapeHtml(shortRecordId('service',s))}</div>
     </div>`;
   }).join('');
 }
@@ -2672,7 +2752,7 @@ function syncServiceCreateToFirebase(local){
   if(!FB) return;
   const payload = {
     category: local.category, nameUr: local.nameUr, nameEn: local.nameEn, type: local.type,
-    address: local.address, whatsapp: local.whatsapp,
+    address: local.address, intro: local.intro || '', whatsapp: local.whatsapp,
     country: local.country, province: local.province, district: local.district,
     city: local.city, area: local.area,
     approved:false, createdAt: FB.serverTimestamp()
@@ -2686,7 +2766,7 @@ function syncServiceUpdateToFirebase(local){
   if(!FB || !local.fsId) return;
   FB.updateDoc(FB.doc(FB.db,'services', local.fsId), {
     category: local.category, nameUr: local.nameUr, nameEn: local.nameEn, type: local.type,
-    address: local.address, whatsapp: local.whatsapp,
+    address: local.address, intro: local.intro || '', whatsapp: local.whatsapp,
     country: local.country, province: local.province, district: local.district,
     city: local.city, area: local.area
   }).catch(()=>{ /* admin-only per Firestore rules; ignore if not signed in */ });
@@ -2714,7 +2794,37 @@ function openControlPanel(){
   document.getElementById('cpContactBox').style.display = isAdminSignedIn ? 'block' : 'none';
   document.getElementById('cpDataSummary').textContent =
     `کل ڈاکٹرز: ${store.doctors.length} | شعبے: ${store.departments.length} | ہسپتال: ${store.hospitals.length}`;
+  applyCardTextPrefs();
   openModal('controlPanelModal');
+}
+function openPrivacyPolicy(){
+  openModal('privacyPolicyModal');
+}
+/* Directory-card typography (name/number/intro/address on doctor & business
+   cards) — user-adjustable font family and size, applied via CSS variables
+   so every card across the app updates instantly and stays saved. */
+const DOC_CARD_FONT_MAP = {
+  kasheeda: "'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif",
+  regular: "'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq Kasheeda',serif"
+};
+function applyCardTextPrefs(){
+  const prefs = store.cardTextPrefs || {font:'kasheeda', scale:1};
+  document.documentElement.style.setProperty('--docCardFont', DOC_CARD_FONT_MAP[prefs.font] || DOC_CARD_FONT_MAP.kasheeda);
+  document.documentElement.style.setProperty('--docCardScale', String(prefs.scale || 1));
+  const fontSel = document.getElementById('cardTextFont');
+  if(fontSel) fontSel.value = prefs.font || 'kasheeda';
+  ['cardSizeBtn_s','cardSizeBtn_m','cardSizeBtn_l'].forEach(id=>{
+    const btn = document.getElementById(id); if(btn) btn.classList.remove('active');
+  });
+  const scale = prefs.scale || 1;
+  const activeId = scale < 0.95 ? 'cardSizeBtn_s' : (scale > 1.05 ? 'cardSizeBtn_l' : 'cardSizeBtn_m');
+  const activeBtn = document.getElementById(activeId);
+  if(activeBtn) activeBtn.classList.add('active');
+}
+function setCardTextPref(key, val){
+  store.cardTextPrefs = {...(store.cardTextPrefs || {font:'kasheeda', scale:1}), [key]: val};
+  saveStore();
+  applyCardTextPrefs();
 }
 
 /* ---------- Backup / Restore ---------- */
@@ -3591,7 +3701,7 @@ function syncDoctorCreateToFirebase(localDoctor){
   if(!FB) return;
   const payload = {
     nameUr:localDoctor.nameUr, nameEn:localDoctor.nameEn, name:localDoctor.name,
-    address:localDoctor.address, whatsapp:localDoctor.whatsapp,
+    address:localDoctor.address, intro: localDoctor.intro || '', whatsapp:localDoctor.whatsapp,
     dept:localDoctor.dept, specialty:localDoctor.specialty, hospital:localDoctor.hospital,
     country:localDoctor.country, province:localDoctor.province, district:localDoctor.district,
     city:localDoctor.city, area:localDoctor.area,
@@ -3606,7 +3716,7 @@ function syncDoctorUpdateToFirebase(localDoctor){
   if(!FB || !localDoctor.fsId) return;
   FB.updateDoc(FB.doc(FB.db,'doctors', localDoctor.fsId), {
     nameUr:localDoctor.nameUr, nameEn:localDoctor.nameEn, name:localDoctor.name,
-    address:localDoctor.address, whatsapp:localDoctor.whatsapp,
+    address:localDoctor.address, intro: localDoctor.intro || '', whatsapp:localDoctor.whatsapp,
     dept:localDoctor.dept, specialty:localDoctor.specialty, hospital:localDoctor.hospital,
     country:localDoctor.country, province:localDoctor.province, district:localDoctor.district,
     city:localDoctor.city, area:localDoctor.area
@@ -3616,6 +3726,7 @@ function syncDoctorUpdateToFirebase(localDoctor){
 /* ---------- Init ---------- */
 renderGlitterVersion();
 updateVersionBadge();
+applyCardTextPrefs();
 renderTicker();
 refreshAllDropdowns();
 renderLastBackupHint();
