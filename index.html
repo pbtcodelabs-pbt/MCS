@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS27SEPSU0300PM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS27SEPSU0300PM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS28SEPMO0318PM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS28SEPMO0318PM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -164,9 +164,6 @@
     box-shadow:0 3px 8px rgba(0,0,0,.1);}
   #pendingHomeBanner .phb-count{background:#e11d48;color:#fff;border-radius:999px;padding:2px 10px;font-size:12.5px;
     font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;}
-  .hero-brand{display:flex;align-items:center;gap:10px;}
-  .hero-logo{width:42px;height:42px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.25);background:#fff;object-fit:cover;}
-  .hero-brand small{display:block;font-size:11px;opacity:.75;letter-spacing:.5px;font-family:'Segoe UI',Roboto,sans-serif;line-height:1.2;}
   .hero-text{position:relative;margin-top:22px;}
   .hero-text h1{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;
     font-size:34px;font-weight:normal;margin:0;line-height:1.7;}
@@ -203,42 +200,70 @@
   .home-footer{text-align:center;padding:18px 16px 4px;font-size:12px;color:#9aa3ad;line-height:1.8;}
   .home-footer .ver{font-family:'Segoe UI',Roboto,sans-serif;direction:ltr;display:inline-block;}
 
-  /* ===== Glitter version badge ===== */
-  .ver-glitter{
-    position:relative;display:flex;align-items:center;justify-content:center;gap:10px;
-    margin:12px auto 0;padding:3px 14px;border-radius:999px;width:fit-content;max-width:100%;
-    background:linear-gradient(135deg,rgba(8,20,40,.78),rgba(20,30,60,.78));
-    border:1.5px solid transparent;
-    background-clip:padding-box;
-    box-shadow:0 0 0 1.5px rgba(255,215,120,.55),0 6px 18px rgba(0,0,0,.35),inset 0 0 14px rgba(255,255,255,.06);
-    overflow:hidden;animation:glowPulse 3s ease-in-out infinite;
-  }
-  .ver-glitter .vg-text{
-    font-family:'Segoe UI',Roboto,'Jameel Noori Nastaleeq Regular',sans-serif;
-    font-size:16px;font-weight:800;letter-spacing:.3px;line-height:1.5;white-space:nowrap;
-    background:linear-gradient(90deg,#ffe066,#ff9ff3,#7df9ff,#b9fbc0,#ffd166,#ff9ff3,#ffe066);
-    background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:hueFlow 4s linear infinite;
-    filter:drop-shadow(0 0 4px rgba(255,230,150,.45));
-  }
-  .ver-glitter .vg-text .ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-weight:normal;font-size:19px;}
-  .ver-glitter::before{
-    content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;
-    background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);
-    animation:shine 2.8s ease-in-out infinite;
-  }
-  .ver-glitter .spark{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;
-    box-shadow:0 0 6px 2px rgba(255,255,255,.9);opacity:0;animation:twinkle 1.8s ease-in-out infinite;}
-  .ver-glitter .spark:nth-of-type(1){top:6px;left:14%;animation-delay:0s;}
-  .ver-glitter .spark:nth-of-type(2){bottom:6px;left:42%;animation-delay:.6s;}
-  .ver-glitter .spark:nth-of-type(3){top:8px;right:18%;animation-delay:1.1s;}
-  .ver-glitter .spark:nth-of-type(4){bottom:7px;right:6%;animation-delay:1.5s;}
-  @keyframes hueFlow{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
-  @keyframes shine{0%{left:-60%;}60%,100%{left:130%;}}
-  @keyframes twinkle{0%,100%{opacity:0;transform:scale(.4);}50%{opacity:1;transform:scale(1.2);}}
-  @keyframes glowPulse{0%,100%{box-shadow:0 0 0 1.5px rgba(255,215,120,.55),0 6px 18px rgba(0,0,0,.35);}
-    50%{box-shadow:0 0 0 1.5px rgba(125,249,255,.7),0 0 18px rgba(255,159,243,.45),0 6px 18px rgba(0,0,0,.35);}}
-  @media (prefers-reduced-motion:reduce){.ver-glitter,.ver-glitter *,.ver-glitter::before{animation:none!important;}}
+  /* ===== Hero status pill (ورژن + آن لائن/آف لائن) — سادہ، بغیر چمک ===== */
+  .hero-status{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+    height:40px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;}
+  .hero-status:active{background:rgba(255,255,255,.22);}
+  .hero-status .hs-ver{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;
+    font-size:11px;font-weight:700;letter-spacing:.3px;line-height:1.35;color:#fff;white-space:nowrap;}
+  .hero-status .hs-net{display:flex;align-items:center;gap:5px;font-size:11px;line-height:1.45;color:#d8efe9;}
+  .hero-status .hs-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.28);flex:none;}
+  .hero-status.off .hs-dot{background:#ef4444;box-shadow:0 0 0 2px rgba(239,68,68,.3);}
+  .hero-status.off .hs-net{color:#ffd4d4;}
+
+  /* ===== یوزر سرچ: کمپیکٹ سرچ بار + فلٹر چپس + ہلکی قطاریں ===== */
+  .ub-bar{margin-bottom:8px;}
+  .ub-search{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #cfe0dd;border-radius:999px;
+    padding:0 12px;height:42px;box-shadow:0 2px 8px rgba(13,59,102,.08);}
+  .ub-search:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,.14);}
+  .ub-search > svg{width:18px;height:18px;color:var(--primary);flex:none;}
+  .ub-search input{flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:14px;color:var(--text);padding:0;height:100%;}
+  .ub-clear{display:none;border:none;background:#e6edef;color:#4b5b6b;width:22px;height:22px;border-radius:50%;
+    font-size:15px;line-height:1;padding:0;flex:none;align-items:center;justify-content:center;}
+  .ub-clear.show{display:flex;}
+  .ub-chips{display:flex;gap:6px;margin-top:8px;}
+  .ub-chip{flex:1 1 0;min-width:0;height:34px;border-radius:999px;border:1.5px solid #cfe0dd;background:#fff;color:#0b2a44;
+    font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 8px;line-height:1;}
+  .ub-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .ub-chip i{font-style:normal;font-size:9px;color:var(--muted);flex:none;}
+  .ub-chip.open{border-color:var(--primary);box-shadow:0 0 0 2px rgba(15,118,110,.15);}
+  .ub-chip.on{background:linear-gradient(135deg,#0d3b66,#0f766e);border-color:transparent;color:#fff;}
+  .ub-chip.on i{color:#f4d58d;}
+  .ub-panel{display:none;flex-wrap:wrap;gap:6px;margin-top:6px;background:#fff;border:1px solid #d9e6e3;border-radius:14px;
+    padding:8px;max-height:176px;overflow-y:auto;box-shadow:0 6px 16px rgba(13,59,102,.12);}
+  .ub-panel.show{display:flex;}
+  .ub-opt{border:1px solid #d5e3e0;background:#f3f8f7;color:#0b2a44;border-radius:999px;padding:2px 12px;font-size:14px;line-height:1.8;
+    display:inline-flex;align-items:center;gap:6px;}
+  .ub-opt.active{background:#0f766e;border-color:#0f766e;color:#fff;}
+  .ub-opt small{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:10px;opacity:.7;}
+  .ub-none{font-size:12.5px;color:var(--muted);padding:4px 6px;}
+  .ub-meta{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);margin:4px 4px 8px;min-height:24px;}
+  .ub-reset{background:none;border:none;color:var(--primary);font-size:12.5px;text-decoration:underline;padding:2px 4px;}
+  .ub-row{--rc:#0f766e;--rbg:#e3f4f1;background:#fff;border:1px solid #dde8e6;border-right:4px solid var(--rc);border-radius:14px;
+    padding:8px 10px;margin-bottom:8px;box-shadow:0 2px 6px rgba(13,59,102,.07);}
+  .ub-top{display:flex;align-items:flex-start;gap:10px;}
+  .ub-ico{width:38px;height:38px;min-width:38px;border-radius:12px;background:var(--rbg);display:flex;align-items:center;justify-content:center;font-size:20px;margin-top:2px;}
+  .ub-body{flex:1;min-width:0;}
+  .ub-name{font-family:var(--docCardFont);font-size:calc(18px*var(--docCardScale));line-height:1.5;color:#0b2a44;font-weight:bold;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .ub-enrow{display:flex;align-items:center;justify-content:space-between;gap:8px;direction:ltr;}
+  .ub-en{flex:1;min-width:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;text-align:left;unicode-bidi:isolate;font-size:11.5px;font-weight:600;
+    color:#9a4b06;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ub-sub{font-size:12.5px;color:#3f5568;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ub-loc{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5b6b78;line-height:1.6;}
+  .ub-loc-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ub-id{flex:none;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;font-size:9.5px;color:#9aa5b1;}
+  .ub-bot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;}
+  .ub-num{direction:ltr;unicode-bidi:isolate;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;font-weight:700;color:#0d3b66;letter-spacing:.3px;}
+  .ub-acts{display:flex;gap:5px;align-items:center;flex:none;}
+  .ub-acts a,.ub-acts button{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    color:#fff;border:none;padding:0;box-shadow:0 2px 5px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.35);}
+  .ub-acts a svg,.ub-acts button svg{width:14px;height:14px;}
+  .ub-acts .ub-edit{background:#eef2f6;color:#334;font-size:13px;}
+  .ub-intro{font-family:var(--docCardFont);font-size:calc(12.5px*var(--docCardScale));color:#7a5600;background:#fff6d9;border-radius:999px;
+    padding:1px 12px;margin-top:5px;line-height:1.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ub-row .doc-pending-line{margin-top:5px;}
 
   /* ===== Category grid ===== */
   #screen-specialist-categories,#screen-business-categories{background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;}
@@ -539,21 +564,17 @@
     <header class="hero">
       <svg class="hero-skyline" viewBox="0 0 400 70" preserveAspectRatio="none" fill="#fff"><path d="M0 70V48h18V30h14v18h10V20h16v28h8V38h12v10h14V12h6V4h4v8h6v36h12V28h18v20h10V36h8V22h14v26h12V8l10-6 10 6v40h14V32h16v16h8V26h12v22h14V16h18v32h10V40h12v8h14V30h16v18h12V22h14v26h12V36h10v34z"/></svg>
       <div class="hero-top">
-        <div class="hero-brand">
-          <img class="hero-logo" src="icons/icon-192.png?v=MCS27SEPSU0300PM" alt="">
-          <small>MY CITY SHINES</small>
-        </div>
+        <button class="hero-status" id="heroStatus" onclick="showNetStatus()" aria-label="ورژن اور انٹرنیٹ کی حالت">
+          <span class="hs-ver" id="hsVer"></span>
+          <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
+        </button>
         <div class="hero-actions">
           <button class="hero-btn hero-btn-share" onclick="shareAppPromo()" aria-label="ایپ شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg></button>
           <button class="hero-btn" onclick="openDevChat()" aria-label="رابطہ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></button>
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS27SEPSU0300PM" alt="مائی سٹی شائنز">
-      <div class="ver-glitter" id="verGlitter">
-        <i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i>
-        <span class="vg-text" id="verGlitterText"></span>
-      </div>
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS28SEPMO0318PM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -645,8 +666,19 @@
         <h2>تلاش کریں</h2>
         <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
-      <div class="field">
-        <input type="text" id="searchBox" placeholder="نام، دکان، شعبہ یا شہر لکھیں..." oninput="onUserSearchInput(this.value)">
+      <div class="ub-bar">
+        <div class="ub-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="text" id="searchBox" placeholder="نام، دکان یا شعبہ لکھیں..." oninput="onUserSearchInput(this.value)" autocomplete="off">
+          <button type="button" class="ub-clear" id="ubClear" onclick="clearUserSearch()" aria-label="صاف کریں">×</button>
+        </div>
+        <div class="ub-chips">
+          <button type="button" class="ub-chip" id="ubChip_district" onclick="ubToggle('district')"></button>
+          <button type="button" class="ub-chip" id="ubChip_city" onclick="ubToggle('city')"></button>
+          <button type="button" class="ub-chip" id="ubChip_area" onclick="ubToggle('area')"></button>
+          <button type="button" class="ub-chip" id="ubChip_cat" onclick="ubToggle('cat')"></button>
+        </div>
+        <div class="ub-panel" id="ubPanel"></div>
       </div>
       <div id="searchResultsWrap"></div>
     </div>
@@ -1156,7 +1188,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS27SEPSU0300PM";
+const APP_VERSION = "MCS28SEPMO0318PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1341,15 +1373,120 @@ function onUserSearchInput(val){
 }
 
 /* ---------- "یوزر" combined search — ڈاکٹرز + پروفیشنلز + بزنس، سب ایک ساتھ ---------- */
+/* ---- یوزر سرچ فلٹرز: ضلع > شہر > علاقہ + کیٹگری (سب ڈیٹا ہی سے بنتے ہیں) ---- */
+const ubFilter = {district:'', city:'', area:'', cat:''};
+let ubOpen = '';
+const UB_LABELS = {district:'ضلع', city:'شہر', area:'علاقہ', cat:'کیٹگری'};
+const UB_PALETTE = [['#0f766e','#e3f4f1'],['#c2740a','#fff1dc'],['#1d4ed8','#e6eeff'],['#be185d','#ffe6ef'],
+  ['#6d28d9','#f0e8ff'],['#15803d','#e4f6e0'],['#c2410c','#ffeadb'],['#0369a1','#e0f1fb']];
+function ubAllRecords(){
+  return store.doctors.map(d=>({kind:'doctor', cat:'doctor', rec:d}))
+    .concat(store.services.map(s=>({kind:'service', cat:s.category, rec:s})));
+}
+function ubCatMeta(cat){
+  if(cat==='doctor') return {emoji:'🩺', ur:'ڈاکٹرز', tag:'ڈاکٹر'};
+  const m = CATEGORY_META[cat] || {};
+  return {emoji:m.emoji||'🏷️', ur:m.ur||'', tag:m.ur||''};
+}
+/* کون سے فلٹر لاگو کرنے ہیں: ہر فلٹر کے آپشن صرف اس کے والدین فلٹرز کے مطابق بنتے ہیں */
+function ubPass(it, keys){
+  const r = it.rec, f = ubFilter;
+  if(keys.includes('district') && f.district && (r.district||'') !== f.district) return false;
+  if(keys.includes('city')     && f.city     && (r.city||'')     !== f.city)     return false;
+  if(keys.includes('area')     && f.area     && (r.area||'')     !== f.area)     return false;
+  if(keys.includes('cat')      && f.cat      && it.cat           !== f.cat)      return false;
+  return true;
+}
+function ubOptions(kind){
+  const parents = {district:[], city:['district'], area:['district','city'], cat:['district','city','area']}[kind];
+  const counts = new Map();
+  ubAllRecords().forEach(it=>{
+    if(!ubPass(it, parents)) return;
+    const v = kind==='cat' ? it.cat : (it.rec[kind]||'');
+    if(!v) return;
+    counts.set(v, (counts.get(v)||0)+1);
+  });
+  let list = Array.from(counts.keys());
+  if(kind==='cat'){
+    const order = ['doctor'].concat(CATEGORY_KEYS);
+    list.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+  } else {
+    list.sort((a,b)=>a.localeCompare(b,'ur'));
+  }
+  return list.map(v=>({v, n:counts.get(v)}));
+}
+function ubOptLabel(kind, o){
+  const n = `<small>${o.n}</small>`;
+  if(kind==='cat'){ const m = ubCatMeta(o.v); return `${m.emoji} ${escapeHtml(m.ur)} ${n}`; }
+  return `${escapeHtml(o.v)} ${n}`;
+}
+function ubToggle(kind){
+  ubOpen = (ubOpen===kind) ? '' : kind;
+  ubRenderBar();
+}
+function ubSelect(kind, val){
+  ubFilter[kind] = val;
+  if(kind==='district'){ ubFilter.city=''; ubFilter.area=''; }
+  if(kind==='city'){ ubFilter.area=''; }
+  ubOpen = '';
+  ubRenderBar();
+  renderUserSearch();
+}
+function ubResetFilters(){
+  ubFilter.district = ubFilter.city = ubFilter.area = ubFilter.cat = '';
+  ubOpen = '';
+  ubRenderBar();
+  renderUserSearch();
+}
+function ubRenderBar(){
+  ['district','city','area','cat'].forEach(k=>{
+    const chip = document.getElementById('ubChip_'+k);
+    if(!chip) return;
+    const val = ubFilter[k];
+    const txt = !val ? UB_LABELS[k] : (k==='cat' ? (ubCatMeta(val).emoji+' '+ubCatMeta(val).ur) : val);
+    chip.innerHTML = `<span>${escapeHtml(txt)}</span><i>${ubOpen===k?'▴':'▾'}</i>`;
+    chip.classList.toggle('on', !!val);
+    chip.classList.toggle('open', ubOpen===k);
+  });
+  const panel = document.getElementById('ubPanel');
+  if(!panel) return;
+  if(!ubOpen){ panel.classList.remove('show'); panel.innerHTML=''; return; }
+  const opts = ubOptions(ubOpen);
+  const all = `<button type="button" class="ub-opt${!ubFilter[ubOpen]?' active':''}" data-v="">سب</button>`;
+  panel.innerHTML = all + (opts.length
+    ? opts.map(o=>`<button type="button" class="ub-opt${ubFilter[ubOpen]===o.v?' active':''}" data-v="${escapeHtml(o.v)}">${ubOptLabel(ubOpen,o)}</button>`).join('')
+    : `<span class="ub-none">ابھی کوئی آپشن موجود نہیں</span>`);
+  panel.classList.add('show');
+}
+function ubInit(){
+  const panel = document.getElementById('ubPanel');
+  if(panel) panel.addEventListener('click', e=>{
+    const b = e.target.closest('.ub-opt');
+    if(!b || !ubOpen) return;
+    ubSelect(ubOpen, b.getAttribute('data-v')||'');
+  });
+  ubRenderBar();
+}
+function clearUserSearch(){
+  const box = document.getElementById('searchBox');
+  if(box){ box.value=''; box.focus(); }
+  renderUserSearch();
+}
+
 function renderUserSearch(){
   const wrap = document.getElementById('searchResultsWrap');
-  const qRaw = (document.getElementById('searchBox').value||'').trim();
+  const box = document.getElementById('searchBox');
+  const qRaw = (box.value||'').trim();
   const q = qRaw.toLowerCase();
   const qDigits = qRaw.replace(/[^0-9]/g,'');
   const genericDoctorWords = ['ڈاکٹر','doctor','dr','dr.'];
   const textMatch = (fields) => fields.some(f => (f||'').toLowerCase().includes(q));
+  const clr = document.getElementById('ubClear'); if(clr) clr.classList.toggle('show', !!qRaw);
+  ubRenderBar();
 
+  const locKeys = ['district','city','area','cat'];
   const doctorResults = store.doctors.filter(d=>{
+    if(!ubPass({rec:d, cat:'doctor'}, locKeys)) return false;
     if(!q) return true;
     if(genericDoctorWords.includes(q)) return true;
     if(qDigits.length>=3 && (d.whatsapp||'').replace(/[^0-9]/g,'').includes(qDigits)) return true;
@@ -1357,6 +1494,7 @@ function renderUserSearch(){
   });
 
   const serviceResults = store.services.filter(s=>{
+    if(!ubPass({rec:s, cat:s.category}, locKeys)) return false;
     if(!q) return true;
     if(qDigits.length>=3 && (s.whatsapp||'').replace(/[^0-9]/g,'').includes(qDigits)) return true;
     const catName = (CATEGORY_META[s.category]||{}).ur || '';
@@ -1364,13 +1502,18 @@ function renderUserSearch(){
     return textMatch([s.nameUr, s.nameEn, s.type, s.address, s.city, s.area, s.district, s.province]);
   });
 
-  if(!doctorResults.length && !serviceResults.length){
-    wrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🔎</span>کچھ نہیں ملا</div>`;
+  const total = doctorResults.length + serviceResults.length;
+  const anyFilter = !!(ubFilter.district||ubFilter.city||ubFilter.area||ubFilter.cat);
+  const meta = `<div class="ub-meta"><span>${urduDigits(total)} نتائج</span>${anyFilter?`<button type="button" class="ub-reset" onclick="ubResetFilters()">فلٹر صاف کریں</button>`:''}</div>`;
+
+  if(!total){
+    const empty = (store.doctors.length + store.services.length) === 0;
+    wrap.innerHTML = meta + `<div class="empty-state"><span class="e-emoji">🔎</span>${empty?'ابھی کوئی اندراج شامل نہیں کیا گیا':'کچھ نہیں ملا'}</div>`;
     return;
   }
 
   const doctorCards = doctorResults.map(d=>userResultCard({
-    kind:'doctor', id:d.id, fsId:d.fsId, nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
+    kind:'doctor', cat:'doctor', id:d.id, fsId:d.fsId, nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
     sub: [d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''),
     city:d.city, area:d.area, address:d.address, intro:d.intro, whatsapp:d.whatsapp, approved:d.approved
   })).join('');
@@ -1378,41 +1521,47 @@ function renderUserSearch(){
   const serviceCards = serviceResults.map(s=>{
     const meta = CATEGORY_META[s.category]||{};
     return userResultCard({
-      kind:'service', id:s.id, fsId:s.fsId, category:s.category, nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
+      kind:'service', cat:s.category, id:s.id, fsId:s.fsId, category:s.category, nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
       sub:s.type||'', city:s.city, area:s.area, address:s.address, intro:s.intro, whatsapp:s.whatsapp, approved:s.approved
     });
   }).join('');
 
-  wrap.innerHTML = doctorCards + serviceCards;
+  wrap.innerHTML = meta + doctorCards + serviceCards;
 }
 function userResultCard(item){
   const num = normalizePkNumber(item.whatsapp||'');
   const digits = num.replace(/[^0-9]/g,'');
   const intl = '92' + digits.replace(/^0/,'');
+  const pi = item.cat==='doctor' ? 0 : Math.max(0, CATEGORY_KEYS.indexOf(item.cat)+1) % UB_PALETTE.length;
+  const pal = UB_PALETTE[pi];
+  const loc = [item.area, item.city].filter(Boolean).join('، ');
+  const locLine = [loc, item.address].filter(Boolean).join(' — ');
+  const rid = item.id ? shortRecordId(item.kind, item) : '';
+  const adminBtn = item.id ? (isAdminSignedIn
+    ? `<button class="ub-edit" onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم">✏️</button>`
+    : `<button class="a-reqadmin" onclick="requestAdminAction('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : '';
   return `
-    <div class="doc-card">
-      <div class="doc-toprow">
-      <div class="doc-avatar"><span style="font-size:20px;">${item.emoji}</span></div>
-      <div class="doc-body">
-        <div class="doc-top"><div class="doc-name">${escapeHtml(item.nameUr||'')}</div></div>
-        ${item.nameEn ? `<div class="doc-name-en">${escapeHtml(item.nameEn)}</div>` : ``}
-        <div class="doc-sub">${item.tag?`<b>${escapeHtml(item.tag)}</b>`:''}${(item.tag&&item.sub)?' • ':''}${escapeHtml(item.sub||'')}</div>
-        <div class="doc-num">${escapeHtml(num||'—')}</div>
+    <div class="ub-row" style="--rc:${pal[0]};--rbg:${pal[1]}">
+      <div class="ub-top">
+        <div class="ub-ico">${item.emoji}</div>
+        <div class="ub-body">
+          <div class="ub-name">${escapeHtml(item.nameUr||'')}</div>
+          ${(item.nameEn||rid) ? `<div class="ub-enrow"><span class="ub-en">${escapeHtml(item.nameEn||'')}</span>${rid?`<span class="ub-id">${escapeHtml(rid)}</span>`:''}</div>` : ``}
+          ${(item.tag||item.sub) ? `<div class="ub-sub">${[item.tag,item.sub].filter(Boolean).map(escapeHtml).join(' • ')}</div>` : ``}
+          ${locLine ? `<div class="ub-loc"><span class="ub-loc-t">📍 ${escapeHtml(locLine)}</span></div>` : ``}
+        </div>
       </div>
+      <div class="ub-bot">
+        <span class="ub-num">${escapeHtml(num||'—')}</span>
+        <div class="ub-acts">
+          ${digits ? `<a class="a-call" href="tel:${digits}" aria-label="کال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
+          <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
+          <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>` : ``}
+          ${item.id ? `<button class="a-share" onclick="shareProfileCardById('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>` : ``}
+          ${adminBtn}
+        </div>
       </div>
-      <div class="doc-side">
-        ${digits ? `<div class="doc-acts">
-        <a class="a-call" href="tel:${digits}" aria-label="کال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
-        <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
-        <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
-        </div>` : ``}
-        ${item.id ? `<button class="a-share" onclick="shareProfileCardById('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>` : ``}
-        ${item.id ? (isAdminSignedIn ? `<button onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم" style="width:32px;height:32px;border-radius:50%;border:none;background:#eef2f6;">✏️</button>` : `<button class="a-reqadmin" onclick="requestAdminAction('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : ``}
-      </div>
-      ${item.intro ? `<div class="doc-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
-      ${(item.city||item.area) ? `<div class="doc-address">📍 ${[item.area,item.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
-      ${item.address ? `<div class="doc-address">${escapeHtml(item.address)}</div>` : ``}
-      ${item.id ? `<div class="doc-recid">ID: ${escapeHtml(shortRecordId(item.kind,item))}</div>` : ``}
+      ${item.intro ? `<div class="ub-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
       ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
     </div>`;
 }
@@ -2196,7 +2345,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS27SEPSU0300PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0318PM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -2348,7 +2497,7 @@ function buildAppPromoCanvas(){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS27SEPSU0300PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0318PM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -3185,6 +3334,14 @@ function updateVersionBadge(){
   const mm = urduDigits(String(now.getMinutes()).padStart(2,'0'));
   const online = navigator.onLine;
   document.getElementById('homeFooter').innerHTML = `<span class="ver">pbtcodelabs</span>`;
+  const st = document.getElementById('heroStatus');
+  if(st){
+    st.classList.toggle('off', !online);
+    const nt = document.getElementById('hsNet'); if(nt) nt.textContent = online ? 'آن لائن' : 'آف لائن';
+  }
+}
+function showNetStatus(){
+  showToast(navigator.onLine ? 'انٹرنیٹ چل رہا ہے — آن لائن' : 'انٹرنیٹ نہیں ہے — آف لائن');
 }
 window.addEventListener('online', updateVersionBadge);
 window.addEventListener('offline', updateVersionBadge);
@@ -3483,10 +3640,10 @@ function saveTickerMessages(msgs){
   showToast('پیغام محفوظ ہو گیا ✓');
 }
 
-/* ---------- Glitter version in header ---------- */
-function renderGlitterVersion(){
-  const el = document.getElementById('verGlitterText');
-  if(el) el.innerHTML = `<span class="ur">${escapeHtml(APP_VERSION)}</span>`;
+/* ---------- Version label in home header (سادہ متن) ---------- */
+function renderVersionLabel(){
+  const el = document.getElementById('hsVer');
+  if(el) el.textContent = APP_VERSION;
 }
 
 /* =========================================================
@@ -3776,8 +3933,9 @@ function syncDoctorUpdateToFirebase(localDoctor){
 }
 
 /* ---------- Init ---------- */
-renderGlitterVersion();
+renderVersionLabel();
 updateVersionBadge();
+ubInit();
 applyCardTextPrefs();
 renderTicker();
 refreshAllDropdowns();
