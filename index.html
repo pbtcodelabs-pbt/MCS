@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS28SEPMO0336PM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS28SEPMO0336PM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS28SEPMO0344PM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS28SEPMO0344PM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -128,15 +128,12 @@
     background:linear-gradient(90deg,var(--ticker-mid-bg1),var(--ticker-mid-bg2));
     border-top:3px solid var(--ticker-border-color);border-bottom:3px solid var(--ticker-border-color);
     display:flex;align-items:center;}
-  .mcs-ticker-track{display:inline-flex;gap:var(--ticker-gap);align-items:center;
-    animation:mcsTickerMove 30s linear infinite;will-change:transform;
-    padding:0 6px;box-sizing:border-box;height:100%;}
+  .mcs-ticker-track{position:absolute;left:0;right:0;top:0;bottom:0;direction:ltr;overflow:hidden;}
+  .tkr-item{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center;white-space:nowrap;will-change:transform;}
   .mcs-ticker-track span{font-size:var(--ticker-font-size);font-family:var(--ticker-font-family),'Segoe UI',sans-serif;
     color:var(--ticker-text);font-weight:600;white-space:nowrap;line-height:1.6;
-    display:inline-flex;align-items:center;padding-top:2px;}
+    display:inline-flex;align-items:center;padding-top:2px;direction:rtl;unicode-bidi:isolate;}
   .mcs-ticker-track span.tkr-pill-custom{padding:2px 12px;border-radius:999px;border:1.5px solid transparent;}
-  .mcs-ticker-track span.tkr-dot{opacity:.55;padding:0;}
-  @keyframes mcsTickerMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   #app{padding-top:var(--ticker-h);}
   .hero{
     position:relative;overflow:hidden;
@@ -511,6 +508,12 @@
   .tk-preset-dot{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d8dee4;flex:0 0 auto;}
   .tk-msg-row{display:flex;align-items:center;gap:5px;border:1px solid #e5e7eb;border-radius:9px;padding:5px;margin-bottom:6px;}
   .tk-msg-row input[type=text]{flex:1;min-width:0;padding:6px 8px;border-radius:7px;border:1px solid #d8dee4;font-size:12.5px;}
+  .tk-msg-card{border:1px solid #e5e7eb;border-radius:10px;padding:6px;margin-bottom:8px;background:#fcfcfd;}
+  .tk-msg-card .tk-r1,.tk-msg-card .tk-r2{display:flex;align-items:center;gap:5px;}
+  .tk-msg-card .tk-r2{margin-top:6px;flex-wrap:wrap;font-size:10px;color:var(--muted);}
+  .tk-msg-card input[type=text]{flex:1;min-width:0;padding:6px 8px;border-radius:7px;border:1px solid #d8dee4;font-size:12.5px;}
+  .tk-msg-card input[type=number]{width:46px;padding:4px;border-radius:7px;border:1px solid #d8dee4;font-size:12px;text-align:center;}
+  .tk-msg-card .tk-num{width:40px;font-weight:800;background:#fff7e0;border-color:#d4a017;}
 
   .toast{
     position:fixed;top:14px;left:50%;transform:translateX(-50%);
@@ -595,7 +598,7 @@
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS28SEPMO0336PM" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS28SEPMO0344PM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1168,21 +1171,27 @@
           <span id="tkFontSizeVal" style="font-size:10.5px;color:var(--muted);"></span>
         </div>
         <div class="tk-swatch-row">
-          <label>رفتار</label>
-          <input type="range" id="tkSpeed" min="10" max="60" step="2" style="flex:1;" oninput="updateTickerPreview({speed:Number(this.value)}); document.getElementById('tkSpeedVal').textContent=this.value">
+          <label>رفتار (زیادہ = تیز)</label>
+          <input type="range" id="tkSpeed" min="20" max="200" step="5" style="flex:1;" oninput="updateTickerPreview({pace:Number(this.value)}); document.getElementById('tkSpeedVal').textContent=this.value">
           <span id="tkSpeedVal" style="font-size:10.5px;color:var(--muted);"></span>
         </div>
       </div>
       <div class="tk-compact-grid" style="grid-template-columns:1fr;">
         <div class="tk-swatch-row">
-          <label>پیغامات کا وقفہ</label>
-          <input type="range" id="tkGap" min="16" max="160" step="4" style="flex:1;" oninput="updateTickerPreview({gap:Number(this.value)}); document.getElementById('tkGapVal').textContent=this.value+'px'">
+          <label>دو پیغامات کے درمیان فاصلہ</label>
+          <input type="range" id="tkGap" min="0" max="400" step="4" style="flex:1;" oninput="updateTickerPreview({gap:Number(this.value)}); document.getElementById('tkGapVal').textContent=this.value+'px'">
           <span id="tkGapVal" style="font-size:10.5px;color:var(--muted);"></span>
+        </div>
+        <div class="tk-swatch-row">
+          <label>سب پیغامات چل چکنے کے بعد پٹی خالی رہے (سیکنڈ) — 0 = خالی نہ رہے</label>
+          <input type="range" id="tkPause" min="0" max="120" step="1" style="flex:1;" oninput="updateTickerPreview({cyclePause:Number(this.value)}); document.getElementById('tkPauseVal').textContent=this.value">
+          <span id="tkPauseVal" style="font-size:10.5px;color:var(--muted);"></span>
         </div>
       </div>
 
       <hr style="margin:10px 0;border:none;border-top:1px solid #e5e7eb;">
-      <div class="backup-card-title" style="font-size:12px;margin-bottom:4px;">پیغامات — ہر ایک کا اپنا رنگ</div>
+      <div class="backup-card-title" style="font-size:12px;margin-bottom:2px;">پیغامات — نمبر، تکرار، فاصلہ اور رنگ</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px;line-height:1.7;">نمبر بدلیں تو پیغام اسی جگہ چلے گا۔ «تکرار» = وہ پیغام لگاتار کتنی بار چلے۔ «فاصلہ» = اس پیغام کے بعد کتنا فاصلہ (خالی چھوڑیں تو اوپر والا عام فاصلہ لگے گا)۔</div>
       <div id="tickerAdminList"></div>
       <div style="display:flex;gap:6px;margin-top:4px;">
         <input type="text" id="tickerNewMsg" placeholder="نیا پیغام لکھیں" style="flex:1;padding:7px;border-radius:8px;border:1px solid #d8dee4;font-size:12.5px;">
@@ -1220,7 +1229,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS28SEPMO0336PM";
+const APP_VERSION = "MCS28SEPMO0344PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2377,7 +2386,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0336PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0344PM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -2529,7 +2538,7 @@ function buildAppPromoCanvas(){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0336PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0344PM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -3396,15 +3405,17 @@ const DEFAULT_TICKER_MESSAGES = [
    own optional color overrides: {text, textColor, bgColor, borderColor}.
    Any override left null/undefined simply inherits the ticker's global look. */
 function tickerMsgNorm(m){
-  if(typeof m === 'string') return {text:m, textColor:null, bgColor:null, borderColor:null, enabled:true};
-  return {text:m.text||'', textColor:m.textColor||null, bgColor:m.bgColor||null, borderColor:m.borderColor||null, enabled:(m.enabled!==false)};
+  if(typeof m === 'string') return {text:m, textColor:null, bgColor:null, borderColor:null, enabled:true, repeat:1, gapAfter:null};
+  const rp = Math.max(1, Math.min(99, parseInt(m.repeat)||1));
+  const ga = (m.gapAfter===null || m.gapAfter===undefined || m.gapAfter==='' || isNaN(Number(m.gapAfter))) ? null : Math.max(0, Number(m.gapAfter));
+  return {text:m.text||'', textColor:m.textColor||null, bgColor:m.bgColor||null, borderColor:m.borderColor||null, enabled:(m.enabled!==false), repeat:rp, gapAfter:ga};
 }
 function tickerMessagesAll(){
   const raw = (store.tickerMessages && store.tickerMessages.length) ? store.tickerMessages : DEFAULT_TICKER_MESSAGES;
   return raw.map(tickerMsgNorm);
 }
 function tickerMessages(){
-  return tickerMessagesAll().filter(m=>m.enabled!==false);
+  return tickerMessagesAll().filter(m=>m.enabled!==false && (m.text||'').trim());
 }
 function tickerMsgSpanHtml(m){
   const custom = !!(m.bgColor || m.borderColor);
@@ -3415,20 +3426,105 @@ function tickerMsgSpanHtml(m){
   const cls = custom ? 'tkr-pill-custom' : '';
   return `<span class="${cls}"${styles.length?` style="${styles.join(';')}"`:''}>${escapeHtml(m.text)}</span>`;
 }
+/* ---------- پٹی کا انجن ----------
+   پیغامات بائیں سے دائیں چلتے ہیں۔ ہر پیغام الگ الگ ترتیب سے نکلتا ہے،
+   اس لیے ایک پیغام کے بعد پٹی خالی نہیں رہتی۔ خالی وقفہ صرف تب آتا ہے
+   جب سیٹنگ میں «سب پیغامات کے بعد خالی وقفہ» رکھا جائے۔ */
+const tkEng = {raf:0, items:[], seq:[], ptr:0, msgs:[], set:null, t:0, pending:null, pausing:false, pauseStart:0};
+function tickerStop(){
+  if(tkEng.raf) cancelAnimationFrame(tkEng.raf);
+  tkEng.raf = 0; tkEng.items = []; tkEng.pending = null;
+}
+function tickerStart(msgs, s){
+  tickerStop();
+  const track = document.getElementById('tickerTrack');
+  if(!track) return;
+  track.innerHTML = '';
+  tkEng.msgs = msgs; tkEng.set = s; tkEng.ptr = 0; tkEng.seq = [];
+  tkEng.t = 0; tkEng.pausing = false; tkEng.pauseStart = 0;
+  msgs.forEach((m,i)=>{
+    const n = Math.max(1, Math.min(99, parseInt(m.repeat)||1));
+    for(let k=0;k<n;k++) tkEng.seq.push(i);
+  });
+  if(!tkEng.seq.length) return;
+  tkEng.raf = requestAnimationFrame(tickerFrame);
+}
+function tickerPrepare(track){
+  const m = tkEng.msgs[tkEng.seq[tkEng.ptr]];
+  const el = document.createElement('div');
+  el.className = 'tkr-item';
+  el.innerHTML = tickerMsgSpanHtml(m);
+  el.style.transform = 'translate3d(-99999px,0,0)';
+  track.appendChild(el);
+  tkEng.pending = {el:el, w:el.offsetWidth, m:m, x:0, gapAfter:0};
+}
+function tickerFrame(ts){
+  const E = tkEng;
+  const track = document.getElementById('tickerTrack');
+  if(!track){ E.raf = 0; return; }
+  if(!E.t) E.t = ts;
+  const dt = Math.min(Math.max((ts - E.t)/1000, 0), 0.1);
+  E.t = ts;
+  const s = E.set || DEFAULT_TICKER_SETTINGS;
+  const speed = Math.max(10, Number(s.pace)||60);
+  const defGap = (s.gap!=null ? Number(s.gap) : 48);
+  const pauseSec = Math.max(0, Number(s.cyclePause)||0);
+  const W = track.clientWidth || window.innerWidth;
+
+  // حرکت (بائیں سے دائیں)
+  for(const it of E.items){
+    it.x += speed*dt;
+    it.el.style.transform = 'translate3d('+it.x+'px,0,0)';
+  }
+  // جو پیغام دائیں کنارے سے نکل گیا اسے ہٹائیں
+  E.items = E.items.filter(it=>{
+    if(it.x >= W){ it.el.remove(); return false; }
+    return true;
+  });
+
+  // خالی وقفہ
+  if(E.pausing){
+    if(!E.items.length){
+      if(!E.pauseStart) E.pauseStart = ts;
+      if((ts - E.pauseStart)/1000 >= E.pauseSec){ E.pausing = false; E.pauseStart = 0; }
+    }
+  }
+  // اگلا پیغام شروع کریں
+  if(!E.pausing){
+    for(let g=0; g<4; g++){
+      if(!E.pending) tickerPrepare(track);
+      const p = E.pending;
+      const last = E.items[E.items.length-1];
+      const right = last ? (last.x - last.gapAfter) : 0;
+      if(last && right < -20) break;
+      p.x = right - p.w;
+      p.gapAfter = (p.m.gapAfter!=null) ? Number(p.m.gapAfter) : defGap;
+      p.el.style.transform = 'translate3d('+p.x+'px,0,0)';
+      E.items.push(p);
+      E.pending = null;
+      E.ptr++;
+      if(E.ptr >= E.seq.length){
+        E.ptr = 0;
+        if(pauseSec > 0){ E.pausing = true; E.pauseSec = pauseSec; E.pauseStart = 0; break; }
+      }
+    }
+  }
+  E.raf = requestAnimationFrame(tickerFrame);
+}
 function renderTicker(){
   const el = document.getElementById('tickerTrack');
   if(!el) return;
-  const line = tickerMessages().map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
-  el.innerHTML = line + line; // duplicated once for seamless 50% loop
   applyTickerSettings();
+  tickerStart(tickerMessages(), tickerSettings());
 }
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>{ try{ renderTicker(); }catch(e){} }); }
 
 /* ---------- Ticker appearance (font/size/colors/speed) ---------- */
 const DEFAULT_TICKER_SETTINGS = {
   fontSize: 14, fontFamily: 'Jameel Noori Nastaleeq Regular',
   textColor: '#f4d58d', midBg1: '#0d3b66', midBg2: '#123a5e',
-  borderColor: '#d4a017', borderTemplate: 'thin', borderWidth: 3, speed: 30,
-  enabled: true, gap: 48
+  borderColor: '#d4a017', borderTemplate: 'thin', borderWidth: 3, pace: 60,
+  enabled: true, gap: 48, cyclePause: 0
 };
 const TICKER_FONT_OPTIONS = ['Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq Kasheeda','Segoe UI'];
 /* Horizontal top/bottom border templates for the ticker strip (like the
@@ -3490,8 +3586,7 @@ function applyTickerSettings(){
   root.setProperty('--ticker-border-color', s.borderColor);
   root.setProperty('--ticker-gap', (s.gap!=null?s.gap:48)+'px');
   tickerApplyBorder(document.getElementById('tickerMiddle'), s.borderTemplate, s.borderColor, s.borderWidth);
-  const track = document.getElementById('tickerTrack');
-  if(track) track.style.animationDuration = s.speed + 's';
+  tkEng.set = s;
   const strip = document.getElementById('mcsTicker');
   if(strip){
     const off = (s.enabled===false);
@@ -3547,13 +3642,8 @@ function tickerApplyLive(pending){
     strip.classList.toggle('tkr-off', off);
     root.setProperty('--ticker-h', off ? '0px' : '34px');
   }
-  const track = document.getElementById('tickerTrack');
-  if(track){
-    track.style.animationDuration = s.speed+'s';
-    const visible = pending.messages.filter(m=>m.enabled!==false);
-    const line = visible.map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
-    track.innerHTML = line + line;
-  }
+  const visible = pending.messages.map(tickerMsgNorm).filter(m=>m.enabled!==false && (m.text||'').trim());
+  tickerStart(visible, s);
 }
 function renderTkBorderTmplRow(){
   const wrap = document.getElementById('tkBorderTmplRow');
@@ -3582,8 +3672,10 @@ function openTickerAdmin(){
   document.getElementById('tkFontFamily').value = s.fontFamily;
   document.getElementById('tkFontSize').value = s.fontSize;
   document.getElementById('tkFontSizeVal').textContent = s.fontSize+'px';
-  document.getElementById('tkSpeed').value = s.speed;
-  document.getElementById('tkSpeedVal').textContent = s.speed;
+  document.getElementById('tkSpeed').value = s.pace;
+  document.getElementById('tkSpeedVal').textContent = s.pace;
+  document.getElementById('tkPause').value = s.cyclePause||0;
+  document.getElementById('tkPauseVal').textContent = (s.cyclePause||0);
   document.getElementById('tkTextColor').value = s.textColor;
   document.getElementById('tkBorderColor').value = s.borderColor;
   document.getElementById('tkBorderWidth').value = s.borderWidth;
@@ -3607,7 +3699,8 @@ function closeTickerAdmin(){
 function updateTickerPreview(patch){
   tickerPending.settings = {...tickerPending.settings, ...patch};
   if('fontSize' in patch) document.getElementById('tkFontSizeVal').textContent = patch.fontSize+'px';
-  if('speed' in patch) document.getElementById('tkSpeedVal').textContent = patch.speed;
+  if('pace' in patch) document.getElementById('tkSpeedVal').textContent = patch.pace;
+  if('gap' in patch) document.getElementById('tkGapVal').textContent = patch.gap+'px';
   if('borderWidth' in patch) document.getElementById('tkBorderWidthVal').textContent = patch.borderWidth+'px';
   tickerApplyLive(tickerPending);
 }
@@ -3630,15 +3723,33 @@ function renderTickerAdminList(){
   if(!wrap) return;
   const msgs = tickerPending.messages;
   wrap.innerHTML = msgs.map((m,idx)=>`
-    <div class="tk-msg-row" style="${m.enabled===false?'opacity:.45;':''}">
-      <input type="checkbox" title="چلائیں/بند کریں" style="width:18px;height:18px;flex:0 0 auto;" ${m.enabled!==false?'checked':''} onchange="updateTickerMsgPending(${idx},'enabled',this.checked)">
-      <input type="text" value="${escapeAttr(m.text)}" oninput="updateTickerMsgPending(${idx},'text',this.value)">
-      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="لکھائی" value="${m.textColor||tickerPending.settings.textColor}" oninput="updateTickerMsgPending(${idx},'textColor',this.value)">
-      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بیک گراؤنڈ" value="${m.bgColor||tickerPending.settings.midBg1}" oninput="updateTickerMsgPending(${idx},'bgColor',this.value)">
-      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بارڈر" value="${m.borderColor||tickerPending.settings.borderColor}" oninput="updateTickerMsgPending(${idx},'borderColor',this.value)">
-      <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="resetTickerMsgColor(${idx})">↺</button>
-      <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="deleteTickerMsgPending(${idx})">🗑️</button>
+    <div class="tk-msg-card" style="${m.enabled===false?'opacity:.5;':''}">
+      <div class="tk-r1">
+        <input type="checkbox" title="چلائیں/بند کریں" style="width:18px;height:18px;flex:0 0 auto;" ${m.enabled!==false?'checked':''} onchange="updateTickerMsgPending(${idx},'enabled',this.checked)">
+        <input type="number" class="tk-num" title="نمبر (کون سے نمبر پر چلے)" min="1" max="${msgs.length}" value="${idx+1}" onchange="moveTickerMsgPending(${idx},this.value)">
+        <input type="text" value="${escapeAttr(m.text)}" oninput="updateTickerMsgPending(${idx},'text',this.value)">
+        <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="deleteTickerMsgPending(${idx})">🗑️</button>
+      </div>
+      <div class="tk-r2">
+        <span>تکرار</span>
+        <input type="number" min="1" max="99" value="${Math.max(1,parseInt(m.repeat)||1)}" onchange="updateTickerMsgPending(${idx},'repeat',Math.max(1,Math.min(99,parseInt(this.value)||1)))">
+        <span>فاصلہ</span>
+        <input type="number" min="0" max="600" placeholder="عام" value="${m.gapAfter==null?'':m.gapAfter}" onchange="updateTickerMsgPending(${idx},'gapAfter',this.value===''?null:Math.max(0,Number(this.value)||0))">
+        <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="لکھائی" value="${m.textColor||tickerPending.settings.textColor}" oninput="updateTickerMsgPending(${idx},'textColor',this.value)">
+        <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بیک گراؤنڈ" value="${m.bgColor||tickerPending.settings.midBg1}" oninput="updateTickerMsgPending(${idx},'bgColor',this.value)">
+        <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بارڈر" value="${m.borderColor||tickerPending.settings.borderColor}" oninput="updateTickerMsgPending(${idx},'borderColor',this.value)">
+        <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="resetTickerMsgColor(${idx})">↺</button>
+      </div>
     </div>`).join('');
+}
+function moveTickerMsgPending(idx, pos){
+  const n = tickerPending.messages.length;
+  let to = Math.max(1, Math.min(n, parseInt(pos)||1)) - 1;
+  if(to === idx){ renderTickerAdminList(); return; }
+  const [m] = tickerPending.messages.splice(idx,1);
+  tickerPending.messages.splice(to,0,m);
+  renderTickerAdminList();
+  tickerApplyLive(tickerPending);
 }
 function updateTickerMsgPending(idx, field, val){
   const m = tickerPending.messages[idx];
@@ -3663,7 +3774,7 @@ function addTickerMsgPending(){
   const input = document.getElementById('tickerNewMsg');
   const val = (input.value||'').trim();
   if(!val) return;
-  tickerPending.messages.push({text:val, textColor:null, bgColor:null, borderColor:null});
+  tickerPending.messages.push({text:val, textColor:null, bgColor:null, borderColor:null, enabled:true, repeat:1, gapAfter:null});
   input.value = '';
   renderTickerAdminList();
   tickerApplyLive(tickerPending);
