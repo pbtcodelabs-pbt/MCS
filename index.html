@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS28SEPMO0344PM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS28SEPMO0344PM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS28SEPMO0355PM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS28SEPMO0355PM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -598,7 +598,7 @@
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS28SEPMO0344PM" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS28SEPMO0355PM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1229,7 +1229,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS28SEPMO0344PM";
+const APP_VERSION = "MCS28SEPMO0355PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2386,7 +2386,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0344PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0355PM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -2538,7 +2538,7 @@ function buildAppPromoCanvas(){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0344PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0355PM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -2991,19 +2991,41 @@ function syncServiceUpdateToFirebase(local){
 }
 
 /* ---------- Dev chat ---------- */
+/* رابطہ کا تیار اردو پیغام — واٹس ایپ اور ایس ایم ایس دونوں میں خود بخود لکھا ہوا کھلتا ہے۔
+   قوسین والی جگہوں پر بھیجنے والا اپنا نام، شہر اور بات لکھے گا۔ */
+const DEV_CONTACT_MSG =
+  'محترم ڈویلپر السلام علیکم ورحمۃ اللہ وبرکاتہ\n\n' +
+  'میں ( یہاں اپنا نام لکھیں )\n' +
+  'شہر ( یہاں اپنے شہر کا نام لکھیں )\n' +
+  'سے ہوں\n\n' +
+  'اور آپ کی ایپ My City shines\n' +
+  'کے بارے میں یہ کہنا چاہتا ہوں کہ ( یہاں اپنی بات لکھیں )';
+function devSmsHref(num){
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent||'');
+  return 'sms:' + num + (isIOS ? '&' : '?') + 'body=' + encodeURIComponent(DEV_CONTACT_MSG);
+}
+function devWaHref(raw){
+  return 'https://wa.me/92' + raw.replace(/^0/,'') + '?text=' + encodeURIComponent(DEV_CONTACT_MSG);
+}
 function devBoxGo(kind){
   const c = store.contact || DEFAULT_CONTACT;
   const raw = (c.whatsapp||'').replace(/[^0-9]/g,'');
   if(!raw){ showToast('رابطہ نمبر محفوظ نہیں'); return; }
   if(kind==='call') location.href = 'tel:' + raw;
-  else if(kind==='sms') location.href = 'sms:' + raw;
-  else window.open('https://wa.me/92' + raw.replace(/^0/,''), '_blank');
+  else if(kind==='sms'){
+    showToast('پیغام میں خالی جگہوں پر اپنا نام اور شہر لکھیں');
+    location.href = devSmsHref(raw);
+  } else {
+    showToast('پیغام میں خالی جگہوں پر اپنا نام اور شہر لکھیں');
+    window.open(devWaHref(raw), '_blank');
+  }
 }
 function openDevChat(){
   const c = store.contact || DEFAULT_CONTACT;
   let html = '';
-  if(c.whatsapp) html += `<a class="wa-link" href="https://wa.me/92${c.whatsapp.replace(/[^0-9]/g,'').replace(/^0/,'')}" target="_blank">واٹس ایپ</a>`;
-  if(c.whatsapp) html += `<a class="sms-link" href="sms:${c.whatsapp}">ایس ایم ایس</a>`;
+  const raw = (c.whatsapp||'').replace(/[^0-9]/g,'');
+  if(c.whatsapp) html += `<a class="wa-link" href="${devWaHref(raw)}" target="_blank">واٹس ایپ</a>`;
+  if(c.whatsapp) html += `<a class="sms-link" href="${devSmsHref(raw)}">ایس ایم ایس</a>`;
   if(c.gmail) html += `<a class="mail-link" href="mailto:${c.gmail}">ای میل</a>`;
   document.getElementById('devChatLinks').innerHTML = html || '<span style="font-size:13px;color:var(--muted);">کوئی رابطہ محفوظ نہیں</span>';
   openModal('devChatModal');
