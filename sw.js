@@ -9,7 +9,7 @@
 /* Same version string as index.html's APP_VERSION and the release zip
    filename (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — keep these three in sync
    on every release so it's always clear which files go together. */
-const CACHE_NAME = 'mcs-cache-MCS28SEPMO0443PM';
+const CACHE_NAME = 'mcs-cache-MCS29SEPTU0352AM';
 /* Font files (fonts/*.ttf) are intentionally NOT in APP_SHELL below —
    they are large (10-13MB each) and would slow down or risk failing the
    very first install. The generic fetch handler further down caches them
@@ -29,7 +29,9 @@ const APP_SHELL = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
+      /* MCS29SEPTU0352AM: cache:'reload' — براؤزر کی پرانی کاپی کے بجائے سرور سے تازہ فائل لے،
+         ورنہ نئے ورژن کے کیش میں پرانی index.html محفوظ ہو سکتی تھی۔ */
+      .then((cache) => cache.addAll(APP_SHELL.map((u) => new Request(u, { cache: 'reload' }))))
       .then(() => self.skipWaiting())
   );
 });
@@ -51,6 +53,16 @@ self.addEventListener('activate', (event) => {
    picking up newer files opportunistically when online. */
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  /* MCS29SEPTU0352AM: صرف اپنی سائٹ کی فائلیں اور گوگل کے فونٹ/فائربیس SDK کیش ہوں۔
+     فائربیس کے لائیو ڈیٹا (firestore.googleapis.com)، واٹس ایپ وغیرہ کو ہاتھ نہ لگائیں —
+     پہلے یہ بھی کیش ہو رہے تھے جس سے میموری بھرتی اور sync میں رکاوٹ کا خطرہ تھا۔ */
+  const url = new URL(event.request.url);
+  const allowed = url.origin === self.location.origin ||
+                  url.hostname === 'www.gstatic.com' ||
+                  url.hostname === 'fonts.googleapis.com' ||
+                  url.hostname === 'fonts.gstatic.com';
+  if (!allowed) return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
