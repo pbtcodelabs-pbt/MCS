@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS28SEPMO0407PM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS28SEPMO0407PM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS28SEPMO0414PM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS28SEPMO0414PM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -664,7 +664,7 @@
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS28SEPMO0407PM" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS28SEPMO0414PM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1298,7 +1298,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS28SEPMO0407PM";
+const APP_VERSION = "MCS28SEPMO0414PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1663,12 +1663,12 @@ function ubRenderCatGrid(catWrap, wrap){
     counts[it.cat] = (counts[it.cat]||0) + 1; total++;
   });
   const anyFilter = !!(ubFilter.district||ubFilter.city||ubFilter.area);
-  const tiles = ubCatKeys().map(k=>{
+  const tiles = ubCatKeys().filter(k=>(counts[k]||0)>0).map(k=>{
     const m = ubCatMeta(k);
     return `<div class="cat-item" onclick="ubPickCat('${escapeAttr(k)}')"><span class="cat-count">${counts[k]||0}</span><div class="emoji">${m.emoji}</div><span>${escapeHtml(m.ur)}</span></div>`;
   }).join('');
   catWrap.innerHTML = `<div class="ub-meta"><span>${urduDigits(total)} اندراجات</span>${anyFilter?`<button type="button" class="ub-reset" onclick="ubResetFilters()">فلٹر صاف کریں</button>`:''}</div>` +
-    catColsPickerHtml() + `<div class="cat-grid" id="ubCatGrid">${tiles}</div>`;
+    (tiles ? catColsPickerHtml() + `<div class="cat-grid" id="ubCatGrid">${tiles}</div>` : `<div class="empty-state"><span class="e-emoji">🔎</span>${total===0 && !anyFilter ? 'ابھی کوئی اندراج شامل نہیں کیا گیا' : 'اس فلٹر میں کوئی اندراج موجود نہیں'}</div>`);
   catColsSyncPickers();
 }
 function ubPickCat(k){
@@ -2529,7 +2529,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0407PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0414PM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -2681,7 +2681,7 @@ function buildAppPromoCanvas(){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0407PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0414PM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
