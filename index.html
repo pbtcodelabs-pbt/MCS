@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS29SEPTU0321AM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS29SEPTU0321AM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS28SEPMO0443PM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS28SEPMO0443PM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -128,15 +128,12 @@
     background:linear-gradient(90deg,var(--ticker-mid-bg1),var(--ticker-mid-bg2));
     border-top:3px solid var(--ticker-border-color);border-bottom:3px solid var(--ticker-border-color);
     display:flex;align-items:center;}
-  .mcs-ticker-track{display:inline-flex;gap:var(--ticker-gap);align-items:center;
-    animation:mcsTickerMove 30s linear infinite;will-change:transform;
-    padding:0 6px;box-sizing:border-box;height:100%;}
+  .mcs-ticker-track{position:absolute;left:0;right:0;top:0;bottom:0;direction:ltr;overflow:hidden;}
+  .tkr-item{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center;white-space:nowrap;will-change:transform;}
   .mcs-ticker-track span{font-size:var(--ticker-font-size);font-family:var(--ticker-font-family),'Segoe UI',sans-serif;
     color:var(--ticker-text);font-weight:600;white-space:nowrap;line-height:1.6;
-    display:inline-flex;align-items:center;padding-top:2px;}
+    display:inline-flex;align-items:center;padding-top:2px;direction:rtl;unicode-bidi:isolate;}
   .mcs-ticker-track span.tkr-pill-custom{padding:2px 12px;border-radius:999px;border:1.5px solid transparent;}
-  .mcs-ticker-track span.tkr-dot{opacity:.55;padding:0;}
-  @keyframes mcsTickerMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   #app{padding-top:var(--ticker-h);}
   .hero{
     position:relative;overflow:hidden;
@@ -164,9 +161,6 @@
     box-shadow:0 3px 8px rgba(0,0,0,.1);}
   #pendingHomeBanner .phb-count{background:#e11d48;color:#fff;border-radius:999px;padding:2px 10px;font-size:12.5px;
     font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;}
-  .hero-brand{display:flex;align-items:center;gap:10px;}
-  .hero-logo{width:42px;height:42px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.25);background:#fff;object-fit:cover;}
-  .hero-brand small{display:block;font-size:11px;opacity:.75;letter-spacing:.5px;font-family:'Segoe UI',Roboto,sans-serif;line-height:1.2;}
   .hero-text{position:relative;margin-top:22px;}
   .hero-text h1{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;
     font-size:34px;font-weight:normal;margin:0;line-height:1.7;}
@@ -193,52 +187,107 @@
     box-shadow:inset 0 3px 7px rgba(0,0,0,.35),inset 0 -1px 0 rgba(255,255,255,.15);
   }
   .entry-card .txt{width:100%;}
+  .entry-count{position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    background:#ffffff;color:#000000;direction:ltr;unicode-bidi:isolate;
+    font-family:'Arial Black','Arial Bold',Gadget,sans-serif;
+    font-size:14px;font-weight:900;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
+    min-width:34px;height:34px;padding:0 10px;box-sizing:border-box;white-space:nowrap;
+    border:1px solid #d8dee4;box-shadow:0 2px 5px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.7);}
   .entry-card .txt b{display:block;font-size:18px;font-weight:800;letter-spacing:.4px;color:#fff;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.3);}
   .entry-en{display:block;font-family:'Segoe UI',Roboto,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.85);margin-top:1px;}
   .e-teal{--c1:#22c1b0;--c2:#0f766e;}
   .e-amber{--c1:#f6ad3c;--c2:#c2740a;}
-  .e-blue{--c1:#4f7ff0;--c2:#1d4ed8;}
+  .e-blue{--c1:#f0578a;--c2:#be123c;}
   .home-logo-big{display:block;width:88px;height:88px;border-radius:24px;margin:6px auto 0;
     box-shadow:0 10px 26px rgba(0,0,0,.3);object-fit:cover;}
   .home-footer{text-align:center;padding:18px 16px 4px;font-size:12px;color:#9aa3ad;line-height:1.8;}
   .home-footer .ver{font-family:'Segoe UI',Roboto,sans-serif;direction:ltr;display:inline-block;}
 
-  /* ===== Glitter version badge ===== */
-  .ver-glitter{
-    position:relative;display:flex;align-items:center;justify-content:center;gap:10px;
-    margin:12px auto 0;padding:3px 14px;border-radius:999px;width:fit-content;max-width:100%;
-    background:linear-gradient(135deg,rgba(8,20,40,.78),rgba(20,30,60,.78));
-    border:1.5px solid transparent;
-    background-clip:padding-box;
-    box-shadow:0 0 0 1.5px rgba(255,215,120,.55),0 6px 18px rgba(0,0,0,.35),inset 0 0 14px rgba(255,255,255,.06);
-    overflow:hidden;animation:glowPulse 3s ease-in-out infinite;
-  }
-  .ver-glitter .vg-text{
-    font-family:'Segoe UI',Roboto,'Jameel Noori Nastaleeq Regular',sans-serif;
-    font-size:16px;font-weight:800;letter-spacing:.3px;line-height:1.5;white-space:nowrap;
-    background:linear-gradient(90deg,#ffe066,#ff9ff3,#7df9ff,#b9fbc0,#ffd166,#ff9ff3,#ffe066);
-    background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:hueFlow 4s linear infinite;
-    filter:drop-shadow(0 0 4px rgba(255,230,150,.45));
-  }
-  .ver-glitter .vg-text .ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-weight:normal;font-size:19px;}
-  .ver-glitter::before{
-    content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;
-    background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);
-    animation:shine 2.8s ease-in-out infinite;
-  }
-  .ver-glitter .spark{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;
-    box-shadow:0 0 6px 2px rgba(255,255,255,.9);opacity:0;animation:twinkle 1.8s ease-in-out infinite;}
-  .ver-glitter .spark:nth-of-type(1){top:6px;left:14%;animation-delay:0s;}
-  .ver-glitter .spark:nth-of-type(2){bottom:6px;left:42%;animation-delay:.6s;}
-  .ver-glitter .spark:nth-of-type(3){top:8px;right:18%;animation-delay:1.1s;}
-  .ver-glitter .spark:nth-of-type(4){bottom:7px;right:6%;animation-delay:1.5s;}
-  @keyframes hueFlow{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
-  @keyframes shine{0%{left:-60%;}60%,100%{left:130%;}}
-  @keyframes twinkle{0%,100%{opacity:0;transform:scale(.4);}50%{opacity:1;transform:scale(1.2);}}
-  @keyframes glowPulse{0%,100%{box-shadow:0 0 0 1.5px rgba(255,215,120,.55),0 6px 18px rgba(0,0,0,.35);}
-    50%{box-shadow:0 0 0 1.5px rgba(125,249,255,.7),0 0 18px rgba(255,159,243,.45),0 6px 18px rgba(0,0,0,.35);}}
-  @media (prefers-reduced-motion:reduce){.ver-glitter,.ver-glitter *,.ver-glitter::before{animation:none!important;}}
+  /* ===== Hero status pill (ورژن + آن لائن/آف لائن) — سادہ، بغیر چمک ===== */
+  .hero-status{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+    height:40px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;}
+  .hero-status:active{background:rgba(255,255,255,.22);}
+  .hero-status .hs-ver{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;
+    font-size:11px;font-weight:700;letter-spacing:.3px;line-height:1.35;color:#fff;white-space:nowrap;}
+  .hero-status .hs-net{display:flex;align-items:center;gap:5px;font-size:11px;line-height:1.45;color:#d8efe9;}
+  .hero-status .hs-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.28);flex:none;}
+  .hero-status.off .hs-dot{background:#ef4444;box-shadow:0 0 0 2px rgba(239,68,68,.3);}
+  .hero-status.off .hs-net{color:#ffd4d4;}
+
+  /* ===== یوزر سرچ: کمپیکٹ سرچ بار + فلٹر چپس + ہلکی قطاریں ===== */
+  .ub-bar{margin-bottom:8px;}
+  .ub-search{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #cfe0dd;border-radius:999px;
+    padding:0 12px;height:42px;box-shadow:0 2px 8px rgba(13,59,102,.08);}
+  .ub-search:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,118,110,.14);}
+  .ub-search > svg{width:18px;height:18px;color:var(--primary);flex:none;}
+  .ub-search input{flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:14px;color:var(--text);padding:0;height:100%;}
+  .ub-clear{display:none;border:none;background:#e6edef;color:#4b5b6b;width:22px;height:22px;border-radius:50%;
+    font-size:15px;line-height:1;padding:0;flex:none;align-items:center;justify-content:center;}
+  .ub-clear.show{display:flex;}
+  .ub-chips{display:flex;gap:6px;margin-top:8px;}
+  .ub-chip{flex:1 1 0;min-width:0;height:34px;border-radius:999px;border:1.5px solid #cfe0dd;background:#fff;color:#0b2a44;
+    font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 8px;line-height:1;}
+  .ub-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .ub-chip i{font-style:normal;font-size:9px;color:var(--muted);flex:none;}
+  .ub-chip.open{border-color:var(--primary);box-shadow:0 0 0 2px rgba(15,118,110,.15);}
+  .ub-chip.on{background:linear-gradient(135deg,#0d3b66,#0f766e);border-color:transparent;color:#fff;}
+  .ub-chip.on i{color:#f4d58d;}
+  .ub-panel{display:none;flex-wrap:wrap;gap:6px;margin-top:6px;background:#fff;border:1px solid #d9e6e3;border-radius:14px;
+    padding:8px;max-height:176px;overflow-y:auto;box-shadow:0 6px 16px rgba(13,59,102,.12);}
+  .ub-panel.show{display:flex;}
+  .ub-opt{border:1px solid #d5e3e0;background:#f3f8f7;color:#0b2a44;border-radius:999px;padding:2px 12px;font-size:14px;line-height:1.8;
+    display:inline-flex;align-items:center;gap:6px;}
+  .ub-opt.active{background:#0f766e;border-color:#0f766e;color:#fff;}
+  .ub-opt small{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:10px;opacity:.7;}
+  .ub-none{font-size:12.5px;color:var(--muted);padding:4px 6px;}
+  .ub-meta{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);margin:4px 4px 8px;min-height:24px;}
+  .ub-reset{background:none;border:none;color:var(--primary);font-size:12.5px;text-decoration:underline;padding:2px 4px;}
+  .ub-row{--rc:#0f766e;--rbg:#e3f4f1;background:#fff;border:1px solid #dde8e6;border-right:4px solid var(--rc);border-radius:14px;
+    padding:8px 10px;margin-bottom:8px;box-shadow:0 2px 6px rgba(13,59,102,.07);}
+  .ub-top{display:flex;align-items:flex-start;gap:10px;}
+  .ub-ico{width:38px;height:38px;min-width:38px;border-radius:12px;background:var(--rbg);display:flex;align-items:center;justify-content:center;font-size:20px;margin-top:2px;}
+  .ub-body{flex:1;min-width:0;}
+  .ub-name{font-family:var(--docCardFont);font-size:calc(18px*var(--docCardScale));line-height:1.5;color:#0b2a44;font-weight:bold;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .ub-enrow{display:flex;align-items:center;justify-content:space-between;gap:8px;direction:ltr;}
+  .ub-en{flex:1;min-width:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;text-align:left;unicode-bidi:isolate;font-size:11.5px;font-weight:600;
+    color:#9a4b06;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ub-sub{font-size:12.5px;color:#3f5568;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ub-loc{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5b6b78;line-height:1.6;}
+  .ub-loc-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ub-id{flex:none;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;font-size:9.5px;color:#9aa5b1;}
+  .ub-bot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;}
+  .ub-num{direction:ltr;unicode-bidi:isolate;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;font-weight:700;color:#0d3b66;letter-spacing:.3px;}
+  .ub-acts{display:flex;gap:5px;align-items:center;flex:none;}
+  .ub-acts a,.ub-acts button{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    color:#fff;border:none;padding:0;box-shadow:0 2px 5px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.35);}
+  .ub-acts a svg,.ub-acts button svg{width:14px;height:14px;}
+  .ub-acts .ub-edit{background:#eef2f6;color:#334;font-size:13px;}
+  .ub-intro{font-family:var(--docCardFont);font-size:calc(12.5px*var(--docCardScale));color:#7a5600;background:#fff6d9;border-radius:999px;
+    padding:1px 12px;margin-top:5px;line-height:1.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ub-row .doc-pending-line{margin-top:5px;}
+
+  /* ===== ہوم: چیٹ ود ڈویلپر ڈبہ ===== */
+  .dev-box{margin:40px auto 0;width:82%;max-width:330px;padding:10px 12px 10px;border-radius:20px;text-align:center;color:#fff;
+    background:linear-gradient(160deg,#4f8dff 0%,#2563eb 45%,#1740b8 100%);
+    border:1px solid rgba(255,255,255,.35);
+    box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 -4px 8px rgba(6,20,80,.35) inset,
+               0 3px 0 #1233a0,0 6px 0 #0e2880,0 12px 18px rgba(13,40,128,.4);}
+  .dev-box-title{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:19px;font-weight:800;letter-spacing:.4px;line-height:1.35;
+    color:#fff;margin:0;text-shadow:0 2px 3px rgba(6,20,80,.55);}
+  .dev-box-sub{font-size:13px;color:#e3edff;line-height:1.6;margin:0 0 7px;text-shadow:0 1px 2px rgba(6,20,80,.4);}
+  .dev-box-btns{display:flex;justify-content:center;gap:16px;margin-bottom:7px;}
+  .dev-box-btns button{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.85);padding:0;color:#fff;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.35);position:relative;}
+  .dev-box-btns button:active{transform:scale(.93);}
+  .dev-box-btns svg{width:19px;height:19px;}
+  .db-call{background:linear-gradient(145deg,#1f9d55,#15803d);}
+  .db-wab{background:linear-gradient(145deg,#2fd16b,#1da851);}
+  .db-wab .wab-b{position:absolute;bottom:-2px;right:-2px;width:15px;height:15px;border-radius:50%;background:#fff;color:#128c7e;
+    font:800 10px/15px 'Segoe UI',Roboto,Arial,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .db-sms{background:linear-gradient(145deg,#ffd27a,#f59e0b);color:#5c3a06;}
+  .dev-box-note{font-size:11.5px;color:#7a5600;background:#fff6d9;border-radius:999px;padding:2px 12px;line-height:1.8;display:inline-block;max-width:100%;}
 
   /* ===== Category grid ===== */
   #screen-specialist-categories,#screen-business-categories{background:linear-gradient(180deg,#e3eef3 0%,#eef4f1 45%,#f6f1e7 100%);background-attachment:fixed;}
@@ -406,6 +455,66 @@
     box-shadow:0 3px 8px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.25);}
   .a-reqadmin:active{transform:scale(.92);}
   .doc-recid{font-size:10px;color:var(--muted);direction:ltr;unicode-bidi:isolate;display:inline-block;margin-top:2px;}
+
+  /* ===== v2: کمپیکٹ کارڈ، سبز نتائج، کیٹگری گرڈ کی قطاریں ===== */
+  .doc-card{width:94%;margin:0 auto 9px;padding:7px 10px;border-radius:14px;}
+  .doc-card::before{top:9px;bottom:9px;width:3px;}
+  .doc-toprow{gap:8px;}
+  .doc-avatar{width:34px;height:34px;min-width:34px;border-radius:10px;}
+  .doc-avatar svg{width:19px;height:19px;}
+  .doc-name{font-size:calc(20px*var(--docCardScale));line-height:1.35;}
+  .doc-name-en{font-size:calc(11.5px*var(--docCardScale));line-height:1.35;}
+  .doc-sub{font-size:calc(12px*var(--docCardScale));line-height:1.4;}
+  .doc-num{font-size:calc(12.5px*var(--docCardScale));line-height:1.35;}
+  .doc-side{margin:4px 0 1px;gap:5px;}
+  .doc-acts{gap:4px;}
+  .doc-acts a,.a-share,.a-reqadmin{width:26px;height:26px;min-width:26px;}
+  .doc-acts a svg{width:14px;height:14px;}
+  .a-share svg{width:13px;height:13px;}
+  .doc-intro{font-size:calc(11.5px*var(--docCardScale));padding:2px 12px;margin:4px 0 2px;line-height:1.4;}
+  .doc-address{font-size:calc(11px*var(--docCardScale));line-height:1.45;}
+  .doc-recid{font-size:9px;margin-top:0;}
+  .doc-pending-line{margin-top:4px;padding:2px 8px;}
+
+  /* یوزر سرچ کے نتائج: ڈاکٹر کارڈ کی طرح سبز اور کمپیکٹ */
+  .ub-row{background:linear-gradient(150deg,#0d3b66 0%,#0f766e 60%,#0b5c56 100%);border:1px solid rgba(255,255,255,.08);
+    border-right:4px solid #f59e0b;border-radius:14px;padding:7px 10px;width:94%;margin:0 auto 9px;
+    box-shadow:0 1px 0 rgba(255,255,255,.15) inset,0 -3px 10px rgba(0,0,0,.25) inset,0 3px 4px rgba(0,0,0,.15),0 8px 16px rgba(13,59,102,.3);}
+  .ub-top{gap:8px;align-items:center;}
+  .ub-ico{width:34px;height:34px;min-width:34px;border-radius:10px;font-size:18px;margin-top:0;
+    background:linear-gradient(145deg,#ffd27a,#f59e0b);box-shadow:0 3px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.55);}
+  .ub-name{font-size:calc(20px*var(--docCardScale));line-height:1.35;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);}
+  .ub-en{color:#ffe4a8;font-size:11px;line-height:1.35;}
+  .ub-id{color:#9fd3cb;font-size:9px;}
+  .ub-sub{color:#e0f2f1;font-size:12px;line-height:1.4;font-weight:600;}
+  .ub-loc{color:#cfe8e4;font-size:11px;line-height:1.45;}
+  .ub-bot{margin-top:3px;}
+  .ub-num{color:#ffe4a8;font-size:12.5px;}
+  .ub-acts{gap:4px;}
+  .ub-acts a,.ub-acts button{width:26px;height:26px;min-width:26px;}
+  .ub-acts a svg,.ub-acts button svg{width:13px;height:13px;}
+  .ub-acts .ub-edit{background:rgba(255,255,255,.2);color:#fff;}
+  .ub-intro{margin-top:3px;font-size:calc(11.5px*var(--docCardScale));padding:1px 12px;line-height:1.6;
+    color:#5a3d00;background:linear-gradient(145deg,#fff3cd,#ffe082);}
+  .ub-back{background:linear-gradient(135deg,#0d3b66,#0f766e);color:#fff;border:none;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:700;}
+  #ubCatWrap .ub-meta{margin-top:2px;}
+
+  /* کیٹگری کارڈ: چھوٹے، ایموجی اور نام نمایاں، قطاریں 2/3/4 */
+  html{--cat-emo-box:44px;--cat-emo:24px;--cat-name:13px;}
+  html[data-cat-cols="2"]{--cat-emo-box:52px;--cat-emo:28px;--cat-name:15px;}
+  html[data-cat-cols="3"]{--cat-emo-box:44px;--cat-emo:24px;--cat-name:13px;}
+  html[data-cat-cols="4"]{--cat-emo-box:36px;--cat-emo:20px;--cat-name:11px;}
+  .cat-grid{grid-template-columns:repeat(3,1fr);gap:8px;}
+  html[data-cat-cols="2"] .cat-grid{grid-template-columns:repeat(2,1fr);}
+  html[data-cat-cols="3"] .cat-grid{grid-template-columns:repeat(3,1fr);}
+  html[data-cat-cols="4"] .cat-grid{grid-template-columns:repeat(4,1fr);gap:6px;}
+  .cat-grid .cat-item{padding:9px 3px 30px;border-radius:14px;}
+  .cat-grid .cat-item .emoji{width:var(--cat-emo-box);height:var(--cat-emo-box);font-size:var(--cat-emo);margin:0 auto 5px;border-radius:12px;}
+  .cat-grid .cat-item > span:not(.cat-count){font-size:var(--cat-name);line-height:1.35;font-weight:800;}
+  .cat-grid .cat-item .cat-count{bottom:6px;}
+  .cols-pick{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 0 10px;font-size:12px;color:#3f5568;font-weight:600;}
+  .cols-pick button{width:32px;height:28px;border-radius:9px;border:1.5px solid #cfe0dd;background:#fff;font-weight:800;font-size:13px;color:#0b2a44;padding:0;}
+  .cols-pick button.on{background:linear-gradient(135deg,#0d3b66,#0f766e);border-color:transparent;color:#fff;}
   .cc-tmpl-btn{padding:8px 12px;border-radius:20px;border:1px solid #d8dee4;background:#f6f7f9;font-size:12px;color:#334;cursor:pointer;}
   .cc-tmpl-btn.active{background:#0d3b66;color:#f4d58d;border-color:#0d3b66;font-weight:700;}
   .num-ltr{direction:ltr;unicode-bidi:isolate;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
@@ -465,6 +574,12 @@
   .tk-preset-dot{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d8dee4;flex:0 0 auto;}
   .tk-msg-row{display:flex;align-items:center;gap:5px;border:1px solid #e5e7eb;border-radius:9px;padding:5px;margin-bottom:6px;}
   .tk-msg-row input[type=text]{flex:1;min-width:0;padding:6px 8px;border-radius:7px;border:1px solid #d8dee4;font-size:12.5px;}
+  .tk-msg-card{border:1px solid #e5e7eb;border-radius:10px;padding:6px;margin-bottom:8px;background:#fcfcfd;}
+  .tk-msg-card .tk-r1,.tk-msg-card .tk-r2{display:flex;align-items:center;gap:5px;}
+  .tk-msg-card .tk-r2{margin-top:6px;flex-wrap:wrap;font-size:10px;color:var(--muted);}
+  .tk-msg-card input[type=text]{flex:1;min-width:0;padding:6px 8px;border-radius:7px;border:1px solid #d8dee4;font-size:12.5px;}
+  .tk-msg-card input[type=number]{width:46px;padding:4px;border-radius:7px;border:1px solid #d8dee4;font-size:12px;text-align:center;}
+  .tk-msg-card .tk-num{width:40px;font-weight:800;background:#fff7e0;border-color:#d4a017;}
 
   .toast{
     position:fixed;top:14px;left:50%;transform:translateX(-50%);
@@ -520,6 +635,64 @@
   .snap-item .snap-meta b{display:block;font-size:13px;}
   .snap-item .snap-meta span{font-size:11px;color:var(--muted);}
   .snap-item button{padding:8px 12px;border-radius:8px;border:none;font-size:12px;font-weight:600;background:#dbeafe;color:#1e40af;white-space:nowrap;}
+
+  /* ===== v3 (MCS28SEPMO0443PM): اعداد انگلش Arial، پکے سائز کے چھوٹے کارڈ، سبز کارڈ اور سبز سرچ بار ===== */
+  .entry-card{width:70%;max-width:270px;height:60px;padding:0 14px 0 60px;margin:0 auto 10px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;box-sizing:border-box;}
+  .entry-card .txt b{font-size:16px;line-height:1.35;}
+  .entry-en{font-size:9.5px;letter-spacing:1.6px;margin-top:0;}
+  .entry-count,.cat-count{font-family:Arial,Helvetica,sans-serif !important;font-weight:700;direction:ltr;unicode-bidi:isolate;
+    background:linear-gradient(145deg,#0f766e,#064e3b);color:#fff;border:2px solid #ffd27a;
+    box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3);letter-spacing:0;text-shadow:0 1px 1px rgba(0,0,0,.35);}
+  .entry-count{left:12px;font-size:14px;min-width:32px;height:32px;padding:0 6px;}
+  .cat-count{font-size:11px;min-width:22px;height:20px;padding:0 6px;bottom:5px;}
+  .cat-grid{grid-auto-rows:88px;}
+  .cat-grid .cat-item{height:88px;box-sizing:border-box;padding:6px 3px 26px;overflow:hidden;}
+  .cat-grid .cat-item .emoji{width:32px;height:32px;font-size:18px;margin:0 auto 3px;border-radius:10px;}
+  .cat-grid .cat-item > span:not(.cat-count){font-size:12px;line-height:1.3;max-height:2.7em;overflow:hidden;}
+  .cat-grid .cat-item small{display:none;}
+  .doc-card{width:90%;padding:5px 9px;margin:0 auto 7px;border-radius:12px;
+    background:linear-gradient(150deg,#15803d 0%,#0f766e 55%,#065f46 100%);}
+  .doc-avatar{width:30px;height:30px;min-width:30px;border-radius:9px;}
+  .doc-avatar svg{width:17px;height:17px;}
+  .doc-name{font-size:calc(17px*var(--docCardScale));line-height:1.3;}
+  .doc-name-en{font-size:calc(10.5px*var(--docCardScale));}
+  .doc-sub{font-size:calc(11px*var(--docCardScale));line-height:1.3;}
+  .doc-num{font-size:calc(11.5px*var(--docCardScale));font-family:Arial,Helvetica,sans-serif;}
+  .doc-address{font-size:calc(10.5px*var(--docCardScale));line-height:1.35;}
+  .doc-intro{font-size:calc(10.5px*var(--docCardScale));padding:1px 10px;margin:3px 0 1px;}
+  .doc-acts a,.a-share,.a-reqadmin{width:24px;height:24px;min-width:24px;}
+  .ub-row{background:linear-gradient(150deg,#15803d 0%,#0f766e 55%,#065f46 100%);width:90%;padding:5px 9px;margin:0 auto 7px;border-radius:12px;}
+  .ub-ico{width:30px;height:30px;min-width:30px;font-size:16px;}
+  .ub-name{font-size:calc(17px*var(--docCardScale));line-height:1.3;}
+  .ub-en{font-size:10px;}
+  .ub-sub{font-size:11px;line-height:1.3;}
+  .ub-loc{font-size:10px;}
+  .ub-num{font-size:11.5px;font-family:Arial,Helvetica,sans-serif;}
+  .ub-acts a,.ub-acts button{width:24px;height:24px;min-width:24px;}
+  .ub-search{background:linear-gradient(150deg,#15803d 0%,#0f766e 55%,#065f46 100%);border:1px solid rgba(255,255,255,.15);height:38px;
+    box-shadow:0 1px 0 rgba(255,255,255,.15) inset,0 4px 10px rgba(6,95,70,.35);}
+  .ub-search > svg{color:#ffe4a8;width:17px;height:17px;}
+  .ub-search input{color:#fff;font-size:13px;}
+  .ub-search input::placeholder{color:rgba(255,255,255,.75);}
+  .ub-search:focus-within{border-color:#ffd27a;box-shadow:0 0 0 3px rgba(255,210,122,.3);}
+  .ub-clear{background:rgba(255,255,255,.25);color:#fff;}
+  .ub-chip{height:30px;font-size:12px;background:linear-gradient(150deg,#15803d 0%,#0f766e 55%,#065f46 100%);color:#fff;border:1px solid rgba(255,255,255,.15);}
+  .ub-chip i{color:#ffe4a8;}
+  .ub-chip.on{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;}
+
+  /* ===== v4 (MCS28SEPMO0443PM): کیٹگری کارڈز کے اعداد — بڑے گول سبز ڈبے، سفید Arial ہندسے (کم از کم دو ہندسوں کی جگہ) ===== */
+  .cat-grid .cat-item .cat-count,.cat-item .cat-count{
+    font-family:Arial,Helvetica,sans-serif !important;font-size:15px !important;font-weight:700 !important;
+    color:#ffffff !important;-webkit-text-fill-color:#ffffff;text-shadow:0 1px 1px rgba(0,0,0,.4);
+    background:linear-gradient(145deg,#0f766e,#064e3b) !important;border:2px solid #ffd27a !important;
+    min-width:34px !important;height:28px !important;padding:0 8px !important;border-radius:999px !important;
+    bottom:5px !important;line-height:1 !important;display:inline-flex !important;align-items:center;justify-content:center;
+    letter-spacing:0;box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3);}
+  .cat-grid{grid-auto-rows:112px;}
+  .cat-grid .cat-item{height:112px;padding:6px 3px 36px;}
+  .cat-grid .cat-item .emoji{width:30px;height:30px;font-size:17px;margin:0 auto 2px;}
+  .cat-grid .cat-item > span:not(.cat-count){font-size:12px;line-height:1.3;max-height:2.7em;overflow:hidden;}
 </style>
 </head>
 <body>
@@ -539,37 +712,47 @@
     <header class="hero">
       <svg class="hero-skyline" viewBox="0 0 400 70" preserveAspectRatio="none" fill="#fff"><path d="M0 70V48h18V30h14v18h10V20h16v28h8V38h12v10h14V12h6V4h4v8h6v36h12V28h18v20h10V36h8V22h14v26h12V8l10-6 10 6v40h14V32h16v16h8V26h12v22h14V16h18v32h10V40h12v8h14V30h16v18h12V22h14v26h12V36h10v34z"/></svg>
       <div class="hero-top">
-        <div class="hero-brand">
-          <img class="hero-logo" src="icons/icon-192.png?v=MCS29SEPTU0321AM" alt="">
-          <small>MY CITY SHINES</small>
-        </div>
+        <button class="hero-status" id="heroStatus" onclick="showNetStatus()" aria-label="ورژن اور انٹرنیٹ کی حالت">
+          <span class="hs-ver" id="hsVer"></span>
+          <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
+        </button>
         <div class="hero-actions">
           <button class="hero-btn hero-btn-share" onclick="shareAppPromo()" aria-label="ایپ شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg></button>
           <button class="hero-btn" onclick="openDevChat()" aria-label="رابطہ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></button>
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS29SEPTU0321AM" alt="مائی سٹی شائنز">
-      <div class="ver-glitter" id="verGlitter">
-        <i class="spark"></i><i class="spark"></i><i class="spark"></i><i class="spark"></i>
-        <span class="vg-text" id="verGlitterText"></span>
-      </div>
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS28SEPMO0443PM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
 
     <section class="home-section">
       <div class="entry-card e-teal" onclick="goScreen('specialist-categories')">
+        <span class="entry-count" id="homeCount_professional">0</span>
         <div class="txt"><b>پروفیشنلز <span class="entry-en">PROFESSIONALS</span></b></div>
       </div>
 
       <div class="entry-card e-amber" onclick="goScreen('business-categories')">
+        <span class="entry-count" id="homeCount_business">0</span>
         <div class="txt"><b>بزنس <span class="entry-en">BUSINESS</span></b></div>
       </div>
 
       <div class="entry-card e-blue" onclick="openSearch()">
+        <span class="entry-count" id="homeCount_total">0</span>
         <div class="txt"><b>یوزر <span class="entry-en">SEARCH</span></b></div>
       </div>
+    </section>
+
+    <section class="dev-box">
+      <h3 class="dev-box-title">Contact us.....!</h3>
+      <p class="dev-box-sub">تجاویز، مسائل اور مشورے</p>
+      <div class="dev-box-btns">
+        <button type="button" class="db-call" onclick="devBoxGo('call')" aria-label="کال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></button>
+        <button type="button" class="db-wab" onclick="devBoxGo('wa')" aria-label="واٹس ایپ بزنس"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg><span class="wab-b">B</span></button>
+        <button type="button" class="db-sms" onclick="devBoxGo('sms')" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+      <div class="dev-box-note">براہِ کرم عصر سے مغرب کے درمیان رابطہ فرمائیں</div>
     </section>
 
     <footer class="home-footer" id="homeFooter"></footer>
@@ -585,14 +768,14 @@
       </div>
       <div class="cat-grid">
         <div class="cat-item" onclick="goScreen('doctor-list')">
-          <span class="cat-count" id="catCount_doctor">۰</span>
+          <span class="cat-count" id="catCount_doctor">0</span>
           <div class="emoji">🩺</div><span>ڈاکٹرز</span><small>ہسپتال، اسپیشلٹی</small>
         </div>
-        <div class="cat-item" onclick="openServiceCategory('medicalStore')"><span class="cat-count" id="catCount_medicalStore">۰</span><div class="emoji">💊</div><span>میڈیکل سٹور</span></div>
-        <div class="cat-item" onclick="openServiceCategory('homeopathic')"><span class="cat-count" id="catCount_homeopathic">۰</span><div class="emoji">🌿</div><span>ہومیوپیتھک</span></div>
-        <div class="cat-item" onclick="openServiceCategory('testingLab')"><span class="cat-count" id="catCount_testingLab">۰</span><div class="emoji">🧪</div><span>ٹیسٹنگ لیب</span></div>
-        <div class="cat-item" onclick="openServiceCategory('plumberElectrician')"><span class="cat-count" id="catCount_plumberElectrician">۰</span><div class="emoji">🔧</div><span>پلمبر / الیکٹریشن</span></div>
-        <div class="cat-item" onclick="openServiceCategory('tuitionTeacher')"><span class="cat-count" id="catCount_tuitionTeacher">۰</span><div class="emoji">📚</div><span>ٹیوشن استاد</span></div>
+        <div class="cat-item" onclick="openServiceCategory('medicalStore')"><span class="cat-count" id="catCount_medicalStore">0</span><div class="emoji">💊</div><span>میڈیکل سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('homeopathic')"><span class="cat-count" id="catCount_homeopathic">0</span><div class="emoji">🌿</div><span>ہومیوپیتھک</span></div>
+        <div class="cat-item" onclick="openServiceCategory('testingLab')"><span class="cat-count" id="catCount_testingLab">0</span><div class="emoji">🧪</div><span>ٹیسٹنگ لیب</span></div>
+        <div class="cat-item" onclick="openServiceCategory('plumberElectrician')"><span class="cat-count" id="catCount_plumberElectrician">0</span><div class="emoji">🔧</div><span>پلمبر / الیکٹریشن</span></div>
+        <div class="cat-item" onclick="openServiceCategory('tuitionTeacher')"><span class="cat-count" id="catCount_tuitionTeacher">0</span><div class="emoji">📚</div><span>ٹیوشن استاد</span></div>
         <span id="customCatTilesProfessional" style="display:contents;"></span>
       </div>
     </div>
@@ -607,18 +790,18 @@
         <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
       <div class="cat-grid">
-        <div class="cat-item" onclick="openServiceCategory('groceryStore')"><span class="cat-count" id="catCount_groceryStore">۰</span><div class="emoji">🛒</div><span>کریانہ سٹور</span></div>
-        <div class="cat-item" onclick="openServiceCategory('clothesShop')"><span class="cat-count" id="catCount_clothesShop">۰</span><div class="emoji">👗</div><span>کپڑوں کی دکان</span></div>
-        <div class="cat-item" onclick="openServiceCategory('mobileElectronics')"><span class="cat-count" id="catCount_mobileElectronics">۰</span><div class="emoji">📱</div><span>موبائل و الیکٹرانکس</span></div>
-        <div class="cat-item" onclick="openServiceCategory('hardwareStore')"><span class="cat-count" id="catCount_hardwareStore">۰</span><div class="emoji">🔩</div><span>ہارڈویئر سٹور</span></div>
-        <div class="cat-item" onclick="openServiceCategory('bakery')"><span class="cat-count" id="catCount_bakery">۰</span><div class="emoji">🍞</div><span>بیکری</span></div>
-        <div class="cat-item" onclick="openServiceCategory('jewelryShop')"><span class="cat-count" id="catCount_jewelryShop">۰</span><div class="emoji">💍</div><span>جیولری شاپ</span></div>
-        <div class="cat-item" onclick="openServiceCategory('furnitureShop')"><span class="cat-count" id="catCount_furnitureShop">۰</span><div class="emoji">🛋️</div><span>فرنیچر شاپ</span></div>
-        <div class="cat-item" onclick="openServiceCategory('autoParts')"><span class="cat-count" id="catCount_autoParts">۰</span><div class="emoji">🚗</div><span>آٹو پارٹس</span></div>
-        <div class="cat-item" style="display:none;" onclick="openServiceCategory('beautyParlor')"><span class="cat-count" id="catCount_beautyParlor">۰</span><div class="emoji">💇</div><span>بیوٹی پارلر / سیلون</span></div>
+        <div class="cat-item" onclick="openServiceCategory('groceryStore')"><span class="cat-count" id="catCount_groceryStore">0</span><div class="emoji">🛒</div><span>کریانہ سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('clothesShop')"><span class="cat-count" id="catCount_clothesShop">0</span><div class="emoji">👗</div><span>کپڑوں کی دکان</span></div>
+        <div class="cat-item" onclick="openServiceCategory('mobileElectronics')"><span class="cat-count" id="catCount_mobileElectronics">0</span><div class="emoji">📱</div><span>موبائل و الیکٹرانکس</span></div>
+        <div class="cat-item" onclick="openServiceCategory('hardwareStore')"><span class="cat-count" id="catCount_hardwareStore">0</span><div class="emoji">🔩</div><span>ہارڈویئر سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('bakery')"><span class="cat-count" id="catCount_bakery">0</span><div class="emoji">🍞</div><span>بیکری</span></div>
+        <div class="cat-item" onclick="openServiceCategory('jewelryShop')"><span class="cat-count" id="catCount_jewelryShop">0</span><div class="emoji">💍</div><span>جیولری شاپ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('furnitureShop')"><span class="cat-count" id="catCount_furnitureShop">0</span><div class="emoji">🛋️</div><span>فرنیچر شاپ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('autoParts')"><span class="cat-count" id="catCount_autoParts">0</span><div class="emoji">🚗</div><span>آٹو پارٹس</span></div>
+        <div class="cat-item" style="display:none;" onclick="openServiceCategory('beautyParlor')"><span class="cat-count" id="catCount_beautyParlor">0</span><div class="emoji">💇</div><span>بیوٹی پارلر / سیلون</span></div>
         <!-- بیوٹی پارلر فی الحال چھپا دیا گیا ہے — ضرورت پر یہ display:none ہٹا دیں، ڈیٹا/کوڈ محفوظ ہے -->
-        <div class="cat-item" onclick="openServiceCategory('restaurant')"><span class="cat-count" id="catCount_restaurant">۰</span><div class="emoji">🍽️</div><span>ہوٹل / ریسٹورنٹ</span></div>
-        <div class="cat-item" onclick="openServiceCategory('otherShop')"><span class="cat-count" id="catCount_otherShop">۰</span><div class="emoji">🏬</div><span>دیگر / جنرل سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('restaurant')"><span class="cat-count" id="catCount_restaurant">0</span><div class="emoji">🍽️</div><span>ہوٹل / ریسٹورنٹ</span></div>
+        <div class="cat-item" onclick="openServiceCategory('otherShop')"><span class="cat-count" id="catCount_otherShop">0</span><div class="emoji">🏬</div><span>دیگر / جنرل سٹور</span></div>
         <span id="customCatTilesBusiness" style="display:contents;"></span>
       </div>
     </div>
@@ -645,9 +828,20 @@
         <h2>تلاش کریں</h2>
         <button class="back-btn nav-home" onclick="goHome()" aria-label="ہوم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>
       </div>
-      <div class="field">
-        <input type="text" id="searchBox" placeholder="نام، دکان، شعبہ یا شہر لکھیں..." oninput="onUserSearchInput(this.value)">
+      <div class="ub-bar">
+        <div class="ub-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="text" id="searchBox" placeholder="نام، دکان یا شعبہ لکھیں..." oninput="onUserSearchInput(this.value)" autocomplete="off">
+          <button type="button" class="ub-clear" id="ubClear" onclick="clearUserSearch()" aria-label="صاف کریں">×</button>
+        </div>
+        <div class="ub-chips">
+          <button type="button" class="ub-chip" id="ubChip_district" onclick="ubToggle('district')"></button>
+          <button type="button" class="ub-chip" id="ubChip_city" onclick="ubToggle('city')"></button>
+          <button type="button" class="ub-chip" id="ubChip_area" onclick="ubToggle('area')"></button>
+        </div>
+        <div class="ub-panel" id="ubPanel"></div>
       </div>
+      <div id="ubCatWrap"></div>
       <div id="searchResultsWrap"></div>
     </div>
   </div>
@@ -1104,21 +1298,27 @@
           <span id="tkFontSizeVal" style="font-size:10.5px;color:var(--muted);"></span>
         </div>
         <div class="tk-swatch-row">
-          <label>رفتار</label>
-          <input type="range" id="tkSpeed" min="10" max="60" step="2" style="flex:1;" oninput="updateTickerPreview({speed:Number(this.value)}); document.getElementById('tkSpeedVal').textContent=this.value">
+          <label>رفتار (زیادہ = تیز)</label>
+          <input type="range" id="tkSpeed" min="20" max="200" step="5" style="flex:1;" oninput="updateTickerPreview({pace:Number(this.value)}); document.getElementById('tkSpeedVal').textContent=this.value">
           <span id="tkSpeedVal" style="font-size:10.5px;color:var(--muted);"></span>
         </div>
       </div>
       <div class="tk-compact-grid" style="grid-template-columns:1fr;">
         <div class="tk-swatch-row">
-          <label>پیغامات کا وقفہ</label>
-          <input type="range" id="tkGap" min="16" max="160" step="4" style="flex:1;" oninput="updateTickerPreview({gap:Number(this.value)}); document.getElementById('tkGapVal').textContent=this.value+'px'">
+          <label>دو پیغامات کے درمیان فاصلہ</label>
+          <input type="range" id="tkGap" min="0" max="400" step="4" style="flex:1;" oninput="updateTickerPreview({gap:Number(this.value)}); document.getElementById('tkGapVal').textContent=this.value+'px'">
           <span id="tkGapVal" style="font-size:10.5px;color:var(--muted);"></span>
+        </div>
+        <div class="tk-swatch-row">
+          <label>سب پیغامات چل چکنے کے بعد پٹی خالی رہے (سیکنڈ) — 0 = خالی نہ رہے</label>
+          <input type="range" id="tkPause" min="0" max="120" step="1" style="flex:1;" oninput="updateTickerPreview({cyclePause:Number(this.value)}); document.getElementById('tkPauseVal').textContent=this.value">
+          <span id="tkPauseVal" style="font-size:10.5px;color:var(--muted);"></span>
         </div>
       </div>
 
       <hr style="margin:10px 0;border:none;border-top:1px solid #e5e7eb;">
-      <div class="backup-card-title" style="font-size:12px;margin-bottom:4px;">پیغامات — ہر ایک کا اپنا رنگ</div>
+      <div class="backup-card-title" style="font-size:12px;margin-bottom:2px;">پیغامات — نمبر، تکرار، فاصلہ اور رنگ</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px;line-height:1.7;">نمبر بدلیں تو پیغام اسی جگہ چلے گا۔ «تکرار» = وہ پیغام لگاتار کتنی بار چلے۔ «فاصلہ» = اس پیغام کے بعد کتنا فاصلہ (خالی چھوڑیں تو اوپر والا عام فاصلہ لگے گا)۔</div>
       <div id="tickerAdminList"></div>
       <div style="display:flex;gap:6px;margin-top:4px;">
         <input type="text" id="tickerNewMsg" placeholder="نیا پیغام لکھیں" style="flex:1;padding:7px;border-radius:8px;border:1px solid #d8dee4;font-size:12.5px;">
@@ -1156,7 +1356,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS29SEPTU0321AM";
+const APP_VERSION = "MCS28SEPMO0443PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1318,8 +1518,9 @@ function goScreen(name, fromHistory){
 }
 
 function openSearch(){
+  ubFilter.cat = '';
+  const b = document.getElementById('searchBox'); if(b) b.value = '';
   goScreen('user-browse');
-  setTimeout(()=>{ const b=document.getElementById('searchBox'); if(b) b.focus(); }, 150);
 }
 
 /* Typing this PIN into the "یوزر" search box jumps straight to the admin
@@ -1341,15 +1542,125 @@ function onUserSearchInput(val){
 }
 
 /* ---------- "یوزر" combined search — ڈاکٹرز + پروفیشنلز + بزنس، سب ایک ساتھ ---------- */
+/* ---- یوزر سرچ فلٹرز: ضلع > شہر > علاقہ + کیٹگری (سب ڈیٹا ہی سے بنتے ہیں) ---- */
+const ubFilter = {district:'', city:'', area:'', cat:''};
+let ubOpen = '';
+const UB_LABELS = {district:'ضلع', city:'شہر', area:'علاقہ', cat:'کیٹگری'};
+const UB_PALETTE = [['#0f766e','#e3f4f1'],['#c2740a','#fff1dc'],['#1d4ed8','#e6eeff'],['#be185d','#ffe6ef'],
+  ['#6d28d9','#f0e8ff'],['#15803d','#e4f6e0'],['#c2410c','#ffeadb'],['#0369a1','#e0f1fb']];
+function ubAllRecords(){
+  return store.doctors.map(d=>({kind:'doctor', cat:'doctor', rec:d}))
+    .concat(store.services.map(s=>({kind:'service', cat:s.category, rec:s})));
+}
+function ubCatMeta(cat){
+  if(cat==='doctor') return {emoji:'🩺', ur:'ڈاکٹرز', tag:'ڈاکٹر'};
+  const m = CATEGORY_META[cat] || {};
+  return {emoji:m.emoji||'🏷️', ur:m.ur||'', tag:m.ur||''};
+}
+/* کون سے فلٹر لاگو کرنے ہیں: ہر فلٹر کے آپشن صرف اس کے والدین فلٹرز کے مطابق بنتے ہیں */
+function ubPass(it, keys){
+  const r = it.rec, f = ubFilter;
+  if(keys.includes('district') && f.district && (r.district||'') !== f.district) return false;
+  if(keys.includes('city')     && f.city     && (r.city||'')     !== f.city)     return false;
+  if(keys.includes('area')     && f.area     && (r.area||'')     !== f.area)     return false;
+  if(keys.includes('cat')      && f.cat      && it.cat           !== f.cat)      return false;
+  return true;
+}
+function ubOptions(kind){
+  const parents = {district:[], city:['district'], area:['district','city'], cat:['district','city','area']}[kind];
+  const counts = new Map();
+  ubAllRecords().forEach(it=>{
+    if(!ubPass(it, parents)) return;
+    const v = kind==='cat' ? it.cat : (it.rec[kind]||'');
+    if(!v) return;
+    counts.set(v, (counts.get(v)||0)+1);
+  });
+  let list = Array.from(counts.keys());
+  if(kind==='cat'){
+    const order = ['doctor'].concat(CATEGORY_KEYS);
+    list.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+  } else {
+    list.sort((a,b)=>a.localeCompare(b,'ur'));
+  }
+  return list.map(v=>({v, n:counts.get(v)}));
+}
+function ubOptLabel(kind, o){
+  const n = `<small>${o.n}</small>`;
+  if(kind==='cat'){ const m = ubCatMeta(o.v); return `${m.emoji} ${escapeHtml(m.ur)} ${n}`; }
+  return `${escapeHtml(o.v)} ${n}`;
+}
+function ubToggle(kind){
+  ubOpen = (ubOpen===kind) ? '' : kind;
+  ubRenderBar();
+}
+function ubSelect(kind, val){
+  ubFilter[kind] = val;
+  if(kind==='district'){ ubFilter.city=''; ubFilter.area=''; }
+  if(kind==='city'){ ubFilter.area=''; }
+  ubOpen = '';
+  ubRenderBar();
+  renderUserSearch();
+}
+function ubResetFilters(){
+  ubFilter.district = ubFilter.city = ubFilter.area = '';
+  ubOpen = '';
+  ubRenderBar();
+  renderUserSearch();
+}
+function ubRenderBar(){
+  ['district','city','area','cat'].forEach(k=>{
+    const chip = document.getElementById('ubChip_'+k);
+    if(!chip) return;
+    const val = ubFilter[k];
+    const txt = !val ? UB_LABELS[k] : (k==='cat' ? (ubCatMeta(val).emoji+' '+ubCatMeta(val).ur) : val);
+    chip.innerHTML = `<span>${escapeHtml(txt)}</span><i>${ubOpen===k?'▴':'▾'}</i>`;
+    chip.classList.toggle('on', !!val);
+    chip.classList.toggle('open', ubOpen===k);
+  });
+  const panel = document.getElementById('ubPanel');
+  if(!panel) return;
+  if(!ubOpen){ panel.classList.remove('show'); panel.innerHTML=''; return; }
+  const opts = ubOptions(ubOpen);
+  const all = `<button type="button" class="ub-opt${!ubFilter[ubOpen]?' active':''}" data-v="">سب</button>`;
+  panel.innerHTML = all + (opts.length
+    ? opts.map(o=>`<button type="button" class="ub-opt${ubFilter[ubOpen]===o.v?' active':''}" data-v="${escapeHtml(o.v)}">${ubOptLabel(ubOpen,o)}</button>`).join('')
+    : `<span class="ub-none">ابھی کوئی آپشن موجود نہیں</span>`);
+  panel.classList.add('show');
+}
+function ubInit(){
+  const panel = document.getElementById('ubPanel');
+  if(panel) panel.addEventListener('click', e=>{
+    const b = e.target.closest('.ub-opt');
+    if(!b || !ubOpen) return;
+    ubSelect(ubOpen, b.getAttribute('data-v')||'');
+  });
+  ubRenderBar();
+}
+function clearUserSearch(){
+  const box = document.getElementById('searchBox');
+  if(box){ box.value=''; box.focus(); }
+  renderUserSearch();
+}
+
 function renderUserSearch(){
   const wrap = document.getElementById('searchResultsWrap');
-  const qRaw = (document.getElementById('searchBox').value||'').trim();
+  const box = document.getElementById('searchBox');
+  const qRaw = (box.value||'').trim();
   const q = qRaw.toLowerCase();
   const qDigits = qRaw.replace(/[^0-9]/g,'');
   const genericDoctorWords = ['ڈاکٹر','doctor','dr','dr.'];
   const textMatch = (fields) => fields.some(f => (f||'').toLowerCase().includes(q));
+  const clr = document.getElementById('ubClear'); if(clr) clr.classList.toggle('show', !!qRaw);
+  ubRenderBar();
 
+  /* کوئی کیٹگری منتخب نہ ہو اور سرچ خالی ہو تو کیٹگری کارڈ دکھائیں */
+  const catWrap = document.getElementById('ubCatWrap');
+  if(!qRaw && !ubFilter.cat){ ubRenderCatGrid(catWrap, wrap); return; }
+  if(catWrap) catWrap.innerHTML = '';
+
+  const locKeys = ['district','city','area','cat'];
   const doctorResults = store.doctors.filter(d=>{
+    if(!ubPass({rec:d, cat:'doctor'}, locKeys)) return false;
     if(!q) return true;
     if(genericDoctorWords.includes(q)) return true;
     if(qDigits.length>=3 && (d.whatsapp||'').replace(/[^0-9]/g,'').includes(qDigits)) return true;
@@ -1357,6 +1668,7 @@ function renderUserSearch(){
   });
 
   const serviceResults = store.services.filter(s=>{
+    if(!ubPass({rec:s, cat:s.category}, locKeys)) return false;
     if(!q) return true;
     if(qDigits.length>=3 && (s.whatsapp||'').replace(/[^0-9]/g,'').includes(qDigits)) return true;
     const catName = (CATEGORY_META[s.category]||{}).ur || '';
@@ -1364,13 +1676,19 @@ function renderUserSearch(){
     return textMatch([s.nameUr, s.nameEn, s.type, s.address, s.city, s.area, s.district, s.province]);
   });
 
-  if(!doctorResults.length && !serviceResults.length){
-    wrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🔎</span>کچھ نہیں ملا</div>`;
+  const total = doctorResults.length + serviceResults.length;
+  const anyFilter = !!(ubFilter.district||ubFilter.city||ubFilter.area);
+  const cm = ubFilter.cat ? ubCatMeta(ubFilter.cat) : null;
+  const meta = `<div class="ub-meta"><span>${cm?`${cm.emoji} ${escapeHtml(cm.ur)} — `:''}${String(total)} نتائج</span><span style="display:flex;gap:8px;align-items:center;">${anyFilter?`<button type="button" class="ub-reset" onclick="ubResetFilters()">فلٹر صاف کریں</button>`:''}<button type="button" class="ub-back" onclick="ubBackToCats()">🗂️ تمام کیٹگریز</button></span></div>`;
+
+  if(!total){
+    const empty = (store.doctors.length + store.services.length) === 0;
+    wrap.innerHTML = meta + `<div class="empty-state"><span class="e-emoji">🔎</span>${empty?'ابھی کوئی اندراج شامل نہیں کیا گیا':'کچھ نہیں ملا'}</div>`;
     return;
   }
 
   const doctorCards = doctorResults.map(d=>userResultCard({
-    kind:'doctor', id:d.id, fsId:d.fsId, nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
+    kind:'doctor', cat:'doctor', id:d.id, fsId:d.fsId, nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
     sub: [d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''),
     city:d.city, area:d.area, address:d.address, intro:d.intro, whatsapp:d.whatsapp, approved:d.approved
   })).join('');
@@ -1378,41 +1696,114 @@ function renderUserSearch(){
   const serviceCards = serviceResults.map(s=>{
     const meta = CATEGORY_META[s.category]||{};
     return userResultCard({
-      kind:'service', id:s.id, fsId:s.fsId, category:s.category, nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
+      kind:'service', cat:s.category, id:s.id, fsId:s.fsId, category:s.category, nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
       sub:s.type||'', city:s.city, area:s.area, address:s.address, intro:s.intro, whatsapp:s.whatsapp, approved:s.approved
     });
   }).join('');
 
-  wrap.innerHTML = doctorCards + serviceCards;
+  wrap.innerHTML = meta + doctorCards + serviceCards;
 }
+
+/* ---------- یوزر صفحے کے کیٹگری کارڈ ---------- */
+function ubCatKeys(){
+  const grp = k => (CATEGORY_META[k] && CATEGORY_META[k].group) || 'professional';
+  const ok = k => k !== 'beautyParlor';
+  return ['doctor']
+    .concat(CATEGORY_KEYS.filter(k=>ok(k) && grp(k)==='professional'))
+    .concat(CATEGORY_KEYS.filter(k=>ok(k) && grp(k)==='business'));
+}
+function ubRenderCatGrid(catWrap, wrap){
+  if(wrap) wrap.innerHTML = '';
+  if(!catWrap) return;
+  const counts = {}; let total = 0;
+  ubAllRecords().forEach(it=>{
+    if(!ubPass(it, ['district','city','area'])) return;
+    counts[it.cat] = (counts[it.cat]||0) + 1; total++;
+  });
+  const anyFilter = !!(ubFilter.district||ubFilter.city||ubFilter.area);
+  const tiles = ubCatKeys().filter(k=>(counts[k]||0)>0).map(k=>{
+    const m = ubCatMeta(k);
+    return `<div class="cat-item" onclick="ubPickCat('${escapeAttr(k)}')"><span class="cat-count">${counts[k]||0}</span><div class="emoji">${m.emoji}</div><span>${escapeHtml(m.ur)}</span></div>`;
+  }).join('');
+  catWrap.innerHTML = `<div class="ub-meta"><span>${String(total)} اندراجات</span>${anyFilter?`<button type="button" class="ub-reset" onclick="ubResetFilters()">فلٹر صاف کریں</button>`:''}</div>` +
+    (tiles ? catColsPickerHtml() + `<div class="cat-grid" id="ubCatGrid">${tiles}</div>` : `<div class="empty-state"><span class="e-emoji">🔎</span>${total===0 && !anyFilter ? 'ابھی کوئی اندراج شامل نہیں کیا گیا' : 'اس فلٹر میں کوئی اندراج موجود نہیں'}</div>`);
+  catColsSyncPickers();
+}
+function ubPickCat(k){
+  ubFilter.cat = k; ubOpen = '';
+  renderUserSearch();
+  try{ window.scrollTo(0,0); }catch(e){}
+}
+function ubBackToCats(){
+  ubFilter.cat = ''; ubOpen = '';
+  const b = document.getElementById('searchBox'); if(b) b.value = '';
+  renderUserSearch();
+  try{ window.scrollTo(0,0); }catch(e){}
+}
+
+/* ---------- کیٹگری کارڈ: ایک قطار میں کتنے (2/3/4) ---------- */
+function catColsGet(){
+  let n = 3;
+  try{ n = parseInt(localStorage.getItem('mcsCatCols'),10); }catch(e){}
+  return [2,3,4].includes(n) ? n : 3;
+}
+function catColsPickerHtml(){
+  const n = catColsGet();
+  return `<div class="cols-pick"><span>ایک قطار میں کارڈ:</span>${[2,3,4].map(c=>`<button type="button" data-c="${c}" class="${c===n?'on':''}" onclick="setCatCols(${c})">${String(c)}</button>`).join('')}</div>`;
+}
+function setCatCols(n){
+  try{ localStorage.setItem('mcsCatCols', String(n)); }catch(e){}
+  document.documentElement.setAttribute('data-cat-cols', String(n));
+  catColsSyncPickers();
+}
+function catColsSyncPickers(){
+  const n = catColsGet();
+  document.querySelectorAll('.cols-pick button').forEach(b=>b.classList.toggle('on', Number(b.getAttribute('data-c'))===n));
+}
+function catColsInit(){
+  document.documentElement.setAttribute('data-cat-cols', String(catColsGet()));
+  document.querySelectorAll('.cat-grid').forEach(g=>{
+    if(g.id==='ubCatGrid') return;
+    const prev = g.previousElementSibling;
+    if(prev && prev.classList.contains('cols-pick')) return;
+    g.insertAdjacentHTML('beforebegin', catColsPickerHtml());
+  });
+}
+
 function userResultCard(item){
   const num = normalizePkNumber(item.whatsapp||'');
   const digits = num.replace(/[^0-9]/g,'');
   const intl = '92' + digits.replace(/^0/,'');
+  const pi = item.cat==='doctor' ? 0 : Math.max(0, CATEGORY_KEYS.indexOf(item.cat)+1) % UB_PALETTE.length;
+  const pal = UB_PALETTE[pi];
+  const loc = [item.area, item.city].filter(Boolean).join('، ');
+  const locLine = [loc, item.address].filter(Boolean).join(' — ');
+  const rid = item.id ? shortRecordId(item.kind, item) : '';
+  const adminBtn = item.id ? (isAdminSignedIn
+    ? `<button class="ub-edit" onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم">✏️</button>`
+    : `<button class="a-reqadmin" onclick="requestAdminAction('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : '';
   return `
-    <div class="doc-card">
-      <div class="doc-toprow">
-      <div class="doc-avatar"><span style="font-size:20px;">${item.emoji}</span></div>
-      <div class="doc-body">
-        <div class="doc-top"><div class="doc-name">${escapeHtml(item.nameUr||'')}</div></div>
-        ${item.nameEn ? `<div class="doc-name-en">${escapeHtml(item.nameEn)}</div>` : ``}
-        <div class="doc-sub">${item.tag?`<b>${escapeHtml(item.tag)}</b>`:''}${(item.tag&&item.sub)?' • ':''}${escapeHtml(item.sub||'')}</div>
-        <div class="doc-num">${escapeHtml(num||'—')}</div>
+    <div class="ub-row" style="--rc:${pal[0]};--rbg:${pal[1]}">
+      <div class="ub-top">
+        <div class="ub-ico">${item.emoji}</div>
+        <div class="ub-body">
+          <div class="ub-name">${escapeHtml(item.nameUr||'')}</div>
+          ${(item.nameEn||rid) ? `<div class="ub-enrow"><span class="ub-en">${escapeHtml(item.nameEn||'')}</span>${rid?`<span class="ub-id">${escapeHtml(rid)}</span>`:''}</div>` : ``}
+          ${(item.tag||item.sub) ? `<div class="ub-sub">${[item.tag,item.sub].filter(Boolean).map(escapeHtml).join(' • ')}</div>` : ``}
+          ${locLine ? `<div class="ub-loc"><span class="ub-loc-t">📍 ${escapeHtml(locLine)}</span></div>` : ``}
+        </div>
       </div>
+      <div class="ub-bot">
+        <span class="ub-num">${escapeHtml(num||'—')}</span>
+        <div class="ub-acts">
+          ${digits ? `<a class="a-call" href="tel:${digits}" aria-label="کال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
+          <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
+          <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>` : ``}
+          ${item.id ? `<button class="a-share" onclick="shareProfileCardById('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>` : ``}
+          ${adminBtn}
+        </div>
       </div>
-      <div class="doc-side">
-        ${digits ? `<div class="doc-acts">
-        <a class="a-call" href="tel:${digits}" aria-label="کال"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
-        <a class="a-sms" href="sms:${digits}" aria-label="میسج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>
-        <a class="a-wa" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></a>
-        </div>` : ``}
-        ${item.id ? `<button class="a-share" onclick="shareProfileCardById('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>` : ``}
-        ${item.id ? (isAdminSignedIn ? `<button onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم" style="width:32px;height:32px;border-radius:50%;border:none;background:#eef2f6;">✏️</button>` : `<button class="a-reqadmin" onclick="requestAdminAction('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ایڈمن سے رابطہ">📩</button>`) : ``}
-      </div>
-      ${item.intro ? `<div class="doc-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
-      ${(item.city||item.area) ? `<div class="doc-address">📍 ${[item.area,item.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : ``}
-      ${item.address ? `<div class="doc-address">${escapeHtml(item.address)}</div>` : ``}
-      ${item.id ? `<div class="doc-recid">ID: ${escapeHtml(shortRecordId(item.kind,item))}</div>` : ``}
+      ${item.intro ? `<div class="ub-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
       ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
     </div>`;
 }
@@ -2196,7 +2587,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS29SEPTU0321AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0443PM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -2348,7 +2739,7 @@ function buildAppPromoCanvas(){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS29SEPTU0321AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS28SEPMO0443PM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -2524,7 +2915,7 @@ function renderCustomCategoryTiles(){
     if(!wrap) return;
     wrap.innerHTML = extra.filter(k=>(CATEGORY_META[k].group||'professional')===grp).map(k=>{
       const c = CATEGORY_META[k];
-      return `<div class="cat-item" onclick="openServiceCategory('${escapeAttr(k)}')"><span class="cat-count" id="catCount_${escapeAttr(k)}">۰</span><div class="emoji">${c.emoji||'🏷️'}</div><span>${escapeHtml(c.ur)}</span></div>`;
+      return `<div class="cat-item" onclick="openServiceCategory('${escapeAttr(k)}')"><span class="cat-count" id="catCount_${escapeAttr(k)}">0</span><div class="emoji">${c.emoji||'🏷️'}</div><span>${escapeHtml(c.ur)}</span></div>`;
     }).join('');
   });
   renderAdminCategoryList();
@@ -2537,6 +2928,17 @@ function updateCategoryCounts(){
     const el = document.getElementById('catCount_'+k);
     if(el) el.textContent = String(store.services.filter(s=>s.category===k).length);
   });
+  /* ہوم اسکرین کے بڑے کارڈوں کی کل تعداد: پروفیشنلز = ڈاکٹرز + پروفیشنل گروپ کی سروسز،
+     بزنس = کاروبار گروپ کی سروسز، یوزر سرچ = سب کا میزان */
+  let pro = store.doctors.length, biz = 0;
+  store.services.forEach(sv=>{
+    const g = (CATEGORY_META[sv.category] && CATEGORY_META[sv.category].group) || 'professional';
+    if(g==='business') biz++; else pro++;
+  });
+  const setH = (id,n)=>{ const e=document.getElementById(id); if(e) e.textContent = String(n); };
+  setH('homeCount_professional', pro);
+  setH('homeCount_business', biz);
+  setH('homeCount_total', pro+biz);
 }
 /* Admin list of self-added categories, each with a delete button. Only
    admin-added (custom) categories can be deleted — the built-in ones are
@@ -2801,11 +3203,41 @@ function syncServiceUpdateToFirebase(local){
 }
 
 /* ---------- Dev chat ---------- */
+/* رابطہ کا تیار اردو پیغام — واٹس ایپ اور ایس ایم ایس دونوں میں خود بخود لکھا ہوا کھلتا ہے۔
+   قوسین والی جگہوں پر بھیجنے والا اپنا نام، شہر اور بات لکھے گا۔ */
+const DEV_CONTACT_MSG =
+  'محترم ڈویلپر السلام علیکم ورحمۃ اللہ وبرکاتہ\n\n' +
+  'میں ( یہاں اپنا نام لکھیں )\n' +
+  'شہر ( یہاں اپنے شہر کا نام لکھیں )\n' +
+  'سے ہوں\n\n' +
+  'اور آپ کی ایپ My City shines\n' +
+  'کے بارے میں یہ کہنا چاہتا ہوں کہ ( یہاں اپنی بات لکھیں )';
+function devSmsHref(num){
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent||'');
+  return 'sms:' + num + (isIOS ? '&' : '?') + 'body=' + encodeURIComponent(DEV_CONTACT_MSG);
+}
+function devWaHref(raw){
+  return 'https://wa.me/92' + raw.replace(/^0/,'') + '?text=' + encodeURIComponent(DEV_CONTACT_MSG);
+}
+function devBoxGo(kind){
+  const c = store.contact || DEFAULT_CONTACT;
+  const raw = (c.whatsapp||'').replace(/[^0-9]/g,'');
+  if(!raw){ showToast('رابطہ نمبر محفوظ نہیں'); return; }
+  if(kind==='call') location.href = 'tel:' + raw;
+  else if(kind==='sms'){
+    showToast('پیغام میں خالی جگہوں پر اپنا نام اور شہر لکھیں');
+    location.href = devSmsHref(raw);
+  } else {
+    showToast('پیغام میں خالی جگہوں پر اپنا نام اور شہر لکھیں');
+    window.open(devWaHref(raw), '_blank');
+  }
+}
 function openDevChat(){
   const c = store.contact || DEFAULT_CONTACT;
   let html = '';
-  if(c.whatsapp) html += `<a class="wa-link" href="https://wa.me/92${c.whatsapp.replace(/[^0-9]/g,'').replace(/^0/,'')}" target="_blank">واٹس ایپ</a>`;
-  if(c.whatsapp) html += `<a class="sms-link" href="sms:${c.whatsapp}">ایس ایم ایس</a>`;
+  const raw = (c.whatsapp||'').replace(/[^0-9]/g,'');
+  if(c.whatsapp) html += `<a class="wa-link" href="${devWaHref(raw)}" target="_blank">واٹس ایپ</a>`;
+  if(c.whatsapp) html += `<a class="sms-link" href="${devSmsHref(raw)}">ایس ایم ایس</a>`;
   if(c.gmail) html += `<a class="mail-link" href="mailto:${c.gmail}">ای میل</a>`;
   document.getElementById('devChatLinks').innerHTML = html || '<span style="font-size:13px;color:var(--muted);">کوئی رابطہ محفوظ نہیں</span>';
   openModal('devChatModal');
@@ -3185,6 +3617,14 @@ function updateVersionBadge(){
   const mm = urduDigits(String(now.getMinutes()).padStart(2,'0'));
   const online = navigator.onLine;
   document.getElementById('homeFooter').innerHTML = `<span class="ver">pbtcodelabs</span>`;
+  const st = document.getElementById('heroStatus');
+  if(st){
+    st.classList.toggle('off', !online);
+    const nt = document.getElementById('hsNet'); if(nt) nt.textContent = online ? 'آن لائن' : 'آف لائن';
+  }
+}
+function showNetStatus(){
+  showToast(navigator.onLine ? 'انٹرنیٹ چل رہا ہے — آن لائن' : 'انٹرنیٹ نہیں ہے — آف لائن');
 }
 window.addEventListener('online', updateVersionBadge);
 window.addEventListener('offline', updateVersionBadge);
@@ -3199,15 +3639,17 @@ const DEFAULT_TICKER_MESSAGES = [
    own optional color overrides: {text, textColor, bgColor, borderColor}.
    Any override left null/undefined simply inherits the ticker's global look. */
 function tickerMsgNorm(m){
-  if(typeof m === 'string') return {text:m, textColor:null, bgColor:null, borderColor:null, enabled:true};
-  return {text:m.text||'', textColor:m.textColor||null, bgColor:m.bgColor||null, borderColor:m.borderColor||null, enabled:(m.enabled!==false)};
+  if(typeof m === 'string') return {text:m, textColor:null, bgColor:null, borderColor:null, enabled:true, repeat:1, gapAfter:null};
+  const rp = Math.max(1, Math.min(99, parseInt(m.repeat)||1));
+  const ga = (m.gapAfter===null || m.gapAfter===undefined || m.gapAfter==='' || isNaN(Number(m.gapAfter))) ? null : Math.max(0, Number(m.gapAfter));
+  return {text:m.text||'', textColor:m.textColor||null, bgColor:m.bgColor||null, borderColor:m.borderColor||null, enabled:(m.enabled!==false), repeat:rp, gapAfter:ga};
 }
 function tickerMessagesAll(){
   const raw = (store.tickerMessages && store.tickerMessages.length) ? store.tickerMessages : DEFAULT_TICKER_MESSAGES;
   return raw.map(tickerMsgNorm);
 }
 function tickerMessages(){
-  return tickerMessagesAll().filter(m=>m.enabled!==false);
+  return tickerMessagesAll().filter(m=>m.enabled!==false && (m.text||'').trim());
 }
 function tickerMsgSpanHtml(m){
   const custom = !!(m.bgColor || m.borderColor);
@@ -3218,20 +3660,105 @@ function tickerMsgSpanHtml(m){
   const cls = custom ? 'tkr-pill-custom' : '';
   return `<span class="${cls}"${styles.length?` style="${styles.join(';')}"`:''}>${escapeHtml(m.text)}</span>`;
 }
+/* ---------- پٹی کا انجن ----------
+   پیغامات بائیں سے دائیں چلتے ہیں۔ ہر پیغام الگ الگ ترتیب سے نکلتا ہے،
+   اس لیے ایک پیغام کے بعد پٹی خالی نہیں رہتی۔ خالی وقفہ صرف تب آتا ہے
+   جب سیٹنگ میں «سب پیغامات کے بعد خالی وقفہ» رکھا جائے۔ */
+const tkEng = {raf:0, items:[], seq:[], ptr:0, msgs:[], set:null, t:0, pending:null, pausing:false, pauseStart:0};
+function tickerStop(){
+  if(tkEng.raf) cancelAnimationFrame(tkEng.raf);
+  tkEng.raf = 0; tkEng.items = []; tkEng.pending = null;
+}
+function tickerStart(msgs, s){
+  tickerStop();
+  const track = document.getElementById('tickerTrack');
+  if(!track) return;
+  track.innerHTML = '';
+  tkEng.msgs = msgs; tkEng.set = s; tkEng.ptr = 0; tkEng.seq = [];
+  tkEng.t = 0; tkEng.pausing = false; tkEng.pauseStart = 0;
+  msgs.forEach((m,i)=>{
+    const n = Math.max(1, Math.min(99, parseInt(m.repeat)||1));
+    for(let k=0;k<n;k++) tkEng.seq.push(i);
+  });
+  if(!tkEng.seq.length) return;
+  tkEng.raf = requestAnimationFrame(tickerFrame);
+}
+function tickerPrepare(track){
+  const m = tkEng.msgs[tkEng.seq[tkEng.ptr]];
+  const el = document.createElement('div');
+  el.className = 'tkr-item';
+  el.innerHTML = tickerMsgSpanHtml(m);
+  el.style.transform = 'translate3d(-99999px,0,0)';
+  track.appendChild(el);
+  tkEng.pending = {el:el, w:el.offsetWidth, m:m, x:0, gapAfter:0};
+}
+function tickerFrame(ts){
+  const E = tkEng;
+  const track = document.getElementById('tickerTrack');
+  if(!track){ E.raf = 0; return; }
+  if(!E.t) E.t = ts;
+  const dt = Math.min(Math.max((ts - E.t)/1000, 0), 0.1);
+  E.t = ts;
+  const s = E.set || DEFAULT_TICKER_SETTINGS;
+  const speed = Math.max(10, Number(s.pace)||60);
+  const defGap = (s.gap!=null ? Number(s.gap) : 48);
+  const pauseSec = Math.max(0, Number(s.cyclePause)||0);
+  const W = track.clientWidth || window.innerWidth;
+
+  // حرکت (بائیں سے دائیں)
+  for(const it of E.items){
+    it.x += speed*dt;
+    it.el.style.transform = 'translate3d('+it.x+'px,0,0)';
+  }
+  // جو پیغام دائیں کنارے سے نکل گیا اسے ہٹائیں
+  E.items = E.items.filter(it=>{
+    if(it.x >= W){ it.el.remove(); return false; }
+    return true;
+  });
+
+  // خالی وقفہ
+  if(E.pausing){
+    if(!E.items.length){
+      if(!E.pauseStart) E.pauseStart = ts;
+      if((ts - E.pauseStart)/1000 >= E.pauseSec){ E.pausing = false; E.pauseStart = 0; }
+    }
+  }
+  // اگلا پیغام شروع کریں
+  if(!E.pausing){
+    for(let g=0; g<4; g++){
+      if(!E.pending) tickerPrepare(track);
+      const p = E.pending;
+      const last = E.items[E.items.length-1];
+      const right = last ? (last.x - last.gapAfter) : 0;
+      if(last && right < -20) break;
+      p.x = right - p.w;
+      p.gapAfter = (p.m.gapAfter!=null) ? Number(p.m.gapAfter) : defGap;
+      p.el.style.transform = 'translate3d('+p.x+'px,0,0)';
+      E.items.push(p);
+      E.pending = null;
+      E.ptr++;
+      if(E.ptr >= E.seq.length){
+        E.ptr = 0;
+        if(pauseSec > 0){ E.pausing = true; E.pauseSec = pauseSec; E.pauseStart = 0; break; }
+      }
+    }
+  }
+  E.raf = requestAnimationFrame(tickerFrame);
+}
 function renderTicker(){
   const el = document.getElementById('tickerTrack');
   if(!el) return;
-  const line = tickerMessages().map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
-  el.innerHTML = line + line; // duplicated once for seamless 50% loop
   applyTickerSettings();
+  tickerStart(tickerMessages(), tickerSettings());
 }
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>{ try{ renderTicker(); }catch(e){} }); }
 
 /* ---------- Ticker appearance (font/size/colors/speed) ---------- */
 const DEFAULT_TICKER_SETTINGS = {
   fontSize: 14, fontFamily: 'Jameel Noori Nastaleeq Regular',
   textColor: '#f4d58d', midBg1: '#0d3b66', midBg2: '#123a5e',
-  borderColor: '#d4a017', borderTemplate: 'thin', borderWidth: 3, speed: 30,
-  enabled: true, gap: 48
+  borderColor: '#d4a017', borderTemplate: 'thin', borderWidth: 3, pace: 60,
+  enabled: true, gap: 48, cyclePause: 0
 };
 const TICKER_FONT_OPTIONS = ['Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq Kasheeda','Segoe UI'];
 /* Horizontal top/bottom border templates for the ticker strip (like the
@@ -3293,8 +3820,7 @@ function applyTickerSettings(){
   root.setProperty('--ticker-border-color', s.borderColor);
   root.setProperty('--ticker-gap', (s.gap!=null?s.gap:48)+'px');
   tickerApplyBorder(document.getElementById('tickerMiddle'), s.borderTemplate, s.borderColor, s.borderWidth);
-  const track = document.getElementById('tickerTrack');
-  if(track) track.style.animationDuration = s.speed + 's';
+  tkEng.set = s;
   const strip = document.getElementById('mcsTicker');
   if(strip){
     const off = (s.enabled===false);
@@ -3350,13 +3876,8 @@ function tickerApplyLive(pending){
     strip.classList.toggle('tkr-off', off);
     root.setProperty('--ticker-h', off ? '0px' : '34px');
   }
-  const track = document.getElementById('tickerTrack');
-  if(track){
-    track.style.animationDuration = s.speed+'s';
-    const visible = pending.messages.filter(m=>m.enabled!==false);
-    const line = visible.map(tickerMsgSpanHtml).join('<span class="tkr-dot">•</span>');
-    track.innerHTML = line + line;
-  }
+  const visible = pending.messages.map(tickerMsgNorm).filter(m=>m.enabled!==false && (m.text||'').trim());
+  tickerStart(visible, s);
 }
 function renderTkBorderTmplRow(){
   const wrap = document.getElementById('tkBorderTmplRow');
@@ -3385,8 +3906,10 @@ function openTickerAdmin(){
   document.getElementById('tkFontFamily').value = s.fontFamily;
   document.getElementById('tkFontSize').value = s.fontSize;
   document.getElementById('tkFontSizeVal').textContent = s.fontSize+'px';
-  document.getElementById('tkSpeed').value = s.speed;
-  document.getElementById('tkSpeedVal').textContent = s.speed;
+  document.getElementById('tkSpeed').value = s.pace;
+  document.getElementById('tkSpeedVal').textContent = s.pace;
+  document.getElementById('tkPause').value = s.cyclePause||0;
+  document.getElementById('tkPauseVal').textContent = (s.cyclePause||0);
   document.getElementById('tkTextColor').value = s.textColor;
   document.getElementById('tkBorderColor').value = s.borderColor;
   document.getElementById('tkBorderWidth').value = s.borderWidth;
@@ -3410,7 +3933,8 @@ function closeTickerAdmin(){
 function updateTickerPreview(patch){
   tickerPending.settings = {...tickerPending.settings, ...patch};
   if('fontSize' in patch) document.getElementById('tkFontSizeVal').textContent = patch.fontSize+'px';
-  if('speed' in patch) document.getElementById('tkSpeedVal').textContent = patch.speed;
+  if('pace' in patch) document.getElementById('tkSpeedVal').textContent = patch.pace;
+  if('gap' in patch) document.getElementById('tkGapVal').textContent = patch.gap+'px';
   if('borderWidth' in patch) document.getElementById('tkBorderWidthVal').textContent = patch.borderWidth+'px';
   tickerApplyLive(tickerPending);
 }
@@ -3433,15 +3957,33 @@ function renderTickerAdminList(){
   if(!wrap) return;
   const msgs = tickerPending.messages;
   wrap.innerHTML = msgs.map((m,idx)=>`
-    <div class="tk-msg-row" style="${m.enabled===false?'opacity:.45;':''}">
-      <input type="checkbox" title="چلائیں/بند کریں" style="width:18px;height:18px;flex:0 0 auto;" ${m.enabled!==false?'checked':''} onchange="updateTickerMsgPending(${idx},'enabled',this.checked)">
-      <input type="text" value="${escapeAttr(m.text)}" oninput="updateTickerMsgPending(${idx},'text',this.value)">
-      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="لکھائی" value="${m.textColor||tickerPending.settings.textColor}" oninput="updateTickerMsgPending(${idx},'textColor',this.value)">
-      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بیک گراؤنڈ" value="${m.bgColor||tickerPending.settings.midBg1}" oninput="updateTickerMsgPending(${idx},'bgColor',this.value)">
-      <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بارڈر" value="${m.borderColor||tickerPending.settings.borderColor}" oninput="updateTickerMsgPending(${idx},'borderColor',this.value)">
-      <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="resetTickerMsgColor(${idx})">↺</button>
-      <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="deleteTickerMsgPending(${idx})">🗑️</button>
+    <div class="tk-msg-card" style="${m.enabled===false?'opacity:.5;':''}">
+      <div class="tk-r1">
+        <input type="checkbox" title="چلائیں/بند کریں" style="width:18px;height:18px;flex:0 0 auto;" ${m.enabled!==false?'checked':''} onchange="updateTickerMsgPending(${idx},'enabled',this.checked)">
+        <input type="number" class="tk-num" title="نمبر (کون سے نمبر پر چلے)" min="1" max="${msgs.length}" value="${idx+1}" onchange="moveTickerMsgPending(${idx},this.value)">
+        <input type="text" value="${escapeAttr(m.text)}" oninput="updateTickerMsgPending(${idx},'text',this.value)">
+        <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="deleteTickerMsgPending(${idx})">🗑️</button>
+      </div>
+      <div class="tk-r2">
+        <span>تکرار</span>
+        <input type="number" min="1" max="99" value="${Math.max(1,parseInt(m.repeat)||1)}" onchange="updateTickerMsgPending(${idx},'repeat',Math.max(1,Math.min(99,parseInt(this.value)||1)))">
+        <span>فاصلہ</span>
+        <input type="number" min="0" max="600" placeholder="عام" value="${m.gapAfter==null?'':m.gapAfter}" onchange="updateTickerMsgPending(${idx},'gapAfter',this.value===''?null:Math.max(0,Number(this.value)||0))">
+        <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="لکھائی" value="${m.textColor||tickerPending.settings.textColor}" oninput="updateTickerMsgPending(${idx},'textColor',this.value)">
+        <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بیک گراؤنڈ" value="${m.bgColor||tickerPending.settings.midBg1}" oninput="updateTickerMsgPending(${idx},'bgColor',this.value)">
+        <input type="color" class="tk-swatch" style="width:22px;height:22px;" title="بارڈر" value="${m.borderColor||tickerPending.settings.borderColor}" oninput="updateTickerMsgPending(${idx},'borderColor',this.value)">
+        <button type="button" class="btn secondary" style="padding:3px 6px;font-size:10px;" onclick="resetTickerMsgColor(${idx})">↺</button>
+      </div>
     </div>`).join('');
+}
+function moveTickerMsgPending(idx, pos){
+  const n = tickerPending.messages.length;
+  let to = Math.max(1, Math.min(n, parseInt(pos)||1)) - 1;
+  if(to === idx){ renderTickerAdminList(); return; }
+  const [m] = tickerPending.messages.splice(idx,1);
+  tickerPending.messages.splice(to,0,m);
+  renderTickerAdminList();
+  tickerApplyLive(tickerPending);
 }
 function updateTickerMsgPending(idx, field, val){
   const m = tickerPending.messages[idx];
@@ -3466,7 +4008,7 @@ function addTickerMsgPending(){
   const input = document.getElementById('tickerNewMsg');
   const val = (input.value||'').trim();
   if(!val) return;
-  tickerPending.messages.push({text:val, textColor:null, bgColor:null, borderColor:null});
+  tickerPending.messages.push({text:val, textColor:null, bgColor:null, borderColor:null, enabled:true, repeat:1, gapAfter:null});
   input.value = '';
   renderTickerAdminList();
   tickerApplyLive(tickerPending);
@@ -3483,10 +4025,10 @@ function saveTickerMessages(msgs){
   showToast('پیغام محفوظ ہو گیا ✓');
 }
 
-/* ---------- Glitter version in header ---------- */
-function renderGlitterVersion(){
-  const el = document.getElementById('verGlitterText');
-  if(el) el.innerHTML = `<span class="ur">${escapeHtml(APP_VERSION)}</span>`;
+/* ---------- Version label in home header (سادہ متن) ---------- */
+function renderVersionLabel(){
+  const el = document.getElementById('hsVer');
+  if(el) el.textContent = APP_VERSION;
 }
 
 /* =========================================================
@@ -3776,9 +4318,11 @@ function syncDoctorUpdateToFirebase(localDoctor){
 }
 
 /* ---------- Init ---------- */
-renderGlitterVersion();
+renderVersionLabel();
 updateVersionBadge();
+ubInit();
 applyCardTextPrefs();
+catColsInit();
 renderTicker();
 refreshAllDropdowns();
 renderLastBackupHint();
