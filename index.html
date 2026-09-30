@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS01OCTTH0441AM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS01OCTTH0441AM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS01OCTTH0452AM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS01OCTTH0452AM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -136,10 +136,10 @@
   .mcs-ticker-track span.tkr-pill-custom{padding:2px 12px;border-radius:999px;border:1.5px solid transparent;}
   #app{padding-top:var(--ticker-h);}
 
-/* ===== MCS01OCTTH0441AM: پٹی صرف ہوم اسکرین پر — باقی اسکرینوں/فارموں پر چھپی رہے گی (display:none نہیں، تاکہ چوڑائی کی پیمائش نہ بگڑے) ===== */
+/* ===== MCS01OCTTH0452AM: پٹی صرف ہوم اسکرین پر — باقی اسکرینوں/فارموں پر چھپی رہے گی (display:none نہیں، تاکہ چوڑائی کی پیمائش نہ بگڑے) ===== */
 body.tkr-hidden .mcs-ticker{transform:translateY(-120%);visibility:hidden;pointer-events:none;box-shadow:none;}
 body.tkr-hidden #app{padding-top:0;}
-/* ===== MCS01OCTTH0441AM: فارم مزید کمپیکٹ + محفوظ کریں بٹن نیچے جما رہے (سکرول کے ساتھ نہ جائے) ===== */
+/* ===== MCS01OCTTH0452AM: فارم مزید کمپیکٹ + محفوظ کریں بٹن نیچے جما رہے (سکرول کے ساتھ نہ جائے) ===== */
 #doctorFormModal .modal-box, #serviceFormModal .modal-box{padding:8px 12px 0;}
 #doctorFormModal .field, #serviceFormModal .field{margin-bottom:5px;}
 #doctorFormModal .field label, #serviceFormModal .field label{margin-bottom:2px;}
@@ -636,13 +636,14 @@ body.tkr-hidden #app{padding-top:0;}
 
   /* ===== Backup / Restore ===== */
   .backup-strip{
-    position:fixed;top:26px;left:0;right:0;z-index:9998;
+    position:fixed;top:var(--ticker-h);left:0;right:0;z-index:9998;
     background:#fff;padding:10px 16px 12px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.12);
-    transform:translateY(-100%);
-    transition:transform .3s ease;
+    box-shadow:none;
+    transform:translateY(-200%);visibility:hidden;
+    transition:transform .3s ease, visibility 0s linear .3s;
   }
-  .backup-strip.active{transform:translateY(0);}
+  .backup-strip.active{transform:translateY(0);visibility:visible;box-shadow:0 3px 10px rgba(0,0,0,0.12);transition:transform .3s ease, visibility 0s;}
+  body.tkr-hidden .backup-strip{top:0;}
   .backup-strip-label{font-size:12px;font-weight:600;color:var(--primary-dark);margin-bottom:6px;text-align:center;}
   .backup-progress-track{
     height:7px;border-radius:999px;background:#e5e7eb;overflow:hidden;
@@ -827,7 +828,7 @@ body.tkr-hidden #app{padding-top:0;}
     font-family:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;}
   .add-strip .as-row button:active{background:#d6f0ea;}
 
-/* ===== MCS01OCTTH0441AM: بٹن انگلی کے لیے مناسب — 32px اور درمیان 8px فاصلہ، ایک ہی لائن ===== */
+/* ===== MCS01OCTTH0452AM: بٹن انگلی کے لیے مناسب — 32px اور درمیان 8px فاصلہ، ایک ہی لائن ===== */
 .doc-side{gap:8px;margin:4px 0 3px;flex-wrap:nowrap;}
 .doc-acts,.doc-mini,.doc-side .doc-mini,.ub-acts{gap:8px;}
 .doc-acts a,.a-share,.a-reqadmin,.doc-mini button,.ub-acts a,.ub-acts button{width:32px;height:32px;min-width:32px;border-radius:50%;
@@ -884,7 +885,7 @@ body.tkr-hidden #app{padding-top:0;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS01OCTTH0441AM" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS01OCTTH0452AM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1620,7 +1621,7 @@ body.tkr-hidden #app{padding-top:0;}
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS01OCTTH0441AM";
+const APP_VERSION = "MCS01OCTTH0452AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1809,7 +1810,7 @@ function goScreen(name, fromHistory){
 }
 
 
-/* ---------- MCS01OCTTH0441AM: پٹی کی نمائش — صرف ہوم اسکرین پر ----------
+/* ---------- MCS01OCTTH0452AM: پٹی کی نمائش — صرف ہوم اسکرین پر ----------
    کوئی فارم/پاپ اپ کھلا ہو یا ہوم کے علاوہ کوئی اسکرین ہو تو پٹی چھپ جاتی ہے۔
    صرف پٹی ترتیب والا پینل اس سے مستثنیٰ ہے (وہاں لائیو پریویو کے لیے پٹی نظر آنی چاہیے)۔ */
 function syncTickerVisibility(){
@@ -3032,7 +3033,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0441AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0452AM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3201,7 +3202,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0441AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0452AM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -4972,7 +4973,7 @@ function fitCardText(){
     if(el.clientWidth < 5) return;
     let fs = parseFloat(getComputedStyle(el).fontSize) || 12;
     let n = 0;
-    /* MCS01OCTTH0441AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
+    /* MCS01OCTTH0452AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
     while(el.scrollWidth > el.clientWidth + 1 && fs > 9 && n < 40){
       fs -= 0.5; el.style.fontSize = fs + 'px'; n++;
     }
