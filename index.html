@@ -214,6 +214,9 @@
   .hero-status .hs-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.28);flex:none;}
   .hero-status.off .hs-dot{background:#ef4444;box-shadow:0 0 0 2px rgba(239,68,68,.3);}
   .hero-status.off .hs-net{color:#ffd4d4;}
+  .hero-status .hs-admin{display:inline-block;margin-top:3px;padding:0 8px;border-radius:999px;font-size:10.5px;font-weight:700;line-height:1.7;white-space:nowrap;
+    background:rgba(255,255,255,.16);color:#e5e7eb;border:1px solid rgba(255,255,255,.25);}
+  .hero-status .hs-admin.in{background:#16a34a;color:#fff;border-color:#86efac;box-shadow:0 0 0 2px rgba(34,197,94,.3);}
 
   /* ===== یوزر سرچ: کمپیکٹ سرچ بار + فلٹر چپس + ہلکی قطاریں ===== */
   .ub-bar{margin-bottom:8px;}
@@ -783,6 +786,7 @@
         <button class="hero-status" id="heroStatus" onclick="showNetStatus()" aria-label="ورژن اور انٹرنیٹ کی حالت">
           <span class="hs-ver" id="hsVer"></span>
           <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
+          <span class="hs-admin" id="hsAdmin" onclick="event.stopPropagation();openAdminFromBadge()">🔒 ایڈمن لاگ آؤٹ</span>
         </button>
         <div class="hero-actions">
           <button class="hero-btn hero-btn-share" onclick="openPromoText()" aria-label="ایپ شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg></button>
@@ -1519,7 +1523,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS309WE#004";
+const APP_VERSION = "MCS309WE#005";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4370,6 +4374,20 @@ function renderVersionLabel(){
    never breaks the local experience.
    ========================================================= */
 let isAdminSignedIn = false;
+function updateAdminBadge(){
+  const el = document.getElementById('hsAdmin');
+  if(!el) return;
+  el.classList.toggle('in', !!isAdminSignedIn);
+  el.textContent = isAdminSignedIn ? '✅ ایڈمن لاگ ان' : '🔒 ایڈمن لاگ آؤٹ';
+}
+function openAdminFromBadge(){
+  openControlPanel();
+  setTimeout(()=>{
+    const t = document.getElementById(isAdminSignedIn ? 'adminPanelBox' : 'adminLoginBox');
+    if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 250);
+}
+
 let pendingApprovals = [];
 
 function startFirebaseSyncWhenReady(){
@@ -4461,6 +4479,7 @@ function initFirebaseSync(){
 
   FB.onAuthStateChanged(FB.auth, (user)=>{
     isAdminSignedIn = !!user;
+    updateAdminBadge();
     document.getElementById('adminLoginBox').style.display = isAdminSignedIn ? 'none' : 'block';
     document.getElementById('adminPanelBox').style.display = isAdminSignedIn ? 'block' : 'none';
     document.getElementById('adminAddCategoryBox').style.display = isAdminSignedIn ? 'block' : 'none';
