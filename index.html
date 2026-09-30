@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS01OCTTH0452AM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS01OCTTH0452AM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS01OCTTH0517AM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS01OCTTH0517AM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -136,21 +136,34 @@
   .mcs-ticker-track span.tkr-pill-custom{padding:2px 12px;border-radius:999px;border:1.5px solid transparent;}
   #app{padding-top:var(--ticker-h);}
 
-/* ===== MCS01OCTTH0452AM: پٹی صرف ہوم اسکرین پر — باقی اسکرینوں/فارموں پر چھپی رہے گی (display:none نہیں، تاکہ چوڑائی کی پیمائش نہ بگڑے) ===== */
+/* ===== MCS01OCTTH0517AM: پٹی صرف ہوم اسکرین پر — باقی اسکرینوں/فارموں پر چھپی رہے گی (display:none نہیں، تاکہ چوڑائی کی پیمائش نہ بگڑے) ===== */
 body.tkr-hidden .mcs-ticker{transform:translateY(-120%);visibility:hidden;pointer-events:none;box-shadow:none;}
 body.tkr-hidden #app{padding-top:0;}
-/* ===== MCS01OCTTH0452AM: فارم مزید کمپیکٹ + محفوظ کریں بٹن نیچے جما رہے (سکرول کے ساتھ نہ جائے) ===== */
-#doctorFormModal .modal-box, #serviceFormModal .modal-box{padding:8px 12px 0;}
-#doctorFormModal .field, #serviceFormModal .field{margin-bottom:5px;}
-#doctorFormModal .field label, #serviceFormModal .field label{margin-bottom:2px;}
-#doctorFormModal .field input, #serviceFormModal .field input{padding:6px 10px;}
-#doctorFormModal .csel-btn, #serviceFormModal .csel-btn{padding:5px 12px;}
-#doctorFormModal .add-circle, #serviceFormModal .add-circle{width:34px;height:34px;min-width:34px;}
-#doctorFormModal .modal-box h3, #serviceFormModal .modal-box h3{margin:0 0 4px;}
-.form-save-bar{position:sticky;bottom:0;z-index:70;background:#fff;margin:4px -12px 0;padding:6px 12px calc(8px + env(safe-area-inset-bottom,0px));
-  border-top:1px solid #e5e7eb;box-shadow:0 -4px 10px rgba(0,0,0,.06);}
-.form-save-bar .form-note{font-size:10.5px;color:#6b7280;line-height:1.5;margin:0 0 5px;}
-.form-save-bar .btn{padding:10px;}
+/* ===== MCS01OCTTH0517AM: فارم ایک ہی صفحے میں — ہیڈر اور محفوظ بٹن جمے، اوپر نیچے آدھا انچ جگہ، لیبل اور خانہ ایک ہی لائن میں ===== */
+#doctorFormModal, #serviceFormModal{align-items:center;padding:46px 10px;}
+#doctorFormModal .modal-box, #serviceFormModal .modal-box{
+  display:flex;flex-direction:column;padding:0;overflow:hidden;max-height:100%;border-radius:18px;animation:none;}
+.fm-head{flex:0 0 auto;display:flex;align-items:center;gap:6px;direction:ltr;padding:8px 12px 6px;border-bottom:1px solid #eef0f2;}
+.fm-head .modal-close{float:none;flex:0 0 auto;width:30px;height:30px;}
+.fm-head .form-size-ctrl{float:none;margin:0;flex:0 0 auto;}
+.fm-head h3{flex:1;margin:0;direction:rtl;text-align:right;font-size:16px;line-height:1.5;}
+.fm-body{flex:1 1 auto;overflow-y:auto;padding:6px 12px 2px;-webkit-overflow-scrolling:touch;}
+.fm-body .field{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.fm-body .field>label{flex:0 0 84px;margin:0;line-height:1.3;}
+.fm-body .field>.csel-wrap, .fm-body .field>.field-with-add, .fm-body .field>input, .fm-body .field>textarea, .fm-body .field>select{flex:1 1 0;min-width:0;}
+.fm-body .field input{padding:6px 10px;}
+.fm-body .field textarea{padding:6px 10px !important;min-height:0;height:36px;}
+.fm-body .csel-btn{padding:4px 12px;}
+.fm-body .add-circle{width:32px;height:32px;min-width:32px;font-size:18px;}
+.fm-body .frow2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:5px;}
+.fm-body .frow2 .field{display:block;margin:0;}
+.fm-body .frow2 .field>label{display:block;margin-bottom:1px;}
+.fm-body .frow2 .field input{width:100%;}
+.fm-body .cp-section-title{margin:2px 0 3px !important;font-size:12px;}
+.form-save-bar{flex:0 0 auto;background:#fff;padding:5px 12px calc(8px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid #e5e7eb;box-shadow:0 -3px 8px rgba(0,0,0,.05);}
+.form-save-bar .form-note{font-size:10.5px;color:#6b7280;line-height:1.4;margin:0 0 4px;}
+.form-save-bar .btn{padding:9px;}
   .hero{
     position:relative;overflow:hidden;
     background:linear-gradient(160deg,#0d3b66 0%,#0f766e 70%,#11897f 100%);
@@ -828,7 +841,7 @@ body.tkr-hidden #app{padding-top:0;}
     font-family:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;}
   .add-strip .as-row button:active{background:#d6f0ea;}
 
-/* ===== MCS01OCTTH0452AM: بٹن انگلی کے لیے مناسب — 32px اور درمیان 8px فاصلہ، ایک ہی لائن ===== */
+/* ===== MCS01OCTTH0517AM: بٹن انگلی کے لیے مناسب — 32px اور درمیان 8px فاصلہ، ایک ہی لائن ===== */
 .doc-side{gap:8px;margin:4px 0 3px;flex-wrap:nowrap;}
 .doc-acts,.doc-mini,.doc-side .doc-mini,.ub-acts{gap:8px;}
 .doc-acts a,.a-share,.a-reqadmin,.doc-mini button,.ub-acts a,.ub-acts button{width:32px;height:32px;min-width:32px;border-radius:50%;
@@ -885,7 +898,7 @@ body.tkr-hidden #app{padding-top:0;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS01OCTTH0452AM" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS01OCTTH0517AM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1037,23 +1050,25 @@ body.tkr-hidden #app{padding-top:0;}
 <!-- ===================== DOCTOR FORM MODAL ===================== -->
 <div class="modal-overlay" id="doctorFormModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('doctorFormModal')">×</button>
+    <div class="fm-head">    <button class="modal-close" onclick="closeModal('doctorFormModal')">×</button>
     <div class="form-size-ctrl" aria-label="متن کا سائز">
       <button type="button" onclick="adjustFormScale(-1)" aria-label="چھوٹا کریں">A-</button>
       <span class="fsc-val">100%</span>
       <button type="button" onclick="adjustFormScale(1)" aria-label="بڑا کریں">A+</button>
     </div>
     <h3 id="doctorFormTitle">نیا ڈاکٹر شامل کریں</h3>
-    <div style="clear:both;"></div>
+    </div>
+    <div class="fm-body">
 
+    <div class="frow2">
     <div class="field">
-      <label>ڈاکٹر کا نام (اردو)</label>
+      <label>نام (اردو)</label>
       <input type="text" id="docNameUr" placeholder="مثلاً ڈاکٹر محمد علی" oninput="docNameSuggestUpdate()">
     </div>
-
     <div class="field">
-      <label>Doctor Name (English)</label>
+      <label>Name (English)</label>
       <input type="text" id="docNameEn" placeholder="e.g. Dr. Muhammad Ali" dir="ltr" style="text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;" oninput="docNameSuggestUpdate()">
+    </div>
     </div>
     <div class="name-suggest" id="docNameSuggest"></div>
 
@@ -1088,13 +1103,13 @@ body.tkr-hidden #app{padding-top:0;}
     </div>
 
     <div class="field">
-      <label>پتہ (Address) — گلی، دکان نمبر، لینڈ مارک وغیرہ</label>
+      <label>پتہ (Address)</label>
       <input type="text" id="docAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
     </div>
 
     <div class="field">
-      <label>مختصر تعارف (اختیاری) — ایک جملے میں بتائیں یہ کس چیز کے ماہر ہیں</label>
-      <textarea id="docIntro" rows="2" placeholder="مثلاً: یہ ہر قسم کے امراض کے ماہر ہیں، بچوں کا خصوصی علاج بھی کرتے ہیں" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+      <label>تعارف (اختیاری)</label>
+      <textarea id="docIntro" rows="1" placeholder="ایک جملے میں بتائیں یہ کس چیز کے ماہر ہیں" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
     </div>
 
     <div class="field">
@@ -1129,6 +1144,7 @@ body.tkr-hidden #app{padding-top:0;}
       </div>
     </div>
 
+    </div>
     <div class="form-save-bar">
       <div class="form-note">محفوظ کر کے آپ تصدیق کرتے ہیں کہ معلومات درست ہیں اور <a href="#privacy" onclick="event.preventDefault();openPrivacyPolicy();">مواد کے اصول</a> کے مطابق ہیں۔</div>
       <button class="btn block" onclick="saveDoctor()">💾 محفوظ کریں</button>
@@ -1139,23 +1155,25 @@ body.tkr-hidden #app{padding-top:0;}
 <!-- ===================== SERVICE FORM MODAL (generic — reused for all non-Doctor categories) ===================== -->
 <div class="modal-overlay" id="serviceFormModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('serviceFormModal')">×</button>
+    <div class="fm-head">    <button class="modal-close" onclick="closeModal('serviceFormModal')">×</button>
     <div class="form-size-ctrl" aria-label="متن کا سائز">
       <button type="button" onclick="adjustFormScale(-1)" aria-label="چھوٹا کریں">A-</button>
       <span class="fsc-val">100%</span>
       <button type="button" onclick="adjustFormScale(1)" aria-label="بڑا کریں">A+</button>
     </div>
     <h3 id="serviceFormTitle">نیا اندراج شامل کریں</h3>
-    <div style="clear:both;"></div>
+    </div>
+    <div class="fm-body">
 
+    <div class="frow2">
     <div class="field">
       <label id="svcNameUrLabel">نام (اردو)</label>
       <input type="text" id="svcNameUr" oninput="svcNameSuggestUpdate()">
     </div>
-
     <div class="field">
       <label>Name (English)</label>
       <input type="text" id="svcNameEn" dir="ltr" style="text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;" oninput="svcNameSuggestUpdate()">
+    </div>
     </div>
     <div class="name-suggest" id="svcNameSuggest"></div>
 
@@ -1198,13 +1216,13 @@ body.tkr-hidden #app{padding-top:0;}
     </div>
 
     <div class="field">
-      <label>پتہ (Address) — گلی، دکان نمبر، لینڈ مارک وغیرہ</label>
+      <label>پتہ (Address)</label>
       <input type="text" id="svcAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
     </div>
 
     <div class="field">
-      <label>مختصر تعارف (اختیاری) — ایک جملے میں بتائیں یہاں کیا ملتا ہے</label>
-      <textarea id="svcIntro" rows="1" placeholder="مثلاً: یہاں نئے پرانے موبائل سیل اور مرمت دونوں کیے جاتے ہیں / دیسی مرغی کا گوشت اور ہوم ڈیلیوری دستیاب ہے" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+      <label>تعارف (اختیاری)</label>
+      <textarea id="svcIntro" rows="1" placeholder="ایک جملے میں بتائیں یہاں کیا ملتا ہے" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
     </div>
 
     <div class="field">
@@ -1215,6 +1233,7 @@ body.tkr-hidden #app{padding-top:0;}
       </div>
     </div>
 
+    </div>
     <div class="form-save-bar">
       <div class="form-note">محفوظ کر کے آپ تصدیق کرتے ہیں کہ معلومات درست ہیں اور <a href="#privacy" onclick="event.preventDefault();openPrivacyPolicy();">مواد کے اصول</a> کے مطابق ہیں۔</div>
       <button class="btn block" onclick="saveService()">💾 محفوظ کریں</button>
@@ -1621,7 +1640,7 @@ body.tkr-hidden #app{padding-top:0;}
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS01OCTTH0452AM";
+const APP_VERSION = "MCS01OCTTH0517AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1810,7 +1829,7 @@ function goScreen(name, fromHistory){
 }
 
 
-/* ---------- MCS01OCTTH0452AM: پٹی کی نمائش — صرف ہوم اسکرین پر ----------
+/* ---------- MCS01OCTTH0517AM: پٹی کی نمائش — صرف ہوم اسکرین پر ----------
    کوئی فارم/پاپ اپ کھلا ہو یا ہوم کے علاوہ کوئی اسکرین ہو تو پٹی چھپ جاتی ہے۔
    صرف پٹی ترتیب والا پینل اس سے مستثنیٰ ہے (وہاں لائیو پریویو کے لیے پٹی نظر آنی چاہیے)۔ */
 function syncTickerVisibility(){
@@ -3033,7 +3052,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0452AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0517AM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3202,7 +3221,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0452AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0517AM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -4973,7 +4992,7 @@ function fitCardText(){
     if(el.clientWidth < 5) return;
     let fs = parseFloat(getComputedStyle(el).fontSize) || 12;
     let n = 0;
-    /* MCS01OCTTH0452AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
+    /* MCS01OCTTH0517AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
     while(el.scrollWidth > el.clientWidth + 1 && fs > 9 && n < 40){
       fs -= 0.5; el.style.fontSize = fs + 'px'; n++;
     }
