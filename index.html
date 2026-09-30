@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS01OCTTH0416AM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS01OCTTH0416AM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS01OCTTH0432AM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS01OCTTH0432AM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -341,18 +341,19 @@
   .badge-soon{display:inline-block;background:#fde68a;color:#92400e;font-size:9px;
     padding:2px 6px;border-radius:6px;margin-top:5px;}
 
-  /* ===== Form ===== */
-  .field{margin-bottom:14px;}
-  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text);}
+  /* ===== Form (کمپیکٹ + قابلِ تبدیل سائز — --form-scale نیچے A+/A- سے بدلتا ہے) ===== */
+  :root{--form-scale:1;}
+  .field{margin-bottom:9px;}
+  .field label{display:block;font-size:calc(12px*var(--form-scale));font-weight:600;margin-bottom:3px;color:var(--text);line-height:1.4;}
   .field input, .field select{
-    width:100%;padding:12px;border-radius:10px;border:1.5px solid #d1d5db;
-    font-size:14px;background:#fff;color:var(--text);
+    width:100%;padding:9px 10px;border-radius:10px;border:1.5px solid #d1d5db;
+    font-size:calc(14px*var(--form-scale));background:#fff;color:var(--text);line-height:1.5;
   }
-  .field-with-add{display:flex;gap:8px;}
+  .field-with-add{display:flex;gap:8px;align-items:center;}
   .field-with-add select{flex:1;}
   .add-circle{
-    width:44px;height:44px;min-width:44px;border-radius:10px;border:none;
-    background:var(--accent);color:#fff;font-size:22px;font-weight:700;
+    width:40px;height:40px;min-width:40px;border-radius:10px;border:none;
+    background:var(--accent);color:#fff;font-size:20px;font-weight:700;flex:0 0 auto;
     display:flex;align-items:center;justify-content:center;
   }
   .add-circle:active{transform:scale(0.95);}
@@ -364,10 +365,10 @@
   .csel-wrap{position:relative;width:100%;}
   .field-with-add .csel-wrap{flex:1;}
   .csel-btn{
-    width:100%;padding:12px 14px;border-radius:999px;border:1.5px solid #d1d5db;
+    width:100%;padding:9px 12px;border-radius:999px;border:1.5px solid #d1d5db;
     background:linear-gradient(180deg,#ffffff,#f3f6f5);color:var(--text);
     display:flex;align-items:center;justify-content:space-between;gap:8px;
-    font-size:14px;text-align:right;cursor:pointer;
+    font-size:calc(14px*var(--form-scale));text-align:right;cursor:pointer;
   }
   .csel-btn .csel-chevron{color:var(--muted);font-size:12px;flex:none;}
   .csel-btn .csel-placeholder{color:var(--muted);}
@@ -376,9 +377,9 @@
      with justify-content:flex-start the two stay bunched together as one
      small compact capsule instead of stretching across the whole row. */
   .csel-label{display:flex;align-items:center;gap:6px;flex:1;min-width:0;justify-content:flex-start;overflow:hidden;}
-  .csel-label .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:10.5px;color:#9a4b06;
+  .csel-label .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:calc(10.5px*var(--form-scale));color:#9a4b06;
     background:#fbdfb4;padding:1px 7px;border-radius:999px;white-space:nowrap;flex:none;}
-  .csel-label .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .csel-label .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:calc(15px*var(--form-scale));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .csel-panel{
     position:absolute;top:calc(100% + 6px);right:0;left:0;z-index:60;
     background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22);
@@ -390,7 +391,7 @@
      in one straight column instead of drifting left/right per row. */
   .csel-opt{
     display:flex;align-items:center;justify-content:space-between;gap:8px;
-    background:#f3f6f5;border-radius:14px;padding:9px 14px;margin-bottom:6px;cursor:pointer;
+    background:#f3f6f5;border-radius:14px;padding:8px 12px;font-size:calc(14px*var(--form-scale));margin-bottom:6px;cursor:pointer;
     border:1px solid #e5e7eb;
   }
   .csel-opt .csel-ur{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -564,11 +565,18 @@
   .modal-overlay.active{display:flex;}
   .modal-box{
     background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;
-    padding:20px;max-height:88vh;overflow-y:auto;animation:slideUp .25s ease;
+    padding:12px 14px;max-height:92vh;overflow-y:auto;animation:slideUp .25s ease;
   }
   @keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-  .modal-box h3{margin:0 0 14px;font-size:16px;}
+  .modal-box h3{margin:0 0 8px;font-size:15px;}
   .modal-close{float:left;background:#f3f4f6;border:none;width:32px;height:32px;border-radius:8px;font-size:16px;}
+  /* ===== متن کا سائز بڑھائیں/گھٹائیں — کمزور نظر والوں کے لیے، صرف ڈیٹا انٹری فارموں میں ===== */
+  .form-size-ctrl{float:left;display:flex;direction:ltr;align-items:center;gap:4px;margin-inline-start:8px;
+    background:#f3f4f6;border-radius:10px;padding:3px;}
+  .form-size-ctrl button{width:30px;height:26px;border:none;border-radius:7px;background:#fff;
+    color:var(--text);font-size:13px;font-weight:800;box-shadow:0 1px 2px rgba(0,0,0,.12);}
+  .form-size-ctrl button:active{transform:scale(.92);}
+  .form-size-ctrl .fsc-val{font-size:10.5px;color:var(--muted);min-width:30px;text-align:center;}
 
   /* Ticker settings modal: header+footer fixed, only the middle scrolls, and
      the whole box height tracks the visible area above the on-screen
@@ -803,7 +811,7 @@
     font-family:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;}
   .add-strip .as-row button:active{background:#d6f0ea;}
 
-/* ===== MCS01OCTTH0416AM: بٹن انگلی کے لیے مناسب — 32px اور درمیان 8px فاصلہ، ایک ہی لائن ===== */
+/* ===== MCS01OCTTH0432AM: بٹن انگلی کے لیے مناسب — 32px اور درمیان 8px فاصلہ، ایک ہی لائن ===== */
 .doc-side{gap:8px;margin:4px 0 3px;flex-wrap:nowrap;}
 .doc-acts,.doc-mini,.doc-side .doc-mini,.ub-acts{gap:8px;}
 .doc-acts a,.a-share,.a-reqadmin,.doc-mini button,.ub-acts a,.ub-acts button{width:32px;height:32px;min-width:32px;border-radius:50%;
@@ -860,7 +868,7 @@
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS01OCTTH0416AM" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS01OCTTH0432AM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1013,6 +1021,11 @@
 <div class="modal-overlay" id="doctorFormModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('doctorFormModal')">×</button>
+    <div class="form-size-ctrl" aria-label="متن کا سائز">
+      <button type="button" onclick="adjustFormScale(-1)" aria-label="چھوٹا کریں">A-</button>
+      <span class="fsc-val">100%</span>
+      <button type="button" onclick="adjustFormScale(1)" aria-label="بڑا کریں">A+</button>
+    </div>
     <h3 id="doctorFormTitle">نیا ڈاکٹر شامل کریں</h3>
     <div style="clear:both;"></div>
 
@@ -1108,6 +1121,11 @@
 <div class="modal-overlay" id="serviceFormModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('serviceFormModal')">×</button>
+    <div class="form-size-ctrl" aria-label="متن کا سائز">
+      <button type="button" onclick="adjustFormScale(-1)" aria-label="چھوٹا کریں">A-</button>
+      <span class="fsc-val">100%</span>
+      <button type="button" onclick="adjustFormScale(1)" aria-label="بڑا کریں">A+</button>
+    </div>
     <h3 id="serviceFormTitle">نیا اندراج شامل کریں</h3>
     <div style="clear:both;"></div>
 
@@ -1582,7 +1600,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS01OCTTH0416AM";
+const APP_VERSION = "MCS01OCTTH0432AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2409,6 +2427,26 @@ function clearNameSuggest(boxId){
   if(box){ box.classList.remove('show'); box.innerHTML=''; }
 }
 
+/* ---------- ڈیٹا انٹری فارموں کے متن کا سائز (کمزور نظر والوں کے لیے A+/A-) ----------
+   فون میں localStorage کے ذریعے محفوظ رہتا ہے، اس لیے ایک دفعہ بڑا کریں تو ہمیشہ بڑا ہی رہے گا۔ */
+const FORM_SCALE_MIN = 0.85, FORM_SCALE_MAX = 1.7, FORM_SCALE_STEP = 0.15;
+function getFormScale(){
+  const v = parseFloat(localStorage.getItem('mcsFormScale'));
+  return (v && v>=FORM_SCALE_MIN && v<=FORM_SCALE_MAX) ? v : 1;
+}
+function applyFormScale(){
+  const v = getFormScale();
+  document.documentElement.style.setProperty('--form-scale', v);
+  document.querySelectorAll('.fsc-val').forEach(el=> el.textContent = Math.round(v*100) + '%');
+}
+function adjustFormScale(dir){
+  let v = getFormScale() + (dir * FORM_SCALE_STEP);
+  v = Math.min(FORM_SCALE_MAX, Math.max(FORM_SCALE_MIN, v));
+  v = Math.round(v*100)/100;
+  localStorage.setItem('mcsFormScale', v);
+  applyFormScale();
+}
+
 /* ---------- Doctor CRUD ---------- */
 let editingDoctorId = null;
 function openDoctorForm(id){
@@ -2955,7 +2993,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0416AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0432AM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3124,7 +3162,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0416AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0432AM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -4881,6 +4919,7 @@ window.addEventListener('load', ()=> setTimeout(openPrivacyFromHash, 300));
 renderVersionLabel();
 updateVersionBadge();
 updateAdminBadge();
+applyFormScale();
 
 /* ---------- کارڈوں میں متن خود فٹ ہو: فونٹ چھوٹا ہوتا ہے، کارڈ کا سائز کبھی نہیں بدلتا ---------- */
 const FIT_SEL = '.doc-name,.doc-name-en,.doc-sub,.doc-address,.doc-intro,.ub-name,.ub-en,.ub-sub,.ub-loc-t,.ub-intro';
@@ -4894,7 +4933,7 @@ function fitCardText(){
     if(el.clientWidth < 5) return;
     let fs = parseFloat(getComputedStyle(el).fontSize) || 12;
     let n = 0;
-    /* MCS01OCTTH0416AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
+    /* MCS01OCTTH0432AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
     while(el.scrollWidth > el.clientWidth + 1 && fs > 9 && n < 40){
       fs -= 0.5; el.style.fontSize = fs + 'px'; n++;
     }
