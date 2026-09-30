@@ -764,6 +764,32 @@
 .doc-foot .doc-address{min-height:1.3em;}
 .ub-enrow{flex-wrap:nowrap !important;}
 .ub-en{flex:1 1 0 !important;min-width:0 !important;}
+
+  /* ===== MCS309WE#006: ڈیولپر ایڈمن بٹن (انتہائی بائیں) + ایڈمن پاپ اپ ===== */
+  .dev-admin-btn{position:absolute;left:0;top:64px;z-index:5;height:26px;padding:0 9px 0 7px;border-radius:0 13px 13px 0;
+    border:1px solid rgba(255,255,255,.3);border-left:none;background:rgba(0,0,0,.28);color:#e5e7eb;font-size:10.5px;font-weight:700;
+    font-family:inherit;line-height:1;display:flex;align-items:center;gap:4px;cursor:pointer;}
+  .dev-admin-btn.in{background:#16a34a;color:#fff;border-color:#86efac;}
+  .admin-pop{position:fixed;top:96px;left:8px;width:min(288px,88vw);z-index:9000;background:#fff;color:#1f2937;border-radius:16px;
+    padding:12px;box-shadow:0 12px 32px rgba(0,0,0,.35);border:1px solid #cfe0dd;}
+  .admin-pop .ap-title{font-weight:800;font-size:14px;margin-bottom:8px;}
+  .admin-pop input{width:100%;height:40px;border:1.5px solid #cfe0dd;border-radius:10px;padding:0 10px;font-size:14px;margin-bottom:8px;box-sizing:border-box;background:#fff;color:#111;}
+  .admin-pop .ap-btn{width:100%;height:40px;border:none;border-radius:10px;background:#0f766e;color:#fff;font-size:14px;font-weight:700;font-family:inherit;margin-top:2px;}
+  .admin-pop .ap-out{background:#fee2e2;color:#991b1b;margin-top:8px;}
+  .admin-pop .ap-link{display:block;margin:8px auto 0;background:none;border:none;color:#6b7280;font-size:11px;font-family:inherit;text-decoration:underline;}
+  /* ===== ہوم پر ➕ سے فوری ڈیٹا انٹری ===== */
+  .home-section .entry-card{padding:0 50px;}
+  .entry-plus{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:2px solid #ffd27a;
+    background:#fff;color:#0f766e;font-size:20px;font-weight:800;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 5px rgba(0,0,0,.35);cursor:pointer;transition:transform .2s;}
+  .entry-plus.open{transform:translateY(-50%) rotate(45deg);background:#fee2e2;color:#b91c1c;}
+  .add-strip{display:none;width:92%;max-width:330px;margin:-2px auto 12px;padding:8px 8px 6px;background:#fff;border:1.5px dashed #0f766e;border-radius:14px;box-sizing:border-box;}
+  .add-strip.open{display:block;}
+  .add-strip small{display:block;font-size:11.5px;color:#4b5b6b;margin-bottom:6px;text-align:center;}
+  .add-strip .as-row{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;}
+  .add-strip .as-row button{flex:none;border:1.5px solid #cfe0dd;background:#f2faf8;color:#0b2a44;border-radius:99px;padding:0 12px;height:32px;
+    font-family:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;}
+  .add-strip .as-row button:active{background:#d6f0ea;}
 </style>
 </head>
 <body>
@@ -776,17 +802,37 @@
   <div class="backup-progress-pct" id="backupProgressPct">۰٪</div>
 </div>
 
+<!-- ===================== ADMIN POPUP (صرف ڈیولپر کی ڈیوائس) ===================== -->
+<div id="adminPop" class="admin-pop" style="display:none;" onclick="event.stopPropagation()">
+  <div id="adminPopOut">
+    <div class="ap-title">🛡️ ایڈمن لاگ ان</div>
+    <input type="text" id="adminEmail" placeholder="ایڈمن جی میل" dir="ltr" autocomplete="username" style="text-align:left;">
+    <div style="position:relative;">
+      <input type="password" id="adminPassword" placeholder="پاس ورڈ" dir="ltr" autocomplete="current-password" style="text-align:left;padding-left:38px;" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button type="button" onclick="toggleAdminPasswordVisibility()" aria-label="پاسورڈ دکھائیں" style="position:absolute;left:6px;top:4px;background:none;border:none;padding:4px;cursor:pointer;font-size:18px;line-height:1;">👁️</button>
+    </div>
+    <button type="button" class="ap-btn" onclick="adminLogin()">لاگ ان</button>
+    <div class="cp-hint" id="adminSyncHint"></div>
+    <button type="button" class="ap-link" onclick="hideDevButton()">اس ڈیوائس سے یہ بٹن ہٹا دیں</button>
+  </div>
+  <div id="adminPopIn" style="display:none;">
+    <div class="ap-title">✅ ایڈمن لاگ ان ہیں</div>
+    <button type="button" class="ap-btn" onclick="showAdminPop(false);openControlPanel();setTimeout(()=>{const t=document.getElementById('adminPanelBox');if(t)t.scrollIntoView({behavior:'smooth',block:'start'});},250)">⏳ منظوری / سیٹنگز کھولیں</button>
+    <button type="button" class="ap-btn ap-out" onclick="adminLogout()">لاگ آؤٹ</button>
+  </div>
+</div>
+
 <div id="app">
 
   <!-- ===================== HOME ===================== -->
   <div id="screen-home" class="screen active">
     <header class="hero">
+      <button type="button" class="dev-admin-btn" id="devAdminBtn" style="display:none;" onclick="toggleAdminPop(event)" aria-label="ایڈمن"><span id="devAdminIc">🔒</span><span id="devAdminTxt">لاگ آؤٹ</span></button>
       <svg class="hero-skyline" viewBox="0 0 400 70" preserveAspectRatio="none" fill="#fff"><path d="M0 70V48h18V30h14v18h10V20h16v28h8V38h12v10h14V12h6V4h4v8h6v36h12V28h18v20h10V36h8V22h14v26h12V8l10-6 10 6v40h14V32h16v16h8V26h12v22h14V16h18v32h10V40h12v8h14V30h16v18h12V22h14v26h12V36h10v34z"/></svg>
       <div class="hero-top">
         <button class="hero-status" id="heroStatus" onclick="showNetStatus()" aria-label="ورژن اور انٹرنیٹ کی حالت">
           <span class="hs-ver" id="hsVer"></span>
           <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
-          <span class="hs-admin" id="hsAdmin" onclick="event.stopPropagation();openAdminFromBadge()">🔒 ایڈمن لاگ آؤٹ</span>
         </button>
         <div class="hero-actions">
           <button class="hero-btn hero-btn-share" onclick="openPromoText()" aria-label="ایپ شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg></button>
@@ -802,13 +848,19 @@
     <section class="home-section">
       <div class="entry-card e-teal" onclick="goScreen('specialist-categories')">
         <span class="entry-count" id="homeCount_professional">0</span>
+        <button type="button" class="entry-plus" id="plus_professional" onclick="event.stopPropagation();toggleAddStrip('professional')" aria-label="نیا پروفیشنل شامل کریں">＋</button>
         <div class="txt"><b>پروفیشنلز <span class="entry-en">PROFESSIONALS</span></b></div>
       </div>
 
+      <div class="add-strip" id="addStrip_professional"></div>
+
       <div class="entry-card e-amber" onclick="goScreen('business-categories')">
         <span class="entry-count" id="homeCount_business">0</span>
+        <button type="button" class="entry-plus" id="plus_business" onclick="event.stopPropagation();toggleAddStrip('business')" aria-label="نیا کاروبار شامل کریں">＋</button>
         <div class="txt"><b>بزنس <span class="entry-en">BUSINESS</span></b></div>
       </div>
+
+      <div class="add-strip" id="addStrip_business"></div>
 
       <div class="entry-card e-blue" onclick="openSearch()">
         <span class="entry-count entry-search-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
@@ -1166,21 +1218,6 @@
 
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
 
-      <div class="backup-card" id="adminLoginBox">
-        <div class="backup-card-title">🛡️ ایڈمن لاگ ان (صرف منظوری کے لیے)</div>
-        <div class="field" style="margin-bottom:8px;">
-          <input type="text" id="adminEmail" placeholder="ایڈمن ای میل" dir="ltr" style="text-align:left;">
-        </div>
-        <div class="field" style="margin-bottom:8px;">
-          <div style="position:relative;">
-            <input type="password" id="adminPassword" placeholder="پاس ورڈ" dir="ltr" style="text-align:left;padding-left:38px;width:100%;box-sizing:border-box;">
-            <button type="button" onclick="toggleAdminPasswordVisibility()" aria-label="پاسورڈ دکھائیں" style="position:absolute;left:6px;top:50%;transform:translateY(-50%);background:none;border:none;padding:4px;cursor:pointer;font-size:18px;line-height:1;">👁️</button>
-          </div>
-        </div>
-        <button class="btn block secondary" onclick="adminLogin()">لاگ ان</button>
-        <div class="cp-hint" id="adminSyncHint"></div>
-      </div>
-
       <div class="backup-card" id="adminPanelBox" style="display:none;">
         <div class="backup-card-title">🛡️ زیر منظوری اندراجات</div>
         <div id="pendingApprovalsWrap"></div>
@@ -1523,7 +1560,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS309WE#005";
+const APP_VERSION = "MCS309WE#006";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1726,11 +1763,9 @@ async function onUserSearchInput(val){
   if(pinHit){
     const box = document.getElementById('searchBox');
     if(box) box.value = '';
-    openControlPanel();
-    setTimeout(()=>{
-      const target = document.getElementById(isAdminSignedIn ? 'adminPanelBox' : 'adminLoginBox');
-      if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 250);
+    markDevDevice(); updateAdminBadge();
+    goHome();
+    setTimeout(()=>showAdminPop(true), 300);
     return;
   }
   renderUserSearch();
@@ -3917,6 +3952,42 @@ if(window.visualViewport) window.visualViewport.addEventListener('resize', setVv
 function openModal(id){ document.getElementById(id).classList.add('active'); }
 function closeModal(id){ document.getElementById(id).classList.remove('active'); }
 
+
+/* ---------- ہوم پر ➕: پروفیشنل / کاروبار کی قسم چن کر سیدھا انٹری فارم ---------- */
+function addStripItems(group){
+  const items = [];
+  if(group==='professional') items.push({k:'__doctor', e:'🩺', u:'ڈاکٹرز'});
+  CATEGORY_KEYS.forEach(k=>{
+    const m = CATEGORY_META[k];
+    if(!m || m.group!==group || k==='beautyParlor') return;
+    items.push({k, e:m.emoji||'', u:m.ur});
+  });
+  return items;
+}
+function closeAddStrips(){
+  ['professional','business'].forEach(g=>{
+    const st = document.getElementById('addStrip_'+g); if(st) st.classList.remove('open');
+    const b = document.getElementById('plus_'+g); if(b) b.classList.remove('open');
+  });
+}
+function toggleAddStrip(group){
+  const strip = document.getElementById('addStrip_'+group); if(!strip) return;
+  const willOpen = !strip.classList.contains('open');
+  closeAddStrips();
+  if(!willOpen) return;
+  strip.innerHTML = '<small>'+(group==='professional' ? 'کس پیشے کی انٹری کرنی ہے؟ قسم چنیں' : 'کس کاروبار کی انٹری کرنی ہے؟ قسم چنیں')+'</small><div class="as-row">'
+    + addStripItems(group).map(i=>`<button type="button" onclick="pickAddCategory('${i.k}')">${i.e} ${escapeHtml(i.u)}</button>`).join('') + '</div>';
+  strip.classList.add('open');
+  const b = document.getElementById('plus_'+group); if(b) b.classList.add('open');
+}
+function pickAddCategory(k){
+  closeAddStrips();
+  if(k==='__doctor'){ openDoctorForm(); return; }
+  if(!CATEGORY_META[k]) return;
+  currentServiceCategory = k;
+  openServiceForm();
+}
+
 /* ---------- Toast ---------- */
 function showToast(msg, ms){
   const t = document.getElementById('toast');
@@ -4374,19 +4445,36 @@ function renderVersionLabel(){
    never breaks the local experience.
    ========================================================= */
 let isAdminSignedIn = false;
+/* ایڈمن بٹن صرف ڈیولپر کی ڈیوائس پر نظر آتا ہے: (۱) ایڈمن لاگ ان ہو، یا (۲) اس ڈیوائس پر
+   ایک بار یوزر سرچ میں ایڈمن PIN لکھا گیا ہو۔ باقی سب لوگوں کو بٹن دکھائی ہی نہیں دیتا۔ */
+const DEV_KEY = 'mcsDevDevice';
+function isDevDevice(){ try{ return localStorage.getItem(DEV_KEY)==='1'; }catch(e){ return false; } }
+function markDevDevice(){ try{ localStorage.setItem(DEV_KEY,'1'); }catch(e){} }
+function hideDevButton(){ try{ localStorage.removeItem(DEV_KEY); }catch(e){} showAdminPop(false); updateAdminBadge(); showToast('اس ڈیوائس سے ایڈمن بٹن ہٹا دیا گیا'); }
 function updateAdminBadge(){
-  const el = document.getElementById('hsAdmin');
-  if(!el) return;
-  el.classList.toggle('in', !!isAdminSignedIn);
-  el.textContent = isAdminSignedIn ? '✅ ایڈمن لاگ ان' : '🔒 ایڈمن لاگ آؤٹ';
+  const btn = document.getElementById('devAdminBtn');
+  const show = !!isAdminSignedIn || isDevDevice();
+  if(btn){
+    btn.style.display = show ? 'flex' : 'none';
+    btn.classList.toggle('in', !!isAdminSignedIn);
+    document.getElementById('devAdminIc').textContent = isAdminSignedIn ? '✅' : '🔒';
+    document.getElementById('devAdminTxt').textContent = isAdminSignedIn ? 'لاگ ان' : 'لاگ آؤٹ';
+  }
+  const o = document.getElementById('adminPopOut'), i = document.getElementById('adminPopIn');
+  if(o) o.style.display = isAdminSignedIn ? 'none' : 'block';
+  if(i) i.style.display = isAdminSignedIn ? 'block' : 'none';
+  if(!show) showAdminPop(false);
 }
-function openAdminFromBadge(){
-  openControlPanel();
-  setTimeout(()=>{
-    const t = document.getElementById(isAdminSignedIn ? 'adminPanelBox' : 'adminLoginBox');
-    if(t) t.scrollIntoView({behavior:'smooth', block:'start'});
-  }, 250);
+function showAdminPop(on){
+  const pop = document.getElementById('adminPop'); if(!pop) return;
+  pop.style.display = on ? 'block' : 'none';
 }
+function toggleAdminPop(ev){
+  if(ev) ev.stopPropagation();
+  const pop = document.getElementById('adminPop');
+  showAdminPop(pop.style.display==='none');
+}
+document.addEventListener('click', ()=>showAdminPop(false));
 
 let pendingApprovals = [];
 
@@ -4480,7 +4568,7 @@ function initFirebaseSync(){
   FB.onAuthStateChanged(FB.auth, (user)=>{
     isAdminSignedIn = !!user;
     updateAdminBadge();
-    document.getElementById('adminLoginBox').style.display = isAdminSignedIn ? 'none' : 'block';
+    if(isAdminSignedIn) markDevDevice();
     document.getElementById('adminPanelBox').style.display = isAdminSignedIn ? 'block' : 'none';
     document.getElementById('adminAddCategoryBox').style.display = isAdminSignedIn ? 'block' : 'none';
     document.getElementById('cpContactBox').style.display = isAdminSignedIn ? 'block' : 'none';
@@ -4614,12 +4702,13 @@ function adminLogin(){
   const pass = document.getElementById('adminPassword').value;
   if(!email || !pass){ showToast('ای میل اور پاس ورڈ لکھیں'); return; }
   FB.signInWithEmailAndPassword(FB.auth, email, pass)
-    .then(()=>{ showToast('ایڈمن لاگ ان ہو گیا ✓'); document.getElementById('adminPassword').value=''; })
+    .then(()=>{ showToast('ایڈمن لاگ ان ہو گیا ✓'); document.getElementById('adminPassword').value=''; markDevDevice(); showAdminPop(false); })
     .catch(()=>{ showToast('لاگ ان ناکام — ای میل یا پاس ورڈ غلط'); });
 }
 function adminLogout(){
   const FB = window.MCSFirebase;
   if(FB) FB.signOut(FB.auth);
+  showAdminPop(false);
 }
 function approvePending(fsId, col){
   const FB = window.MCSFirebase;
@@ -4699,6 +4788,7 @@ window.addEventListener('load', ()=> setTimeout(openPrivacyFromHash, 300));
 /* ---------- Init ---------- */
 renderVersionLabel();
 updateVersionBadge();
+updateAdminBadge();
 
 /* ---------- کارڈوں میں متن خود فٹ ہو: فونٹ چھوٹا ہوتا ہے، کارڈ کا سائز کبھی نہیں بدلتا ---------- */
 const FIT_SEL = '.doc-name,.doc-name-en,.doc-sub,.doc-address,.doc-intro,.ub-name,.ub-en,.ub-sub,.ub-loc-t,.ub-intro';
