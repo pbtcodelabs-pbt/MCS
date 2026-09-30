@@ -785,7 +785,7 @@
           <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
         </button>
         <div class="hero-actions">
-          <button class="hero-btn hero-btn-share" onclick="shareAppPromo()" aria-label="ایپ شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg></button>
+          <button class="hero-btn hero-btn-share" onclick="openPromoText()" aria-label="ایپ شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg></button>
           <button class="hero-btn" onclick="openDevChat()" aria-label="رابطہ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></button>
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
@@ -1317,6 +1317,22 @@
 </div>
 
 <!-- ===================== CARD CUSTOMIZE MODAL (before sharing) ===================== -->
+<!-- ===================== APP PROMO TEXT MODAL ===================== -->
+<div class="modal-overlay" id="promoTextModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('promoTextModal')">×</button>
+    <h3>📤 ایپ شیئر کارڈ</h3>
+    <div style="clear:both;"></div>
+    <div class="field">
+      <label>اپنا متن لکھیں (کسٹمر کے مطابق بدل سکتے ہیں)</label>
+      <textarea id="promoTextInput" rows="5" dir="rtl" oninput="promoTextChanged()" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;line-height:2;"></textarea>
+      <button class="link-btn" type="button" onclick="resetPromoText()">↺ پہلا متن واپس لائیں</button>
+    </div>
+    <div id="promoPreviewHolder" style="margin-bottom:14px;background:#eee;border-radius:10px;min-height:120px;"></div>
+    <button class="btn block accent" onclick="sharePromoFromModal()">📤 واٹس ایپ پر شیئر کریں</button>
+  </div>
+</div>
+
 <div class="modal-overlay" id="cardCustomizeModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('cardCustomizeModal')">×</button>
@@ -1468,7 +1484,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS309WE#002";
+const APP_VERSION = "MCS309WE#003";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2816,8 +2832,9 @@ function buildShareCanvas(kind, item, opts){
    their own/friends'/relatives' business, a contact number for questions,
    and the install link. Reuses the exact same canvas techniques as the
    profile share card (navy/gold theme, embossed text, rounded panel). */
-function buildAppPromoCanvas(){
-  const FF = 'Jameel Noori Nastaleeq Regular';
+function buildAppPromoCanvas(customText){
+  const FF = 'Jameel Noori Nastaleeq Kasheeda';
+  const promoBody = (customText||'').trim() || DEFAULT_PROMO_TEXT;
   return new Promise((resolve)=>{
     Promise.all([
       document.fonts.load(`800 48px "${FF}"`),
@@ -2887,10 +2904,22 @@ function buildAppPromoCanvas(){
         cx = x0 - chipGap;
       });
 
-      // invitation paragraph
+      // invitation paragraph (user's own text, Kasheeda, auto-fit inside the box)
       ctx.fillStyle = '#e7ecf2';
-      shareFitAndDraw(ctx, 'یہ آپ کی اپنی ایپ ہے — اپنا کاروبار، دوستوں اور رشتہ داروں کا کاروبار بھی شامل کریں۔ جتنا زیادہ حصہ لیں گے، اتنی ہی سب کے لیے سہولت اور آپ کے لیے ترقی ہوگی!', W/2, cardTop+235, W-190, 30, 18, 700, FF, 1.5,
-        (c,l,x,y)=>{ c.fillStyle='#e7ecf2'; c.fillText(l,x,y); });
+      (function(){
+        const boxTop = cardTop+205, boxH = 205, maxW = W-190;
+        const paras = promoBody.split(/\n+/);
+        let fs = 34, lines = [], lh = 0;
+        while(fs >= 14){
+          ctx.font = `700 ${fs}px "${FF}", sans-serif`;
+          lines = []; paras.forEach(pt=>{ shareWrapLines(ctx, pt, maxW).forEach(l=>lines.push(l)); });
+          lh = fs*1.7;
+          if(lines.length*lh <= boxH) break;
+          fs -= 2;
+        }
+        const startY = boxTop + Math.max(0,(boxH - lines.length*lh)/2) + fs;
+        lines.forEach((l,i)=>{ ctx.fillText(l, W/2, startY + i*lh); });
+      })();
 
       // contact capsule (questions/suggestions)
       const waRaw = normalizePkNumber((store.contact && store.contact.whatsapp) || DEFAULT_CONTACT.whatsapp);
@@ -2914,9 +2943,14 @@ function buildAppPromoCanvas(){
       ctx.fillText(waRaw, pillX+pillW/2+26, pillY+pillH/2+11);
       ctx.restore();
       ctx.direction='rtl';
+      ctx.fillStyle = '#f4d58d';
+      ctx.font = `700 30px "${FF}", sans-serif`;
+      ctx.fillText('ڈویلپر: عبدالحفیظ', W/2, cardTop+548);
+      ctx.direction='ltr';
       ctx.fillStyle = '#cfd7e0';
-      ctx.font = `700 22px "${FF}", sans-serif`;
-      ctx.fillText('سوالات یا تجاویز کے لیے رابطہ کریں', W/2, cardTop+545);
+      ctx.font = '600 22px sans-serif';
+      ctx.fillText(((store.contact && store.contact.gmail) || DEFAULT_CONTACT.gmail), W/2, cardTop+585);
+      ctx.direction='rtl';
 
       finishFooter();
     };
@@ -2959,35 +2993,62 @@ function buildAppPromoCanvas(){
     });
   });
 }
+const DEFAULT_PROMO_TEXT = 'یہ آپ کی اپنی ایپ ہے — اپنا کاروبار، دوستوں اور رشتہ داروں کا کاروبار بھی شامل کریں۔ جتنا زیادہ حصہ لیں گے، اتنی ہی سب کے لیے سہولت اور آپ کے لیے ترقی ہوگی!';
 function appPromoCaptionText(){
   const waRaw = waPhoneDisplay((store.contact && store.contact.whatsapp) || DEFAULT_CONTACT.whatsapp);
+  const mail = (store.contact && store.contact.gmail) || DEFAULT_CONTACT.gmail;
   return [
-    '🌟 "مائی سٹی شائنز" — اپنے شہر کی مکمل ڈائریکٹری!',
+    '🌟 "مائی سٹی شائنز" — اپنے شہر کی مکمل ڈائریکٹری',
     '',
-    '🩺 ڈاکٹرز   🏪 دکانیں   🔧 ہر طرح کی خدمات — سب ایک ہی جگہ۔',
+    '📲 ایپ انسٹال کرنے کا لنک:',
+    MCS_APP_URL,
     '',
-    'یہ آپ کی اپنی ایپ ہے — اپنا کاروبار، دوستوں اور رشتہ داروں کا کاروبار بھی شامل کریں۔ جتنا زیادہ حصہ لیں گے، اتنی ہی سب کے لیے سہولت اور آپ کے لیے ترقی ہوگی!',
-    '',
-    '📞 سوالات یا تجاویز کے لیے رابطہ: ' + waRaw,
-    '',
-    '✅ یہ لنک آپ کے پاس پہنچ گیا تو آپ ابھی فوری طور پر ایپ انسٹال کر سکتے ہیں — یہ بالکل فری ایپ ہے، اس کے کوئی چارجز نہیں۔ اور اس وقت تک شامل کیے گئے اندراجات کے ساتھ یہ آن لائن ڈائریکٹری اسی وقت آپ کے سامنے مکمل فنکشنل حالت میں موجود ہوگی۔',
-    '',
-    '📲 ابھی ایپ حاصل کریں:',
-    MCS_APP_URL
+    '👨‍💻 ڈویلپر: عبدالحفیظ',
+    '📞 ' + waRaw,
+    '📧 ' + mail
   ].join('\n');
 }
-async function shareAppPromo(){
-  showToast('کارڈ بن رہا ہے...');
+let promoPreviewTimer = null;
+function openPromoText(){
+  document.getElementById('promoTextInput').value = store.promoText || DEFAULT_PROMO_TEXT;
+  openModal('promoTextModal');
+  refreshPromoPreview();
+}
+function promoTextChanged(){
+  clearTimeout(promoPreviewTimer);
+  promoPreviewTimer = setTimeout(refreshPromoPreview, 350);
+}
+function resetPromoText(){
+  document.getElementById('promoTextInput').value = DEFAULT_PROMO_TEXT;
+  refreshPromoPreview();
+}
+async function refreshPromoPreview(){
+  const holder = document.getElementById('promoPreviewHolder');
   try{
-    const canvas = await buildAppPromoCanvas();
-    const caption = appPromoCaptionText();
+    const canvas = await buildAppPromoCanvas(document.getElementById('promoTextInput').value);
+    canvas.style.width='100%'; canvas.style.borderRadius='10px';
+    holder.innerHTML=''; holder.appendChild(canvas);
+  }catch(e){ holder.textContent='پیش نظارہ نہیں بن سکا'; }
+}
+function sharePromoFromModal(){
+  const txt = document.getElementById('promoTextInput').value.trim();
+  store.promoText = (txt && txt !== DEFAULT_PROMO_TEXT) ? txt : '';
+  saveStore();
+  closeModal('promoTextModal');
+  shareAppPromo(txt);
+}
+async function shareAppPromo(customText){
+  showToast('کارڈ بن رہا ہے...');
+  const caption = appPromoCaptionText();
+  try{
+    const canvas = await buildAppPromoCanvas(customText);
     canvas.toBlob(async (blob)=>{
       if(!blob){ shareTextAndImageFallback(caption, null, 'my-city-shines-app.png'); return; }
       const file = new File([blob], 'my-city-shines-app.png', {type:'image/png'});
       if(navigator.canShare && navigator.canShare({files:[file]})){
         try{ await navigator.share({files:[file], title:'مائی سٹی شائنز', text: caption}); return; }
         catch(e){
-          if(e && e.name==='AbortError') return; /* user cancelled the share sheet themselves */
+          if(e && e.name==='AbortError') return;
           shareTextAndImageFallback(caption, blob, 'my-city-shines-app.png');
           return;
         }
@@ -2995,7 +3056,7 @@ async function shareAppPromo(){
       shareTextAndImageFallback(caption, blob, 'my-city-shines-app.png');
     }, 'image/png');
   }catch(e){
-    shareTextAndImageFallback(appPromoCaptionText(), null, 'my-city-shines-app.png');
+    shareTextAndImageFallback(caption, null, 'my-city-shines-app.png');
   }
 }
 function renderDoctorList(mode){
