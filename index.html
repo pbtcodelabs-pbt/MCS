@@ -1323,13 +1323,48 @@
     <button class="modal-close" onclick="closeModal('promoTextModal')">×</button>
     <h3>📤 ایپ شیئر کارڈ</h3>
     <div style="clear:both;"></div>
+
+    <!-- پیش نظارہ اوپر چپکا رہتا ہے تاکہ کی بورڈ کھلنے پر بھی نظر آئے -->
+    <div id="promoPreviewHolder" style="position:sticky;top:0;z-index:5;margin-bottom:10px;background:#eee;border-radius:10px;min-height:120px;text-align:center;padding:4px;box-shadow:0 4px 10px rgba(0,0,0,.12);"></div>
+
     <div class="field">
-      <label>اپنا متن لکھیں (کسٹمر کے مطابق بدل سکتے ہیں)</label>
-      <textarea id="promoTextInput" rows="5" dir="rtl" oninput="promoTextChanged()" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;line-height:2;"></textarea>
+      <label>اپنا متن لکھیں</label>
+      <textarea id="promoTextInput" rows="4" dir="rtl" oninput="promoTextChanged()" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;line-height:2;"></textarea>
       <button class="link-btn" type="button" onclick="resetPromoText()">↺ پہلا متن واپس لائیں</button>
     </div>
-    <div id="promoPreviewHolder" style="margin-bottom:14px;background:#eee;border-radius:10px;min-height:120px;"></div>
-    <button class="btn block accent" onclick="sharePromoFromModal()">📤 واٹس ایپ پر شیئر کریں</button>
+
+    <div class="field">
+      <label>فونٹ</label>
+      <select id="pcFont" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;" onchange="setPromoOpt('fontFamily',this.value)"></select>
+    </div>
+    <div class="field">
+      <label>لفظوں کا سائز (چھوٹا ← بڑا) — لکھائی ہمیشہ ڈبے کے اندر ہی رہتی ہے</label>
+      <input type="range" id="pcSize" min="16" max="140" step="1" style="width:100%;" oninput="setPromoOpt('size',Number(this.value))">
+    </div>
+
+    <div class="backup-card-title">بیک گراؤنڈ ٹمپلیٹ</div>
+    <div id="pcBgTemplates" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
+    <div class="cp-btn-row">
+      <div class="field" style="flex:1;"><label>رنگ</label>
+        <input type="range" id="pcBgHue" min="0" max="360" step="1" style="width:100%;" oninput="setPromoOpt('bgHue',Number(this.value))"></div>
+      <div class="field" style="flex:1;"><label>ہلکا ← گہرا</label>
+        <input type="range" id="pcBgLight" min="12" max="96" step="1" style="width:100%;" oninput="setPromoOpt('bgLight',Number(this.value))"></div>
+      <div class="field" style="flex:1;"><label>مدھم ← تیز</label>
+        <input type="range" id="pcBgSat" min="0" max="100" step="1" style="width:100%;" oninput="setPromoOpt('bgSat',Number(this.value))"></div>
+    </div>
+
+    <div class="backup-card-title">بارڈر ٹمپلیٹ</div>
+    <div id="pcBorderTemplates" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
+    <div class="cp-btn-row">
+      <div class="field" style="flex:1;"><label>رنگ</label>
+        <input type="range" id="pcBorderHue" min="0" max="360" step="1" style="width:100%;" oninput="setPromoOpt('borderHue',Number(this.value))"></div>
+      <div class="field" style="flex:1;"><label>ہلکا ← گہرا</label>
+        <input type="range" id="pcBorderLight" min="20" max="90" step="1" style="width:100%;" oninput="setPromoOpt('borderLight',Number(this.value))"></div>
+      <div class="field" style="flex:1;"><label>مدھم ← تیز</label>
+        <input type="range" id="pcBorderSat" min="0" max="100" step="1" style="width:100%;" oninput="setPromoOpt('borderSat',Number(this.value))"></div>
+    </div>
+
+    <button class="btn block accent" style="margin-top:10px;" onclick="sharePromoFromModal()">📤 واٹس ایپ پر شیئر کریں</button>
   </div>
 </div>
 
@@ -1484,7 +1519,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS309WE#003";
+const APP_VERSION = "MCS309WE#004";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2832,8 +2867,9 @@ function buildShareCanvas(kind, item, opts){
    their own/friends'/relatives' business, a contact number for questions,
    and the install link. Reuses the exact same canvas techniques as the
    profile share card (navy/gold theme, embossed text, rounded panel). */
-function buildAppPromoCanvas(customText){
-  const FF = 'Jameel Noori Nastaleeq Kasheeda';
+function buildAppPromoCanvas(customText, opts){
+  const po = {...DEFAULT_PROMO_OPTS, ...(opts||{})};
+  const FF = po.fontFamily;
   const promoBody = (customText||'').trim() || DEFAULT_PROMO_TEXT;
   return new Promise((resolve)=>{
     Promise.all([
@@ -2867,58 +2903,56 @@ function buildAppPromoCanvas(customText){
       ctx.restore();
 
       const cardTop=130, cardH=600;
+      const bgL = po.bgLight, bgS = po.bgSat;
+      const panelG = ctx.createLinearGradient(0,cardTop,0,cardTop+cardH);
+      panelG.addColorStop(0, hslToHex(po.bgHue, bgS, Math.min(bgL+7,100)));
+      panelG.addColorStop(1, hslToHex(po.bgHue, bgS, Math.max(bgL-7,0)));
       ctx.save();
       ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=26; ctx.shadowOffsetY=12;
-      const cardG = ctx.createLinearGradient(0,cardTop,0,cardTop+cardH);
-      cardG.addColorStop(0,'#0f4a7a'); cardG.addColorStop(1,'#0a3562');
-      ctx.fillStyle = cardG;
+      if(po.bgTemplate==='solid') ctx.fillStyle = hslToHex(po.bgHue, bgS, bgL);
+      else if(po.bgTemplate==='radial'){
+        const rg = ctx.createRadialGradient(W/2,cardTop+cardH*0.4,20,W/2,cardTop+cardH*0.4,cardH*0.8);
+        rg.addColorStop(0, hslToHex(po.bgHue, bgS, Math.min(bgL+12,100)));
+        rg.addColorStop(1, hslToHex(po.bgHue, bgS, Math.max(bgL-10,0)));
+        ctx.fillStyle = rg;
+      } else ctx.fillStyle = panelG;
       shareRoundRect(ctx, 50, cardTop, W-100, cardH, 30); ctx.fill();
       ctx.restore();
-      shareDrawBorderTemplate(ctx, 'thin', 50, cardTop, W-100, cardH, 30, '#d4a017');
-
-      // headline
-      ctx.fillStyle = '#fff';
-      shareFitAndDraw(ctx, 'اپنے شہر کی مکمل ڈائریکٹری', W/2, cardTop+65, W-160, 44, 28, 800, FF, 1.2,
-        (c,l,x,y)=> shareEmbossText(c, l, x, y, '#ffffff', 'rgba(0,0,0,.5)'));
-
-      // feature row: three quick emoji+label chips, one line
-      const feats = [['🩺','ڈاکٹرز'],['🏪','دکانیں'],['🔧','ہر خدمت']];
-      ctx.font = `700 24px "${FF}", sans-serif`;
-      const chipGap = 18;
-      const chipWs = feats.map(([e,l])=> 56 + ctx.measureText(l).width + 14);
-      const totalW = chipWs.reduce((a,b)=>a+b,0) + chipGap*(feats.length-1);
-      let cx = W/2 + totalW/2;
-      const chipY = cardTop+140, chipH=54;
-      feats.forEach(([emoji,label],i)=>{
-        const cw = chipWs[i];
-        const x0 = cx - cw;
+      if(po.bgTemplate==='stripes' || po.bgTemplate==='dots'){
         ctx.save();
-        ctx.fillStyle = 'rgba(244,213,141,.16)';
-        shareRoundRect(ctx, x0, chipY-chipH/2, cw, chipH, chipH/2); ctx.fill();
+        shareRoundRect(ctx, 50, cardTop, W-100, cardH, 30); ctx.clip();
+        ctx.fillStyle = ctx.strokeStyle = (bgL>55) ? 'rgba(0,0,0,.07)' : 'rgba(255,255,255,.09)';
+        if(po.bgTemplate==='stripes'){
+          ctx.lineWidth = 14;
+          for(let x=-cardH; x<W+cardH; x+=44){ ctx.beginPath(); ctx.moveTo(x,cardTop+cardH); ctx.lineTo(x+cardH,cardTop); ctx.stroke(); }
+        } else {
+          for(let y=cardTop+20; y<cardTop+cardH; y+=40) for(let x=70+((y/40)%2?20:0); x<W-50; x+=40){ ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill(); }
+        }
         ctx.restore();
-        ctx.font = '26px sans-serif';
-        ctx.fillText(emoji, cx-28, chipY+9);
-        ctx.font = `700 24px "${FF}", sans-serif`;
-        ctx.fillStyle = '#f4d58d';
-        ctx.fillText(label, x0 + (cw-56)/2 + 4, chipY+8);
-        cx = x0 - chipGap;
-      });
+      }
+      const borderColor = hslToHex(po.borderHue, po.borderSat, po.borderLight);
+      shareDrawBorderTemplate(ctx, po.borderTemplate, 50, cardTop, W-100, cardH, 30, borderColor);
+      const txtColor = (bgL>62) ? '#1b2733' : '#ffffff';
 
-      // invitation paragraph (user's own text, Kasheeda, auto-fit inside the box)
-      ctx.fillStyle = '#e7ecf2';
+      // user's text: size slider = biggest size wanted, always shrinks to stay inside the box
+      ctx.fillStyle = txtColor;
       (function(){
-        const boxTop = cardTop+205, boxH = 205, maxW = W-190;
+        const boxTop = cardTop+45, boxH = 350, maxW = W-190;
         const paras = promoBody.split(/\n+/);
-        let fs = 34, lines = [], lh = 0;
-        while(fs >= 14){
+        let fs = po.size, lines = [], lh = 0;
+        while(fs >= 12){
           ctx.font = `700 ${fs}px "${FF}", sans-serif`;
           lines = []; paras.forEach(pt=>{ shareWrapLines(ctx, pt, maxW).forEach(l=>lines.push(l)); });
-          lh = fs*1.7;
-          if(lines.length*lh <= boxH) break;
-          fs -= 2;
+          lh = fs*1.75;
+          const widest = Math.max(...lines.map(l=>ctx.measureText(l).width));
+          if(lines.length*lh <= boxH && widest <= maxW) break;
+          fs -= 1;
         }
-        const startY = boxTop + Math.max(0,(boxH - lines.length*lh)/2) + fs;
+        const startY = boxTop + Math.max(0,(boxH - lines.length*lh)/2) + fs*1.1;
+        ctx.save();
+        if(bgL<=62){ ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=3; ctx.shadowOffsetY=2; }
         lines.forEach((l,i)=>{ ctx.fillText(l, W/2, startY + i*lh); });
+        ctx.restore();
       })();
 
       // contact capsule (questions/suggestions)
@@ -2926,7 +2960,7 @@ function buildAppPromoCanvas(customText){
       ctx.font = '800 34px sans-serif';
       const numW = ctx.measureText(waRaw).width;
       const maxPillW = W-160;
-      const pillW = Math.min(numW + 130, maxPillW), pillH = 70, pillY = cardTop+430, pillX = W/2 - pillW/2;
+      const pillW = Math.min(numW + 130, maxPillW), pillH = 70, pillY = cardTop+425, pillX = W/2 - pillW/2;
       const pg = ctx.createLinearGradient(0,pillY,0,pillY+pillH);
       pg.addColorStop(0,'#2fd66b'); pg.addColorStop(1,'#1aa851');
       ctx.save();
@@ -2943,11 +2977,11 @@ function buildAppPromoCanvas(customText){
       ctx.fillText(waRaw, pillX+pillW/2+26, pillY+pillH/2+11);
       ctx.restore();
       ctx.direction='rtl';
-      ctx.fillStyle = '#f4d58d';
+      ctx.fillStyle = txtColor;
       ctx.font = `700 30px "${FF}", sans-serif`;
       ctx.fillText('ڈویلپر: عبدالحفیظ', W/2, cardTop+548);
       ctx.direction='ltr';
-      ctx.fillStyle = '#cfd7e0';
+      ctx.fillStyle = txtColor;
       ctx.font = '600 22px sans-serif';
       ctx.fillText(((store.contact && store.contact.gmail) || DEFAULT_CONTACT.gmail), W/2, cardTop+585);
       ctx.direction='rtl';
@@ -3008,15 +3042,49 @@ function appPromoCaptionText(){
     '📧 ' + mail
   ].join('\n');
 }
+/* نیا فونٹ شامل کرنا ہو تو صرف یہاں ایک لائن بڑھا دیں (name = @font-face والا نام) */
+const PROMO_FONTS = [
+  { name:'Jameel Noori Nastaleeq Kasheeda', label:'جمیل نوری نستعلیق (کشیدہ)' },
+  { name:'Jameel Noori Nastaleeq Regular',  label:'جمیل نوری نستعلیق' }
+];
+const PROMO_BG_TEMPLATES = [
+  {key:'gradient', label:'گریڈینٹ'}, {key:'solid', label:'سادہ رنگ'}, {key:'radial', label:'درمیان سے روشن'},
+  {key:'stripes', label:'دھاریاں'}, {key:'dots', label:'نقطے'}
+];
+const DEFAULT_PROMO_OPTS = { fontFamily:PROMO_FONTS[0].name, size:140,
+  bgTemplate:'gradient', bgHue:208, bgLight:28, bgSat:70,
+  borderTemplate:'thin', borderHue:42, borderLight:55, borderSat:65 };
+let promoOpts = {...DEFAULT_PROMO_OPTS};
 let promoPreviewTimer = null;
+function promoFillControls(){
+  const o = promoOpts, g = id=>document.getElementById(id);
+  g('pcFont').innerHTML = PROMO_FONTS.map(f=>`<option value="${escapeHtml(f.name)}">${escapeHtml(f.label)}</option>`).join('');
+  g('pcFont').value = o.fontFamily;
+  g('pcSize').value = o.size;
+  g('pcBgHue').value = o.bgHue; g('pcBgLight').value = o.bgLight; g('pcBgSat').value = o.bgSat;
+  g('pcBorderHue').value = o.borderHue; g('pcBorderLight').value = o.borderLight; g('pcBorderSat').value = o.borderSat;
+  g('pcBgTemplates').innerHTML = PROMO_BG_TEMPLATES.map(t=>
+    `<button type="button" class="cc-tmpl-btn${o.bgTemplate===t.key?' active':''}" data-key="${t.key}" onclick="setPromoOpt('bgTemplate','${t.key}')">${escapeHtml(t.label)}</button>`).join('');
+  g('pcBorderTemplates').innerHTML = SHARE_BORDER_TEMPLATES.map(t=>
+    `<button type="button" class="cc-tmpl-btn${o.borderTemplate===t.key?' active':''}" data-key="${t.key}" onclick="setPromoOpt('borderTemplate','${t.key}')">${escapeHtml(t.label)}</button>`).join('');
+}
+function setPromoOpt(key,val){
+  promoOpts[key] = val;
+  if(key==='bgTemplate') document.querySelectorAll('#pcBgTemplates .cc-tmpl-btn').forEach(b=>b.classList.toggle('active', b.dataset.key===val));
+  if(key==='borderTemplate') document.querySelectorAll('#pcBorderTemplates .cc-tmpl-btn').forEach(b=>b.classList.toggle('active', b.dataset.key===val));
+  promoTextChanged();
+}
 function openPromoText(){
+  promoOpts = {...DEFAULT_PROMO_OPTS, ...(store.promoOpts||{})};
+  if(!PROMO_FONTS.some(f=>f.name===promoOpts.fontFamily)) promoOpts.fontFamily = PROMO_FONTS[0].name;
   document.getElementById('promoTextInput').value = store.promoText || DEFAULT_PROMO_TEXT;
+  promoFillControls();
   openModal('promoTextModal');
   refreshPromoPreview();
 }
 function promoTextChanged(){
   clearTimeout(promoPreviewTimer);
-  promoPreviewTimer = setTimeout(refreshPromoPreview, 350);
+  promoPreviewTimer = setTimeout(refreshPromoPreview, 250);
 }
 function resetPromoText(){
   document.getElementById('promoTextInput').value = DEFAULT_PROMO_TEXT;
@@ -3025,23 +3093,27 @@ function resetPromoText(){
 async function refreshPromoPreview(){
   const holder = document.getElementById('promoPreviewHolder');
   try{
-    const canvas = await buildAppPromoCanvas(document.getElementById('promoTextInput').value);
-    canvas.style.width='100%'; canvas.style.borderRadius='10px';
+    try{ await document.fonts.load(`700 40px "${promoOpts.fontFamily}"`); }catch(e){}
+    const canvas = await buildAppPromoCanvas(document.getElementById('promoTextInput').value, promoOpts);
+    canvas.style.height='34vh'; canvas.style.maxWidth='100%'; canvas.style.width='auto';
+    canvas.style.borderRadius='8px'; canvas.style.display='block'; canvas.style.margin='0 auto';
     holder.innerHTML=''; holder.appendChild(canvas);
   }catch(e){ holder.textContent='پیش نظارہ نہیں بن سکا'; }
 }
 function sharePromoFromModal(){
   const txt = document.getElementById('promoTextInput').value.trim();
   store.promoText = (txt && txt !== DEFAULT_PROMO_TEXT) ? txt : '';
+  store.promoOpts = {...promoOpts};
   saveStore();
   closeModal('promoTextModal');
-  shareAppPromo(txt);
+  shareAppPromo(txt, promoOpts);
 }
-async function shareAppPromo(customText){
+async function shareAppPromo(customText, opts){
   showToast('کارڈ بن رہا ہے...');
   const caption = appPromoCaptionText();
   try{
-    const canvas = await buildAppPromoCanvas(customText);
+    try{ await document.fonts.load(`700 40px "${(opts||{}).fontFamily||DEFAULT_PROMO_OPTS.fontFamily}"`); }catch(e){}
+    const canvas = await buildAppPromoCanvas(customText, opts);
     canvas.toBlob(async (blob)=>{
       if(!blob){ shareTextAndImageFallback(caption, null, 'my-city-shines-app.png'); return; }
       const file = new File([blob], 'my-city-shines-app.png', {type:'image/png'});
