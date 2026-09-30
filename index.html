@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS01OCTTH0432AM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS01OCTTH0432AM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS01OCTTH0441AM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS01OCTTH0441AM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -135,6 +135,22 @@
     display:inline-flex;align-items:center;padding-top:2px;direction:rtl;unicode-bidi:isolate;}
   .mcs-ticker-track span.tkr-pill-custom{padding:2px 12px;border-radius:999px;border:1.5px solid transparent;}
   #app{padding-top:var(--ticker-h);}
+
+/* ===== MCS01OCTTH0441AM: پٹی صرف ہوم اسکرین پر — باقی اسکرینوں/فارموں پر چھپی رہے گی (display:none نہیں، تاکہ چوڑائی کی پیمائش نہ بگڑے) ===== */
+body.tkr-hidden .mcs-ticker{transform:translateY(-120%);visibility:hidden;pointer-events:none;box-shadow:none;}
+body.tkr-hidden #app{padding-top:0;}
+/* ===== MCS01OCTTH0441AM: فارم مزید کمپیکٹ + محفوظ کریں بٹن نیچے جما رہے (سکرول کے ساتھ نہ جائے) ===== */
+#doctorFormModal .modal-box, #serviceFormModal .modal-box{padding:8px 12px 0;}
+#doctorFormModal .field, #serviceFormModal .field{margin-bottom:5px;}
+#doctorFormModal .field label, #serviceFormModal .field label{margin-bottom:2px;}
+#doctorFormModal .field input, #serviceFormModal .field input{padding:6px 10px;}
+#doctorFormModal .csel-btn, #serviceFormModal .csel-btn{padding:5px 12px;}
+#doctorFormModal .add-circle, #serviceFormModal .add-circle{width:34px;height:34px;min-width:34px;}
+#doctorFormModal .modal-box h3, #serviceFormModal .modal-box h3{margin:0 0 4px;}
+.form-save-bar{position:sticky;bottom:0;z-index:70;background:#fff;margin:4px -12px 0;padding:6px 12px calc(8px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid #e5e7eb;box-shadow:0 -4px 10px rgba(0,0,0,.06);}
+.form-save-bar .form-note{font-size:10.5px;color:#6b7280;line-height:1.5;margin:0 0 5px;}
+.form-save-bar .btn{padding:10px;}
   .hero{
     position:relative;overflow:hidden;
     background:linear-gradient(160deg,#0d3b66 0%,#0f766e 70%,#11897f 100%);
@@ -811,7 +827,7 @@
     font-family:inherit;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;}
   .add-strip .as-row button:active{background:#d6f0ea;}
 
-/* ===== MCS01OCTTH0432AM: بٹن انگلی کے لیے مناسب — 32px اور درمیان 8px فاصلہ، ایک ہی لائن ===== */
+/* ===== MCS01OCTTH0441AM: بٹن انگلی کے لیے مناسب — 32px اور درمیان 8px فاصلہ، ایک ہی لائن ===== */
 .doc-side{gap:8px;margin:4px 0 3px;flex-wrap:nowrap;}
 .doc-acts,.doc-mini,.doc-side .doc-mini,.ub-acts{gap:8px;}
 .doc-acts a,.a-share,.a-reqadmin,.doc-mini button,.ub-acts a,.ub-acts button{width:32px;height:32px;min-width:32px;border-radius:50%;
@@ -868,7 +884,7 @@
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS01OCTTH0432AM" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS01OCTTH0441AM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1112,8 +1128,10 @@
       </div>
     </div>
 
-    <div style="font-size:11.5px;color:#6b7280;line-height:1.7;margin:6px 0;">محفوظ کر کے آپ تصدیق کرتے ہیں کہ معلومات درست ہیں اور <a href="#privacy" onclick="event.preventDefault();openPrivacyPolicy();">مواد کے اصول</a> کے مطابق ہیں۔</div>
-    <button class="btn block" onclick="saveDoctor()">💾 محفوظ کریں</button>
+    <div class="form-save-bar">
+      <div class="form-note">محفوظ کر کے آپ تصدیق کرتے ہیں کہ معلومات درست ہیں اور <a href="#privacy" onclick="event.preventDefault();openPrivacyPolicy();">مواد کے اصول</a> کے مطابق ہیں۔</div>
+      <button class="btn block" onclick="saveDoctor()">💾 محفوظ کریں</button>
+    </div>
   </div>
 </div>
 
@@ -1185,7 +1203,7 @@
 
     <div class="field">
       <label>مختصر تعارف (اختیاری) — ایک جملے میں بتائیں یہاں کیا ملتا ہے</label>
-      <textarea id="svcIntro" rows="2" placeholder="مثلاً: یہاں نئے پرانے موبائل سیل اور مرمت دونوں کیے جاتے ہیں / دیسی مرغی کا گوشت اور ہوم ڈیلیوری دستیاب ہے" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+      <textarea id="svcIntro" rows="1" placeholder="مثلاً: یہاں نئے پرانے موبائل سیل اور مرمت دونوں کیے جاتے ہیں / دیسی مرغی کا گوشت اور ہوم ڈیلیوری دستیاب ہے" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
     </div>
 
     <div class="field">
@@ -1196,8 +1214,10 @@
       </div>
     </div>
 
-    <div style="font-size:11.5px;color:#6b7280;line-height:1.7;margin:6px 0;">محفوظ کر کے آپ تصدیق کرتے ہیں کہ معلومات درست ہیں اور <a href="#privacy" onclick="event.preventDefault();openPrivacyPolicy();">مواد کے اصول</a> کے مطابق ہیں۔</div>
-    <button class="btn block" onclick="saveService()">💾 محفوظ کریں</button>
+    <div class="form-save-bar">
+      <div class="form-note">محفوظ کر کے آپ تصدیق کرتے ہیں کہ معلومات درست ہیں اور <a href="#privacy" onclick="event.preventDefault();openPrivacyPolicy();">مواد کے اصول</a> کے مطابق ہیں۔</div>
+      <button class="btn block" onclick="saveService()">💾 محفوظ کریں</button>
+    </div>
   </div>
 </div>
 
@@ -1600,7 +1620,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS01OCTTH0432AM";
+const APP_VERSION = "MCS01OCTTH0441AM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -1782,10 +1802,29 @@ function goScreen(name, fromHistory){
   window.scrollTo(0,0);
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
+  if(typeof syncTickerVisibility==='function') syncTickerVisibility();
   if(name==='doctor-list') renderDoctorList('list');
   if(name==='user-browse') renderUserSearch();
   if(name==='service-list' && currentServiceCategory) renderServiceList('list');
 }
+
+
+/* ---------- MCS01OCTTH0441AM: پٹی کی نمائش — صرف ہوم اسکرین پر ----------
+   کوئی فارم/پاپ اپ کھلا ہو یا ہوم کے علاوہ کوئی اسکرین ہو تو پٹی چھپ جاتی ہے۔
+   صرف پٹی ترتیب والا پینل اس سے مستثنیٰ ہے (وہاں لائیو پریویو کے لیے پٹی نظر آنی چاہیے)۔ */
+function syncTickerVisibility(){
+  const adminOpen = !!document.querySelector('#tickerAdminModal.active');
+  const otherModal = !!document.querySelector('.modal-overlay.active:not(#tickerAdminModal)');
+  const show = adminOpen || (currentScreen==='home' && !otherModal);
+  document.body.classList.toggle('tkr-hidden', !show);
+}
+(function(){
+  try{
+    const mo = new MutationObserver(syncTickerVisibility);
+    document.querySelectorAll('.modal-overlay').forEach(m=>mo.observe(m,{attributes:true,attributeFilter:['class']}));
+  }catch(e){}
+  syncTickerVisibility();
+})();
 
 function openSearch(){
   ubFilter.cat = '';
@@ -2993,7 +3032,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0432AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0441AM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3162,7 +3201,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0432AM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS01OCTTH0441AM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -4933,7 +4972,7 @@ function fitCardText(){
     if(el.clientWidth < 5) return;
     let fs = parseFloat(getComputedStyle(el).fontSize) || 12;
     let n = 0;
-    /* MCS01OCTTH0432AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
+    /* MCS01OCTTH0441AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
     while(el.scrollWidth > el.clientWidth + 1 && fs > 9 && n < 40){
       fs -= 0.5; el.style.fontSize = fs + 'px'; n++;
     }
