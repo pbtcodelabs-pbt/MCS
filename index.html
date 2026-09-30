@@ -725,7 +725,7 @@
 .entry-search-ic{display:flex;align-items:center;justify-content:center;}
 .entry-search-ic svg{display:block;}
 
-/* ===== MCS309WE#001: مزید چھوٹے کارڈ — ایک اسکرین پر زیادہ کارڈ، نام (اردو/انگلش) کبھی نہیں کٹتا ===== */
+/* ===== MCS309WE#002: مزید چھوٹے کارڈ — ایک اسکرین پر زیادہ کارڈ، نام (اردو/انگلش) کبھی نہیں کٹتا ===== */
 .doc-card,.ub-row{width:84%;max-width:340px;padding:4px 8px 3px;margin:0 auto 5px;border-radius:11px;}
 .doc-card::before{top:6px;bottom:6px;width:3px;}
 .doc-toprow,.ub-top{gap:6px;}
@@ -749,6 +749,18 @@
 .doc-intro,.ub-intro{margin:2px 0 1px;padding:1px 8px;font-size:calc(9.5px*var(--docCardScale));line-height:1.35;}
 .doc-foot{gap:5px;margin-top:0;}
 .doc-recid,.ub-id{font-size:8px;}
+
+/* ===== MCS309WE#002: سب کارڈ ایک ہی سائز — ہر لائن ایک ہی سطر میں، لمبا نام ہو تو فونٹ خود چھوٹا ہو (کٹتا نہیں، کارڈ بڑھتا نہیں) ===== */
+.doc-card,.ub-row{width:84%;max-width:340px;box-sizing:border-box;}
+.doc-top{flex-wrap:nowrap !important;align-items:center;gap:6px;}
+.doc-top .doc-name{flex:1 1 0 !important;min-width:0 !important;}
+.doc-top .doc-name-en{flex:0 1 auto !important;max-width:46% !important;min-width:0 !important;}
+.doc-name,.doc-name-en,.doc-sub,.doc-address,.doc-intro,.ub-name,.ub-en,.ub-sub,.ub-loc-t,.ub-intro{
+  white-space:nowrap !important;overflow:hidden !important;text-overflow:clip !important;overflow-wrap:normal !important;}
+.doc-sub,.ub-sub{min-height:1.3em;}
+.doc-foot .doc-address{min-height:1.3em;}
+.ub-enrow{flex-wrap:nowrap !important;}
+.ub-en{flex:1 1 0 !important;min-width:0 !important;}
 </style>
 </head>
 <body>
@@ -1456,7 +1468,7 @@
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS309WE#001";
+const APP_VERSION = "MCS309WE#002";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4535,6 +4547,35 @@ window.addEventListener('load', ()=> setTimeout(openPrivacyFromHash, 300));
 /* ---------- Init ---------- */
 renderVersionLabel();
 updateVersionBadge();
+
+/* ---------- کارڈوں میں متن خود فٹ ہو: فونٹ چھوٹا ہوتا ہے، کارڈ کا سائز کبھی نہیں بدلتا ---------- */
+const FIT_SEL = '.doc-name,.doc-name-en,.doc-sub,.doc-address,.doc-intro,.ub-name,.ub-en,.ub-sub,.ub-loc-t,.ub-intro';
+let fitQueued = false;
+function fitCardText(){
+  fitQueued = false;
+  document.querySelectorAll(FIT_SEL).forEach(el=>{
+    if(!el.offsetParent) return;                 /* چھپی ہوئی اسکرین چھوڑ دیں */
+    el.style.fontSize = '';
+    if(el.clientWidth < 5) return;
+    let fs = parseFloat(getComputedStyle(el).fontSize) || 12;
+    let n = 0;
+    while(el.scrollWidth > el.clientWidth + 1 && fs > 6 && n < 40){
+      fs -= 0.5; el.style.fontSize = fs + 'px'; n++;
+    }
+  });
+}
+function queueFitCards(){
+  if(fitQueued) return; fitQueued = true;
+  requestAnimationFrame(fitCardText);
+}
+(function(){
+  const app = document.getElementById('app');
+  if(app) new MutationObserver(queueFitCards).observe(app, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+  window.addEventListener('resize', queueFitCards);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(queueFitCards);
+  queueFitCards();
+})();
+
 ubInit();
 applyCardTextPrefs();
 catColsInit();
