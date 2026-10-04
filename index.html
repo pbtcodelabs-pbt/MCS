@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS04OCTSU0158PM">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS04OCTSU0158PM">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS04OCTSU0318PM">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS04OCTSU0318PM">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1024,7 +1024,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS04OCTSU0158PM" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS04OCTSU0318PM" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1419,7 +1419,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
 
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
 
-      <!-- MCS04OCTSU0158PM: ایڈمن لاگ ان نہ ہو تو یہ خانہ بتاتا ہے کہ منظوری اور کیٹگری والے حصے کہاں ہیں -->
+      <!-- MCS04OCTSU0318PM: ایڈمن لاگ ان نہ ہو تو یہ خانہ بتاتا ہے کہ منظوری اور کیٹگری والے حصے کہاں ہیں -->
       <div class="backup-card" id="adminLockedHint">
         <div class="backup-card-title">🔒 منظوری اور کیٹگریز</div>
         <div class="cp-hint" style="margin-bottom:10px;">زیر منظوری اندراجات اور نئی کیٹگری شامل کرنے والے حصے صرف ایڈمن لاگ ان کے بعد کھلتے ہیں۔</div>
@@ -1440,8 +1440,10 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
             <option value="business">بزنس سیکشن میں شامل کریں</option>
           </select>
         </div>
-        <div class="field" style="margin-bottom:8px;">
-          <input type="text" id="newCatUr" placeholder="کیٹگری کا نام (اردو) — مثلاً بیکری">
+        <!-- MCS04OCTSU0318PM: محفوظ کرنے کا بٹن نام والے خانے کے ساتھ ہی، تاکہ نیچے تک گھمانا نہ پڑے -->
+        <div class="field" style="margin-bottom:8px;display:flex;gap:8px;align-items:stretch;">
+          <input type="text" id="newCatUr" placeholder="کیٹگری کا نام (اردو) — مثلاً بیکری" style="flex:1;min-width:0;">
+          <button type="button" class="btn accent" style="flex:0 0 auto;padding:0 14px;white-space:nowrap;" onclick="addNewCategory()">➕ محفوظ</button>
         </div>
         <div class="field" style="margin-bottom:4px;">
           <input type="text" id="newCatEmoji" placeholder="ایموجی (اختیاری) — نیچے سے چن لیں" style="text-align:center;">
@@ -1470,6 +1472,15 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
         </div>
         <button class="btn block accent" onclick="addNewCategory()">➕ کیٹگری شامل کریں</button>
         <div id="customCatAdminList" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- MCS04OCTSU0318PM: لسٹ امپورٹ (Excel / CSV) — صرف ایڈمن -->
+      <div class="backup-card" id="adminImportBox" style="display:none;">
+        <div class="backup-card-title">📥 لسٹ امپورٹ کریں (Excel / CSV)</div>
+        <div class="cp-hint" style="margin-bottom:10px;">فائل میں یہ خانے ہوں: دکان کا نام، دکاندار کا نام، موبائل نمبر، کیٹگری، علاقہ، شہر، ضلع۔ کیٹگری کا نام بالکل ایپ والی کیٹگری جیسا ہو۔ غلط نمبر، دہرے نمبر اور پہلے سے موجود نمبر خود چھوڑ دیے جاتے ہیں۔</div>
+        <button class="btn block accent" onclick="document.getElementById('importFileInput').click()">📂 فائل چنیں</button>
+        <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="onImportFileChosen(this)">
+        <div id="importPreview" style="margin-top:10px;"></div>
       </div>
 
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
@@ -1781,7 +1792,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS04OCTSU0158PM";
+const APP_VERSION = "MCS04OCTSU0318PM";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3327,7 +3338,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS04OCTSU0158PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS04OCTSU0318PM';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3496,7 +3507,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS04OCTSU0158PM';
+    headerLogo.src = 'icons/icon-192.png?v=MCS04OCTSU0318PM';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -4111,14 +4122,134 @@ function openControlPanel(){
   applyCardTextPrefs();
   openModal('controlPanelModal');
 }
-/* MCS04OCTSU0158PM: ایڈمن والے حصے ایک ہی جگہ سے دکھانا/چھپانا */
+/* MCS04OCTSU0318PM: ایڈمن والے حصے ایک ہی جگہ سے دکھانا/چھپانا */
 function syncAdminPanelSections(){
   const on = !!isAdminSignedIn;
   const set = (id, show)=>{ const e=document.getElementById(id); if(e) e.style.display = show ? 'block' : 'none'; };
   set('adminPanelBox', on);
   set('adminAddCategoryBox', on);
+  set('adminImportBox', on);
   set('cpContactBox', on);
   set('adminLockedHint', !on);
+}
+/* ===== MCS04OCTSU0318PM: ایڈمن لسٹ امپورٹ (Excel / CSV) =====
+   فائل پڑھ کر پہلے پیش نظارہ دکھاتا ہے، پھر "امپورٹ شروع کریں" پر سب اندراجات
+   منظور شدہ حالت میں 400 کے گروپوں میں فائربیس پر بھیجتا ہے۔ */
+let importReady = [];
+function loadSheetLib(){
+  if(window.XLSX) return Promise.resolve();
+  return new Promise((res, rej)=>{
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    sc.onload = ()=>res(); sc.onerror = ()=>rej(new Error('lib'));
+    document.head.appendChild(sc);
+  });
+}
+function impNorm(t){ return String(t==null?'':t).replace(/[\s\u0640\u200c\u200f\u200e]/g,'').replace(/ي/g,'ی').replace(/ك/g,'ک').trim(); }
+function impCatKey(name){
+  const n = impNorm(name);
+  if(!n) return null;
+  return CATEGORY_KEYS.find(k=>CATEGORY_META[k] && impNorm(CATEGORY_META[k].ur)===n) || null;
+}
+function impProvinceOf(district){
+  const d = impNorm(district);
+  for(const pr of Object.keys(DISTRICTS)){ if((DISTRICTS[pr]||[]).some(x=>impNorm(x)===d)) return pr; }
+  return '';
+}
+async function onImportFileChosen(input){
+  const file = input.files && input.files[0];
+  input.value = '';
+  if(!file) return;
+  const box = document.getElementById('importPreview');
+  box.innerHTML = '<div class="cp-hint">فائل پڑھی جا رہی ہے…</div>';
+  try{ await loadSheetLib(); }catch(e){ box.innerHTML = '<div class="cp-hint" style="color:#b91c1c;">Excel پڑھنے کا پروگرام لوڈ نہیں ہوا — انٹرنیٹ چیک کریں</div>'; return; }
+  let rows;
+  try{
+    const wb = XLSX.read(await file.arrayBuffer(), {type:'array'});
+    const sheetName = wb.SheetNames.find(n=>impNorm(n)===impNorm('شائع کرنے کے لیے')) || wb.SheetNames[0];
+    rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {header:1, defval:'', raw:false});
+  }catch(e){ box.innerHTML = '<div class="cp-hint" style="color:#b91c1c;">فائل نہیں پڑھی جا سکی</div>'; return; }
+  const hi = rows.findIndex(r=>r.some(c=>impNorm(c).includes('موبائل')) && r.some(c=>impNorm(c)==='کیٹگری'));
+  if(hi<0){ box.innerHTML = '<div class="cp-hint" style="color:#b91c1c;">"موبائل نمبر" اور "کیٹگری" والے خانے نہیں ملے</div>'; return; }
+  const head = rows[hi].map(impNorm);
+  const col = (...names)=>{ for(const n of names){ const i = head.findIndex(h=>h===impNorm(n)); if(i>-1) return i; } return -1; };
+  const C = { shop:col('دکان کا نام','نام دکان','نام'), owner:col('دکاندار کا نام','دکاندار'), phone:col('موبائل نمبر','موبائل','نمبر'),
+    cat:col('کیٹگری'), area:col('علاقہ'), city:col('شہر'), district:col('ضلع'), province:col('صوبہ'), address:col('پتہ') };
+  const have = new Set([...store.services, ...store.doctors].map(x=>x.whatsapp).filter(Boolean));
+  const seen = new Set(); const unknown = {}; let bad=0, dupFile=0, dupApp=0;
+  importReady = [];
+  rows.slice(hi+1).forEach(r=>{
+    const g = i=> i>-1 ? String(r[i]==null?'':r[i]).replace(/\s+/g,' ').trim() : '';
+    if(!r.some(c=>String(c).trim())) return;
+    let raw = g(C.phone).replace(/[^0-9+]/g,'');
+    if(/^3\d{9}$/.test(raw)) raw = '0'+raw;
+    const ph = normalizePkNumber(raw);
+    if(!/^03\d{2}-\d{7}$/.test(ph)){ bad++; return; }
+    if(seen.has(ph)){ dupFile++; return; }
+    seen.add(ph);
+    if(have.has(ph)){ dupApp++; return; }
+    const catName = g(C.cat), key = impCatKey(catName);
+    if(!key){ const k = catName||'(خالی)'; unknown[k]=(unknown[k]||0)+1; return; }
+    const shop = g(C.shop), owner = g(C.owner);
+    const district = g(C.district);
+    importReady.push({ category:key, nameUr: shop || owner, nameEn:'', type:'',
+      intro: owner && shop ? ('دکاندار: ' + owner) : '', address: g(C.address), whatsapp: ph,
+      country:'پاکستان', province: g(C.province) || impProvinceOf(district), district,
+      city: g(C.city), area: g(C.area) });
+  });
+  const byCat = {};
+  importReady.forEach(x=>{ byCat[x.category]=(byCat[x.category]||0)+1; });
+  const unk = Object.keys(unknown);
+  box.innerHTML = `
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;">
+      <b>✅ امپورٹ کے لیے تیار: ${urduDigits(importReady.length)}</b><br>
+      ${Object.keys(byCat).map(k=>`${CATEGORY_META[k].emoji||'🏷️'} ${escapeHtml(CATEGORY_META[k].ur)}: ${urduDigits(byCat[k])}`).join('<br>')}
+      <hr style="border:none;border-top:1px solid #d1fae5;margin:6px 0;">
+      غلط / ادھورے نمبر (چھوڑ دیے): ${urduDigits(bad)}<br>
+      فائل میں دہرے نمبر (چھوڑ دیے): ${urduDigits(dupFile)}<br>
+      ایپ میں پہلے سے موجود نمبر (چھوڑ دیے): ${urduDigits(dupApp)}
+    </div>
+    ${unk.length ? `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;margin-top:8px;">
+      <b>⚠️ یہ کیٹگریز ایپ میں نہیں ملیں</b> (ان کے اندراجات امپورٹ نہیں ہوں گے — پہلے کیٹگری بنا لیں، پھر فائل دوبارہ چنیں):<br>
+      ${unk.map(k=>`• ${escapeHtml(k)}: ${urduDigits(unknown[k])}`).join('<br>')}</div>` : ''}
+    ${importReady.length ? `<button class="btn block accent" style="margin-top:10px;" id="importGoBtn" onclick="runImport()">📥 ${urduDigits(importReady.length)} اندراجات امپورٹ کریں</button>` : ''}
+    <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
+}
+async function runImport(){
+  const FB = window.MCSFirebase;
+  if(!FB || !FB.writeBatch){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
+  if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ ان کریں'); return; }
+  const list = importReady.slice();
+  if(!list.length) return;
+  if(!confirm(`${list.length} اندراجات منظور شدہ حالت میں سب کے لیے شائع ہو جائیں گے۔ جاری رکھیں؟`)) return;
+  const btn = document.getElementById('importGoBtn'); if(btn){ btn.disabled = true; btn.style.opacity = .6; }
+  const prog = document.getElementById('importProgress');
+  const stamp = Date.now(); let done = 0;
+  try{
+    for(let i=0; i<list.length; i+=400){
+      const chunk = list.slice(i, i+400);
+      const batch = FB.writeBatch(FB.db);
+      const locals = [];
+      chunk.forEach((x, j)=>{
+        const id = 'imp_' + stamp + '_' + (i+j);
+        const payload = cleanFsPayload({...x, approved:true, source:'import', createdAt: FB.serverTimestamp()});
+        batch.set(FB.doc(FB.db, 'services', id), payload);
+        locals.push({...x, id, fsId:id, approved:true, synced:true, createdAt:stamp, updatedAt:stamp});
+      });
+      await batch.commit();
+      locals.forEach(l=>{ if(!store.services.some(s=>s.fsId===l.fsId)) store.services.push(l); });
+      saveStore();
+      done += chunk.length;
+      if(prog) prog.textContent = `بھیجے گئے: ${urduDigits(done)} / ${urduDigits(list.length)}`;
+    }
+    importReady = [];
+    showToast(`${done} اندراجات امپورٹ ہو گئے ✓`);
+    if(prog) prog.innerHTML = `<b style="color:#047857;">✓ ${urduDigits(done)} اندراجات امپورٹ ہو گئے</b>`;
+    if(btn) btn.remove();
+  }catch(e){
+    if(prog) prog.innerHTML = `<span style="color:#b91c1c;">رکاوٹ آ گئی (${escapeHtml((e&&e.code)||'error')}) — ${urduDigits(done)} بھیجے جا چکے ہیں۔ فائل دوبارہ چنیں، بھیجے گئے نمبر خود چھوڑ دیے جائیں گے۔</span>`;
+    if(btn){ btn.disabled = false; btn.style.opacity = 1; }
+  }
 }
 function openAdminLoginFromPanel(ev){
   if(ev) ev.stopPropagation();
@@ -4374,7 +4505,7 @@ function renderAutoBackupHint(){
   const list = loadAutoSnapshots();
   if(list.length===0){ el.textContent = 'ابھی تک کوئی خودکار کاپی نہیں بنی'; return; }
   const last = new Date(list[0].ts);
-  /* MCS04OCTSU0158PM: تاریخ اور وقت الگ LTR خانے میں، تاکہ اردو کے بیچ میں ہندسے الٹے پلٹے نہ ہوں */
+  /* MCS04OCTSU0318PM: تاریخ اور وقت الگ LTR خانے میں، تاکہ اردو کے بیچ میں ہندسے الٹے پلٹے نہ ہوں */
   const when = `${pad2(last.getDate())}/${pad2(last.getMonth()+1)}  ${pad2(last.getHours())}:${pad2(last.getMinutes())}`;
   el.innerHTML = `آخری خودکار کاپی: <bdi dir="ltr" style="unicode-bidi:isolate;">${when}</bdi> — کل ${urduDigits(list.length)} کاپیاں محفوظ`;
 }
@@ -5385,7 +5516,7 @@ if('serviceWorker' in navigator){
   import {
     initializeFirestore, persistentLocalCache,
     collection, addDoc, doc, setDoc, updateDoc, deleteDoc,
-    onSnapshot, query, where, serverTimestamp, getDocs
+    onSnapshot, query, where, serverTimestamp, getDocs, writeBatch
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
   import {
     getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
@@ -5406,7 +5537,7 @@ if('serviceWorker' in navigator){
     const auth = getAuth(fbApp);
     window.MCSFirebase = {
       db, auth, collection, addDoc, doc, setDoc, updateDoc, deleteDoc,
-      onSnapshot, query, where, serverTimestamp, getDocs,
+      onSnapshot, query, where, serverTimestamp, getDocs, writeBatch,
       signInWithEmailAndPassword, signOut, onAuthStateChanged
     };
     window.dispatchEvent(new Event('mcs-firebase-ready'));
