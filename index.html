@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS410SU001">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS410SU001">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS410SU003">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS410SU003">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1024,7 +1024,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS410SU001" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS410SU003" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1285,6 +1285,12 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
     <h3 id="serviceFormTitle">نیا اندراج شامل کریں</h3>
     </div>
     <div class="fm-body">
+
+    <!-- MCS410SU002: ایڈمن ترمیم کے وقت کیٹگری بدل سکتا ہے -->
+    <div class="field" id="svcCategoryField" style="display:none;">
+      <label>🗂️ کیٹگری (صرف ایڈمن بدل سکتا ہے)</label>
+      <select id="svcCategory"></select>
+    </div>
 
     <div class="frow2">
     <div class="field">
@@ -1792,7 +1798,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS410SU001";
+const APP_VERSION = "MCS410SU003";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3338,7 +3344,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS410SU001';
+    headerLogo.src = 'icons/icon-192.png?v=MCS410SU003';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3507,7 +3513,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS410SU001';
+    headerLogo.src = 'icons/icon-192.png?v=MCS410SU003';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -3872,11 +3878,33 @@ function openServiceCategory(key){
   goScreen('service-list');
 }
 let editingServiceId = null;
+/* MCS410SU002: کیٹگری کی فہرست — پروفیشنلز اور بزنس الگ گروپ میں */
+function categoryOptionsHtml(selected){
+  const grp = {professional:[], business:[]};
+  CATEGORY_KEYS.forEach(k=>{ const m = CATEGORY_META[k]; if(!m) return; (grp[m.group==='business'?'business':'professional']).push(k); });
+  const opt = k=>`<option value="${escapeAttr(k)}"${k===selected?' selected':''}>${escapeHtml((CATEGORY_META[k].emoji||'🏷️')+' '+CATEGORY_META[k].ur)}</option>`;
+  return `<optgroup label="پروفیشنلز">${grp.professional.map(opt).join('')}</optgroup><optgroup label="بزنس">${grp.business.map(opt).join('')}</optgroup>`;
+}
 function openServiceForm(id){
   editingServiceId = id || null;
+  const catField = document.getElementById('svcCategoryField');
+  if(catField){
+    const showCat = !!id && !!isAdminSignedIn;
+    catField.style.display = showCat ? 'block' : 'none';
+    if(showCat){ const s0 = store.services.find(x=>x.id===id); document.getElementById('svcCategory').innerHTML = categoryOptionsHtml(s0 ? s0.category : currentServiceCategory); }
+  }
   const meta = CATEGORY_META[currentServiceCategory];
   document.getElementById('svcNameUrLabel').textContent = meta.nameLabel + ' (اردو)';
   document.getElementById('svcTypeLabel').textContent = meta.typeLabel;
+  /* MCS410SU002: امپورٹ شدہ اندراج کا شہر/علاقہ فہرست میں نہ ہو تو ترمیم پر خالی ہو کر مٹ جاتا — اسے فہرست میں شامل کر دیں */
+  if(id){
+    const s1 = store.services.find(x=>x.id===id);
+    if(s1){
+      if(s1.city && !store.cities.includes(s1.city)) store.cities.push(s1.city);
+      if(s1.area && !store.areas.includes(s1.area)) store.areas.push(s1.area);
+      if(s1.type){ const tl = store.serviceTypes[currentServiceCategory] = store.serviceTypes[currentServiceCategory] || []; if(!tl.includes(s1.type)) tl.push(s1.type); }
+    }
+  }
   populateDropdown('svcType', store.serviceTypes[currentServiceCategory]);
   populateDropdown('svcCity', store.cities);
   populateDropdown('svcArea', store.areas);
@@ -3916,7 +3944,7 @@ function saveService(){
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
   if(!/^03\d{2}-\d{7}$/.test(whatsapp)){ showToast('نمبر درست نہیں — 11 ہندسوں کا نمبر لکھیں جو 03 سے شروع ہو، مثلاً 0300-1234567'); return; }
   if(!document.getElementById('svcCity').value){ showToast('شہر منتخب کریں'); return; }
-  if(!document.getElementById('svcType').value){ showToast(((CATEGORY_META[currentServiceCategory]||{}).typeLabel || 'قسم') + ' منتخب کریں'); return; }
+  if(!editingServiceId && !document.getElementById('svcType').value){ showToast(((CATEGORY_META[currentServiceCategory]||{}).typeLabel || 'قسم') + ' منتخب کریں'); return; }
   const dup = store.services.find(x=>x.whatsapp===whatsapp && x.category===currentServiceCategory && x.id!==editingServiceId);
   if(dup && !confirm(`یہ واٹس ایپ نمبر پہلے سے موجود ہے: "${dup.nameUr}"۔ کیا پھر بھی جمع کروائیں؟`)) return;
   const loc = readLocationFormValues('svc');
@@ -3926,6 +3954,11 @@ function saveService(){
     country: loc.country, province: loc.province, district: loc.district,
     city: loc.city, area: loc.area,
   };
+  let movedTo = null;
+  if(editingServiceId && isAdminSignedIn){
+    const sel = document.getElementById('svcCategory');
+    if(sel && sel.value && CATEGORY_META[sel.value] && sel.value!==currentServiceCategory){ data.category = sel.value; movedTo = sel.value; }
+  }
   if(editingServiceId){
     const s = store.services.find(x=>x.id===editingServiceId);
     Object.assign(s, data);
@@ -3942,7 +3975,7 @@ function saveService(){
   }
   saveStore();
   closeModal('serviceFormModal');
-  showToast('محفوظ ہو گیا ✓');
+  showToast(movedTo ? ('محفوظ ہو گیا ✓ — کیٹگری: ' + CATEGORY_META[movedTo].ur) : 'محفوظ ہو گیا ✓');
   renderServiceList('list');
   if(!editingServiceId && confirm('محفوظ ہو گیا! کیا آپ ابھی اپنی پروفائل دوستوں کو شیئر کرنا چاہتے ہیں؟')){
     shareProfileCardById('service', data.id);
@@ -5294,7 +5327,7 @@ function renderPendingApprovals(){
     const dupWarn = isDuplicateWhatsapp(d) ? `<div class="doc-pending-badge" style="background:#fecaca;color:#7f1d1d;">⚠️ یہ نمبر پہلے سے منظور شدہ لسٹ میں موجود ہے</div>` : ``;
     if(pendingEditFsId === d.fsId){
       const typeField = isService
-        ? `<div class="field"><label>${escapeHtml((CATEGORY_META[d.category]||{}).typeLabel||'قسم')}</label><input type="text" id="pe_type_${escapeAttr(d.fsId)}" value="${escapeAttr(d.type||'')}"></div>`
+        ? `<div class="field"><label>🗂️ کیٹگری</label><select id="pe_cat_${escapeAttr(d.fsId)}">${categoryOptionsHtml(d.category)}</select></div><div class="field"><label>${escapeHtml((CATEGORY_META[d.category]||{}).typeLabel||'قسم')}</label><input type="text" id="pe_type_${escapeAttr(d.fsId)}" value="${escapeAttr(d.type||'')}"></div>`
         : `<div class="field"><label>شعبہ</label><input type="text" id="pe_dept_${escapeAttr(d.fsId)}" value="${escapeAttr(d.dept||'')}"></div>
         <div class="field"><label>اسپیشلٹی</label><input type="text" id="pe_spec_${escapeAttr(d.fsId)}" value="${escapeAttr(d.specialty||'')}"></div>
         <div class="field"><label>ہسپتال</label><input type="text" id="pe_hosp_${escapeAttr(d.fsId)}" value="${escapeAttr(d.hospital||'')}"></div>`;
@@ -5334,12 +5367,13 @@ function savePendingEdit(fsId, col, alsoApprove){
   const g = id=>{ const el = document.getElementById(id); return el ? el.value.trim() : undefined; };
   let payload;
   if(col==='services'){
-    payload = { type: g('pe_type_'+fsId), city: g('pe_city_'+fsId), area: g('pe_area_'+fsId), address: g('pe_addr_'+fsId) };
+    payload = { category: g('pe_cat_'+fsId), type: g('pe_type_'+fsId), city: g('pe_city_'+fsId), area: g('pe_area_'+fsId), address: g('pe_addr_'+fsId) };
   } else {
     payload = { dept: g('pe_dept_'+fsId), specialty: g('pe_spec_'+fsId), hospital: g('pe_hosp_'+fsId),
       city: g('pe_city_'+fsId), area: g('pe_area_'+fsId), address: g('pe_addr_'+fsId) };
   }
   if(alsoApprove) payload.approved = true;
+  if(col==='services' && payload.category && !CATEGORY_META[payload.category]){ alert('کیٹگری منتخب کریں'); return; }
   pushEditToFirebase(col, fsId, payload)
     .then(ok=>{ if(ok){ showToast(alsoApprove ? 'محفوظ اور منظور کر دیا گیا ✓' : 'محفوظ کر دیا گیا ✓'); pendingEditFsId=null; } });
 }
@@ -5358,12 +5392,31 @@ function adminLogout(){
   if(FB) FB.signOut(FB.auth);
   showAdminPop(false);
 }
+/* MCS410SU003: منظوری کا بٹن اب وجہ بتاتا ہے، کیٹگری کی جانچ کرتا ہے، اور کامیابی پر فہرست فوراً تازہ کرتا ہے */
 function approvePending(fsId, col){
   const FB = window.MCSFirebase;
-  if(!FB) return;
+  if(!FB){ alert('انٹرنیٹ کنکشن نہیں — منظوری نہیں ہوئی'); return; }
+  if(!isAdminSignedIn){ alert('ایڈمن لاگ ان نہیں — پہلے لاگ ان کریں'); return; }
+  const d = pendingApprovals.find(x=>x.fsId===fsId) || {};
+  if(col==='services' && !CATEGORY_META[d.category]){
+    alert('اس اندراج کی کیٹگری ایپ میں موجود نہیں (شاید ڈیلیٹ ہو چکی)، اس لیے منظور ہو کر بھی کسی فہرست میں نظر نہیں آئے گا۔\n\nپہلے "ترمیم" دبا کر درست کیٹگری چنیں، پھر "محفوظ و منظور" دبائیں۔');
+    pendingEditFsId = fsId; renderPendingApprovals(); return;
+  }
   FB.updateDoc(FB.doc(FB.db,col,fsId), {approved:true})
-    .then(()=>showToast('منظور کر دیا گیا ✓'))
-    .catch(()=>showToast('خرابی — دوبارہ کوشش کریں'));
+    .then(()=>{
+      pendingApprovals = pendingApprovals.filter(x=>x.fsId!==fsId);
+      if(pendingByCollection[col]) pendingByCollection[col] = pendingByCollection[col].filter(x=>x.fsId!==fsId);
+      const arr = localArrayFor(col);
+      const local = arr.find(x=>x.fsId===fsId);
+      if(local){ local.approved = true; }
+      else { const {_col, ...rest} = d; arr.push({...rest, fsId, approved:true, id: rest.id || ('fs_'+fsId)}); }
+      saveStore(); renderPendingApprovals();
+      showToast('منظور کر دیا گیا ✓ — اب فہرست میں نظر آئے گا');
+    })
+    .catch(e=>{
+      const code = (e && e.code) || 'unknown';
+      alert('منظوری نہیں ہوئی۔\nوجہ کا کوڈ: ' + code + (code==='permission-denied' ? '\n\nسرور نے اجازت نہیں دی — لاگ آؤٹ کر کے pbtcodelabs@gmail.com سے دوبارہ لاگ ان کریں۔' : ''));
+    });
 }
 function rejectPending(fsId, col){
   if(!confirm('یہ اندراج مستقل حذف کر دی جائے؟')) return;
