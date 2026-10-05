@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS510MO007">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS510MO007">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS510MO008">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS510MO008">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -146,7 +146,6 @@ body.tkr-hidden #app{padding-top:0;}
   height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));padding:6px 14px calc(6px + env(safe-area-inset-bottom,0px));
   background:linear-gradient(180deg,#f4f8f7,#e3ecea);border-top:1px solid #cfdcd9;box-shadow:0 -4px 14px rgba(13,59,102,.14);direction:ltr;}
 body.nav-on .bnav{display:flex;}
-body.kbd .bnav{display:none;}
 .bnav button{border:none;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
   -webkit-user-select:none;user-select:none;touch-action:manipulation;
   transition:transform .08s ease, box-shadow .08s ease, filter .08s ease;}
@@ -166,7 +165,6 @@ body.kbd .bnav{display:none;}
 /* کوئی بھی تحریر/فارم پٹی کے نیچے نہ آئے */
 body.nav-on .screen{padding-bottom:calc(var(--nav-h) + 84px + env(safe-area-inset-bottom,0px));}
 body.nav-on .modal-overlay{bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));}
-body.nav-on.kbd .modal-overlay{bottom:0;}
 body.nav-on .fab{bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom,0px));}
 body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-bottom,0px));}
 .screen-head h2{text-align:center;}
@@ -969,7 +967,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
 .name-suggest .ns-en{font-size:11.5px;color:#334155;direction:ltr;text-align:right;unicode-bidi:plaintext;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
 .name-suggest mark.ns-hl{background:#ffe08a;color:#3a2c00;border-radius:4px;padding:0 2px;font-weight:700;}
 .fm-body{position:relative;}
-/* ===== MCS510MO007: چھپے خانے، رفتار بٹن، گلی/محلہ فہرست، شیٹ ایڈیٹر ===== */
+/* ===== MCS510MO008: چھپے خانے، رفتار بٹن، گلی/محلہ فہرست، شیٹ ایڈیٹر ===== */
 .mcs-off{display:none !important;}
 .fm-head h3{font-size:14.5px;line-height:1.45;}
 .fm-speed{flex:0 0 auto;border:none;border-radius:9px;padding:4px 7px;font-size:11.5px;font-weight:800;direction:ltr;
@@ -1003,6 +1001,29 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
 .sheet-table th.sh-n{z-index:3;background:#0a2f52;color:#fff;}
 .sh-pend{color:#e11d48;font-size:9px;margin-inline-start:2px;}
 #sheetSaveBtn{margin-top:8px;}
+/* ===== MCS510MO008: نیچے والی پٹی ہر صفحے پر — پیچھے | ہوم | آگے ===== */
+.bnav{gap:22px;background:linear-gradient(180deg,#123a6b 0%,#0b2a52 100%) !important;border-top:1px solid rgba(255,255,255,.18) !important;
+  box-shadow:0 -6px 18px rgba(5,20,60,.35) !important;}
+.bnav .bn-arrow{width:72px;height:54px;border-radius:16px;flex-direction:column;
+  background:linear-gradient(180deg,#3fc58b 0%,#1f9e66 55%,#147a4d 100%);}
+.bnav .bn-home{width:92px;height:58px;border-radius:18px;
+  background:linear-gradient(180deg,#ffd76a 0%,#f5a623 55%,#d9820b 100%);box-shadow:0 6px 0 #9a5a00, 0 10px 14px rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.65);}
+.bnav .bn-home svg{stroke:#5a2f00;filter:none;}
+.bnav .bn-home span{color:#5a2f00 !important;text-shadow:none !important;font-size:13px;}
+.bnav .bn-arrow svg{width:22px;height:22px;}
+.bnav .bn-arrow span{font-size:11.5px;font-weight:800;line-height:1.1;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.35);}
+.bnav .bn-home:active{box-shadow:0 1px 0 #9a5a00, 0 3px 5px rgba(0,0,0,.25), inset 0 2px 0 rgba(255,255,255,.5);}
+.bnav button[disabled]{opacity:.45;}
+/* کی بورڈ کھلا ہو تو پٹی چھپتی نہیں، صرف پتلی ہو جاتی ہے */
+body.kbd{--nav-h:54px;}
+body.kbd .bnav .bn-arrow{height:40px;width:64px;border-radius:12px;}
+body.kbd .bnav .bn-home{height:42px;width:80px;border-radius:13px;}
+body.kbd .bnav .bn-arrow span{display:none;}
+body.kbd .bnav .bn-home span{display:none;}
+/* فارم ہمیشہ پٹی کے اوپر رہے، کچھ نہ کٹے */
+body.nav-on #doctorFormModal, body.nav-on #serviceFormModal{padding-bottom:10px;}
+.fm-body .frow2 .field>label{margin-bottom:4px !important;line-height:1.5 !important;overflow:visible;}
+.fm-body{padding-top:8px;}
 </style>
 </head>
 <body>
@@ -1010,9 +1031,9 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   <div class="mcs-ticker-middle" id="tickerMiddle"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
 </div>
 <nav class="bnav" id="bnav" aria-label="نیویگیشن">
-  <button type="button" class="bn-arrow" id="bnBack" onclick="navPress(goBack)" aria-label="پیچھے"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button type="button" class="bn-arrow" id="bnBack" onclick="navPress(goBack)" aria-label="پیچھے"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span>پیچھے</span></button>
   <button type="button" class="bn-home" onclick="navPress(goHome)" aria-label="ہوم"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>ہوم</span></button>
-  <button type="button" class="bn-arrow" id="bnFwd" onclick="navPress(navForward)" aria-label="آگے"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <button type="button" class="bn-arrow" id="bnFwd" onclick="navPress(navForward)" aria-label="آگے"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg><span>آگے</span></button>
 </nav>
 <div class="backup-strip" id="backupStrip">
   <div class="backup-strip-label" id="backupStripLabel">بیک اپ ہو رہا ہے...</div>
@@ -1058,7 +1079,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS510MO007" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS510MO008" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1274,7 +1295,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
     </div>
 
-    <!-- MCS510MO007: علاقہ اور پتہ کی جگہ اب صرف ایک خانہ "گلی / محلہ" — لکھیں یا نیچے کھلنے والی فہرست سے چنیں -->
+    <!-- MCS510MO008: علاقہ اور پتہ کی جگہ اب صرف ایک خانہ "گلی / محلہ" — لکھیں یا نیچے کھلنے والی فہرست سے چنیں -->
     <div class="field">
       <label>گلی / محلہ</label>
       <input type="text" id="docArea" class="mcs-combo" placeholder="مثلاً محلہ اسلام پورہ، گلی 3" autocomplete="off" enterkeyhint="next">
@@ -1288,7 +1309,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
     </div>
 
-    <!-- MCS510MO007: یہ خانے فی الحال چھپے ہیں (ڈیٹا محفوظ رہتا ہے) — دوبارہ دکھانے کے لیے mcs-off کلاس ہٹا دیں -->
+    <!-- MCS510MO008: یہ خانے فی الحال چھپے ہیں (ڈیٹا محفوظ رہتا ہے) — دوبارہ دکھانے کے لیے mcs-off کلاس ہٹا دیں -->
     <div class="field mcs-off">
       <label>پتہ (Address)</label>
       <input type="text" id="docAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
@@ -1369,7 +1390,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
     </div>
 
-    <!-- MCS510MO007: علاقہ اور پتہ کی جگہ اب صرف ایک خانہ "گلی / محلہ" — لکھیں یا نیچے کھلنے والی فہرست سے چنیں -->
+    <!-- MCS510MO008: علاقہ اور پتہ کی جگہ اب صرف ایک خانہ "گلی / محلہ" — لکھیں یا نیچے کھلنے والی فہرست سے چنیں -->
     <div class="field">
       <label>گلی / محلہ</label>
       <input type="text" id="svcArea" class="mcs-combo" placeholder="مثلاً محلہ اسلام پورہ، گلی 3" autocomplete="off" enterkeyhint="next">
@@ -1383,7 +1404,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
     </div>
 
-    <!-- MCS510MO007: یہ خانے فی الحال چھپے ہیں (ڈیٹا محفوظ رہتا ہے) — دوبارہ دکھانے کے لیے mcs-off کلاس ہٹا دیں -->
+    <!-- MCS510MO008: یہ خانے فی الحال چھپے ہیں (ڈیٹا محفوظ رہتا ہے) — دوبارہ دکھانے کے لیے mcs-off کلاس ہٹا دیں -->
     <div class="field mcs-off">
       <label>پتہ (Address)</label>
       <input type="text" id="svcAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
@@ -1402,7 +1423,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   </div>
 </div>
 
-<!-- ===================== MCS510MO007: SHEET EDITOR MODAL ===================== -->
+<!-- ===================== MCS510MO008: SHEET EDITOR MODAL ===================== -->
 <div class="modal-overlay" id="sheetEditModal">
   <div class="modal-box sheet-box">
     <div class="sheet-head">
@@ -1532,7 +1553,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
 
       <!-- MCS04OCTSU0355PM: لسٹ امپورٹ (Excel / CSV) — صرف ایڈمن -->
-      <!-- MCS510MO007: کیٹگری چن کر سارے ریکارڈ ایکسل شیٹ کی طرح ایک ایک لائن میں درست کریں -->
+      <!-- MCS510MO008: کیٹگری چن کر سارے ریکارڈ ایکسل شیٹ کی طرح ایک ایک لائن میں درست کریں -->
       <div class="backup-card" id="adminSheetBox" style="display:none;">
         <div class="backup-card-title">📊 شیٹ ایڈیٹر (ایک ساتھ ترمیم)</div>
         <div class="cp-hint" style="margin-bottom:10px;">کیٹگری چنیں — سارے ریکارڈ ایک ایک لائن میں کھلیں گے۔ نام، نمبر، علاقہ وغیرہ وہیں درست کر کے ایک ہی بار محفوظ کریں۔</div>
@@ -1860,7 +1881,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS510MO007";
+const APP_VERSION = "MCS510MO008";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2060,7 +2081,7 @@ function syncTickerVisibility(){
   const otherModal = !!document.querySelector('.modal-overlay.active:not(#tickerAdminModal)');
   const show = adminOpen || (currentScreen==='home' && !otherModal);
   document.body.classList.toggle('tkr-hidden', !show);
-  document.body.classList.toggle('nav-on', currentScreen!=='home');
+  document.body.classList.add('nav-on');   /* MCS510MO008: پٹی ہر صفحے پر، ہوم سمیت */
   const b=document.getElementById('bnBack'), f=document.getElementById('bnFwd');
   if(b) b.disabled = !(navStack.length>1 || otherModal);
   if(f) f.disabled = !fwdStack.length;
@@ -2478,7 +2499,7 @@ function waPhoneDisplay(raw){
   return '⁦' + grouped + '⁩';
 }
 async function pickFromContacts(numId, nameId, ev){
-  /* MCS510MO007: فون بک صرف آئیکن پر اصلی ٹیپ سے کھلے — نمبر والے خانے میں جانے سے کبھی نہیں */
+  /* MCS510MO008: فون بک صرف آئیکن پر اصلی ٹیپ سے کھلے — نمبر والے خانے میں جانے سے کبھی نہیں */
   if(!ev || !ev.isTrusted || ev.type!=='click') return;
   if(!('contacts' in navigator) || !('select' in navigator.contacts)){
     showToast('یہ فون/براؤزر فون بک کی سہولت نہیں دیتا — نمبر خود لکھیں');
@@ -2501,8 +2522,22 @@ async function pickFromContacts(numId, nameId, ev){
 }
 
 function goBack(){
+  /* MCS510MO008: کوئی فارم/پاپ اپ کھلا ہو تو پیچھے کا بٹن پہلے اسے بند کرے، صفحہ نہیں بدلے */
+  const open = Array.from(document.querySelectorAll('.modal-overlay.active')).pop();
+  if(open){
+    if((open.id==='doctorFormModal' || open.id==='serviceFormModal') && formHasTyping(open) &&
+       !confirm('لکھی ہوئی معلومات محفوظ نہیں ہوئیں۔ کیا بغیر محفوظ کیے واپس جائیں؟')) return;
+    if(typeof flowCancel==='function') flowCancel();
+    if(open.id==='sheetEditModal' && typeof closeSheetEditor==='function'){ closeSheetEditor(); return; }
+    closeModal(open.id);
+    return;
+  }
   if(navStack.length>1){ try{ history.back(); return; }catch(e){} }
   goHome();
+}
+function formHasTyping(ov){
+  return ['docNameUr','svcNameUr','docArea','svcArea','docWhatsapp','svcWhatsapp']
+    .some(id=>{ const el = document.getElementById(id); return el && ov.contains(el) && el.value.trim(); });
 }
 function goHome(){
   fwdStack = [];
@@ -2515,7 +2550,12 @@ function goHome(){
 window.addEventListener('resize', ()=>{ try{ fitOpenForms(); }catch(e){} });
 window.addEventListener('popstate', ()=>{
   const open = document.querySelector('.modal-overlay.active');
-  if(open){ open.classList.remove('active'); }
+  if(open){
+    open.classList.remove('active');
+    /* MCS510MO008: فون کا بیک بٹن بھی صرف پاپ اپ بند کرے، نیچے والا صفحہ وہی رہے */
+    if(currentScreen!=='home'){ try{ history.pushState({s:currentScreen},''); }catch(e){} }
+    return;
+  }
   if(navStack.length>1){ fwdStack.push(navStack.pop()); goScreen(navStack[navStack.length-1], true); }
 });
 
@@ -2617,7 +2657,7 @@ function resetLocationFormValues(prefix){
   populateDistrictDropdown(prefix, wantProvince, wantDistrict);
   document.getElementById(prefix+'DistrictCustom').style.display = 'none';
   document.getElementById(prefix+'DistrictCustom').value = '';
-  /* MCS510MO007: پچھلا شہر فہرست میں نہ ہو تب بھی خود بھر جائے؛ گلی/محلہ ہر نئے اندراج پر خالی */
+  /* MCS510MO008: پچھلا شہر فہرست میں نہ ہو تب بھی خود بھر جائے؛ گلی/محلہ ہر نئے اندراج پر خالی */
   if(last && last.city){
     const citySel = document.getElementById(prefix+'City');
     if(citySel && !Array.from(citySel.options).some(o=>o.value===last.city)){
@@ -2693,13 +2733,13 @@ function enhanceCapsuleSelect(selectId){
         sel.dispatchEvent(new Event('change', {bubbles:true}));
         syncBtn();
         closePanel();
-        sel.dispatchEvent(new CustomEvent('cselpick'));   /* MCS510MO007: خودکار اگلے خانے کے لیے */
+        sel.dispatchEvent(new CustomEvent('cselpick'));   /* MCS510MO008: خودکار اگلے خانے کے لیے */
       };
       panel.appendChild(row);
     });
     panel.style.display = 'block';
     document.addEventListener('click', outsideClick, true);
-    /* MCS510MO007: نیچے جگہ کم ہو تو فہرست اوپر کھلے، اور پوری نظر آئے */
+    /* MCS510MO008: نیچے جگہ کم ہو تو فہرست اوپر کھلے، اور پوری نظر آئے */
     panel.style.top = ''; panel.style.bottom = '';
     const body = wrap.closest('.fm-body');
     if(body){
@@ -2725,7 +2765,7 @@ function enhanceCapsuleSelect(selectId){
   sel._cselSync = syncBtn;
   sel._cselOpen = openPanel;
   sel._cselClose = closePanel;
-  /* MCS510MO007: فہرست کو چھوا یا سکرول کیا تو کرسر خود آگے نہ بڑھے — بندہ چن رہا ہے */
+  /* MCS510MO008: فہرست کو چھوا یا سکرول کیا تو کرسر خود آگے نہ بڑھے — بندہ چن رہا ہے */
   ['touchstart','pointerdown','wheel'].forEach(ev=> panel.addEventListener(ev, ()=>{ if(typeof flowCancel==='function') flowCancel(); }, {passive:true}));
   sel._cselBtn = btn;
   syncBtn();
@@ -2953,7 +2993,7 @@ function saveDoctor(){
     data.id = 'doc_' + Date.now() + '_' + Math.floor(Math.random()*1000);
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
-    data.approved = !!isAdminSignedIn; // MCS510MO007: ایڈمن کا اپنا اندراج فوراً منظور؛ باقی سب ایڈمن کی منظوری کے بعد
+    data.approved = !!isAdminSignedIn; // MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور؛ باقی سب ایڈمن کی منظوری کے بعد
     store.doctors.push(data);
     syncDoctorCreateToFirebase(data);
   }
@@ -3116,7 +3156,7 @@ function renderCardPreview(){
   cardPreviewDebounce = setTimeout(async ()=>{
     const st = cardCustomState;
     const canvas = await buildShareCanvas(st.kind, st.item, st.opts);
-    /* MCS510MO007: کارڈ کی تصویر پہلے سے تیار — شیئر بٹن دباتے ہی بغیر انتظار کے تصویر + پیغام اکٹھے جائیں */
+    /* MCS510MO008: کارڈ کی تصویر پہلے سے تیار — شیئر بٹن دباتے ہی بغیر انتظار کے تصویر + پیغام اکٹھے جائیں */
     canvas.toBlob(b=>{ if(cardCustomState===st) st.readyBlob = b; }, 'image/png');
     const holder = document.getElementById('ccPreviewHolder');
     holder.innerHTML = '';
@@ -3129,7 +3169,7 @@ function finalizeCardShare(mode){
   const st = cardCustomState;
   store.cardCustomOpts = {...st.opts};
   saveStore();
-  /* MCS510MO007: پہلے کارڈ بنانے میں وقت لگتا تھا، اتنی دیر میں فون "ٹیپ" کی اجازت ختم کر دیتا اور
+  /* MCS510MO008: پہلے کارڈ بنانے میں وقت لگتا تھا، اتنی دیر میں فون "ٹیپ" کی اجازت ختم کر دیتا اور
      صرف پیغام جاتا تھا، تصویر الگ لگانی پڑتی تھی۔ اب تیار شدہ تصویر فوراً ایک ہی شیئر میں جاتی ہے۔ */
   if(st.readyBlob){
     closeModal('cardCustomizeModal');
@@ -3162,7 +3202,7 @@ function shareCardToOwnerFallback(blob, caption, item){
   alert('یہ فون تصویر اور پیغام ایک ساتھ نہیں بھیج سکتا۔\n\nکارڈ کی تصویر گیلری میں محفوظ کر دی گئی ہے — واٹس ایپ چیٹ کھلنے پر 📎 سے لگا دیں۔');
   window.open('https://wa.me/' + to + '?text=' + encodeURIComponent(caption), '_blank');
 }
-/* MCS510MO007: جس کا اندراج ہے اسی کو اس کا کارڈ + اطلاعی پیغام */
+/* MCS510MO008: جس کا اندراج ہے اسی کو اس کا کارڈ + اطلاعی پیغام */
 function ownerCaptionText(kind, item){
   const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
   const lines = ['السلام علیکم!', '',
@@ -3506,7 +3546,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS510MO007';
+    headerLogo.src = 'icons/icon-192.png?v=MCS510MO008';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3675,7 +3715,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS510MO007';
+    headerLogo.src = 'icons/icon-192.png?v=MCS510MO008';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -4132,7 +4172,7 @@ function saveService(){
     data.id = 'svc_' + Date.now() + '_' + Math.floor(Math.random()*1000);
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
-    data.approved = !!isAdminSignedIn;   /* MCS510MO007: ایڈمن کا اپنا اندراج فوراً منظور */
+    data.approved = !!isAdminSignedIn;   /* MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور */
     store.services.push(data);
     syncServiceCreateToFirebase(data);
   }
@@ -5329,7 +5369,7 @@ function startFirebaseSyncWhenReady(){
 const SYNCED_COLLECTIONS = ['doctors','services'];
 function localArrayFor(col){ return col==='services' ? store.services : store.doctors; }
 
-/* MCS510MO007: فہرست فوراً تازہ */
+/* MCS510MO008: فہرست فوراً تازہ */
 function refreshVisibleLists(){
   try{
     if(currentScreen==='doctor-list') renderDoctorList('list');
@@ -5337,7 +5377,7 @@ function refreshVisibleLists(){
     if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
   }catch(e){}
 }
-/* MCS510MO007: جو اندراج اس فون پر "Pending" دکھ رہے ہیں، سرور سے ان کی اصل حالت پوچھ کر درست کریں
+/* MCS510MO008: جو اندراج اس فون پر "Pending" دکھ رہے ہیں، سرور سے ان کی اصل حالت پوچھ کر درست کریں
    (منظوری کسی اور فون یا پرانے ورژن سے ہوئی ہو تب بھی یہاں پھنسا ہوا نشان ہٹ جائے) */
 function healPendingLocal(){
   const FB = window.MCSFirebase;
@@ -5584,7 +5624,7 @@ function adminLogout(){
   if(FB) FB.signOut(FB.auth);
   showAdminPop(false);
 }
-/* MCS510MO007: منظوری کا بٹن اب وجہ بتاتا ہے، کیٹگری کی جانچ کرتا ہے، اور کامیابی پر فہرست فوراً تازہ کرتا ہے */
+/* MCS510MO008: منظوری کا بٹن اب وجہ بتاتا ہے، کیٹگری کی جانچ کرتا ہے، اور کامیابی پر فہرست فوراً تازہ کرتا ہے */
 function approvePending(fsId, col){
   const FB = window.MCSFirebase;
   if(!FB){ alert('انٹرنیٹ کنکشن نہیں — منظوری نہیں ہوئی'); return; }
@@ -5679,7 +5719,7 @@ window.addEventListener('hashchange', openPrivacyFromHash);
 window.addEventListener('load', ()=> setTimeout(openPrivacyFromHash, 300));
 
 /* =====================================================================
-   MCS510MO007: تیز ڈیٹا انٹری
+   MCS510MO008: تیز ڈیٹا انٹری
    (1) کرسر خود بخود اگلے خانے پر — رفتار ⏩ بٹن سے کم/زیادہ یا بند
    (2) فہرست والا خانہ آتے ہی اس کی لسٹ خود کھل جاتی ہے
    (3) گلی/محلہ: لکھیں یا پہلے سے موجود ناموں کی فہرست سے چنیں
@@ -5723,7 +5763,7 @@ function flowFocus(el){
     /* باقی کھلی فہرستیں بند، یہ والی کھلے */
     document.querySelectorAll('select').forEach(o=>{ if(o!==el && o._cselClose) o._cselClose(); });
     if(el._cselOpen){ setTimeout(()=>{ try{ el._cselOpen(); if(el._cselBtn) el._cselBtn.focus({preventScroll:true}); }catch(e){} }, 60); }
-    /* MCS510MO007: پہلے سے بھرا خانہ (صوبہ/ضلع/شہر) — فہرست کھل کر چنا ہوا نام دکھاتی ہے؛
+    /* MCS510MO008: پہلے سے بھرا خانہ (صوبہ/ضلع/شہر) — فہرست کھل کر چنا ہوا نام دکھاتی ہے؛
        کچھ نہ چھوا تو مقررہ وقفے بعد خود بند ہو کر کرسر آگے؛ وہی نام دبائیں تو فوراً آگے */
     const v = getAutoSpeed();
     if(v && MCS_LOC_IDS.test(el.id) && el.value && el.value !== CUSTOM_OPTION){
@@ -5861,7 +5901,7 @@ function enhanceCombo(id){
 }
 
 /* =====================================================================
-   MCS510MO007: شیٹ ایڈیٹر — کیٹگری چنیں، سارے ریکارڈ ایک ایک لائن میں،
+   MCS510MO008: شیٹ ایڈیٹر — کیٹگری چنیں، سارے ریکارڈ ایک ایک لائن میں،
    جو بدلیں وہ ایک ہی بار میں محفوظ (موبائل + فائربیس)
    ===================================================================== */
 const SHEET_COLS = {
