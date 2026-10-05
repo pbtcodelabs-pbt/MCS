@@ -1,33 +1,77 @@
 name: Unzip MCS update
 
+# ریپو کی جڑ میں کوئی بھی .zip آئے تو یہ چلتا ہے:
+# - نام MCS سے شروع ہو (مثلاً MCS510MO007.zip) اور اندر index.html ہو -> فائلیں لگتی ہیں، زپ ہٹ جاتی ہے
+# - نام MCS سے شروع نہ ہو، یا اندر index.html نہ ہو -> کچھ نہیں بدلتا، زپ خود حذف
 on:
   push:
     branches: [main]
-    paths: ['MCS*.zip']
+    paths: ['*.zip']
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: mcs-zip
+  cancel-in-progress: false
+
 jobs:
-  unzip:
+  handle-zip:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Unzip and replace files
+      - name: Check zip name, then unzip or delete
         run: |
           set -e
-          ZIP=$(git log -1 --format= --name-only --diff-filter=AM -- 'MCS*.zip' | head -n1)
-          if [ -z "$ZIP" ] || [ ! -f "$ZIP" ]; then
-            ZIP=$(ls MCS*.zip 2>/dev/null | head -n1 || true)
-          fi
-          if [ -z "$ZIP" ]; then echo "No MCS zip found"; exit 0; fi
-          echo "Using $ZIP"
-          unzip -o "$ZIP" index.html sw.js -d .
-          git rm -q --ignore-unmatch MCS*.zip
+          shopt -s nullglob
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add index.html sw.js
-          git commit -m "Auto-update from $ZIP" || echo "Nothing to commit"
-          git push
+
+          CHANGED=0
+
+          # 1) غلط نام والی زپ: کوئی کام نہیں، صرف حذف
+          for f in *.zip; do
+            case "$f" in
+              MCS*.zip) ;;
+              *)
+                echo "::warning::Rejected '$f' - name must start with MCS. Deleting it."
+                git rm -q -- "$f"
+                CHANGED=1
+                ;;
+            esac
+          done
+
+          # 2) درست نام والی زپ: تازہ ترین والی لگائیں
+          ZIP=""; BEST=0
+          for f in MCS*.zip; do
+            T=$(git log -1 --format=%ct -- "$f" || echo 0)
+            if [ "${T:-0}" -ge "$BEST" ]; then BEST=${T:-0}; ZIP="$f"; fi
+          done
+
+          if [ -n "$ZIP" ] && [ -f "$ZIP" ]; then
+            if unzip -l "$ZIP" | awk '{print $4}' | grep -qx 'index.html'; then
+              echo "Using $ZIP"
+              unzip -o "$ZIP" index.html -d .
+              if unzip -l "$ZIP" | awk '{print $4}' | grep -qx 'sw.js'; then
+                unzip -o "$ZIP" sw.js -d .
+              fi
+              git add index.html sw.js
+              MSG="Auto-update from $ZIP"
+            else
+              echo "::warning::'$ZIP' has no index.html inside - nothing changed. Deleting it."
+              MSG="Removed invalid zip $ZIP"
+            fi
+            CHANGED=1
+          fi
+
+          # 3) ہر قسم کی MCS زپ بھی کام کے بعد ریپو سے ہٹ جائے
+          for f in MCS*.zip; do git rm -q --ignore-unmatch -- "$f"; done
+
+          if [ "$CHANGED" = "1" ]; then
+            git commit -m "${MSG:-Removed rejected zip files}" || echo "Nothing to commit"
+            git push
+          else
+            echo "No zip to handle"
+          fi
