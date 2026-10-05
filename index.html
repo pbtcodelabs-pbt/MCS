@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS410SU003">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS410SU003">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS510MO004">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS510MO004">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -969,6 +969,40 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
 .name-suggest .ns-en{font-size:11.5px;color:#334155;direction:ltr;text-align:right;unicode-bidi:plaintext;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
 .name-suggest mark.ns-hl{background:#ffe08a;color:#3a2c00;border-radius:4px;padding:0 2px;font-weight:700;}
 .fm-body{position:relative;}
+/* ===== MCS510MO004: چھپے خانے، رفتار بٹن، گلی/محلہ فہرست، شیٹ ایڈیٹر ===== */
+.mcs-off{display:none !important;}
+.fm-head h3{font-size:14.5px;line-height:1.45;}
+.fm-speed{flex:0 0 auto;border:none;border-radius:9px;padding:4px 7px;font-size:11.5px;font-weight:800;direction:ltr;
+  background:linear-gradient(180deg,#ffe7a3,#f5b931);color:#5a3a00;box-shadow:0 2px 4px rgba(0,0,0,.35), inset 0 1px 0 #fff;}
+.fm-speed.off{background:linear-gradient(180deg,#e5e7eb,#b8bec8);color:#374151;}
+.fm-speed:active{transform:scale(.93);}
+.loc-hint{font-size:10px;color:#dbe7ff;font-weight:400;}
+.fm-body .field>.combo-wrap{flex:1 1 0;min-width:0;position:relative;}
+.combo-wrap input{width:100%;}
+.combo-wrap .csel-panel{max-height:210px;}
+.fm-save-btn.pulse{animation:mcsPulse 1s ease 2;}
+@keyframes mcsPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.04);box-shadow:0 0 0 5px rgba(255,214,102,.8);}}
+#sheetEditModal{align-items:stretch;}
+#sheetEditModal .sheet-box{max-width:100%;max-height:100%;height:100%;border-radius:0;display:flex;flex-direction:column;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));overflow:hidden;}
+.sheet-head{display:flex;align-items:center;gap:8px;direction:ltr;}
+.sheet-head h3{flex:1;margin:0;direction:rtl;text-align:right;}
+.sheet-tools{display:flex;gap:6px;margin:8px 0 4px;}
+.sheet-tools select,.sheet-tools input{flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1.5px solid #d1d5db;font-size:14px;background:#fff;}
+.sheet-info{font-size:11.5px;color:#6b7280;margin:2px 2px 6px;}
+.sheet-scroll{flex:1 1 auto;overflow:auto;border:1px solid #d1d5db;border-radius:10px;-webkit-overflow-scrolling:touch;background:#fff;}
+.sheet-table{border-collapse:collapse;font-size:13px;width:max-content;min-width:100%;}
+.sheet-table th{position:sticky;top:0;z-index:2;background:#0d3b66;color:#fff;font-weight:700;padding:6px 6px;white-space:nowrap;border-left:1px solid rgba(255,255,255,.2);}
+.sheet-table td{border-bottom:1px solid #e5e7eb;border-left:1px solid #eef0f2;padding:0;}
+.sheet-table tr:nth-child(even) td{background:#f7f9fc;}
+.sheet-table td input{width:100%;border:none;background:transparent;padding:7px 6px;font-size:13px;font-family:inherit;color:#111827;outline:none;}
+.sheet-table td input:focus{background:#fff8e1;box-shadow:inset 0 0 0 2px #f5b931;}
+.sheet-table td input.sh-chg{background:#fff3c4;font-weight:700;}
+.sheet-table tr.sh-dirty td.sh-n{background:#f5b931;color:#3b2a00;}
+.sheet-table tr.sh-bad td{background:#fde2e2 !important;}
+.sheet-table .sh-n{position:sticky;right:0;z-index:1;background:#eef2f7;text-align:center;font-size:11px;color:#6b7280;min-width:34px;padding:0 4px;}
+.sheet-table th.sh-n{z-index:3;background:#0a2f52;color:#fff;}
+.sh-pend{color:#e11d48;font-size:9px;margin-inline-start:2px;}
+#sheetSaveBtn{margin-top:8px;}
 </style>
 </head>
 <body>
@@ -1024,7 +1058,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS410SU003" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS510MO004" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1177,6 +1211,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       <span class="fsc-val">100%</span>
       <button type="button" onclick="adjustFormScale(1)" aria-label="بڑا کریں">A+</button>
     </div>
+    <button type="button" class="fm-speed" onclick="cycleAutoSpeed()" aria-label="خودکار اگلا خانہ — رفتار">⏩ <span class="fm-speed-val">1.5s</span></button>
     <h3 id="doctorFormTitle">نیا ڈاکٹر شامل کریں</h3>
     </div>
     <div class="fm-body">
@@ -1184,16 +1219,40 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
     <div class="frow2">
     <div class="field">
       <label>نام (اردو)</label>
-      <input type="text" id="docNameUr" placeholder="مثلاً ڈاکٹر محمد علی" oninput="docNameSuggestUpdate()">
+      <input type="text" id="docNameUr" placeholder="مثلاً ڈاکٹر محمد علی" autocomplete="off" enterkeyhint="next" oninput="docNameSuggestUpdate()">
     </div>
-    <div class="field">
+    <div class="field mcs-off">
       <label>Name (English)</label>
       <input type="text" id="docNameEn" placeholder="e.g. Dr. Muhammad Ali" dir="ltr" style="text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;" oninput="docNameSuggestUpdate()">
     </div>
     </div>
     <div class="name-suggest" id="docNameSuggest"></div>
 
-    <div class="cp-section-title" style="margin-top:6px;">📍 مقام</div>
+    <div class="field">
+      <label>شعبہ (Department)</label>
+      <div class="field-with-add">
+        <select id="docDept"></select>
+        <button class="add-circle" onclick="promptAddOption('department','docDept')">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>اسپیشلٹی (Specialty)</label>
+      <div class="field-with-add">
+        <select id="docSpecialty"></select>
+        <button class="add-circle" onclick="promptAddOption('specialty','docSpecialty')">+</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>منسلک ہسپتال</label>
+      <div class="field-with-add">
+        <select id="docHospital"></select>
+        <button class="add-circle" onclick="promptAddOption('hospital','docHospital')">+</button>
+      </div>
+    </div>
+
+    <div class="cp-section-title" style="margin-top:6px;">📍 مقام <span class="loc-hint">(پچھلا اندراج خود بھر جاتا ہے)</span></div>
 
     <div class="field">
       <label>صوبہ (Province)</label>
@@ -1215,60 +1274,35 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
     </div>
 
+    <!-- MCS510MO004: علاقہ اور پتہ کی جگہ اب صرف ایک خانہ "گلی / محلہ" — لکھیں یا نیچے کھلنے والی فہرست سے چنیں -->
     <div class="field">
-      <label>علاقہ (Area)</label>
-      <div class="field-with-add">
-        <select id="docArea"></select>
-        <button class="add-circle" onclick="promptAddOption('area','docArea')">+</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>پتہ (Address)</label>
-      <input type="text" id="docAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
-    </div>
-
-    <div class="field">
-      <label>تعارف (اختیاری)</label>
-      <textarea id="docIntro" rows="1" placeholder="ایک جملے میں بتائیں یہ کس چیز کے ماہر ہیں" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
-    </div>
-
-    <div class="field">
-      <label>شعبہ (Department)</label>
-      <div class="field-with-add">
-        <select id="docDept"></select>
-        <button class="add-circle" onclick="promptAddOption('department','docDept')">+</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>اسپیشلٹی (Specialty)</label>
-      <div class="field-with-add">
-        <select id="docSpecialty"></select>
-        <button class="add-circle" onclick="promptAddOption('specialty','docSpecialty')">+</button>
-      </div>
+      <label>گلی / محلہ</label>
+      <input type="text" id="docArea" class="mcs-combo" placeholder="مثلاً محلہ اسلام پورہ، گلی 3" autocomplete="off" enterkeyhint="next">
     </div>
 
     <div class="field">
       <label>واٹس ایپ نمبر</label>
       <div class="field-with-add">
-        <input type="tel" id="docWhatsapp" placeholder="0300-1234567" dir="ltr" inputmode="tel" style="flex:1;text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;letter-spacing:.5px;" onblur="this.value=normalizePkNumber(this.value)">
-        <button class="add-circle pick-contact" onclick="pickFromContacts('docWhatsapp','docNameEn')" aria-label="فون بک سے نمبر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></button>
+        <input type="text" id="docWhatsapp" name="mcs_doc_num_x" placeholder="0300-1234567" dir="ltr" inputmode="tel" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" data-lpignore="true" style="flex:1;text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;letter-spacing:.5px;" onblur="this.value=normalizePkNumber(this.value)">
+        <button type="button" class="add-circle pick-contact" onclick="pickFromContacts('docWhatsapp','docNameEn',event)" aria-label="فون بک سے نمبر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></button>
       </div>
     </div>
 
-    <div class="field">
-      <label>منسلک ہسپتال</label>
-      <div class="field-with-add">
-        <select id="docHospital"></select>
-        <button class="add-circle" onclick="promptAddOption('hospital','docHospital')">+</button>
-      </div>
+    <!-- MCS510MO004: یہ خانے فی الحال چھپے ہیں (ڈیٹا محفوظ رہتا ہے) — دوبارہ دکھانے کے لیے mcs-off کلاس ہٹا دیں -->
+    <div class="field mcs-off">
+      <label>پتہ (Address)</label>
+      <input type="text" id="docAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
+    </div>
+
+    <div class="field mcs-off">
+      <label>تعارف (اختیاری)</label>
+      <textarea id="docIntro" rows="1" placeholder="ایک جملے میں بتائیں یہ کس چیز کے ماہر ہیں" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
     </div>
 
     </div>
     <div class="form-save-bar">
       <div class="form-note">محفوظ کر کے آپ تصدیق کرتے ہیں کہ معلومات درست ہیں اور <a href="#privacy" onclick="event.preventDefault();openPrivacyPolicy();">مواد کے اصول</a> کے مطابق ہیں۔</div>
-      <button class="btn block" onclick="saveDoctor()">💾 محفوظ کریں</button>
+      <button class="btn block fm-save-btn" onclick="saveDoctor()">💾 محفوظ کریں</button>
     </div>
   </div>
 </div>
@@ -1282,6 +1316,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       <span class="fsc-val">100%</span>
       <button type="button" onclick="adjustFormScale(1)" aria-label="بڑا کریں">A+</button>
     </div>
+    <button type="button" class="fm-speed" onclick="cycleAutoSpeed()" aria-label="خودکار اگلا خانہ — رفتار">⏩ <span class="fm-speed-val">1.5s</span></button>
     <h3 id="serviceFormTitle">نیا اندراج شامل کریں</h3>
     </div>
     <div class="fm-body">
@@ -1295,9 +1330,9 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
     <div class="frow2">
     <div class="field">
       <label id="svcNameUrLabel">نام (اردو)</label>
-      <input type="text" id="svcNameUr" oninput="svcNameSuggestUpdate()">
+      <input type="text" id="svcNameUr" autocomplete="off" enterkeyhint="next" oninput="svcNameSuggestUpdate()">
     </div>
-    <div class="field">
+    <div class="field mcs-off">
       <label>Name (English)</label>
       <input type="text" id="svcNameEn" dir="ltr" style="text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;" oninput="svcNameSuggestUpdate()">
     </div>
@@ -1312,7 +1347,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
     </div>
 
-    <div class="cp-section-title" style="margin-top:6px;">📍 مقام</div>
+    <div class="cp-section-title" style="margin-top:6px;">📍 مقام <span class="loc-hint">(پچھلا اندراج خود بھر جاتا ہے)</span></div>
 
     <div class="field">
       <label>صوبہ (Province)</label>
@@ -1334,37 +1369,53 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
     </div>
 
+    <!-- MCS510MO004: علاقہ اور پتہ کی جگہ اب صرف ایک خانہ "گلی / محلہ" — لکھیں یا نیچے کھلنے والی فہرست سے چنیں -->
     <div class="field">
-      <label>علاقہ (Area)</label>
-      <div class="field-with-add">
-        <select id="svcArea"></select>
-        <button class="add-circle" onclick="promptAddOption('area','svcArea')">+</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>پتہ (Address)</label>
-      <input type="text" id="svcAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
-    </div>
-
-    <div class="field">
-      <label>تعارف (اختیاری)</label>
-      <textarea id="svcIntro" rows="1" placeholder="ایک جملے میں بتائیں یہاں کیا ملتا ہے" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+      <label>گلی / محلہ</label>
+      <input type="text" id="svcArea" class="mcs-combo" placeholder="مثلاً محلہ اسلام پورہ، گلی 3" autocomplete="off" enterkeyhint="next">
     </div>
 
     <div class="field">
       <label>واٹس ایپ نمبر</label>
       <div class="field-with-add">
-        <input type="tel" id="svcWhatsapp" placeholder="0300-1234567" dir="ltr" inputmode="tel" style="flex:1;text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;letter-spacing:.5px;" onblur="this.value=normalizePkNumber(this.value)">
-        <button class="add-circle pick-contact" onclick="pickFromContacts('svcWhatsapp','svcNameEn')" aria-label="فون بک سے نمبر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></button>
+        <input type="text" id="svcWhatsapp" name="mcs_svc_num_x" placeholder="0300-1234567" dir="ltr" inputmode="tel" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" data-lpignore="true" style="flex:1;text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;letter-spacing:.5px;" onblur="this.value=normalizePkNumber(this.value)">
+        <button type="button" class="add-circle pick-contact" onclick="pickFromContacts('svcWhatsapp','svcNameEn',event)" aria-label="فون بک سے نمبر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></button>
       </div>
+    </div>
+
+    <!-- MCS510MO004: یہ خانے فی الحال چھپے ہیں (ڈیٹا محفوظ رہتا ہے) — دوبارہ دکھانے کے لیے mcs-off کلاس ہٹا دیں -->
+    <div class="field mcs-off">
+      <label>پتہ (Address)</label>
+      <input type="text" id="svcAddress" placeholder="مثلاً مین بازار، دکان نمبر 5، وارڈ نمبر 2">
+    </div>
+
+    <div class="field mcs-off">
+      <label>تعارف (اختیاری)</label>
+      <textarea id="svcIntro" rows="1" placeholder="ایک جملے میں بتائیں یہاں کیا ملتا ہے" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
     </div>
 
     </div>
     <div class="form-save-bar">
       <div class="form-note">محفوظ کر کے آپ تصدیق کرتے ہیں کہ معلومات درست ہیں اور <a href="#privacy" onclick="event.preventDefault();openPrivacyPolicy();">مواد کے اصول</a> کے مطابق ہیں۔</div>
-      <button class="btn block" onclick="saveService()">💾 محفوظ کریں</button>
+      <button class="btn block fm-save-btn" onclick="saveService()">💾 محفوظ کریں</button>
     </div>
+  </div>
+</div>
+
+<!-- ===================== MCS510MO004: SHEET EDITOR MODAL ===================== -->
+<div class="modal-overlay" id="sheetEditModal">
+  <div class="modal-box sheet-box">
+    <div class="sheet-head">
+      <button class="modal-close" onclick="closeSheetEditor()">×</button>
+      <h3>📊 شیٹ ایڈیٹر</h3>
+    </div>
+    <div class="sheet-tools">
+      <select id="sheetCat" onchange="renderSheet()"></select>
+      <input type="text" id="sheetSearch" placeholder="🔍 تلاش..." oninput="renderSheetSoon()" autocomplete="off">
+    </div>
+    <div class="sheet-info" id="sheetInfo"></div>
+    <div class="sheet-scroll"><table class="sheet-table" id="sheetTable"></table></div>
+    <button class="btn block accent" id="sheetSaveBtn" onclick="saveSheetChanges()">💾 تبدیلیاں محفوظ کریں</button>
   </div>
 </div>
 
@@ -1481,6 +1532,13 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
 
       <!-- MCS04OCTSU0355PM: لسٹ امپورٹ (Excel / CSV) — صرف ایڈمن -->
+      <!-- MCS510MO004: کیٹگری چن کر سارے ریکارڈ ایکسل شیٹ کی طرح ایک ایک لائن میں درست کریں -->
+      <div class="backup-card" id="adminSheetBox" style="display:none;">
+        <div class="backup-card-title">📊 شیٹ ایڈیٹر (ایک ساتھ ترمیم)</div>
+        <div class="cp-hint" style="margin-bottom:10px;">کیٹگری چنیں — سارے ریکارڈ ایک ایک لائن میں کھلیں گے۔ نام، نمبر، علاقہ وغیرہ وہیں درست کر کے ایک ہی بار محفوظ کریں۔</div>
+        <button class="btn block accent" onclick="openSheetEditor()">📊 شیٹ کھولیں</button>
+      </div>
+
       <div class="backup-card" id="adminImportBox" style="display:none;">
         <div class="backup-card-title">📥 لسٹ امپورٹ کریں (Excel / CSV)</div>
         <div class="cp-hint" style="margin-bottom:10px;">فائل میں یہ خانے ہوں: دکان کا نام، دکاندار کا نام، موبائل نمبر، کیٹگری، علاقہ، شہر، ضلع۔ کیٹگری کا نام بالکل ایپ والی کیٹگری جیسا ہو۔ غلط نمبر، دہرے نمبر اور پہلے سے موجود نمبر خود چھوڑ دیے جاتے ہیں۔</div>
@@ -1687,7 +1745,11 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
       </div>
     </div>
 
-    <button class="btn block accent" style="margin-top:10px;" onclick="finalizeCardShare()">📤 شیئر کریں</button>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn accent" style="flex:1;" onclick="finalizeCardShare()">📤 عام شیئر</button>
+      <button class="btn" style="flex:1;background:#128c7e;" onclick="finalizeCardShare('owner')">👤 اسی کو بھیجیں</button>
+    </div>
+    <div class="cp-hint" style="margin-top:6px;">"اسی کو بھیجیں" سے کارڈ کے ساتھ یہ پیغام جاتا ہے کہ آپ کا ڈیٹا MCS ایپ میں لگا دیا گیا ہے، اور ایپ دوستوں کو بتانے کی درخواست۔</div>
   </div>
 </div>
 
@@ -1798,7 +1860,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
    (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS410SU003";
+const APP_VERSION = "MCS510MO004";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2415,7 +2477,9 @@ function waPhoneDisplay(raw){
   if(/^03\d{9}$/.test(n)) grouped = n.slice(0,4) + ' ' + n.slice(4,5) + ' ' + n.slice(5,8) + ' ' + n.slice(8,11);
   return '⁦' + grouped + '⁩';
 }
-async function pickFromContacts(numId, nameId){
+async function pickFromContacts(numId, nameId, ev){
+  /* MCS510MO004: فون بک صرف آئیکن پر اصلی ٹیپ سے کھلے — نمبر والے خانے میں جانے سے کبھی نہیں */
+  if(!ev || !ev.isTrusted || ev.type!=='click') return;
   if(!('contacts' in navigator) || !('select' in navigator.contacts)){
     showToast('یہ فون/براؤزر فون بک کی سہولت نہیں دیتا — نمبر خود لکھیں');
     return;
@@ -2480,7 +2544,6 @@ function refreshAllDropdowns(){
   populateDropdown('docSpecialty', store.specialties);
   populateDropdown('docHospital', store.hospitals);
   populateDropdown('docCity', store.cities);
-  populateDropdown('docArea', store.areas);
   populateProvinceDropdown();
 }
 
@@ -2528,9 +2591,13 @@ function setLocationFormValues(prefix, d){
   document.getElementById(prefix+'DistrictCustom').style.display = (!districtInList && district) ? 'block' : 'none';
   document.getElementById(prefix+'DistrictCustom').value = (!districtInList && district) ? district : '';
   resyncCapsuleSelect(prefix+'District');
-  if(d.city) document.getElementById(prefix+'City').value = d.city;
-  if(d.area) document.getElementById(prefix+'Area').value = d.area;
-  resyncCapsuleSelect(prefix+'City'); resyncCapsuleSelect(prefix+'Area');
+  if(d.city){
+    const cs = document.getElementById(prefix+'City');
+    if(!Array.from(cs.options).some(o=>o.value===d.city)){ if(!store.cities.includes(d.city)) store.cities.push(d.city); populateDropdown(prefix+'City', store.cities); }
+    cs.value = d.city;
+  }
+  document.getElementById(prefix+'Area').value = d.area || '';
+  resyncCapsuleSelect(prefix+'City');
 }
 function resetLocationFormValues(prefix){
   prefix = prefix || 'doc';
@@ -2550,15 +2617,18 @@ function resetLocationFormValues(prefix){
   populateDistrictDropdown(prefix, wantProvince, wantDistrict);
   document.getElementById(prefix+'DistrictCustom').style.display = 'none';
   document.getElementById(prefix+'DistrictCustom').value = '';
+  /* MCS510MO004: پچھلا شہر فہرست میں نہ ہو تب بھی خود بھر جائے؛ گلی/محلہ ہر نئے اندراج پر خالی */
   if(last && last.city){
     const citySel = document.getElementById(prefix+'City');
-    if(citySel && Array.from(citySel.options).some(o=>o.value===last.city)) citySel.value = last.city;
+    if(citySel && !Array.from(citySel.options).some(o=>o.value===last.city)){
+      if(!store.cities.includes(last.city)) store.cities.push(last.city);
+      populateDropdown(prefix+'City', store.cities);
+    }
+    if(citySel) citySel.value = last.city;
   }
-  if(last && last.area){
-    const areaSel = document.getElementById(prefix+'Area');
-    if(areaSel && Array.from(areaSel.options).some(o=>o.value===last.area)) areaSel.value = last.area;
-  }
-  resyncCapsuleSelect(prefix+'City'); resyncCapsuleSelect(prefix+'Area');
+  const areaEl = document.getElementById(prefix+'Area');
+  if(areaEl) areaEl.value = '';
+  resyncCapsuleSelect(prefix+'City');
 }
 function readLocationFormValues(prefix){
   prefix = prefix || 'doc';
@@ -2570,7 +2640,7 @@ function readLocationFormValues(prefix){
     country: 'پاکستان',
     province, district,
     city: document.getElementById(prefix+'City').value,
-    area: document.getElementById(prefix+'Area').value
+    area: document.getElementById(prefix+'Area').value.trim()
   };
 }
 
@@ -2623,11 +2693,14 @@ function enhanceCapsuleSelect(selectId){
         sel.dispatchEvent(new Event('change', {bubbles:true}));
         syncBtn();
         closePanel();
+        sel.dispatchEvent(new CustomEvent('cselpick'));   /* MCS510MO004: خودکار اگلے خانے کے لیے */
       };
       panel.appendChild(row);
     });
     panel.style.display = 'block';
     document.addEventListener('click', outsideClick, true);
+    const act = panel.querySelector('.csel-opt.active');
+    if(act) panel.scrollTop = Math.max(0, act.offsetTop - 40);
   }
   function syncBtn(){
     const opt = sel.options[sel.selectedIndex];
@@ -2640,6 +2713,8 @@ function enhanceCapsuleSelect(selectId){
     if(panel.style.display==='block') closePanel(); else openPanel();
   });
   sel._cselSync = syncBtn;
+  sel._cselOpen = openPanel;
+  sel._cselBtn = btn;
   syncBtn();
 }
 function resyncCapsuleSelect(selectId){
@@ -2647,8 +2722,8 @@ function resyncCapsuleSelect(selectId){
   if(sel && sel._cselSync) sel._cselSync();
 }
 function enhanceAllCapsuleSelects(){
-  ['docProvince','docDistrict','docCity','docArea','docDept','docSpecialty','docHospital',
-   'svcProvince','svcDistrict','svcCity','svcArea','svcType']
+  ['docProvince','docDistrict','docCity','docDept','docSpecialty','docHospital',
+   'svcProvince','svcDistrict','svcCity','svcType']
     .forEach(enhanceCapsuleSelect);
 }
 
@@ -2829,6 +2904,7 @@ function openDoctorForm(id){
     clearNameSuggest('docNameSuggest');
   }
   openModal('doctorFormModal');
+  flowStart('doctorFormModal', !id);
 }
 function saveDoctor(){
   const nameUr = document.getElementById('docNameUr').value.trim();
@@ -2837,7 +2913,6 @@ function saveDoctor(){
   const intro = document.getElementById('docIntro').value.trim();
   const whatsapp = normalizePkNumber(document.getElementById('docWhatsapp').value.trim());
   if(!nameUr){ showToast('ڈاکٹر کا نام اردو میں لکھیں'); return; }
-  if(!nameEn){ showToast('Doctor name in English likhein'); return; }
   if(!whatsapp){ showToast('واٹس ایپ نمبر لکھیں'); return; }
   if(!/^03\d{2}-\d{7}$/.test(whatsapp)){ showToast('نمبر درست نہیں — 11 ہندسوں کا نمبر لکھیں جو 03 سے شروع ہو، مثلاً 0300-1234567'); return; }
   if(!document.getElementById('docCity').value){ showToast('شہر منتخب کریں'); return; }
@@ -2854,6 +2929,8 @@ function saveDoctor(){
     country: loc.country, province: loc.province, district: loc.district,
     city: loc.city, area: loc.area,
   };
+  rememberArea(loc.area);
+  store.lastLocation = {province:loc.province, district:loc.district, city:loc.city, area:loc.area};
   if(editingDoctorId){
     const d = store.doctors.find(x=>x.id===editingDoctorId);
     Object.assign(d, data);
@@ -2864,7 +2941,6 @@ function saveDoctor(){
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
     data.approved = false; // shown locally right away; visible to OTHER devices once admin approves
-    store.lastLocation = {province:loc.province, district:loc.district, city:loc.city, area:loc.area};
     store.doctors.push(data);
     syncDoctorCreateToFirebase(data);
   }
@@ -2972,11 +3048,13 @@ function shareProfileCardById(kind, id){
   if(!item){ showToast('اندراج نہیں ملا'); return; }
   openCardCustomize(kind, item);
 }
-async function shareProfileCard(kind, item, opts){
+async function shareProfileCard(kind, item, opts, mode){
   showToast('کارڈ بن رہا ہے...');
+  const owner = mode==='owner';
   try{
     const canvas = await buildShareCanvas(kind, item, opts);
-    const caption = shareCaptionText(kind, item);
+    const caption = owner ? ownerCaptionText(kind, item) : shareCaptionText(kind, item);
+    if(owner){ shareCardToOwner(canvas, caption, item); return; }
     canvas.toBlob(async (blob)=>{
       if(!blob){ shareTextAndImageFallback(caption, null, 'my-city-shines.png'); return; }
       const file = new File([blob], 'my-city-shines.png', {type:'image/png'});
@@ -3030,11 +3108,44 @@ function renderCardPreview(){
     holder.appendChild(canvas);
   }, 120);
 }
-function finalizeCardShare(){
+function finalizeCardShare(mode){
   store.cardCustomOpts = {...cardCustomState.opts};
   saveStore();
   closeModal('cardCustomizeModal');
-  shareProfileCard(cardCustomState.kind, cardCustomState.item, cardCustomState.opts);
+  shareProfileCard(cardCustomState.kind, cardCustomState.item, cardCustomState.opts, mode);
+}
+/* MCS510MO004: جس کا اندراج ہے اسی کو اس کا کارڈ + اطلاعی پیغام */
+function ownerCaptionText(kind, item){
+  const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
+  const lines = ['السلام علیکم!', '',
+    '🌟 آپ کا اندراج ہم نے MCS (مائی سٹی شائنز) ایپ میں شامل کر دیا ہے:', '',
+    `👤 ${item.nameUr||item.name||''}${catLabel?' — '+catLabel:''}`];
+  if(item.city||item.area) lines.push('📍 ' + [item.area,item.city].filter(Boolean).join('، '));
+  if(item.whatsapp) lines.push('📞 ' + waPhoneDisplay(item.whatsapp));
+  lines.push('',
+    'یہ ہماری نئی ایپ ہے جو ہم نے اپنے شہر کی ڈیجیٹل ڈائریکٹری کے لیے بنائی ہے۔',
+    'اگر آپ کو اچھی لگے تو اپنے دوستوں اور جاننے والوں کو بھی بتائیں، اور زیادہ سے زیادہ ریکارڈ اس ایپ میں شامل کروائیں تاکہ یہ ہم سب کے لیے فائدہ مند ہو۔',
+    '', 'اپنے اندراج میں کوئی غلطی ہو تو ہمیں بتا دیں۔', '', '📲 ایپ یہاں سے کھولیں:', MCS_APP_URL);
+  return lines.join('\n');
+}
+function shareCardToOwner(canvas, caption, item){
+  const digits = normalizePkNumber(item.whatsapp||'').replace(/[^0-9]/g,'');
+  canvas.toBlob(async (blob)=>{
+    const file = blob ? new File([blob], 'my-city-shines.png', {type:'image/png'}) : null;
+    if(file && navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title:'مائی سٹی شائنز', text: caption}); return; }
+      catch(e){ if(e && e.name==='AbortError') return; }
+    }
+    /* شیئر شیٹ نہ ہو تو: تصویر فون میں محفوظ، پیغام کاپی، اور سیدھا اسی بندے کی واٹس ایپ چیٹ */
+    if(blob){
+      try{ const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='my-city-shines.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(()=>URL.revokeObjectURL(url), 4000); }catch(e){}
+    }
+    try{ if(navigator.clipboard) await navigator.clipboard.writeText(caption); }catch(e){}
+    const to = /^03\d{9}$/.test(digits) ? ('92' + digits.slice(1)) : '';
+    showToast('کارڈ محفوظ ہو گیا — واٹس ایپ میں تصویر بھی لگا دیں');
+    window.open('https://wa.me/' + to + '?text=' + encodeURIComponent(caption), '_blank');
+  }, 'image/png');
 }
 function shareTextFallback(caption){
   window.open('https://wa.me/?text=' + encodeURIComponent(caption), '_blank');
@@ -3344,7 +3455,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS410SU003';
+    headerLogo.src = 'icons/icon-192.png?v=MCS510MO004';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3513,7 +3624,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS410SU003';
+    headerLogo.src = 'icons/icon-192.png?v=MCS510MO004';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -3907,7 +4018,6 @@ function openServiceForm(id){
   }
   populateDropdown('svcType', store.serviceTypes[currentServiceCategory]);
   populateDropdown('svcCity', store.cities);
-  populateDropdown('svcArea', store.areas);
   populateProvinceDropdown('svc');
   if(id){
     const s = store.services.find(x=>x.id===id);
@@ -3933,6 +4043,7 @@ function openServiceForm(id){
     clearNameSuggest('svcNameSuggest');
   }
   openModal('serviceFormModal');
+  flowStart('serviceFormModal', !id);
 }
 function saveService(){
   const nameUr = document.getElementById('svcNameUr').value.trim();
@@ -3959,6 +4070,8 @@ function saveService(){
     const sel = document.getElementById('svcCategory');
     if(sel && sel.value && CATEGORY_META[sel.value] && sel.value!==currentServiceCategory){ data.category = sel.value; movedTo = sel.value; }
   }
+  rememberArea(loc.area);
+  store.lastLocation = {province:loc.province, district:loc.district, city:loc.city, area:loc.area};
   if(editingServiceId){
     const s = store.services.find(x=>x.id===editingServiceId);
     Object.assign(s, data);
@@ -3969,7 +4082,6 @@ function saveService(){
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
     data.approved = false;
-    store.lastLocation = {province:loc.province, district:loc.district, city:loc.city, area:loc.area};
     store.services.push(data);
     syncServiceCreateToFirebase(data);
   }
@@ -4162,6 +4274,7 @@ function syncAdminPanelSections(){
   set('adminPanelBox', on);
   set('adminAddCategoryBox', on);
   set('adminImportBox', on);
+  set('adminSheetBox', on);
   set('cpContactBox', on);
   set('adminLockedHint', !on);
 }
@@ -5392,7 +5505,7 @@ function adminLogout(){
   if(FB) FB.signOut(FB.auth);
   showAdminPop(false);
 }
-/* MCS410SU003: منظوری کا بٹن اب وجہ بتاتا ہے، کیٹگری کی جانچ کرتا ہے، اور کامیابی پر فہرست فوراً تازہ کرتا ہے */
+/* MCS510MO004: منظوری کا بٹن اب وجہ بتاتا ہے، کیٹگری کی جانچ کرتا ہے، اور کامیابی پر فہرست فوراً تازہ کرتا ہے */
 function approvePending(fsId, col){
   const FB = window.MCSFirebase;
   if(!FB){ alert('انٹرنیٹ کنکشن نہیں — منظوری نہیں ہوئی'); return; }
@@ -5486,6 +5599,313 @@ function openPrivacyFromHash(){
 window.addEventListener('hashchange', openPrivacyFromHash);
 window.addEventListener('load', ()=> setTimeout(openPrivacyFromHash, 300));
 
+/* =====================================================================
+   MCS510MO004: تیز ڈیٹا انٹری
+   (1) کرسر خود بخود اگلے خانے پر — رفتار ⏩ بٹن سے کم/زیادہ یا بند
+   (2) فہرست والا خانہ آتے ہی اس کی لسٹ خود کھل جاتی ہے
+   (3) گلی/محلہ: لکھیں یا پہلے سے موجود ناموں کی فہرست سے چنیں
+   ===================================================================== */
+const MCS_FLOW = {
+  doctorFormModal: ['docNameUr','docDept','docSpecialty','docHospital','docProvince','docDistrict','docCity','docArea','docWhatsapp'],
+  serviceFormModal: ['svcNameUr','svcType','svcProvince','svcDistrict','svcCity','svcArea','svcWhatsapp']
+};
+const MCS_LOC_IDS = /(Province|District|City)$/;
+const AUTO_SPEEDS = [0, 0.8, 1.2, 1.5, 2, 3];   /* سیکنڈ — 0 = بند */
+function getAutoSpeed(){
+  const v = parseFloat(localStorage.getItem('mcsAutoSpeed'));
+  return AUTO_SPEEDS.includes(v) ? v : 1.5;
+}
+function renderAutoSpeed(){
+  const v = getAutoSpeed();
+  document.querySelectorAll('.fm-speed-val').forEach(el=> el.textContent = v ? (v + 's') : 'بند');
+  document.querySelectorAll('.fm-speed').forEach(el=> el.classList.toggle('off', !v));
+}
+function cycleAutoSpeed(){
+  const i = AUTO_SPEEDS.indexOf(getAutoSpeed());
+  const v = AUTO_SPEEDS[(i + 1) % AUTO_SPEEDS.length];
+  localStorage.setItem('mcsAutoSpeed', v);
+  renderAutoSpeed();
+  showToast(v ? ('خودکار اگلا خانہ: ' + v + ' سیکنڈ') : 'خودکار اگلا خانہ بند');
+}
+function flowModalOf(id){
+  return Object.keys(MCS_FLOW).find(m=> MCS_FLOW[m].includes(id));
+}
+function flowFieldVisible(el){
+  const f = el && el.closest('.field');
+  return !!(f && f.offsetParent !== null && !f.classList.contains('mcs-off'));
+}
+let flowTimer = null;
+function flowCancel(){ clearTimeout(flowTimer); flowTimer = null; }
+function flowFocus(el){
+  if(!el) return;
+  const f = el.closest('.field');
+  if(f) f.scrollIntoView({block:'nearest', behavior:'smooth'});
+  if(el.tagName === 'SELECT'){
+    if(el._cselOpen){ setTimeout(()=>{ try{ el._cselOpen(); if(el._cselBtn) el._cselBtn.focus({preventScroll:true}); }catch(e){} }, 60); }
+  } else {
+    el.focus();
+    if(el.classList.contains('mcs-combo')) comboShow(el);
+  }
+}
+/* fromId کے بعد والا اگلا خانہ — پہلے سے بھرے ہوئے صوبہ/ضلع/شہر چھوڑ دیتا ہے،
+   سوائے اس کے کہ ابھی ابھی اوپر والا مقام بدلا گیا ہو */
+function flowNext(fromId){
+  const modal = flowModalOf(fromId); if(!modal) return;
+  const ov = document.getElementById(modal);
+  if(!ov || !ov.classList.contains('active')) return;
+  const list = MCS_FLOW[modal];
+  const justChangedLoc = MCS_LOC_IDS.test(fromId);
+  for(let i = list.indexOf(fromId) + 1; i < list.length; i++){
+    const el = document.getElementById(list[i]);
+    if(!el || !flowFieldVisible(el)) continue;
+    const isLoc = MCS_LOC_IDS.test(list[i]);
+    if(isLoc && el.value && el.value !== CUSTOM_OPTION && !(justChangedLoc && i === list.indexOf(fromId) + 1)) continue;
+    flowFocus(el);
+    return;
+  }
+  flowDone(modal);
+}
+function flowDone(modal){
+  const ov = document.getElementById(modal); if(!ov) return;
+  if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  const btn = ov.querySelector('.fm-save-btn');
+  if(btn){ btn.classList.remove('pulse'); void btn.offsetWidth; btn.classList.add('pulse'); }
+}
+function flowSchedule(fromId, ms){
+  flowCancel();
+  if(!getAutoSpeed()) return;
+  flowTimer = setTimeout(()=>{ flowTimer = null; flowNext(fromId); }, ms);
+}
+function flowStart(modal, isNew){
+  renderAutoSpeed();
+  flowCancel();
+  if(!isNew) return;   /* ترمیم میں کرسر خود نہیں چلتا */
+  setTimeout(()=>{ const first = document.getElementById(MCS_FLOW[modal][0]); if(first) first.focus(); }, 280);
+}
+function flowWire(){
+  Object.keys(MCS_FLOW).forEach(modal=>{
+    MCS_FLOW[modal].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el || el.dataset.flowDone) return;
+      el.dataset.flowDone = '1';
+      if(el.tagName === 'SELECT'){
+        /* فہرست سے چننے کے فوراً بعد اگلا خانہ */
+        el.addEventListener('cselpick', ()=>{
+          const v = getAutoSpeed(); if(!v) return;
+          if(el.value === CUSTOM_OPTION) return;   /* "دیگر" — نام خود لکھنا ہے */
+          flowSchedule(id, Math.max(250, v * 300));
+        });
+        return;
+      }
+      const isPhone = /Whatsapp$/.test(id);
+      el.addEventListener('keydown', e=>{
+        if(e.key === 'Enter'){ e.preventDefault(); flowCancel(); comboHide(el); if(isPhone){ el.value = normalizePkNumber(el.value); flowDone(modal); } else flowNext(id); }
+      });
+      el.addEventListener('input', ()=>{
+        const v = getAutoSpeed();
+        if(isPhone){
+          const d = el.value.replace(/[^0-9]/g,'');
+          if(/^03\d{9}$/.test(d) || /^923\d{9}$/.test(d)){ flowCancel(); setTimeout(()=>{ el.value = normalizePkNumber(el.value); if(v) flowDone(modal); }, 250); }
+          return;
+        }
+        /* لکھنا رکنے کے بعد مقررہ وقفے پر اگلا خانہ */
+        if(v && el.value.trim().length >= 2) flowSchedule(id, v * 1000); else flowCancel();
+      });
+      el.addEventListener('blur', ()=>{ if(!isPhone) setTimeout(()=>{ if(document.activeElement !== el) flowCancel(); }, 50); });
+    });
+  });
+}
+
+/* ---------- گلی/محلہ: لکھتے یا خانے میں آتے ہی تجاویز کی فہرست ---------- */
+function rememberArea(val){
+  val = (val||'').trim();
+  if(!val || store.areas.includes(val)) return;
+  store.areas.push(val);
+  const FB = window.MCSFirebase;
+  if(FB && isAdminSignedIn){
+    const ref = FB.doc(FB.db,'appConfig','dropdowns');
+    FB.updateDoc(ref, {areas: store.areas}).catch(()=> FB.setDoc(ref, {areas: store.areas}, {merge:true}).catch(()=>{}));
+  }
+}
+function comboAreaList(){
+  const set = new Set(store.areas || []);
+  (store.services||[]).forEach(x=>{ if(x.area) set.add(x.area); });
+  (store.doctors||[]).forEach(x=>{ if(x.area) set.add(x.area); });
+  return [...set];
+}
+function comboShow(input){
+  const panel = input._comboPanel; if(!panel) return;
+  const q = input.value.trim().toLowerCase();
+  let items = comboAreaList().filter(v=> !q || v.toLowerCase().includes(q));
+  items.sort((a,b)=> a.localeCompare(b,'ur'));
+  items = items.slice(0, 40);
+  if(!items.length || (items.length===1 && items[0]===input.value.trim())){ panel.style.display='none'; return; }
+  panel.innerHTML = items.map(v=>`<div class="csel-opt" data-v="${escapeAttr(v)}"><span class="csel-ur solo">${escapeHtml(v)}</span></div>`).join('');
+  panel.style.display = 'block';
+  /* نیچے جگہ کم ہو تو فہرست اوپر کی طرف کھلے */
+  const body = input.closest('.fm-body');
+  const r = input.getBoundingClientRect(), br = body ? body.getBoundingClientRect() : {bottom: innerHeight};
+  const up = (br.bottom - r.bottom) < Math.min(panel.scrollHeight, 210) + 10 && (r.top - (body?br.top:0)) > (br.bottom - r.bottom);
+  panel.style.top = up ? 'auto' : '';
+  panel.style.bottom = up ? 'calc(100% + 6px)' : '';
+}
+function comboHide(input){ if(input && input._comboPanel) input._comboPanel.style.display = 'none'; }
+function enhanceCombo(id){
+  const input = document.getElementById(id);
+  if(!input || input._comboPanel) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'combo-wrap';
+  input.parentNode.insertBefore(wrap, input);
+  wrap.appendChild(input);
+  const panel = document.createElement('div');
+  panel.className = 'csel-panel';
+  panel.style.display = 'none';
+  wrap.appendChild(panel);
+  input._comboPanel = panel;
+  input.addEventListener('focus', ()=> comboShow(input));
+  input.addEventListener('input', ()=> comboShow(input));
+  input.addEventListener('blur', ()=> setTimeout(()=> comboHide(input), 180));
+  panel.addEventListener('mousedown', e=> e.preventDefault());
+  panel.addEventListener('click', e=>{
+    const row = e.target.closest('.csel-opt'); if(!row) return;
+    input.value = row.getAttribute('data-v');
+    comboHide(input);
+    flowCancel();
+    if(getAutoSpeed()) setTimeout(()=> flowNext(id), Math.max(200, getAutoSpeed()*250));
+  });
+}
+
+/* =====================================================================
+   MCS510MO004: شیٹ ایڈیٹر — کیٹگری چنیں، سارے ریکارڈ ایک ایک لائن میں،
+   جو بدلیں وہ ایک ہی بار میں محفوظ (موبائل + فائربیس)
+   ===================================================================== */
+const SHEET_COLS = {
+  doctor:  [['nameUr','نام (اردو)','rtl',150],['specialty','اسپیشلٹی','rtl',110],['dept','شعبہ','rtl',100],['area','گلی / محلہ','rtl',120],['city','شہر','rtl',90],['whatsapp','واٹس ایپ','ltr',120]],
+  service: [['nameUr','نام (اردو)','rtl',150],['type','زمرہ / قسم','rtl',110],['area','گلی / محلہ','rtl',120],['city','شہر','rtl',90],['whatsapp','واٹس ایپ','ltr',120],['nameEn','Name (English)','ltr',130]]
+};
+let sheetEdits = {};   /* id -> {field: newValue} */
+let sheetSoonT = null;
+function openSheetEditor(preCat){
+  if(!isAdminSignedIn){ showToast('شیٹ ایڈیٹر کے لیے ایڈمن لاگ اِن ضروری ہے'); return; }
+  const sel = document.getElementById('sheetCat');
+  const opts = [`<option value="doctor">🩺 ڈاکٹرز (${store.doctors.length})</option>`];
+  CATEGORY_KEYS.forEach(k=>{
+    const m = CATEGORY_META[k]; if(!m) return;
+    const n = store.services.filter(x=>x.category===k).length;
+    opts.push(`<option value="${escapeAttr(k)}">${escapeHtml((m.emoji||'🏷️')+' '+m.ur)} (${n})</option>`);
+  });
+  sel.innerHTML = opts.join('');
+  const want = preCat || (typeof currentServiceCategory!=='undefined' && currentServiceCategory) || 'doctor';
+  if(Array.from(sel.options).some(o=>o.value===want)) sel.value = want;
+  sheetEdits = {};
+  document.getElementById('sheetSearch').value = '';
+  closeModal('controlPanelModal');
+  openModal('sheetEditModal');
+  renderSheet();
+}
+function sheetPendingCount(){ return Object.keys(sheetEdits).length; }
+function closeSheetEditor(){
+  if(sheetPendingCount() && !confirm(sheetPendingCount() + ' ریکارڈ کی تبدیلیاں محفوظ نہیں ہوئیں۔ کیا انہیں چھوڑ کر بند کریں؟')) return;
+  sheetEdits = {};
+  closeModal('sheetEditModal');
+}
+function sheetRecords(cat){
+  return cat==='doctor' ? store.doctors : store.services.filter(x=>x.category===cat);
+}
+function renderSheetSoon(){ clearTimeout(sheetSoonT); sheetSoonT = setTimeout(renderSheet, 220); }
+function renderSheet(){
+  const cat = document.getElementById('sheetCat').value;
+  const cols = SHEET_COLS[cat==='doctor' ? 'doctor' : 'service'];
+  const q = (document.getElementById('sheetSearch').value||'').trim().toLowerCase();
+  let rows = sheetRecords(cat);
+  if(q) rows = rows.filter(r=> cols.some(c=> String((sheetEdits[r.id]&&sheetEdits[r.id][c[0]]!==undefined) ? sheetEdits[r.id][c[0]] : (r[c[0]]||'')).toLowerCase().includes(q)));
+  rows = [...rows].sort((a,b)=> (a.nameUr||a.name||'').localeCompare(b.nameUr||b.name||'','ur'));
+  const LIMIT = 400, total = rows.length;
+  rows = rows.slice(0, LIMIT);
+  const head = '<thead><tr><th class="sh-n">#</th>' + cols.map(c=>`<th style="min-width:${c[3]}px">${escapeHtml(c[1])}</th>`).join('') + '</tr></thead>';
+  const body = rows.map((r,i)=>{
+    const ed = sheetEdits[r.id] || {};
+    return `<tr data-id="${escapeAttr(r.id)}" class="${sheetEdits[r.id]?'sh-dirty':''}"><td class="sh-n">${i+1}${r.approved===false?'<span class="sh-pend" title="زیر منظوری">●</span>':''}</td>` +
+      cols.map(c=>{
+        const v = ed[c[0]]!==undefined ? ed[c[0]] : (c[0]==='nameUr' ? (r.nameUr||r.name||'') : (r[c[0]]||''));
+        return `<td><input type="text" data-f="${c[0]}" dir="${c[2]}" value="${escapeAttr(v)}" class="${ed[c[0]]!==undefined?'sh-chg':''}" autocomplete="off"${c[0]==='whatsapp'?' inputmode="tel"':''}></td>`;
+      }).join('') + '</tr>';
+  }).join('');
+  const tbl = document.getElementById('sheetTable');
+  tbl.innerHTML = head + '<tbody>' + body + '</tbody>';
+  document.getElementById('sheetInfo').textContent = total
+    ? (`کل ${total} ریکارڈ` + (total>LIMIT ? ` — پہلے ${LIMIT} دکھائے گئے، باقی کے لیے تلاش کریں` : '') + ' — خانے پر ٹیپ کر کے درست کریں')
+    : 'اس کیٹگری میں کوئی ریکارڈ نہیں';
+  sheetUpdateSaveBtn();
+}
+function sheetUpdateSaveBtn(){
+  const n = sheetPendingCount();
+  const b = document.getElementById('sheetSaveBtn');
+  b.textContent = n ? `💾 تبدیلیاں محفوظ کریں (${n} ریکارڈ)` : '💾 کوئی تبدیلی نہیں';
+  b.disabled = !n;
+  b.style.opacity = n ? '1' : '.55';
+}
+document.addEventListener('input', e=>{
+  const inp = e.target;
+  if(!inp || !inp.matches || !inp.matches('#sheetTable input[data-f]')) return;
+  const tr = inp.closest('tr'); const id = tr.getAttribute('data-id'); const f = inp.getAttribute('data-f');
+  const cat = document.getElementById('sheetCat').value;
+  const rec = sheetRecords(cat).find(x=>x.id===id); if(!rec) return;
+  const orig = f==='nameUr' ? (rec.nameUr||rec.name||'') : (rec[f]||'');
+  sheetEdits[id] = sheetEdits[id] || {};
+  if(inp.value === orig){ delete sheetEdits[id][f]; inp.classList.remove('sh-chg'); }
+  else { sheetEdits[id][f] = inp.value; inp.classList.add('sh-chg'); }
+  if(!Object.keys(sheetEdits[id]).length) delete sheetEdits[id];
+  tr.classList.toggle('sh-dirty', !!sheetEdits[id]);
+  sheetUpdateSaveBtn();
+});
+document.addEventListener('keydown', e=>{
+  /* Enter پر نیچے والی لائن کے اسی خانے میں — ایکسل کی طرح */
+  const inp = e.target;
+  if(e.key!=='Enter' || !inp || !inp.matches || !inp.matches('#sheetTable input[data-f]')) return;
+  e.preventDefault();
+  const tr = inp.closest('tr').nextElementSibling;
+  const nx = tr && tr.querySelector(`input[data-f="${inp.getAttribute('data-f')}"]`);
+  if(nx){ nx.focus(); nx.select && nx.select(); } else inp.blur();
+});
+function saveSheetChanges(){
+  const cat = document.getElementById('sheetCat').value;
+  const ids = Object.keys(sheetEdits);
+  if(!ids.length) return;
+  if(!isAdminSignedIn){ showToast('ایڈمن لاگ اِن ضروری ہے'); return; }
+  let bad = [];
+  ids.forEach(id=>{
+    const ch = sheetEdits[id];
+    if(ch.whatsapp!==undefined){
+      const n = normalizePkNumber(ch.whatsapp.trim());
+      if(!/^03\d{2}-\d{7}$/.test(n)) bad.push(id); else ch.whatsapp = n;
+    }
+    if(ch.nameUr!==undefined && !ch.nameUr.trim()) bad.push(id);
+  });
+  if(bad.length){
+    document.querySelectorAll('#sheetTable tr').forEach(tr=> tr.classList.toggle('sh-bad', bad.includes(tr.getAttribute('data-id'))));
+    showToast(bad.length + ' لائنوں میں نام خالی ہے یا نمبر غلط ہے (لال لائن) — درست کریں');
+    return;
+  }
+  let saved = 0;
+  ids.forEach(id=>{
+    const rec = sheetRecords(cat).find(x=>x.id===id); if(!rec) return;
+    const ch = sheetEdits[id];
+    Object.keys(ch).forEach(f=>{ rec[f] = (ch[f]||'').trim(); });
+    if(ch.nameUr!==undefined && cat==='doctor') rec.name = rec.nameUr;
+    if(ch.area!==undefined) rememberArea(rec.area);
+    if(ch.city!==undefined && rec.city && !store.cities.includes(rec.city)) store.cities.push(rec.city);
+    rec.updatedAt = Date.now();
+    if(cat==='doctor') syncDoctorUpdateToFirebase(rec); else syncServiceUpdateToFirebase(rec);
+    saved++;
+  });
+  sheetEdits = {};
+  saveStore();
+  try{ if(cat==='doctor') renderDoctorList('list'); else if(typeof currentServiceCategory!=='undefined' && currentServiceCategory===cat) renderServiceList('list'); }catch(e){}
+  renderSheet();
+  showToast(saved + ' ریکارڈ محفوظ ہو گئے ✓');
+}
+
 /* ---------- Init ---------- */
 renderVersionLabel();
 updateVersionBadge();
@@ -5537,6 +5957,7 @@ renderAutoBackupHint();
 checkAutoBackupCheckpoints();
 setInterval(checkAutoBackupCheckpoints, 5*60*1000); // re-check every 5 min in case app stays open across a checkpoint
 enhanceAllCapsuleSelects();
+enhanceCombo('docArea'); enhanceCombo('svcArea'); flowWire(); renderAutoSpeed();
 applyCustomCategories(store.customCategories || []); // offline-cached custom categories show immediately
 renderCustomCategoryTiles();
 startFirebaseSyncWhenReady();
