@@ -9,7 +9,7 @@
 /* Same version string as index.html's APP_VERSION and the release zip
    filename (MCS+DDMON+DAYLETTERS+HHMMAM/PM) — keep these three in sync
    on every release so it's always clear which files go together. */
-const CACHE_NAME = 'mcs-cache-MCS11OCTSU1030AM';
+const CACHE_NAME = 'mcs-cache-MCS11OCTSU1145AM';
 /* Font files (fonts/*.ttf) are intentionally NOT in APP_SHELL below —
    they are large (10-13MB each) and would slow down or risk failing the
    very first install. The generic fetch handler further down caches them
@@ -18,6 +18,7 @@ const CACHE_NAME = 'mcs-cache-MCS11OCTSU1030AM';
 const APP_SHELL = [
   './',
   './index.html',
+  './list.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
