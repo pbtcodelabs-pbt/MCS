@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -99,3 +101,17 @@ jobs:
             android-build/app-release-signed.apk
             android-build/app-release-bundle.aab
           retention-days: 90
+
+      # فون سے آسان ڈاؤن لوڈ: ہر بلڈ کی APK اور AAB ایک Release میں بھی لگ جاتی ہیں۔
+      # لنک ہمیشہ یہی: https://github.com/pbtcodelabs-pbt/MCS/releases/latest
+      - name: Publish APK + AAB as a GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          code="${{ steps.ver.outputs.code }}"
+          cp android-build/app-release-bundle.aab "my-city-shines-v${code}.aab"
+          cp android-build/app-release-signed.apk "my-city-shines-v${code}.apk"
+          gh release create "android-v${code}" "my-city-shines-v${code}.aab" "my-city-shines-v${code}.apk" \
+            --repo "${{ github.repository }}" --target "${{ github.sha }}" --latest \
+            --title "My City Shines Android v${code}" \
+            --notes "Play Console میں .aab فائل اپلوڈ کریں۔ .apk سیدھا فون میں انسٹال کرنے کے لیے ہے۔"
