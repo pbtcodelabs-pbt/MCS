@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1110SU001">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1110SU001">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1110SU002">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1110SU002">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1149,6 +1149,39 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
 .ls-btns .btn{padding:11px 8px;font-size:13.5px;}
 .ls-btns .wide{grid-column:1/-1;background:#16a34a;}
 .ls-btns .btn.secondary.wide{background:#fff;}
+/* ===== MCS1110SU002: اپڈیٹ کی پٹی اور "اپڈیٹ مکمل" پاپ اپ ===== */
+.upd-shield{position:fixed;inset:0;z-index:20000;background:rgba(10,30,50,.55);backdrop-filter:blur(2px);display:none;}
+.upd-shield.show{display:block;}
+.upd-shield.passive{background:rgba(10,30,50,.18);pointer-events:none;backdrop-filter:none;}
+.upd-bar{position:fixed;top:0;left:0;right:0;z-index:20001;display:none;color:#fff;text-align:center;
+  background:linear-gradient(135deg,#b45309,#d97706);box-shadow:0 4px 18px rgba(0,0,0,.35);padding:10px 14px 0;
+  padding-top:calc(10px + env(safe-area-inset-top,0px));border-bottom:3px solid #fde68a;}
+.upd-bar.show{display:block;animation:updDrop .35s ease;}
+@keyframes updDrop{from{transform:translateY(-100%);}to{transform:translateY(0);}}
+.upd-bar .ut{font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;}
+.upd-bar .us{font-size:13.5px;opacity:.95;margin:2px 0 8px;line-height:1.9;}
+.upd-spin{width:20px;height:20px;border-radius:50%;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;animation:updSpin .8s linear infinite;flex:0 0 auto;}
+@keyframes updSpin{to{transform:rotate(360deg);}}
+.upd-track{height:7px;margin:0 -14px;background:repeating-linear-gradient(-45deg,#fde68a 0 14px,#f59e0b 14px 28px);background-size:40px 40px;animation:updMove .7s linear infinite;}
+@keyframes updMove{from{background-position:0 0;}to{background-position:40px 0;}}
+.upd-done{position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top,0px));z-index:20002;transform:translateX(-50%);
+  width:min(360px,calc(100vw - 32px));background:#fff;border-radius:20px;overflow:hidden;display:none;
+  box-shadow:0 18px 50px rgba(0,0,0,.35);border:2px solid #34d399;}
+.upd-done.show{display:block;animation:updPop .45s cubic-bezier(.2,1.4,.4,1);}
+@keyframes updPop{from{transform:translateX(-50%) scale(.7);opacity:0;}to{transform:translateX(-50%) scale(1);opacity:1;}}
+.upd-done .uh{background:linear-gradient(135deg,#059669,#10b981);color:#fff;padding:12px 44px 10px;text-align:center;font-size:18px;font-weight:800;position:relative;}
+.upd-done .ux{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.25);color:#fff;font-size:20px;line-height:1;}
+.upd-done .ub{padding:12px 16px 14px;text-align:center;}
+.upd-done .uv{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #e5e7eb;border-radius:12px;padding:6px 12px;margin:6px 0;font-size:13.5px;}
+.upd-done .uv b{direction:ltr;font-family:Arial,sans-serif;font-size:15px;letter-spacing:.5px;}
+.upd-done .uv.old b{color:#9ca3af;text-decoration:line-through;}
+.upd-done .uv.new{border-color:#34d399;background:#ecfdf5;}
+.upd-done .uv.new b{color:#047857;}
+.upd-done .ua{font-size:20px;color:#10b981;line-height:1;}
+.upd-done .ug{margin-top:8px;font-size:16px;font-weight:800;color:#065f46;}
+.upd-done .ut2{height:4px;background:#10b981;transform-origin:right;animation:updTime var(--upd-ms,9000ms) linear forwards;}
+@keyframes updTime{from{transform:scaleX(1);}to{transform:scaleX(0);}}
 </style>
 </head>
 <body>
@@ -1216,7 +1249,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1110SU001" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1110SU002" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1718,6 +1751,24 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
 
 <!-- ===================== REPORT / ADMIN CHOICE (MCS29SEPTU0350PM) ===================== -->
 <!-- ===================== MCS11OCTSU1030AM: لسٹ شیئر ===================== -->
+<!-- ===================== MCS1110SU002: اپڈیٹ کی پٹی / اپڈیٹ مکمل ===================== -->
+<div class="upd-shield" id="updShield"></div>
+<div class="upd-bar" id="updBar" role="status" aria-live="polite">
+  <div class="ut"><span class="upd-spin"></span>🔄 نئی اپڈیٹ آ رہی ہے</div>
+  <div class="us" id="updBarSub">براہِ کرم انتظار کریں — فی الحال ایپ میں کام روک دیں</div>
+  <div class="upd-track"></div>
+</div>
+<div class="upd-done" id="updDone" role="dialog" aria-live="polite">
+  <div class="uh">✅ اپڈیٹ مکمل ہو گئی<button class="ux" onclick="hideUpdateDone()" aria-label="بند کریں">×</button></div>
+  <div class="ub">
+    <div class="uv old"><span>پرانا ورژن</span><b id="updOldV"></b></div>
+    <div class="ua">⬇</div>
+    <div class="uv new"><span>نیا ورژن (لگ چکا ہے)</span><b id="updNewV"></b></div>
+    <div class="ug">👍 اوکے، اب آپ کام شروع کر سکتے ہیں</div>
+  </div>
+  <div class="ut2" id="updTimer"></div>
+</div>
+
 <div class="modal-overlay" id="listShareModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('listShareModal')">×</button>
@@ -2014,7 +2065,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1110SU001";
+const APP_VERSION = "MCS1110SU002";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3688,7 +3739,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1110SU001';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1110SU002';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3857,7 +3908,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1110SU001';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1110SU002';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -6770,23 +6821,77 @@ startFirebaseSyncWhenReady();
 /* ---------- Service worker registration ---------- */
 /* MCS29SEPTU0352AM: نیا ورژن اپلوڈ ہونے پر ایپ پہلی بار کھولتے ہی خود تازہ ہو جائے
    (پہلے دوسری بار کھولنے پر نیا ورژن آتا تھا)۔ کوئی فارم/ونڈو کھلی ہو تو اس کے بند ہونے
-   کا انتظار کرتی ہے تاکہ لکھا ہوا ضائع نہ ہو۔ */
+   کا انتظار کرتی ہے تاکہ لکھا ہوا ضائع نہ ہو۔
+   MCS1110SU002: اپڈیٹ آتے ہی اوپر پٹی "نئی اپڈیٹ آ رہی ہے — انتظار کریں" اور باقی ایپ رک جاتی ہے؛
+   تازہ ہونے کے بعد "اپڈیٹ مکمل" پاپ اپ میں پرانا اور نیا ورژن، × سے یا خود چند سیکنڈ میں بند۔ */
+const UPD_SEEN_KEY = 'mcsSeenVersion';
+function showUpdateBar(){
+  const bar = document.getElementById('updBar'), sh = document.getElementById('updShield');
+  if(!bar || bar.classList.contains('show')) return;
+  bar.classList.add('show'); sh.classList.add('show');
+  updSyncShield();
+}
+function hideUpdateBar(){
+  const bar = document.getElementById('updBar'), sh = document.getElementById('updShield');
+  if(bar) bar.classList.remove('show'); if(sh) sh.classList.remove('show','passive');
+}
+/* کوئی فارم کھلا ہو تو ایپ کو مکمل نہ روکیں — پہلے فارم محفوظ/بند ہو جائے، پھر اپڈیٹ لگے */
+function updSyncShield(){
+  const bar = document.getElementById('updBar'); if(!bar || !bar.classList.contains('show')) return;
+  const formOpen = !!document.querySelector('.modal-overlay.active');
+  document.getElementById('updShield').classList.toggle('passive', formOpen);
+  document.getElementById('updBarSub').textContent = formOpen
+    ? 'پہلے کھلا ہوا فارم محفوظ یا بند کر لیں — پھر اپڈیٹ خود لگ جائے گی'
+    : 'براہِ کرم انتظار کریں — فی الحال ایپ میں کام روک دیں';
+  if(formOpen) setTimeout(updSyncShield, 1500);
+}
+let updDoneTimer = null;
+function showUpdateDone(oldV, newV){
+  const box = document.getElementById('updDone'); if(!box) return;
+  const ms = 9000;
+  document.getElementById('updOldV').textContent = oldV;
+  document.getElementById('updNewV').textContent = newV;
+  box.style.setProperty('--upd-ms', ms + 'ms');
+  const t = document.getElementById('updTimer'); t.style.animation = 'none'; void t.offsetWidth; t.style.animation = '';
+  box.classList.add('show');
+  clearTimeout(updDoneTimer); updDoneTimer = setTimeout(hideUpdateDone, ms);
+}
+function hideUpdateDone(){
+  clearTimeout(updDoneTimer);
+  const box = document.getElementById('updDone'); if(box) box.classList.remove('show');
+}
+/* ایپ کھلنے پر: پچھلی بار والا ورژن مختلف تھا تو "اپڈیٹ مکمل" دکھائیں */
+(function(){
+  let seen = null;
+  try{ seen = localStorage.getItem(UPD_SEEN_KEY); localStorage.setItem(UPD_SEEN_KEY, APP_VERSION); }catch(e){}
+  if(seen && seen !== APP_VERSION) setTimeout(()=>showUpdateDone(seen, APP_VERSION), 600);
+})();
 if('serviceWorker' in navigator){
   const hadController = !!navigator.serviceWorker.controller;
   let swReloading = false;
   function reloadWhenSafe(){
     if(swReloading) return;
-    if(document.querySelector('.modal-overlay.active')){ setTimeout(reloadWhenSafe, 2000); return; }
+    if(document.querySelector('.modal-overlay.active')){ updSyncShield(); setTimeout(reloadWhenSafe, 2000); return; }
     swReloading = true;
     location.reload();
   }
   navigator.serviceWorker.addEventListener('controllerchange', ()=>{
-    if(!hadController) return; // پہلی انسٹال پر ری لوڈ کی ضرورت نہیں
-    try{ showToast('نیا ورژن آ گیا ✓'); }catch(e){}
-    setTimeout(reloadWhenSafe, 800);
+    /* پہلی انسٹال پر ری لوڈ کی ضرورت نہیں — لیکن اگر اپڈیٹ کی پٹی چل رہی ہے تو ضرور تازہ کریں، ورنہ پٹی اٹکی رہے گی */
+    const barOn = document.getElementById('updBar').classList.contains('show');
+    if(!hadController && !barOn) return;
+    showUpdateBar();
+    setTimeout(reloadWhenSafe, 1200);
   });
   window.addEventListener('load', ()=>{
     navigator.serviceWorker.register('sw.js').then(reg=>{
+      /* نیا ورژن ڈاؤن لوڈ ہونا شروع ہوتے ہی پٹی؛ ڈاؤن لوڈ ناکام ہو تو پٹی ہٹ جائے */
+      const watch = (w)=>{
+        if(!w || !navigator.serviceWorker.controller) return;   // پہلی انسٹال، اپڈیٹ نہیں
+        showUpdateBar();
+        w.addEventListener('statechange', ()=>{ if(w.state==='redundant') hideUpdateBar(); });
+      };
+      if(reg.installing) watch(reg.installing);
+      reg.addEventListener('updatefound', ()=> watch(reg.installing));
       // ایپ دوبارہ سامنے آنے پر نئے ورژن کی جانچ
       document.addEventListener('visibilitychange', ()=>{
         if(document.visibilityState==='visible' && navigator.onLine) reg.update().catch(()=>{});
