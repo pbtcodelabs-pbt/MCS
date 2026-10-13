@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1110SU002">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1110SU002">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1310TU003">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1310TU003">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1132,6 +1132,12 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
 /* ===== MCS11OCTSU1030AM: لسٹ شیئر ===== */
 .ls-open{background:#e6f4f1;color:var(--primary);border:1px solid #99d5cb;border-radius:20px;padding:4px 10px;font-size:12.5px;font-weight:700;white-space:nowrap;}
 .screen-head .ls-open{margin-inline-start:auto;}
+/* MCS1310TU003: فہرست کی ترتیب — نیا اندراج سب سے اوپر */
+.sort-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:2px 0 10px;}
+.sort-bar .sort-lbl{font-size:12.5px;color:var(--muted);font-weight:700;}
+.sort-bar button{background:#fff;border:1px solid #cfd8dc;color:#37474f;border-radius:18px;padding:4px 11px;font-size:12.5px;font-weight:700;font-family:inherit;}
+.sort-bar button.on{background:var(--primary);border-color:var(--primary);color:#fff;}
+.new-badge{display:inline-block;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:10px;font-size:11px;font-weight:800;padding:0 6px;margin-inline-start:6px;vertical-align:middle;}
 #listShareModal .modal-box{max-width:520px;}
 .ls-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0;}
 .ls-tools button{background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;padding:5px 10px;font-size:12.5px;}
@@ -1249,7 +1255,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1110SU002" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1310TU003" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1343,6 +1349,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
         <h2>ڈاکٹرز کی فہرست</h2>
         <button type="button" class="ls-open" onclick="openListShare('doctor')">📤 لسٹ شیئر</button>
       </div>
+      <div class="sort-bar" data-for="doctor"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button></div>
       <div id="doctorListWrap"></div>
     </div>
     <button class="fab" onclick="openDoctorForm()">➕ نیا ڈاکٹر شامل کریں</button>
@@ -1387,6 +1394,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
       <div class="field">
         <input type="text" id="serviceSearchBox" placeholder="نام، قسم یا پتہ لکھیں..." oninput="renderServiceList('list')">
       </div>
+      <div class="sort-bar" data-for="service"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button></div>
       <div id="serviceListWrap"></div>
     </div>
     <button class="fab" id="serviceFab" onclick="openServiceForm()">➕ نیا شامل کریں</button>
@@ -1482,7 +1490,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
     <div class="fm-body">
     <div class="fm-cols">
     <div class="fm-col fm-col-main">
-      <div class="field mcs-off" id="svcCategoryField"><label>🗂️ کیٹگری</label><select id="svcCategory"></select></div>
+      <div class="field mcs-off" id="svcCategoryField"><label>🗂️ کیٹگری تبدیل کریں (ایڈمن)</label><select id="svcCategory" onchange="svcCategoryChanged()"></select></div>
       <button type="button" class="fm-scan" onclick="startBoardScan('svc')">📷 دکان کا بورڈ اسکین کریں — نام اور نمبر خود</button>
       <div class="field fm-phone">
         <label>📱 موبائل / واٹس ایپ</label>
@@ -2065,7 +2073,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1110SU002";
+const APP_VERSION = "MCS1310TU003";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3739,7 +3747,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1110SU002';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU003';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3908,7 +3916,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1110SU002';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU003';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -4043,6 +4051,35 @@ async function shareAppPromo(customText, opts){
     shareTextAndImageFallback(caption, null, 'my-city-shines-app.png');
   }
 }
+/* MCS1310TU003: اندراج کا وقت (نیا/پرانا ترتیب کے لیے) — مقامی نمبر، فائربیس Timestamp، یا id میں لکھا وقت */
+function recTime(x){
+  if(!x) return 0;
+  const c = x.createdAt;
+  if(typeof c==='number') return c;
+  if(c && typeof c.toMillis==='function'){ try{ return c.toMillis(); }catch(e){} }
+  if(c && typeof c==='object' && (c.seconds||c._seconds)) return (c.seconds||c._seconds)*1000;
+  if(typeof c==='string'){ const t = Date.parse(c); if(!isNaN(t)) return t; }
+  const m = String(x.id||'').match(/_(\d{12,14})(?:_|$)/);
+  if(m) return +m[1];
+  return (typeof x.updatedAt==='number') ? x.updatedAt : 0;
+}
+let listSort = 'new';
+try{ listSort = localStorage.getItem('mcs_list_sort') || 'new'; }catch(e){}
+function sortRecords(items){
+  const arr = items.slice();
+  if(listSort==='name') arr.sort((a,b)=>(a.nameUr||a.name||'').localeCompare(b.nameUr||b.name||'','ur'));
+  else if(listSort==='old') arr.sort((a,b)=>recTime(a)-recTime(b));
+  else arr.sort((a,b)=>recTime(b)-recTime(a));
+  return arr;
+}
+function syncSortBars(){ document.querySelectorAll('.sort-bar button').forEach(b=>b.classList.toggle('on', b.dataset.s===listSort)); }
+function setListSort(v){
+  listSort = v; try{ localStorage.setItem('mcs_list_sort', v); }catch(e){}
+  syncSortBars();
+  if(currentScreen==='doctor-list') renderDoctorList('list');
+  if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
+}
+function newBadge(x){ const t = recTime(x); return (t && Date.now()-t < 48*3600*1000) ? '<span class="new-badge">🆕 نیا</span>' : ''; }
 function renderDoctorList(mode){
   const listWrap = mode==='list' ? document.getElementById('doctorListWrap') : document.getElementById('searchResultsWrap');
   let items = store.doctors;
@@ -4068,6 +4105,7 @@ function renderDoctorList(mode){
       });
     }
   }
+  items = sortRecords(items); syncSortBars();
   if(mode==='list') lsLists.doctor = items.map(lsFromDoctor);
   if(items.length===0){
     listWrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🩺</span>ابھی کوئی ڈاکٹر شامل نہیں کیا گیا</div>`;
@@ -4085,7 +4123,7 @@ function renderDoctorList(mode){
       <div class="doc-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
       <div class="doc-body">
         <div class="doc-top">
-          <div class="doc-name">${escapeHtml(nameUr)}</div>
+          <div class="doc-name">${escapeHtml(nameUr)}${newBadge(d)}</div>
           ${d.nameEn ? `<div class="doc-name-en">${escapeHtml(d.nameEn)}</div>` : ``}
         </div>
         <div class="doc-sub">${sub || escapeHtml(d.dept||'')}</div>
@@ -4597,6 +4635,20 @@ function openServiceForm(id, pendingRec){
   openModal('serviceFormModal');
   flowStart('serviceFormModal', !id && !pendingRec);
 }
+/* MCS1310TU003: ایڈمن کیٹگری بدلے تو قسم کی فہرست اور لیبل نئی کیٹگری کے مطابق */
+function svcCategoryChanged(){
+  const k = document.getElementById('svcCategory').value;
+  const m = CATEGORY_META[k]; if(!m) return;
+  const typeEl = document.getElementById('svcType'); const cur = typeEl ? typeEl.value : '';
+  const tl = (store.serviceTypes[k] = store.serviceTypes[k] || []);
+  if(cur && !tl.includes(cur)) tl.push(cur);
+  populateDropdown('svcType', tl);
+  if(typeEl) typeEl.value = cur;
+  resyncCapsuleSelect('svcType');
+  document.getElementById('svcNameUrLabel').textContent = m.nameLabel + ' (اردو)';
+  document.getElementById('svcTypeLabel').textContent = m.typeLabel;
+  if(k!==currentServiceCategory) showToast('محفوظ کرنے پر یہ ریکارڈ "' + m.ur + '" میں چلا جائے گا');
+}
 function saveService(approve){
   if(pendingFormCtx && pendingFormCtx.col==='services') return savePendingFromForm('services', !!approve);
   const nameUr = document.getElementById('svcNameUr').value.trim();
@@ -4677,6 +4729,7 @@ function renderServiceList(mode){
       (s.province||'').toLowerCase().includes(q);
     });
   }
+  items = sortRecords(items); syncSortBars();
   lsLists.service = items.map(lsFromService);
   if(items.length===0){
     wrap.innerHTML = `<div class="empty-state"><span class="e-emoji">${meta.emoji}</span>ابھی کوئی اندراج شامل نہیں کیا گیا</div>`;
@@ -4691,7 +4744,7 @@ function renderServiceList(mode){
       <div class="doc-toprow">
       <div class="doc-avatar"><span style="font-size:20px;">${meta.emoji}</span></div>
       <div class="doc-body">
-        <div class="doc-top"><div class="doc-name">${escapeHtml(s.nameUr)}</div>${s.nameEn ? `<div class="doc-name-en">${escapeHtml(s.nameEn)}</div>` : ``}</div>
+        <div class="doc-top"><div class="doc-name">${escapeHtml(s.nameUr)}${newBadge(s)}</div>${s.nameEn ? `<div class="doc-name-en">${escapeHtml(s.nameEn)}</div>` : ``}</div>
         <div class="doc-sub">${escapeHtml(s.type||'')}</div>
         <div class="doc-num">${escapeHtml(num||'—')}</div>
       </div>
