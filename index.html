@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1310TU004">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1310TU004">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1310TU005">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1310TU005">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1190,6 +1190,32 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
 .upd-done .ug{margin-top:8px;font-size:16px;font-weight:800;color:#065f46;}
 .upd-done .ut2{height:4px;background:#10b981;transform-origin:right;animation:updTime var(--upd-ms,9000ms) linear forwards;}
 @keyframes updTime{from{transform:scaleX(1);}to{transform:scaleX(0);}}
+
+/* ===== MCS1310TU005: کیٹگری کارڈ — ایموجی ہٹانے اور نام موٹا/بڑا کرنے کا اختیار ===== */
+html{--cat-tscale:1;}
+html[data-cat-title="l"]{--cat-tscale:1.3;}
+html[data-cat-title="xl"]{--cat-tscale:1.6;}
+.cat-grid .cat-item > span:not(.cat-count){font-size:calc(var(--cat-name,13px) * var(--cat-tscale)) !important;font-weight:800;max-height:none !important;overflow:visible !important;}
+html[data-cat-title="l"] .cat-grid .cat-item > span:not(.cat-count),
+html[data-cat-title="xl"] .cat-grid .cat-item > span:not(.cat-count){font-weight:900;color:#0a2540;text-shadow:0 1px 0 rgba(255,255,255,.9);}
+/* ایموجی کے بغیر: ابھرا ہوا 3D کارڈ، بیچ میں موٹا اردو نام */
+html[data-cat-emoji="off"] .cat-grid .cat-item .emoji{display:none !important;}
+html[data-cat-emoji="off"] .cat-grid .cat-item{
+  display:flex !important;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
+  border:1px solid rgba(255,255,255,.85) !important;border-radius:18px !important;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.95),inset 0 -4px 0 rgba(0,0,0,.10),inset 0 0 0 1px rgba(255,255,255,.35),
+    0 3px 0 rgba(13,59,102,.18),0 10px 18px rgba(13,59,102,.22) !important;}
+html[data-cat-emoji="off"] .cat-grid .cat-item::before{content:"";position:absolute;left:6%;right:6%;top:5px;height:38%;border-radius:14px;
+  background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,0));pointer-events:none;}
+html[data-cat-emoji="off"] .cat-grid .cat-item > span:not(.cat-count){
+  position:relative;padding:0 6px;font-weight:900 !important;color:#0a2540;line-height:1.45 !important;
+  font-size:calc(var(--cat-name,13px) * 1.3 * var(--cat-tscale)) !important;
+  text-shadow:0 1px 0 #fff,0 2px 0 rgba(255,255,255,.55),0 3px 5px rgba(10,37,64,.28);}
+html[data-cat-emoji="off"] .cat-grid .cat-item:active{transform:translateY(2px);box-shadow:inset 0 2px 0 rgba(255,255,255,.9),0 4px 8px rgba(13,59,102,.2) !important;}
+.cat-style-pick{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin:-4px 0 12px;font-size:12px;color:#3f5568;font-weight:600;}
+.cat-style-pick button{height:28px;border-radius:9px;border:1.5px solid #cfe0dd;background:#fff;font-weight:800;font-size:12.5px;color:#0b2a44;padding:0 9px;font-family:inherit;}
+.cat-style-pick button.on{background:linear-gradient(135deg,#0d3b66,#0f766e);border-color:transparent;color:#fff;}
+.cat-style-pick .sep{width:10px;}
 </style>
 </head>
 <body>
@@ -1257,7 +1283,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1310TU004" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1310TU005" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -2075,7 +2101,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1310TU004";
+const APP_VERSION = "MCS1310TU005";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2609,6 +2635,28 @@ function catColsPickerHtml(){
   const n = catColsGet();
   return `<div class="cols-pick"><span>ایک قطار میں کارڈ:</span>${[2,3,4].map(c=>`<button type="button" data-c="${c}" class="${c===n?'on':''}" onclick="setCatCols(${c})">${String(c)}</button>`).join('')}</div>`;
 }
+/* MCS1310TU005: ایموجی دکھائیں/ہٹائیں اور نام کا سائز — اس فون میں یاد رہتا ہے */
+function catStyleGet(){
+  let e='on', t='m';
+  try{ e = localStorage.getItem('mcsCatEmoji') || 'on'; t = localStorage.getItem('mcsCatTitle') || 'm'; }catch(x){}
+  return {e: e==='off'?'off':'on', t: ['m','l','xl'].includes(t)?t:'m'};
+}
+function catStyleApply(){
+  const st = catStyleGet();
+  document.documentElement.setAttribute('data-cat-emoji', st.e);
+  document.documentElement.setAttribute('data-cat-title', st.t);
+  document.querySelectorAll('.cat-style-pick button').forEach(b=>{
+    if(b.dataset.e) b.classList.toggle('on', b.dataset.e===st.e);
+    if(b.dataset.t) b.classList.toggle('on', b.dataset.t===st.t);
+  });
+}
+function setCatStyle(kind, v){
+  try{ localStorage.setItem(kind==='e'?'mcsCatEmoji':'mcsCatTitle', v); }catch(x){}
+  catStyleApply();
+}
+function catStylePickerHtml(){
+  return `<div class="cat-style-pick"><span>ایموجی:</span><button type="button" data-e="on" onclick="setCatStyle('e','on')">دکھائیں</button><button type="button" data-e="off" onclick="setCatStyle('e','off')">ہٹائیں</button><span class="sep"></span><span>نام:</span><button type="button" data-t="m" onclick="setCatStyle('t','m')">عام</button><button type="button" data-t="l" onclick="setCatStyle('t','l')">بڑا</button><button type="button" data-t="xl" onclick="setCatStyle('t','xl')">بہت بڑا</button></div>`;
+}
 function setCatCols(n){
   try{ localStorage.setItem('mcsCatCols', String(n)); }catch(e){}
   document.documentElement.setAttribute('data-cat-cols', String(n));
@@ -2623,9 +2671,10 @@ function catColsInit(){
   document.querySelectorAll('.cat-grid').forEach(g=>{
     if(g.id==='ubCatGrid') return;
     const prev = g.previousElementSibling;
-    if(prev && prev.classList.contains('cols-pick')) return;
-    g.insertAdjacentHTML('beforebegin', catColsPickerHtml());
+    if(prev && (prev.classList.contains('cols-pick') || prev.classList.contains('cat-style-pick'))) return;
+    g.insertAdjacentHTML('beforebegin', catColsPickerHtml() + catStylePickerHtml());
   });
+  catStyleApply();
 }
 
 function userResultCard(item){
@@ -3802,7 +3851,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU004';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU005';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -3971,7 +4020,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU004';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU005';
 
     function finishFooter(){
       const fY = 770, fH = 220;
