@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1310TU007">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1310TU007">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1310TU008">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1310TU008">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1028,6 +1028,12 @@ body.nav-on #doctorFormModal, body.nav-on #serviceFormModal{padding-bottom:10px;
 /* ===================== MCS11OCTSU0913AM ===================== */
 /* --- ڈیٹا انٹری فارم: چھوٹا، دو کالم --- */
 #doctorFormModal.active, #serviceFormModal.active{z-index:1050;}
+/* MCS1310TU008: "نئی قسم" والا ڈبہ فارم کے اوپر کھلے — پہلے فارم کے پیچھے دب جاتا تھا */
+#addOptionModal.active{z-index:1080;}
+.aos-box{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 10px;max-height:34vh;overflow-y:auto;}
+.aos-box .aos-h{width:100%;font-size:12px;font-weight:700;color:#3f5568;}
+.aos-box button{border:1.5px solid #cfe0dd;background:#f3faf8;border-radius:16px;padding:4px 12px;font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:16px;color:#0b2a44;}
+.aos-box button mark{background:#ffe08a;border-radius:3px;padding:0 1px;}
 #doctorFormModal, #serviceFormModal{padding:14px 8px 10px !important;}
 #doctorFormModal .modal-box, #serviceFormModal .modal-box{max-width:520px;}
 .fm-head{padding:6px 10px 5px;}
@@ -1294,7 +1300,7 @@ html[data-admin] .adm-only{display:flex !important;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1310TU007" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1310TU008" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1637,8 +1643,9 @@ html[data-admin] .adm-only{display:flex !important;}
     <h3 id="addOptionTitle">نئی چیز شامل کریں</h3>
     <div style="clear:both;"></div>
     <div class="field">
-      <input type="text" id="addOptionInput" placeholder="یہاں نام لکھیں">
+      <input type="text" id="addOptionInput" placeholder="یہاں نام لکھیں" autocomplete="off" oninput="addOptSuggest()" onkeydown="if(event.key==='Enter'){event.preventDefault();confirmAddOption();}">
     </div>
+    <div id="addOptSuggest" class="aos-box"></div>
     <button class="btn block accent" onclick="confirmAddOption()">➕ شامل کریں</button>
   </div>
 </div>
@@ -2113,7 +2120,7 @@ html[data-admin] .adm-only{display:flex !important;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1310TU007";
+const APP_VERSION = "MCS1310TU008";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3100,6 +3107,37 @@ function promptAddOption(key, selectId){
   document.getElementById('addOptionTitle').textContent = labels[key] || 'نئی چیز شامل کریں';
   document.getElementById('addOptionInput').value = '';
   openModal('addOptionModal');
+  addOptSuggest();
+  if(typeof flowCancel==='function') flowCancel();
+  setTimeout(()=>{ const i = document.getElementById('addOptionInput'); if(i) i.focus(); }, 150);
+}
+/* MCS1310TU008: پہلے سے لکھی ہوئی چیزیں — لکھتے ہی کیپسول بن کر سامنے؛ دبائیں تو وہی چن لی جائے */
+function addOptPool(){
+  const k = addOptionTargetKey;
+  if(k==='serviceType'){
+    const set = new Set(store.serviceTypes[currentServiceCategory] || []);
+    store.services.forEach(x=>{ if(x.category===currentServiceCategory && x.type) set.add(x.type); });
+    Object.keys(store.serviceTypes||{}).forEach(c=> (store.serviceTypes[c]||[]).forEach(v=>set.add(v)));
+    return [...set];
+  }
+  const mapKey = {department:'departments', specialty:'specialties', hospital:'hospitals', city:'cities', area:'areas'}[k];
+  return (store[mapKey] || []).slice();
+}
+function addOptSuggest(){
+  const box = document.getElementById('addOptSuggest'); if(!box) return;
+  const q = (document.getElementById('addOptionInput').value||'').trim();
+  let items = addOptPool();
+  if(q) items = items.filter(v=> v.includes(q));
+  items.sort((a,b)=> (q ? ((b.startsWith(q)?1:0)-(a.startsWith(q)?1:0)) : 0) || a.localeCompare(b,'ur'));
+  items = items.slice(0, 30);
+  if(!items.length){ box.innerHTML = q ? '<div class="aos-h">✓ یہ نیا نام ہے — "شامل کریں" دبائیں</div>' : ''; return; }
+  const hl = v=>{ if(!q) return escapeHtml(v); const i = v.indexOf(q); return escapeHtml(v.slice(0,i))+'<mark>'+escapeHtml(q)+'</mark>'+escapeHtml(v.slice(i+q.length)); };
+  box.innerHTML = `<div class="aos-h">${q?'پہلے سے موجود — دبا کر چن لیں:':'پہلے لکھی ہوئی:'}</div>` +
+    items.map(v=>`<button type="button" data-v="${escapeAttr(v)}" onclick="addOptPick(this.dataset.v)">${hl(v)}</button>`).join('');
+}
+function addOptPick(v){
+  document.getElementById('addOptionInput').value = v;
+  confirmAddOption();
 }
 function confirmAddOption(){
   const val = document.getElementById('addOptionInput').value.trim();
@@ -3877,7 +3915,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU007';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU008';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4046,7 +4084,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU007';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU008';
 
     function finishFooter(){
       const fY = 770, fH = 220;
