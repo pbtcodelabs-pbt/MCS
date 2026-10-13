@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1310TU008">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1310TU008">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1310TU009">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1310TU009">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1300,7 +1300,7 @@ html[data-admin] .adm-only{display:flex !important;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1310TU008" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1310TU009" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -2120,7 +2120,7 @@ html[data-admin] .adm-only{display:flex !important;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1310TU008";
+const APP_VERSION = "MCS1310TU009";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3003,7 +3003,7 @@ function enhanceCapsuleSelect(selectId){
   function openPanel(){
     panel.innerHTML = '';
     /* MCS1310TU004: لمبی فہرست میں اوپر لکھنے کا خانہ — لکھتے ہی ملتی قسمیں/نام سامنے، Enter پر پہلا چن لیں */
-    const many = sel.options.length > 8;
+    const many = sel.options.length > 5;
     let q = null;
     if(many){
       q = document.createElement('input');
@@ -3185,13 +3185,22 @@ function nsHighlight(text, q, ci){
   return escapeHtml(text.slice(0,i)) + '<mark class="ns-hl">' + escapeHtml(text.slice(i, i+q.length)) + '</mark>' + escapeHtml(text.slice(i+q.length));
 }
 const nsState = {};
-function renderNameSuggest(boxId, urVal, enVal, excludeId){
+function renderNameSuggest(boxId, urVal, enVal, excludeId, recentMode){
   const box = document.getElementById(boxId);
   if(!box) return;
   const qUr = (urVal||'').trim();
   const qEn = (enVal||'').trim();
   /* MCS1310TU004: پہلا حرف لکھتے ہی تجاویز — اسی کیٹگری والے اور شروع سے ملنے والے نام سب سے اوپر */
-  if(qUr.length<1 && qEn.length<2){ clearNameSuggest(boxId); return; }
+  if(qUr.length<1 && qEn.length<2){
+    if(!recentMode){ clearNameSuggest(boxId); return; }
+    /* MCS1310TU009: خالی خانہ چھونے پر — اسی کیٹگری کے تازہ ترین 8 نام */
+    const cat = boxId==='docNameSuggest' ? 'doctor' : currentServiceCategory;
+    const pool = cat==='doctor' ? store.doctors : store.services.filter(x=>x.category===cat);
+    const rec = sortRecordsNewest(pool).filter(x=>x.id!==excludeId).slice(0,8)
+      .map(x=>({id:x.id, nameUr:x.nameUr||x.name||'', nameEn:x.nameEn||'', whatsapp:x.whatsapp||'', city:x.city, area:x.area, type:x.type||'', _kind:cat==='doctor'?'doctor':'service', _cat:cat}));
+    if(!rec.length){ clearNameSuggest(boxId); return; }
+    return showNameSuggestList(boxId, rec, '', '', 'حال ہی میں فیڈ ہوئے نام — دبا کر چن لیں');
+  }
   const seen = new Set();
   const myCat = boxId==='docNameSuggest' ? 'doctor' : currentServiceCategory;
   const urNS = qUr.replace(/\s+/g,'');
@@ -3213,9 +3222,14 @@ function renderNameSuggest(boxId, urVal, enVal, excludeId){
     if(seen.has(key)) return false; seen.add(key); return true;
   }).slice(0,8);
   if(!matched.length){ clearNameSuggest(boxId); return; }
+  showNameSuggestList(boxId, matched, qUr, qEn, 'پہلے فیڈ ہوئے نام — دبا کر چن لیں');
+}
+function sortRecordsNewest(arr){ return arr.slice().sort((a,b)=>recTime(b)-recTime(a)); }
+function showNameSuggestList(boxId, matched, qUr, qEn, head){
+  const box = document.getElementById(boxId); if(!box) return;
   nsState[boxId] = matched;
   const meta = it => it._kind==='doctor' ? {emoji:'🩺', ur:'ڈاکٹر'} : (CATEGORY_META[it._cat]||{});
-  box.innerHTML = `<div class="ns-head"><span>پہلے فیڈ ہوئے نام — دبا کر چن لیں</span>
+  box.innerHTML = `<div class="ns-head"><span>${head}</span>
       <button type="button" class="ns-x" aria-label="بند کریں" onclick="clearNameSuggest('${boxId}')">✕</button></div>` +
     matched.map((it,idx)=>{
       const m = meta(it);
@@ -3915,7 +3929,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU008';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU009';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4084,7 +4098,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU008';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1310TU009';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -6749,14 +6763,33 @@ function comboAreaList(){
   (store.doctors||[]).forEach(x=>{ if(x.area) set.add(x.area); });
   return [...set];
 }
+/* MCS1310TU009: ہر لکھنے والے خانے کی اپنی فہرست — پہلے فیڈ شدہ ریکارڈز سے */
+function comboPool(input){
+  const kind = input.dataset.pool || 'area';
+  const recs = (store.services||[]).concat(store.doctors||[]);
+  const set = new Set();
+  if(kind==='area'){ (store.areas||[]).forEach(v=>set.add(v)); recs.forEach(x=>{ if(x.area) set.add(x.area); }); }
+  else if(kind==='address') recs.forEach(x=>{ if(x.address) set.add(x.address); });
+  else if(kind==='district') recs.forEach(x=>{ if(x.district) set.add(x.district); });
+  else if(kind==='province') recs.forEach(x=>{ if(x.province) set.add(x.province); });
+  else if(kind==='nameEn') recs.forEach(x=>{ if(x.nameEn) set.add(x.nameEn); });
+  return [...set];
+}
 function comboShow(input){
   const panel = input._comboPanel; if(!panel) return;
-  const q = input.value.trim().toLowerCase();
-  let items = comboAreaList().filter(v=> !q || v.toLowerCase().includes(q));
-  items.sort((a,b)=> a.localeCompare(b,'ur'));
+  const raw = input.value.trim(), q = raw.toLowerCase();
+  /* اسی شہر کے علاقے پہلے، پھر جو شروع سے ملیں، پھر باقی */
+  const pre = (input.id||'').slice(0,3);
+  const cityEl = document.getElementById(pre+'City'); const city = cityEl ? cityEl.value : '';
+  const sameCity = new Set();
+  if(input.dataset.pool==='area' || !input.dataset.pool){ ((store.services||[]).concat(store.doctors||[])).forEach(x=>{ if(city && x.city===city && x.area) sameCity.add(x.area); }); }
+  let items = comboPool(input).filter(v=> !q || v.toLowerCase().includes(q));
+  const score = v=> (sameCity.has(v)?2:0) + (q && v.toLowerCase().startsWith(q)?1:0);
+  items.sort((a,b)=> score(b)-score(a) || a.localeCompare(b,'ur'));
   items = items.slice(0, 40);
-  if(!items.length || (items.length===1 && items[0]===input.value.trim())){ panel.style.display='none'; return; }
-  panel.innerHTML = items.map(v=>`<div class="csel-opt" data-v="${escapeAttr(v)}"><span class="csel-ur solo">${escapeHtml(v)}</span></div>`).join('');
+  if(!items.length || (items.length===1 && items[0]===raw)){ panel.style.display='none'; return; }
+  const hl = v=>{ if(!q) return escapeHtml(v); const i = v.toLowerCase().indexOf(q); return i<0 ? escapeHtml(v) : escapeHtml(v.slice(0,i))+'<mark class="ns-hl">'+escapeHtml(v.slice(i,i+q.length))+'</mark>'+escapeHtml(v.slice(i+q.length)); };
+  panel.innerHTML = items.map(v=>`<div class="csel-opt" data-v="${escapeAttr(v)}"><span class="csel-ur solo">${hl(v)}</span></div>`).join('');
   panel.style.display = 'block';
   /* نیچے جگہ کم ہو تو فہرست اوپر کی طرف کھلے */
   const body = input.closest('.fm-body');
@@ -7125,7 +7158,14 @@ renderAutoBackupHint();
 checkAutoBackupCheckpoints();
 setInterval(checkAutoBackupCheckpoints, 5*60*1000); // re-check every 5 min in case app stays open across a checkpoint
 enhanceAllCapsuleSelects();
-enhanceCombo('docArea'); enhanceCombo('svcArea'); flowWire(); renderAutoSpeed();
+enhanceCombo('docArea'); enhanceCombo('svcArea');
+/* MCS1310TU009: پتہ، انگریزی نام، اور "دیگر" صوبہ/ضلع میں بھی پہلے لکھی چیزوں کی فہرست */
+[['docAddress','address'],['svcAddress','address'],['docNameEn','nameEn'],['svcNameEn','nameEn'],
+ ['docDistrictCustom','district'],['svcDistrictCustom','district'],['docProvinceCustom','province'],['svcProvinceCustom','province']]
+  .forEach(([id,pool])=>{ const el = document.getElementById(id); if(el){ el.dataset.pool = pool; el.setAttribute('autocomplete','off'); enhanceCombo(id); } });
+/* نام کے خانے کو چھوتے ہی اسی کیٹگری کے حال ہی میں فیڈ ہوئے نام */
+['doc','svc'].forEach(pre=>{ const el = document.getElementById(pre+'NameUr'); if(el) el.addEventListener('focus', ()=>{ if(!el.value.trim()) renderNameSuggest(pre+'NameSuggest','','', pre==='doc'?editingDoctorId:editingServiceId, true); }); });
+flowWire(); renderAutoSpeed();
 applyCustomCategories(store.customCategories || []); // offline-cached custom categories show immediately
 try{ applyCatOverrides(); }catch(e){}
 renderCustomCategoryTiles();
