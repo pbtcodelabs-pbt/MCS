@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1410WE011">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1410WE011">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1710SA012">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1710SA012">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1300,7 +1300,7 @@ html[data-admin] .adm-only{display:flex !important;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1410WE011" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1710SA012" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -2120,7 +2120,7 @@ html[data-admin] .adm-only{display:flex !important;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1410WE011";
+const APP_VERSION = "MCS1710SA012";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3944,7 +3944,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1410WE011';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1710SA012';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4113,7 +4113,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1410WE011';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1710SA012';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -7087,6 +7087,7 @@ function boardNameCandidates(data){
     if(digits.length >= 7) return;                       /* نمبر والی لائن */
     const letters = (t.match(/[؀-ۿA-Za-z]/g)||[]).length;
     if(letters < 3 || letters < t.length*0.5) return;    /* بے معنی نشانات */
+    if((l.confidence||60) < 45) return;                  /* دھندلا/غلط پڑھا گیا */
     if(t.length > 45) t = t.slice(0,45);
     const h = (l.bbox ? (l.bbox.y1 - l.bbox.y0) : 10);
     if(!out.some(o=>o.t===t)) out.push({t, h, c:l.confidence||0});
@@ -7094,12 +7095,54 @@ function boardNameCandidates(data){
   out.sort((a,b)=> (b.h - a.h) || (b.c - a.c));
   return out.slice(0,6).map(o=>o.t);
 }
+/* MCS1710SA012: فون والا Tesseract اردو بورڈ (نستعلیق، رنگین پس منظر) کا نام بگاڑ دیتا تھا اور چھوٹا نمبر چھوڑ دیتا تھا۔
+   اب انٹرنیٹ ہو تو تصویر ہمارے Cloudflare سرور پر AI پڑھتا ہے؛ وہ ناکام ہو یا انٹرنیٹ نہ ہو تو پرانا طریقہ۔ */
+const BOARD_AI_URL = 'https://aio-pos-verify.pbtcodelabs.workers.dev/ocr';
+let boardScanExtra = {};
+function boardAiImage(file){
+  return new Promise((res, rej)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const max = 1280, sc = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src); res(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = rej;
+    img.src = URL.createObjectURL(file);
+  });
+}
+async function boardAiRead(file){
+  const image = await boardAiImage(file);
+  const ctl = new AbortController(); const tm = setTimeout(()=>ctl.abort(), 45000);
+  try{
+    const r = await fetch(BOARD_AI_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({image}), signal: ctl.signal});
+    const j = await r.json();
+    if(!j || !j.ok || !j.data) return null;
+    const d = j.data, clean = v=> String(v||'').replace(/\s+/g,' ').trim().slice(0,60);
+    const phones = boardExtractPhones((Array.isArray(d.phones) ? d.phones : [d.phones]).join(' , '));
+    const names = [clean(d.name_ur), clean(d.name_en)].filter(Boolean);
+    return {phones, names, nameEn: clean(d.name_en), address: clean(d.address)};
+  } finally { clearTimeout(tm); }
+}
 async function onBoardPhoto(input){
   const f = input.files && input.files[0]; if(!f) return;
   document.getElementById('bsImg').src = URL.createObjectURL(f);
   document.getElementById('bsResult').style.display = 'none';
+  boardScanExtra = {};
   bsSetStatus('⏳ تصویر تیار ہو رہی ہے...');
   openModal('boardScanModal');
+  if(navigator.onLine !== false){
+    bsSetStatus('⏳ بورڈ پڑھا جا رہا ہے...');
+    try{
+      const a = await boardAiRead(f);
+      if(a && (a.phones.length || a.names.length)){
+        boardScanExtra = {nameEn: a.nameEn, address: a.address};
+        boardShowResult(a.phones, a.names);
+        return;
+      }
+    }catch(e){ /* سرور نہ ملا — نیچے فون والا طریقہ */ }
+  }
   try{
     const canvas = await boardPrepImage(f);
     const w = await getOcrWorker();
@@ -7129,6 +7172,9 @@ function boardApply(save){
   const phEl = document.getElementById(pre+'Whatsapp'), nmEl = document.getElementById(pre+'NameUr');
   if(phEl && ph) phEl.value = ph;
   if(nmEl && nm) nmEl.value = nm;
+  const enEl = document.getElementById(pre+'NameEn'), adEl = document.getElementById(pre+'Address');
+  if(enEl && !enEl.value.trim() && boardScanExtra.nameEn && boardScanExtra.nameEn !== nm) enEl.value = boardScanExtra.nameEn;
+  if(adEl && !adEl.value.trim() && boardScanExtra.address) adEl.value = boardScanExtra.address;
   closeModal('boardScanModal');
   livePhoneDupCheck(pre);
   if(save){
