@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1810SU015">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1810SU015">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1810SU016">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1810SU016">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1322,7 +1322,7 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1810SU015" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1810SU016" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1573,6 +1573,10 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
         <input type="text" id="svcNameUr" placeholder="" autocomplete="off" enterkeyhint="next" oninput="svcNameSuggestUpdate()">
       </div>
       <div class="name-suggest" id="svcNameSuggest"></div>
+      <div class="field" id="svcOwnerField">
+        <label>👤 دکاندار کا نام <small style="font-weight:600;opacity:.75">(جس کا یہ نمبر ہے)</small></label>
+        <input type="text" id="svcOwner" placeholder="مثلاً علی سلیمان" autocomplete="off" enterkeyhint="next">
+      </div>
       <div class="field mcs-off"><label>Name (English)</label><input type="text" id="svcNameEn" dir="ltr" oninput="svcNameSuggestUpdate()"></div>
       <div class="field">
         <label id="svcTypeLabel">قسم</label>
@@ -2143,7 +2147,7 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1810SU015";
+const APP_VERSION = "MCS1810SU016";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2807,7 +2811,7 @@ function userResultCard(item){
           ${adminBtn}
         </div>
       </div>
-      ${item.intro ? `<div class="ub-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
+      ${item.intro ? `<div class="ub-intro">${introIcon(item.intro)} ${escapeHtml(item.intro)}</div>` : ``}
       ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
     </div>`;
 }
@@ -4002,7 +4006,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU015';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU016';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4171,7 +4175,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU015';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU016';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -4397,7 +4401,7 @@ function renderDoctorList(mode){
             <button class="mini-del" onclick="deleteDoctor('${escapeAttr(d.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
           </div>` : `<button class="a-reqadmin" onclick="openReportChoice('doctor','${escapeAttr(d.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`) : ``}
       </div>
-      ${d.intro ? `<div class="doc-intro">💬 ${escapeHtml(d.intro)}</div>` : ``}
+      ${d.intro ? `<div class="doc-intro">${introIcon(d.intro)} ${escapeHtml(d.intro)}</div>` : ``}
       <div class="doc-foot">
         ${([d.address,d.area,d.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[d.address,d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
         <div class="doc-recid">ID: ${escapeHtml(shortRecordId('doctor',d))}</div>
@@ -4926,6 +4930,24 @@ function catPickTop(){
   });
   return d;
 }
+/* MCS1810SU016: دکاندار کا نام — الگ خانہ؛ تعارف میں "دکاندار: …" پہلی لائن بن کر محفوظ ہوتا ہے
+   (ایکسل امپورٹ بھی یہی شکل لکھتا ہے، اس لیے پرانے کارڈ بھی ویسے ہی دکھتے ہیں) */
+const OWNER_PREFIX = 'دکاندار: ';
+function introIcon(t){ return String(t||'').startsWith('دکاندار') ? '👤' : '💬'; }
+function splitOwnerIntro(intro){
+  const t = String(intro||'');
+  const m = t.match(/^دکاندار\s*[:：]\s*([^\n]*)\n?/);
+  return m ? {owner: m[1].trim(), rest: t.slice(m[0].length).trim()} : {owner:'', rest: t.trim()};
+}
+function svcOwnerSplit(){
+  const i = document.getElementById('svcIntro'), o = document.getElementById('svcOwner'); if(!i || !o) return;
+  const p = splitOwnerIntro(i.value); o.value = p.owner; i.value = p.rest;
+}
+function svcOwnerMerge(){
+  const i = document.getElementById('svcIntro'), o = document.getElementById('svcOwner'); if(!i || !o) return;
+  const p = splitOwnerIntro(i.value), owner = o.value.trim() || '';
+  i.value = (owner ? OWNER_PREFIX + owner : '') + (owner && p.rest ? '\n' : '') + p.rest;
+}
 function openServiceForm(id, pendingRec){
   editingServiceId = pendingRec ? null : (id || null);
   if(!pendingRec) pendingFormCtx = null;
@@ -5106,7 +5128,7 @@ function renderServiceList(mode){
           <button class="mini-del" onclick="deleteService('${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>` : `<button class="a-reqadmin" onclick="openReportChoice('service','${escapeAttr(s.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`}
       </div>
-      ${s.intro ? `<div class="doc-intro">💬 ${escapeHtml(s.intro)}</div>` : ``}
+      ${s.intro ? `<div class="doc-intro">${introIcon(s.intro)} ${escapeHtml(s.intro)}</div>` : ``}
       <div class="doc-foot">
         ${([s.address,s.area,s.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[s.address,s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
         <div class="doc-recid">ID: ${escapeHtml(shortRecordId('service',s))}</div>
@@ -6496,7 +6518,7 @@ function savePendingFromForm(col, approve){
   if(col==='services'){
     const cat = g('svcCategory');
     if(!CATEGORY_META[cat]){ alert('کیٹگری منتخب کریں'); return; }
-    payload = {category:cat, nameUr, nameEn:g('svcNameEn'), type:g('svcType'), whatsapp,
+    payload = {category:cat, nameUr, nameEn:g('svcNameEn'), type:g('svcType'), intro:g('svcIntro'), whatsapp,
       country:loc.country, province:loc.province, district:loc.district, city:loc.city, area:loc.area};
   } else {
     payload = {nameUr, name:nameUr, nameEn:g('docNameEn'), dept:g('docDept'), specialty:g('docSpecialty'), hospital:g('docHospital'), whatsapp,
@@ -6580,7 +6602,7 @@ function phoneMaskWire(id){
 /* محفوظ ہونے کے بعد: فارم کھلا رہے، نمبر اور نام خالی، کیٹگری/قسم اور مقام وہی — کرسر موبائل پر */
 function nextEntryReady(pre){
   const mid = pre==='doc' ? 'doctorFormModal' : 'serviceFormModal';
-  ['Whatsapp','NameUr','NameEn','Address','Intro'].forEach(f=>{ const el = document.getElementById(pre+f); if(el) el.value=''; });
+  ['Whatsapp','NameUr','NameEn','Address','Intro','Owner'].forEach(f=>{ const el = document.getElementById(pre+f); if(el) el.value=''; });
   clearNameSuggest(pre+'NameSuggest');
   const dupEl = document.getElementById(pre+'PhoneDup'); if(dupEl){ dupEl.textContent=''; dupEl.style.display='none'; }
   showToast('محفوظ ہو گیا ✓ — اگلا اندراج لکھیں', 2200);
@@ -7180,7 +7202,7 @@ async function boardAiRead(file){
     const d = j.data, clean = v=> String(v||'').replace(/\s+/g,' ').trim().slice(0,60);
     const phones = boardExtractPhones((Array.isArray(d.phones) ? d.phones : [d.phones]).join(' , '));
     const names = [clean(d.name_ur), clean(d.name_en)].filter(Boolean);
-    return {phones, names, nameEn: clean(d.name_en), address: clean(d.address)};
+    return {phones, names, nameEn: clean(d.name_en), address: clean(d.address), owner: clean(d.owner)};
   } finally { clearTimeout(tm); }
 }
 async function onBoardPhoto(input){
@@ -7195,7 +7217,7 @@ async function onBoardPhoto(input){
     try{
       const a = await boardAiRead(f);
       if(a && (a.phones.length || a.names.length)){
-        boardScanExtra = {nameEn: a.nameEn, address: a.address};
+        boardScanExtra = {nameEn: a.nameEn, address: a.address, owner: a.owner};
         boardShowResult(a.phones, a.names);
         return;
       }
@@ -7272,6 +7294,8 @@ function boardApply(save){
   const enEl = document.getElementById(pre+'NameEn'), adEl = document.getElementById(pre+'Address');
   if(enEl && !enEl.value.trim() && boardScanExtra.nameEn && boardScanExtra.nameEn !== nm) enEl.value = boardScanExtra.nameEn;
   if(adEl && !adEl.value.trim() && boardScanExtra.address) adEl.value = boardScanExtra.address;
+  const owEl = document.getElementById(pre+'Owner');
+  if(owEl && !owEl.value.trim() && boardScanExtra.owner) owEl.value = boardScanExtra.owner.replace(/^(پروپرائیٹر|پروپرائٹر|مالک|prop\.?|proprietor)\s*[:：]?\s*/i,'');
   closeModal('boardScanModal');
   livePhoneDupCheck(pre);
   if(save){
@@ -7308,6 +7332,13 @@ function toggleZoomPanel(ev){
 document.addEventListener('click', ()=>{ const p = document.getElementById('zoomPanel'); if(p) p.style.display='none'; });
 applyZoom();
 
+/* MCS1810SU016: دکاندار کا خانہ فارم کھلنے/محفوظ ہونے کے ساتھ */
+(function(){
+  const _open = openServiceForm, _save = saveService, _pend = savePendingFromForm;
+  openServiceForm = function(){ const r = _open.apply(this, arguments); svcOwnerSplit(); return r; };
+  saveService = function(){ svcOwnerMerge(); const r = _save.apply(this, arguments); svcOwnerSplit(); return r; };
+  savePendingFromForm = function(col){ if(col==='services') svcOwnerMerge(); return _pend.apply(this, arguments); };
+})();
 ubInit();
 applyCardTextPrefs();
 catColsInit();
