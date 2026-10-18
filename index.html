@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1810SU020">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1810SU020">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1810SU021">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1810SU021">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1277,6 +1277,9 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
 .cat-recs .cr-h{margin:10px 2px 4px;font-size:13.5px;font-weight:800;color:#0d3b66;}
 .cat-recs .ub-row{margin:8px 0 0;width:100%;max-width:none;box-sizing:border-box;}
 .cat-recs .cr-more{display:block;margin:10px auto 4px;border:1.5px solid #cfe0dd;background:#fff;border-radius:12px;padding:6px 16px;font-family:inherit;font-weight:800;color:#0d3b66;}
+
+/* MCS1810SU021: دکاندار کا نام دکان کے نام کے نیچے */
+.ub-owner,.doc-owner{font-family:var(--docCardFont);font-size:calc(15px*var(--docCardScale));line-height:1.6;font-weight:bold;color:#fde68a;text-shadow:0 1px 2px rgba(0,0,0,.35);margin:1px 0 2px;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -1435,7 +1438,7 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1810SU020" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1810SU021" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -2247,9 +2250,9 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1810SU020";
+const APP_VERSION = "MCS1810SU021";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "فارم میں ⚙️ ترتیب: کرسر کی ترتیب اور رفتار؛ گلی محلہ اب خود نہیں بھرتا";
+const UPDATE_NOTE = "دکاندار کا نام اب دکان کے نام کے نیچے، نوٹ الگ کیپسول میں";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2919,6 +2922,7 @@ function catColsInit(){
 }
 
 function userResultCard(item){
+  { const on = splitOwnerIntro(item.intro); item = {...item, _owner: on.owner, intro: on.rest}; }   /* MCS1810SU021: دکاندار نام کے نیچے، نوٹ الگ */
   const num = normalizePkNumber(item.whatsapp||'');
   const digits = num.replace(/[^0-9]/g,'');
   const intl = '92' + digits.replace(/^0/,'');
@@ -2936,6 +2940,7 @@ function userResultCard(item){
         <div class="ub-ico">${item.emoji}</div>
         <div class="ub-body">
           <div class="ub-name">${escapeHtml(item.nameUr||'')}</div>
+          ${item._owner ? `<div class="ub-owner">👤 ${escapeHtml(item._owner)}</div>` : ``}
           ${(item.nameEn||rid) ? `<div class="ub-enrow"><span class="ub-en">${escapeHtml(item.nameEn||'')}</span>${rid?`<span class="ub-id">${escapeHtml(rid)}</span>`:''}</div>` : ``}
           ${(item.tag||item.sub) ? `<div class="ub-sub">${[item.tag,item.sub].filter(Boolean).map(escapeHtml).join(' • ')}</div>` : ``}
           ${locLine ? `<div class="ub-loc"><span class="ub-loc-t">📍 ${escapeHtml(locLine)}</span></div>` : ``}
@@ -2951,7 +2956,7 @@ function userResultCard(item){
           ${adminBtn}
         </div>
       </div>
-      ${item.intro ? `<div class="ub-intro">${introIcon(item.intro)} ${escapeHtml(item.intro)}</div>` : ``}
+      ${item.intro ? `<div class="ub-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
       ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
     </div>`;
 }
@@ -4146,7 +4151,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU020';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU021';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4315,7 +4320,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU020';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU021';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -5077,7 +5082,12 @@ function introIcon(t){ return String(t||'').startsWith('دکاندار') ? '👤
 function splitOwnerIntro(intro){
   const t = String(intro||'');
   const m = t.match(/^دکاندار\s*[:：]\s*([^\n]*)\n?/);
-  return m ? {owner: m[1].trim(), rest: t.slice(m[0].length).trim()} : {owner:'', rest: t.trim()};
+  if(!m) return {owner:'', rest: t.trim()};
+  let owner = m[1].trim(), rest = t.slice(m[0].length).trim();
+  /* MCS1810SU021: پرانے اندراج جن میں نام کے ساتھ اسی لائن میں نوٹ بھی لکھا تھا — نام عموماً دو لفظ */
+  const w = owner.split(/\s+/);
+  if(owner.length > 24 && w.length > 3){ rest = (w.slice(2).join(' ') + (rest ? '\n' + rest : '')).trim(); owner = w.slice(0,2).join(' '); }
+  return {owner, rest};
 }
 function svcOwnerSplit(){
   const i = document.getElementById('svcIntro'), o = document.getElementById('svcOwner'); if(!i || !o) return;
@@ -5252,6 +5262,7 @@ function renderServiceList(mode){
       <div class="doc-avatar"><span style="font-size:20px;">${meta.emoji}</span></div>
       <div class="doc-body">
         <div class="doc-top"><div class="doc-name">${escapeHtml(s.nameUr)}${newBadge(s)}</div>${s.nameEn ? `<div class="doc-name-en">${escapeHtml(s.nameEn)}</div>` : ``}</div>
+        ${splitOwnerIntro(s.intro).owner ? `<div class="doc-owner">👤 ${escapeHtml(splitOwnerIntro(s.intro).owner)}</div>` : ``}
         <div class="doc-sub">${escapeHtml(s.type||'')}</div>
         <div class="doc-num">${escapeHtml(num||'—')}</div>
       </div>
@@ -5268,7 +5279,7 @@ function renderServiceList(mode){
           <button class="mini-del" onclick="deleteService('${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>` : `<button class="a-reqadmin" onclick="openReportChoice('service','${escapeAttr(s.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`}
       </div>
-      ${s.intro ? `<div class="doc-intro">${introIcon(s.intro)} ${escapeHtml(s.intro)}</div>` : ``}
+      ${splitOwnerIntro(s.intro).rest ? `<div class="doc-intro">💬 ${escapeHtml(splitOwnerIntro(s.intro).rest)}</div>` : ``}
       <div class="doc-foot">
         ${([s.address,s.area,s.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[s.address,s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
         <div class="doc-recid">ID: ${escapeHtml(shortRecordId('service',s))}</div>
