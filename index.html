@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1810SU018">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1810SU018">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS1810SU019">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS1810SU019">
 <meta name="theme-color" content="#0d3b66">
 <style>
   @font-face{
@@ -1416,7 +1416,7 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1810SU018" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS1810SU019" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -2226,9 +2226,9 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1810SU018";
+const APP_VERSION = "MCS1810SU019";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "کیٹگری صفحے کی تلاش سے اب نمبر، نام اور پتے سے دکانیں بھی ملتی ہیں";
+const UPDATE_NOTE = "تلاش والے کارڈوں پر ✏️ ترمیم کا بٹن دوبارہ کام کرنے لگا";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2838,6 +2838,9 @@ function catFilter(inp){
   const recs = catRecordSearch(inp.value, !!tools.closest('#screen-business-categories'));
   const rw = tools.querySelector('.cat-recs'); if(rw) catRenderRecs(rw, recs, inp.value);
   const nr = tools.querySelector('.cat-noresult'); if(nr) nr.style.display = (q && !shown && !recs.list.length) ? 'block' : 'none';
+}
+function catRefreshSearches(){
+  setTimeout(()=>document.querySelectorAll('.cat-search input').forEach(i=>{ if(i.value.trim()) catFilter(i); }), 300);
 }
 function catRecordSearch(raw, business){
   const qs = ubParseQuery(raw||'');
@@ -4122,7 +4125,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU018';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU019';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4291,7 +4294,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU018';
+    headerLogo.src = 'icons/icon-192.png?v=MCS1810SU019';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -7451,8 +7454,12 @@ applyZoom();
 /* MCS1810SU016: دکاندار کا خانہ فارم کھلنے/محفوظ ہونے کے ساتھ */
 (function(){
   const _open = openServiceForm, _save = saveService, _pend = savePendingFromForm;
-  openServiceForm = function(){ const r = _open.apply(this, arguments); svcOwnerSplit(); return r; };
-  saveService = function(){ svcOwnerMerge(); const r = _save.apply(this, arguments); svcOwnerSplit(); return r; };
+  openServiceForm = function(id, pendingRec){
+    /* MCS1810SU019: تلاش/کسی بھی صفحے سے ✏️ — اسی ریکارڈ کی کیٹگری پہلے سیٹ کریں (ورنہ فارم کھلتا ہی نہیں تھا) */
+    const rec = pendingRec || (id ? store.services.find(x=>x.id===id) : null);
+    if(rec && CATEGORY_META[rec.category]) currentServiceCategory = rec.category;
+    const r = _open.apply(this, arguments); svcOwnerSplit(); return r; };
+  saveService = function(){ svcOwnerMerge(); const r = _save.apply(this, arguments); svcOwnerSplit(); catRefreshSearches(); return r; };
   savePendingFromForm = function(col){ if(col==='services') svcOwnerMerge(); return _pend.apply(this, arguments); };
 })();
 ubInit();
