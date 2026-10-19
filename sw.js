@@ -9,7 +9,11 @@
 /* Same version string as index.html's APP_VERSION and the release zip
    filename (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001) — keep these three in sync
    on every release so it's always clear which files go together. */
-const CACHE_NAME = 'mcs-cache-MCS1910MO028';
+const CACHE_NAME = 'mcs-cache-MCS1910MO029';
+/* MCS1910MO029: فونٹ (10-13MB) الگ مستقل کیش میں — ہر ورژن پر مٹتے نہیں تھے تو ہر اپڈیٹ کے بعد دوبارہ
+   ڈاؤن لوڈ ہوتے اور تب تک نوری نستعلیق/کشیدہ نظر نہیں آتا تھا۔ */
+const FONT_CACHE = 'mcs-fonts-v1';
+const isFontReq = (url) => /\.(ttf|otf|woff2?)$/i.test(url.pathname);
 /* Font files (fonts/*.ttf) are intentionally NOT in APP_SHELL below —
    they are large (10-13MB each) and would slow down or risk failing the
    very first install. The generic fetch handler further down caches them
@@ -42,7 +46,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys.filter((key) => key !== CACHE_NAME)
+        keys.filter((key) => key !== CACHE_NAME && key !== FONT_CACHE)
             .map((key) => caches.delete(key))
       )
     ).then(() => self.clients.claim())
@@ -66,6 +70,18 @@ self.addEventListener('fetch', (event) => {
                   /* MCS11OCTSU0913AM: بورڈ اسکین والی پڑھائی کی فائلیں ایک بار آ کر فون میں رہیں */
                   url.hostname === 'cdn.jsdelivr.net';
   if (!allowed) return;
+
+  if (isFontReq(url)) {
+    event.respondWith(
+      caches.open(FONT_CACHE).then((cache) =>
+        cache.match(event.request).then((hit) => hit || fetch(event.request).then((response) => {
+          if (response && response.status === 200) cache.put(event.request, response.clone());
+          return response;
+        }))
+      )
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
