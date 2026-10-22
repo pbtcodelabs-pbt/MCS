@@ -5,9 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2010TU035">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2010TU035">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2210TH036">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2210TH036">
 <meta name="theme-color" content="#0d3b66">
+<!-- MCS2210TH036: فائربیس کی فائلیں شروع ہی میں آنا شروع ہوں تاکہ لاگ اِن اور نئے ریکارڈ جلد آئیں -->
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js">
 <style>
   @font-face{
     font-family:'Jameel Noori Nastaleeq Regular';
@@ -284,7 +289,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
     font-size:14px;font-weight:900;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
     min-width:34px;height:34px;padding:0 10px;box-sizing:border-box;white-space:nowrap;
     border:1px solid #d8dee4;box-shadow:0 2px 5px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.7);}
-  /* MCS2010TU035: ہوم کے بڑے بٹنوں کا عنوان کشیدہ میں */
+  /* MCS2210TH036: ہوم کے بڑے بٹنوں کا عنوان کشیدہ میں */
   .entry-card .txt b{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;display:block;font-size:18px;font-weight:800;letter-spacing:.4px;color:#fff;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.3);}
   .entry-en{display:block;font-family:'Segoe UI',Roboto,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.85);margin-top:1px;}
   .e-teal{--c1:#22c1b0;--c2:#0f766e;}
@@ -1050,14 +1055,14 @@ body.nav-on #doctorFormModal, body.nav-on #serviceFormModal{padding-bottom:10px;
 #doctorFormModal.active, #serviceFormModal.active{z-index:1050;}
 /* MCS1310TU008: "نئی قسم" والا ڈبہ فارم کے اوپر کھلے — پہلے فارم کے پیچھے دب جاتا تھا */
 #addOptionModal.active{z-index:1080;}
-/* MCS2010TU035: محفوظ کے بعد والا پاپ اپ اور کارڈ اسکرین فارم کے اوپر */
+/* MCS2210TH036: محفوظ کے بعد والا پاپ اپ اور کارڈ اسکرین فارم کے اوپر */
 #afterSaveModal.active{z-index:1090;align-items:center;}
-/* MCS2010TU035: خانہ چھپانے/دکھانے کا 👁 */
+/* MCS2210TH036: خانہ چھپانے/دکھانے کا 👁 */
 .fh-eye{border:1px solid #cfe0dd;background:#fff;border-radius:999px;font-size:12px;line-height:1;padding:2px 6px;margin-inline-start:6px;vertical-align:middle;cursor:pointer;filter:none!important;opacity:1!important}
 .field.fh-off > *:not(label){filter:blur(1.4px);opacity:.45}
 .field.fh-off > label{opacity:.6}
 .field.fh-off .fh-eye{background:#fee2e2;border-color:#fca5a5}
-/* MCS2010TU035: واٹس ایپ بزنس / عام واٹس ایپ کا انتخاب */
+/* MCS2210TH036: واٹس ایپ بزنس / عام واٹس ایپ کا انتخاب */
 .wa-app-pick{display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;font-weight:700;color:#0b2a44;}
 .wa-app-pick button{border:1.5px solid #cfe0dd;background:#fff;border-radius:999px;padding:5px 12px;font-family:inherit;font-weight:800;font-size:13.5px;color:#0b2a44;}
 .wa-app-pick button.active{background:#128c7e;border-color:#128c7e;color:#fff;}
@@ -1460,7 +1465,7 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2010TU035" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2210TH036" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -2168,7 +2173,7 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
   </div>
 </div>
 
-<!-- MCS2010TU035: ریکارڈ محفوظ ہونے کے بعد کے بٹن -->
+<!-- MCS2210TH036: ریکارڈ محفوظ ہونے کے بعد کے بٹن -->
 <div class="modal-overlay" id="afterSaveModal">
   <div class="modal-box" style="max-width:420px;">
     <button class="modal-close" onclick="afterSaveGo('next')">×</button>
@@ -2292,9 +2297,9 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2010TU035";
+const APP_VERSION = "MCS2210TH036";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "بورڈ اسکین سے آیا پتہ اب فارم میں نظر آتا ہے — مٹا یا چھپا سکتے ہیں";
+const UPDATE_NOTE = "ایڈمن لاگ اِن پکا یاد؛ نیا ریکارڈ آتے ہی ایڈمن کو فوراً خبر";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3109,7 +3114,7 @@ function sortOptionValues(arr){
     return a.localeCompare(b, 'ur');
   });
 }
-/* MCS2010TU035: ان خانوں میں سب سے اوپر «خالی رکھیں» — چنیں تو خانہ خالی محفوظ ہوتا ہے اور کارڈ/پرنٹ میں نہیں آتا */
+/* MCS2210TH036: ان خانوں میں سب سے اوپر «خالی رکھیں» — چنیں تو خانہ خالی محفوظ ہوتا ہے اور کارڈ/پرنٹ میں نہیں آتا */
 const BLANK_OK_SELECTS = ['svcType','docSpecialty','docHospital'];
 const BLANK_LABEL = '— خالی رکھیں —';
 function isBlankVal(v){ return /^[\s\-–—_.]*$/.test(String(v==null?'':v)); }
@@ -3703,7 +3708,7 @@ function deleteDoctor(id){
 /* ---------- Share own profile card (image) to WhatsApp/friends — also promotes
    the app itself, so the app spreads through the people who list themselves. ---------- */
 const MCS_APP_URL = 'https://pbtcodelabs-pbt.github.io/MCS/';
-/* MCS2010TU035: ایپ پلے اسٹور پر شائع — شیئر پیغام اور پوسٹر میں اب پلے اسٹور کا لنک (list.html والے لنک ویب سائٹ ہی پر رہیں گے) */
+/* MCS2210TH036: ایپ پلے اسٹور پر شائع — شیئر پیغام اور پوسٹر میں اب پلے اسٹور کا لنک (list.html والے لنک ویب سائٹ ہی پر رہیں گے) */
 const MCS_PLAY_URL = 'https://play.google.com/store/apps/details?id=com.pbtcodelabs.mycityshines';
 
 /* ---------- Short, human-readable record ID (e.g. BKY-04821) — shown on
@@ -3877,7 +3882,7 @@ function sendCardToOwnerChat(blob, caption, item){
   showToast(to ? '✅ اسی کی چیٹ کھل رہی ہے — 📷 کارڈ گیلری میں محفوظ ہے، 📎 سے لگا کر بھیج دیں' : 'نمبر درست نہیں — واٹس ایپ میں رابطہ خود چنیں', 5000);
   waOpen(to, caption);
 }
-/* MCS2010TU035: شیئر/بھیجنا سیدھا واٹس ایپ بزنس (com.whatsapp.w4b) میں — اینڈرائیڈ پر intent سے؛
+/* MCS2210TH036: شیئر/بھیجنا سیدھا واٹس ایپ بزنس (com.whatsapp.w4b) میں — اینڈرائیڈ پر intent سے؛
    بزنس نہ ہو یا فون اینڈرائیڈ نہ ہو تو عام wa.me۔ انتخاب اسی فون میں محفوظ (mcsWaApp)۔ */
 function waAppPref(){ try{ return localStorage.getItem('mcsWaApp') || 'business'; }catch(e){ return 'business'; } }
 function setWaApp(v){
@@ -3973,7 +3978,7 @@ function shareCaptionText(kind, item){
     '', '📲 پلے اسٹور سے ابھی ایپ حاصل کریں:', MCS_PLAY_URL, '🔍 یا پلے اسٹور پر «My City Shines» لکھ کر سرچ کریں');
   return lines.join('\n');
 }
-/* MCS2010TU035: پوسٹر پر "GET IT ON Google Play" کا بٹن اور سرچ کی لائن — cx درمیان، y بٹن کا اوپر */
+/* MCS2210TH036: پوسٹر پر "GET IT ON Google Play" کا بٹن اور سرچ کی لائن — cx درمیان، y بٹن کا اوپر */
 function sharePlayBadge(ctx, cx, y, FF){
   const bw = 300, bh = 64, bx = cx - bw/2;
   ctx.save();
@@ -4265,7 +4270,7 @@ function buildShareCanvas(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2010TU035';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2210TH036';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4282,7 +4287,7 @@ function buildShareCanvas(kind, item, opts){
     ctx.font = `800 32px "${FF}", sans-serif`;
     shareWrapText(ctx, 'اپنے شہر کی مکمل ڈائریکٹری — ابھی ایپ حاصل کریں!', W/2, fY+50, W-160, 40);
 
-    /* MCS2010TU035: پلے اسٹور کا بٹن + «پلے اسٹور پر My City Shines سرچ کریں» */
+    /* MCS2210TH036: پلے اسٹور کا بٹن + «پلے اسٹور پر My City Shines سرچ کریں» */
     sharePlayBadge(ctx, W/2, fY+80, FF);
 
     resolve(canvas);
@@ -4426,7 +4431,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2010TU035';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2210TH036';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -5053,7 +5058,7 @@ function renameCategory(key){
   refreshCatHeader();
   showToast('کیٹگری کا نام بدل گیا ✓');
 }
-/* MCS2010TU035: نئی کیٹگری پہلے اُس کیٹگری کے لیبل اٹھا لیتی تھی جس میں ایڈمن کھڑا تھا (مثلاً فوٹو سٹیٹ میں «مزدور کا نام»)۔
+/* MCS2210TH036: نئی کیٹگری پہلے اُس کیٹگری کے لیبل اٹھا لیتی تھی جس میں ایڈمن کھڑا تھا (مثلاً فوٹو سٹیٹ میں «مزدور کا نام»)۔
    اپنی بنائی کیٹگری کا لیبل اگر اس کے نام سے میل نہ کھائے تو گروپ کے عام لیبل دکھائیں۔ */
 function catLabels(key){
   const m = CATEGORY_META[key] || {};
@@ -5199,7 +5204,7 @@ function catPickTop(){
    (ایکسل امپورٹ بھی یہی شکل لکھتا ہے، اس لیے پرانے کارڈ بھی ویسے ہی دکھتے ہیں) */
 const OWNER_PREFIX = 'دکاندار: ';
 function introIcon(t){ return String(t||'').startsWith('دکاندار') ? '👤' : '💬'; }
-/* MCS2010TU035: فارم کے ہر خانے پر 👁 — صرف اسی ایک ریکارڈ کے لیے۔ چھپایا خانہ فارم میں دھندلا نظر آتا رہتا ہے
+/* MCS2210TH036: فارم کے ہر خانے پر 👁 — صرف اسی ایک ریکارڈ کے لیے۔ چھپایا خانہ فارم میں دھندلا نظر آتا رہتا ہے
    (ڈیٹا محفوظ)، مگر اس ریکارڈ کے کارڈ، تلاش، لسٹ شیئر/پرنٹ اور شیئر تصویر میں نہیں آتا۔ ریکارڈ میں `hide` (خانوں کی فہرست)؛
    نیا ریکارڈ ہمیشہ سب خانے کھلے۔ */
 const FH_FIELDS = {
@@ -5208,7 +5213,7 @@ const FH_FIELDS = {
 };
 const fhForm = {svc:new Set(), doc:new Set()};   /* ابھی کھلے فارم کے چھپے خانے */
 function fhOn(pre, key){ return fhForm[pre].has(key); }
-/* MCS2010TU035: پتہ کا خانہ فارم میں چھپا تھا مگر بورڈ اسکین چپکے سے اس میں پتہ لکھ دیتا تھا اور وہ کارڈ پر آ جاتا —
+/* MCS2210TH036: پتہ کا خانہ فارم میں چھپا تھا مگر بورڈ اسکین چپکے سے اس میں پتہ لکھ دیتا تھا اور وہ کارڈ پر آ جاتا —
    اب پتہ ہو تو خانہ فارم میں نظر آتا ہے (مٹا سکیں یا 👁 سے چھپا سکیں)، خالی ہو تو چھپا رہتا ہے۔ */
 function addrFieldSync(pre){
   const el = document.getElementById(pre+'Address'), f = document.getElementById(pre+'AddressField');
@@ -6550,6 +6555,10 @@ let isAdminSignedIn = false;
 /* ایڈمن بٹن صرف ڈیولپر کی ڈیوائس پر نظر آتا ہے: (۱) ایڈمن لاگ ان ہو، یا (۲) اس ڈیوائس پر
    ایک بار یوزر سرچ میں ایڈمن PIN لکھا گیا ہو۔ باقی سب لوگوں کو بٹن دکھائی ہی نہیں دیتا۔ */
 const DEV_KEY = 'mcsDevDevice';
+/* MCS2210TH036: ایڈمن آخری بار لاگ اِن تھا تو ایپ کھلتے ہی «لاگ آؤٹ» کے بجائے «جڑ رہا ہے» — فائربیس چند لمحے بعد خود لاگ اِن بحال کرتا ہے */
+var ADMIN_LAST_KEY = 'mcsAdminLast', ADMIN_EMAIL_KEY = 'mcsAdminEmail';
+function adminWasIn(){ try{ return localStorage.getItem(ADMIN_LAST_KEY)==='1'; }catch(e){ return false; } }
+var adminRestoring = adminWasIn();
 function isDevDevice(){ try{ return localStorage.getItem(DEV_KEY)==='1'; }catch(e){ return false; } }
 function markDevDevice(){ try{ localStorage.setItem(DEV_KEY,'1'); }catch(e){} }
 function hideDevButton(){ try{ localStorage.removeItem(DEV_KEY); }catch(e){} showAdminPop(false); updateAdminBadge(); showToast('اس ڈیوائس سے ایڈمن بٹن ہٹا دیا گیا'); }
@@ -6559,8 +6568,8 @@ function updateAdminBadge(){
   if(btn){
     btn.style.display = show ? 'flex' : 'none';
     btn.classList.toggle('in', !!isAdminSignedIn);
-    document.getElementById('devAdminIc').textContent = isAdminSignedIn ? '✅' : '🔒';
-    document.getElementById('devAdminTxt').textContent = isAdminSignedIn ? 'لاگ ان' : 'لاگ آؤٹ';
+    document.getElementById('devAdminIc').textContent = isAdminSignedIn ? '✅' : (adminRestoring ? '🔄' : '🔒');
+    document.getElementById('devAdminTxt').textContent = isAdminSignedIn ? 'لاگ ان' : (adminRestoring ? 'جڑ رہا ہے' : 'لاگ آؤٹ');
   }
   const o = document.getElementById('adminPopOut'), i = document.getElementById('adminPopIn');
   if(o) o.style.display = isAdminSignedIn ? 'none' : 'block';
@@ -6571,8 +6580,8 @@ function updateAdminBadge(){
   if(nb){
     nb.style.display = show ? 'flex' : 'none';
     nb.classList.toggle('in', !!isAdminSignedIn);
-    document.getElementById('bnAdminIc').textContent = isAdminSignedIn ? '✅' : '🔒';
-    document.getElementById('bnAdminTxt').textContent = isAdminSignedIn ? 'لاگ اِن' : 'لاگ آؤٹ';
+    document.getElementById('bnAdminIc').textContent = isAdminSignedIn ? '✅' : (adminRestoring ? '🔄' : '🔒');
+    document.getElementById('bnAdminTxt').textContent = isAdminSignedIn ? 'لاگ اِن' : (adminRestoring ? 'جڑ رہا ہے' : 'لاگ آؤٹ');
   }
   if(typeof updatePendingHomeIndicator==='function') updatePendingHomeIndicator();
 }
@@ -6704,6 +6713,13 @@ function initFirebaseSync(){
   }, ()=>{ /* offline/permission issue — local/default messages still work */ });
 
   FB.onAuthStateChanged(FB.auth, (user)=>{
+    adminRestoring = false;
+    if(user){ try{ localStorage.setItem(ADMIN_LAST_KEY,'1'); if(user.email) localStorage.setItem(ADMIN_EMAIL_KEY, user.email); }catch(e){} }
+    else if(adminWasIn()){
+      /* لاگ اِن واقعی مٹ گیا (فون نے صاف کیا) — فوراً لاگ اِن کا ڈبہ، ای میل پہلے سے لکھی */
+      try{ localStorage.removeItem(ADMIN_LAST_KEY); }catch(e){}
+      setTimeout(()=>{ try{ showAdminPop(true); const em=document.getElementById('adminEmail'); if(em && !em.value) em.value = localStorage.getItem(ADMIN_EMAIL_KEY)||''; }catch(e){} }, 400);
+    }
     isAdminSignedIn = !!user;
     document.documentElement.toggleAttribute('data-admin', isAdminSignedIn);   /* MCS1310TU006 */
     updateAdminBadge();
@@ -6723,7 +6739,12 @@ function startPendingApprovalsListener(){
     const pendingQ = FB.query(colRef, FB.where('approved','==', false));
     const unsub = FB.onSnapshot(pendingQ, (snap)=>{
       pendingByCollection[col] = snap.docs.map(d=>({fsId:d.id, _col:col, ...d.data()}));
+      const before = new Set(pendingApprovals.map(x=>x.fsId));
       pendingApprovals = [...pendingByCollection.doctors, ...pendingByCollection.services];
+      /* MCS2210TH036: نیا ریکارڈ آتے ہی ایڈمن کو فوراً خبر — ٹوسٹ، تھرتھراہٹ، ٹن */
+      const fresh = pendingSeenOnce[col] ? snap.docChanges().filter(c=>c.type==='added' && !before.has(c.doc.id)) : [];
+      pendingSeenOnce[col] = true;
+      if(fresh.length) newPendingAlert(fresh.map(c=>c.doc.data()));
       renderPendingApprovals();
       healPendingLocal();
     });
@@ -6731,9 +6752,22 @@ function startPendingApprovalsListener(){
   });
 }
 let pendingUnsubList = [];
+var pendingSeenOnce = {doctors:false, services:false};
+function newPendingAlert(list){
+  const d = list[0] || {};
+  showToast('🔔 نیا ریکارڈ آیا: ' + (d.nameUr || d.name || '') + (list.length>1 ? ' (+' + (list.length-1) + ')' : '') + ' — منظوری کے لیے', 5000);
+  try{ navigator.vibrate && navigator.vibrate([180,80,180]); }catch(e){}
+  try{
+    const A = window.AudioContext || window.webkitAudioContext; if(!A) return;
+    const ac = new A(), o = ac.createOscillator(), g = ac.createGain();
+    o.frequency.value = 880; g.gain.setValueAtTime(0.18, ac.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.5);
+    o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + 0.5);
+  }catch(e){}
+}
 function stopPendingApprovalsListener(){
   pendingUnsubList.forEach(u=>u());
   pendingUnsubList = [];
+  pendingSeenOnce.doctors = pendingSeenOnce.services = false;
   pendingByCollection = {doctors:[], services:[]};
   pendingApprovals = [];
   renderPendingApprovals();
@@ -6765,8 +6799,12 @@ function updatePendingHomeIndicator(){
   if(badge){ badge.textContent = String(n); badge.style.display = n>0 ? 'flex' : 'none'; }
   const banner = document.getElementById('pendingHomeBanner');
   if(banner){
-    banner.classList.toggle('phb-out', !isAdminSignedIn && isDevDevice());
-    if(!isAdminSignedIn && isDevDevice()){
+    banner.classList.toggle('phb-out', !isAdminSignedIn && isDevDevice() && !adminRestoring);
+    if(!isAdminSignedIn && isDevDevice() && adminRestoring){
+      banner.style.display = 'flex';
+      banner.innerHTML = `<span>🔄 ایڈمن لاگ اِن بحال ہو رہا ہے…</span>`;
+      banner.onclick = null;
+    } else if(!isAdminSignedIn && isDevDevice()){
       /* MCS11OCTSU0913AM: ایڈمن لاگ آؤٹ ہو تو صاف بتائے کہ اسی وجہ سے زیر منظوری ریکارڈ نہیں آ رہے */
       banner.style.display = 'flex';
       banner.innerHTML = `<span>🔒 ایڈمن لاگ آؤٹ ہے — زیر منظوری ریکارڈ لاگ اِن کے بعد نظر آئیں گے</span><span class="phb-count">لاگ اِن</span>`;
@@ -6961,7 +6999,7 @@ function phoneMaskWire(id){
   el.addEventListener('blur', ()=>{ if(el.value.replace(/[^0-9]/g,'')==='03') return; fix(); });
 }
 /* محفوظ ہونے کے بعد: فارم کھلا رہے، نمبر اور نام خالی، کیٹگری/قسم اور مقام وہی — کرسر موبائل پر */
-/* MCS2010TU035: ریکارڈ محفوظ ہوتے ہی چھوٹا پاپ اپ — اسی کو بھیجیں / عام شیئر / اگلا اندراج / بند کریں۔
+/* MCS2210TH036: ریکارڈ محفوظ ہوتے ہی چھوٹا پاپ اپ — اسی کو بھیجیں / عام شیئر / اگلا اندراج / بند کریں۔
    کارڈ کی تصویر پاپ اپ کھلتے ہی تیار ہو جاتی ہے تاکہ بٹن دباتے ہی بغیر انتظار کے چیٹ کھلے۔ */
 let afterSaveState = null;
 function openAfterSave(kind, item, pre){
@@ -6996,7 +7034,7 @@ function afterSaveGo(action){
   }
 }
 function nextEntryReady(pre){
-  fhLoad(pre, null);   /* MCS2010TU035: اگلا نیا ریکارڈ — سب خانے پھر کھلے */
+  fhLoad(pre, null);   /* MCS2210TH036: اگلا نیا ریکارڈ — سب خانے پھر کھلے */
   const mid = pre==='doc' ? 'doctorFormModal' : 'serviceFormModal';
   ['Whatsapp','NameUr','NameEn','Address','Intro','Owner'].forEach(f=>{ const el = document.getElementById(pre+f); if(el) el.value=''; });
   addrFieldSync(pre);
@@ -7017,6 +7055,7 @@ function adminLogin(){
     .catch(()=>{ showToast('لاگ ان ناکام — ای میل یا پاس ورڈ غلط'); });
 }
 function adminLogout(){
+  try{ localStorage.removeItem(ADMIN_LAST_KEY); }catch(e){}
   const FB = window.MCSFirebase;
   if(FB) FB.signOut(FB.auth);
   showAdminPop(false);
@@ -7883,7 +7922,7 @@ if('serviceWorker' in navigator){
     onSnapshot, query, where, serverTimestamp, getDocs, getDoc, writeBatch
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
   import {
-    getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+    initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, signInWithEmailAndPassword, signOut, onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -7898,7 +7937,8 @@ if('serviceWorker' in navigator){
   try{
     const fbApp = initializeApp(firebaseConfig);
     const db = initializeFirestore(fbApp, { localCache: persistentLocalCache() });
-    const auth = getAuth(fbApp);
+    /* MCS2210TH036: لاگ اِن فون میں پکا محفوظ — پہلے IndexedDB، وہ نہ ہو تو localStorage */
+    const auth = initializeAuth(fbApp, { persistence: [indexedDBLocalPersistence, browserLocalPersistence] });
     window.MCSFirebase = {
       db, auth, collection, addDoc, doc, setDoc, updateDoc, deleteDoc,
       onSnapshot, query, where, serverTimestamp, getDocs, getDoc, writeBatch,
