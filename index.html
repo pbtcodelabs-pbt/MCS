@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2310FR045">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2310FR045">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2310FR046">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2310FR046">
 <meta name="theme-color" content="#0d3b66">
 <!-- MCS2310FR041: فائربیس کی فائلیں شروع ہی میں آنا شروع ہوں تاکہ لاگ اِن اور نئے ریکارڈ جلد آئیں -->
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -115,7 +115,7 @@
   .btn:active{transform:scale(0.98);}
 
   /* ===== Home (v1.7 professional) ===== */
-  #screen-specialist-categories .inner, #screen-business-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner, #screen-service-list .inner{padding:16px;}
+  #screen-specialist-categories .inner, #screen-business-categories .inner, #screen-doctor-list .inner, #screen-user-browse .inner, #screen-service-list .inner, #screen-favorites .inner{padding:16px;}
   #screen-home{padding-bottom:24px;background:var(--bg);}
   /* ===== ٹکر پٹی — سیٹنگز پینل سے تبدیل ہوتی ہیں (7 دفعہ ٹچ) ===== */
   :root{
@@ -299,6 +299,15 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .a-fav{width:32px;height:32px;min-width:32px;border-radius:50%;border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;padding:0;cursor:pointer;background:linear-gradient(145deg,#fb7185,#e11d48);box-shadow:inset 0 2px 1px rgba(255,255,255,.42),inset 0 -2px 2px rgba(0,0,0,.26),0 3px 0 rgba(0,0,0,.2),0 4px 8px rgba(0,0,0,.25)}
   .a-fav:not(.on){background:linear-gradient(145deg,#94a3b8,#64748b)}
   .lc-share .a-fav{display:none!important}
+  .fav-add{box-sizing:border-box;width:calc(100% - 20px);max-width:440px;background:#fff;border:1.5px solid #e9d5ff;border-radius:18px;padding:10px 10px 8px;margin:0 auto 12px;box-shadow:0 4px 12px rgba(109,40,217,.12)}
+  .fav-add-t{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;color:#6d28d9;text-align:center;line-height:1.7}
+  .fav-search{margin:4px 0 8px}
+  .fav-go{display:flex;gap:8px;justify-content:center}
+  .fav-go button{flex:1;border:0;border-radius:14px;padding:8px 6px;color:#fff;font-family:inherit;font-weight:800;font-size:15px;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .fav-go .fg-pro{background:linear-gradient(145deg,#22c1b0,#0f766e)}.fav-go .fg-biz{background:linear-gradient(145deg,#f6ad3c,#c2740a)}
+  .fav-hint{text-align:center;font-size:13px;color:#6b7280;margin:6px 0 2px}
+  .fav-none{text-align:center;font-size:13px;color:#6b7280;margin:6px 0}
+  .fav-list-t{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:19px;color:#be123c;text-align:center;line-height:1.7;margin:2px 0 4px}
   .e-blue{--c1:#f0578a;--c2:#be123c;}
   .home-logo-big{display:block;width:88px;height:88px;border-radius:24px;margin:6px auto 0;
     box-shadow:0 10px 26px rgba(0,0,0,.3);object-fit:cover;}
@@ -1498,7 +1507,7 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2310FR045" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2310FR046" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1607,6 +1616,22 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
   <div id="screen-favorites" class="screen">
     <div class="inner">
       <div class="screen-head"><h2>❤️ میرے فیورٹس</h2></div>
+      <!-- MCS2310FR046: یہیں سے نیا فیورٹ — نام، ID یا نمبر لکھیں، یا کیٹگری سے -->
+      <div class="fav-add">
+        <div class="fav-add-t">➕ نیا فیورٹ شامل کریں</div>
+        <div class="ub-search fav-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="text" id="favSearchBox" placeholder="نام، ID یا نمبر لکھیں — مثلاً ڈاکٹرز فارمیسی" oninput="renderFavSearch()" autocomplete="off">
+          <button type="button" class="ub-clear" id="favClear" onclick="clearFavSearch()" aria-label="صاف کریں">×</button>
+        </div>
+        <div class="fav-go">
+          <button type="button" class="fg-pro" onclick="goScreen('specialist-categories')">👨‍⚕️ پروفیشنلز</button>
+          <button type="button" class="fg-biz" onclick="goScreen('business-categories')">🏪 بزنس</button>
+        </div>
+        <div class="fav-hint">کارڈ پر 🤍 دبائیں، وہ اوپر آپ کے فیورٹس میں آ جائے گا</div>
+        <div id="favSearchWrap"></div>
+      </div>
+      <div id="favListTitle" class="fav-list-t"></div>
       <div id="favWrap"></div>
     </div>
   </div>
@@ -2363,9 +2388,9 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2310FR045";
+const APP_VERSION = "MCS2310FR046";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "کارڈ گیلری میں محفوظ نہیں ہوتا، صرف کاپی (Paste)؛ پیغام میں پلے اسٹور ریٹنگ اور ریویو کی درخواست";
+const UPDATE_NOTE = "فیورٹس صفحے پر ہی تلاش (نام، ID، نمبر) اور پروفیشنلز/بزنس کے بٹن — وہیں سے دل دبا کر شامل";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2553,7 +2578,7 @@ function goScreen(name, fromHistory){
   if(typeof syncTickerVisibility==='function') syncTickerVisibility();
   if(name==='doctor-list') renderDoctorList('list');
   if(name==='user-browse') renderUserSearch();
-  if(name==='favorites') renderFavorites();
+  if(name==='favorites'){ renderFavorites(); renderFavSearch(); }
   if(name==='service-list' && currentServiceCategory) renderServiceList('list');
 }
 
@@ -3058,7 +3083,7 @@ function toggleFav(kind, id){
   document.querySelectorAll(`.a-fav[data-fav="${CSS.escape(k)}"]`).forEach(b=>{ b.classList.toggle('on', on); b.textContent = on ? '❤️' : '🤍'; });
   updateFavCount();
   showToast(on ? '❤️ میرے فیورٹس میں شامل' : 'فیورٹس سے نکال دیا');
-  if(currentScreen==='favorites') renderFavorites();
+  if(currentScreen==='favorites'){ renderFavorites(); }
 }
 function favRecords(){
   return (Array.isArray(store.favs) ? store.favs : []).map(k=>{
@@ -3067,19 +3092,46 @@ function favRecords(){
     return rec ? {kind, rec} : null;
   }).filter(Boolean);
 }
+/* MCS2310FR046: فیورٹس صفحے کی اپنی تلاش — وہی یونیورسل تلاش (نام، دکان، کیٹگری، علاقہ، نمبر، ID) */
+function searchAllRecords(qRaw){
+  const srch = ubParseQuery(qRaw);
+  if(srch.empty) return [];
+  let docs = store.doctors.filter(d=> ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d)], d.whatsapp));
+  let svcs = store.services.filter(x=>{ const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, x.type, x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
+  const idQ = idKey(qRaw);
+  if(/^[a-z]{2,4}[0-9]{5}$/.test(idQ)){
+    const dh = docs.filter(d=>idKey(shortRecordId('doctor', d))===idQ), sh = svcs.filter(x=>idKey(shortRecordId('service', x))===idQ);
+    if(dh.length || sh.length){ docs = dh; svcs = sh; }
+  }
+  return docs.map(rec=>({kind:'doctor', rec})).concat(svcs.map(rec=>({kind:'service', rec})));
+}
+function favCardHtml(kind, rec){
+  if(kind==='doctor'){ const d = fhDoc(rec); return userResultCard({kind:'doctor', cat:'doctor', id:d.id, fsId:d.fsId, nameUr:d.nameUr||d.name, nameEn:d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
+    sub:[d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''), city:d.city, area:d.area, address:d.address, intro:d.intro, whatsapp:d.whatsapp, approved:d.approved}); }
+  const x = fhSvc(rec), m = CATEGORY_META[x.category]||{};
+  return userResultCard({kind:'service', cat:x.category, id:x.id, fsId:x.fsId, category:x.category, nameUr:x.nameUr, nameEn:x.nameEn, emoji:m.emoji||'🏷️', tag:m.ur||'',
+    sub:isBlankVal(x.type)?'':x.type, city:x.city, area:x.area, address:x.address, intro:x.intro, whatsapp:x.whatsapp, approved:x.approved});
+}
+function renderFavSearch(){
+  const box = document.getElementById('favSearchBox'), wrap = document.getElementById('favSearchWrap'); if(!box || !wrap) return;
+  const q = box.value.trim();
+  const clr = document.getElementById('favClear'); if(clr) clr.classList.toggle('show', !!q);
+  if(!q){ wrap.innerHTML = ''; return; }
+  const res = searchAllRecords(q);
+  if(!res.length){ wrap.innerHTML = `<div class="fav-none">🔎 کچھ نہیں ملا</div>`; return; }
+  const shown = res.slice(0, 30);
+  wrap.innerHTML = `<div class="fav-none">${res.length} نتائج${res.length>30?' — پہلے 30 دکھا رہے ہیں، اور لکھ کر محدود کریں':''}</div>` + shown.map(r=>favCardHtml(r.kind, r.rec)).join('');
+}
+function clearFavSearch(){ const b = document.getElementById('favSearchBox'); if(b){ b.value=''; b.focus(); } renderFavSearch(); }
 function updateFavCount(){ const el = document.getElementById('homeCount_fav'); if(el) el.textContent = String(favRecords().length); }
 function renderFavorites(){
   const wrap = document.getElementById('favWrap'); if(!wrap) return;
   const list = favRecords();
   updateFavCount();
-  if(!list.length){ wrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🤍</span>ابھی کوئی فیورٹ نہیں<br><small>کسی بھی کارڈ پر 🤍 دبائیں، وہ یہاں آ جائے گا</small></div>`; return; }
-  wrap.innerHTML = list.map(({kind, rec})=>{
-    if(kind==='doctor'){ const d = fhDoc(rec); return userResultCard({kind:'doctor', cat:'doctor', id:d.id, fsId:d.fsId, nameUr:d.nameUr||d.name, nameEn:d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
-      sub:[d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''), city:d.city, area:d.area, address:d.address, intro:d.intro, whatsapp:d.whatsapp, approved:d.approved}); }
-    const x = fhSvc(rec), m = CATEGORY_META[x.category]||{};
-    return userResultCard({kind:'service', cat:x.category, id:x.id, fsId:x.fsId, category:x.category, nameUr:x.nameUr, nameEn:x.nameEn, emoji:m.emoji||'🏷️', tag:m.ur||'',
-      sub:isBlankVal(x.type)?'':x.type, city:x.city, area:x.area, address:x.address, intro:x.intro, whatsapp:x.whatsapp, approved:x.approved});
-  }).join('');
+  const lt = document.getElementById('favListTitle');
+  if(lt) lt.textContent = list.length ? ('❤️ آپ کے فیورٹس (' + list.length + ')') : '';
+  if(!list.length){ wrap.innerHTML = `<div class="empty-state" style="padding-top:14px;"><span class="e-emoji">🤍</span>ابھی کوئی فیورٹ نہیں — اوپر سے تلاش کر کے شامل کریں</div>`; return; }
+  wrap.innerHTML = list.map(({kind, rec})=>favCardHtml(kind, rec)).join('');
 }
 function userResultCard(item){
   { const on = splitOwnerIntro(item.intro); item = {...item, _owner: on.owner, intro: on.rest}; }   /* MCS1810SU021: دکاندار نام کے نیچے، نوٹ الگ */
@@ -4438,7 +4490,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2310FR045';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2310FR046';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4599,7 +4651,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2310FR045';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2310FR046';
 
     function finishFooter(){
       const fY = 770, fH = 220;
