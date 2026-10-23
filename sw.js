@@ -9,7 +9,7 @@
 /* Same version string as index.html's APP_VERSION and the release zip
    filename (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001) — keep these three in sync
    on every release so it's always clear which files go together. */
-const CACHE_NAME = 'mcs-cache-MCS2310FR049';
+const CACHE_NAME = 'mcs-cache-MCS2310FR050';
 /* MCS2310FR047: فونٹ (10-13MB) الگ مستقل کیش میں — ہر ورژن پر مٹتے نہیں تھے تو ہر اپڈیٹ کے بعد دوبارہ
    ڈاؤن لوڈ ہوتے اور تب تک نوری نستعلیق/کشیدہ نظر نہیں آتا تھا۔ */
 const FONT_CACHE = 'mcs-fonts-v1';
@@ -46,7 +46,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys.filter((key) => key !== CACHE_NAME && key !== FONT_CACHE)
+        keys.filter((key) => (key.startsWith('mcs-cache-') || key.startsWith('mcs-fonts-')) && key !== CACHE_NAME && key !== FONT_CACHE) /* 🛡️ صرف اپنے پرانے کیش */
             .map((key) => caches.delete(key))
       )
     ).then(() => self.clients.claim())

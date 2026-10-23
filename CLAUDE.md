@@ -25,3 +25,5 @@
 - AIO اور FFPOS کی Google Play خریداری کی تصدیق کا کوڈ AIO ریپو کے `cloudflare-worker/` میں ہے۔
 - وہاں تبدیلی main میں جائے تو `deploy-worker.yml` خود Cloudflare پر Deploy کرتا ہے (GitHub Secrets: `CLOUDFLARE_API_TOKEN`، `CLOUDFLARE_ACCOUNT_ID`)۔
 - مالک کو Cloudflare کے ایڈیٹر میں کوڈ لگانے کا کبھی نہ کہیں۔
+
+- **ایک ہی ویب سائٹ، کئی ایپس (مستقل اصول):** `pbtcodelabs-pbt.github.io` پر کئی ایپس چلتی ہیں۔ `sw.js` اور «تازہ کریں» بٹن صرف **اسی ایپ** کے کیش/سروس ورکر مٹائیں (`getRegistration()`، `getRegistrations()` نہیں)؛ `localStorage.clear()` کبھی نہیں — صرف اپنی کلیدیں ہٹائیں۔
