@@ -82,6 +82,20 @@ jobs:
           "
           ls -la ./android-build
 
+      - name: Open only /MCS/ links (not the whole pbtcodelabs-pbt.github.io site)
+        run: |
+          node -e "
+            const fs = require('fs');
+            const f = './android-build/app/src/main/AndroidManifest.xml';
+            const scope = new URL(JSON.parse(fs.readFileSync('twa-manifest.json','utf8')).fullScopeUrl).pathname;
+            let x = fs.readFileSync(f, 'utf8');
+            x = x.replace(/<data([^>]*android:host=[^>]*?)\s*\/>/g,
+              (m, a) => /pathPrefix/.test(a) ? m : '<data' + a + ' android:pathPrefix=\"' + scope + '\"/>');
+            fs.writeFileSync(f, x);
+            if (!x.includes('android:pathPrefix=\"' + scope + '\"')) { console.error('pathPrefix not added'); process.exit(1); }
+            console.log('pathPrefix', scope);
+          "
+
       - name: Build signed APK + AAB
         working-directory: ./android-build
         env:
