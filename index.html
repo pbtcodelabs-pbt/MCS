@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2610MO062">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2610MO062">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2610MO063">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2610MO063">
 <meta name="theme-color" content="#0d3b66">
 <!-- MCS2310FR041: فائربیس کی فائلیں شروع ہی میں آنا شروع ہوں تاکہ لاگ اِن اور نئے ریکارڈ جلد آئیں -->
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -1118,6 +1118,24 @@ body.nav-on #doctorFormModal, body.nav-on #serviceFormModal{padding-bottom:10px;
 .lc-share .lc-s{font-size:14px;line-height:1.7}
 .lc-share .lc-gpc{width:150px;height:32px;display:block;margin:4px auto 2px}
 #liveNoticeModal.active{z-index:1095;align-items:center;}
+#cardStyleModal.active{z-index:1097;align-items:flex-end;}
+#cardStyleModal .modal-box{border-radius:22px 22px 0 0;max-height:92vh;overflow-y:auto;}
+.cs-preview{position:sticky;top:-16px;z-index:2;background:#0d3b66;border-radius:12px;padding:4px;margin-bottom:6px;box-shadow:0 6px 14px rgba(0,0,0,.25)}
+.cs-preview canvas{display:block;max-height:34vh;object-fit:contain;margin:0 auto}
+.cs-lbl{font-weight:800;color:#0b2a44;font-size:14px;margin:8px 0 4px}
+.cs-presets{display:flex;gap:8px;flex-wrap:wrap}
+.cs-presets button{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.25);padding:0}
+.cs-presets button.on,.cs-sw button.on{outline:3px solid #f59e0b;outline-offset:1px}
+.cs-row{background:#f6f8fa;border-radius:12px;padding:4px 8px 6px;margin-top:6px}
+.cs-sw{display:flex;gap:5px;flex-wrap:wrap}
+.cs-sw button{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(0,0,0,.2);padding:0}
+.cs-sl{display:flex;align-items:center;gap:6px;font-size:12px;color:#4b5563;margin-top:4px}
+.cs-sl input{flex:1}
+.cs-open-row{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 8px;font-weight:700;color:#0b2a44}
+.cs-open{width:36px;height:36px;border-radius:50%;border:none;font-size:19px;line-height:1;padding:0;cursor:pointer;background:conic-gradient(#ef4444,#f59e0b,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7,#ef4444);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.cs-open.sm{width:28px;height:28px;font-size:14px;margin-inline-start:4px}
+html[data-cstyle] .doc-card{background:linear-gradient(150deg,var(--cc0) 0%,var(--cc1) 60%,var(--cc2) 100%)!important;border:2px solid var(--cbr)!important}
+html[data-cstyle] .doc-card .doc-name,html[data-cstyle] .doc-card .doc-sub,html[data-cstyle] .doc-card .doc-address{color:var(--ctx)!important}
 /* MCS2310FR041: تصویر اب اصل کارڈ ہے، رنگ/بارڈر/فونٹ والے پرانے کنٹرول بے اثر — چھپا دیے */
 #cardCustomizeModal .field:has(#ccFontFamily),#cardCustomizeModal .backup-card-title,#ccBorderTemplates,#cardCustomizeModal .cp-btn-row:has(input[type=range]){display:none!important}
 #liveNoticeModal .modal-box{border-radius:22px;}
@@ -1570,7 +1588,7 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2610MO062" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2610MO063" alt="مائی سٹی شائنز">
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -1676,8 +1694,7 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
         <h2>ڈاکٹرز کی فہرست</h2>
         <button type="button" class="ls-open" onclick="openListShare('doctor')">📤 لسٹ شیئر</button>
       </div>
-      <div class="sort-bar" data-for="doctor"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" onclick="toggleListThemes(this)">🎨 رنگ</button></div>
-      <div class="cc-themes list-themes" id="listThemes_doctor" style="display:none;"></div>
+      <div class="sort-bar" data-for="doctor"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" class="cs-open sm" onclick="openCardStyle()" aria-label="کارڈ کا رنگ اور انداز">🎨</button></div>
       <div id="doctorListWrap"></div>
     </div>
     <button class="fab" onclick="openDoctorForm()">➕ نیا ڈاکٹر شامل کریں</button>
@@ -1746,8 +1763,7 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
       <div class="field">
         <input type="text" id="serviceSearchBox" placeholder="نام، قسم یا پتہ لکھیں..." oninput="renderServiceList('list')">
       </div>
-      <div class="sort-bar" data-for="service"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" onclick="toggleListThemes(this)">🎨 رنگ</button></div>
-      <div class="cc-themes list-themes" id="listThemes_service" style="display:none;"></div>
+      <div class="sort-bar" data-for="service"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" class="cs-open sm" onclick="openCardStyle()" aria-label="کارڈ کا رنگ اور انداز">🎨</button></div>
       <div id="emgQuick" class="emg-quick" style="display:none;">
         <a href="tel:15"><b>15</b><span>پولیس</span></a>
         <a href="tel:1122"><b>1122</b><span>ریسکیو</span></a>
@@ -2282,8 +2298,8 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
     <h3>📇 آپ کا لائیو کارڈ</h3>
     <div style="clear:both;"></div>
 
-    <!-- MCS2610MO060: کارڈ کے رنگ — تصویر سے اوپر تاکہ فوراً نظر آئیں -->
-    <div class="cc-themes" id="ccThemes"></div>
+    <!-- MCS2610MO063: رنگ/انداز — چھوٹا 🎨 بٹن، کھولنے پر کارڈ کی جھلک کے ساتھ -->
+    <div class="cs-open-row"><button type="button" class="cs-open" onclick="openCardStyle(cardCustomState.kind, cardCustomState.item)" aria-label="کارڈ کا رنگ اور انداز">🎨</button><span>رنگ / انداز بدلیں</span></div>
     <div id="ccPreviewHolder" style="margin-bottom:10px;background:#eee;border-radius:10px;min-height:120px;"></div>
 
     <div class="field">
@@ -2347,6 +2363,23 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
 </div>
 
 <!-- MCS2310FR041: ریکارڈ محفوظ ہونے کے بعد کے بٹن -->
+<!-- MCS2610MO063: کارڈ کا رنگ اور انداز — لائیو جھلک -->
+<div class="modal-overlay" id="cardStyleModal">
+  <div class="modal-box" style="max-width:440px;">
+    <button class="modal-close" onclick="closeModal('cardStyleModal')">×</button>
+    <h3>🎨 کارڈ کا رنگ اور انداز</h3>
+    <div style="clear:both;"></div>
+    <div id="csPreview" class="cs-preview"></div>
+    <div class="cs-lbl" style="margin-top:6px;">✨ تیار انداز</div>
+    <div id="csPresets" class="cs-presets"></div>
+    <div id="csRows"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button class="btn" style="flex:2;background:#15803d;" onclick="closeModal('cardStyleModal')">✓ ٹھیک ہے</button>
+      <button class="btn" style="flex:1;background:#8a8a8a;" onclick="csReset()">↺ اصل</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="afterSaveModal">
   <div class="modal-box" style="max-width:420px;">
     <button class="modal-close" onclick="afterSaveGo('next')">×</button>
@@ -2361,7 +2394,7 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
       <p class="mnb-s">منظوری ہوتے ہی اسی موبائل پر آپ کو اطلاع مل جائے گی۔</p>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="cc-themes" id="asThemes"></div>
+      <div class="cs-open-row"><button type="button" class="cs-open" onclick="afterSaveState && openCardStyle(afterSaveState.kind, afterSaveState.item)" aria-label="کارڈ کا رنگ اور انداز">🎨</button><span>کارڈ کا رنگ / انداز</span></div>
       <div class="wa-app-pick"><span>بھیجیں:</span><button type="button" data-v="business" onclick="setWaApp('business')">💼 واٹس ایپ بزنس</button><button type="button" data-v="normal" onclick="setWaApp('normal')">💬 عام واٹس ایپ</button></div>
       <button class="btn" style="background:#128c7e;" onclick="afterSaveGo('owner')">👤 اسی کو بھیجیں</button>
       <button class="btn accent" onclick="afterSaveGo('share')">📤 عام شیئر</button>
@@ -2478,9 +2511,9 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2610MO062";
+const APP_VERSION = "MCS2610MO063";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "🎨 کارڈ کا رنگ: شیئر اسکرین میں اوپر، محفوظ والے پاپ اپ میں، اور فہرست میں بھی — ایپ کے کارڈ بھی اسی رنگ میں";
+const UPDATE_NOTE = "🎨 چھوٹا بٹن: کارڈ کی لائیو جھلک کے ساتھ پس منظر، بارڈر اور لکھائی کا رنگ، ہلکا/گہرا سلائیڈر";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4183,7 +4216,7 @@ function toggleListThemes(btn){
   const show = el.style.display==='none';
   el.innerHTML = show ? themeChipsHtml(store.cardTheme || 'green') : ''; el.style.display = show ? '' : 'none';
 }
-function applyAppCardTheme(){ document.documentElement.setAttribute('data-ctheme', store.cardTheme || 'green'); }
+function applyAppCardTheme(){ document.documentElement.removeAttribute('data-ctheme'); applyCardStyleVars(); }
 function setCardTheme(k){
   store.cardTheme = k; saveStore(); applyAppCardTheme(); renderCardThemes();
   document.querySelectorAll('.list-themes').forEach(el=>{ if(el.style.display!=='none') el.innerHTML = themeChipsHtml(k); });
@@ -4555,6 +4588,64 @@ function loadH2C(){
 }
 /* MCS2510SU057: کارڈ کی تصویر اب سیدھی کینوس پر — html2canvas اردو جوڑ توڑ دیتا تھا (کشیدہ کے حروف ایک دوسرے پر)،
    فون کے زوم/چوڑائی سے لکھائی باہر جاتی تھی اور دیر لگتی تھی۔ اب ہر فون پر ایک جیسا، فوراً، اور رنگ بدلنے کے انداز۔ */
+/* MCS2610MO063: کارڈ کا انداز — پس منظر، بارڈر اور لکھائی کا رنگ الگ الگ، ہر ایک کی شوخی کا سلائیڈر۔
+   store.cardStyle = {bgH,bgS,bgL, brH,brS,brL, txH,txS,txL} — تصویر اور ایپ کے کارڈ دونوں یہی دیکھتے ہیں */
+function hsl(h, sat, l, a){ return a==null ? `hsl(${h} ${sat}% ${l}%)` : `hsl(${h} ${sat}% ${l}% / ${a})`; }
+const STYLE_PRESETS = {
+  green:  {bgH:174,bgS:77,bgL:27, brH:38,brS:92,brL:50, txH:0,txS:0,txL:100},
+  blue:   {bgH:224,bgS:76,bgL:40, brH:200,brS:90,brL:70, txH:0,txS:0,txL:100},
+  maroon: {bgH:345,bgS:75,bgL:32, brH:45,brS:90,brL:60, txH:0,txS:0,txL:100},
+  purple: {bgH:263,bgS:68,bgL:42, brH:290,brS:80,brL:75, txH:0,txS:0,txL:100},
+  black:  {bgH:220,bgS:15,bgL:14, brH:45,brS:65,brL:52, txH:45,txS:70,txL:85},
+  orange: {bgH:21,bgS:88,bgL:42, brH:50,brS:95,brL:65, txH:0,txS:0,txL:100},
+  white:  {bgH:40,bgS:60,bgL:94, brH:38,brS:85,brL:48, txH:215,txS:60,txL:18}
+};
+function cardStyle(){ return {...STYLE_PRESETS.green, ...(STYLE_PRESETS[store.cardTheme]||{}), ...(store.cardStyle||{})}; }
+function styleBg(st){ return [hsl(st.bgH, st.bgS, Math.max(st.bgL-14,0)), hsl(st.bgH, st.bgS, st.bgL), hsl(st.bgH, st.bgS, Math.max(st.bgL-8,0))]; }
+function applyCardStyleVars(){
+  const st = cardStyle(), r = document.documentElement.style, c = styleBg(st);
+  r.setProperty('--cc0', c[0]); r.setProperty('--cc1', c[1]); r.setProperty('--cc2', c[2]);
+  r.setProperty('--cbr', hsl(st.brH, st.brS, st.brL)); r.setProperty('--ctx', hsl(st.txH, st.txS, st.txL));
+  document.documentElement.toggleAttribute('data-cstyle', !!(store.cardStyle || (store.cardTheme && store.cardTheme!=='green')));
+}
+const CS_SWATCH = [[0,0,100],[0,0,8],[0,0,55],[0,80],[21,88],[38,92],[52,95],[90,60],[145,65],[174,77],[200,85],[224,76],[263,68],[300,65],[345,75]];
+let csCtx = null;   /* {kind, item} — جھلک کس کارڈ کی */
+function openCardStyle(kind, item){
+  if(!item){ const r = (store.services[0] && {kind:'service', rec:store.services[0]}) || (store.doctors[0] && {kind:'doctor', rec:store.doctors[0]});
+    item = r ? r.rec : {id:'demo', nameUr:'نمونہ دکان', category:'groceryStore', whatsapp:'0300-1234567', type:'جنرل', city:'آپ کا شہر', intro:'دکاندار: نام'}; kind = r ? r.kind : 'service'; }
+  csCtx = {kind, item};
+  renderCardStyleUI(); openModal('cardStyleModal'); csPreview();
+}
+function csRow(part, label){
+  const st = cardStyle(), H = st[part+'H'], S = st[part+'S'], L = st[part+'L'];
+  return `<div class="cs-row"><div class="cs-lbl">${label}</div><div class="cs-sw">${CS_SWATCH.map(([h,sat,l])=>{
+      const on = (sat||0)===0 ? (S===0 && Math.abs((l==null?50:l)-L)<20) : (h===H && sat===S);
+      return `<button type="button" class="${on?'on':''}" style="background:${hsl(h, sat||0, l==null?50:l)}" onclick="csSet('${part}',${h},${sat||0},${l==null?'null':l})"></button>`; }).join('')}</div>
+    <div class="cs-sl"><span>ہلکا</span><input type="range" min="5" max="97" value="${102-L}" oninput="csLight('${part}',this.value)"><span>گہرا</span></div></div>`;
+}
+function renderCardStyleUI(){
+  const cur = store.cardTheme || 'green';
+  document.getElementById('csPresets').innerHTML = Object.keys(STYLE_PRESETS).map(k=>{ const p = STYLE_PRESETS[k];
+    return `<button type="button" class="${(!store.cardStyle && k===cur)?'on':''}" style="background:linear-gradient(135deg,${hsl(p.bgH,p.bgS,p.bgL)},${hsl(p.bgH,p.bgS,Math.max(p.bgL-14,0))});border-color:${hsl(p.brH,p.brS,p.brL)}" onclick="csPreset('${k}')"></button>`; }).join('');
+  document.getElementById('csRows').innerHTML = csRow('bg','🟩 پس منظر') + csRow('br','🔲 بارڈر') + csRow('tx','🔤 لکھائی');
+}
+function csSave(){ saveStore(); applyCardStyleVars(); clearTimeout(csSave._t); csSave._t = setTimeout(()=>{ csPreview(); if(document.getElementById('cardCustomizeModal').classList.contains('active')) renderCardPreview(); csRefreshAfterSave(); }, 60); }
+function csPreset(k){ store.cardTheme = k; store.cardStyle = null; renderCardStyleUI(); csSave(); }
+function csSet(part, h, sat, l){ const st = cardStyle(); st[part+'H'] = h; st[part+'S'] = sat; if(l!=null) st[part+'L'] = l; else if(st[part+'L']>90 || st[part+'L']<10) st[part+'L'] = 45; store.cardStyle = st; renderCardStyleUI(); csSave(); }
+function csLight(part, v){ const st = cardStyle(); st[part+'L'] = 102 - Number(v); store.cardStyle = st; csSave(); }
+function csReset(){ store.cardTheme = 'green'; store.cardStyle = null; renderCardStyleUI(); csSave(); }
+async function csPreview(){
+  if(!csCtx) return;
+  const c = await buildShareCanvas(csCtx.kind, csCtx.item, {});
+  const h = document.getElementById('csPreview'); if(!h) return;
+  c.style.width = '100%'; c.style.borderRadius = '10px'; h.innerHTML = ''; h.appendChild(c);
+}
+function csRefreshAfterSave(){
+  const st = afterSaveState;
+  if(st && document.getElementById('afterSaveModal').classList.contains('active')){
+    st.blob = null; st.blobP = buildShareCanvas(st.kind, st.item, {}).then(c=> new Promise(r=> c.toBlob(b=>{ st.blob = b; r(b); }, 'image/png'))).catch(()=>null);
+  }
+}
 const CARD_THEMES = [
   {key:'green',  label:'سبز',     c:['#0d3b66','#0f766e','#0b5c56']},
   {key:'blue',   label:'نیلا',    c:['#0b1f4b','#1d4ed8','#1e3a8a']},
@@ -4590,7 +4681,7 @@ function lcWrap(ctx, text, maxW){
 async function buildShareCanvas(kind, item, opts){
   await lcFonts();
   const rec = kind==='doctor' ? fhDoc(item) : fhSvc(item);
-  const th = CARD_THEMES.find(t=>t.key===((opts&&opts.theme) || store.cardTheme)) || CARD_THEMES[0];
+  const st = cardStyle(), th = {c: styleBg(st), gold: true};
   const KS = '"Jameel Noori Nastaleeq Kasheeda","Jameel Noori Nastaleeq Regular",serif', RG = '"Jameel Noori Nastaleeq Regular",serif', NUM = 'Arial, sans-serif';
   const W = 1040, cardX = 44, cardW = W - 88;
   const m = kind==='doctor' ? {emoji:'🩺', ur:'ڈاکٹر'} : (CATEGORY_META[rec.category]||{});
@@ -4620,7 +4711,7 @@ async function buildShareCanvas(kind, item, opts){
   x.save(); x.shadowColor = 'rgba(0,0,0,.4)'; x.shadowBlur = 24; x.shadowOffsetY = 8;
   const cg = x.createLinearGradient(cardX, cardTop, cardX + cardW, cardTop + cardH); cg.addColorStop(0, th.c[0]); cg.addColorStop(.6, th.c[1]); cg.addColorStop(1, th.c[2]);
   x.fillStyle = cg; shareRoundRect(x, cardX, cardTop, cardW, cardH, 40); x.fill(); x.restore();
-  if(th.gold){ x.strokeStyle = '#d4af37'; x.lineWidth = 4; shareRoundRect(x, cardX, cardTop, cardW, cardH, 40); x.stroke(); }
+  x.strokeStyle = hsl(st.brH, st.brS, st.brL); x.lineWidth = 5; shareRoundRect(x, cardX, cardTop, cardW, cardH, 40); x.stroke();
   x.fillStyle = '#f59e0b'; shareRoundRect(x, cardX + cardW - 12, cardTop + 30, 10, cardH - 60, 5); x.fill();
   /* ایموجی ڈبہ */
   const ax = cardX + cardW - 130, ay = cardTop + 30;
@@ -4632,12 +4723,12 @@ async function buildShareCanvas(kind, item, opts){
   let y = cardTop + 92; x.textAlign = 'right';
   let enW = 0;
   if(rec.nameEn){ x.direction='ltr'; lcFit(x, rec.nameEn, '600 {s}px ' + NUM, 30, cardW*0.28, 18); enW = Math.min(x.measureText(rec.nameEn).width, cardW*0.28) + 30; x.direction='rtl'; }
-  x.fillStyle = '#fff'; lcFit(x, rec.nameUr||rec.name||'', '{s}px ' + KS, 62, maxW - enW, 28);
+  x.fillStyle = hsl(st.txH, st.txS, st.txL); lcFit(x, rec.nameUr||rec.name||'', '{s}px ' + KS, 62, maxW - enW, 28);
   x.shadowColor = 'rgba(0,0,0,.4)'; x.shadowBlur = 4; x.fillText(rec.nameUr||rec.name||'', tx, y); x.shadowBlur = 0;
   if(rec.nameEn){ x.textAlign = 'left'; x.direction = 'ltr'; x.fillStyle = '#ffe4a8'; lcFit(x, rec.nameEn, '600 {s}px ' + NUM, 30, cardW*0.32, 18); x.fillText(rec.nameEn, cardX + 40, cardTop + 70); x.direction = 'rtl'; x.textAlign = 'right'; }
   if(own.owner){ y += 62; x.fillStyle = '#fde68a'; lcFit(x, '👤 ' + own.owner, '{s}px ' + KS, 46, maxW, 24); x.fillText('👤 ' + own.owner, tx, y); }
-  if(sub){ y += 52; x.fillStyle = '#e0f2f1'; lcFit(x, sub, '{s}px ' + RG, 34, maxW, 20); x.fillText(sub, tx, y); }
-  y += 62; x.fillStyle = th.gold ? '#f5d37a' : '#fde68a'; x.direction = 'ltr'; x.font = 'bold 50px ' + NUM; x.fillText(num, tx, y); x.direction = 'rtl';
+  if(sub){ y += 52; x.fillStyle = hsl(st.txH, st.txS, Math.max(st.txL-8, 0), .92); lcFit(x, sub, '{s}px ' + RG, 34, maxW, 20); x.fillText(sub, tx, y); }
+  y += 62; x.fillStyle = '#fde68a'; x.direction = 'ltr'; x.font = 'bold 50px ' + NUM; x.fillText(num, tx, y); x.direction = 'rtl';
   /* گول بٹن */
   const by = y + 80, br = 44, gap = 26, list = [['call','#15803d','#1f9d55'],['sms','#1d4ed8','#3b82f6'],['wa','#1da851','#2fd16b'],['share','#a16207','#d4a017'],['mail','#4b5563','#9ca3af']];
   const totalW = list.length*br*2 + (list.length-1)*gap; let bx = W/2 + totalW/2 - br;
@@ -4652,7 +4743,7 @@ async function buildShareCanvas(kind, item, opts){
   /* نیچے: ID اور مقام */
   const fy = cardTop + cardH - 26;
   x.direction = 'ltr'; x.textAlign = 'left'; x.fillStyle = 'rgba(255,255,255,.45)'; x.font = '26px ' + NUM; x.fillText('ID: ' + shortRecordId(kind, rec), cardX + 34, fy);
-  if(loc){ x.direction = 'rtl'; x.textAlign = 'right'; x.fillStyle = '#cfe8e4'; lcFit(x, '📍 ' + loc, '{s}px ' + RG, 30, cardW*0.6, 18); x.fillText('📍 ' + loc, cardX + cardW - 40, fy); }
+  if(loc){ x.direction = 'rtl'; x.textAlign = 'right'; x.fillStyle = hsl(st.txH, st.txS, Math.max(st.txL-12, 0), .85); lcFit(x, '📍 ' + loc, '{s}px ' + RG, 30, cardW*0.6, 18); x.fillText('📍 ' + loc, cardX + cardW - 40, fy); }
   x.direction = 'rtl';
   /* مبارک باد کی پٹی */
   x.fillStyle = '#fffdf3'; shareRoundRect(x, cardX - 8, bTop, cardW + 16, bH, 32); x.fill();
@@ -4829,7 +4920,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO062';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO063';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -4990,7 +5081,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO062';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO063';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -8583,7 +8674,7 @@ applyCustomCategories(store.customCategories || []); // offline-cached custom ca
 try{ applyCatOverrides(); }catch(e){}
 renderCustomCategoryTiles();
 updateFavCount();
-applyAppCardTheme();
+applyCardStyleVars();
 startFirebaseSyncWhenReady();
 
 /* ---------- Service worker registration ---------- */
