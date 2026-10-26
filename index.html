@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2610MO064">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2610MO064">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2610MO065">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2610MO065">
 <meta name="theme-color" content="#0d3b66">
 <!-- MCS2310FR041: فائربیس کی فائلیں شروع ہی میں آنا شروع ہوں تاکہ لاگ اِن اور نئے ریکارڈ جلد آئیں -->
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -337,6 +337,8 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .fav-none{text-align:center;font-size:13px;color:#6b7280;margin:6px 0}
   .fav-list-t{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:19px;color:#be123c;text-align:center;line-height:1.7;margin:2px 0 4px}
   .e-blue{--c1:#f0578a;--c2:#be123c;}
+  .home-total{width:max-content;margin:6px auto 0;padding:2px 12px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:13px;font-weight:700;line-height:1.7;position:relative;z-index:1}
+  .home-total b{font-family:Arial,sans-serif;font-size:14px;color:#ffe08a}
   .home-logo-big{display:block;width:88px;height:88px;border-radius:24px;margin:6px auto 0;
     box-shadow:0 10px 26px rgba(0,0,0,.3);object-fit:cover;}
   .home-footer{text-align:center;padding:18px 16px 4px;font-size:12px;color:#9aa3ad;line-height:1.8;}
@@ -1589,7 +1591,9 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2610MO064" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2610MO065" alt="مائی سٹی شائنز">
+      <!-- MCS2610MO065: کل ریکارڈ — لوگو کے نیچے چھوٹی پٹی -->
+      <div class="home-total">📊 کل ریکارڈ: <b id="homeCount_total">0</b></div>
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
@@ -2512,9 +2516,9 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2610MO064";
+const APP_VERSION = "MCS2610MO065";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "🎨 لکھائی کا رنگ اب کارڈ کی ہر تحریر پر — نام، دکاندار، نمبر، قسم، علاقہ، ID";
+const UPDATE_NOTE = "ہوم پر لوگو کے نیچے «📊 کل ریکارڈ» کی چھوٹی پٹی";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4922,7 +4926,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO064';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO065';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5083,7 +5087,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO064';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO065';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -5668,6 +5672,7 @@ function updateCategoryCounts(){
   const setH = (id,n)=>{ const e=document.getElementById(id); if(e) e.textContent = String(n); };
   setH('homeCount_professional', pro);
   setH('homeCount_business', biz);
+  setH('homeCount_total', pro + biz);
   setH('homeCount_emg', store.services.filter(x=>x.category==='emergencyNumbers').length);
   setH('homeCount_total', pro+biz);
 }
