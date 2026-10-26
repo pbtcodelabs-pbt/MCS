@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2610MO065">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2610MO065">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2610MO066">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2610MO066">
 <meta name="theme-color" content="#0d3b66">
 <!-- MCS2310FR041: فائربیس کی فائلیں شروع ہی میں آنا شروع ہوں تاکہ لاگ اِن اور نئے ریکارڈ جلد آئیں -->
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -1591,7 +1591,7 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2610MO065" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2610MO066" alt="مائی سٹی شائنز">
       <!-- MCS2610MO065: کل ریکارڈ — لوگو کے نیچے چھوٹی پٹی -->
       <div class="home-total">📊 کل ریکارڈ: <b id="homeCount_total">0</b></div>
     </header>
@@ -2516,9 +2516,9 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2610MO065";
+const APP_VERSION = "MCS2610MO066";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "ہوم پر لوگو کے نیچے «📊 کل ریکارڈ» کی چھوٹی پٹی";
+const UPDATE_NOTE = "خاص نمبر: دل دبانے کے بعد تلاش کے باقی نتائج خود ہٹ جاتے ہیں — صرف آپ کے چنے ہوئے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2708,7 +2708,7 @@ function goScreen(name, fromHistory){
   if(typeof syncTickerVisibility==='function') syncTickerVisibility();
   if(name==='doctor-list') renderDoctorList('list');
   if(name==='user-browse') renderUserSearch();
-  if(name==='favorites'){ renderFavorites(); renderFavSearch(); }
+  if(name==='favorites'){ const fb = document.getElementById('favSearchBox'); if(fb) fb.value = ''; renderFavorites(); renderFavSearch(); }   /* MCS2610MO066: صفحہ کھلتے ہی پرانی تلاش صاف */
   if(name==='service-list' && currentServiceCategory) renderServiceList('list');
 }
 
@@ -3290,7 +3290,11 @@ function toggleFav(kind, id){
   document.querySelectorAll(`.a-fav[data-fav="${CSS.escape(k)}"]`).forEach(b=>{ b.classList.toggle('on', on); b.textContent = on ? '❤️' : '🤍'; });
   updateFavCount();
   showToast(on ? '❤️ میرے خاص نمبروں میں شامل' : 'خاص نمبروں سے نکال دیا');
-  if(currentScreen==='favorites'){ renderFavorites(); }
+  if(currentScreen==='favorites'){
+    /* MCS2610MO066: تلاش سے دل دبایا تو تلاش کے باقی نتائج ہٹا دیں — نیچے صرف اپنے خاص نمبر */
+    if(on){ const fb = document.getElementById('favSearchBox'); if(fb && fb.value){ fb.value = ''; renderFavSearch(); } }
+    renderFavorites();
+  }
 }
 function favRecords(){
   return (Array.isArray(store.favs) ? store.favs : []).map(k=>{
@@ -3327,7 +3331,7 @@ function renderFavSearch(){
   const res = searchAllRecords(q);
   if(!res.length){ wrap.innerHTML = `<div class="fav-none">🔎 کچھ نہیں ملا</div>`; return; }
   const shown = res.slice(0, 30);
-  wrap.innerHTML = `<div class="fav-none">${res.length} نتائج${res.length>30?' — پہلے 30 دکھا رہے ہیں، اور لکھ کر محدود کریں':''}</div>` + shown.map(r=>favCardHtml(r.kind, r.rec)).join('');
+  wrap.innerHTML = `<div class="fav-none">🔎 تلاش کے ${res.length} نتائج — جسے شامل کرنا ہو اس پر 🤍 دبائیں${res.length>30?' (پہلے 30)':''}</div>` + shown.map(r=>favCardHtml(r.kind, r.rec)).join('');
 }
 function clearFavSearch(){ const b = document.getElementById('favSearchBox'); if(b){ b.value=''; b.focus(); } renderFavSearch(); }
 function updateFavCount(){ const el = document.getElementById('homeCount_fav'); if(el) el.textContent = String(favRecords().length); }
@@ -4926,7 +4930,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO065';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO066';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5087,7 +5091,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO065';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO066';
 
     function finishFooter(){
       const fY = 770, fH = 220;
