@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2610MO066">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2610MO066">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2710TU067">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2710TU067">
 <meta name="theme-color" content="#0d3b66">
 <!-- MCS2310FR041: فائربیس کی فائلیں شروع ہی میں آنا شروع ہوں تاکہ لاگ اِن اور نئے ریکارڈ جلد آئیں -->
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -1591,7 +1591,7 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2610MO066" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2710TU067" alt="مائی سٹی شائنز">
       <!-- MCS2610MO065: کل ریکارڈ — لوگو کے نیچے چھوٹی پٹی -->
       <div class="home-total">📊 کل ریکارڈ: <b id="homeCount_total">0</b></div>
     </header>
@@ -2103,6 +2103,14 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
         <button class="btn block accent" onclick="openSheetEditor()">📊 شیٹ کھولیں</button>
       </div>
 
+      <!-- MCS2710TU067: فتح پور پرانی فیڈ کے ٹوٹے ہوئے نام ایک بار درست کریں — صرف ایڈمن -->
+      <div class="backup-card" id="adminNameFixBox" style="display:none;">
+        <div class="backup-card-title">🔤 فتح پور ناموں کی درستگی</div>
+        <div class="cp-hint" style="margin-bottom:10px;">پرانی لسٹ فیڈ میں جن ریکارڈز کے نام ٹوٹ گئے تھے (مثلاً «پ ئرس پارٹس») وہ اصل لسٹ سے درست ہو جائیں گے۔ صرف وہی نام بدلے گا جو ابھی تک ٹوٹا ہوا ہے — آپ کا خود درست کیا ہوا نام نہیں چھیڑا جائے گا۔</div>
+        <button class="btn block accent" id="nameFixBtn" onclick="runNameFix()">🔤 نام درست کریں</button>
+        <div class="cp-hint" id="nameFixProgress" style="margin-top:6px;"></div>
+      </div>
+
       <div class="backup-card" id="adminImportBox" style="display:none;">
         <div class="backup-card-title">📥 لسٹ امپورٹ کریں (Excel / CSV)</div>
         <div class="cp-hint" style="margin-bottom:10px;">فائل میں یہ خانے ہوں: دکان کا نام، دکاندار کا نام، موبائل نمبر، کیٹگری، علاقہ، شہر، ضلع۔ کیٹگری کا نام بالکل ایپ والی کیٹگری جیسا ہو۔ غلط نمبر، دہرے نمبر اور پہلے سے موجود نمبر خود چھوڑ دیے جاتے ہیں۔</div>
@@ -2516,9 +2524,9 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2610MO066";
+const APP_VERSION = "MCS2710TU067";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "خاص نمبر: دل دبانے کے بعد تلاش کے باقی نتائج خود ہٹ جاتے ہیں — صرف آپ کے چنے ہوئے";
+const UPDATE_NOTE = "ایڈمن: فتح پور کے ٹوٹے ہوئے دکان/دکاندار ناموں کی ایک بٹن سے درستگی";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4930,7 +4938,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO066';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2710TU067';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5091,7 +5099,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2610MO066';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2710TU067';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -6365,6 +6373,7 @@ function syncAdminPanelSections(){
   set('adminAddCategoryBox', on);
   set('adminImportBox', on);
   set('adminSheetBox', on);
+  set('adminNameFixBox', on);
   set('cpContactBox', on);
   set('adminLockedHint', !on);
 }
@@ -6491,6 +6500,37 @@ async function runImport(){
     if(btn) btn.remove();
   }catch(e){
     if(prog) prog.innerHTML = `<span style="color:#b91c1c;">رکاوٹ آ گئی (${escapeHtml((e&&e.code)||'error')}) — ${urduDigits(done)} بھیجے جا چکے ہیں۔ فائل دوبارہ چنیں، بھیجے گئے نمبر خود چھوڑ دیے جائیں گے۔</span>`;
+    if(btn){ btn.disabled = false; btn.style.opacity = 1; }
+  }
+}
+/* MCS2710TU067: ٹوٹے ہوئے نام — [شناخت، خانہ، پرانا ٹوٹا نام، درست نام]۔ صرف تب بدلے جب فائربیس میں ابھی بھی بالکل پرانا ٹوٹا نام ہو */
+const NAME_FIX_1 = [["imp_1791111090457_105", "nameUr", "منا آٹوزپ ئرسپارٹس", "منا آٹوز سپیئر پارٹس"], ["imp_1791111090457_119", "nameUr", "نج ینٹ العمران اررنگ ورکس", "العمران انجینئرنگ ورکس"], ["imp_1791111090457_122", "nameUr", "حنیف موب لی م والا", "حنیف موبل آئل والا"], ["imp_1791111090457_150", "nameUr", "ن یکی صٹ النور کمیون", "النور کمیونیکیشن"], ["imp_1791111090457_178", "nameUr", "پیپلز فلٹیگ اسٹیشن", "پیپلز فلنگ اسٹیشن"], ["imp_1791111090457_182", "nameUr", "حبیب پھڑ ی والا", "حبیب پھڑی والا"], ["imp_1791111090457_192", "nameUr", "دبئی فال سی لٹیگ", "دبئی فال سیلنگ"], ["imp_1791111090457_215", "nameUr", "الج ی ب ووڈورکس", "الجنت ووڈ ورکس"], ["imp_1791111090457_217", "nameUr", "غلام مصطفٰی فرنیچر ورکس", "غلام مصطفیٰ فرنیچر ورکس"], ["imp_1791111090457_23", "nameUr", "ثنااللہ اولڈ پ ئرس پارٹس", "ثنااللہ اولڈ سپیئر پارٹس"], ["imp_1791111090457_246", "nameUr", "شی فی ہ الیکٹرک ،یوپی ایس", "سیفیہ الیکٹرک، یوپی ایس"], ["imp_1791111090457_248", "nameUr", "پئ وحید الیکٹرک ریرنگ سنٹر", "وحید الیکٹرک ریپیئرنگ سنٹر"], ["imp_1791111090457_25", "nameUr", "عادل بشیر اولڈ پ ئرس پارٹس", "عادل بشیر اولڈ سپیئر پارٹس"], ["imp_1791111090457_261", "nameUr", "طلحٰہ موٹرورکشاپ", "طلحہ موٹر ورکشاپ"], ["imp_1791111090457_265", "nameUr", "ٹنٹ ڈی پینٹنگ", "ڈینٹنگ پینٹنگ"], ["imp_1791111090457_271", "nameUr", "ٹنٹ وحید ڈی پینٹنگ", "وحید ڈینٹنگ پینٹنگ"], ["imp_1791111090457_280", "nameUr", "نج ینٹ اتفاق آٹواررنگ ورکشاپ", "اتفاق آٹو انجینئرنگ ورکشاپ"], ["imp_1791111090457_302", "nameUr", "فیاض ہنڈ ا", "فیاض ہنڈا"], ["imp_1791111090457_304", "nameUr", "ٹنٹ آصف ڈی ورکشاپ", "آصف ڈینٹنگ ورکشاپ"], ["imp_1791111090457_305", "nameUr", "ٹنٹ فلک شیر ڈی پینٹنگ", "فلک شیر ڈینٹنگ پینٹنگ"], ["imp_1791111090457_307", "nameUr", "ٹنٹ اکبر ڈی پینٹنگ ورکشاپ", "اکبر ڈینٹنگ پینٹنگ ورکشاپ"], ["imp_1791111090457_310", "nameUr", "ٹنٹ بسم اللہ ڈی پینٹنگ", "بسم اللہ ڈینٹنگ پینٹنگ"], ["imp_1791111090457_315", "nameUr", "نھہ ن ریڈی ایٹر سروس", "تفہیم ریڈی ایٹر سروس"], ["imp_1791111090457_326", "nameUr", "فورسٹر وک مکی ٹیک", "فورسٹر وک مکینک"], ["imp_1791111090457_335", "nameUr", "کپاس ،بیلنا،اشیپی لرر", "کپاس، بیلنا، اسپیلر"], ["imp_1791111090457_337", "nameUr", "شاہین آئل شیپی لرر", "شاہین آئل سپیلر"], ["imp_1791111090457_338", "nameUr", "یوسف آئل شیپی لرر", "یوسف آئل سپیلر"], ["imp_1791111090457_339", "nameUr", "النورآئل شیپی لرر", "النور آئل سپیلر"], ["imp_1791111090457_342", "nameUr", "جمیل سپرپاورآٹومکی ٹیک", "جمیل سپر پاور آٹو مکینک"], ["imp_1791111090457_412", "nameUr", "سلیم آٹوٹریکٹر پ ئرس پارٹس", "سلیم آٹو ٹریکٹر سپیئر پارٹس"], ["imp_1791111090457_453", "nameUr", "پئ ماشا اللہ لائٹ ریرنگ", "ماشاءاللہ لائٹ ریپیئرنگ"], ["imp_1791111090457_469", "nameUr", "ٹنٹ مدینہ ڈی", "مدینہ ڈینٹنگ"], ["imp_1791111090457_496", "nameUr", "غلام مصطفٰی ڈیزل لیبارٹری", "غلام مصطفیٰ ڈیزل لیبارٹری"], ["imp_1791111090457_536", "nameUr", "ی ش مٹن چوہدری ریفریب", "چوہدری ریفریشمنٹ"], ["imp_1791111090457_546", "nameUr", "عوامی کمِل ڈیری", "عوامی ملک ڈیری"], ["imp_1791111090457_561", "nameUr", "لمصطف ای مشینری سٹور", "المصطفیٰ مشینری سٹور"], ["imp_1791111090457_59", "nameUr", "جی ایم پ ئرس پارٹس", "جی ایم سپیئر پارٹس"], ["imp_1791111090457_609", "nameUr", "نج ینٹ عبدالحمید اررنگ ورکس", "عبدالحمید انجینئرنگ ورکس"], ["imp_1791111090457_63", "nameUr", "ھادی آٹوز اینڈ پ رس پارٹس", "ہادی آٹوز اینڈ سپیئر پارٹس"], ["imp_1791111090457_637", "nameUr", "الطا ف حمام", "الطاف حمام"], ["imp_1791111090457_64", "nameUr", "بسم اللہ اولڈ پ ئرس پارٹس", "بسم اللہ اولڈ سپیئر پارٹس"], ["imp_1791111090457_77", "nameUr", "عاقب اکبر پ ئرس پارٹس", "عاقب اکبر سپیئر پارٹس"], ["imp_1791111090457_90", "nameUr", "اکبر آٹوپ ئرسپارٹس اینڈ بیٹری", "اکبر آٹو سپیئر پارٹس اینڈ بیٹری"], ["imp_1791111090457_109", "intro", "دکاندار: رانا عبدالسلی ن", "دکاندار: رانا عبدالسلیم"], ["imp_1791111090457_126", "intro", "دکاندار: فضل الہٰ ی", "دکاندار: فضل الٰہی"], ["imp_1791111090457_20", "intro", "دکاندار: شی ع ب اشرف", "دکاندار: شعیب اشرف"], ["imp_1791111090457_297", "intro", "دکاندار: محمد اشر ف", "دکاندار: محمد اشرف"], ["imp_1791111090457_354", "intro", "دکاندار: دلشا د احمد", "دکاندار: دلشاد احمد"], ["imp_1791111090457_80", "intro", "دکاندار: خالد محمو د", "دکاندار: خالد محمود"], ["svc_1791690094654_78", "nameUr", "برادر ز فارمیسی", "برادرز فارمیسی"], ["ywS0JjA9vtSbfHgQPqBe", "nameUr", "الشیخ آ ٹو الیکٹریشن", "الشیخ آٹو الیکٹریشن"]];
+async function runNameFix(){
+  const FB = window.MCSFirebase;
+  if(!FB || !FB.writeBatch || !FB.getDoc){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
+  if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ ان کریں'); return; }
+  if(!confirm(`${NAME_FIX_1.length} ٹوٹے ہوئے نام جانچ کر درست کیے جائیں گے۔ جاری رکھیں؟`)) return;
+  const btn = document.getElementById('nameFixBtn'); if(btn){ btn.disabled = true; btn.style.opacity = .6; }
+  const prog = document.getElementById('nameFixProgress');
+  let fixed = 0, skipped = 0;
+  try{
+    const batch = FB.writeBatch(FB.db);
+    const applied = [];
+    for(let i=0; i<NAME_FIX_1.length; i++){
+      const [id, f, oldV, newV] = NAME_FIX_1[i];
+      if(prog) prog.textContent = `⏳ جانچ… ${urduDigits(i+1)} / ${urduDigits(NAME_FIX_1.length)}`;
+      const snap = await FB.getDoc(FB.doc(FB.db, 'services', id));
+      if(!snap.exists() || (snap.data()||{})[f] !== oldV){ skipped++; continue; }
+      batch.update(FB.doc(FB.db, 'services', id), {[f]: newV});
+      applied.push([id, f, newV]); fixed++;
+    }
+    if(fixed) await batch.commit();
+    applied.forEach(([id, f, v])=>{ const l = store.services.find(s=>s.fsId===id || s.id===id); if(l) l[f] = v; });
+    if(fixed){ saveStore(); if(typeof renderAll==='function') renderAll(); }
+    if(prog) prog.innerHTML = `<b style="color:#047857;">✓ ${urduDigits(fixed)} نام درست ہو گئے</b>${skipped ? ` — ${urduDigits(skipped)} پہلے سے درست تھے، نہیں چھیڑے` : ''}`;
+    showToast(`${fixed} نام درست ہو گئے ✓`);
+  }catch(e){
+    if(prog) prog.innerHTML = `<span style="color:#b91c1c;">رکاوٹ آ گئی (${escapeHtml((e&&e.code)||'error')}) — کچھ نہیں بدلا، دوبارہ دبائیں</span>`;
     if(btn){ btn.disabled = false; btn.style.opacity = 1; }
   }
 }
