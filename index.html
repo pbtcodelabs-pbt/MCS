@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2710TU068">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2710TU068">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2810WE069">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2810WE069">
 <meta name="theme-color" content="#0d3b66">
 <!-- MCS2310FR041: فائربیس کی فائلیں شروع ہی میں آنا شروع ہوں تاکہ لاگ اِن اور نئے ریکارڈ جلد آئیں -->
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -1433,6 +1433,34 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
 .csel-empty{min-height:1em;display:inline-block;}
 .csel-nomatch{display:none;margin:8px 4px;padding:8px 10px;border-radius:12px;background:#fff7ed;border:1.5px dashed #f59e0b;color:#7c2d12;font-size:13px;font-weight:700;line-height:1.7;text-align:center;}
 .plus-hint{font-size:calc(11px*var(--form-scale));color:#fde68a;font-weight:700;margin:3px 2px 0;line-height:1.5;text-shadow:0 1px 2px rgba(0,0,0,.4);}
+
+/* MCS2810WE069: تلاش کے فلٹر بڑے اور واضح — ہر ڈبے پر عنوان اور منتخب قیمت؛ آپشن بڑے بٹن */
+#screen-user-browse .ub-chips{display:grid !important;grid-template-columns:1fr 1fr;gap:8px !important;margin-top:10px !important;}
+#screen-user-browse .ub-chip{height:auto !important;min-height:54px;flex-direction:column !important;align-items:center;justify-content:center;gap:0 !important;
+  border-radius:16px !important;padding:4px 8px !important;background:#fff !important;color:#0b2a44 !important;border:2px solid #b7d3cf !important;box-shadow:0 3px 8px rgba(13,59,102,.12);}
+#screen-user-browse .ub-chip b{font-size:12.5px;font-weight:800;color:#0f766e;line-height:1.5;}
+#screen-user-browse .ub-chip span{font-size:15.5px;font-weight:800;line-height:1.6;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#screen-user-browse .ub-chip.on{background:linear-gradient(135deg,#0d3b66,#0f766e) !important;border-color:transparent !important;}
+#screen-user-browse .ub-chip.on b,#screen-user-browse .ub-chip.on span{color:#fff;}
+#screen-user-browse .ub-chip.open{outline:3px solid #f59e0b;outline-offset:1px;}
+#screen-user-browse .ub-catrow{margin-top:8px;}
+#screen-user-browse .ub-chip-cat{width:100%;}
+#screen-user-browse .ub-panel.show{display:grid !important;grid-template-columns:1fr 1fr;gap:8px !important;padding:10px !important;border:2px solid #f59e0b !important;border-radius:16px !important;max-height:55vh;overflow:auto;}
+#screen-user-browse .ub-panel .ub-opt{width:100%;min-height:46px !important;border-radius:14px !important;font-size:15.5px !important;font-weight:800;justify-content:center;text-align:center;}
+#screen-user-browse .ub-panel .ub-opt.active{background:linear-gradient(135deg,#0d3b66,#0f766e) !important;color:#fff !important;}
+#screen-user-browse .ub-panel.cat-mode{grid-template-columns:1fr !important;}
+.ub-phead{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;font-size:15px;color:#0d3b66;}
+.ub-pclose{border:none;background:#f1f5f9;border-radius:10px;padding:4px 12px;font-weight:800;font-family:inherit;color:#334155;}
+#screen-user-browse #searchBox{font-size:17px !important;}
+/* ہوم پر گوگل جیسی تلاش */
+.home-search{display:flex;align-items:center;gap:8px;margin:14px 2px 6px;background:#fff;border:2px solid #0f766e;border-radius:999px;padding:4px 6px 4px 14px;box-shadow:0 6px 16px rgba(13,59,102,.18);}
+.home-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;height:44px;font-size:17px;font-family:inherit;color:#0b2a44;padding:0 8px;}
+.home-search button{flex:0 0 auto;width:46px;height:46px;border:none;border-radius:50%;background:linear-gradient(135deg,#0d3b66,#0f766e);color:#fff;font-size:20px;}
+.home-qf{display:flex;gap:8px;margin:2px 2px 10px;}
+.home-qf button{flex:1;min-height:42px;border-radius:14px;border:1.5px solid #b7d3cf;background:#fff;font-weight:800;font-size:14px;color:#0b2a44;font-family:inherit;}
+/* شیئر کے بٹن */
+.promo-share-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+.promo-share-row button{min-height:44px;border:none;border-radius:12px;font-weight:800;font-size:13.5px;color:#fff;font-family:inherit;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -1591,12 +1619,24 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
           <button class="hero-btn" onclick="openControlPanel()" aria-label="سیٹنگز" style="position:relative;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="hero-badge" id="pendingBadge" style="display:none;">0</span></button>
         </div>
       </div>
-      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2710TU068" alt="مائی سٹی شائنز">
+      <img class="home-logo-big" src="icons/icon-192.png?v=MCS2810WE069" alt="مائی سٹی شائنز">
       <!-- MCS2610MO065: کل ریکارڈ — لوگو کے نیچے چھوٹی پٹی -->
       <div class="home-total">📊 کل ریکارڈ: <b id="homeCount_total">0</b></div>
     </header>
 
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
+
+    <!-- MCS2810WE069: ہوم پر گوگل جیسی بڑی تلاش + فوری فلٹر -->
+    <form class="home-search" onsubmit="event.preventDefault();homeSearchGo()">
+      <input type="search" id="homeSearchBox" placeholder="دکان، نام، نمبر، علاقہ — کچھ بھی تلاش کریں" autocomplete="off" enterkeyhint="search">
+      <button type="submit" aria-label="تلاش">🔍</button>
+    </form>
+    <div class="home-qf">
+      <button type="button" onclick="homeSearchGo('district')">🗺️ ضلع</button>
+      <button type="button" onclick="homeSearchGo('city')">🏙️ شہر</button>
+      <button type="button" onclick="homeSearchGo('area')">📍 علاقہ</button>
+      <button type="button" onclick="homeSearchGo('cat')">🗂️ کیٹگری</button>
+    </div>
 
     <section class="home-section">
       <div class="entry-card e-teal" onclick="goScreen('specialist-categories')">
@@ -2308,7 +2348,15 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
         <input type="range" id="pcBorderSat" min="0" max="100" step="1" style="width:100%;" oninput="setPromoOpt('borderSat',Number(this.value))"></div>
     </div>
 
-    <button class="btn block accent" style="margin-top:10px;" onclick="sharePromoFromModal()">📤 واٹس ایپ پر شیئر کریں</button>
+    <button class="btn block accent" style="margin-top:10px;" onclick="sharePromoFromModal('sheet')">📤 شیئر کریں — کسی بھی ایپ پر (واٹس ایپ، فیس بک، ٹیلی گرام…)</button>
+    <div class="promo-share-row">
+      <button type="button" style="background:#16a34a;" onclick="sharePromoFromModal('wa')">واٹس ایپ</button>
+      <button type="button" style="background:#1877f2;" onclick="sharePromoFromModal('fb')">فیس بک</button>
+      <button type="button" style="background:#229ed9;" onclick="sharePromoFromModal('tg')">ٹیلی گرام</button>
+      <button type="button" style="background:#7c3aed;" onclick="sharePromoFromModal('save')">📥 تصویر محفوظ</button>
+      <button type="button" style="background:#0f766e;" onclick="sharePromoFromModal('copy')">📋 لنک کاپی</button>
+      <button type="button" style="background:#475569;" onclick="sharePromoFromModal('sms')">✉️ SMS</button>
+    </div>
   </div>
 </div>
 
@@ -2531,9 +2579,9 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2710TU068";
+const APP_VERSION = "MCS2810WE069";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "ایڈمن: فتح پور کے نئے ریکارڈ ایک بٹن سے فیڈ — فائل چننے کی ضرورت نہیں";
+const UPDATE_NOTE = "ہوم پر بڑی تلاش، واضح فلٹر، بہتر نتائج؛ ایپ پوسٹر ہر سوشل میڈیا پر شیئر";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -2778,6 +2826,17 @@ function openSearch(){
 /* MCS29SEPTU0350PM: PIN اب کوڈ میں صاف نہیں لکھا، صرف اس کا SHA-256 ہیش ہے */
 const ADMIN_QUICK_PIN_HASH = '8b5a43764420e5af43f7c4623ad3a6699a628be06269051d38f494f9f4b22a9a';
 async function mcsSha256(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); }
+/* MCS2810WE069: ہوم کی تلاش سے سیدھا تلاش والا صفحہ — لکھا ہوا لفظ ساتھ، یا فلٹر کھلا ہوا */
+function homeSearchGo(openKind){
+  const hb = document.getElementById('homeSearchBox'); const q = hb ? hb.value.trim() : '';
+  goScreen('user-browse');
+  const sb = document.getElementById('searchBox');
+  if(sb){ sb.value = q; }
+  if(q) onUserSearchInput(q); else renderUserSearch();
+  if(openKind){ ubOpen = openKind; ubRenderBar(); }
+  if(hb) hb.value = '';
+  if(!openKind && !q && sb) setTimeout(()=>sb.focus(), 200);
+}
 async function onUserSearchInput(val){
   let pinHit = false;
   if(/^\d{6}$/.test(val||'')){ try{ pinHit = (await mcsSha256(val)) === ADMIN_QUICK_PIN_HASH; }catch(e){} }
@@ -2891,14 +2950,14 @@ function ubRenderBar(){
     const chip = document.getElementById('ubChip_'+k);
     if(!chip) return;
     const val = ubDraft[k];
-    chip.innerHTML = `<span>${escapeHtml(val || UB_LABELS[k])}</span><i>${ubOpen===k?'▴':'▾'}</i>`;
+    chip.innerHTML = `<b>${({province:'🗺️',district:'🗺️',city:'🏙️',area:'📍'})[k]} ${UB_LABELS[k]}</b><span>${escapeHtml(val || 'سب')}</span>`;
     chip.classList.toggle('on', !!val);
     chip.classList.toggle('open', ubOpen===k);
   });
   const cc = document.getElementById('ubChip_cat');
   if(cc){
     const cv = ubFilter.cat, cmeta = cv ? ubCatMeta(cv) : null;
-    cc.innerHTML = `<span>${cv ? escapeHtml(cmeta.emoji+' '+cmeta.ur) : '🗂️ کیٹگری — سب'}</span><i>${ubOpen==='cat'?'▴':'▾'}</i>`;
+    cc.innerHTML = `<b>🗂️ کیٹگری</b><span>${cv ? escapeHtml(cmeta.emoji+' '+cmeta.ur) : 'سب'}</span>`;
     cc.classList.toggle('on', !!cv); cc.classList.toggle('open', ubOpen==='cat');
   }
   ['professional','business'].forEach(g=>{
@@ -2909,7 +2968,8 @@ function ubRenderBar(){
   if(!panel) return;
   if(!ubOpen){ panel.classList.remove('show','cat-mode'); panel.innerHTML=''; return; }
   const opts = ubOptions(ubOpen);
-  const all = `<button type="button" class="ub-opt${!(ubOpen==='cat'?ubFilter.cat:ubDraft[ubOpen])?' active':''}" data-v="">سب</button>`;
+  const head = `<div class="ub-phead"><b>${UB_LABELS[ubOpen]} چنیں</b><button type="button" class="ub-pclose" onclick="ubToggle('${ubOpen}')">✖ بند</button></div>`;
+  const all = head + `<button type="button" class="ub-opt${!(ubOpen==='cat'?ubFilter.cat:ubDraft[ubOpen])?' active':''}" data-v="">سب</button>`;
   panel.innerHTML = all + (opts.length
     ? opts.map(o=>`<button type="button" class="ub-opt${(ubOpen==='cat'?ubFilter.cat:ubDraft[ubOpen])===o.v?' active':''}" data-v="${escapeHtml(o.v)}">${ubOptLabel(ubOpen,o)}</button>`).join('')
     : `<span class="ub-none">ابھی کوئی آپشن موجود نہیں</span>`);
@@ -3012,6 +3072,13 @@ function renderUserSearch(){
     return;
   }
 
+  /* MCS2810WE069: جس کے نام میں لکھا لفظ شروع سے ملے وہ سب سے اوپر — پھر نام کے اندر، پھر باقی خانوں والے */
+  const qTok = qRaw ? ubNorm(qRaw).split(' ').filter(Boolean) : [];
+  const nameScore = n=>{ const nm = ubNorm(n||''); let sc = 0; qTok.forEach(t=>{ sc += nm.startsWith(t) ? 6 : nm.split(' ').some(w=>w.startsWith(t)) ? 4 : nm.includes(t) ? 2 : 0; }); return sc; };
+  if(qTok.length){
+    doctorResults.sort((a,b)=> nameScore(b.nameUr||b.name) + nameScore(b.nameEn) - nameScore(a.nameUr||a.name) - nameScore(a.nameEn));
+    serviceResults.sort((a,b)=> nameScore(b.nameUr) + nameScore(b.nameEn) - nameScore(a.nameUr) - nameScore(a.nameEn));
+  }
   const doctorCards = doctorResults.map(fhDoc).map(d=>userResultCard({
     kind:'doctor', cat:'doctor', id:d.id, fsId:d.fsId, nameUr: d.nameUr||d.name, nameEn: d.nameEn, emoji:'🩺', tag:'ڈاکٹر',
     sub: [d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''),
@@ -3026,7 +3093,10 @@ function renderUserSearch(){
     });
   }).join('');
 
-  wrap.innerHTML = meta + doctorCards + serviceCards;
+  /* نام سے ملنے والے کاروبار ڈاکٹروں سے پہلے بھی آ سکیں */
+  const bestDoc = doctorResults.length ? nameScore(doctorResults[0].nameUr||doctorResults[0].name) : 0;
+  const bestSvc = serviceResults.length ? nameScore(serviceResults[0].nameUr) : 0;
+  wrap.innerHTML = meta + (qTok.length && bestSvc > bestDoc ? serviceCards + doctorCards : doctorCards + serviceCards);
 }
 
 /* ---------- یوزر صفحے کے کیٹگری کارڈ ---------- */
@@ -4945,7 +5015,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2710TU068';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2810WE069';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5106,7 +5176,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2710TU068';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2810WE069';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -5207,13 +5277,32 @@ async function refreshPromoPreview(){
     holder.innerHTML=''; holder.appendChild(canvas);
   }catch(e){ holder.textContent='پیش نظارہ نہیں بن سکا'; }
 }
-function sharePromoFromModal(){
+function sharePromoFromModal(target){
   const txt = document.getElementById('promoTextInput').value.trim();
   store.promoText = (txt && txt !== DEFAULT_PROMO_TEXT) ? txt : '';
   store.promoOpts = {...promoOpts};
   saveStore();
+  /* MCS2810WE069: ہر پلیٹ فارم کا الگ بٹن — فیس بک/ٹیلی گرام لنک کے ساتھ کھلتے ہیں اور تصویر فون میں محفوظ ہو جاتی ہے */
+  const caption = appPromoCaptionText();
+  if(target==='copy'){ try{ navigator.clipboard.writeText(caption); showToast('📋 پیغام اور لنک کاپی ہو گیا — جہاں چاہیں پیسٹ کریں'); }catch(e){ showToast('کاپی نہیں ہو سکا'); } return; }
+  if(target==='sms'){ location.href = 'sms:?body=' + encodeURIComponent(caption); return; }
+  if(target && target!=='sheet'){ promoShareTo(target, txt, caption); return; }
   closeModal('promoTextModal');
   shareAppPromo(txt, promoOpts);
+}
+async function promoShareTo(target, txt, caption){
+  showToast('کارڈ بن رہا ہے...');
+  let blob = null;
+  try{ const c = await buildAppPromoCanvas(txt, promoOpts); blob = await new Promise(r=> c.toBlob(r, 'image/png')); }catch(e){}
+  if(blob){ try{ downloadBlob(blob, 'my-city-shines-app.png'); }catch(e){} }
+  try{ navigator.clipboard && navigator.clipboard.writeText(caption).catch(()=>{}); }catch(e){}
+  if(target==='save'){ showToast('📥 تصویر فون میں محفوظ ہو گئی', 2500); return; }
+  const u = encodeURIComponent((typeof MCS_PLAY_URL!=='undefined' && MCS_PLAY_URL) || MCS_APP_URL), t = encodeURIComponent(caption);
+  const url = target==='fb' ? 'https://www.facebook.com/sharer/sharer.php?u=' + u
+            : target==='tg' ? 'https://t.me/share/url?url=' + u + '&text=' + t
+            : 'https://wa.me/?text=' + t;
+  showToast('📥 تصویر محفوظ، 📋 پیغام کاپی — وہاں تصویر لگا کر پیسٹ کر دیں', 4000);
+  window.open(url, '_blank');
 }
 async function shareAppPromo(customText, opts){
   showToast('کارڈ بن رہا ہے...');
