@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2910TH076">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2910TH076">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS2910TH077">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS2910TH077">
 <meta name="theme-color" content="#0d3b66">
 <!-- MCS2310FR041: فائربیس کی فائلیں شروع ہی میں آنا شروع ہوں تاکہ لاگ اِن اور نئے ریکارڈ جلد آئیں -->
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -2813,9 +2813,9 @@ button.cc-city{padding:0 8px 0 6px;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2910TH076";
+const APP_VERSION = "MCS2910TH077";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "پورا ہوم ایک ہی اسکرین میں — ایپس کی چلتی پٹی بھی سامنے";
+const UPDATE_NOTE = "شہر بدلیں تو موسم بھی اسی شہر کا";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5332,7 +5332,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2910TH076';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2910TH077';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5493,7 +5493,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS2910TH076';
+    headerLogo.src = 'icons/icon-192.png?v=MCS2910TH077';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9308,11 +9308,38 @@ function ccRenderCityPick(){
   box.innerHTML = list.length ? list.map(x=>`<button type="button" class="cp-c${x.city===act?' on':''}" data-c="${escapeHtml(x.city)}">${escapeHtml(x.city)}<small>${x.n} ریکارڈ${x.district && x.district!==x.city ? ' • ' + escapeHtml(x.district) : ''}</small></button>`).join('')
     : '<div class="ub-none" style="grid-column:1/-1">کوئی شہر نہیں ملا</div>';
 }
-function ccPickCity(c){ ccLS('mcsCityPick', {city:c, ts:Date.now()}); closeModal('cityPickModal'); ccApplyCity(true); showToast('📍 ' + c + ' — اس شہر کا ریکارڈ سب سے پہلے'); }
+function ccPickCity(c){ ccLS('mcsCityPick', {city:c, ts:Date.now()}); closeModal('cityPickModal'); ccApplyCity(true); ccCityWeather(); showToast('📍 ' + c + ' — اس شہر کا ریکارڈ سب سے پہلے'); }
 function ccUseGps(){ try{ localStorage.removeItem('mcsCityPick'); }catch(e){} closeModal('cityPickModal'); ccApplyCity(true); ccLocate(true); }
+/* MCS2910TH077: موسم چنے ہوئے شہر کا — شہر کے نام سے جگہ (open-meteo، پھر OpenStreetMap)، ایک بار ملے تو فون میں یاد */
+async function ccCityCoords(city){
+  const memo = ccLS('mcsCityGeo') || {};
+  if(memo[city]) return memo[city];
+  const info = ccCityList().find(x=>x.city===city) || {};
+  const tries = [];
+  const om = q => async()=>{ const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=10&language=ur&countryCode=PK`); const j = await r.json(); const x = (j.results||[])[0]; return x ? {lat:x.latitude, lon:x.longitude} : null; };
+  const osm = q => async()=>{ const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=pk&q=${encodeURIComponent(q)}`); const j = await r.json(); const x = (j||[])[0]; return x ? {lat:+x.lat, lon:+x.lon} : null; };
+  tries.push(osm([city, info.district!==city ? info.district : '', info.province, 'پاکستان'].filter(Boolean).join('، ')), om(city), osm(city + '، پاکستان'));
+  if(info.district && info.district!==city) tries.push(om(info.district), osm(info.district + '، پاکستان'));
+  for(const t of tries){ try{ const c = await t(); if(c && isFinite(c.lat)){ c.lat = +(+c.lat).toFixed(3); c.lon = +(+c.lon).toFixed(3); memo[city] = c; ccLS('mcsCityGeo', memo); return c; } }catch(e){} }
+  return null;
+}
+let ccWxFor = '';
+async function ccCityWeather(){
+  const pick = ccLS('mcsCityPick'), g = ccLS('mcsGeo');
+  if(pick && pick.city){
+    ccWxFor = pick.city;
+    const e = document.getElementById('ccWx'); if(e) e.textContent = '⛅ موسم…';
+    const c = await ccCityCoords(pick.city);
+    if(ccWxFor !== pick.city) return;
+    if(c) ccWeather(c.lat, c.lon); else if(e) e.textContent = '⛅ اس شہر کا موسم نہیں ملا';
+    return;
+  }
+  ccWxFor = '';
+  if(g && g.lat) ccWeather(g.lat, g.lon);
+}
 async function ccLocate(force){
   const geo = ccLS('mcsGeo');
-  if(!force && geo && geo.city && geo.cands && Date.now()-geo.ts < 6*3600e3){ ccApplyCity(); if(geo.lat) ccWeather(geo.lat, geo.lon); return; }
+  if(!force && geo && geo.city && geo.cands && Date.now()-geo.ts < 6*3600e3){ ccApplyCity(); ccCityWeather(); return; }
   if(!navigator.geolocation){ return; }
   if(force) showToast('📍 لوکیشن معلوم کی جا رہی ہے...', 2000);
   navigator.geolocation.getCurrentPosition(async pos=>{
@@ -9325,7 +9352,7 @@ async function ccLocate(force){
       }catch(e){}
     }
     const v = {lat, lon, city: city || (geo && geo.city) || '', cands, ts: Date.now()};
-    ccLS('mcsGeo', v); ccApplyCity(true); ccWeather(lat, lon);
+    ccLS('mcsGeo', v); ccApplyCity(true); ccCityWeather();
   }, ()=>{ if(force) showToast('لوکیشن نہیں ملی — فون میں لوکیشن آن کریں', 3000); }, {timeout:12000, maximumAge:30*60e3});
 }
 function ccShowRates(){
@@ -9359,7 +9386,7 @@ function ccInit(){
   const cpl = document.getElementById('cityPickList'); if(cpl) cpl.addEventListener('click', e=>{ const b = e.target.closest('.cp-c'); if(b) ccPickCity(b.dataset.c); });
   ccShowWx(ccLS('mcsWx')); ccClock(); ccShowRates();
   setInterval(ccClock, 30000);
-  setTimeout(()=>{ ccLocate(false); ccFetchRates(); }, 1500);
+  setTimeout(()=>{ if(ccLS('mcsCityPick')) ccCityWeather(); ccLocate(false); ccFetchRates(); }, 1500);
 }
 try{ ccInit(); }catch(e){}
 try{ oaInit(); }catch(e){}
