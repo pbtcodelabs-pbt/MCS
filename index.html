@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR096">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR096">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR097">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR097">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1888,6 +1888,7 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
 .adrec-row{display:flex;flex-wrap:wrap;gap:6px;}
 .adrec-row button{min-height:40px;padding:0 12px;border-radius:12px;border:1.5px solid #cfe3df;background:#f7fbfa;font-family:inherit;font-weight:700;font-size:14px;color:var(--text);}
 .adrec-cats{max-height:55vh;overflow:auto;}
+.adrec-row button.sug{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-color:transparent;}
 .adrec-ok{font-size:11px;color:#15803d;font-weight:800;text-align:center;}
 .nt-row .adrec-add{background:#c2610f !important;}
 .ad-free{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;direction:rtl;}
@@ -1948,6 +1949,11 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
 .ad-alt{margin-top:4px;font-size:12.5px;line-height:1.8;color:#92400e;}
 .ad-alt.ok{color:#15803d;}
 .ad-alt button{border:1.5px solid #f59e0b;background:#fffbeb;border-radius:8px;font-family:inherit;font-weight:800;padding:0 8px;}
+.ad-paste{margin:6px 0;border:1.5px dashed #0f766e;border-radius:14px;padding:6px 10px;background:#f7fbfa;}
+.ad-paste summary{font-weight:800;color:#0f766e;cursor:pointer;min-height:36px;display:flex;align-items:center;}
+.ad-paste textarea{width:100%;box-sizing:border-box;border:1.5px solid #cfe3df;border-radius:10px;padding:8px;font-family:inherit;font-size:14px;margin:6px 0;unicode-bidi:plaintext;}
+.ad-paste .btn{min-height:42px;}
+html.mcs-dark .ad-paste{background:#0D2226;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -2556,6 +2562,10 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
         <label class="ad-vcbtn">📷 کیمرے سے وزٹنگ کارڈ<input type="file" accept="image/*" capture="environment" id="adCardCam" onchange="onAdCard(this)" hidden></label>
         <label class="ad-vcbtn ad-vcgal">🖼️ گیلری سے<input type="file" accept="image/*" id="adCardInput" onchange="onAdCard(this)" hidden></label>
       </div>
+      <details class="ad-paste"><summary>📋 دکاندار کا واٹس ایپ پیغام پیسٹ کریں</summary>
+        <textarea id="adPasteBox" rows="6" placeholder="دکاندار نے جو تفصیل بھیجی (دکان کا نام، نمبر، اشتہار میں کیا لکھنا ہے…) پوری کاپی کر کے یہاں پیسٹ کریں"></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:6px"><button type="button" class="btn secondary" onclick="adPasteFromClip()">📋 کاپی شدہ لگائیں</button><button type="button" class="btn accent" onclick="adParsePaste()">✨ خانے بھر دیں</button></div>
+      </details>
       <div id="adCardStatus" class="cp-hint"></div>
       <img id="adCardPrev" class="ad-vcprev" alt="" hidden>
       <div class="field"><label>دکان کا نام / عنوان</label><input type="text" id="adTitle" placeholder="مثلاً: مدینہ ہارڈویئر"></div>
@@ -2563,9 +2573,9 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
       <div class="field"><label>فون / واٹس ایپ نمبر (کال بٹن)</label><input type="tel" id="adPhone" placeholder="03xx-xxxxxxx"></div>
       <div class="field"><label>سب نمبر نام کے ساتھ (ہر لائن میں ایک)</label><textarea id="adContacts" rows="3" style="unicode-bidi:plaintext;text-align:right" placeholder="عبدالستار: 0320-6378201"></textarea></div>
       <div class="field"><label>پتہ</label><input type="text" id="adAddr" placeholder="مثلاً: لنک روڈ، اڈا 214"></div>
-      <div class="field"><label>کتنے دن چلے</label><input type="number" id="adDays" value="30" min="1" max="365"></div>
-      <label class="ad-freechk"><input type="checkbox" id="adFree" checked> 🎁 مفت تعارفی اشتہار (پہلے 5 میں سے) <small id="adFreeInfo"></small></label>
-      <input type="hidden" id="adEditId">
+      <div class="field"><label>کتنے دن چلے</label><input type="number" id="adDays" value="7" min="1" max="365" oninput="this.dataset.touched=1"></div>
+      <label class="ad-freechk"><input type="checkbox" id="adFree" checked onchange="const d=document.getElementById('adDays'); if(d && !d.dataset.touched) d.value=this.checked?7:30;"> 🎁 مفت تعارفی اشتہار — 7 دن (پہلے 5 میں سے) <small id="adFreeInfo"></small></label>
+      <input type="hidden" id="adEditId"><input type="hidden" id="adKind">
       <button class="btn block accent" id="adSaveBtn" onclick="adSave()">✅ اشتہار لگائیں</button>
     </div>
   </div>
@@ -3204,9 +3214,9 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR096";
+const APP_VERSION = "MCS3010FR097";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "وزٹنگ کارڈ: روشنی/کنٹراسٹ، دونوں AI سے پڑھائی اور نمبروں کی تصدیق";
+const UPDATE_NOTE = "دکاندار کا پیغام پیسٹ کریں؛ مفت اشتہار 7 دن؛ ریکارڈ میں شہر/علاقہ خود";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5723,7 +5733,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR096';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR097';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5884,7 +5894,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR096';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR097';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9828,7 +9838,7 @@ function adPromos(){
   const c = store.contact || DEFAULT_CONTACT; const raw = String(c.whatsapp||'').replace(/[^0-9]/g,'').replace(/^0/,'');
   const wa = 'https://wa.me/92' + raw + '?text=' + encodeURIComponent('السلام علیکم! میں My City Shines ایپ میں اپنی دکان کا اشتہار لگوانا چاہتا ہوں۔\n\nمیرے کاروبار اور دکان کی تفصیلات یہ ہیں:\n🏪 دکان کا نام: \n👤 میرا نام: \n📞 موبائل / واٹس ایپ نمبر: \n🗂️ کاروبار کی قسم: \n📍 شہر / علاقہ: \n📝 اشتہار میں کیا لکھنا ہے (آفر / تعارف): \n⏳ کتنے دن کے لیے: ');
   return [
-    ...(adFreeLeft() > 0 ? [{promo:1, ic:'🎁', title:'پہلی 5 دکانوں کا اشتہار مفت!', line: adFreeUsed() ? `${adFreeUsed()} ${adFreeUsed()===1?'دکان':'دکانوں'} کا اشتہار لگ چکا — صرف ${adFreeLeft()} باقی، اگلی دکان آپ کی ہو سکتی ہے!` : 'ایک مہینہ بالکل مفت — پہلی 5 دکانوں میں آپ بھی شامل ہوں', wa, freeBar:1}] : []),
+    ...(adFreeLeft() > 0 ? [{promo:1, ic:'🎁', title:'پہلی 5 دکانوں کا اشتہار 7 دن بالکل مفت!', line: adFreeUsed() ? `${adFreeUsed()} ${adFreeUsed()===1?'دکان':'دکانوں'} کا اشتہار لگ چکا — صرف ${adFreeLeft()} باقی، اگلی دکان آپ کی ہو سکتی ہے!` : '7 دن بالکل مفت — پہلی 5 دکانوں میں آپ بھی شامل ہوں', wa, freeBar:1}] : []),
     {promo:1, ic:'📢', title:'اپنی دکان کا اشتہار یہاں لگوائیں', line:'شہر کے لوگ روز یہ ایپ کھولتے ہیں — سب سے پہلے آپ کی دکان نظر آئے', wa},
     {promo:1, ic:'🏪', title:'اپنی دکان مفت درج کروائیں', line:'ایپ میں اپنا نمبر ڈالیں، گاہک سیدھا آپ کو کال کریں', add:1}
   ];
@@ -9942,6 +9952,36 @@ function cropDone(full){
   closeModal('cropModal');
   c.toBlob(b=>adProcessCard(b), 'image/jpeg', 0.92);
 }
+/* MCS3010FR097: مفت اشتہار 7 دن (مالک کی ہدایت)۔ دکاندار کا بھیجا پیغام پیسٹ — خانے خود بھریں (ہمارا فارمیٹ ہو یا عام پیغام) */
+async function adPasteFromClip(){ try{ const t = await navigator.clipboard.readText(); if(t){ document.getElementById('adPasteBox').value = t; adParsePaste(); } else showToast('کاپی شدہ کچھ نہیں ملا — خود پیسٹ کریں'); }catch(e){ showToast('خانے میں انگلی رکھ کر Paste کریں'); } }
+function adParsePaste(){
+  const raw = (document.getElementById('adPasteBox').value || '').replace(/\r/g,'');
+  if(!raw.trim()){ showToast('پہلے پیغام پیسٹ کریں'); return; }
+  const clean = v=>String(v||'').replace(/[*_~]/g,'').replace(/^[\s:：\-–—]+|[\s:：\-–—]+$/g,'').trim();
+  const field = rx=>{ const re = new RegExp('(?:^|\\n)[^\\n]*?(?:' + rx + ')[^\\n:：]*[:：][ \\t]*([^\\n]*)', 'gi'); let m; while((m = re.exec(raw))){ const v = clean(m[1]); if(v) return v; } return ''; };
+  let shop = field('دکان کا نام|کاروبار کا نام|shop name|business name');
+  const person = field('میرا نام|آپ کا نام|نام مالک|مالک|owner|my name');
+  const kind = field('کاروبار کی قسم|قسم|category');
+  const area = field('شہر\\s*/\\s*علاقہ|علاقہ|شہر|پتہ|address|area');
+  let line = field('اشتہار میں کیا لکھنا|آفر|تعارف|تفصیل|offer|details');
+  const daysTxt = field('کتنے دن|دن|days|مدت');
+  /* سب نمبر (03… یا +92…) */
+  const phones = []; (raw.match(/(?:\+?92|0)\s*3\d{2}[\s-]?\d{7}/g) || []).forEach(n=>{ let d = n.replace(/[^0-9]/g,''); if(d.startsWith('92')) d = '0' + d.slice(2); if(/^03\d{9}$/.test(d) && !phones.includes(d)) phones.push(d); });
+  /* ہمارا فارمیٹ نہ ہو تو: پہلی بامعنی لائن نام، باقی تفصیل */
+  if(!shop){ const lines = raw.split('\n').map(clean).filter(l=>l && !/السلام|اشتہار لگوانا|تفصیلات یہ ہیں|^\+?\d[\d\s-]+$/.test(l)); shop = (lines[0]||'').slice(0, 60); if(!line) line = lines.slice(1).filter(l=>!/(?:\+?92|0)\s*3\d{2}/.test(l)).join(' — ').slice(0, 160); }
+  const fmt = d=>d.slice(0,4) + '-' + d.slice(4);
+  const set = (id, v)=>{ const e = document.getElementById(id); if(e && v) e.value = v; };
+  set('adTitle', shop); { const e = document.getElementById('adKind'); if(e) e.value = kind || ''; }
+  set('adLine', [line, kind && !line.includes(kind) ? '(' + kind + ')' : ''].filter(Boolean).join(' '));
+  set('adAddr', area);
+  if(phones[0]) set('adPhone', fmt(phones[0]));
+  if(phones.length) set('adContacts', phones.map((d,i)=>(i===0 && person ? person + ': ' : '') + '\u200E' + fmt(d)).join('\n'));
+  const dn = parseInt(String(daysTxt).replace(/[۰-۹]/g, c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)), 10); if(dn > 0 && dn <= 365){ const fr = (document.getElementById('adFree')||{}).checked; set('adDays', fr ? Math.min(dn, 7) : dn); }
+  const st = document.getElementById('adCardStatus');
+  if(st) st.innerHTML = '✅ پیغام سے خانے بھر دیے — ایک نظر دیکھ لیں' + (!shop ? '<div class="ad-alt">⚠️ دکان کا نام نہیں ملا — خود لکھ دیں</div>' : '') + (!phones.length ? '<div class="ad-alt">⚠️ کوئی موبائل نمبر نہیں ملا</div>' : '');
+  const d = document.querySelector('.ad-paste'); if(d) d.open = false;
+  document.getElementById('adTitle').scrollIntoView({behavior:'smooth', block:'center'});
+}
 async function cardAiRead(file){
   const image = await boardAiImage(file);
   const ctl = new AbortController(); const tm = setTimeout(()=>ctl.abort(), 60000);
@@ -9963,7 +10003,7 @@ async function adProcessCard(f){
       const set = (id, v)=>{ const e = document.getElementById(id); if(e && v) e.value = v; };
       set('adTitle', a.name); set('adLine', a.tagline); set('adAddr', a.address);
       if(a.contacts[0]) set('adPhone', a.contacts[0].phone);
-      set('adContacts', a.contacts.map(x=>(x.name ? x.name + ': ' : '') + x.phone).join('\n'));
+      set('adContacts', a.contacts.map(x=>(x.name ? x.name + ': ' : '') + '\u200E' + x.phone).join('\n'));
       const weak = a.merged ? a.contacts.filter(x=>x.votes < 2).map(x=>x.phone) : [];
       st.innerHTML = '✅ کارڈ پڑھ لیا — ایک نظر خانے دیکھ لیں' + (a.nameAlt ? `<div class="ad-alt">دوسرے AI نے نام یوں پڑھا: <button type="button" onclick="document.getElementById('adTitle').value=this.textContent">${escapeHtml(a.nameAlt)}</button> (دبائیں تو یہ لگ جائے)</div>` : '') + (weak.length ? `<div class="ad-alt">⚠️ یہ نمبر ایک ہی AI نے پڑھا، کارڈ سے ملا لیں: ${weak.map(x=>'<bdi dir="ltr">'+escapeHtml(x)+'</bdi>').join('، ')}</div>` : (a.merged && a.contacts.length ? '<div class="ad-alt ok">✓ سب نمبر دونوں AI نے ایک جیسے پڑھے</div>' : ''));
     } else st.textContent = 'کارڈ صاف نہیں پڑھا گیا — خانے خود بھر دیں (تصویر اشتہار میں لگے گی)';
@@ -9990,7 +10030,10 @@ function adAskRecord(a){
   adRecItem = a;
   document.getElementById('adRecHint').textContent = `«${a.title}» کا نمبر ریکارڈ میں نہیں ملا — کیٹگری چنیں تو یہ دکان اپنے شعبے میں فوراً درج ہو جائے (فارم بھرا ہوا کھلے گا)`;
   const chip = i=>`<button type="button" data-k="${i.k}">${i.e} ${escapeHtml(i.u)}</button>`;
-  document.getElementById('adRecCats').innerHTML = `<div class="adrec-h">🏪 بزنس</div><div class="adrec-row">${addStripItems('business').map(chip).join('')}</div><div class="adrec-h">👔 پروفیشنلز</div><div class="adrec-row">${addStripItems('professional').map(chip).join('')}</div>`;
+  const all = addStripItems('business').concat(addStripItems('professional'));
+  const kw = String(a.kind || '') + ' ' + String(a.title || '') + ' ' + String(a.line || '');
+  const sug = all.find(i=>i.u && kw && i.u.split(/[\s\/،]+/).some(w=>w.length > 2 && kw.includes(w)));
+  document.getElementById('adRecCats').innerHTML = (sug ? `<div class="adrec-h">⭐ تجویز</div><div class="adrec-row"><button type="button" class="sug" data-k="${sug.k}">${sug.e} ${escapeHtml(sug.u)}</button></div>` : '') + `<div class="adrec-h">🏪 بزنس</div><div class="adrec-row">${addStripItems('business').map(chip).join('')}</div><div class="adrec-h">👔 پروفیشنلز</div><div class="adrec-row">${addStripItems('professional').map(chip).join('')}</div>`;
   openModal('adRecModal');
 }
 function adRecPick(k){
@@ -10003,7 +10046,13 @@ function adRecPick(k){
   setTimeout(()=>{
     const set = (id, v)=>{ const e = document.getElementById(id); if(e && v){ e.value = v; e.dispatchEvent(new Event('input', {bubbles:true})); e.dispatchEvent(new Event('change', {bubbles:true})); } };
     if(k==='__doctor'){ set('docName', a.title); set('docNameUr', a.title); set('docWhatsapp', a.phone); set('docAddress', a.addr); }
-    else { set('svcNameUr', a.title); set('svcWhatsapp', a.phone); set('svcAddress', a.addr); set('svcOwner', owners); set('svcIntro', [a.line, others ? '📞 ' + others : ''].filter(Boolean).join(' — ')); }
+    else {
+      /* پتے میں ریکارڈ والا شہر/علاقہ ہو تو وہی چن لیں */
+      const ad = String(a.addr||''); const cityHit = (store.cities||[]).filter(c=>c && ad.includes(c)).sort((x,y)=>y.length-x.length)[0]; const areaHit = (store.areas||[]).filter(c=>c && c.length > 2 && ad.includes(c)).sort((x,y)=>y.length-x.length)[0];
+      const info = cityHit ? ccCityList().find(x=>x.city===cityHit) : null;
+      if(info){ set('svcProvince', info.province); set('svcDistrict', info.district); }
+      if(cityHit) set('svcCity', cityHit); if(areaHit) set('svcArea', areaHit);
+      set('svcNameUr', a.title); set('svcWhatsapp', a.phone); set('svcAddress', a.addr); set('svcOwner', owners); set('svcIntro', [a.line, others ? '📞 ' + others : ''].filter(Boolean).join(' — ')); }
     showToast('📝 اشتہار سے فارم بھر دیا — شہر/علاقہ چن کر محفوظ کریں', 3500);
   }, 350);
 }
@@ -10086,7 +10135,7 @@ function adEdit(i){
   const a = (adList||[])[i]; if(!a) return;
   const set = (id, v)=>{ const e = document.getElementById(id); if(e) e.value = v || ''; };
   set('adTitle', a.title); set('adLine', a.line); set('adPhone', a.phone); set('adAddr', a.addr); set('adEditId', a.id); set('adDays', '');
-  set('adContacts', (a.contacts||[]).map(x=>(x.name ? x.name + ': ' : '') + x.phone).join('\n'));
+  set('adContacts', (a.contacts||[]).map(x=>(x.name ? x.name + ': ' : '') + '\u200E' + x.phone).join('\n'));
   document.getElementById('adSaveBtn').textContent = '💾 ترمیم محفوظ کریں';
   const pv = document.getElementById('adCardPrev'); if(a.img){ adImg(a.img).then(src=>{ if(src){ pv.src = src; pv.hidden = false; } }); }
   document.getElementById('adTitle').scrollIntoView({behavior:'smooth', block:'center'});
@@ -10107,7 +10156,7 @@ function adOpenAdmin(){ openModal('adsModal'); adCfgDraft = null; adCfgRender();
 function adRenderAdmin(){
   const box = document.getElementById('adsList'); if(!box) return;
   const fi = document.getElementById('adFreeInfo'); if(fi) fi.textContent = `— ${adFreeUsed()}/${AD_FREE_TOTAL} لگ چکے، ${adFreeLeft()} باقی`;
-  const fc = document.getElementById('adFree'); if(fc && !document.getElementById('adEditId').value) fc.checked = adFreeLeft() > 0;
+  const fc = document.getElementById('adFree'); if(fc && !document.getElementById('adEditId').value){ fc.checked = adFreeLeft() > 0; const dd = document.getElementById('adDays'); if(dd && !dd.dataset.touched) dd.value = fc.checked ? 7 : 30; }
   const now = Date.now();
   box.innerHTML = (adList||[]).length ? adList.map((a,i)=>`<div class="nt-row${a.until && a.until < now ? ' sent':''}"><div class="nm"><b>${a.free !== false ? '<span class="ad-ftag">🎁 مفت</span> ' : '<span class="ad-ftag paid">💰</span> '}${escapeHtml(a.title)}</b><small>${escapeHtml(a.phone||'')}</small> <small>${a.until ? (a.until < now ? 'ختم ہو گیا' : 'آخری تاریخ ' + new Date(a.until).toLocaleDateString('en-GB')) : ''}</small></div><div style="display:flex;flex-direction:column;gap:4px">${adInRecords(a) ? '<small class="adrec-ok">📋 ریکارڈ میں ہے</small>' : `<button type="button" class="adrec-add" onclick="adAskRecord(adList[${i}])">➕ ریکارڈ میں درج</button>`}<button type="button" onclick="adEdit(${i})">✏️ ترمیم</button><button type="button" class="del" onclick="adDelete(${i})">🗑️ ہٹائیں</button></div></div>`).join('') : '<div class="cp-hint">ابھی کوئی اشتہار نہیں — جگہ پر «یہاں اشتہار لگوائیں» کے پیغام چل رہے ہیں</div>';
 }
@@ -10121,14 +10170,14 @@ function adSave(){
   const days = Math.max(1, Math.min(365, parseInt(v('adDays'),10) || 30));
   const editId = +v('adEditId') || 0; const prev = editId ? (adList||[]).find(x=>x.id===editId) : null;
   const id = editId || Date.now();
-  const contacts = v('adContacts').split(/\n+/).map(l=>{ const m = l.match(/(.*?)[:：\-–]?\s*(0?3\d{2}[\s-]?\d{7})\s*$/); return m ? {name: m[1].replace(/[:：\-–]\s*$/,'').trim(), phone: normalizePkNumber(m[2])} : null; }).filter(Boolean);
+  const contacts = v('adContacts').replace(/[\u200e\u200f]/g,'').split(/\n+/).map(l=>{ const m = l.match(/(.*?)[:：\-–]?\s*(0?3\d{2}[\s-]?\d{7})\s*$/); return m ? {name: m[1].replace(/[:：\-–]\s*$/,'').trim(), phone: normalizePkNumber(m[2])} : null; }).filter(Boolean);
   const isFree = prev ? (prev.free !== false) : !!(document.getElementById('adFree')||{}).checked;
-  const item = Object.assign({}, prev||{}, {free: isFree, id, title, line: v('adLine'), phone: v('adPhone') || (contacts[0]||{}).phone || '', contacts, addr: v('adAddr'), until: prev && !v('adDays') ? prev.until : Date.now() + days*864e5});
+  const item = Object.assign({}, prev||{}, {free: isFree, id, title, line: v('adLine'), kind: v('adKind') || (prev && prev.kind) || '', phone: normalizePkNumber(v('adPhone')) || (contacts[0]||{}).phone || '', contacts, addr: v('adAddr'), until: prev && !v('adDays') ? prev.until : Date.now() + days*864e5});
   const FB = window.MCSFirebase;
   if(adPendingImg && FB){ item.img = 'adimg_' + id; adImgCache[item.img] = adPendingImg; FB.setDoc(FB.doc(FB.db,'appConfig', item.img), {data: adPendingImg, ts: Date.now()}).catch(e=>alert('تصویر محفوظ نہیں ہوئی: ' + (e.code||e.message))); }
   if(!prev && isFree){ adFreeStored = adFreeUsed() + 1; try{ localStorage.setItem('mcsAdFree', adFreeStored); }catch(e){} }
   adSaveList(editId ? (adList||[]).map(x=>x.id===editId ? item : x) : (adList||[]).concat([item]));
-  if(!adInRecords(item)) setTimeout(()=>adAskRecord(item), 400); else showToast('✓ یہ دکان پہلے سے ریکارڈ میں ہے'); ['adTitle','adLine','adPhone','adContacts','adAddr','adEditId'].forEach(x=>document.getElementById(x).value=''); document.getElementById('adSaveBtn').textContent = '✅ اشتہار لگائیں';
+  if(!adInRecords(item)) setTimeout(()=>adAskRecord(item), 400); else showToast('✓ یہ دکان پہلے سے ریکارڈ میں ہے'); ['adTitle','adLine','adPhone','adContacts','adAddr','adEditId','adKind'].forEach(x=>document.getElementById(x).value=''); document.getElementById('adSaveBtn').textContent = '✅ اشتہار لگائیں';
   adPendingImg = ''; const pv = document.getElementById('adCardPrev'); if(pv){ pv.hidden = true; pv.removeAttribute('src'); } const st = document.getElementById('adCardStatus'); if(st) st.textContent = '';
 }
 function adDelete(i){ if(!confirm('یہ اشتہار ہٹا دیں؟')) return; const list = (adList||[]).slice(); const [gone] = list.splice(i,1); adSaveList(list); try{ if(gone && gone.img){ const FB = window.MCSFirebase; FB.deleteDoc(FB.doc(FB.db,'appConfig', gone.img)).catch(()=>{}); } }catch(e){} }
