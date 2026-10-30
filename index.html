@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA101">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA101">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA102">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA102">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -3240,9 +3240,9 @@ html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{col
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3110SA101";
+const APP_VERSION = "MCS3110SA102";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "ہوم اوپر سے نہیں کٹتا — اشتہار کی اونچائی درست";
+const UPDATE_NOTE = "مفت اشتہار والا پیغام (اتنے لگ چکے، اتنے باقی) پھر سے نظر آتا ہے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5759,7 +5759,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA101';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA102';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5920,7 +5920,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA101';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA102';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9877,7 +9877,15 @@ function adFreeUsed(){ return Math.min(AD_FREE_TOTAL, Math.max(adFreeStored, (ad
 function adFreeLeft(){ return Math.max(0, AD_FREE_TOTAL - adFreeUsed()); }
 function adFreeBar(){ const u = adFreeUsed(); return `<div class="ad-free">${Array.from({length:AD_FREE_TOTAL}, (_,i)=>`<i class="${i<u?'on':''}">${i<u?'✓':i+1}</i>`).join('')}</div>`; }
 function adActive(){ const now = Date.now(); return (adList||[]).filter(a=>a && a.title && (!a.until || a.until > now)); }
-function adSlides(){ const paid = adActive(); const pr = adPromos(); return paid.length >= 3 ? paid : paid.concat(pr.slice(0, Math.max(1, 3 - paid.length) + (paid.length ? 0 : 0))); }
+/* MCS3110SA102: دکانوں کے اشتہار جتنے بھی ہوں، «5 مفت — اتنے لگ چکے، اتنے باقی» (یا پیکج والا) پیغام ہر چکر میں ضرور آئے؛ ہر 2 دکانوں کے بعد ایک پیغام */
+function adSlides(){
+  const paid = adActive(), pr = adPromos();
+  if(!paid.length) return pr;
+  const main = pr[0];  /* مفت والا (جگہ باقی ہو) یا «اشتہار لگوائیں» پیکج والا */
+  const out = []; paid.forEach((a,i)=>{ out.push(a); if(i % 2 === 1 && i < paid.length - 1) out.push(main); });
+  out.push(main); if(paid.length < 3 && pr[1]) out.push(pr[1]);
+  return out;
+}
 function adRender(){
   const box = document.getElementById('homeAds'); if(!box) return;
   const sl = adSlides(); if(!sl.length){ box.innerHTML = ''; return; }
