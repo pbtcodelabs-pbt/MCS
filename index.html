@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR097">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR097">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR098">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR098">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1954,6 +1954,12 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
 .ad-paste textarea{width:100%;box-sizing:border-box;border:1.5px solid #cfe3df;border-radius:10px;padding:8px;font-family:inherit;font-size:14px;margin:6px 0;unicode-bidi:plaintext;}
 .ad-paste .btn{min-height:42px;}
 html.mcs-dark .ad-paste{background:#0D2226;}
+.ad-cd{display:inline-block;font:700 11.5px Arial,sans-serif;direction:rtl;background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;border-radius:999px;padding:1px 8px;margin-top:3px;white-space:nowrap;}
+.ad-cd.urgent{background:#fee2e2;color:#b91c1c;border-color:#fca5a5;animation:adCdPulse 1.4s infinite;}
+@keyframes adCdPulse{50%{opacity:.6}}
+#homeAds .ad-cd-home{position:absolute;top:4px;right:8px;z-index:2;font-size:10px;padding:0 6px;margin:0;}
+.adv-cdw{text-align:center;margin-top:10px;font-size:13px;font-weight:700;color:#475569;}
+.adv-cdw .ad-cd{font-size:13px;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -3214,9 +3220,9 @@ html.mcs-dark .ad-paste{background:#0D2226;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR097";
+const APP_VERSION = "MCS3010FR098";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "دکاندار کا پیغام پیسٹ کریں؛ مفت اشتہار 7 دن؛ ریکارڈ میں شہر/علاقہ خود";
+const UPDATE_NOTE = "اشتہار کی الٹی گنتی — دن، گھنٹے، منٹ";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5733,7 +5739,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR097';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR098';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5894,7 +5900,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR097';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR098';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9859,7 +9865,7 @@ function adRender(){
   if(a.promo){ go = a.add ? `<button type="button" onclick="toggleAddStrip('business')">➕ دکان درج کریں</button>` : `<a href="${escapeAttr(a.wa)}" target="_blank" rel="noopener">💬 رابطہ کریں</a>`; }
   else { const d = String(a.phone||'').replace(/[^0-9]/g,''); if(d){ go = `<a class="ad-call" href="tel:${d}">📞 کال</a><a href="https://wa.me/92${d.replace(/^0/,'')}" target="_blank" rel="noopener">💬 واٹس ایپ</a>`; } }
   const fx = adAnim; adAnim = '';
-  box.innerHTML = `<div class="ad-card${a.promo?'':' paid'}${fx && fx!=='none' ? ' fx-' + fx + (adDir < 0 ? ' fx-back' : '') : ''}"${a.promo?'':` onclick="if(!event.target.closest('a,button'))adView(${a.id})"`}><span class="ad-tag">${a.promo?'📢 اشتہار کی جگہ':'AD • اشتہار'}</span>${a.promo?'<span class="ad-ribbon">خالی</span>':''}<div class="ad-row">${(!a.promo && a.img) ? (adImgCache[a.img] ? `<img class="ad-vc" src="${adImgCache[a.img]}" alt="" >` : (adImg(a.img), '<span class="ad-ic">🏪</span>')) : `<span class="ad-ic">${a.promo ? a.ic : '🏪'}</span>`}<div class="ad-tx"><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.line||'')}</span>${a.freeBar ? adFreeBar() : ''}</div></div><div class="ad-go">${go}</div>${isAdminSignedIn?'<button type="button" class="ad-admin" onclick="adOpenAdmin()">⚙️</button>':''}</div>`
+  box.innerHTML = `<div class="ad-card${a.promo?'':' paid'}${fx && fx!=='none' ? ' fx-' + fx + (adDir < 0 ? ' fx-back' : '') : ''}"${a.promo?'':` onclick="if(!event.target.closest('a,button'))adView(${a.id})"`}><span class="ad-tag">${a.promo?'📢 اشتہار کی جگہ':'AD • اشتہار'}</span>${(!a.promo && isAdminSignedIn && a.until) ? adCdHtml(a).replace('class="ad-cd', 'class="ad-cd ad-cd-home') : ''}${a.promo?'<span class="ad-ribbon">خالی</span>':''}<div class="ad-row">${(!a.promo && a.img) ? (adImgCache[a.img] ? `<img class="ad-vc" src="${adImgCache[a.img]}" alt="" >` : (adImg(a.img), '<span class="ad-ic">🏪</span>')) : `<span class="ad-ic">${a.promo ? a.ic : '🏪'}</span>`}<div class="ad-tx"><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.line||'')}</span>${a.freeBar ? adFreeBar() : ''}</div></div><div class="ad-go">${go}</div>${isAdminSignedIn?'<button type="button" class="ad-admin" onclick="adOpenAdmin()">⚙️</button>':''}</div>`
     + (sl.length > 1 ? `<div class="ad-dots">${sl.map((_,i)=>`<i class="${i===adIdx?'on':''}" onclick="event.stopPropagation();adHold=Date.now()+20000;adGo(${i}-adIdx||0)"></i>`).join('')}</div>` : '');
 }
 function appVh(){ try{ document.documentElement.style.setProperty('--app-vh', window.innerHeight + 'px'); }catch(e){} }
@@ -10119,6 +10125,12 @@ try{
   /* کمپیوٹر/کروم بک: ماؤس سے کھینچیں */
   let mx = null; box.addEventListener('mousedown', e=>{ mx = e.clientX; }); window.addEventListener('mouseup', e=>{ if(mx === null) return; const dx = e.clientX - mx; mx = null; if(Math.abs(dx) > 50){ adHold = Date.now() + 20000; adGo(dx < 0 ? 1 : -1); } });
 }catch(e){}
+/* MCS3010FR098: اشتہار کی الٹی گنتی — ایڈمن فہرست، ہوم (صرف ایڈمن) اور اشتہار کھولنے پر */
+function adLeft(until){ const ms = (until||0) - Date.now(); if(!until) return ''; if(ms <= 0) return 'ختم ہو گیا';
+  const d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5), m = Math.floor(ms%36e5/6e4), s = Math.floor(ms%6e4/1e3);
+  return (d ? d + ' دن ' : '') + h + ' گھنٹے ' + m + ' منٹ' + (d ? '' : ' ' + s + ' سیکنڈ'); }
+function adCdHtml(a){ if(!a || !a.until) return ''; const ms = a.until - Date.now(); return `<span class="ad-cd${ms < 864e5 ? ' urgent' : ''}" data-until="${a.until}">⏳ ${adLeft(a.until)}</span>`; }
+setInterval(()=>{ document.querySelectorAll('.ad-cd[data-until]').forEach(e=>{ const u = +e.dataset.until; e.textContent = '⏳ ' + adLeft(u); e.classList.toggle('urgent', u - Date.now() < 864e5); }); }, 1000);
 function adTick(){ adGo(1); }
 /* MCS3010FR090: اشتہار زیادہ دیر — دکان کا 15 سیکنڈ، اپنے پیغام 6؛ انگلی لگے یا اشتہار کھلا ہو تو رکے */
 let adHold = 0, adShownAt = Date.now();
@@ -10147,7 +10159,7 @@ async function adView(id){
   const contacts = (a.contacts && a.contacts.length) ? a.contacts : (a.phone ? [{name:'', phone:a.phone}] : []);
   const rows = contacts.map(c=>{ const d = String(c.phone||'').replace(/[^0-9]/g,''); return `<div class="adv-c"><div><b>${escapeHtml(c.name||'')}</b><span>${escapeHtml(c.phone)}</span></div><a class="ad-call" href="tel:${d}">📞 کال</a><a href="https://wa.me/92${d.replace(/^0/,'')}" target="_blank" rel="noopener">💬 واٹس ایپ</a></div>`; }).join('');
   const render = src=>{ body.innerHTML = `${a.img ? (src ? `<img class="adv-img" src="${src}" alt="" onclick="adZoom('${a.img}')">` : '<div class="adv-load">⏳ وزٹنگ کارڈ لوڈ ہو رہا ہے…</div>') : ''}
-    <div class="adv-t">${escapeHtml(a.title)}</div>${a.line ? `<div class="adv-l">${escapeHtml(a.line)}</div>` : ''}${a.addr ? `<div class="adv-a">📍 ${escapeHtml(a.addr)}</div>` : ''}<div class="adv-cs">${rows}</div><div class="adv-tag">AD • اشتہار</div>`; };
+    <div class="adv-t">${escapeHtml(a.title)}</div>${a.line ? `<div class="adv-l">${escapeHtml(a.line)}</div>` : ''}${a.addr ? `<div class="adv-a">📍 ${escapeHtml(a.addr)}</div>` : ''}<div class="adv-cs">${rows}</div>${a.until && a.until > Date.now() ? `<div class="adv-cdw">${a.free !== false ? '🎁 مفت اشتہار — ' : ''}باقی وقت: ${adCdHtml(a)}</div>` : ''}<div class="adv-tag">AD • اشتہار</div>`; };
   render(a.img ? adImgCache[a.img] : '');
   openModal('adViewModal');
   if(a.img && !adImgCache[a.img]){ delete adImgCache[a.img]; const src = await adImg(a.img); if(document.getElementById('adViewModal').classList.contains('active')) render(src || ''); if(!src) body.querySelector('.adv-load') && (body.querySelector('.adv-load').textContent = 'کارڈ کی تصویر نہیں ملی — انٹرنیٹ چیک کریں'); }
@@ -10158,7 +10170,7 @@ function adRenderAdmin(){
   const fi = document.getElementById('adFreeInfo'); if(fi) fi.textContent = `— ${adFreeUsed()}/${AD_FREE_TOTAL} لگ چکے، ${adFreeLeft()} باقی`;
   const fc = document.getElementById('adFree'); if(fc && !document.getElementById('adEditId').value){ fc.checked = adFreeLeft() > 0; const dd = document.getElementById('adDays'); if(dd && !dd.dataset.touched) dd.value = fc.checked ? 7 : 30; }
   const now = Date.now();
-  box.innerHTML = (adList||[]).length ? adList.map((a,i)=>`<div class="nt-row${a.until && a.until < now ? ' sent':''}"><div class="nm"><b>${a.free !== false ? '<span class="ad-ftag">🎁 مفت</span> ' : '<span class="ad-ftag paid">💰</span> '}${escapeHtml(a.title)}</b><small>${escapeHtml(a.phone||'')}</small> <small>${a.until ? (a.until < now ? 'ختم ہو گیا' : 'آخری تاریخ ' + new Date(a.until).toLocaleDateString('en-GB')) : ''}</small></div><div style="display:flex;flex-direction:column;gap:4px">${adInRecords(a) ? '<small class="adrec-ok">📋 ریکارڈ میں ہے</small>' : `<button type="button" class="adrec-add" onclick="adAskRecord(adList[${i}])">➕ ریکارڈ میں درج</button>`}<button type="button" onclick="adEdit(${i})">✏️ ترمیم</button><button type="button" class="del" onclick="adDelete(${i})">🗑️ ہٹائیں</button></div></div>`).join('') : '<div class="cp-hint">ابھی کوئی اشتہار نہیں — جگہ پر «یہاں اشتہار لگوائیں» کے پیغام چل رہے ہیں</div>';
+  box.innerHTML = (adList||[]).length ? adList.map((a,i)=>`<div class="nt-row${a.until && a.until < now ? ' sent':''}"><div class="nm"><b>${a.free !== false ? '<span class="ad-ftag">🎁 مفت</span> ' : '<span class="ad-ftag paid">💰</span> '}${escapeHtml(a.title)}</b><small>${escapeHtml(a.phone||'')}</small> <small>${a.until ? (a.until < now ? 'ختم ہو گیا' : 'آخری تاریخ ' + new Date(a.until).toLocaleDateString('en-GB')) : ''}</small>${a.until && a.until > now ? '<div>' + adCdHtml(a) + '</div>' : ''}</div><div style="display:flex;flex-direction:column;gap:4px">${adInRecords(a) ? '<small class="adrec-ok">📋 ریکارڈ میں ہے</small>' : `<button type="button" class="adrec-add" onclick="adAskRecord(adList[${i}])">➕ ریکارڈ میں درج</button>`}<button type="button" onclick="adEdit(${i})">✏️ ترمیم</button><button type="button" class="del" onclick="adDelete(${i})">🗑️ ہٹائیں</button></div></div>`).join('') : '<div class="cp-hint">ابھی کوئی اشتہار نہیں — جگہ پر «یہاں اشتہار لگوائیں» کے پیغام چل رہے ہیں</div>';
 }
 function adSaveList(list){
   const FB = window.MCSFirebase; if(!FB){ showToast('انٹرنیٹ درکار ہے'); return; }
