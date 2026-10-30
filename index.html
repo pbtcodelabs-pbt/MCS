@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA103">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA103">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA104">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA104">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -3242,9 +3242,9 @@ html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{col
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3110SA103";
+const APP_VERSION = "MCS3110SA104";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "اشتہار کے انداز کی رفتار کم زیادہ کریں";
+const UPDATE_NOTE = "لکھتے وقت کی بورڈ بار بار بند نہیں ہوگا";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3454,7 +3454,9 @@ function syncTickerVisibility(){
 }
 /* کی بورڈ کھلا ہو تو نچلی پٹی چھپ جائے تاکہ لکھتے وقت جگہ نہ گھرے */
 document.addEventListener('focusin', e=>{ if(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) document.body.classList.add('kbd'); });
-document.addEventListener('focusout', ()=>{ setTimeout(()=>{ const a=document.activeElement; if(!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) document.body.classList.remove('kbd'); }, 150); });
+/* MCS3110SA104: لکھتے وقت پس منظر کا کوئی کام صفحہ نہ چھیڑے — ورنہ بعض فونوں پر کی بورڈ بار بار بند/کھلتا تھا */
+function mcsTyping(){ const a = document.activeElement; return !!(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.type !== 'range' && a.type !== 'checkbox' && a.type !== 'file'); }
+document.addEventListener('focusout', ()=>{ setTimeout(()=>{ const a=document.activeElement; if(!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)){ document.body.classList.remove('kbd'); try{ queueFitCards(); if(typeof fitHomeSoon==='function') fitHomeSoon(); }catch(e){} } }, 150); });
 (function(){
   try{
     const mo = new MutationObserver(syncTickerVisibility);
@@ -3993,7 +3995,7 @@ function toggleCatDrag(btn){
 function catSearchStickyTop(){
   document.querySelectorAll('.screen').forEach(sc=>{ const h = sc.querySelector('.screen-head'); const cs = sc.querySelector('.cat-search'); if(h && cs && h.offsetHeight) cs.style.top = (h.offsetHeight - 6) + 'px'; });
 }
-window.addEventListener('resize', catSearchStickyTop);
+window.addEventListener('resize', ()=>{ if(!mcsTyping()) catSearchStickyTop(); });
 let catStT = 0; window.addEventListener('scroll', ()=>{ if(Date.now() - catStT > 400){ catStT = Date.now(); catSearchStickyTop(); } }, {passive:true});
 /* MCS1810SU013: کیٹگری صفحے کی ایک ہی چھوٹی پٹی — تلاش + کالم/ایموجی/نام کا سائز/ترتیب */
 function catToolsHtml(){
@@ -4295,7 +4297,7 @@ function goHome(){
   goScreen('home', true);
   if(steps>0){ try{ history.go(-steps); }catch(e){} }
 }
-window.addEventListener('resize', ()=>{ try{ fitOpenForms(); }catch(e){} });
+window.addEventListener('resize', ()=>{ if(mcsTyping()) return; try{ fitOpenForms(); }catch(e){} });
 window.addEventListener('popstate', ()=>{
   const open = document.querySelector('.modal-overlay.active');
   if(open){
@@ -5761,7 +5763,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA103';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA104';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5922,7 +5924,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA103';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA104';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -7898,6 +7900,8 @@ function tickerFrame(ts){
   const track = document.getElementById('tickerTrack');
   if(!track){ E.raf = 0; return; }
   if(!E.t) E.t = ts;
+  /* MCS3110SA104: لکھتے وقت پٹی رکی رہے (کی بورڈ کی ٹمٹماہٹ سے بچاؤ) */
+  if(typeof mcsTyping === 'function' && mcsTyping()){ E.t = ts; E.raf = requestAnimationFrame(tickerFrame); return; }
   const dt = Math.min(Math.max((ts - E.t)/1000, 0), 0.1);
   E.t = ts;
   const s = E.set || DEFAULT_TICKER_SETTINGS;
@@ -9282,6 +9286,7 @@ function fitCardText(){
   });
 }
 function queueFitCards(){
+  if(mcsTyping()) return;
   if(fitQueued) return; fitQueued = true;
   requestAnimationFrame(fitCardText);
 }
@@ -9675,7 +9680,7 @@ async function stFillCards(){
   try{ vfApply(); }catch(e){}
   cards.forEach(c=>{ const k = c.dataset.st; if(!k || k==='-' || !stCache[k]) return; const h = stLineHtml(stCache[k].v); let l = c.querySelector(':scope > .st-line'); if(!h){ if(l) l.remove(); return; } if(!l){ l = document.createElement('div'); l.className = 'st-line'; c.appendChild(l); } l.innerHTML = h; });
 }
-try{ new MutationObserver(()=>{ clearTimeout(stTimer); stTimer = setTimeout(stFillCards, 700); }).observe(document.getElementById('app') || document.body, {childList:true, subtree:true}); }catch(e){}
+try{ new MutationObserver(()=>{ if(mcsTyping()) return; clearTimeout(stTimer); stTimer = setTimeout(stFillCards, 700); }).observe(document.getElementById('app') || document.body, {childList:true, subtree:true}); }catch(e){}
 
 /* ---- ایڈمن رپورٹ ---- */
 function stRecMap(){ const m = {}; ubAllRecords().forEach(it=>{ const k = stKey(it.rec.whatsapp); if(k && !m[k]) m[k] = it; }); return m; }
@@ -9900,11 +9905,11 @@ function adRender(){
     + (sl.length > 1 ? `<div class="ad-dots">${sl.map((_,i)=>`<i class="${i===adIdx?'on':''}" onclick="event.stopPropagation();adHold=Date.now()+20000;adGo(${i}-adIdx||0)"></i>`).join('')}</div>` : '');
 }
 function appVh(){ try{ document.documentElement.style.setProperty('--app-vh', window.innerHeight + 'px'); }catch(e){} }
-appVh(); window.addEventListener('resize', appVh);
+appVh(); window.addEventListener('resize', ()=>{ if(!mcsTyping()) appVh(); });
 /* MCS3010FR084: ہوم ایک اسکرین میں — ناپ کر اشتہار کی اونچائی (فون کے کنارے/نیچے کی پٹی کچھ بھی ہو) */
 function fitHome(){
   try{
-    if(currentScreen !== 'home') return;
+    if(currentScreen !== 'home' || mcsTyping()) return;
     const ads = document.getElementById('homeAds'), apps = document.getElementById('ourApps');
     const nav = document.getElementById('bnav'); if(!ads || !apps) return;
     const limit = (nav && nav.getBoundingClientRect().height ? nav.getBoundingClientRect().top : window.innerHeight) - 6;
@@ -9918,7 +9923,7 @@ function fitHome(){
     ads.classList.toggle('tight', h < 90);
   }catch(e){}
 }
-let fitT = 0; function fitHomeSoon(){ clearTimeout(fitT); fitT = setTimeout(()=>requestAnimationFrame(fitHome), 60); }
+let fitT = 0; function fitHomeSoon(){ if(mcsTyping()) return; clearTimeout(fitT); fitT = setTimeout(()=>requestAnimationFrame(fitHome), 60); }
 window.addEventListener('resize', fitHomeSoon);
 try{ new MutationObserver(fitHomeSoon).observe(document.getElementById('screen-home'), {childList:true, subtree:true, attributes:true, attributeFilter:['class']}); }catch(e){}
 setTimeout(fitHome, 300); setTimeout(fitHome, 1500); setTimeout(fitHome, 4000);
@@ -10164,7 +10169,7 @@ function adLeft(until){ const ms = (until||0) - Date.now(); if(!until) return ''
   const d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5), m = Math.floor(ms%36e5/6e4), s = Math.floor(ms%6e4/1e3);
   return (d ? d + ' دن ' : '') + h + ' گھنٹے ' + m + ' منٹ' + (d ? '' : ' ' + s + ' سیکنڈ'); }
 function adCdHtml(a){ if(!a || !a.until) return ''; const ms = a.until - Date.now(); return `<span class="ad-cd${ms < 864e5 ? ' urgent' : ''}" data-until="${a.until}">⏳ ${adLeft(a.until)}</span>`; }
-setInterval(()=>{ document.querySelectorAll('.ad-cd[data-until]').forEach(e=>{ const u = +e.dataset.until; e.textContent = '⏳ ' + adLeft(u); e.classList.toggle('urgent', u - Date.now() < 864e5); }); }, 1000);
+setInterval(()=>{ if(mcsTyping()) return; document.querySelectorAll('.ad-cd[data-until]').forEach(e=>{ if(!e.offsetParent) return; const u = +e.dataset.until; e.textContent = '⏳ ' + adLeft(u); e.classList.toggle('urgent', u - Date.now() < 864e5); }); }, 1000);
 /* MCS3010FR099: اشتہار کے پیکج — مفت 7 دن، 15 دن 500، مہینہ 800؛ ہر اشتہار پر قیمت اور کل آمدن */
 const AD_PLANS = {free:{days:7, price:0}, '15':{days:15, price:500}, '30':{days:30, price:800}};
 function adPickPlan(k){
@@ -10182,7 +10187,7 @@ let adHold = 0, adShownAt = Date.now();
 function adStart(){
   adRender(); clearInterval(adTimer);
   adTimer = setInterval(()=>{
-    if(currentScreen!=='home' || document.hidden || Date.now() < adHold || document.getElementById('adViewModal').classList.contains('active')) return;
+    if(currentScreen!=='home' || document.hidden || mcsTyping() || Date.now() < adHold || document.getElementById('adViewModal').classList.contains('active')) return;
     const sl = adSlides(), a = sl[adIdx % (sl.length||1)]; const dur = a && !a.promo ? (adCfg.paidMs||15000) : (adCfg.promoMs||6000);
     if(Date.now() - adShownAt >= dur){ adTick(); }
   }, 1000);
@@ -10317,7 +10322,8 @@ function ccHijri(dt){
 }
 function ccClock(){
   const d = new Date();
-  const set = (id,v)=>{ const e = document.getElementById(id); if(e) e.textContent = v; };
+  const set = (id,v)=>{ const e = document.getElementById(id); if(e && e.textContent !== v) e.textContent = v; };
+  if(mcsTyping()) return;
   set('ccTime', d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}));
   set('ccDate', UR_WDAYS[d.getDay()] + '، ' + d.getDate() + ' ' + UR_GMONTHS[d.getMonth()] + ' ' + d.getFullYear());
   const h = ccHijri(new Date(d.getTime() + (Number(ccAdmin.hijriAdj)||0)*864e5));
