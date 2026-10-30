@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA106">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA106">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA107">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA107">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -3270,9 +3270,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3110SA106";
+const APP_VERSION = "MCS3110SA107";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "اشتہار کا ڈبہ مناسب سائز کا، اوپر نیچے تھوڑی جگہ";
+const UPDATE_NOTE = "اصل لوکیشن خود — جہاں بندہ ہو وہی جگہ اوپر";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5792,7 +5792,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA106';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA107';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5953,7 +5953,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA106';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA107';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -10397,8 +10397,17 @@ function ccMatchCity(cands){
     if(hit) return hit.city; }
   return '';
 }
+/* MCS3110SA107: ہاتھ سے چنا شہر صرف 6 گھنٹے یا جب تک بندہ اپنی جگہ سے نہ ہلے — پھر اصل لوکیشن */
+function ccPickValid(){
+  const pick = ccLS('mcsCityPick'); if(!pick || !pick.city) return null;
+  const g = ccLS('mcsGeo');
+  const expired = Date.now() - (pick.ts||0) > 6*3600e3;
+  const moved = g && g.lat && pick.lat && ccKm({lat:pick.lat, lon:pick.lon}, {lat:g.lat, lon:g.lon}) > 8 && g.ts > pick.ts;
+  if(expired || moved){ try{ localStorage.removeItem('mcsCityPick'); }catch(e){} return null; }
+  return pick;
+}
 function ccActiveCity(){
-  const pick = ccLS('mcsCityPick'); if(pick && pick.city) return pick.city;
+  const pick = ccPickValid(); if(pick) return pick.city;
   const g = ccLS('mcsGeo'); if(g && g.cands){ const m = ccMatchCity(g.cands); if(m) return m; if(g.near && g.near.km <= 60 && ccCityList().some(x=>x.city===g.near.city)) return g.near.city; }
   return '';
 }
@@ -10415,10 +10424,11 @@ async function ccNearest(lat, lon){
 function ccShowCity(){
   const e = document.getElementById('ccCity'); if(!e) return;
   const act = ccActiveCity(), g = ccLS('mcsGeo');
-  e.textContent = act || (g && g.city ? ccCleanName(g.city) : 'شہر چنیں');
-  const pick = ccLS('mcsCityPick');
-  const viaNear = !(pick && pick.city) && act && g && g.near && g.near.city === act && !ccMatchCity(g.cands||[]);
-  const nc = document.getElementById('ccNoCity'); if(nc) nc.textContent = viaNear ? `📍 آپ ${ccCleanName(g.city)} میں ہیں — قریب ترین شہر (${g.near.km} کلومیٹر)` : ((!act && g && g.city && ccCityList().length) ? 'اس شہر کا ابھی ریکارڈ نہیں — ٹچ کر کے شہر چنیں' : '');
+  const pick = ccPickValid();
+  const viaNear = !pick && act && g && g.near && g.near.city === act && !ccMatchCity(g.cands||[]);
+  /* اوپر بڑا نام: جہاں بندہ اس وقت ہے (اس جگہ کا ریکارڈ نہ ہو تو نیچے قریب ترین ریکارڈ والا شہر) */
+  e.textContent = viaNear ? ccCleanName(g.city) : (act || (g && g.city ? ccCleanName(g.city) : 'شہر چنیں'));
+  const nc = document.getElementById('ccNoCity'); if(nc) nc.textContent = viaNear ? `📋 ریکارڈ: ${act} (${g.near.km} کلومیٹر)` : ((!act && g && g.city && ccCityList().length) ? 'اس شہر کا ابھی ریکارڈ نہیں — ٹچ کر کے شہر چنیں' : '');
 }
 let ccLastApplied = null;
 /* چنا ہوا شہر ہوم کے فلٹر اور فہرستوں میں سب سے اوپر */
@@ -10449,7 +10459,7 @@ function ccRenderCityPick(){
   box.innerHTML = list.length ? list.map(x=>`<button type="button" class="cp-c${x.city===act?' on':''}" data-c="${escapeHtml(x.city)}">${escapeHtml(x.city)}<small>${x.n} ریکارڈ${x.district && x.district!==x.city ? ' • ' + escapeHtml(x.district) : ''}</small></button>`).join('')
     : '<div class="ub-none" style="grid-column:1/-1">کوئی شہر نہیں ملا</div>';
 }
-function ccPickCity(c){ ccLS('mcsCityPick', {city:c, ts:Date.now()}); closeModal('cityPickModal'); ccApplyCity(true); ccCityWeather(); showToast('📍 ' + c + ' — اس شہر کا ریکارڈ سب سے پہلے'); }
+function ccPickCity(c){ const g0 = ccLS('mcsGeo') || {}; ccLS('mcsCityPick', {city:c, ts:Date.now(), lat:g0.lat, lon:g0.lon}); closeModal('cityPickModal'); ccApplyCity(true); ccCityWeather(); showToast('📍 ' + c + ' — اس شہر کا ریکارڈ سب سے پہلے'); }
 function ccUseGps(){ try{ localStorage.removeItem('mcsCityPick'); }catch(e){} closeModal('cityPickModal'); ccApplyCity(true); ccLocate(true); }
 /* MCS2910TH077: موسم چنے ہوئے شہر کا — شہر کے نام سے جگہ (open-meteo، پھر OpenStreetMap)، ایک بار ملے تو فون میں یاد */
 async function ccCityCoords(city){
@@ -10466,7 +10476,7 @@ async function ccCityCoords(city){
 }
 let ccWxFor = '';
 async function ccCityWeather(){
-  const pick = ccLS('mcsCityPick'), g = ccLS('mcsGeo');
+  const pick = ccPickValid(), g = ccLS('mcsGeo');
   if(pick && pick.city){
     ccWxFor = pick.city;
     const e = document.getElementById('ccWx'); if(e) e.textContent = '⛅ موسم…';
@@ -10482,7 +10492,7 @@ async function ccLocate(force){
   const geo = ccLS('mcsGeo');
   /* MCS3010FR094: لوکیشن کی اجازت پہلے سے ہو تو ہر بار کھلنے پر (10 منٹ میں ایک بار) تازہ جگہ — بندہ جہاں ہو وہیں کا شہر */
   let granted = false; try{ if(navigator.permissions){ const ps = await navigator.permissions.query({name:'geolocation'}); granted = ps.state === 'granted'; } }catch(e){}
-  const fresh = geo && geo.city && geo.cands && Date.now()-geo.ts < (granted ? 10*60e3 : 6*3600e3);
+  const fresh = geo && geo.city && geo.cands && Date.now()-geo.ts < (granted ? 4*60e3 : 6*3600e3);
   if(!force && fresh){ ccApplyCity(); ccCityWeather(); return; }
   if(!navigator.geolocation){ return; }
   if(force) showToast('📍 لوکیشن معلوم کی جا رہی ہے...', 2000);
@@ -10501,7 +10511,8 @@ async function ccLocate(force){
     ccLS('mcsGeo', v); ccApplyCity(ccActiveCity() !== prevAct || !!force); ccCityWeather();
   }, ()=>{ if(force) showToast('لوکیشن نہیں ملی — فون میں لوکیشن آن کریں', 3000); }, {timeout:12000, maximumAge:30*60e3});
 }
-document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && !ccLS('mcsCityPick')) setTimeout(()=>ccLocate(false), 800); });
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setTimeout(()=>ccLocate(false), 800); });
+setInterval(()=>{ if(!document.hidden && !mcsTyping()) ccLocate(false); }, 5*60e3);
 /* MCS3110SA105: صاف ہوم — تاریخیں/ریٹ ایک قطار میں باری باری؛ فلٹر بٹن سے کھلے */
 let ccSw = 0;
 function ccSwapGo(to){ ccSw = (to === undefined) ? 1 - ccSw : to; document.querySelectorAll('#ccSwap > .cc-boxes').forEach((x,i)=>x.classList.toggle('off', i !== ccSw)); document.querySelectorAll('#ccSwapDots i').forEach((x,i)=>x.classList.toggle('on', i === ccSw)); }
@@ -10554,7 +10565,7 @@ function ccInit(){
   const cpl = document.getElementById('cityPickList'); if(cpl) cpl.addEventListener('click', e=>{ const b = e.target.closest('.cp-c'); if(b) ccPickCity(b.dataset.c); });
   ccShowWx(ccLS('mcsWx')); ccClock(); ccShowRates();
   setInterval(ccClock, 30000);
-  setTimeout(()=>{ if(ccLS('mcsCityPick')) ccCityWeather(); ccLocate(false); ccFetchRates(); }, 1500);
+  setTimeout(()=>{ if(ccPickValid()) ccCityWeather(); ccLocate(false); ccFetchRates(); }, 1500);
 }
 try{ ccInit(); }catch(e){}
 try{ oaInit(); }catch(e){}
