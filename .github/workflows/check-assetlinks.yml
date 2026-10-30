@@ -1,0 +1,31 @@
+name: Check TWA asset links (address bar)
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Served assetlinks.json (MCS entry)
+        run: |
+          curl -sS -D - https://pbtcodelabs-pbt.github.io/.well-known/assetlinks.json -o al.json | head -15
+          python3 -c "import json;d=json.load(open('al.json'));print([x['target'] for x in d if x['target'].get('package_name')=='com.pbtcodelabs.mycityshines'])"
+      - name: Google Digital Asset Links check per fingerprint
+        run: |
+          for fp in 38:9A:52:C6:DD:56:35:66:34:BB:A4:C2:17:9A:12:77:A6:2B:53:19:FF:AA:4E:49:79:6E:9E:0D:85:B7:2C:D5 C9:37:FE:00:D1:FF:EF:3D:CD:27:55:F7:82:F0:9B:FF:3A:03:D1:61:7C:2B:25:02:70:29:A5:7E:C2:61:80:D0 D2:D7:34:EB:4B:CC:8E:66:B7:C1:7E:1E:D1:C0:1E:7C:8E:2D:25:A6:7A:1A:30:5B:BF:7A:8A:9D:BD:42:85:1E; do
+            echo "== $fp"
+            curl -sS "https://digitalassetlinks.googleapis.com/v1/assetlinks:check?source.web.site=https://pbtcodelabs-pbt.github.io&relation=delegate_permission/common.handle_all_urls&target.android_app.package_name=com.pbtcodelabs.mycityshines&target.android_app.certificate.sha256_fingerprint=$fp"; echo
+          done
+          echo "== statements:list"
+          curl -sS "https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://pbtcodelabs-pbt.github.io&relation=delegate_permission/common.handle_all_urls" | head -c 1500; echo
+      - name: Signing cert of latest GitHub Release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download --repo ${{ github.repository }} --pattern '*.apk' -D apk || true
+          ls apk || true
+          for f in apk/*.apk; do unzip -o -q "$f" 'META-INF/*' -d m || true; done
+          for c in m/META-INF/*.RSA m/META-INF/*.EC m/META-INF/*.DSA; do [ -f "$c" ] && keytool -printcert -file "$c" | grep -i sha256; done || true
+          AS=$(ls $ANDROID_HOME/build-tools/*/apksigner 2>/dev/null | tail -1); [ -n "$AS" ] && for f in apk/*.apk; do $AS verify --print-certs "$f" | grep -i sha-256; done || true
+      - name: Android manifest intent filter in APK
+        run: |
+          AA=$(ls $ANDROID_HOME/build-tools/*/aapt2 2>/dev/null | tail -1); [ -n "$AA" ] && for f in apk/*.apk; do $AA dump xmltree --file AndroidManifest.xml "$f" | grep -iE "host|path|scheme|DEFAULT_URL|package" | head -30; done || true
