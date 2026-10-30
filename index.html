@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR100">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR100">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA101">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA101">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -3240,9 +3240,9 @@ html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{col
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR100";
+const APP_VERSION = "MCS3110SA101";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "اشتہار پر ایڈمن کی گنتی نیچے کونے میں باریک — نام نہیں کٹتا";
+const UPDATE_NOTE = "ہوم اوپر سے نہیں کٹتا — اشتہار کی اونچائی درست";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5759,7 +5759,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR100';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA101';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5920,7 +5920,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR100';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA101';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9900,7 +9900,9 @@ function fitHome(){
     const limit = (nav && nav.getBoundingClientRect().height ? nav.getBoundingClientRect().top : window.innerHeight) - 6;
     ads.classList.add('fitted');
     const cur = ads.getBoundingClientRect().height;
-    const want = Math.round(cur + (limit - apps.getBoundingClientRect().bottom));
+    /* MCS3110SA101: صفحہ تھوڑا اسکرول ہو تو بھی اوپر سے ناپیں — پہلے اسکرول جتنا اشتہار بڑا ہو کر ہیڈر اوپر کٹ جاتا تھا */
+    const sy = window.scrollY || (document.scrollingElement||document.documentElement).scrollTop || 0;
+    const want = Math.round(cur + (limit - (apps.getBoundingClientRect().bottom + sy)));
     const h = Math.max(56, Math.min(want, 260));
     ads.style.height = h + 'px';
     ads.classList.toggle('tight', h < 90);
