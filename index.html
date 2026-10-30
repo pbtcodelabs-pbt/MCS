@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR090">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR090">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR091">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR091">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1884,6 +1884,12 @@ body.nav-on #screen-home.active{min-height:0 !important;}
 .adv-tag{text-align:center;font:700 10px Arial,sans-serif;color:#94a3b8;margin-top:8px;}
 #homeAds .ad-card.paid{cursor:pointer;}
 html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv-t{color:#bdf5dd;}html.mcs-dark .adv-l{color:#cbd5e1;}
+.adrec-h{font-weight:800;color:#0f766e;margin:8px 0 4px;}
+.adrec-row{display:flex;flex-wrap:wrap;gap:6px;}
+.adrec-row button{min-height:40px;padding:0 12px;border-radius:12px;border:1.5px solid #cfe3df;background:#f7fbfa;font-family:inherit;font-weight:700;font-size:14px;color:var(--text);}
+.adrec-cats{max-height:55vh;overflow:auto;}
+.adrec-ok{font-size:11px;color:#15803d;font-weight:800;text-align:center;}
+.nt-row .adrec-add{background:#c2610f !important;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -2533,6 +2539,16 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
     <div id="adViewBody"></div>
   </div>
 </div>
+<div class="modal-overlay" id="adRecModal" style="z-index:2147481500">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('adRecModal')">×</button>
+    <h3>🏪 یہ دکان ابھی ریکارڈ میں نہیں</h3>
+    <div style="clear:both;"></div>
+    <div class="cp-hint" id="adRecHint"></div>
+    <div id="adRecCats" class="adrec-cats"></div>
+    <button type="button" class="link-btn" onclick="closeModal('adRecModal')">ابھی نہیں</button>
+  </div>
+</div>
 <div class="modal-overlay" id="cityPickModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('cityPickModal')">×</button>
@@ -3116,9 +3132,9 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR090";
+const APP_VERSION = "MCS3010FR091";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "اشتہار دبائیں تو پورا کارڈ اور سب نمبر؛ کارڈ کی بہتر پڑھائی؛ اشتہار زیادہ دیر";
+const UPDATE_NOTE = "اشتہار والی دکان ریکارڈ میں نہ ہو تو ساتھ ہی درج کریں";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5635,7 +5651,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR090';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR091';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5796,7 +5812,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR090';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR091';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9876,6 +9892,32 @@ function adZoom(id){
   if(!z){ z = document.createElement('div'); z.id = 'adZoom'; z.className = 'ad-zoom'; z.onclick = ()=>z.remove(); document.body.appendChild(z); }
   z.innerHTML = `<img src="${src}" alt=""><span>✖ بند کریں</span>`;
 }
+/* MCS3010FR091: اشتہار والی دکان ریکارڈ میں نہ ہو تو ساتھ ہی درج — کیٹگری چنیں، فارم بھرا ہوا کھلے */
+function adPhones(a){ return [a.phone].concat((a.contacts||[]).map(c=>c.phone)).filter(Boolean); }
+function adInRecords(a){ return adPhones(a).some(p=>findAllByPhone(p).length > 0); }
+let adRecItem = null;
+function adAskRecord(a){
+  adRecItem = a;
+  document.getElementById('adRecHint').textContent = `«${a.title}» کا نمبر ریکارڈ میں نہیں ملا — کیٹگری چنیں تو یہ دکان اپنے شعبے میں فوراً درج ہو جائے (فارم بھرا ہوا کھلے گا)`;
+  const chip = i=>`<button type="button" data-k="${i.k}">${i.e} ${escapeHtml(i.u)}</button>`;
+  document.getElementById('adRecCats').innerHTML = `<div class="adrec-h">🏪 بزنس</div><div class="adrec-row">${addStripItems('business').map(chip).join('')}</div><div class="adrec-h">👔 پروفیشنلز</div><div class="adrec-row">${addStripItems('professional').map(chip).join('')}</div>`;
+  openModal('adRecModal');
+}
+function adRecPick(k){
+  const a = adRecItem; if(!a) return;
+  closeModal('adRecModal'); closeModal('adsModal');
+  const others = (a.contacts||[]).filter(c=>c.phone && c.phone !== a.phone).map(c=>(c.name ? c.name + ': ' : '') + c.phone).join('، ');
+  const owners = Array.from(new Set((a.contacts||[]).map(c=>c.name).filter(Boolean))).join('، ');
+  if(k==='__doctor'){ openDoctorForm(); }
+  else { currentServiceCategory = k; openServiceForm(); }
+  setTimeout(()=>{
+    const set = (id, v)=>{ const e = document.getElementById(id); if(e && v){ e.value = v; e.dispatchEvent(new Event('input', {bubbles:true})); e.dispatchEvent(new Event('change', {bubbles:true})); } };
+    if(k==='__doctor'){ set('docName', a.title); set('docNameUr', a.title); set('docWhatsapp', a.phone); set('docAddress', a.addr); }
+    else { set('svcNameUr', a.title); set('svcWhatsapp', a.phone); set('svcAddress', a.addr); set('svcOwner', owners); set('svcIntro', [a.line, others ? '📞 ' + others : ''].filter(Boolean).join(' — ')); }
+    showToast('📝 اشتہار سے فارم بھر دیا — شہر/علاقہ چن کر محفوظ کریں', 3500);
+  }, 350);
+}
+try{ document.getElementById('adRecCats').addEventListener('click', e=>{ const b = e.target.closest('button[data-k]'); if(b) adRecPick(b.dataset.k); }); }catch(e){}
 function adTick(){ adIdx++; adRender(); }
 /* MCS3010FR090: اشتہار زیادہ دیر — دکان کا 15 سیکنڈ، اپنے پیغام 6؛ انگلی لگے یا اشتہار کھلا ہو تو رکے */
 let adHold = 0, adShownAt = Date.now();
@@ -9913,7 +9955,7 @@ function adOpenAdmin(){ openModal('adsModal'); adRenderAdmin(); }
 function adRenderAdmin(){
   const box = document.getElementById('adsList'); if(!box) return;
   const now = Date.now();
-  box.innerHTML = (adList||[]).length ? adList.map((a,i)=>`<div class="nt-row${a.until && a.until < now ? ' sent':''}"><div class="nm"><b>${escapeHtml(a.title)}</b><small>${escapeHtml(a.phone||'')}</small> <small>${a.until ? (a.until < now ? 'ختم ہو گیا' : 'آخری تاریخ ' + new Date(a.until).toLocaleDateString('en-GB')) : ''}</small></div><div style="display:flex;flex-direction:column;gap:4px"><button type="button" onclick="adEdit(${i})">✏️ ترمیم</button><button type="button" class="del" onclick="adDelete(${i})">🗑️ ہٹائیں</button></div></div>`).join('') : '<div class="cp-hint">ابھی کوئی اشتہار نہیں — جگہ پر «یہاں اشتہار لگوائیں» کے پیغام چل رہے ہیں</div>';
+  box.innerHTML = (adList||[]).length ? adList.map((a,i)=>`<div class="nt-row${a.until && a.until < now ? ' sent':''}"><div class="nm"><b>${escapeHtml(a.title)}</b><small>${escapeHtml(a.phone||'')}</small> <small>${a.until ? (a.until < now ? 'ختم ہو گیا' : 'آخری تاریخ ' + new Date(a.until).toLocaleDateString('en-GB')) : ''}</small></div><div style="display:flex;flex-direction:column;gap:4px">${adInRecords(a) ? '<small class="adrec-ok">📋 ریکارڈ میں ہے</small>' : `<button type="button" class="adrec-add" onclick="adAskRecord(adList[${i}])">➕ ریکارڈ میں درج</button>`}<button type="button" onclick="adEdit(${i})">✏️ ترمیم</button><button type="button" class="del" onclick="adDelete(${i})">🗑️ ہٹائیں</button></div></div>`).join('') : '<div class="cp-hint">ابھی کوئی اشتہار نہیں — جگہ پر «یہاں اشتہار لگوائیں» کے پیغام چل رہے ہیں</div>';
 }
 function adSaveList(list){
   const FB = window.MCSFirebase; if(!FB){ showToast('انٹرنیٹ درکار ہے'); return; }
@@ -9929,7 +9971,8 @@ function adSave(){
   const item = Object.assign({}, prev||{}, {id, title, line: v('adLine'), phone: v('adPhone') || (contacts[0]||{}).phone || '', contacts, addr: v('adAddr'), until: prev && !v('adDays') ? prev.until : Date.now() + days*864e5});
   const FB = window.MCSFirebase;
   if(adPendingImg && FB){ item.img = 'adimg_' + id; adImgCache[item.img] = adPendingImg; FB.setDoc(FB.doc(FB.db,'appConfig', item.img), {data: adPendingImg, ts: Date.now()}).catch(e=>alert('تصویر محفوظ نہیں ہوئی: ' + (e.code||e.message))); }
-  adSaveList(editId ? (adList||[]).map(x=>x.id===editId ? item : x) : (adList||[]).concat([item])); ['adTitle','adLine','adPhone','adContacts','adAddr','adEditId'].forEach(x=>document.getElementById(x).value=''); document.getElementById('adSaveBtn').textContent = '✅ اشتہار لگائیں';
+  adSaveList(editId ? (adList||[]).map(x=>x.id===editId ? item : x) : (adList||[]).concat([item]));
+  if(!adInRecords(item)) setTimeout(()=>adAskRecord(item), 400); else showToast('✓ یہ دکان پہلے سے ریکارڈ میں ہے'); ['adTitle','adLine','adPhone','adContacts','adAddr','adEditId'].forEach(x=>document.getElementById(x).value=''); document.getElementById('adSaveBtn').textContent = '✅ اشتہار لگائیں';
   adPendingImg = ''; const pv = document.getElementById('adCardPrev'); if(pv){ pv.hidden = true; pv.removeAttribute('src'); } const st = document.getElementById('adCardStatus'); if(st) st.textContent = '';
 }
 function adDelete(i){ if(!confirm('یہ اشتہار ہٹا دیں؟')) return; const list = (adList||[]).slice(); const [gone] = list.splice(i,1); adSaveList(list); try{ if(gone && gone.img){ const FB = window.MCSFirebase; FB.deleteDoc(FB.doc(FB.db,'appConfig', gone.img)).catch(()=>{}); } }catch(e){} }
