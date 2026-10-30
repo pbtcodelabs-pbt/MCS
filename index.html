@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR083">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR083">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR084">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR084">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1839,6 +1839,17 @@ html.mcs-dark #homeAds .ad-tx b,html.mcs-dark #homeAds .ad-tx span{color:#ffe2a8
 .vf-edit{background:#fff;color:#b45309;border:2px solid #f59e0b;box-shadow:0 4px 0 #f5d08a;}
 .vf-done{padding:8px 10px;border-radius:12px;background:#dcfce7;color:#15803d;font-weight:800;text-align:center;}
 .vf-done.big{font-size:17px;line-height:1.9;padding:18px 12px;}
+/* MCS3010FR084: ہوم کی اونچائی ناپ کر — اشتہار کا ڈبہ اتنا ہی کہ ایپس کی پٹی نیچے بٹنوں کے بالکل اوپر رہے */
+body.nav-on #screen-home.active{min-height:0 !important;}
+#screen-home #ourApps{margin-top:0 !important;}
+#screen-home #homeAds.fitted{flex:none !important;min-height:0 !important;}
+#screen-home #homeAds.fitted .ad-card{min-height:0 !important;height:100%;box-sizing:border-box;overflow:hidden;}
+#homeAds.tight .ad-card{padding:6px 10px 10px !important;}
+#homeAds.tight .ad-ic{width:36px !important;height:36px !important;font-size:20px !important;}
+#homeAds.tight .ad-tx b{font-size:16px !important;}
+#homeAds.tight .ad-tx span{white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis;font-size:11.5px !important;}
+#homeAds.tight .ad-ribbon,#homeAds.tight .ad-tag{display:none;}
+#homeAds.tight .ad-go a,#homeAds.tight .ad-go button{min-height:30px !important;font-size:12.5px !important;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -3042,9 +3053,9 @@ html.mcs-dark #homeAds .ad-tx b,html.mcs-dark #homeAds .ad-tx span{color:#ffe2a8
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR083";
+const APP_VERSION = "MCS3010FR084";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "دکاندار لنک سے خود تصدیق یا ترمیم بھیجے؛ ایڈمن میں ترمیم کی درخواستیں";
+const UPDATE_NOTE = "ایپس کی پٹی ہر فون پر نیچے بٹنوں کے اوپر؛ کارڈ پر صفر گنتی نہیں دکھتی";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5561,7 +5572,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR083';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR084';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5722,7 +5733,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR083';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR084';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9457,8 +9468,13 @@ const stCache = {};
 let stTimer = 0;
 function stCardKey(card){ const a = card.querySelector('a[href^="tel:"]'); return a ? stKey(a.getAttribute('href').slice(4)) : ''; }
 function stLineHtml(v){
-  v = v || {}; const call = v.call||0, wa = v.wa||0, sms = v.sms||0, t = (v.callToday||0) + (v.waToday||0) + (v.smsToday||0);
-  return `📊 اس مہینے ایپ سے: <b>${call}</b> کال • <b>${wa}</b> واٹس ایپ${sms?` • <b>${sms}</b> میسج`:''}${t?` <span class="st-t">(آج ${t})</span>`:''}`;
+  /* MCS3010FR084: صفر کبھی نہیں دکھانا — جو گنتی ہو صرف وہی؛ کچھ نہ ہو تو لائن ہی نہیں */
+  v = v || {};
+  const nm = {call:'کال', wa:'واٹس ایپ', sms:'میسج'};
+  const part = suf=>['call','wa','sms'].filter(k=>(v[k+suf]||0) > 0).map(k=>`<b>${v[k+suf]}</b> ${nm[k]}`).join(' • ');
+  const month = part(''), today = part('Today');
+  if(!month) return '';
+  return `📊 ایپ سے رابطے — اس مہینے: ${month}${today ? ` <span class="st-t">(آج: ${today})</span>` : ''}`;
 }
 async function stFillCards(){
   const cards = Array.from(document.querySelectorAll('.screen.active .doc-card, .screen.active .ub-row')).filter(c=>!c.dataset.st);
@@ -9468,7 +9484,7 @@ async function stFillCards(){
   const uniq = Array.from(new Set(need)).slice(0, 80);
   if(uniq.length){ try{ const r = await fetch(ST_URL + '?days=30&recs=' + uniq.join(',')); const j = await r.json(); uniq.forEach(k=>{ stCache[k] = {t: Date.now(), v: j[k] || {}}; }); }catch(e){ return; } }
   try{ vfApply(); }catch(e){}
-  cards.forEach(c=>{ const k = c.dataset.st; if(!k || k==='-' || !stCache[k]) return; let l = c.querySelector(':scope > .st-line'); if(!l){ l = document.createElement('div'); l.className = 'st-line'; c.appendChild(l); } l.innerHTML = stLineHtml(stCache[k].v); });
+  cards.forEach(c=>{ const k = c.dataset.st; if(!k || k==='-' || !stCache[k]) return; const h = stLineHtml(stCache[k].v); let l = c.querySelector(':scope > .st-line'); if(!h){ if(l) l.remove(); return; } if(!l){ l = document.createElement('div'); l.className = 'st-line'; c.appendChild(l); } l.innerHTML = h; });
 }
 try{ new MutationObserver(()=>{ clearTimeout(stTimer); stTimer = setTimeout(stFillCards, 700); }).observe(document.getElementById('app') || document.body, {childList:true, subtree:true}); }catch(e){}
 
@@ -9680,6 +9696,26 @@ function adRender(){
 }
 function appVh(){ try{ document.documentElement.style.setProperty('--app-vh', window.innerHeight + 'px'); }catch(e){} }
 appVh(); window.addEventListener('resize', appVh);
+/* MCS3010FR084: ہوم ایک اسکرین میں — ناپ کر اشتہار کی اونچائی (فون کے کنارے/نیچے کی پٹی کچھ بھی ہو) */
+function fitHome(){
+  try{
+    if(currentScreen !== 'home') return;
+    const ads = document.getElementById('homeAds'), apps = document.getElementById('ourApps');
+    const nav = document.getElementById('bnav'); if(!ads || !apps) return;
+    const limit = (nav && nav.getBoundingClientRect().height ? nav.getBoundingClientRect().top : window.innerHeight) - 6;
+    ads.classList.add('fitted');
+    const cur = ads.getBoundingClientRect().height;
+    const want = Math.round(cur + (limit - apps.getBoundingClientRect().bottom));
+    const h = Math.max(56, Math.min(want, 260));
+    ads.style.height = h + 'px';
+    ads.classList.toggle('tight', h < 90);
+  }catch(e){}
+}
+let fitT = 0; function fitHomeSoon(){ clearTimeout(fitT); fitT = setTimeout(()=>requestAnimationFrame(fitHome), 60); }
+window.addEventListener('resize', fitHomeSoon);
+try{ new MutationObserver(fitHomeSoon).observe(document.getElementById('screen-home'), {childList:true, subtree:true, attributes:true, attributeFilter:['class']}); }catch(e){}
+setTimeout(fitHome, 300); setTimeout(fitHome, 1500); setTimeout(fitHome, 4000);
+try{ document.fonts && document.fonts.ready.then(fitHomeSoon); }catch(e){}
 function adTick(){ adIdx++; adRender(); }
 function adStart(){ adRender(); clearInterval(adTimer); adTimer = setInterval(()=>{ if(currentScreen==='home' && !document.hidden) adTick(); }, 6000); }
 function adOpenAdmin(){ openModal('adsModal'); adRenderAdmin(); }
