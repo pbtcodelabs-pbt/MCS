@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR093">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR093">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR094">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR094">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1899,6 +1899,38 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
 .ad-freechk small{color:#64748b;font-weight:700;}
 .ad-ftag{font-size:11px;background:#fef3c7;color:#b45309;border-radius:6px;padding:0 5px;}
 .ad-ftag.paid{background:#dcfce7;color:#15803d;}
+/* اشتہار آنے کے انداز */
+#homeAds .ad-card{transform-origin:center;backface-visibility:hidden;}
+#homeAds{perspective:900px;}
+@keyframes adSlideIn{from{transform:translateX(-105%);opacity:.2}to{transform:none;opacity:1}}
+@keyframes adSlideBack{from{transform:translateX(105%);opacity:.2}to{transform:none;opacity:1}}
+@keyframes adZoomIn{from{transform:scale(.55);opacity:0}to{transform:none;opacity:1}}
+@keyframes adZoomOut{from{transform:scale(1.35);opacity:0}to{transform:none;opacity:1}}
+@keyframes adFlip{from{transform:rotateY(90deg);opacity:.3}to{transform:none;opacity:1}}
+@keyframes adFlipX{from{transform:rotateX(-90deg);opacity:.3}to{transform:none;opacity:1}}
+@keyframes adSpin{from{transform:rotate(-20deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes adBounce{0%{transform:translateY(-60px);opacity:0}60%{transform:translateY(8px);opacity:1}80%{transform:translateY(-4px)}100%{transform:none}}
+@keyframes adFade{from{opacity:0}to{opacity:1}}
+#homeAds .fx-slide{animation:adSlideIn .55s cubic-bezier(.2,.8,.2,1);}
+#homeAds .fx-slide.fx-back{animation-name:adSlideBack;}
+#homeAds .fx-zoomin{animation:adZoomIn .55s cubic-bezier(.2,.8,.2,1);}
+#homeAds .fx-zoomout{animation:adZoomOut .55s ease-out;}
+#homeAds .fx-flip{animation:adFlip .6s ease-out;}
+#homeAds .fx-flipx{animation:adFlipX .6s ease-out;}
+#homeAds .fx-spin{animation:adSpin .6s cubic-bezier(.2,.8,.2,1);}
+#homeAds .fx-bounce{animation:adBounce .7s ease-out;}
+#homeAds .fx-fade{animation:adFade .7s ease;}
+@media (prefers-reduced-motion: reduce){#homeAds .ad-card{animation:none !important;}}
+#homeAds .ad-dots i{cursor:pointer;}
+.ad-cfg-row{display:flex;align-items:center;gap:8px;margin:6px 0;}
+.ad-cfg-row label{flex:1;font-weight:800;}
+.ad-cfg-row button{width:40px;height:40px;border-radius:12px;border:1.5px solid #0f766e;background:#fff;color:#0f766e;font-size:20px;font-weight:800;}
+.ad-cfg-row b{min-width:90px;text-align:center;font-size:15px;}
+.ad-cfg-h{font-weight:800;color:#0f766e;margin:8px 0 4px;}
+.ad-fx{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.ad-fx button{min-height:40px;border-radius:12px;border:1.5px solid #cfe3df;background:#f7fbfa;font-family:inherit;font-weight:700;font-size:13.5px;color:var(--text);}
+.ad-fx button.on{background:linear-gradient(135deg,#0d3b66,#0f766e);color:#fff;border-color:transparent;}
+@media (min-width:700px){.ad-fx{grid-template-columns:repeat(3,1fr);}}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -2492,6 +2524,14 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
     <button class="modal-close" onclick="closeModal('adsModal')">×</button>
     <h3>📢 اشتہار لگائیں</h3>
     <div style="clear:both;"></div>
+    <div class="backup-card ad-cfg">
+      <div class="backup-card-title">⏱️ اشتہار بدلنے کا وقت اور انداز</div>
+      <div class="ad-cfg-row"><label>🏪 دکان کا اشتہار</label><button type="button" onclick="adCfgStep('paidMs',-500)">−</button><b id="adCfgPaid"></b><button type="button" onclick="adCfgStep('paidMs',500)">+</button></div>
+      <div class="ad-cfg-row"><label>📢 اپنا پیغام</label><button type="button" onclick="adCfgStep('promoMs',-500)">−</button><b id="adCfgPromo"></b><button type="button" onclick="adCfgStep('promoMs',500)">+</button></div>
+      <div class="ad-cfg-h">✨ آنے کا انداز</div>
+      <div class="ad-fx" id="adFxPick"></div>
+      <button type="button" class="btn block accent" style="margin-top:8px" onclick="adCfgSave()">💾 وقت اور انداز محفوظ کریں</button>
+    </div>
     <div id="adsList" class="nt-list"></div>
     <div class="backup-card" style="margin-top:10px;">
       <div class="backup-card-title">➕ نیا اشتہار</div>
@@ -3142,9 +3182,9 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR093";
+const APP_VERSION = "MCS3010FR094";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "مفت اشتہار اب صرف پہلی 5 دکانوں کے لیے";
+const UPDATE_NOTE = "اشتہار انگلی سے کھسکائیں، وقت اور انداز؛ لوکیشن سے خود قریب ترین شہر";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5661,7 +5701,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR093';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR094';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5822,7 +5862,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR093';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR094';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -8308,7 +8348,7 @@ function initFirebaseSync(){
 
   // Ticker messages + appearance (edited via 7-tap secret on the ticker strip) sync here to every device
   /* MCS2910TH071: ایڈمن کے لگائے ریٹ (پٹرول وغیرہ) */
-  FB.onSnapshot(FB.doc(FB.db,'appConfig','ads'), (snap)=>{ try{ adList = (snap.exists() && snap.data().list) || []; adFreeStored = Math.max(adFreeStored, (snap.exists() && +snap.data().freeCount) || 0); localStorage.setItem('mcsAds', JSON.stringify(adList)); localStorage.setItem('mcsAdFree', adFreeStored); adRender(); adRenderAdmin(); }catch(e){} }, ()=>{});
+  FB.onSnapshot(FB.doc(FB.db,'appConfig','ads'), (snap)=>{ try{ adList = (snap.exists() && snap.data().list) || []; adFreeStored = Math.max(adFreeStored, (snap.exists() && +snap.data().freeCount) || 0); if(snap.exists() && snap.data().cfg){ adCfg = Object.assign(adCfg, snap.data().cfg); localStorage.setItem('mcsAdCfg', JSON.stringify(adCfg)); adCfgRender(); } localStorage.setItem('mcsAds', JSON.stringify(adList)); localStorage.setItem('mcsAdFree', adFreeStored); adRender(); adRenderAdmin(); }catch(e){} }, ()=>{});
   FB.onSnapshot(FB.doc(FB.db,'appConfig','verified'), (snap)=>{ try{ if(snap.exists()){ const m = snap.data().m || {}; vfMap = {}; Object.keys(m).forEach(k=>{ if(m[k]) vfMap[k] = m[k]; }); localStorage.setItem('mcsVerified', JSON.stringify(vfMap)); vfApply(); if(document.getElementById('notifyModal').classList.contains('active')) ntRender(); } }catch(e){} }, ()=>{});
   FB.onSnapshot(FB.doc(FB.db,'appConfig','notified'), (snap)=>{ try{ if(snap.exists()){ ntSent = Object.assign({}, ntSent, snap.data().m || {}); localStorage.setItem('mcsNotified', JSON.stringify(ntSent)); if(document.getElementById('notifyModal').classList.contains('active')) ntRender(); } }catch(e){} }, ()=>{});
   FB.onSnapshot(FB.doc(FB.db,'appConfig','rates'), (snap)=>{ if(snap.exists()){ ccAdmin = snap.data()||{}; ccLS('mcsRatesAdmin', ccAdmin); ccShowRates(); ccClock(); } }, ()=>{});
@@ -9786,8 +9826,9 @@ function adRender(){
   let go = '';
   if(a.promo){ go = a.add ? `<button type="button" onclick="toggleAddStrip('business')">➕ دکان درج کریں</button>` : `<a href="${escapeAttr(a.wa)}" target="_blank" rel="noopener">💬 رابطہ کریں</a>`; }
   else { const d = String(a.phone||'').replace(/[^0-9]/g,''); if(d){ go = `<a class="ad-call" href="tel:${d}">📞 کال</a><a href="https://wa.me/92${d.replace(/^0/,'')}" target="_blank" rel="noopener">💬 واٹس ایپ</a>`; } }
-  box.innerHTML = `<div class="ad-card${a.promo?'':' paid'}"${a.promo?'':` onclick="if(!event.target.closest('a,button'))adView(${a.id})"`}><span class="ad-tag">${a.promo?'📢 اشتہار کی جگہ':'AD • اشتہار'}</span>${a.promo?'<span class="ad-ribbon">خالی</span>':''}<div class="ad-row">${(!a.promo && a.img) ? (adImgCache[a.img] ? `<img class="ad-vc" src="${adImgCache[a.img]}" alt="" >` : (adImg(a.img), '<span class="ad-ic">🏪</span>')) : `<span class="ad-ic">${a.promo ? a.ic : '🏪'}</span>`}<div class="ad-tx"><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.line||'')}</span>${a.freeBar ? adFreeBar() : ''}</div></div><div class="ad-go">${go}</div>${isAdminSignedIn?'<button type="button" class="ad-admin" onclick="adOpenAdmin()">⚙️</button>':''}</div>`
-    + (sl.length > 1 ? `<div class="ad-dots">${sl.map((_,i)=>`<i class="${i===adIdx?'on':''}"></i>`).join('')}</div>` : '');
+  const fx = adAnim; adAnim = '';
+  box.innerHTML = `<div class="ad-card${a.promo?'':' paid'}${fx && fx!=='none' ? ' fx-' + fx + (adDir < 0 ? ' fx-back' : '') : ''}"${a.promo?'':` onclick="if(!event.target.closest('a,button'))adView(${a.id})"`}><span class="ad-tag">${a.promo?'📢 اشتہار کی جگہ':'AD • اشتہار'}</span>${a.promo?'<span class="ad-ribbon">خالی</span>':''}<div class="ad-row">${(!a.promo && a.img) ? (adImgCache[a.img] ? `<img class="ad-vc" src="${adImgCache[a.img]}" alt="" >` : (adImg(a.img), '<span class="ad-ic">🏪</span>')) : `<span class="ad-ic">${a.promo ? a.ic : '🏪'}</span>`}<div class="ad-tx"><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.line||'')}</span>${a.freeBar ? adFreeBar() : ''}</div></div><div class="ad-go">${go}</div>${isAdminSignedIn?'<button type="button" class="ad-admin" onclick="adOpenAdmin()">⚙️</button>':''}</div>`
+    + (sl.length > 1 ? `<div class="ad-dots">${sl.map((_,i)=>`<i class="${i===adIdx?'on':''}" onclick="event.stopPropagation();adHold=Date.now()+20000;adGo(${i}-adIdx||0)"></i>`).join('')}</div>` : '');
 }
 function appVh(){ try{ document.documentElement.style.setProperty('--app-vh', window.innerHeight + 'px'); }catch(e){} }
 appVh(); window.addEventListener('resize', appVh);
@@ -9934,15 +9975,45 @@ function adRecPick(k){
   }, 350);
 }
 try{ document.getElementById('adRecCats').addEventListener('click', e=>{ const b = e.target.closest('button[data-k]'); if(b) adRecPick(b.dataset.k); }); }catch(e){}
-function adTick(){ adIdx++; adRender(); }
+/* MCS3010FR094: اشتہار — انگلی سے کھسکائیں، ایڈمن کا وقت (آدھے سیکنڈ تک) اور آنے کے انداز (appConfig/ads.cfg) */
+const AD_FX = [['auto','🎲 خودکار (ہر بار نیا)'],['slide','➡️ کھسک کر'],['zoomin','🔍 بڑا ہو کر'],['zoomout','🔎 چھوٹا ہو کر'],['flip','🔄 پلٹ کر'],['flipx','🔃 اوپر سے پلٹ کر'],['spin','🌀 گھوم کر'],['bounce','⬇️ اچھل کر'],['fade','🌫️ دھیرے سے'],['none','⏸️ بغیر انداز']];
+let adCfg = {paidMs:15000, promoMs:6000, effect:'auto'};
+try{ adCfg = Object.assign(adCfg, JSON.parse(localStorage.getItem('mcsAdCfg')||'{}')); }catch(e){}
+let adCfgDraft = null, adAnim = '', adDir = 1;
+function adSec(ms){ return (ms/1000).toLocaleString('en-US', {maximumFractionDigits:1}) + ' سیکنڈ'; }
+function adCfgRender(){
+  const d = adCfgDraft || adCfg;
+  const a = document.getElementById('adCfgPaid'), b = document.getElementById('adCfgPromo'); if(a) a.textContent = adSec(d.paidMs); if(b) b.textContent = adSec(d.promoMs);
+  const f = document.getElementById('adFxPick'); if(f) f.innerHTML = AD_FX.map(([k,t])=>`<button type="button" class="${d.effect===k?'on':''}" data-fx="${k}">${t}</button>`).join('');
+}
+function adCfgStep(k, delta){ adCfgDraft = adCfgDraft || Object.assign({}, adCfg); adCfgDraft[k] = Math.max(1000, Math.min(120000, (adCfgDraft[k]||5000) + delta)); adCfgRender(); }
+function adCfgSave(){
+  const c = Object.assign({}, adCfg, adCfgDraft||{}); adCfg = c; adCfgDraft = null;
+  try{ localStorage.setItem('mcsAdCfg', JSON.stringify(c)); }catch(e){}
+  const FB = window.MCSFirebase; if(FB) FB.setDoc(FB.doc(FB.db,'appConfig','ads'), {cfg: c}, {merge:true}).then(()=>showToast('✓ وقت اور انداز محفوظ — سب کے فون پر')).catch(e=>alert('محفوظ نہیں ہوا: ' + (e.code||e.message)));
+  adCfgRender(); adGo(1);
+}
+function adPickFx(){ const e = (adCfgDraft||adCfg).effect || 'auto'; if(e !== 'auto') return e; const list = AD_FX.map(x=>x[0]).filter(k=>!['auto','none'].includes(k)); return list[Math.floor(Math.random()*list.length)]; }
+function adGo(dir){ adDir = dir; adAnim = adPickFx(); const n = adSlides().length || 1; adIdx = (adIdx + dir + n) % n; adShownAt = Date.now(); adRender(); }
+try{
+  document.getElementById('adFxPick').addEventListener('click', e=>{ const b = e.target.closest('button[data-fx]'); if(!b) return; adCfgDraft = adCfgDraft || Object.assign({}, adCfg); adCfgDraft.effect = b.dataset.fx; adCfgRender(); adGo(1); });
+  /* انگلی سے کھسکائیں */
+  const box = document.getElementById('homeAds'); let sx = 0, sy = 0, st = 0;
+  box.addEventListener('touchstart', e=>{ const t = e.touches[0]; sx = t.clientX; sy = t.clientY; st = Date.now(); }, {passive:true});
+  box.addEventListener('touchend', e=>{ const t = e.changedTouches[0]; const dx = t.clientX - sx, dy = t.clientY - sy;
+    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3 && Date.now() - st < 900){ adHold = Date.now() + 20000; adGo(dx < 0 ? 1 : -1); } }, {passive:true});
+  /* کمپیوٹر/کروم بک: ماؤس سے کھینچیں */
+  let mx = null; box.addEventListener('mousedown', e=>{ mx = e.clientX; }); window.addEventListener('mouseup', e=>{ if(mx === null) return; const dx = e.clientX - mx; mx = null; if(Math.abs(dx) > 50){ adHold = Date.now() + 20000; adGo(dx < 0 ? 1 : -1); } });
+}catch(e){}
+function adTick(){ adGo(1); }
 /* MCS3010FR090: اشتہار زیادہ دیر — دکان کا 15 سیکنڈ، اپنے پیغام 6؛ انگلی لگے یا اشتہار کھلا ہو تو رکے */
 let adHold = 0, adShownAt = Date.now();
 function adStart(){
   adRender(); clearInterval(adTimer);
   adTimer = setInterval(()=>{
     if(currentScreen!=='home' || document.hidden || Date.now() < adHold || document.getElementById('adViewModal').classList.contains('active')) return;
-    const sl = adSlides(), a = sl[adIdx % (sl.length||1)]; const dur = a && !a.promo ? 15000 : 6000;
-    if(Date.now() - adShownAt >= dur){ adShownAt = Date.now(); adTick(); }
+    const sl = adSlides(), a = sl[adIdx % (sl.length||1)]; const dur = a && !a.promo ? (adCfg.paidMs||15000) : (adCfg.promoMs||6000);
+    if(Date.now() - adShownAt >= dur){ adTick(); }
   }, 1000);
   const box = document.getElementById('homeAds'); if(box) ['pointerdown','touchstart'].forEach(ev=>box.addEventListener(ev, ()=>{ adHold = Date.now() + 20000; }, {passive:true}));
 }
@@ -9967,7 +10038,7 @@ async function adView(id){
   openModal('adViewModal');
   if(a.img && !adImgCache[a.img]){ delete adImgCache[a.img]; const src = await adImg(a.img); if(document.getElementById('adViewModal').classList.contains('active')) render(src || ''); if(!src) body.querySelector('.adv-load') && (body.querySelector('.adv-load').textContent = 'کارڈ کی تصویر نہیں ملی — انٹرنیٹ چیک کریں'); }
 }
-function adOpenAdmin(){ openModal('adsModal'); adRenderAdmin(); }
+function adOpenAdmin(){ openModal('adsModal'); adCfgDraft = null; adCfgRender(); adRenderAdmin(); }
 function adRenderAdmin(){
   const box = document.getElementById('adsList'); if(!box) return;
   const fi = document.getElementById('adFreeInfo'); if(fi) fi.textContent = `— ${adFreeUsed()}/${AD_FREE_TOTAL} لگ چکے، ${adFreeLeft()} باقی`;
@@ -10114,14 +10185,26 @@ function ccMatchCity(cands){
 }
 function ccActiveCity(){
   const pick = ccLS('mcsCityPick'); if(pick && pick.city) return pick.city;
-  const g = ccLS('mcsGeo'); if(g && g.cands){ return ccMatchCity(g.cands); }
+  const g = ccLS('mcsGeo'); if(g && g.cands){ const m = ccMatchCity(g.cands); if(m) return m; if(g.near && g.near.km <= 60 && ccCityList().some(x=>x.city===g.near.city)) return g.near.city; }
   return '';
+}
+/* MCS3010FR094: لوکیشن والے شہر کا ریکارڈ نہ ہو تو قریب ترین ریکارڈ والا شہر (کلومیٹر کے ساتھ) */
+function ccKm(a, b){ const R = 6371, r = x=>x*Math.PI/180, dLa = r(b.lat-a.lat), dLo = r(b.lon-a.lon); const h = Math.sin(dLa/2)**2 + Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
+async function ccNearest(lat, lon){
+  let best = null;
+  for(const x of ccCityList().slice(0, 25)){
+    const c = await ccCityCoords(x.city); if(!c) continue;
+    const km = ccKm({lat, lon}, c); if(!best || km < best.km) best = {city: x.city, km: Math.round(km)};
+  }
+  return best;
 }
 function ccShowCity(){
   const e = document.getElementById('ccCity'); if(!e) return;
   const act = ccActiveCity(), g = ccLS('mcsGeo');
   e.textContent = act || (g && g.city ? ccCleanName(g.city) : 'شہر چنیں');
-  const nc = document.getElementById('ccNoCity'); if(nc) nc.textContent = (!act && g && g.city && ccCityList().length) ? 'اس شہر کا ابھی ریکارڈ نہیں — ٹچ کر کے شہر چنیں' : '';
+  const pick = ccLS('mcsCityPick');
+  const viaNear = !(pick && pick.city) && act && g && g.near && g.near.city === act && !ccMatchCity(g.cands||[]);
+  const nc = document.getElementById('ccNoCity'); if(nc) nc.textContent = viaNear ? `📍 آپ ${ccCleanName(g.city)} میں ہیں — قریب ترین شہر (${g.near.km} کلومیٹر)` : ((!act && g && g.city && ccCityList().length) ? 'اس شہر کا ابھی ریکارڈ نہیں — ٹچ کر کے شہر چنیں' : '');
 }
 let ccLastApplied = null;
 /* چنا ہوا شہر ہوم کے فلٹر اور فہرستوں میں سب سے اوپر */
@@ -10183,7 +10266,10 @@ async function ccCityWeather(){
 }
 async function ccLocate(force){
   const geo = ccLS('mcsGeo');
-  if(!force && geo && geo.city && geo.cands && Date.now()-geo.ts < 6*3600e3){ ccApplyCity(); ccCityWeather(); return; }
+  /* MCS3010FR094: لوکیشن کی اجازت پہلے سے ہو تو ہر بار کھلنے پر (10 منٹ میں ایک بار) تازہ جگہ — بندہ جہاں ہو وہیں کا شہر */
+  let granted = false; try{ if(navigator.permissions){ const ps = await navigator.permissions.query({name:'geolocation'}); granted = ps.state === 'granted'; } }catch(e){}
+  const fresh = geo && geo.city && geo.cands && Date.now()-geo.ts < (granted ? 10*60e3 : 6*3600e3);
+  if(!force && fresh){ ccApplyCity(); ccCityWeather(); return; }
   if(!navigator.geolocation){ return; }
   if(force) showToast('📍 لوکیشن معلوم کی جا رہی ہے...', 2000);
   navigator.geolocation.getCurrentPosition(async pos=>{
@@ -10196,9 +10282,12 @@ async function ccLocate(force){
       }catch(e){}
     }
     const v = {lat, lon, city: city || (geo && geo.city) || '', cands, ts: Date.now()};
-    ccLS('mcsGeo', v); ccApplyCity(true); ccCityWeather();
+    if(!ccMatchCity(cands)){ try{ v.near = await ccNearest(lat, lon); }catch(e){} }
+    const prevAct = ccActiveCity();
+    ccLS('mcsGeo', v); ccApplyCity(ccActiveCity() !== prevAct || !!force); ccCityWeather();
   }, ()=>{ if(force) showToast('لوکیشن نہیں ملی — فون میں لوکیشن آن کریں', 3000); }, {timeout:12000, maximumAge:30*60e3});
 }
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && !ccLS('mcsCityPick')) setTimeout(()=>ccLocate(false), 800); });
 function ccShowRates(){
   const r = ccLS('mcsRates') || {};
   const usd = ccAdmin.dollar || r.usdPkr, gold = ccAdmin.gold || r.goldTola;
