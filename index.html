@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR087">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR087">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR088">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR088">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1850,6 +1850,8 @@ body.nav-on #screen-home.active{min-height:0 !important;}
 #homeAds.tight .ad-tx span{white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis;font-size:11.5px !important;}
 #homeAds.tight .ad-ribbon,#homeAds.tight .ad-tag{display:none;}
 #homeAds.tight .ad-go a,#homeAds.tight .ad-go button{min-height:30px !important;font-size:12.5px !important;}
+.ad-vcrow{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;}
+.ad-vcgal{background:#fff !important;color:#0f766e !important;border:2px solid #0f766e;box-shadow:0 3px 0 #b7d3cf !important;}
 .ad-vcbtn{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;background:linear-gradient(135deg,#0d3b66,#0f766e);color:#fff;font-weight:800;font-size:15px;margin:4px 0 6px;cursor:pointer;box-shadow:0 3px 0 #072a49;}
 .ad-vcprev{display:block;max-width:100%;max-height:180px;margin:6px auto;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.2);}
 #homeAds .ad-vc{flex:0 0 auto;height:100%;max-height:120px;min-height:44px;width:auto;max-width:42%;object-fit:contain;border-radius:10px;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18);cursor:zoom-in;align-self:center;}
@@ -2454,7 +2456,10 @@ body.nav-on #screen-home.active{min-height:0 !important;}
     <div id="adsList" class="nt-list"></div>
     <div class="backup-card" style="margin-top:10px;">
       <div class="backup-card-title">➕ نیا اشتہار</div>
-      <label class="ad-vcbtn">📷 وزٹنگ کارڈ سے بنائیں — تصویر لیں / چنیں<input type="file" accept="image/*" id="adCardInput" onchange="onAdCard(this)" hidden></label>
+      <div class="ad-vcrow">
+        <label class="ad-vcbtn">📷 کیمرے سے وزٹنگ کارڈ<input type="file" accept="image/*" capture="environment" id="adCardCam" onchange="onAdCard(this)" hidden></label>
+        <label class="ad-vcbtn ad-vcgal">🖼️ گیلری سے<input type="file" accept="image/*" id="adCardInput" onchange="onAdCard(this)" hidden></label>
+      </div>
       <div id="adCardStatus" class="cp-hint"></div>
       <img id="adCardPrev" class="ad-vcprev" alt="" hidden>
       <div class="field"><label>دکان کا نام / عنوان</label><input type="text" id="adTitle" placeholder="مثلاً: مدینہ ہارڈویئر"></div>
@@ -3064,9 +3069,9 @@ body.nav-on #screen-home.active{min-height:0 !important;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR087";
+const APP_VERSION = "MCS3010FR088";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "وزٹنگ کارڈ سے اشتہار — AI کارڈ پڑھے، کارڈ اشتہار میں نظر آئے";
+const UPDATE_NOTE = "وزٹنگ کارڈ: کیمرے سے سیدھی تصویر یا گیلری سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5583,7 +5588,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR087';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR088';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5744,7 +5749,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR087';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR088';
 
     function finishFooter(){
       const fY = 770, fH = 220;
