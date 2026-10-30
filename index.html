@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR092">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR092">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR093">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR093">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -2507,7 +2507,7 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
       <div class="field"><label>سب نمبر نام کے ساتھ (ہر لائن میں ایک)</label><textarea id="adContacts" rows="3" style="unicode-bidi:plaintext;text-align:right" placeholder="عبدالستار: 0320-6378201"></textarea></div>
       <div class="field"><label>پتہ</label><input type="text" id="adAddr" placeholder="مثلاً: لنک روڈ، اڈا 214"></div>
       <div class="field"><label>کتنے دن چلے</label><input type="number" id="adDays" value="30" min="1" max="365"></div>
-      <label class="ad-freechk"><input type="checkbox" id="adFree" checked> 🎁 مفت تعارفی اشتہار (پہلے 10 میں سے) <small id="adFreeInfo"></small></label>
+      <label class="ad-freechk"><input type="checkbox" id="adFree" checked> 🎁 مفت تعارفی اشتہار (پہلے 5 میں سے) <small id="adFreeInfo"></small></label>
       <input type="hidden" id="adEditId">
       <button class="btn block accent" id="adSaveBtn" onclick="adSave()">✅ اشتہار لگائیں</button>
     </div>
@@ -3142,9 +3142,9 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR092";
+const APP_VERSION = "MCS3010FR093";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "پہلے 10 مفت اشتہاروں کی گنتی — کتنے لگ چکے، کتنے باقی";
+const UPDATE_NOTE = "مفت اشتہار اب صرف پہلی 5 دکانوں کے لیے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5661,7 +5661,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR092';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR093';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5822,7 +5822,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR092';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR093';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9766,13 +9766,13 @@ function adPromos(){
   const c = store.contact || DEFAULT_CONTACT; const raw = String(c.whatsapp||'').replace(/[^0-9]/g,'').replace(/^0/,'');
   const wa = 'https://wa.me/92' + raw + '?text=' + encodeURIComponent('السلام علیکم! میں My City Shines ایپ میں اپنی دکان کا اشتہار لگوانا چاہتا ہوں۔\n\nمیرے کاروبار اور دکان کی تفصیلات یہ ہیں:\n🏪 دکان کا نام: \n👤 میرا نام: \n📞 موبائل / واٹس ایپ نمبر: \n🗂️ کاروبار کی قسم: \n📍 شہر / علاقہ: \n📝 اشتہار میں کیا لکھنا ہے (آفر / تعارف): \n⏳ کتنے دن کے لیے: ');
   return [
-    ...(adFreeLeft() > 0 ? [{promo:1, ic:'🎁', title:'پہلی 10 دکانوں کا اشتہار مفت!', line: adFreeUsed() ? `${adFreeUsed()} ${adFreeUsed()===1?'دکان':'دکانوں'} کا اشتہار لگ چکا — صرف ${adFreeLeft()} باقی، اگلی دکان آپ کی ہو سکتی ہے!` : 'ایک مہینہ بالکل مفت — پہلی 10 دکانوں میں آپ بھی شامل ہوں', wa, freeBar:1}] : []),
+    ...(adFreeLeft() > 0 ? [{promo:1, ic:'🎁', title:'پہلی 5 دکانوں کا اشتہار مفت!', line: adFreeUsed() ? `${adFreeUsed()} ${adFreeUsed()===1?'دکان':'دکانوں'} کا اشتہار لگ چکا — صرف ${adFreeLeft()} باقی، اگلی دکان آپ کی ہو سکتی ہے!` : 'ایک مہینہ بالکل مفت — پہلی 5 دکانوں میں آپ بھی شامل ہوں', wa, freeBar:1}] : []),
     {promo:1, ic:'📢', title:'اپنی دکان کا اشتہار یہاں لگوائیں', line:'شہر کے لوگ روز یہ ایپ کھولتے ہیں — سب سے پہلے آپ کی دکان نظر آئے', wa},
     {promo:1, ic:'🏪', title:'اپنی دکان مفت درج کروائیں', line:'ایپ میں اپنا نمبر ڈالیں، گاہک سیدھا آپ کو کال کریں', add:1}
   ];
 }
-/* MCS3010FR092: پہلے 10 مفت اشتہار — گنتی (appConfig/ads.freeCount)؛ پرانے اشتہار بھی مفت گنے */
-const AD_FREE_TOTAL = 10; let adFreeStored = 0;
+/* MCS3010FR093: پہلے 5 مفت اشتہار (مالک کی ہدایت؛ پہلے 10 تھے) — گنتی (appConfig/ads.freeCount)؛ پرانے اشتہار بھی مفت گنے */
+const AD_FREE_TOTAL = 5; let adFreeStored = 0;
 try{ adFreeStored = +localStorage.getItem('mcsAdFree') || 0; }catch(e){}
 function adFreeUsed(){ return Math.min(AD_FREE_TOTAL, Math.max(adFreeStored, (adList||[]).filter(a=>a && a.free !== false).length)); }
 function adFreeLeft(){ return Math.max(0, AD_FREE_TOTAL - adFreeUsed()); }
@@ -9970,7 +9970,7 @@ async function adView(id){
 function adOpenAdmin(){ openModal('adsModal'); adRenderAdmin(); }
 function adRenderAdmin(){
   const box = document.getElementById('adsList'); if(!box) return;
-  const fi = document.getElementById('adFreeInfo'); if(fi) fi.textContent = `— ${adFreeUsed()}/10 لگ چکے، ${adFreeLeft()} باقی`;
+  const fi = document.getElementById('adFreeInfo'); if(fi) fi.textContent = `— ${adFreeUsed()}/${AD_FREE_TOTAL} لگ چکے، ${adFreeLeft()} باقی`;
   const fc = document.getElementById('adFree'); if(fc && !document.getElementById('adEditId').value) fc.checked = adFreeLeft() > 0;
   const now = Date.now();
   box.innerHTML = (adList||[]).length ? adList.map((a,i)=>`<div class="nt-row${a.until && a.until < now ? ' sent':''}"><div class="nm"><b>${a.free !== false ? '<span class="ad-ftag">🎁 مفت</span> ' : '<span class="ad-ftag paid">💰</span> '}${escapeHtml(a.title)}</b><small>${escapeHtml(a.phone||'')}</small> <small>${a.until ? (a.until < now ? 'ختم ہو گیا' : 'آخری تاریخ ' + new Date(a.until).toLocaleDateString('en-GB')) : ''}</small></div><div style="display:flex;flex-direction:column;gap:4px">${adInRecords(a) ? '<small class="adrec-ok">📋 ریکارڈ میں ہے</small>' : `<button type="button" class="adrec-add" onclick="adAskRecord(adList[${i}])">➕ ریکارڈ میں درج</button>`}<button type="button" onclick="adEdit(${i})">✏️ ترمیم</button><button type="button" class="del" onclick="adDelete(${i})">🗑️ ہٹائیں</button></div></div>`).join('') : '<div class="cp-hint">ابھی کوئی اشتہار نہیں — جگہ پر «یہاں اشتہار لگوائیں» کے پیغام چل رہے ہیں</div>';
