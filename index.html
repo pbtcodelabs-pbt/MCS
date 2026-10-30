@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR088">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR088">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR089">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR089">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1860,6 +1860,15 @@ body.nav-on #screen-home.active{min-height:0 !important;}
 .ad-zoom{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;}
 .ad-zoom img{max-width:100%;max-height:80vh;border-radius:12px;}
 .ad-zoom span{color:#fff;font-weight:800;background:rgba(255,255,255,.15);padding:6px 16px;border-radius:999px;}
+.crop-wrap{position:relative;margin:8px 0;text-align:center;touch-action:none;user-select:none;background:#111;border-radius:12px;padding:6px;}
+.crop-wrap img{display:inline-block;max-width:100%;max-height:58vh;vertical-align:middle;}
+.crop-box{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.55);cursor:move;touch-action:none;}
+.crop-wrap{overflow:hidden;}
+.crop-box i{position:absolute;width:26px;height:26px;background:#f59e0b;border:3px solid #fff;border-radius:50%;touch-action:none;}
+.crop-box i[data-h=nw]{left:-14px;top:-14px;cursor:nwse-resize;}.crop-box i[data-h=ne]{right:-14px;top:-14px;cursor:nesw-resize;}
+.crop-box i[data-h=sw]{left:-14px;bottom:-14px;cursor:nesw-resize;}.crop-box i[data-h=se]{right:-14px;bottom:-14px;cursor:nwse-resize;}
+.crop-btns{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:6px;}
+.crop-btns .btn{min-height:46px;padding:0 6px;font-size:14px;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -2486,6 +2495,19 @@ body.nav-on #screen-home.active{min-height:0 !important;}
     <div id="editsList" class="nt-list">لوڈ ہو رہا ہے…</div>
   </div>
 </div>
+<div class="modal-overlay" id="cropModal" style="z-index:2147482000">
+  <div class="modal-box">
+    <h3>✂️ کارڈ والا حصہ چنیں</h3>
+    <div class="cp-hint">کونوں کو کھینچ کر صرف وزٹنگ کارڈ ڈبے میں لائیں — ڈبے کو بیچ سے پکڑ کر ہلا بھی سکتے ہیں</div>
+    <div class="crop-wrap" id="cropWrap"><img id="cropImg" alt=""><div class="crop-box" id="cropBox"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div></div>
+    <div class="crop-btns">
+      <button type="button" class="btn secondary" onclick="cropRotate()">↻ گھمائیں</button>
+      <button type="button" class="btn secondary" onclick="cropDone(true)">پوری تصویر</button>
+      <button type="button" class="btn accent" onclick="cropDone(false)">✅ کاٹ لیں</button>
+    </div>
+    <button type="button" class="link-btn" onclick="closeModal('cropModal')">منسوخ</button>
+  </div>
+</div>
 <div class="modal-overlay" id="cityPickModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('cityPickModal')">×</button>
@@ -3069,9 +3091,9 @@ body.nav-on #screen-home.active{min-height:0 !important;}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR088";
+const APP_VERSION = "MCS3010FR089";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "وزٹنگ کارڈ: کیمرے سے سیدھی تصویر یا گیلری سے";
+const UPDATE_NOTE = "وزٹنگ کارڈ کی تصویر کاٹیں (Crop) اور گھمائیں";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5588,7 +5610,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR088';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR089';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5749,7 +5771,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR088';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR089';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9737,10 +9759,62 @@ let adPendingImg = ''; const adImgCache = {};
 function adCompress(file, max, q){
   return new Promise((res, rej)=>{ const img = new Image(); img.onload = ()=>{ const sc = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(img.src); res(c.toDataURL('image/jpeg', q)); }; img.onerror = rej; img.src = URL.createObjectURL(file); });
 }
-async function onAdCard(input){
-  const f = input.files && input.files[0]; if(!f) return;
+/* MCS3010FR089: پہلے کاٹیں (Crop) — کونے کھینچیں، گھمائیں — پھر کارڈ پڑھیں */
+let cropSrc = null, cropRect = {x:.06, y:.06, w:.88, h:.88};
+function onAdCard(input){
+  const f = input.files && input.files[0]; input.value = ''; if(!f) return;
+  const img = new Image();
+  img.onload = ()=>{ const c = document.createElement('canvas'); const sc = Math.min(1, 1600 / Math.max(img.width, img.height)); c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(img.src); cropSrc = c; cropShow(); };
+  img.src = URL.createObjectURL(f);
+}
+function cropShow(){
+  const im = document.getElementById('cropImg'); im.src = cropSrc.toDataURL('image/jpeg', 0.9);
+  cropRect = {x:.06, y:.06, w:.88, h:.88};
+  openModal('cropModal'); im.onload = cropDraw;
+}
+function cropDraw(){
+  const b = document.getElementById('cropBox'), im = document.getElementById('cropImg');
+  b.style.left = (im.offsetLeft + cropRect.x*im.clientWidth) + 'px'; b.style.top = (im.offsetTop + cropRect.y*im.clientHeight) + 'px';
+  b.style.width = (cropRect.w*im.clientWidth) + 'px'; b.style.height = (cropRect.h*im.clientHeight) + 'px';
+}
+function cropRotate(){
+  const c = document.createElement('canvas'); c.width = cropSrc.height; c.height = cropSrc.width;
+  const x = c.getContext('2d'); x.translate(c.width, 0); x.rotate(Math.PI/2); x.drawImage(cropSrc, 0, 0);
+  cropSrc = c; cropShow();
+}
+(function(){
+  let drag = null;
+  const box = ()=>document.getElementById('cropBox'), im = ()=>document.getElementById('cropImg');
+  document.addEventListener('pointerdown', e=>{
+    const b = e.target.closest && e.target.closest('#cropBox'); if(!b) return;
+    e.preventDefault(); drag = {h: e.target.dataset.h || 'move', sx: e.clientX, sy: e.clientY, r: Object.assign({}, cropRect)};
+    try{ b.setPointerCapture(e.pointerId); }catch(x){}
+  });
+  document.addEventListener('pointermove', e=>{
+    if(!drag) return; e.preventDefault();
+    const W = im().clientWidth, H = im().clientHeight, dx = (e.clientX - drag.sx)/W, dy = (e.clientY - drag.sy)/H, r = Object.assign({}, drag.r), m = .06;
+    if(drag.h === 'move'){ r.x = Math.min(1 - r.w, Math.max(0, r.x + dx)); r.y = Math.min(1 - r.h, Math.max(0, r.y + dy)); }
+    else{
+      if(drag.h.includes('w')){ const nx = Math.min(r.x + r.w - m, Math.max(0, r.x + dx)); r.w += r.x - nx; r.x = nx; }
+      if(drag.h.includes('e')){ r.w = Math.min(1 - r.x, Math.max(m, r.w + dx)); }
+      if(drag.h.includes('n')){ const ny = Math.min(r.y + r.h - m, Math.max(0, r.y + dy)); r.h += r.y - ny; r.y = ny; }
+      if(drag.h.includes('s')){ r.h = Math.min(1 - r.y, Math.max(m, r.h + dy)); }
+    }
+    cropRect = r; cropDraw();
+  }, {passive:false});
+  document.addEventListener('pointerup', ()=>{ drag = null; });
+  window.addEventListener('resize', ()=>{ if(document.getElementById('cropModal').classList.contains('active')) cropDraw(); });
+})();
+function cropDone(full){
+  const r = full ? {x:0, y:0, w:1, h:1} : cropRect;
+  const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(r.w*cropSrc.width)); c.height = Math.max(1, Math.round(r.h*cropSrc.height));
+  c.getContext('2d').drawImage(cropSrc, r.x*cropSrc.width, r.y*cropSrc.height, c.width, c.height, 0, 0, c.width, c.height);
+  closeModal('cropModal');
+  c.toBlob(b=>adProcessCard(b), 'image/jpeg', 0.92);
+}
+async function adProcessCard(f){
   const st = document.getElementById('adCardStatus'), pv = document.getElementById('adCardPrev');
-  try{ adPendingImg = await adCompress(f, 760, 0.72); pv.src = adPendingImg; pv.hidden = false; }catch(e){ adPendingImg = ''; }
+  try{ adPendingImg = await adCompress(f, 760, 0.74); pv.src = adPendingImg; pv.hidden = false; }catch(e){ adPendingImg = ''; }
   st.textContent = '⏳ کارڈ پڑھا جا رہا ہے...';
   try{
     const a = await boardAiRead(f);
@@ -9753,7 +9827,6 @@ async function onAdCard(input){
       st.textContent = '✅ کارڈ پڑھ لیا — خانے دیکھ کر درست کر لیں، پھر «اشتہار لگائیں»';
     } else st.textContent = 'کارڈ صاف نہیں پڑھا گیا — خانے خود بھر دیں (تصویر اشتہار میں لگے گی)';
   }catch(e){ st.textContent = 'انٹرنیٹ درکار ہے — خانے خود بھر دیں (تصویر اشتہار میں لگے گی)'; }
-  input.value = '';
 }
 async function adImg(id){
   if(!id) return '';
