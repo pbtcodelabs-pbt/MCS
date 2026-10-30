@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR078">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR078">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR079">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR079">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -2858,9 +2858,9 @@ html.mcs-dark .theme-seg button:not(.on){background:#0D2226;border-color:#21403F
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR078";
+const APP_VERSION = "MCS3010FR079";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "رات کا رنگ (سیٹنگز میں)، ہلکے رنگ کے 6 ٹائل — کل ریکارڈ اور رابطہ بھی";
+const UPDATE_NOTE = "پٹرول کا ریٹ اب خودکار — روز خود تازہ";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5377,7 +5377,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR078';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR079';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5538,7 +5538,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR078';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR079';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9442,7 +9442,10 @@ async function ccLocate(force){
 }
 function ccShowRates(){
   const r = ccLS('mcsRates') || {};
-  const usd = ccAdmin.dollar || r.usdPkr, gold = ccAdmin.gold || r.goldTola, pet = ccAdmin.petrol;
+  const usd = ccAdmin.dollar || r.usdPkr, gold = ccAdmin.gold || r.goldTola;
+  /* MCS3010FR079: پٹرول سرور سے خودکار؛ ایڈمن کا لگایا ریٹ صرف 12 گھنٹے آگے رہتا ہے (درستی کے لیے)، یا جب خودکار نہ ملے */
+  const petFresh = ccAdmin.petrol && ccAdmin.petrolTs && Date.now() - ccAdmin.petrolTs < 12*3600e3;
+  const pet = petFresh ? ccAdmin.petrol : (r.petrol || ccAdmin.petrol);
   const set = (id,v)=>{ const e = document.getElementById(id); if(e) e.textContent = v; };
   set('ccUsd', usd ? 'Rs ' + Number(usd).toFixed(2) : '—');
   set('ccGold', ccMoney(gold)); set('ccPetrol', pet ? 'Rs ' + Number(pet).toFixed(2) : '—');
@@ -9452,17 +9455,17 @@ function ccShowRates(){
 async function ccFetchRates(){
   const old = ccLS('mcsRates');
   if(old && Date.now() - (old.ts||0) < 30*60e3){ ccShowRates(); return; }
-  try{ const r = await fetch(CC_RATES_URL); const j = await r.json(); if(j && (j.usdPkr || j.goldTola)){ ccLS('mcsRates', j); } }catch(e){}
+  try{ const r = await fetch(CC_RATES_URL); const j = await r.json(); if(j && (j.usdPkr || j.goldTola || j.petrol)){ ccLS('mcsRates', j); } }catch(e){}
   ccShowRates();
 }
 /* ایڈمن: کسی ریٹ کو دبا کر خود لگائیں (پٹرول ضروری؛ سونا/ڈالر خالی چھوڑیں تو خودکار) */
 function ccEditRate(kind){
   if(!isAdminSignedIn){ ccFetchRates(); showToast('ریٹ تازہ کیے جا رہے ہیں...', 1500); return; }
-  const lbl = {dollar:'ڈالر کا ریٹ (خالی = خودکار)', gold:'سونا فی تولہ (خالی = عالمی ریٹ سے خودکار)', petrol:'پٹرول فی لیٹر'}[kind];
+  const lbl = {dollar:'ڈالر کا ریٹ (خالی = خودکار)', gold:'سونا فی تولہ (خالی = عالمی ریٹ سے خودکار)', petrol:'پٹرول فی لیٹر (خالی = خودکار؛ لکھا ہوا 12 گھنٹے رہے گا)'}[kind];
   const v = prompt(lbl + ':', ccAdmin[kind] || ''); if(v===null) return;
   const n = parseFloat(String(v).replace(/[^0-9.]/g,''));
   const FB = window.MCSFirebase; if(!FB){ showToast('انٹرنیٹ درکار ہے'); return; }
-  const upd = {ts: Date.now()}; upd[kind] = isNaN(n) ? null : n;
+  const upd = {ts: Date.now()}; upd[kind] = isNaN(n) ? null : n; upd[kind + 'Ts'] = Date.now();
   FB.setDoc(FB.doc(FB.db,'appConfig','rates'), upd, {merge:true}).then(()=>showToast('ریٹ لگ گیا ✓ — سب کے فون پر')).catch(e=>alert('محفوظ نہیں ہوا: ' + (e.code||e.message)));
 }
 function ccInit(){
