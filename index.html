@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA104">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA104">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3110SA105">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3110SA105">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1974,6 +1974,31 @@ html.mcs-dark .ad-paste{background:#0D2226;}
 .ad-planchips i.best{background:#16a34a;border-color:#16a34a;color:#fff;}
 #homeAds.tight .ad-planchips{display:none;}
 html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{color:#86efac;}
+/* MCS3110SA105: صاف ہوم */
+.qt-hide{display:none !important;}
+.qt-grid{grid-template-columns:repeat(4,1fr) !important;}
+.qt{flex-direction:column !important;justify-content:center !important;gap:1px !important;padding:4px 2px !important;min-height:52px !important;}
+.qt-ic{width:24px !important;height:24px !important;font-size:14px !important;}
+.qt-t{align-items:center !important;}
+.qt-t small{display:none !important;}
+.qt-t b{font-size:12.5px !important;}
+.qt-n{left:4px !important;top:2px !important;}
+.qt-plus{left:auto !important;right:3px !important;top:3px !important;}
+.cc-swap{position:relative;cursor:pointer;}
+.cc-swap > .cc-boxes{min-height:50px;align-items:stretch;}
+.cc-swap > .cc-boxes > .cc-box{justify-content:center;}
+.cc-swap > .cc-boxes{transition:opacity .5s, transform .5s;}
+.cc-swap > .cc-boxes.off{position:absolute;left:0;right:0;top:0;opacity:0;transform:translateY(8px);pointer-events:none;}
+.cc-swap > .cc-boxes{margin-top:6px !important;}
+.cc-swapdots{display:flex;justify-content:center;gap:4px;margin-top:3px;}
+.cc-swapdots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.35);}
+.cc-swapdots i.on{background:#ffe08a;width:12px;border-radius:3px;}
+#homeFinder.hf-closed{display:none !important;}
+.home-search .hs-filter{position:relative;flex:0 0 auto;width:auto !important;height:32px !important;padding:0 10px !important;border-radius:999px !important;background:#eef7f5 !important;color:#0f766e !important;border:1.5px solid #b7d3cf !important;font-family:inherit;font-weight:800;font-size:13px !important;display:flex;align-items:center;gap:3px;}
+.home-search .hs-filter.on{background:linear-gradient(135deg,#0d3b66,#0f766e) !important;color:#fff !important;border-color:transparent !important;}
+.hs-filter i{position:absolute;top:2px;left:4px;width:8px;height:8px;border-radius:50%;background:#f59e0b;display:none;}
+.hs-filter i.show{display:block;}
+html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !important;border-color:#21403F !important;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -2142,16 +2167,18 @@ html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{col
         </div>
         <div class="cc-time" id="ccTime"></div>
       </div>
+      <div class="cc-swap" id="ccSwap" onclick="ccSwapGo()">
       <div class="cc-boxes">
         <div class="cc-box"><span class="cc-k">عیسوی</span><b id="ccDate"></b><small id="ccDateEn"></small></div>
         <div class="cc-box"><span class="cc-k">اسلامی</span><b id="ccHijri"></b><small id="ccHijriEn"></small></div>
         <div class="cc-box"><span class="cc-k">دیسی</span><b id="ccDesi"></b><small id="ccDesiEn"></small></div>
       </div>
-      <div class="cc-boxes cc-rates">
+      <div class="cc-boxes cc-rates off">
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('dollar')"><span class="cc-k">💵 ڈالر <i>USD</i></span><b id="ccUsd">—</b></button>
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('gold')"><span class="cc-k">🪙 سونا/تولہ <i>Gold</i></span><b id="ccGold">—</b></button>
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('petrol')"><span class="cc-k">⛽ پٹرول <i>Petrol</i></span><b id="ccPetrol">—</b></button>
       </div>
+      </div><div class="cc-swapdots" id="ccSwapDots"><i class="on"></i><i></i></div>
       <div class="cc-note" id="ccNote" hidden></div>
       </div>
     </header>
@@ -2160,6 +2187,7 @@ html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{col
     <!-- MCS2810WE069: ہوم پر گوگل جیسی بڑی تلاش + فوری فلٹر -->
     <form class="home-search" onsubmit="event.preventDefault();homeSearchGo()">
       <input type="search" id="homeSearchBox" placeholder="دکان، نام، نمبر، علاقہ — کچھ بھی تلاش کریں" autocomplete="off" enterkeyhint="search">
+      <button type="button" class="hs-filter" id="hsFilterBtn" onclick="hfToggle()" aria-label="فلٹر">⚙️<span>فلٹر</span><i id="hsFilterDot"></i></button>
       <button type="submit" aria-label="تلاش">🔍</button>
     </form>
     <!-- MCS2910TH075: بڑے بٹن کی جگہ چھوٹے ٹائل (دو دو ایک قطار میں) -->
@@ -2170,7 +2198,7 @@ html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{col
       <div class="qt" style="--c:#C8412F" onclick="openServiceCategory('emergencyNumbers')">
         <span class="qt-n" id="homeCount_emg">0</span><span class="qt-ic">🚨</span><span class="qt-t"><b>ایمرجنسی</b><small>Emergency</small></span>
       </div>
-      <div class="qt" style="--c:#5A47C2" onclick="openSearch()">
+      <div class="qt qt-hide" style="--c:#5A47C2" onclick="openSearch()">
         <span class="qt-n" id="homeCount_total">0</span><span class="qt-ic">📊</span><span class="qt-t"><b>کل ریکارڈ</b><small>All records</small></span>
       </div>
       <div class="qt" style="--c:#C2610F" onclick="goScreen('business-categories')">
@@ -2181,7 +2209,7 @@ html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{col
         <span class="qt-n" id="homeCount_professional">0</span><span class="qt-ic">👔</span><span class="qt-t"><b>پروفیشنلز</b><small>Professionals</small></span>
         <button type="button" class="qt-plus" id="plus_professional" onclick="event.stopPropagation();toggleAddStrip('professional')" aria-label="نیا پروفیشنل شامل کریں">＋</button>
       </div>
-      <div class="qt" style="--c:#B8306E" onclick="openDevChat()">
+      <div class="qt qt-hide" style="--c:#B8306E" onclick="openDevChat()">
         <span class="qt-ic">💬</span><span class="qt-t"><b>رابطہ کریں</b><small>Contact us</small></span>
       </div>
     </section>
@@ -3242,9 +3270,9 @@ html.mcs-dark .ad-income span{background:#0c2a22;}html.mcs-dark .ad-income b{col
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3110SA104";
+const APP_VERSION = "MCS3110SA105";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "لکھتے وقت کی بورڈ بار بار بند نہیں ہوگا";
+const UPDATE_NOTE = "صاف ہوم: تاریخیں/ریٹ ایک قطار، 4 ٹائل، فلٹر بٹن سے کھلے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3557,6 +3585,7 @@ function hfRender(){
   html = html.replace('<!--GO-->', `<button type="button" class="hf-gob" data-go="1">🔍 ${n}<small>نتائج</small></button>`);
   if(any) html = html.replace('<!--CLR-->', '<button type="button" class="hf-clr" data-reset="1">✖ صاف</button>');
   box.innerHTML = html;
+  try{ hfSyncOpen(); }catch(e){}
 }
 function hfClick(e){
   const b = e.target.closest('button'); if(!b) return;
@@ -5763,7 +5792,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA104';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA105';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5924,7 +5953,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA104';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3110SA105';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -10468,6 +10497,24 @@ async function ccLocate(force){
   }, ()=>{ if(force) showToast('لوکیشن نہیں ملی — فون میں لوکیشن آن کریں', 3000); }, {timeout:12000, maximumAge:30*60e3});
 }
 document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && !ccLS('mcsCityPick')) setTimeout(()=>ccLocate(false), 800); });
+/* MCS3110SA105: صاف ہوم — تاریخیں/ریٹ ایک قطار میں باری باری؛ فلٹر بٹن سے کھلے */
+let ccSw = 0;
+function ccSwapGo(to){ ccSw = (to === undefined) ? 1 - ccSw : to; document.querySelectorAll('#ccSwap > .cc-boxes').forEach((x,i)=>x.classList.toggle('off', i !== ccSw)); document.querySelectorAll('#ccSwapDots i').forEach((x,i)=>x.classList.toggle('on', i === ccSw)); }
+setInterval(()=>{ if(currentScreen === 'home' && !document.hidden && !mcsTyping()) ccSwapGo(); }, 5000);
+let hfOpen = false; try{ hfOpen = localStorage.getItem('mcsHfOpen') === '1'; }catch(e){}
+function hfToggle(force){
+  hfOpen = force === undefined ? !hfOpen : !!force;
+  try{ localStorage.setItem('mcsHfOpen', hfOpen ? '1' : '0'); }catch(e){}
+  hfSyncOpen(); try{ fitHomeSoon(); }catch(e){}
+}
+function hfSyncOpen(){
+  const box = document.getElementById('homeFinder'), btn = document.getElementById('hsFilterBtn'), dot = document.getElementById('hsFilterDot');
+  if(box) box.classList.toggle('hf-closed', !hfOpen);
+  if(btn) btn.classList.toggle('on', hfOpen);
+  const any = typeof hf !== 'undefined' && (hf.group || hf.cat || hf.province || hf.district || hf.city || hf.area);
+  if(dot) dot.classList.toggle('show', !!any && !hfOpen);
+}
+try{ hfSyncOpen(); }catch(e){}
 function ccShowRates(){
   const r = ccLS('mcsRates') || {};
   const usd = ccAdmin.dollar || r.usdPkr, gold = ccAdmin.gold || r.goldTola;
