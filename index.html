@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR082">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR082">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS3010FR083">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS3010FR083">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1830,6 +1830,15 @@ html.mcs-dark #homeAds .ad-card{background:linear-gradient(135deg,#3a2a08,#4a350
   #homeAds .ad-ribbon{display:none;}
 }
 html.mcs-dark #homeAds .ad-tx b,html.mcs-dark #homeAds .ad-tx span{color:#ffe2a8;}
+.vf-card{display:flex;gap:10px;align-items:center;padding:12px;border-radius:16px;background:linear-gradient(135deg,#0d3b66,#0f766e);color:#fff;margin-bottom:10px;}
+.vf-card .vf-ic{width:52px;height:52px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;flex:0 0 auto;}
+.vf-card b{display:block;font-size:20px;line-height:1.5;}
+.vf-card span{display:block;font-size:13px;opacity:.9;line-height:1.6;}
+.vf-card .vf-num{font-family:Arial,sans-serif;direction:ltr;text-align:right;color:#ffe08a;font-weight:700;}
+.vf-yes,.vf-edit{display:block;width:100%;min-height:52px;border:none;border-radius:14px;font-family:inherit;font-weight:800;font-size:17px;margin-top:8px;color:#fff;background:#16a34a;box-shadow:0 4px 0 #0f6b32;}
+.vf-edit{background:#fff;color:#b45309;border:2px solid #f59e0b;box-shadow:0 4px 0 #f5d08a;}
+.vf-done{padding:8px 10px;border-radius:12px;background:#dcfce7;color:#15803d;font-weight:800;text-align:center;}
+.vf-done.big{font-size:17px;line-height:1.9;padding:18px 12px;}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -2434,6 +2443,22 @@ html.mcs-dark #homeAds .ad-tx b,html.mcs-dark #homeAds .ad-tx span{color:#ffe2a8
     </div>
   </div>
 </div>
+<div class="modal-overlay" id="vfModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('vfModal')">×</button>
+    <h3>🪪 آپ کا ریکارڈ — My City Shines</h3>
+    <div style="clear:both;"></div>
+    <div id="vfBody">لوڈ ہو رہا ہے…</div>
+  </div>
+</div>
+<div class="modal-overlay" id="editsModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('editsModal')">×</button>
+    <h3>✏️ ترمیم کی درخواستیں</h3>
+    <div style="clear:both;"></div>
+    <div id="editsList" class="nt-list">لوڈ ہو رہا ہے…</div>
+  </div>
+</div>
 <div class="modal-overlay" id="cityPickModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('cityPickModal')">×</button>
@@ -2522,6 +2547,7 @@ html.mcs-dark #homeAds .ad-tx b,html.mcs-dark #homeAds .ad-tx span{color:#ffe2a8
           <button class="btn accent" style="flex:1;min-width:140px;" onclick="stOpenAdmin()">📊 کالوں کی رپورٹ</button>
           <button class="btn secondary" style="flex:1;min-width:140px;" onclick="ntOpen()">📩 دکانداروں کو اطلاع</button>
           <button class="btn secondary" style="flex:1;min-width:140px;" onclick="adOpenAdmin()">📢 اشتہار لگائیں</button>
+          <button class="btn secondary" style="flex:1;min-width:140px;" onclick="edOpen()">✏️ ترمیم کی درخواستیں</button>
         </div>
       </div>
       <div class="backup-card" id="adminPanelBox" style="display:none;">
@@ -3016,9 +3042,9 @@ html.mcs-dark #homeAds .ad-tx b,html.mcs-dark #homeAds .ad-tx span{color:#ffe2a8
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS3010FR082";
+const APP_VERSION = "MCS3010FR083";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "اطلاع کی فہرست کیٹگری وار + کارڈ تصویر؛ ✅ تصدیق شدہ؛ اشتہار کا بڑا ڈبہ";
+const UPDATE_NOTE = "دکاندار لنک سے خود تصدیق یا ترمیم بھیجے؛ ایڈمن میں ترمیم کی درخواستیں";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5535,7 +5561,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR082';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR083';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -5696,7 +5722,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR082';
+    headerLogo.src = 'icons/icon-192.png?v=MCS3010FR083';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -9489,7 +9515,9 @@ function ntItems(){
 }
 function ntOpen(){ openModal('notifyModal'); ntRender(); }
 function ntCaption(it){
-  return ownerCaptionText(it.kind, it.r).replace('— *pbtcodelabs* 💙', '✅ اگر آپ کا ریکارڈ درست ہے تو جواب میں «درست ہے» لکھ دیں — آپ کے کارڈ پر *تصدیق شدہ ✅* کا نشان لگ جائے گا۔ کوئی غلطی ہو تو بتا دیں، ہم ٹھیک کر دیں گے۔\n\n— *pbtcodelabs* 💙');
+  const tok = vfToks[it.k];
+  const link = tok ? ('\n👉 *اپنا ریکارڈ تصدیق کریں یا ترمیم بھیجیں — یہ لنک دبائیں:*\n' + VF_PAGE + '?vf=' + it.k + '.' + tok + '\n') : '';
+  return ownerCaptionText(it.kind, it.r).replace('— *pbtcodelabs* 💙', '✅ ریکارڈ درست ہے تو نیچے کے لنک سے «ہاں، درست ہے» دبا دیں — آپ کے کارڈ پر *تصدیق شدہ ✅* کا نشان خود لگ جائے گا۔ نام، نمبر یا کوئی اور چیز غلط ہو یا نمبر بدلوانا ہو تو اسی لنک سے «ترمیم بھیجیں»۔\n' + link + '\n— *pbtcodelabs* 💙');
 }
 function ntRender(){
   const box = document.getElementById('ntList'); if(!box) return;
@@ -9505,7 +9533,7 @@ function ntRender(){
   let lastCat = null, html = '', n = 0;
   list.slice(0, 300).forEach(it=>{
     if(it.cat !== lastCat){ lastCat = it.cat; const m = ubCatMeta(it.cat); const cnt = list.filter(x=>x.cat===it.cat).length; html += `<div class="nt-cat">${m.emoji} ${escapeHtml(m.ur)} <small>${cnt}</small></div>`; }
-    n++; const r = it.r, sent = ntSent[it.k], vf = vfMap[it.k];
+    n++; const r = it.r, sent = ntSent[it.k], vf = vfIs(it.k);
     const btn = ntFilt==='todo' || !sent
       ? `<button type="button" class="nt-tick${ntBlobs[it.k]?' ready':''}" data-k="${it.k}">${ntBusy[it.k] ? '⏳' : (ntBlobs[it.k] ? '📤 بھیجیں' : '☑️')}</button>`
       : `<button type="button" class="nt-vf${vf?' on':''}" data-vf="${it.k}">${vf ? '✅ تصدیق شدہ' : '☐ تصدیق کریں'}</button><button type="button" class="nt-again" data-k="${it.k}">↻</button>`;
@@ -9519,6 +9547,7 @@ async function ntPrepare(it, quiet){
   if(ntBlobs[it.k] || ntBusy[it.k]) return;
   ntBusy[it.k] = 1; if(!quiet) ntRender();
   try{ const c = await buildShareCanvas(it.kind, it.r, Object.assign({}, store.cardCustomOpts||{}, {dlBanner:true})); ntBlobs[it.k] = await new Promise(res=>c.toBlob(res, 'image/png')); }catch(e){}
+  try{ if(!vfToks[it.k]) vfToks[it.k] = await vfGetToken(it.k); }catch(e){}
   delete ntBusy[it.k];
   const b = document.querySelector(`#ntList button.nt-tick[data-k="${it.k}"]`); if(b){ b.textContent = ntBlobs[it.k] ? '📤 بھیجیں' : '☑️'; b.classList.toggle('ready', !!ntBlobs[it.k]); }
 }
@@ -9537,7 +9566,7 @@ function ntTick(k){
   setTimeout(ntRender, 600);
 }
 function vfToggle(k){
-  const on = !vfMap[k]; if(on) vfMap[k] = Date.now(); else delete vfMap[k];
+  const on = !vfIs(k); if(on) vfMap[k] = Date.now(); else { delete vfMap[k]; if(vfSrv[k]){ delete vfSrv[k]; vfAdminHdr().then(h=>fetch(VF_API + '/vunset', {method:'POST', headers:h, body: JSON.stringify({rec:k})})).catch(()=>{}); } }
   try{ localStorage.setItem('mcsVerified', JSON.stringify(vfMap)); }catch(e){}
   const FB = window.MCSFirebase;
   if(FB){ const upd = {}; upd['m.' + k] = on ? vfMap[k] : null; FB.updateDoc(FB.doc(FB.db,'appConfig','verified'), upd).catch(()=>FB.setDoc(FB.doc(FB.db,'appConfig','verified'), {m:{[k]: on ? vfMap[k] : null}}, {merge:true}).catch(()=>{})); }
@@ -9548,7 +9577,7 @@ function vfApply(){
   document.querySelectorAll('.doc-card, .ub-row').forEach(c=>{
     const k = stCardKey(c); const nm = c.querySelector('.doc-name, .ub-name'); if(!nm) return;
     let bd = nm.querySelector('.vf-badge');
-    if(k && vfMap[k]){ if(!bd){ bd = document.createElement('span'); bd.className = 'vf-badge'; bd.textContent = '✅ تصدیق شدہ'; nm.appendChild(bd); } }
+    if(vfIs(k)){ if(!bd){ bd = document.createElement('span'); bd.className = 'vf-badge'; bd.textContent = '✅ تصدیق شدہ'; nm.appendChild(bd); } }
     else if(bd) bd.remove();
   });
 }
@@ -9560,6 +9589,68 @@ try{
     const b = e.target.closest('button[data-k]'); if(b) ntTick(b.dataset.k);
   });
   document.getElementById('ntFilter').addEventListener('click', e=>{ const b = e.target.closest('button[data-f]'); if(b){ ntFilt = b.dataset.f; ntRender(); } });
+}catch(e){}
+
+/* ===== MCS3010FR083: دکاندار خود تصدیق یا ترمیم کرے — خفیہ لنک (?vf=کلید.کوڈ)؛ تصدیق خود «✅ تصدیق شدہ» ===== */
+const VF_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
+const VF_PAGE = 'https://pbtcodelabs-pbt.github.io/MCS/index.html';
+const vfToks = {}; let vfSrv = {};
+async function vfAdminHdr(){ const FB = window.MCSFirebase; const u = FB && FB.auth && FB.auth.currentUser; if(!u) throw new Error('login'); return {'Content-Type':'text/plain', 'Authorization':'Bearer ' + await u.getIdToken()}; }
+async function vfGetToken(k){ const r = await fetch(VF_API + '/vtoken', {method:'POST', headers: await vfAdminHdr(), body: JSON.stringify({rec:k})}); const j = await r.json(); return j.tok || ''; }
+async function vfLoadSrv(){ try{ const r = await fetch(VF_API + '/vlist'); vfSrv = await r.json() || {}; localStorage.setItem('mcsVerifiedSrv', JSON.stringify(vfSrv)); vfApply(); }catch(e){} }
+function vfIs(k){ return !!(k && (vfMap[k] || vfSrv[k])); }
+/* دکاندار کا صفحہ */
+let vfParam = null;
+function vfFind(k){ const it = ntItems().find(x=>x.k===k); return it || null; }
+function vfShow(tries){
+  const body = document.getElementById('vfBody'); if(!body || !vfParam) return;
+  openModal('vfModal');
+  const it = vfFind(vfParam.k);
+  if(!it){ if((tries||0) < 20){ body.textContent = 'ریکارڈ لوڈ ہو رہا ہے…'; setTimeout(()=>vfShow((tries||0)+1), 700); } else body.innerHTML = '<div class="cp-hint">ریکارڈ نہیں ملا — انٹرنیٹ چیک کریں یا ہمیں واٹس ایپ کریں</div>'; return; }
+  const r = it.r, m = ubCatMeta(it.cat);
+  body.innerHTML = `<div class="vf-card"><div class="vf-ic">${m.emoji}</div><div><b>${escapeHtml(r.nameUr||r.name||r.nameEn||'')}</b><span>${escapeHtml(m.ur)}${r.area||r.city?' • '+escapeHtml([r.area,r.city].filter(Boolean).join('، ')):''}</span><span class="vf-num">📞 ${escapeHtml(normalizePkNumber(r.whatsapp||''))}</span></div></div>
+    ${vfIs(vfParam.k) ? '<div class="vf-done">✅ آپ کا ریکارڈ تصدیق شدہ ہے</div>' : ''}
+    <button type="button" class="vf-yes" onclick="vfSubmit()">✅ ہاں، میرا ریکارڈ درست ہے</button>
+    <button type="button" class="vf-edit" onclick="vfEditForm()">✏️ کچھ غلط ہے — ترمیم بھیجیں</button>
+    <div id="vfEditBox"></div>`;
+}
+function vfEditForm(){
+  const it = vfFind(vfParam.k); const r = it ? it.r : {};
+  document.getElementById('vfEditBox').innerHTML = `<div class="backup-card" style="margin-top:10px">
+    <div class="field"><label>درست نام (اگر غلط ہے)</label><input type="text" id="vfeName" placeholder="${escapeAttr(r.nameUr||'')}"></div>
+    <div class="field"><label>نیا / درست موبائل نمبر</label><input type="tel" id="vfePhone" placeholder="03xx-xxxxxxx"></div>
+    <div class="field"><label>دوسرا نمبر (اگر ہو)</label><input type="tel" id="vfePhone2" placeholder="03xx-xxxxxxx"></div>
+    <div class="field"><label>پتہ / علاقہ</label><input type="text" id="vfeAddr" placeholder="${escapeAttr([r.address,r.area].filter(Boolean).join('، '))}"></div>
+    <div class="field"><label>اور کچھ (کام کی تفصیل، وقت وغیرہ)</label><textarea id="vfeNote" rows="2"></textarea></div>
+    <button type="button" class="vf-yes" onclick="vfSubmitEdit()">📤 ترمیم بھیجیں</button></div>`;
+}
+async function vfPost(body){ const r = await fetch(VF_API + '/vsubmit', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(body)}); return r.json(); }
+async function vfSubmit(){
+  try{ const j = await vfPost({rec: vfParam.k, tok: vfParam.t}); if(j.ok){ vfSrv[vfParam.k] = Date.now(); vfApply(); document.getElementById('vfBody').innerHTML = '<div class="vf-done big">✅ شکریہ! آپ کا ریکارڈ اب «تصدیق شدہ» ہے۔<br>اپنا کارڈ گاہکوں کو شیئر کریں 🙏</div>'; } else alert('لنک درست نہیں — ہمیں واٹس ایپ کریں'); }catch(e){ alert('انٹرنیٹ درکار ہے'); }
+}
+async function vfSubmitEdit(){
+  const v = id=>(document.getElementById(id).value||'').trim();
+  const edit = {name: v('vfeName'), phone: v('vfePhone'), phone2: v('vfePhone2'), addr: v('vfeAddr'), note: v('vfeNote')};
+  if(!Object.values(edit).some(Boolean)){ showToast('کم از کم ایک خانہ لکھیں'); return; }
+  try{ const j = await vfPost({rec: vfParam.k, tok: vfParam.t, edit}); if(j.ok) document.getElementById('vfBody').innerHTML = '<div class="vf-done big">📤 آپ کی ترمیم کی درخواست ہمیں مل گئی — جلد درست کر دی جائے گی۔ شکریہ!</div>'; else alert('لنک درست نہیں — ہمیں واٹس ایپ کریں'); }catch(e){ alert('انٹرنیٹ درکار ہے'); }
+}
+/* ایڈمن: ترمیم کی درخواستیں */
+async function edOpen(){
+  openModal('editsModal'); const box = document.getElementById('editsList'); box.textContent = 'لوڈ ہو رہا ہے…';
+  let list; try{ const r = await fetch(VF_API + '/edits', {method:'POST', headers: await vfAdminHdr(), body:'{}'}); list = await r.json(); }catch(e){ box.textContent = 'ایڈمن لاگ ان اور انٹرنیٹ درکار ہے'; return; }
+  if(!Array.isArray(list) || !list.length){ box.innerHTML = '<div class="cp-hint">ابھی کوئی درخواست نہیں</div>'; return; }
+  const L = {name:'نام', phone:'نیا نمبر', phone2:'دوسرا نمبر', addr:'پتہ', note:'نوٹ'};
+  box.innerHTML = list.map(e=>{ const it = vfFind(e.rec); const b = (()=>{ try{ return JSON.parse(e.body)||{}; }catch(x){ return {}; } })();
+    const lines = Object.keys(L).filter(k=>b[k]).map(k=>`<div><small>${L[k]}:</small> <b>${escapeHtml(b[k])}</b></div>`).join('');
+    const open = it ? `<button type="button" onclick="closeModal('editsModal');${it.kind==='doctor'?`openDoctorForm('${escapeAttr(String(it.r.id))}')`:`openServiceForm('${escapeAttr(String(it.r.id))}')`}">✏️ کھولیں</button>` : '';
+    return `<div class="nt-row${e.done?' sent':''}" style="align-items:flex-start"><div class="nm"><b>${it?escapeHtml(it.r.nameUr||it.r.name||''):'(ریکارڈ نہیں ملا)'}</b><small>0${escapeHtml(e.rec.slice(1))} • ${new Date(e.ts).toLocaleDateString('en-GB')}</small>${lines}</div><div style="display:flex;flex-direction:column;gap:4px">${open}${e.done?'':`<button type="button" class="nt-again" onclick="edDone(${e.id})">✓ ہو گیا</button>`}</div></div>`; }).join('');
+}
+async function edDone(id){ try{ await fetch(VF_API + '/editdone', {method:'POST', headers: await vfAdminHdr(), body: JSON.stringify({id})}); }catch(e){} edOpen(); }
+try{
+  vfSrv = JSON.parse(localStorage.getItem('mcsVerifiedSrv')||'{}') || {};
+  const q = new URLSearchParams(location.search).get('vf');
+  if(q && /^p\d{10}\.[a-z0-9]{6,20}$/.test(q)){ const [k, t] = q.split('.'); vfParam = {k, t}; setTimeout(()=>vfShow(0), 1200); }
+  setTimeout(vfLoadSrv, 2500);
 }catch(e){}
 
 /* ===== اشتہار کی جگہ — appConfig/ads؛ خالی ہو تو اپنے پیغام ===== */
