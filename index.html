@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0111SU109">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0111SU109">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0111SU110">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0111SU110">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1851,6 +1851,15 @@ body.nav-on #screen-home.active{min-height:0 !important;}
 #homeAds.tight .ad-ribbon,#homeAds.tight .ad-tag{display:none;}
 #homeAds.tight .ad-go a,#homeAds.tight .ad-go button{min-height:30px !important;font-size:12.5px !important;}
 .ad-vcrow{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;}
+.adm-pw{max-width:360px;text-align:center;}
+.adm-pw-ic{font-size:40px;}.adm-pw-t{font-weight:800;font-size:19px;color:#b91c1c;margin:2px 0 6px;}
+.adm-pw-m{font-size:14px;line-height:1.9;color:#334155;margin-bottom:10px;}
+.adm-pw-row{display:flex;gap:6px;}.adm-pw-row input{flex:1;min-height:46px;font-size:18px;border:2px solid #cbd5e1;border-radius:12px;padding:0 12px;text-align:left;}
+.adm-pw-row button{width:46px;border:2px solid #cbd5e1;border-radius:12px;background:#fff;font-size:18px;}
+.adm-pw-err{min-height:22px;color:#b91c1c;font-weight:700;font-size:14px;margin:6px 0;}
+.adm-pw-btns{display:grid;grid-template-columns:1fr 1.5fr;gap:8px;}
+.adm-pw-btns button{min-height:46px;border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:16px;}
+.adm-pw-cancel{background:#e2e8f0;color:#334155;}.adm-pw-ok{background:#dc2626;color:#fff;box-shadow:0 3px 0 #991b1b;}
 .fm-del-btn{display:block;width:100%;margin-top:8px;min-height:40px;border:2px solid #dc2626 !important;background:#fff !important;color:#b91c1c !important;font-weight:800;border-radius:12px;}
 .ub-acts .ub-del{background:#fee2e2 !important;color:#b91c1c !important;}
 /* MCS0111SU108: ریکارڈ سے بنا اشتہار — ایڈمن کا چنا رنگ اور شکل */
@@ -3324,9 +3333,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0111SU109";
+const APP_VERSION = "MCS0111SU110";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "ایڈمن: تلاش، خاص نمبر اور ترمیم فارم میں بھی ریکارڈ حذف کرنے کا 🗑️ بٹن";
+const UPDATE_NOTE = "ریکارڈ حذف کرنے سے پہلے اب ایڈمن پاس ورڈ مانگا جاتا ہے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5009,10 +5018,10 @@ function deleteFromFirebase(col, item){
     return false;
   });
 }
-function deleteDoctor(id){
+async function deleteDoctor(id){
   const item = store.doctors.find(x=>x.id===id); if(!item) return;
   /* MCS0111SU109: نام کے ساتھ تصدیق؛ حذف کے بعد جو صفحہ کھلا ہو (فہرست، تلاش، خاص نمبر) وہی تازہ */
-  if(!confirm(`«${item.nameUr||item.name||''}» ${item.whatsapp?'('+item.whatsapp+') ':''}کا ریکارڈ ہمیشہ کے لیے حذف کر دیں؟\n\nیہ واپس نہیں آئے گا۔`)) return;
+  if(!(await askAdminPassword(`«${item.nameUr||item.name||''}» ${item.whatsapp?'(\u2066'+item.whatsapp+'\u2069) ':''}کا ریکارڈ ہمیشہ کے لیے حذف ہو جائے گا — یہ واپس نہیں آئے گا۔`))) return;
   deleteFromFirebase('doctors', item).then(ok=>{
     if(!ok) return;
     store.doctors = store.doctors.filter(x=>x.id!==id);
@@ -5850,7 +5859,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU109';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU110';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6011,7 +6020,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU109';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU110';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -7132,10 +7141,10 @@ function saveService(approve){
   showToast(movedTo ? ('محفوظ ہو گیا ✓ — کیٹگری: ' + CATEGORY_META[movedTo].ur) : 'محفوظ ہو گیا ✓');
   openAfterSave('service', store.services.find(x=>x.id===editingServiceId), null);
 }
-function deleteService(id){
+async function deleteService(id){
   const item = store.services.find(x=>x.id===id); if(!item) return;
   /* MCS0111SU109: نام کے ساتھ تصدیق؛ حذف کے بعد جو صفحہ کھلا ہو (فہرست، تلاش، خاص نمبر) وہی تازہ */
-  if(!confirm(`«${item.nameUr||item.name||''}» ${item.whatsapp?'('+item.whatsapp+') ':''}کا ریکارڈ ہمیشہ کے لیے حذف کر دیں؟\n\nیہ واپس نہیں آئے گا۔`)) return;
+  if(!(await askAdminPassword(`«${item.nameUr||item.name||''}» ${item.whatsapp?'(\u2066'+item.whatsapp+'\u2069) ':''}کا ریکارڈ ہمیشہ کے لیے حذف ہو جائے گا — یہ واپس نہیں آئے گا۔`))) return;
   deleteFromFirebase('services', item).then(ok=>{
     if(!ok) return;
     store.services = store.services.filter(x=>x.id!==id);
@@ -7144,6 +7153,31 @@ function deleteService(id){
     try{ renderServiceList('list'); }catch(e){}
     afterRecordDeleted();
     showToast('🗑️ حذف کر دیا گیا');
+  });
+}
+/* MCS0111SU110: حذف سے پہلے ایڈمن کا پاس ورڈ — فائربیس سے جانچ (اسی ایڈمن ای میل پر دوبارہ سائن اِن)، غلط ہو تو کچھ نہیں مٹتا */
+function askAdminPassword(msg){
+  return new Promise(res=>{
+    const FB = window.MCSFirebase, u = FB && FB.auth && FB.auth.currentUser;
+    if(!isAdminSignedIn || !u || !u.email){ showToast('پہلے ایڈمن لاگ ان کریں'); res(false); return; }
+    let ov = document.getElementById('admPwModal');
+    if(!ov){ ov = document.createElement('div'); ov.id = 'admPwModal'; ov.className = 'modal-overlay'; ov.style.zIndex = '2147482000'; document.body.appendChild(ov); }
+    ov.innerHTML = `<div class="modal-box adm-pw"><div class="adm-pw-ic">🔐</div><div class="adm-pw-t">ایڈمن پاس ورڈ لکھیں</div><div class="adm-pw-m">${escapeHtml(msg||'')}</div>
+      <div class="adm-pw-row"><input type="password" id="admPwIn" dir="ltr" autocomplete="current-password" placeholder="پاس ورڈ"><button type="button" onclick="const i=document.getElementById('admPwIn');i.type=i.type==='password'?'text':'password'">👁</button></div>
+      <div class="adm-pw-err" id="admPwErr"></div>
+      <div class="adm-pw-btns"><button type="button" class="adm-pw-cancel">بند</button><button type="button" class="adm-pw-ok">🗑️ حذف کریں</button></div></div>`;
+    const done = v=>{ ov.classList.remove('active'); res(v); };
+    const inp = ov.querySelector('#admPwIn'), err = ov.querySelector('#admPwErr'), ok = ov.querySelector('.adm-pw-ok');
+    const go = async ()=>{
+      const pw = inp.value; if(!pw){ err.textContent = 'پاس ورڈ لکھیں'; inp.focus(); return; }
+      ok.disabled = true; ok.textContent = '⏳ جانچ…'; err.textContent = '';
+      try{ await FB.signInWithEmailAndPassword(FB.auth, u.email, pw); done(true); }
+      catch(e){ ok.disabled = false; ok.textContent = '🗑️ حذف کریں'; const c = (e && e.code) || '';
+        err.textContent = /network/.test(c) ? 'انٹرنیٹ نہیں — دوبارہ کوشش کریں' : /too-many/.test(c) ? 'بہت زیادہ غلط کوشش — تھوڑی دیر بعد' : '❌ پاس ورڈ غلط ہے — ریکارڈ حذف نہیں ہوا'; inp.select(); }
+    };
+    ok.onclick = go; ov.querySelector('.adm-pw-cancel').onclick = ()=>done(false);
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') go(); });
+    ov.classList.add('active'); setTimeout(()=>inp.focus(), 150);
   });
 }
 function afterRecordDeleted(){
