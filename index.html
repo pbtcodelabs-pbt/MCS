@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0111SU111">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0111SU111">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0111SU112">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0111SU112">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1633,6 +1633,10 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 #ccNamazBox .nr{display:flex;justify-content:space-between;align-items:center;padding:7px 4px;border-bottom:1px dashed #e2e8f0;font-size:16px;}
 #ccNamazBox .nr.on{background:#ecfdf5;border-radius:10px;font-weight:800;}
 #ccNamazBox .nr i{font:700 15px Arial,sans-serif;font-style:normal;direction:ltr;}
+.cc-qibla.aligned .cq-dial{filter:drop-shadow(0 0 9px #4ade80) drop-shadow(0 0 3px #22c55e);}
+.cc-prays{grid-template-columns:repeat(5,1fr) !important;}
+.cc-prays .cc-box b{font:800 12px Arial,sans-serif;direction:ltr;}
+.cc-prays .cc-box.now{background:linear-gradient(180deg,#f59e0b,#d97706);border-color:#ffd27a;box-shadow:0 0 0 2px rgba(255,210,122,.4);}
 @media (max-width:370px){.cq-dial{width:52px;height:52px;}.cc-namaz{max-width:120px;font-size:10.5px;}}
 /* MCS2910TH076: ایک اسکرین والا ہوم */
 .hero{padding:6px 10px 8px !important;}
@@ -2258,12 +2262,13 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
         <div class="cc-box"><span class="cc-k">اسلامی</span><b id="ccHijri"></b><small id="ccHijriEn"></small></div>
         <div class="cc-box"><span class="cc-k">دیسی</span><b id="ccDesi"></b><small id="ccDesiEn"></small></div>
       </div>
+      <div class="cc-boxes cc-prays off" id="ccPrays"></div>
       <div class="cc-boxes cc-rates off">
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('dollar')"><span class="cc-k">💵 ڈالر <i>USD</i></span><b id="ccUsd">—</b></button>
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('gold')"><span class="cc-k">🪙 سونا/تولہ <i>Gold</i></span><b id="ccGold">—</b></button>
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('petrol')"><span class="cc-k">⛽ پٹرول <i>Petrol</i></span><b id="ccPetrol">—</b></button>
       </div>
-      </div><div class="cc-swapdots" id="ccSwapDots"><i class="on"></i><i></i></div>
+      </div><div class="cc-swapdots" id="ccSwapDots"><i class="on"></i><i></i><i></i></div>
       <div class="cc-note" id="ccNote" hidden></div>
       </div>
     </header>
@@ -3373,9 +3378,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0111SU111";
+const APP_VERSION = "MCS0111SU112";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "شہر کارڈ میں قبلہ کمپاس اور نماز کے اوقات (اردو + انگریزی)";
+const UPDATE_NOTE = "پانچوں نمازوں کی قطار (اس وقت کی نماز نمایاں) اور قبلہ کی طرف رخ ہو تو کمپاس سبز";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5899,7 +5904,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU111';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU112';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6060,7 +6065,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU111';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU112';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -10608,7 +10613,12 @@ function ccNamazNow(){
 }
 function ccNamazShow(){
   const el = document.getElementById('ccNamaz'); if(!el) return;
-  const n = ccNamazNow(); if(!n){ el.textContent = ''; return; }
+  const n = ccNamazNow();
+  /* MCS0111SU112: تاریخوں اور ریٹ کے ساتھ باری باری پانچوں نمازوں کی قطار — اس وقت کی نماز نارنجی */
+  const pr = document.getElementById('ccPrays');
+  if(pr){ const h = n ? NAMAZ.filter(x=>x[0] !== 'sunrise').map(([k,u,e])=>`<div class="cc-box${n.cur[0] === k ? ' now' : ''}"><span class="cc-k">${u} <i>${e}</i></span><b>${ccHM(n.t[k])}</b></div>`).join('')
+      : '<div class="cc-box" style="grid-column:1/-1"><b>🕌 لوکیشن آن کریں یا شہر چنیں — نماز کے اوقات آ جائیں گے</b></div>'; if(pr.innerHTML !== h) pr.innerHTML = h; }
+  if(!n){ el.textContent = ''; return; }
   const nm = k => NAMAZ.find(x => x[0] === k);
   const v = n.cur[0] ? `🕌 <b>${nm(n.cur[0])[1]}</b> ${nm(n.cur[0])[2]} <i>${ccHM(n.cur[1])}–${ccHM(n.cur[2])}</i>` : `🕌 اگلی <b>ظہر</b> Dhuhr <i>${ccHM(n.t.dhuhr)}</i>`;
   if(el.innerHTML !== v) el.innerHTML = v;
@@ -10624,7 +10634,7 @@ function ccNamazAll(){
   document.body.appendChild(b);
 }
 function ccQiblaDeg(lat, lon){ const D = Math.PI/180, kl = 21.4225*D, kL = 39.8262*D, la = lat*D, dL = kL - lon*D; return (Math.atan2(Math.sin(dL), Math.cos(la)*Math.tan(kl) - Math.sin(la)*Math.cos(dL))/D + 360) % 360; }
-let ccHeading = null, ccQDeg = null;
+let ccHeading = null, ccQDeg = null, ccQRaf = 0;
 function ccQiblaShow(){
   const c = ccCoords(), t = document.getElementById('ccQiblaT'), ring = document.getElementById('cqRing'), k = document.getElementById('cqKaaba');
   if(!t || !ring || !k) return;
@@ -10632,14 +10642,19 @@ function ccQiblaShow(){
   ccQDeg = ccQiblaDeg(c.lat, c.lon);
   k.setAttribute('transform', `rotate(${ccQDeg.toFixed(1)} 50 50)`);
   ring.style.transform = ccHeading == null ? '' : `rotate(${(-ccHeading).toFixed(1)}deg)`;
+  /* MCS0111SU112: فون کا رخ قبلہ کی طرف (±6°) ہو تو کمپاس سبز چمکے */
+  const q = document.getElementById('ccQibla'); if(q){ const diff = ccHeading == null ? 999 : Math.abs(((ccQDeg - ccHeading + 540) % 360) - 180); q.classList.toggle('aligned', diff < 6); }
   const v = `قبلہ <b>Qibla ${Math.round(ccQDeg)}°</b>`; if(t.innerHTML !== v) t.innerHTML = v;
 }
 function ccOnOrient(e){
   let h = null;
   if(typeof e.webkitCompassHeading === 'number') h = e.webkitCompassHeading;
   else if(e.absolute && typeof e.alpha === 'number') h = (360 - e.alpha) % 360;
-  if(h == null) return;
-  ccHeading = h; ccQiblaShow();
+  if(h == null || isNaN(h)) return;
+  const so = (screen.orientation && screen.orientation.angle) || window.orientation || 0; h = (h + so + 360) % 360;
+  /* سوئی کانپے نہیں — ہلکی ہمواری */
+  if(ccHeading == null) ccHeading = h; else { const d = ((h - ccHeading + 540) % 360) - 180; ccHeading = (ccHeading + d*0.25 + 360) % 360; }
+  if(!ccQRaf) ccQRaf = requestAnimationFrame(()=>{ ccQRaf = 0; if(!mcsTyping()) ccQiblaShow(); });
 }
 let ccOrientOn = false;
 function ccStartCompass(){
@@ -10668,7 +10683,7 @@ async function ccWeather(lat, lon){
 const WX_EN = c=> c===0?'Clear sky':c<=3?'Partly cloudy':(c===45||c===48)?'Fog':c<=57?'Drizzle':c<=67?'Rain':c<=77?'Snow':c<=82?'Showers':'Thunderstorm';
 function ccCityEn(){ try{ const g = ccLS('mcsGeo'), act = (typeof ccActiveCity === 'function') ? ccActiveCity() : ''; if(!g || !Array.isArray(g.cands)) return ''; const ur = g.city || ''; if(act && ur && ccNormCity(act) !== ccNormCity(ur) && !g.cands.some(n=>ccNormCity(n)===ccNormCity(act))) return ''; const en = g.cands.find(n=>/^[A-Za-z][A-Za-z .'-]+$/.test(n||'')); return en ? ccCleanName(en) : ''; }catch(e){ return ''; } }
 function ccShowWx(v){ const e = document.getElementById('ccWx'); if(!e || !v) return; const en = (v.code != null ? WX_EN(v.code) + ', ' + v.t + '°C' : ''); const ce = ccCityEn();
-  const h = `${v.ic} آج: ${v.tx}، ${v.t}°C` + ((en || ce) ? `<small class="cc-wxen">${escapeHtml([ce, en].filter(Boolean).join(' · '))}</small>` : ''); if(e.innerHTML !== h) e.innerHTML = h; }
+  const h = `${v.ic} آج: ${v.tx}، \u2066${v.t}°C\u2069` + ((en || ce) ? `<small class="cc-wxen">${escapeHtml([ce, en].filter(Boolean).join(' · '))}</small>` : ''); if(e.innerHTML !== h) e.innerHTML = h; }
 /* MCS2910TH074: شہر — ہاتھ سے چنا ہوا (mcsCityPick) پہلے، ورنہ لوکیشن والا اگر ریکارڈ میں ہو */
 function ccNormCity(t){ return String(t||'').replace(/(تحصیل|ضلع|ڈسٹرکٹ|شہر|سٹی|tehsil|district|city)/gi,'').replace(/[\s\-_.،,]+/g,'').toLowerCase(); }
 function ccCleanName(t){ return String(t||'').replace(/^(تحصیل|ضلع|Tehsil|District)\s+/i,'').replace(/\s+(Tehsil|District|City)$/i,'').trim(); }
@@ -10807,7 +10822,7 @@ document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setTime
 setInterval(()=>{ if(!document.hidden && !mcsTyping()) ccLocate(false); }, 5*60e3);
 /* MCS3110SA105: صاف ہوم — تاریخیں/ریٹ ایک قطار میں باری باری؛ فلٹر بٹن سے کھلے */
 let ccSw = 0;
-function ccSwapGo(to){ ccSw = (to === undefined) ? 1 - ccSw : to; document.querySelectorAll('#ccSwap > .cc-boxes').forEach((x,i)=>x.classList.toggle('off', i !== ccSw)); document.querySelectorAll('#ccSwapDots i').forEach((x,i)=>x.classList.toggle('on', i === ccSw)); }
+function ccSwapGo(to){ const n = document.querySelectorAll('#ccSwap > .cc-boxes').length || 2; ccSw = (to === undefined) ? (ccSw + 1) % n : to; document.querySelectorAll('#ccSwap > .cc-boxes').forEach((x,i)=>x.classList.toggle('off', i !== ccSw)); document.querySelectorAll('#ccSwapDots i').forEach((x,i)=>x.classList.toggle('on', i === ccSw)); }
 setInterval(()=>{ if(currentScreen === 'home' && !document.hidden && !mcsTyping()) ccSwapGo(); }, 5000);
 let hfOpen = false; try{ hfOpen = localStorage.getItem('mcsHfOpen') === '1'; }catch(e){}
 function hfToggle(force){
