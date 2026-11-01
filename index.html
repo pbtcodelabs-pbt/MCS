@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0211MO114">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0211MO114">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0211MO115">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0211MO115">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1660,7 +1660,7 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 @media (max-width:370px){.hl-num{display:none;}}
 html.mcs-dark .hl-cap{background:linear-gradient(135deg,#132a2c,#0f2224);border-color:#1f4a47;box-shadow:0 3px 0 #1f4a47;}
 html.mcs-dark .hl-tx b,html.mcs-dark .hl-h b{color:#e2f5f2;}html.mcs-dark .hl-tx small{color:#a7c4c0;}
-/* MCS0211MO114: پروفائل صفحہ اور سنہری کارڈ */
+/* MCS0211MO115: پروفائل صفحہ اور سنہری کارڈ */
 .pf-gold{border:2.5px solid #e9a23b !important;box-shadow:0 0 0 2px rgba(233,162,59,.25),0 6px 16px rgba(233,162,59,.25) !important;}
 .hl-cap.pf-gold{background:linear-gradient(135deg,#fffaf0,#ffefc7) !important;}
 .pf-btn{display:block;width:100%;margin-top:6px;min-height:36px;border:none;border-radius:10px;font-family:inherit;font-weight:800;font-size:13.5px;color:#5a3a00;background:linear-gradient(135deg,#ffe08a,#f5b83d);box-shadow:0 3px 0 #c98a1a;cursor:pointer;}
@@ -2878,7 +2878,7 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
     <div id="recViewBody"></div>
   </div>
 </div>
-<!-- MCS0211MO114: پروفائل کا صفحہ اور اسے سنوارنے کا فارم -->
+<!-- MCS0211MO115: پروفائل کا صفحہ اور اسے سنوارنے کا فارم -->
 <div class="modal-overlay" id="pfModal" style="z-index:2147480500">
   <div class="modal-box pf-box">
     <button class="modal-close" onclick="closeModal('pfModal')">×</button>
@@ -3518,9 +3518,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0211MO114";
+const APP_VERSION = "MCS0211MO115";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "پروفائل کا صفحہ: 6 تصویریں، تفصیل، ریٹ، اوقات، نقشہ، 3 نمبر — سنہرا کارڈ اور فہرست میں سب سے اوپر؛ سادہ اندراج ہمیشہ مفت";
+const UPDATE_NOTE = "نیا SOS بٹن (کنارے پر): PBT Help Desk میں مسئلہ یا مشورہ تصویر اور آواز کے ساتھ بھیجیں، جواب ایپ ہی میں آئے گا";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3771,7 +3771,7 @@ async function mcsSha256(t){ const b = await crypto.subtle.digest('SHA-256', new
 /* MCS2810WE069: ہوم کی تلاش سے سیدھا تلاش والا صفحہ — لکھا ہوا لفظ ساتھ، یا فلٹر کھلا ہوا */
 /* ===== MCS0211MO113: میری پروفائل + ہوم پر کیپسول نتائج ===== */
 const MP_FREE_DAYS = 60;
-/* ===== MCS0211MO114: پروفائل — دکاندار کا اپنا صفحہ (ہمارا سرور /pclaim /pget /psave /pimg /plist /padmin) ===== */
+/* ===== MCS0211MO115: پروفائل — دکاندار کا اپنا صفحہ (ہمارا سرور /pclaim /pget /psave /pimg /plist /padmin) ===== */
 const PF_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
 let pfAct = {}; try{ pfAct = JSON.parse(localStorage.getItem('mcsPfList')||'{}') || {}; }catch(e){}
 function pfKeyOf(rec){ return rec ? stKey(rec.whatsapp) : ''; }
@@ -3969,7 +3969,7 @@ function hlItems(){
   const q = ((document.getElementById('homeSearchBox')||{}).value||'').trim();
   let list = q ? searchAllRecords(q).map(x=>({kind:x.kind, cat: x.kind==='doctor' ? 'doctor' : x.rec.category, rec:x.rec})) : ubAllRecords();
   list = list.filter(it=>ubPassF(it, ['group','cat'].concat(HF_LOC), hf) && it.cat !== 'emergencyNumbers' && it.cat !== 'govOffices');
-  /* MCS0211MO114: پروفائل والے سب سے اوپر */
+  /* MCS0211MO115: پروفائل والے سب سے اوپر */
   list = list.map((it,i)=>[it,i]).sort((a,b)=>(pfActive(b[0].rec)?1:0)-(pfActive(a[0].rec)?1:0) || a[1]-b[1]).map(x=>x[0]);
   return {q, list};
 }
@@ -6287,7 +6287,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO114';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO115';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6448,7 +6448,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO114';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO115';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -6635,7 +6635,7 @@ function sortRecords(items){
   else if(listSort==='old') arr.sort((a,b)=>recTime(a)-recTime(b));
   else arr.sort((a,b)=>recTime(b)-recTime(a));
   let out = arr; try{ out = ccCityFirst(arr); }catch(e){}
-  try{ out = out.map((x,i)=>[x,i]).sort((a,b)=>(pfActive(b[0])?1:0)-(pfActive(a[0])?1:0) || a[1]-b[1]).map(p=>p[0]); }catch(e){}   /* MCS0211MO114 */
+  try{ out = out.map((x,i)=>[x,i]).sort((a,b)=>(pfActive(b[0])?1:0)-(pfActive(a[0])?1:0) || a[1]-b[1]).map(p=>p[0]); }catch(e){}   /* MCS0211MO115 */
   return out;
 }
 function syncSortBars(){ document.querySelectorAll('.sort-bar button').forEach(b=>b.classList.toggle('on', b.dataset.s===listSort)); }
@@ -11386,5 +11386,6 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0211MO115" data-float="1" defer></script> <!-- 🆘 MCS0211MO115: PBT Help Desk -->
 </body>
 </html>
