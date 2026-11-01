@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0111SU110">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0111SU110">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0111SU111">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0111SU111">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1592,6 +1592,33 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 .dev-box-note{flex-basis:100%;text-align:center;font-size:10.5px !important;}
 @media (min-width:700px){.qt-grid{grid-template-columns:repeat(4,1fr);}.oa-app{width:96px;}.oa-app img{width:48px;height:48px;}.oa-app small{display:block;}}
 
+/* MCS0111SU111: تین خانوں والا اوپر کا حصہ — شہر | قبلہ نما | وقت اور نماز */
+.cc-top.cc3{display:grid !important;grid-template-columns:minmax(0,1fr) auto minmax(0,.82fr);align-items:center !important;gap:6px;}
+.cc-hi{font-size:12px;line-height:1.55;opacity:.95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-hi small{display:block;font:600 10px/1.3 Arial,sans-serif;opacity:.82;direction:ltr;text-align:right;}
+.cc3 .cc-l{min-width:0;}
+.cc3 button.cc-city{margin:2px 0 0;}
+.cc-cityen{display:block;font:700 12px/1.3 Arial,sans-serif;color:#ffe08a;direction:ltr;text-align:right;opacity:.92;}
+.cc-cityen:empty{display:none;}
+.cc3 .cc-wx small{display:block;font:600 10.5px/1.3 Arial,sans-serif;direction:ltr;text-align:right;opacity:.85;}
+.cc-qb{border:none;background:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:1px;color:#fff;font-family:inherit;cursor:pointer;}
+.qb-dial{width:78px;height:78px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));transition:filter .3s;}
+#qbRose{transform-origin:50px 50px;transition:transform .25s linear;}
+.cc-qb.aligned .qb-dial{filter:drop-shadow(0 0 10px #4ade80) drop-shadow(0 0 4px #22c55e);}
+.qb-t{font-size:12px;font-weight:800;line-height:1.4;white-space:nowrap;}
+.qb-t b{font:800 13px Arial,sans-serif;direction:ltr;unicode-bidi:isolate;}
+.qb-t small{font:600 10px Arial,sans-serif;opacity:.8;margin-inline-start:4px;}
+.cc-r2{display:flex;flex-direction:column;align-items:flex-end;text-align:left;min-width:0;}
+.cc3 .cc-time{font-size:23px !important;align-self:flex-end !important;white-space:nowrap;}
+.cc-pr{margin-top:3px;text-align:left;line-height:1.35;}
+.cc-pr b{display:block;font-size:14px;color:#ffd27a;}
+.cc-pr b i{font:700 11px Arial,sans-serif;font-style:normal;margin-inline-start:4px;opacity:.9;}
+.cc-pr span{display:block;font:700 11.5px Arial,sans-serif;direction:ltr;white-space:nowrap;}
+.cc-pr small{display:block;font-size:10px;opacity:.8;}
+.cc-prays{grid-template-columns:repeat(5,1fr) !important;}
+.cc-prays .cc-box b{font:800 12px Arial,sans-serif;direction:ltr;}
+.cc-prays .cc-box.now{background:linear-gradient(180deg,#f59e0b,#d97706);border-color:#ffd27a;box-shadow:0 0 0 2px rgba(255,210,122,.4);}
+@media (max-width:370px){.qb-dial{width:66px;height:66px;}.cc3 .cc-time{font-size:20px !important;}.cc-hi{font-size:11px;}}
 /* MCS2910TH071: شہر کارڈ — ابھرا ہوا */
 .city-card{margin:12px 2px 6px;padding:14px 14px 10px;border-radius:22px;color:#fff;background:linear-gradient(150deg,#0d3b66 0%,#0f766e 70%,#0b5d55 100%);
   box-shadow:0 10px 0 #072a49,0 18px 28px rgba(4,30,60,.35),inset 0 2px 0 rgba(255,255,255,.18);position:relative;overflow:hidden;}
@@ -2204,13 +2231,36 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
       </div>
       <!-- MCS2910TH076: ایک اسکرین والا ہوم — شہر کارڈ کمپیکٹ، تاریخیں اور ریٹ چھوٹے خانوں میں -->
       <div class="city-card" id="cityCard">
-      <div class="cc-top">
+      <!-- MCS0111SU111: اوپر والا حصہ — خوش آمدید، شہر (خود لوکیشن سے)، موسم، قبلہ نما، وقت اور اس وقت کی نماز؛ اردو + انگریزی -->
+      <div class="cc-top cc3">
         <div class="cc-l">
+          <div class="cc-hi">میرا شہر روشن ہے میں خوش آمدید<small>Welcome to My City Shines</small></div>
           <button type="button" class="cc-city" onclick="ccOpenCityPick()" aria-label="شہر بدلیں"><span class="cc-pin">📍</span><b id="ccCity">آپ کا شہر</b><span class="cc-chg">بدلیں ▾</span></button>
-          <div class="cc-wx"><span id="ccWx">⛅ موسم…</span></div>
+          <small class="cc-cityen" id="ccCityEn"></small>
+          <div class="cc-wx"><span id="ccWx">⛅ موسم…</span><small id="ccWxEn"></small></div>
           <div class="cc-nocity" id="ccNoCity"></div>
         </div>
-        <div class="cc-time" id="ccTime"></div>
+        <button type="button" class="cc-qb" id="ccQibla" onclick="qbTap()" aria-label="قبلہ نما">
+          <svg class="qb-dial" viewBox="0 0 100 100" aria-hidden="true">
+            <defs><radialGradient id="qbFace" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe7ee"/></radialGradient></defs>
+            <circle cx="50" cy="50" r="47" fill="url(#qbFace)" stroke="#0b2a44" stroke-width="2.5"/>
+            <g id="qbRose">
+              <g id="qbTicks"></g>
+              <text x="50" y="17" text-anchor="middle" font-size="11" font-weight="800" fill="#dc2626" font-family="Arial">N</text>
+              <text x="86" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#334155" font-family="Arial">E</text>
+              <text x="50" y="90" text-anchor="middle" font-size="8" font-weight="700" fill="#334155" font-family="Arial">S</text>
+              <text x="14" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#334155" font-family="Arial">W</text>
+              <g id="qbArrow"><path d="M50 50 L50 16" stroke="#d97706" stroke-width="3" stroke-linecap="round"/><path d="M50 9 L45 18 L55 18 Z" fill="#d97706"/><rect x="44" y="1" width="12" height="11" rx="1.5" fill="#111"/><rect x="44" y="4.5" width="12" height="2.2" fill="#e8b84a"/></g>
+            </g>
+            <path d="M50 22 L54 50 L50 46 L46 50 Z" fill="#16a34a"/><path d="M50 78 L54 50 L50 54 L46 50 Z" fill="#1d4ed8"/>
+            <circle cx="50" cy="50" r="4.5" fill="#0b2a44" stroke="#fff" stroke-width="1.5"/>
+          </svg>
+          <span class="qb-t">قبلہ <b id="qbDeg">—</b><small>Qibla</small></span>
+        </button>
+        <div class="cc-r2">
+          <div class="cc-time" id="ccTime"></div>
+          <div class="cc-pr" id="ccPrNow"></div>
+        </div>
       </div>
       <div class="cc-swap" id="ccSwap" onclick="ccSwapGo()">
       <div class="cc-boxes">
@@ -2218,12 +2268,13 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
         <div class="cc-box"><span class="cc-k">اسلامی</span><b id="ccHijri"></b><small id="ccHijriEn"></small></div>
         <div class="cc-box"><span class="cc-k">دیسی</span><b id="ccDesi"></b><small id="ccDesiEn"></small></div>
       </div>
+      <div class="cc-boxes cc-prays off" id="ccPrays"></div>
       <div class="cc-boxes cc-rates off">
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('dollar')"><span class="cc-k">💵 ڈالر <i>USD</i></span><b id="ccUsd">—</b></button>
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('gold')"><span class="cc-k">🪙 سونا/تولہ <i>Gold</i></span><b id="ccGold">—</b></button>
         <button type="button" class="cc-box cc-rate" onclick="ccEditRate('petrol')"><span class="cc-k">⛽ پٹرول <i>Petrol</i></span><b id="ccPetrol">—</b></button>
       </div>
-      </div><div class="cc-swapdots" id="ccSwapDots"><i class="on"></i><i></i></div>
+      </div><div class="cc-swapdots" id="ccSwapDots"><i class="on"></i><i></i><i></i></div>
       <div class="cc-note" id="ccNote" hidden></div>
       </div>
     </header>
@@ -3333,9 +3384,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0111SU110";
+const APP_VERSION = "MCS0111SU111";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "ریکارڈ حذف کرنے سے پہلے اب ایڈمن پاس ورڈ مانگا جاتا ہے";
+const UPDATE_NOTE = "ہوم کا اوپر والا حصہ: قبلہ نما، نماز کے اوقات، خود لوکیشن والا شہر اور موسم — اردو اور انگریزی";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5859,7 +5910,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU110';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU111';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6020,7 +6071,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU110';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU111';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -10539,16 +10590,17 @@ function ccClock(){
   set('ccHijriEn', h[0] + ' ' + HIJRI_EN[h[1]-1] + ' ' + h[2] + ' AH');
   set('ccDesiEn', ccDesi(d, true));
 }
+const WX_EN = c=> c===0?'Clear sky':c<=3?'Partly cloudy':(c===45||c===48)?'Fog':c<=57?'Drizzle':c<=67?'Rain':c<=77?'Snow':c<=82?'Rain showers':'Thunderstorm';
 const WX = c=> c===0?['☀️','صاف آسمان']:c<=3?['⛅','جزوی بادل']:(c===45||c===48)?['🌫️','دھند']:c<=57?['🌦️','ہلکی بوندا باندی']:c<=67?['🌧️','بارش']:c<=77?['❄️','برف باری']:c<=82?['🌧️','بارش کی بوچھاڑ']:['⛈️','آندھی / طوفان'];
 async function ccWeather(lat, lon){
   try{
     const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);
     const j = await r.json(); const c = j && j.current; if(!c) return;
-    const [ic, tx] = WX(Number(c.weather_code)); const v = {t: Math.round(c.temperature_2m), ic, tx, ts: Date.now()};
+    const [ic, tx] = WX(Number(c.weather_code)); const v = {t: Math.round(c.temperature_2m), ic, tx, en: WX_EN(Number(c.weather_code)), ts: Date.now()};
     ccLS('mcsWx', v); ccShowWx(v);
   }catch(e){}
 }
-function ccShowWx(v){ const e = document.getElementById('ccWx'); if(e && v) e.textContent = `${v.ic} آج: ${v.tx}، ${v.t}°C`; }
+function ccShowWx(v){ const e = document.getElementById('ccWx'); if(e && v) e.textContent = `${v.ic} آج: ${v.tx}، \u2066${v.t}°C\u2069`; const n = document.getElementById('ccWxEn'); if(n) n.textContent = v && v.en ? `${v.en}, ${v.t}°C` : ''; }
 /* MCS2910TH074: شہر — ہاتھ سے چنا ہوا (mcsCityPick) پہلے، ورنہ لوکیشن والا اگر ریکارڈ میں ہو */
 function ccNormCity(t){ return String(t||'').replace(/(تحصیل|ضلع|ڈسٹرکٹ|شہر|سٹی|tehsil|district|city)/gi,'').replace(/[\s\-_.،,]+/g,'').toLowerCase(); }
 function ccCleanName(t){ return String(t||'').replace(/^(تحصیل|ضلع|Tehsil|District)\s+/i,'').replace(/\s+(Tehsil|District|City)$/i,'').trim(); }
@@ -10600,6 +10652,7 @@ function ccShowCity(){
   const viaNear = !pick && act && g && g.near && g.near.city === act && !ccMatchCity(g.cands||[]);
   /* اوپر بڑا نام: جہاں بندہ اس وقت ہے (اس جگہ کا ریکارڈ نہ ہو تو نیچے قریب ترین ریکارڈ والا شہر) */
   e.textContent = viaNear ? ccCleanName(g.city) : (act || (g && g.city ? ccCleanName(g.city) : 'شہر چنیں'));
+  const ce = document.getElementById('ccCityEn'); if(ce) ce.textContent = (!pick && g && g.cityEn && (viaNear || !act || ccMatchCity(g.cands||[]) === act)) ? ccCleanName(g.cityEn) : '';
   const nc = document.getElementById('ccNoCity'); if(nc) nc.textContent = viaNear ? `📋 ریکارڈ: ${act} (${g.near.km} کلومیٹر)` : ((!act && g && g.city && ccCityList().length) ? 'اس شہر کا ابھی ریکارڈ نہیں — ٹچ کر کے شہر چنیں' : '');
 }
 let ccLastApplied = null;
@@ -10608,7 +10661,7 @@ function ccApplyCity(force){
   const act = ccActiveCity();
   if(!force && act === ccLastApplied) return;
   ccLastApplied = act;
-  ccShowCity();
+  ccShowCity(); try{ prUpdate(); }catch(e){}
   try{
     const info = act ? ccCityList().find(x=>x.city===act) : null;
     if(typeof hf !== 'undefined'){
@@ -10654,7 +10707,7 @@ async function ccCityWeather(){
     const e = document.getElementById('ccWx'); if(e) e.textContent = '⛅ موسم…';
     const c = await ccCityCoords(pick.city);
     if(ccWxFor !== pick.city) return;
-    if(c) ccWeather(c.lat, c.lon); else if(e) e.textContent = '⛅ اس شہر کا موسم نہیں ملا';
+    if(c){ ccWeather(c.lat, c.lon); try{ prUpdate(); }catch(e2){} } else if(e) e.textContent = '⛅ اس شہر کا موسم نہیں ملا';
     return;
   }
   ccWxFor = '';
@@ -10670,24 +10723,25 @@ async function ccLocate(force){
   if(force) showToast('📍 لوکیشن معلوم کی جا رہی ہے...', 2000);
   navigator.geolocation.getCurrentPosition(async pos=>{
     const lat = +pos.coords.latitude.toFixed(4), lon = +pos.coords.longitude.toFixed(4);
-    let city = ''; const cands = [];
+    let city = '', cityEn = ''; const cands = [];
     for(const lang of ['ur','en']){
       try{ const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${lang}`); const j = await r.json();
         if(!city) city = j.city || j.locality || '';
+        if(lang === 'en') cityEn = j.city || j.locality || '';
         [j.locality, j.city].concat(((j.localityInfo||{}).administrative||[]).slice().reverse().map(a=>a.name), ((j.localityInfo||{}).informative||[]).map(a=>a.name)).forEach(n=>{ if(n && !cands.includes(n)) cands.push(n); });
       }catch(e){}
     }
-    const v = {lat, lon, city: city || (geo && geo.city) || '', cands, ts: Date.now()};
+    const v = {lat, lon, city: city || (geo && geo.city) || '', cityEn, cands, ts: Date.now()};
     if(!ccMatchCity(cands)){ try{ v.near = await ccNearest(lat, lon); }catch(e){} }
     const prevAct = ccActiveCity();
-    ccLS('mcsGeo', v); ccApplyCity(ccActiveCity() !== prevAct || !!force); ccCityWeather();
+    ccLS('mcsGeo', v); ccApplyCity(ccActiveCity() !== prevAct || !!force); ccCityWeather(); try{ prUpdate(); }catch(e){}
   }, ()=>{ if(force) showToast('لوکیشن نہیں ملی — فون میں لوکیشن آن کریں', 3000); }, {timeout:12000, maximumAge:30*60e3});
 }
 document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setTimeout(()=>ccLocate(false), 800); });
 setInterval(()=>{ if(!document.hidden && !mcsTyping()) ccLocate(false); }, 5*60e3);
 /* MCS3110SA105: صاف ہوم — تاریخیں/ریٹ ایک قطار میں باری باری؛ فلٹر بٹن سے کھلے */
 let ccSw = 0;
-function ccSwapGo(to){ ccSw = (to === undefined) ? 1 - ccSw : to; document.querySelectorAll('#ccSwap > .cc-boxes').forEach((x,i)=>x.classList.toggle('off', i !== ccSw)); document.querySelectorAll('#ccSwapDots i').forEach((x,i)=>x.classList.toggle('on', i === ccSw)); }
+function ccSwapGo(to){ const n = document.querySelectorAll('#ccSwap > .cc-boxes').length || 2; ccSw = (to === undefined) ? (ccSw + 1) % n : to; document.querySelectorAll('#ccSwap > .cc-boxes').forEach((x,i)=>x.classList.toggle('off', i !== ccSw)); document.querySelectorAll('#ccSwapDots i').forEach((x,i)=>x.classList.toggle('on', i === ccSw)); }
 setInterval(()=>{ if(currentScreen === 'home' && !document.hidden && !mcsTyping()) ccSwapGo(); }, 5000);
 let hfOpen = false; try{ hfOpen = localStorage.getItem('mcsHfOpen') === '1'; }catch(e){}
 function hfToggle(force){
@@ -10731,12 +10785,96 @@ function ccEditRate(kind){
   const upd = {ts: Date.now()}; upd[kind] = isNaN(n) ? null : n; upd[kind + 'Ts'] = Date.now();
   FB.setDoc(FB.doc(FB.db,'appConfig','rates'), upd, {merge:true}).then(()=>showToast('ریٹ لگ گیا ✓ — سب کے فون پر')).catch(e=>alert('محفوظ نہیں ہوا: ' + (e.code||e.message)));
 }
+/* ===== MCS0111SU111: نماز کے اوقات (کراچی طریقہ 18°، عصر حنفی) اور قبلہ — فون میں خود حساب، انٹرنیٹ کی ضرورت نہیں ===== */
+const PR_NAMES = [['fajr','فجر','Fajr'],['dhuhr','ظہر','Dhuhr'],['asr','عصر','Asr'],['maghrib','مغرب','Maghrib'],['isha','عشاء','Isha']];
+function prCalc(date, lat, lon){
+  const r = Math.PI/180, sin = x=>Math.sin(x*r), cos = x=>Math.cos(x*r), tan = x=>Math.tan(x*r);
+  const asin = x=>Math.asin(x)/r, acos = x=>Math.acos(Math.max(-1, Math.min(1, x)))/r, atan2 = (y,x)=>Math.atan2(y,x)/r, acot = x=>Math.atan(1/x)/r;
+  const fix = (a, b)=>{ a = a - b*Math.floor(a/b); return a < 0 ? a + b : a; };
+  const tz = -date.getTimezoneOffset()/60;
+  const jd0 = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())/864e5 + 2440587.5 - lon/(15*24);
+  const sun = t=>{ const D = jd0 + t - 2451545; const g = fix(357.529 + .98560028*D, 360), q = fix(280.459 + .98564736*D, 360);
+    const L = fix(q + 1.915*sin(g) + .020*sin(2*g), 360), e = 23.439 - .00000036*D;
+    const RA = fix(atan2(cos(e)*sin(L), cos(L))/15, 24); return {decl: asin(sin(e)*sin(L)), eqt: q/15 - RA}; };
+  const mid = t=>fix(12 - sun(t).eqt, 24);
+  const ang = (a, t, ccw)=>{ const d = sun(t).decl; const T = acos((-sin(a) - sin(d)*sin(lat))/(cos(d)*cos(lat)))/15; return mid(t) + (ccw ? -T : T); };
+  const asrT = (f, t)=>{ const d = sun(t).decl; return ang(-acot(f + tan(Math.abs(lat - d))), t); };
+  const P = {fajr:5/24, sunrise:6/24, dhuhr:12/24, asr:13/24, sunset:18/24, isha:18/24};
+  const h = {fajr: ang(18, P.fajr, true), sunrise: ang(.833, P.sunrise, true), dhuhr: mid(P.dhuhr), asr: asrT(2, P.asr), maghrib: ang(.833, P.sunset), isha: ang(18, P.isha)};
+  const out = {}; Object.keys(h).forEach(k=>{ const hr = h[k] + tz - lon/15 + (k==='maghrib' ? 1/60 : 0); const d = new Date(date.getFullYear(), date.getMonth(), date.getDate()); d.setTime(d.getTime() + hr*36e5); out[k] = d; });
+  return out;
+}
+function prFmt(d){ return d ? d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}) : '—'; }
+function ccPlace(){
+  const pick = ccPickValid();
+  if(pick && pick.city){ const m = (ccLS('mcsCityGeo')||{})[pick.city]; if(m) return m; }
+  const g = ccLS('mcsGeo'); if(g && isFinite(g.lat) && g.lat) return {lat:+g.lat, lon:+g.lon};
+  const last = ccLS('mcsPrPlace'); return last || null;
+}
+function qbBearing(p){ const r = Math.PI/180, la = p.lat*r, lo = p.lon*r, kl = 21.4225*r, kn = 39.8262*r;
+  return (Math.atan2(Math.sin(kn - lo), Math.cos(la)*Math.tan(kl) - Math.sin(la)*Math.cos(kn - lo))/r + 360) % 360; }
+let qbDegV = null;
+function prUpdate(){
+  if(mcsTyping()) return;
+  const p = ccPlace(); const now = new Date();
+  const set = (id, h)=>{ const e = document.getElementById(id); if(e && e.innerHTML !== h) e.innerHTML = h; };
+  if(!p){ set('ccPrNow', '<small>نماز کے اوقات کے لیے<br>لوکیشن آن کریں</small>'); set('ccPrays', '<div class="cc-box" style="grid-column:1/-1"><b>🕌 لوکیشن یا شہر چنیں — نماز کے اوقات آ جائیں گے</b></div>'); set('qbDeg', '—'); return; }
+  ccLS('mcsPrPlace', {lat:p.lat, lon:p.lon});
+  qbDegV = qbBearing(p); set('qbDeg', Math.round(qbDegV) + '°'); qbRender();
+  const t = prCalc(now, p.lat, p.lon), tm = prCalc(new Date(now.getTime() + 864e5), p.lat, p.lon), ty = prCalc(new Date(now.getTime() - 864e5), p.lat, p.lon);
+  /* اس وقت کی نماز: وقت شروع سے اگلی نماز تک؛ فجر طلوع پر ختم؛ طلوع سے ظہر تک «اگلی نماز» */
+  const win = [['fajr', t.fajr, t.sunrise], ['dhuhr', t.dhuhr, t.asr], ['asr', t.asr, t.maghrib], ['maghrib', t.maghrib, t.isha], ['isha', t.isha, tm.fajr], ['isha', ty.isha, t.fajr]];
+  const cur = win.find(w=>now >= w[1] && now < w[2]);
+  const nm = k=>PR_NAMES.find(x=>x[0]===k);
+  let html;
+  if(cur){ const n = nm(cur[0]); html = `<b>${n[1]}<i>${n[2]}</i></b><span>${prFmt(cur[1])} – ${prFmt(cur[2])}</span>`; }
+  else { const n = nm('dhuhr'); html = `<small>اگلی نماز • Next</small><b>${n[1]}<i>${n[2]}</i></b><span>${prFmt(t.dhuhr)}</span>`; }
+  set('ccPrNow', html);
+  const curK = cur ? cur[0] : '';
+  set('ccPrays', PR_NAMES.map(([k, u, e])=>`<div class="cc-box${k===curK?' now':''}"><span class="cc-k">${u} <i>${e}</i></span><b>${prFmt(t[k])}</b></div>`).join(''));
+}
+/* قبلہ نما — فون کا کمپاس ہو تو گلاب گھومے (کعبہ والا تیر اوپر آئے تو رخ قبلہ کی طرف، سبز چمک)؛ نہ ہو تو شمال اوپر اور تیر قبلہ کی طرف */
+let qbHead = null, qbOn = false, qbRaf = 0;
+function qbTicks(){ const g = document.getElementById('qbTicks'); if(!g || g.childNodes.length) return; let h = '';
+  for(let a = 0; a < 360; a += 15){ const L = a % 90 === 0 ? 7 : a % 45 === 0 ? 5 : 3; h += `<line x1="50" y1="4.5" x2="50" y2="${4.5+L}" stroke="#334155" stroke-width="${a%45===0?1.6:1}" transform="rotate(${a} 50 50)"/>`; }
+  g.innerHTML = h; }
+function qbRender(){
+  qbTicks();
+  const rose = document.getElementById('qbRose'), arr = document.getElementById('qbArrow'); if(!rose || !arr) return;
+  arr.setAttribute('transform', `rotate(${qbDegV==null ? 0 : qbDegV} 50 50)`);
+  arr.style.display = qbDegV==null ? 'none' : '';
+  const hd = qbHead == null ? 0 : qbHead;
+  rose.style.transform = `rotate(${-hd}deg)`;
+  const box = document.getElementById('ccQibla');
+  if(box){ const diff = qbHead == null || qbDegV == null ? 999 : Math.abs(((qbDegV - qbHead + 540) % 360) - 180); box.classList.toggle('aligned', diff < 6); }
+}
+function qbOnOri(e){
+  let h = null;
+  if(typeof e.webkitCompassHeading === 'number') h = e.webkitCompassHeading;
+  else if(e.absolute && typeof e.alpha === 'number') h = 360 - e.alpha;
+  if(h == null || isNaN(h)) return;
+  const so = (screen.orientation && screen.orientation.angle) || window.orientation || 0; h = (h + so + 360) % 360;
+  if(qbHead == null) qbHead = h; else { const d = ((h - qbHead + 540) % 360) - 180; qbHead = (qbHead + d*0.25 + 360) % 360; }
+  if(!qbRaf) qbRaf = requestAnimationFrame(()=>{ qbRaf = 0; if(currentScreen === 'home' && !mcsTyping()) qbRender(); });
+}
+function qbStart(){
+  if(qbOn) return; qbOn = true;
+  if('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', qbOnOri);
+  else window.addEventListener('deviceorientation', qbOnOri);
+}
+async function qbTap(){
+  try{ if(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function'){ const r = await DeviceOrientationEvent.requestPermission(); if(r !== 'granted'){ showToast('کمپاس کی اجازت نہیں ملی'); return; } } }catch(e){}
+  qbStart();
+  if(qbDegV == null){ showToast('📍 قبلہ کے لیے لوکیشن آن کریں یا شہر چنیں', 3000); return; }
+  showToast(qbHead == null ? `🕋 قبلہ شمال سے ${Math.round(qbDegV)}° — فون کا کمپاس نہیں ملا، سونے والا تیر قبلہ کی طرف ہے` : '🕋 فون کو سیدھا (زمین کے متوازی) رکھ کر گھمائیں — کعبہ والا تیر اوپر آئے اور کمپاس سبز ہو جائے تو رخ قبلہ کی طرف', 4000);
+}
 function ccInit(){
   const c = ccLS('mcsRatesAdmin'); if(c) ccAdmin = c;
   ccShowCity();
   const cpl = document.getElementById('cityPickList'); if(cpl) cpl.addEventListener('click', e=>{ const b = e.target.closest('.cp-c'); if(b) ccPickCity(b.dataset.c); });
   ccShowWx(ccLS('mcsWx')); ccClock(); ccShowRates();
   setInterval(ccClock, 30000);
+  try{ prUpdate(); qbStart(); setInterval(()=>{ if(!document.hidden && currentScreen==='home') prUpdate(); }, 30000); }catch(e){}
   setTimeout(()=>{ if(ccPickValid()) ccCityWeather(); ccLocate(false); ccFetchRates(); }, 1500);
 }
 try{ ccInit(); }catch(e){}
