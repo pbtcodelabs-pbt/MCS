@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0111SU110">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0111SU110">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0111SU111">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0111SU111">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1614,6 +1614,26 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 .cc-rate b{font:800 15.5px Arial,sans-serif;direction:ltr;color:#ffe08a;margin-top:2px;width:100%;text-align:right;}
 .cc-note{font-size:10.5px;opacity:.75;margin-top:6px;text-align:center;line-height:1.6;position:relative;}
 @media (max-width:360px){.cc-city b{font-size:24px}.cc-rate b{font-size:13.5px}}
+/* MCS0111SU111: قبلہ کمپاس + نماز */
+.cc-qibla{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:#fff;font-family:inherit;padding:0;cursor:pointer;}
+.cq-dial{width:62px;height:62px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));}
+#cqRing{transition:transform .25s linear;transform-origin:50px 50px;}
+.cq-t{font-size:11px;line-height:1.5;white-space:nowrap;}
+.cq-t b{font:800 11.5px Arial,sans-serif;direction:ltr;display:inline-block;}
+.cc-r2{display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex:0 1 auto;min-width:0;}
+.cc-namaz{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-family:inherit;font-size:11.5px;line-height:1.55;padding:1px 7px;cursor:pointer;text-align:left;direction:rtl;max-width:150px;}
+.cc-namaz:empty{display:none;}
+.cc-wxen{display:block;font:11px Arial,sans-serif;opacity:.85;direction:ltr;text-align:right;line-height:1.5;}
+.cc-namaz b{color:#ffe08a;}
+.cc-namaz i{font-style:normal;font:700 11px Arial,sans-serif;direction:ltr;display:inline-block;}
+.cc-hello{font-size:11.5px !important;line-height:1.5 !important;opacity:.92;}
+.cc-hello small{display:block;font:10px Arial,sans-serif;opacity:.8;margin:0;}
+#ccNamazBox{position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;}
+#ccNamazBox .nb{background:#fff;color:#0f172a;border-radius:18px;width:min(360px,100%);padding:14px 16px;box-shadow:0 12px 30px rgba(0,0,0,.35);}
+#ccNamazBox .nr{display:flex;justify-content:space-between;align-items:center;padding:7px 4px;border-bottom:1px dashed #e2e8f0;font-size:16px;}
+#ccNamazBox .nr.on{background:#ecfdf5;border-radius:10px;font-weight:800;}
+#ccNamazBox .nr i{font:700 15px Arial,sans-serif;font-style:normal;direction:ltr;}
+@media (max-width:370px){.cq-dial{width:52px;height:52px;}.cc-namaz{max-width:120px;font-size:10.5px;}}
 /* MCS2910TH076: ایک اسکرین والا ہوم */
 .hero{padding:6px 10px 8px !important;}
 .hero .hero-skyline{height:34px;}
@@ -2206,11 +2226,31 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
       <div class="city-card" id="cityCard">
       <div class="cc-top">
         <div class="cc-l">
+          <div class="cc-hello">میرا شہر روشن ہے میں خوش آمدید<small>Welcome to My City Shines</small></div>
           <button type="button" class="cc-city" onclick="ccOpenCityPick()" aria-label="شہر بدلیں"><span class="cc-pin">📍</span><b id="ccCity">آپ کا شہر</b><span class="cc-chg">بدلیں ▾</span></button>
           <div class="cc-wx"><span id="ccWx">⛅ موسم…</span></div>
           <div class="cc-nocity" id="ccNoCity"></div>
         </div>
-        <div class="cc-time" id="ccTime"></div>
+        <!-- MCS0111SU111: قبلہ کمپاس + نماز کا وقت -->
+        <button type="button" class="cc-qibla" id="ccQibla" onclick="ccQiblaTap()" aria-label="قبلہ کی سمت">
+          <svg viewBox="0 0 100 100" class="cq-dial" aria-hidden="true">
+            <g id="cqRing">
+              <circle cx="50" cy="50" r="46" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+              <g stroke="#94a3b8" stroke-width="1.2"><line x1="50" y1="6" x2="50" y2="13" transform="rotate(0 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(15 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(30 50 50)"/><line x1="50" y1="6" x2="50" y2="13" transform="rotate(45 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(60 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(75 50 50)"/><line x1="50" y1="6" x2="50" y2="13" transform="rotate(90 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(105 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(120 50 50)"/><line x1="50" y1="6" x2="50" y2="13" transform="rotate(135 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(150 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(165 50 50)"/><line x1="50" y1="6" x2="50" y2="13" transform="rotate(180 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(195 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(210 50 50)"/><line x1="50" y1="6" x2="50" y2="13" transform="rotate(225 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(240 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(255 50 50)"/><line x1="50" y1="6" x2="50" y2="13" transform="rotate(270 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(285 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(300 50 50)"/><line x1="50" y1="6" x2="50" y2="13" transform="rotate(315 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(330 50 50)"/><line x1="50" y1="6" x2="50" y2="10" transform="rotate(345 50 50)"/></g>
+              <text x="50" y="23" text-anchor="middle" font-size="12" font-weight="800" fill="#dc2626" font-family="Arial">N</text>
+              <text x="81" y="54" text-anchor="middle" font-size="9" fill="#475569" font-family="Arial">E</text>
+              <text x="50" y="86" text-anchor="middle" font-size="9" fill="#475569" font-family="Arial">S</text>
+              <text x="19" y="54" text-anchor="middle" font-size="9" fill="#475569" font-family="Arial">W</text>
+              <g id="cqKaaba"><path d="M50 50 L50 13" stroke="#16a34a" stroke-width="3.2" stroke-linecap="round"/><rect x="44" y="3" width="12" height="11" rx="1.5" fill="#111"/><rect x="44" y="6" width="12" height="2.2" fill="#eab308"/></g>
+            </g>
+            <circle cx="50" cy="50" r="4" fill="#0f172a"/>
+          </svg>
+          <span class="cq-t" id="ccQiblaT">قبلہ <b>—</b></span>
+        </button>
+        <div class="cc-r2">
+          <div class="cc-time" id="ccTime"></div>
+          <button type="button" class="cc-namaz" id="ccNamaz" onclick="ccNamazAll()"></button>
+        </div>
       </div>
       <div class="cc-swap" id="ccSwap" onclick="ccSwapGo()">
       <div class="cc-boxes">
@@ -3333,9 +3373,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0111SU110";
+const APP_VERSION = "MCS0111SU111";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "ریکارڈ حذف کرنے سے پہلے اب ایڈمن پاس ورڈ مانگا جاتا ہے";
+const UPDATE_NOTE = "شہر کارڈ میں قبلہ کمپاس اور نماز کے اوقات (اردو + انگریزی)";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -5859,7 +5899,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU110';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU111';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6020,7 +6060,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU110';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0111SU111';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -10540,15 +10580,95 @@ function ccClock(){
   set('ccDesiEn', ccDesi(d, true));
 }
 const WX = c=> c===0?['☀️','صاف آسمان']:c<=3?['⛅','جزوی بادل']:(c===45||c===48)?['🌫️','دھند']:c<=57?['🌦️','ہلکی بوندا باندی']:c<=67?['🌧️','بارش']:c<=77?['❄️','برف باری']:c<=82?['🌧️','بارش کی بوچھاڑ']:['⛈️','آندھی / طوفان'];
+
+/* ===== MCS0111SU111: قبلہ کمپاس اور نماز کے اوقات — انٹرنیٹ کے بغیر حساب (کراچی طریقہ 18°، عصر حنفی) ===== */
+const NAMAZ = [['fajr','فجر','Fajr'],['sunrise','طلوع','Sunrise'],['dhuhr','ظہر','Dhuhr'],['asr','عصر','Asr'],['maghrib','مغرب','Maghrib'],['isha','عشاء','Isha']];
+function ccCoords(){ const c = ccLS('mcsCoords') || ccLS('mcsGeo'); return (c && isFinite(c.lat) && isFinite(c.lon)) ? {lat:+c.lat, lon:+c.lon} : null; }
+function ccPrayerTimes(date, lat, lon){
+  const D = Math.PI/180, tz = -date.getTimezoneOffset()/60;
+  const jd = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())/864e5 + 2440587.5 - lon/360;
+  const sun = j => { const d = j - 2451545, g = (357.529 + .98560028*d)%360, q = (280.459 + .98564736*d)%360, L = (q + 1.915*Math.sin(g*D) + .02*Math.sin(2*g*D))%360, e = 23.439 - .00000036*d;
+    const RA = Math.atan2(Math.cos(e*D)*Math.sin(L*D), Math.cos(L*D))/D/15; const decl = Math.asin(Math.sin(e*D)*Math.sin(L*D))/D; let eqt = q/15 - ((RA%24)+24)%24; eqt = ((eqt+12)%24+24)%24-12; return {decl, eqt}; };
+  const mid = t => { const s = sun(jd + t/24); return 12 - s.eqt; };
+  const angT = (a, t, ccw) => { const s = sun(jd + t/24); const v = (-Math.sin(a*D) - Math.sin(s.decl*D)*Math.sin(lat*D)) / (Math.cos(s.decl*D)*Math.cos(lat*D)); const h = Math.acos(Math.max(-1, Math.min(1, v)))/D/15; return mid(t) + (ccw ? -h : h); };
+  const asrT = (f, t) => { const s = sun(jd + t/24); const a = -Math.atan(1/(f + Math.tan(Math.abs(lat - s.decl)*D)))/D; return angT(a, t); };
+  let T = {fajr:5, sunrise:6, dhuhr:12, asr:13, maghrib:18, isha:18};
+  for(let i = 0; i < 2; i++) T = { fajr: angT(18, T.fajr, true), sunrise: angT(.833, T.sunrise, true), dhuhr: mid(T.dhuhr), asr: asrT(2, T.asr), maghrib: angT(.833, T.maghrib), isha: angT(18, T.isha) };
+  const adj = tz - lon/15, out = {};
+  Object.keys(T).forEach(k => { const h = T[k] + adj; const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0); d.setSeconds(Math.round(h*3600)); out[k] = d; });
+  return out;
+}
+const ccHM = d => d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+function ccNamazNow(){
+  const c = ccCoords(); if(!c) return null;
+  const now = new Date(), t = ccPrayerTimes(now, c.lat, c.lon), tm = ccPrayerTimes(new Date(now.getTime()+864e5), c.lat, c.lon), ty = ccPrayerTimes(new Date(now.getTime()-864e5), c.lat, c.lon);
+  const seq = [['isha', ty.isha, t.fajr], ['fajr', t.fajr, t.sunrise], [null, t.sunrise, t.dhuhr], ['dhuhr', t.dhuhr, t.asr], ['asr', t.asr, t.maghrib], ['maghrib', t.maghrib, t.isha], ['isha', t.isha, tm.fajr]];
+  const cur = seq.find(x => now >= x[1] && now < x[2]) || seq[0];
+  return { t, cur, next: cur[0] ? null : 'dhuhr' };
+}
+function ccNamazShow(){
+  const el = document.getElementById('ccNamaz'); if(!el) return;
+  const n = ccNamazNow(); if(!n){ el.textContent = ''; return; }
+  const nm = k => NAMAZ.find(x => x[0] === k);
+  const v = n.cur[0] ? `🕌 <b>${nm(n.cur[0])[1]}</b> ${nm(n.cur[0])[2]} <i>${ccHM(n.cur[1])}–${ccHM(n.cur[2])}</i>` : `🕌 اگلی <b>ظہر</b> Dhuhr <i>${ccHM(n.t.dhuhr)}</i>`;
+  if(el.innerHTML !== v) el.innerHTML = v;
+}
+function ccNamazAll(){
+  const n = ccNamazNow(); if(!n){ showToast('📍 نماز کے اوقات کے لیے شہر یا لوکیشن چنیں', 2500); return; }
+  let b = document.getElementById('ccNamazBox'); if(b) b.remove();
+  b = document.createElement('div'); b.id = 'ccNamazBox'; b.onclick = e => { if(e.target === b) b.remove(); };
+  const city = (document.getElementById('ccCity') || {}).textContent || '';
+  b.innerHTML = `<div class="nb" dir="rtl"><div style="font-size:18px;font-weight:800;text-align:center;line-height:1.8;">🕌 نماز کے اوقات — ${city}<div style="font:12px Arial,sans-serif;color:#64748b;">Prayer times · Karachi method · Asr Hanafi</div></div>` +
+    NAMAZ.map(([k,u,e]) => `<div class="nr ${n.cur[0] === k ? 'on' : ''}"><span>${u} <small style="font:12px Arial,sans-serif;color:#64748b;">${e}</small></span><i>${ccHM(n.t[k])}</i></div>`).join('') +
+    `<div style="font-size:11.5px;color:#64748b;text-align:center;margin-top:8px;line-height:1.7;">اوقات حساب سے ہیں، مقامی مسجد کے اعلان کو ترجیح دیں</div><button type="button" onclick="this.closest('#ccNamazBox').remove()" style="width:100%;margin-top:8px;padding:9px;border:none;border-radius:12px;background:#0f766e;color:#fff;font-family:inherit;font-size:16px;font-weight:800;">ٹھیک ہے</button></div>`;
+  document.body.appendChild(b);
+}
+function ccQiblaDeg(lat, lon){ const D = Math.PI/180, kl = 21.4225*D, kL = 39.8262*D, la = lat*D, dL = kL - lon*D; return (Math.atan2(Math.sin(dL), Math.cos(la)*Math.tan(kl) - Math.sin(la)*Math.cos(dL))/D + 360) % 360; }
+let ccHeading = null, ccQDeg = null;
+function ccQiblaShow(){
+  const c = ccCoords(), t = document.getElementById('ccQiblaT'), ring = document.getElementById('cqRing'), k = document.getElementById('cqKaaba');
+  if(!t || !ring || !k) return;
+  if(!c){ t.innerHTML = 'قبلہ <b>—</b>'; return; }
+  ccQDeg = ccQiblaDeg(c.lat, c.lon);
+  k.setAttribute('transform', `rotate(${ccQDeg.toFixed(1)} 50 50)`);
+  ring.style.transform = ccHeading == null ? '' : `rotate(${(-ccHeading).toFixed(1)}deg)`;
+  const v = `قبلہ <b>Qibla ${Math.round(ccQDeg)}°</b>`; if(t.innerHTML !== v) t.innerHTML = v;
+}
+function ccOnOrient(e){
+  let h = null;
+  if(typeof e.webkitCompassHeading === 'number') h = e.webkitCompassHeading;
+  else if(e.absolute && typeof e.alpha === 'number') h = (360 - e.alpha) % 360;
+  if(h == null) return;
+  ccHeading = h; ccQiblaShow();
+}
+let ccOrientOn = false;
+function ccStartCompass(){
+  if(ccOrientOn) return; ccOrientOn = true;
+  if('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', ccOnOrient);
+  else window.addEventListener('deviceorientation', ccOnOrient);
+}
+async function ccQiblaTap(){
+  try{ if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){ const r = await DeviceOrientationEvent.requestPermission(); if(r !== 'granted'){ showToast('کمپاس کی اجازت نہیں ملی', 2500); return; } } }catch(e){}
+  ccStartCompass();
+  if(!ccCoords()){ try{ ccLocate(true); }catch(e){} return; }
+  showToast(ccHeading == null ? `🕋 قبلہ شمال سے ${Math.round(ccQDeg||0)}° — فون سیدھا رکھ کر آہستہ گھمائیں` : '🕋 سبز سوئی کی طرف قبلہ ہے', 3000);
+}
+setTimeout(() => { try{ ccStartCompass(); ccQiblaShow(); ccNamazShow(); }catch(e){} }, 600);
+setInterval(() => { try{ if(!document.hidden) ccNamazShow(); }catch(e){} }, 30000);
 async function ccWeather(lat, lon){
+  try{ ccLS('mcsCoords', {lat, lon}); ccQiblaShow(); ccNamazShow(); }catch(e){}
   try{
     const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`);
     const j = await r.json(); const c = j && j.current; if(!c) return;
-    const [ic, tx] = WX(Number(c.weather_code)); const v = {t: Math.round(c.temperature_2m), ic, tx, ts: Date.now()};
+    const [ic, tx] = WX(Number(c.weather_code)); const v = {t: Math.round(c.temperature_2m), ic, tx, code: Number(c.weather_code), ts: Date.now()};
     ccLS('mcsWx', v); ccShowWx(v);
   }catch(e){}
 }
-function ccShowWx(v){ const e = document.getElementById('ccWx'); if(e && v) e.textContent = `${v.ic} آج: ${v.tx}، ${v.t}°C`; }
+/* MCS0111SU111: موسم اور شہر انگریزی میں بھی */
+const WX_EN = c=> c===0?'Clear sky':c<=3?'Partly cloudy':(c===45||c===48)?'Fog':c<=57?'Drizzle':c<=67?'Rain':c<=77?'Snow':c<=82?'Showers':'Thunderstorm';
+function ccCityEn(){ try{ const g = ccLS('mcsGeo'), act = (typeof ccActiveCity === 'function') ? ccActiveCity() : ''; if(!g || !Array.isArray(g.cands)) return ''; const ur = g.city || ''; if(act && ur && ccNormCity(act) !== ccNormCity(ur) && !g.cands.some(n=>ccNormCity(n)===ccNormCity(act))) return ''; const en = g.cands.find(n=>/^[A-Za-z][A-Za-z .'-]+$/.test(n||'')); return en ? ccCleanName(en) : ''; }catch(e){ return ''; } }
+function ccShowWx(v){ const e = document.getElementById('ccWx'); if(!e || !v) return; const en = (v.code != null ? WX_EN(v.code) + ', ' + v.t + '°C' : ''); const ce = ccCityEn();
+  const h = `${v.ic} آج: ${v.tx}، ${v.t}°C` + ((en || ce) ? `<small class="cc-wxen">${escapeHtml([ce, en].filter(Boolean).join(' · '))}</small>` : ''); if(e.innerHTML !== h) e.innerHTML = h; }
 /* MCS2910TH074: شہر — ہاتھ سے چنا ہوا (mcsCityPick) پہلے، ورنہ لوکیشن والا اگر ریکارڈ میں ہو */
 function ccNormCity(t){ return String(t||'').replace(/(تحصیل|ضلع|ڈسٹرکٹ|شہر|سٹی|tehsil|district|city)/gi,'').replace(/[\s\-_.،,]+/g,'').toLowerCase(); }
 function ccCleanName(t){ return String(t||'').replace(/^(تحصیل|ضلع|Tehsil|District)\s+/i,'').replace(/\s+(Tehsil|District|City)$/i,'').trim(); }
