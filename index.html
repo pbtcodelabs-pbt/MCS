@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0211MO116">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0211MO116">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0211MO117">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0211MO117">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -2363,7 +2363,7 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
       <div class="cc-note" id="ccNote" hidden></div>
       </div>
     </header>
-    <!-- MCS0211MO113: میری پروفائل — جس نے اپنا ریکارڈ فیڈ کیا، اوپر اس کی دکان/پروفیشن؛ 2 ماہ مفت کی الٹی گنتی -->
+    <!-- MCS0211MO113: میری پروفائل — جس نے اپنا ریکارڈ فیڈ کیا، اوپر اس کی دکان/پروفیشن؛ 15 دن مفت کی الٹی گنتی -->
     <div class="mp-bar" id="mpBar"></div>
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
 
@@ -2916,7 +2916,7 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
     <div class="mp-ask-ic">👤</div>
     <div class="mp-ask-t">کیا یہ آپ کی اپنی دکان / کام ہے؟</div>
     <div class="mp-ask-n" id="mpAskName"></div>
-    <div class="mp-ask-h">«ہاں» دبائیں تو یہ آپ کی <b>پروفائل</b> بن جائے گی — ایپ کھولتے ہی سب سے اوپر آپ کی دکان اور آپ کا شہر، اور <b>2 ماہ بالکل مفت</b>۔</div>
+    <div class="mp-ask-h">«ہاں» دبائیں تو یہ آپ کی <b>پروفائل</b> بن جائے گی — ایپ کھولتے ہی سب سے اوپر آپ کی دکان اور آپ کا شہر، اور <b>15 دن بالکل مفت</b>۔</div>
     <div class="mp-ask-btns"><button type="button" class="no" onclick="mpAskDone(false)">نہیں، کسی اور کی ہے</button><button type="button" class="yes" onclick="mpAskDone(true)">✅ ہاں، میری ہے</button></div>
   </div>
 </div>
@@ -3520,9 +3520,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0211MO116";
+const APP_VERSION = "MCS0211MO117";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "SOS بٹن اب ایپ کی اپنی پٹی میں (درمیان والا ہٹا دیا)";
+const UPDATE_NOTE = "پروفائل کی مفت آزمائش اب 15 دن";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3772,7 +3772,7 @@ const ADMIN_QUICK_PIN_HASH = '8b5a43764420e5af43f7c4623ad3a6699a628be06269051d38
 async function mcsSha256(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); }
 /* MCS2810WE069: ہوم کی تلاش سے سیدھا تلاش والا صفحہ — لکھا ہوا لفظ ساتھ، یا فلٹر کھلا ہوا */
 /* ===== MCS0211MO113: میری پروفائل + ہوم پر کیپسول نتائج ===== */
-const MP_FREE_DAYS = 60;
+const MP_FREE_DAYS = 15;   /* MCS0211MO117: مفت آزمائش 15 دن (مالک کی ہدایت) */
 /* ===== MCS0211MO116: پروفائل — دکاندار کا اپنا صفحہ (ہمارا سرور /pclaim /pget /psave /pimg /plist /padmin) ===== */
 const PF_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
 let pfAct = {}; try{ pfAct = JSON.parse(localStorage.getItem('mcsPfList')||'{}') || {}; }catch(e){}
@@ -3835,7 +3835,7 @@ function pfHtml(c){
     + ((owner || adm) ? `<div class="pf-own">${p.until ? `<div class="pf-days">${left > 0 ? `⭐ پروفائل فعال — ${left} دن باقی` : '⚠️ پروفائل کی مدت ختم — سبسکرائب کریں'}</div>` : ''}
         ${(owner || (adm && c.prof)) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ پروفائل سنواریں — تصویریں، ریٹ، اوقات، نقشہ</button>` : ''}
         ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('year')">➕ ایک سال بڑھائیں (ادائیگی ملنے پر)</button><button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ پروفائل ختم کریں</button>`
-          : `<button type="button" class="pf-adm" onclick="pfAdmin('make')">⭐ اس ریکارڈ کی پروفائل بنائیں (2 ماہ مفت)</button>`) : ''}
+          : `<button type="button" class="pf-adm" onclick="pfAdmin('make')">⭐ اس ریکارڈ کی پروفائل بنائیں (15 دن مفت)</button>`) : ''}
         ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove()">✖ اس فون سے پروفائل ہٹائیں</button>` : ''}</div>` : '');
 }
 function pfRender(){
@@ -3847,7 +3847,7 @@ async function pfAdmin(act){
   const c = pfCur; if(!c) return;
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ showToast('ایڈمن لاگ ان درکار ہے'); return; }
   try{
-    if(act === 'make'){ const r = await fetch(PF_API + '/pclaim', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk})}); const j = await r.json(); if(!j.key) throw 0; pfAct[c.rk] = {since:j.since, until:j.until}; showToast('⭐ پروفائل بن گئی — 2 ماہ مفت'); }
+    if(act === 'make'){ const r = await fetch(PF_API + '/pclaim', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk})}); const j = await r.json(); if(!j.key) throw 0; pfAct[c.rk] = {since:j.since, until:j.until}; showToast('⭐ پروفائل بن گئی — 15 دن مفت'); }
     else {
       if(act === 'del' && !confirm('اس دکان کی پروفائل (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
       const until = act === 'year' ? Math.max(Date.now(), (c.prof && c.prof.until) || 0) + 365*864e5 : 0;
@@ -3927,7 +3927,7 @@ function mpSet(kind, rec){
   const same = old && (old.id===rec.id || (rec.fsId && old.fsId===rec.fsId));
   store.myProfile = same ? Object.assign(old, {kind, id:rec.id, fsId:rec.fsId||''}) : {kind, id:rec.id, fsId:rec.fsId||'', since: Date.now()};
   saveStore(); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRender();
-  showToast('👤 آپ کی پروفائل بن گئی — 2 ماہ مفت ✓', 3000);
+  showToast('👤 آپ کی پروفائل بن گئی — 15 دن مفت ✓', 3000);
   pfClaim();
 }
 let mpWant = false, mpAskItem = null;
@@ -3951,7 +3951,7 @@ function mpRender(){
   const box = document.getElementById('mpBar'); if(!box) return;
   if(isAdminSignedIn && !store.myProfile){ box.innerHTML = ''; return; }
   const m = mpRec();
-  if(!m){ box.innerHTML = `<button type="button" class="mp-new" onclick="mpStartNew()">👤 اپنی دکان / پروفیشن کی پروفائل بنائیں — 2 ماہ مفت <small>Create your profile</small></button>`; return; }
+  if(!m){ box.innerHTML = `<button type="button" class="mp-new" onclick="mpStartNew()">👤 اپنی دکان / پروفیشن کی پروفائل بنائیں — 15 دن مفت <small>Create your profile</small></button>`; return; }
   const r = m.kind==='doctor' ? fhDoc(m.rec) : fhSvc(m.rec), cm = ubCatMeta(m.kind==='doctor' ? 'doctor' : r.category);
   const own = m.kind==='doctor' ? {owner:''} : splitOwnerIntro(r.intro);
   const left = mpLeft(), cls = left <= 0 ? 'end' : left <= 10 ? 'warn' : '';
@@ -6289,7 +6289,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO116';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO117';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6450,7 +6450,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO116';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO117';
 
     function finishFooter(){
       const fY = 770, fH = 220;
