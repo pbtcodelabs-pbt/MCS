@@ -57,6 +57,8 @@ self.addEventListener('activate', (event) => {
    This guarantees the app boots even with zero connectivity, while still
    picking up newer files opportunistically when online. */
 self.addEventListener('fetch', (event) => {
+  /* ہیلپ ڈیسک (#33): pbtcodelabs-pbt.github.io/help/ کی فائلیں (widget.js) کبھی کیش نہیں — ہر ایپ میں نیا بٹن فوراً */
+  try { const _hd = new URL(event.request.url); if (_hd.hostname === 'pbtcodelabs-pbt.github.io' && _hd.pathname.startsWith('/help/')) return; } catch (_e) {}
   if (event.request.method !== 'GET') return;
 
   /* MCS29SEPTU0352AM: صرف اپنی سائٹ کی فائلیں اور گوگل کے فونٹ/فائربیس SDK کیش ہوں۔
