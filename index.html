@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0311TU124">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0311TU124">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0311TU125">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0311TU125">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1711,6 +1711,24 @@ html.mcs-dark .hl-tx b,html.mcs-dark .hl-h b{color:#e2f5f2;}html.mcs-dark .hl-tx
 .pf-add,.pf-loc{display:block;width:100%;min-height:40px;border:1.5px dashed #0f766e;border-radius:12px;background:#f0fdfa;color:#0f766e;font-family:inherit;font-weight:800;font-size:14px;margin-bottom:8px;}
 .pf-loc.on{background:#dcfce7;border-style:solid;}
 .pf-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+/* MCS0311TU125 */
+.fm-pf{border-color:#f2b13a !important;background:linear-gradient(180deg,#fffaf0,#fff) !important;}
+.fm-pf > summary{color:#92400e !important;}
+.pf-h small{font-weight:600;color:#64748b;font-size:11px;}
+.pf-slots{grid-template-columns:repeat(4,1fr) !important;}
+.pf-lock{margin-bottom:10px;padding:10px 12px;border-radius:14px;background:#fff7ed;border:2px solid #fb923c;color:#7c2d12;font-size:13.5px;line-height:1.9;text-align:center;}
+.pf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+.pf-stats div{text-align:center;padding:6px 4px;border-radius:12px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #a7f3d0;}
+.pf-stats b{display:block;font:800 20px Arial,sans-serif;color:#065f46;}
+.pf-stats small{font-size:11.5px;color:#047857;font-weight:700;}
+.pf-stats span{grid-column:1/-1;text-align:center;font-size:11px;color:#64748b;}
+.pf-days.end{color:#b91c1c !important;}
+.mp-card.mp-small{margin-top:6px;padding:5px 8px;}
+.mp-card.mp-small .mp-ic{width:34px;height:34px;font-size:18px;}
+.mp-card.mp-small .mp-tx b{font-size:16px;}
+.mp-cd.none{background:#64748b;}
+.mp-more{display:block;width:100%;margin-top:6px;min-height:36px;border:1.5px dashed #c98a1a;border-radius:12px;background:#fffbeb;color:#92400e;font-family:inherit;font-weight:800;font-size:13px;}
+.mp-more small{font-weight:600;font-size:11px;}
 /* MCS0111SU111: قبلہ کمپاس + نماز */
 .cc-qibla{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:#fff;font-family:inherit;padding:0;cursor:pointer;}
 .cq-dial{width:62px;height:62px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));}
@@ -2739,7 +2757,12 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
       <div class="field"><label>✉️ ای میل</label><input type="email" id="svcEmail" maxlength="80" dir="ltr" placeholder="Email — name@gmail.com"></div>
       <div class="field"><label>🗺️ گوگل میپ لوکیشن</label><input type="text" id="svcMap" maxlength="300" dir="ltr" placeholder="Google Map link — یا نیچے 📍 دبائیں"></div>
       <button type="button" class="fm-geo" onclick="svcMapHere()">📍 میری موجودہ جگہ لگائیں <small>(دکان پر کھڑے ہو کر)</small></button>
-      <div class="fm-more-hint">🖼️ دکان / مالک کی تصویریں: ریکارڈ محفوظ ہونے کے بعد کارڈ پر «پروفائل» سے لگائیں</div>
+    </details>
+    <!-- MCS0311TU125: ⭐ پروفائل — اسی ریکارڈ کا دوسرا حصہ (الگ انٹری نہیں)؛ بھرنے کے دن سے 15 دن مفت، پھر سبسکرپشن -->
+    <details class="fm-more fm-pf" id="svcPfBox">
+      <summary>⭐ میرا کاروبار / پروفائل <small>15 دن مفت، پھر سبسکرپشن — تفصیل، ریٹ، اوقات، تصویریں</small></summary>
+      <div class="fm-more-note">اوپر والے خانے (سادہ کارڈ) <b>ہمیشہ مفت</b>۔ یہ حصہ بھریں تو 15 دن آپ کی پوری پروفائل سب کو دکھے گی — پھر سبسکرپشن (سال 1000 روپے)؛ نہ لیں تو پروفائل چھپ جائے گی، مٹے گی نہیں، اور سادہ کارڈ چلتا رہے گا۔</div>
+      <div id="svcPfFields"></div>
     </details>
     <div class="field mcs-off"><label>تعارف</label><textarea id="svcIntro" rows="1"></textarea></div>
     </div>
@@ -2934,22 +2957,10 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
 <div class="modal-overlay" id="pfEditModal" style="z-index:2147480800">
   <div class="modal-box pf-box">
     <button class="modal-close" onclick="closeModal('pfEditModal')">×</button>
-    <h3>✏️ اپنی پروفائل سنواریں</h3>
+    <h3>⭐ اپنی پروفائل سنواریں</h3>
     <div style="clear:both;"></div>
-    <div class="pf-h">📸 تصویریں (6 تک) — پہلی تصویر سب سے آگے دکھے گی</div>
-    <div class="pf-slots" id="pfSlots"></div>
     <input type="file" accept="image/*" id="pfImgIn" hidden onchange="pfImgPicked(this)">
-    <div class="field"><label>📝 دکان / کام کی تفصیل — کیا کیا ملتا ہے</label><textarea id="pfAbout" rows="4" maxlength="1500" placeholder="مثلاً: ہر قسم کا ہارڈویئر، پینٹ، سینٹری، بجلی کا سامان۔ ہول سیل اور ریٹیل۔ گھر تک ڈیلیوری۔"></textarea></div>
-    <div class="pf-h">🏷️ چیزیں / سروسز اور ریٹ (20 تک)</div>
-    <div id="pfItems"></div>
-    <button type="button" class="pf-add" onclick="pfAddItem()">➕ ایک اور چیز</button>
-    <div class="pf-2"><div class="field"><label>🕘 اوقات</label><input type="text" id="pfHours" maxlength="120" placeholder="صبح 9 سے رات 9"></div>
-      <div class="field"><label>🚫 چھٹی</label><select id="pfOff"><option value="">کوئی نہیں</option><option>جمعہ</option><option>اتوار</option><option>ہفتہ</option><option>پیر</option><option>منگل</option><option>بدھ</option><option>جمعرات</option></select></div></div>
-    <div class="field"><label>📍 پتہ</label><input type="text" id="pfAddr" maxlength="200" placeholder="مثلاً: مین بازار، نزد جامع مسجد"></div>
-    <button type="button" class="pf-loc" id="pfLocBtn" onclick="pfGetLoc()">📍 میں ابھی دکان پر ہوں — نقشے پر جگہ لگائیں</button>
-    <div class="pf-2"><div class="field"><label>📞 دوسرا نمبر</label><input type="tel" id="pfPh1" placeholder="03xx-xxxxxxx"></div><div class="field"><label>📞 تیسرا نمبر</label><input type="tel" id="pfPh2" placeholder="03xx-xxxxxxx"></div></div>
-    <div class="field"><label>🌐 فیس بک / ویب سائٹ کا لنک</label><input type="url" id="pfLink1" dir="ltr" placeholder="https://facebook.com/..."></div>
-    <div class="field"><label>🌐 دوسرا لنک (یوٹیوب، انسٹاگرام…)</label><input type="url" id="pfLink2" dir="ltr" placeholder="https://..."></div>
+    <div id="pfEFields"></div>
     <button type="button" class="btn block accent" id="pfSaveBtn" onclick="pfSave()">💾 پروفائل محفوظ کریں</button>
     <div class="cp-hint" id="pfSaveMsg" style="margin-top:6px;text-align:center"></div>
   </div>
@@ -3121,6 +3132,12 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
 
       <!-- MCS04OCTSU0355PM: لسٹ امپورٹ (Excel / CSV) — صرف ایڈمن -->
       <!-- MCS510MO008: کیٹگری چن کر سارے ریکارڈ ایکسل شیٹ کی طرح ایک ایک لائن میں درست کریں -->
+      <!-- MCS0311TU125: پروفائل میں تصویریں — مالک جب چاہے چالو کرے (شروع میں بند) -->
+      <div class="backup-card" id="adminPfBox" style="display:none;">
+        <div class="backup-card-title">⭐ پروفائل کی سہولتیں</div>
+        <button type="button" class="btn block secondary" id="pfPhotosBtn" onclick="pfTogglePhotos()">📸 پروفائل میں تصویریں</button>
+        <div class="cp-hint" style="margin-top:6px;">بند ہو تو دکاندار تصویریں نہیں لگا سکتے اور لگی ہوئی بھی کسی کو نہیں دکھتیں (ایڈمن کو جانچ کے لیے دکھتی ہیں)۔</div>
+      </div>
       <div class="backup-card" id="adminSheetBox" style="display:none;">
         <div class="backup-card-title">📊 شیٹ ایڈیٹر (ایک ساتھ ترمیم)</div>
         <div class="cp-hint" style="margin-bottom:10px;">کیٹگری چنیں — سارے ریکارڈ ایک ایک لائن میں کھلیں گے۔ نام، نمبر، علاقہ وغیرہ وہیں درست کر کے ایک ہی بار محفوظ کریں۔</div>
@@ -3563,9 +3580,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0311TU124";
+const APP_VERSION = "MCS0311TU125";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "رابطہ اب صرف «Help Desk · مسائل و تجاویز» سے — اوپر کا 📞 بٹن ہٹایا";
+const UPDATE_NOTE = "ایک ہی فارم میں ⭐ پروفائل حصہ (15 دن مفت، پھر سبسکرپشن)؛ ایک نمبر کی کئی پروفائلیں؛ مدت ختم ہو تو چھپے مٹے نہیں";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -3815,71 +3832,111 @@ const ADMIN_QUICK_PIN_HASH = '8b5a43764420e5af43f7c4623ad3a6699a628be06269051d38
 async function mcsSha256(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); }
 /* MCS2810WE069: ہوم کی تلاش سے سیدھا تلاش والا صفحہ — لکھا ہوا لفظ ساتھ، یا فلٹر کھلا ہوا */
 /* ===== MCS0211MO113: میری پروفائل + ہوم پر کیپسول نتائج ===== */
-const MP_FREE_DAYS = 15;   /* MCS0211MO118: مفت آزمائش 15 دن (مالک کی ہدایت) */
-/* ===== MCS0211MO116: پروفائل — دکاندار کا اپنا صفحہ (ہمارا سرور /pclaim /pget /psave /pimg /plist /padmin) ===== */
+/* ===== MCS0311TU125: پروفائل — ایک ریکارڈ، دو حصے: سادہ کارڈ ہمیشہ مفت؛ «⭐ پروفائل» (تفصیل، ریٹ، اوقات، تصویریں) 15 دن مفت پھر سبسکرپشن
+   پروفائل کی پہچان = فون + کاروبار کی قسم (ایک نمبر کی کئی دکانیں، ہر ایک کی الگ پروفائل)؛ سرور /pclaim /pget /psave /pimg /plist /padmin ===== */
 const PF_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
+const MP_FREE_DAYS = 15;          /* مفت آزمائش — پروفائل حصہ پہلی بار بھرنے کے دن سے، ہر نمبر+قسم کو ایک بار */
+const PF_MAX_IMGS = 4;
 let pfAct = {}; try{ pfAct = JSON.parse(localStorage.getItem('mcsPfList')||'{}') || {}; }catch(e){}
-function pfKeyOf(rec){ return rec ? stKey(rec.whatsapp) : ''; }
+let pfFeat = {}; try{ pfFeat = JSON.parse(localStorage.getItem('mcsPfFeat')||'{}') || {}; }catch(e){}
+function pfPhotosOn(){ return !!pfFeat.photos; }
+function pfCatTag(kind, rec){ const c = kind==='doctor' || !rec.category ? 'doctor' : String(rec.category); let h = 0; for(let i=0;i<c.length;i++) h = (h*31 + c.charCodeAt(i)) >>> 0; return h.toString(36).slice(0, 7); }
+function pfKindOf(rec){ return rec && rec.category ? 'service' : 'doctor'; }
+function pfKeyOf(rec, kind){ const k = rec ? stKey(rec.whatsapp) : ''; return k ? k + '_' + pfCatTag(kind || pfKindOf(rec), rec) : ''; }
+/* اس فون کی پروفائلیں — store.myProfiles = [{kind,id,fsId,rk,key,since,until,taken}] */
+function mpAll(){
+  if(store.myProfile && !store.myProfiles){ const o = store.myProfile; store.myProfiles = [{kind:o.kind, id:o.id, fsId:o.fsId||''}]; delete store.myProfile; try{ saveStore(); }catch(e){} }
+  return Array.isArray(store.myProfiles) ? store.myProfiles : [];
+}
+function mpRecOf(p){ const r = p.kind==='doctor' ? store.doctors.find(x=>x.id===p.id || (p.fsId && x.fsId===p.fsId)) : store.services.find(x=>x.id===p.id || (p.fsId && x.fsId===p.fsId)); return r || null; }
+function mpList(){ return mpAll().map(p=>({p, rec: mpRecOf(p)})).filter(x=>x.rec); }
+function mpRec(){ const x = mpList()[0]; return x ? {kind:x.p.kind, rec:x.rec} : null; }
+function mpCity(){ const m = mpRec(); return m && m.rec.city && !isBlankVal(m.rec.city) ? m.rec.city : ''; }
+function mpEntry(rec){ const rk = pfKeyOf(rec); return rk ? mpAll().find(p=>p.rk === rk || p.id === rec.id || (rec.fsId && p.fsId === rec.fsId)) || null : null; }
+function mpLeftOf(p){ return p && p.until ? Math.ceil((p.until - Date.now())/864e5) : null; }
+function mpLeft(){ const x = mpList().find(x=>x.p.until); return x ? mpLeftOf(x.p) : 0; }
+function pfIsOwner(rec){ const e = rec && mpEntry(rec); return !!(e && e.key); }
 function pfActive(rec){
   const k = pfKeyOf(rec); if(!k) return false;
-  const m = store.myProfile; if(m && m.key && m.rk === k && (m.until||0) > Date.now()) return true;
+  const e = mpAll().find(p=>p.rk === k && p.key); if(e && (e.until||0) > Date.now()) return true;
   const x = pfAct[k]; return !!(x && (x.until||0) > Date.now());
 }
 async function pfLoadList(){
   try{ const r = await fetch(PF_API + '/plist'); const j = await r.json(); if(j && typeof j === 'object' && !j.error){ pfAct = j; localStorage.setItem('mcsPfList', JSON.stringify(j));
-    const m = store.myProfile; if(m && m.rk && j[m.rk]){ m.until = j[m.rk].until; m.since = j[m.rk].since; saveStore(); }
+    let ch = false; mpAll().forEach(p=>{ if(p.rk && j[p.rk]){ p.until = j[p.rk].until; p.since = j[p.rk].since; ch = true; } }); if(ch) saveStore();
     try{ hlRenderSoon(); mpRender(); if(currentScreen==='service-list') renderServiceList('list'); }catch(e){} } }catch(e){}
+  try{ const FB = window.MCSFirebase; if(FB && FB.getDoc){ const sn = await FB.getDoc(FB.doc(FB.db,'appConfig','features')); pfFeat = (sn.exists() && sn.data()) || {}; localStorage.setItem('mcsPfFeat', JSON.stringify(pfFeat)); } }catch(e){}
 }
-function pfBtn(kind, rec){ return (rec && rec.id && pfActive(rec)) ? `<button type="button" class="pf-btn" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')">🏪 پروفائل دیکھیں — تصویریں، ریٹ، نقشہ</button>` : ''; }
+/* ایڈمن: تصویروں کی سہولت چالو / بند (appConfig/features.photos) */
+async function pfTogglePhotos(){
+  const FB = window.MCSFirebase; if(!FB || !isAdminSignedIn){ showToast('ایڈمن لاگ ان اور انٹرنیٹ درکار'); return; }
+  const on = !pfPhotosOn();
+  try{ await FB.setDoc(FB.doc(FB.db,'appConfig','features'), {photos: on, ts: Date.now()}, {merge:true}); pfFeat.photos = on; localStorage.setItem('mcsPfFeat', JSON.stringify(pfFeat)); pfFeatRender(); showToast(on ? '📸 پروفائل میں تصویریں چالو — سب کے لیے' : '📸 تصویریں بند'); }
+  catch(e){ alert('محفوظ نہیں ہوا: ' + (e.code||e.message)); }
+}
+function pfFeatRender(){ const b = document.getElementById('pfPhotosBtn'); if(b) b.textContent = pfPhotosOn() ? '📸 پروفائل میں تصویریں: چالو ✅ (دبائیں تو بند)' : '📸 پروفائل میں تصویریں: بند ⛔ (دبائیں تو چالو)'; }
+function pfBtn(kind, rec){ return (rec && rec.id && pfActive(rec)) ? `<button type="button" class="pf-btn" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')">🏪 پروفائل دیکھیں — تفصیل، ریٹ، اوقات</button>` : ''; }
 function pfRecById(kind, id){ return kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id); }
-async function pfClaim(){
-  const m = store.myProfile; const mr = mpRec(); if(!m || !mr || m.key || m.taken) return;
-  const rk = pfKeyOf(mr.rec); if(!rk) return;
-  try{
-    const r = await fetch(PF_API + '/pclaim', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({rec: rk})});
-    const j = await r.json();
-    if(j.key){ Object.assign(m, {key:j.key, rk, since:j.since, until:j.until}); pfAct[rk] = {since:j.since, until:j.until, ts:Date.now()}; saveStore(); mpRender(); hlRenderSoon(); }
-    else if(j.error === 'taken'){ m.taken = true; m.rk = rk; saveStore(); mpRender(); showToast('یہ پروفائل پہلے کسی دوسرے فون پر بن چکی ہے — نئے فون پر لانے کے لیے ہم سے رابطہ کریں', 5000); }
-  }catch(e){}
+/* مالک یا ایڈمن کے لیے سرور پر پروفائل بنائیں (پہلی بار = 15 دن شروع) */
+async function pfEnsureKey(kind, rec){
+  if(isAdminSignedIn && !pfIsOwner(rec)) return {admin:true};
+  let e = mpEntry(rec); if(!e){ mpAdd(kind, rec, true); e = mpEntry(rec); }
+  e.rk = pfKeyOf(rec, kind);
+  if(e.key) return {key:e.key};
+  if(e.taken) throw new Error('taken');
+  const r = await fetch(PF_API + '/pclaim', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({rec: e.rk})});
+  const j = await r.json();
+  if(j.key){ Object.assign(e, {key:j.key, since:j.since, until:j.until}); pfAct[e.rk] = {since:j.since, until:j.until, ts:Date.now()}; saveStore(); return {key:j.key}; }
+  if(j.error === 'taken'){ e.taken = true; saveStore(); throw new Error('taken'); }
+  throw new Error(j.error || 'net');
 }
-function pfIsOwner(rec){ const m = store.myProfile; return !!(m && m.key && rec && m.rk === pfKeyOf(rec)); }
 const pfImgCache = {};
 async function pfImg(id, ts){ const k = id + '@' + ts; if(pfImgCache[k]) return pfImgCache[k]; try{ const r = await fetch(PF_API + '/pimg?id=' + encodeURIComponent(id) + '&v=' + ts); const j = await r.json(); pfImgCache[k] = j.data || ''; }catch(e){ pfImgCache[k] = ''; } return pfImgCache[k]; }
-let pfCur = null;   /* {kind, rec, rk, prof} */
+async function pfGet(rk){ const r = await fetch(PF_API + '/pget', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({rec: rk})}); const j = await r.json(); return j.none ? null : j; }
+let pfCur = null;   /* {kind, rec, rk, prof, stats} */
 async function pfOpen(kind, id){
   const rec = pfRecById(kind, id); if(!rec) return;
-  const rk = pfKeyOf(rec); pfCur = {kind, rec, rk, prof:null};
+  const rk = pfKeyOf(rec, kind); pfCur = {kind, rec, rk, prof:null, stats:null};
   closeModal('recViewModal');
   document.getElementById('pfBody').innerHTML = pfHtml(pfCur) + '<div class="cp-hint" style="text-align:center">⏳ پروفائل لوڈ ہو رہی ہے…</div>';
   openModal('pfModal');
-  try{ const r = await fetch(PF_API + '/pget', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({rec: rk})}); const j = await r.json(); if(pfCur && pfCur.rk === rk){ pfCur.prof = j.none ? null : j; pfRender(); } }
+  if(!pfIsOwner(rec) && !isAdminSignedIn) stHit(rk, 'view');   /* پروفائل دیکھی گئی */
+  try{ const j = await pfGet(rk); if(pfCur && pfCur.rk === rk){ pfCur.prof = j; pfRender(); } }
   catch(e){ if(pfCur && pfCur.rk === rk) document.getElementById('pfBody').innerHTML = pfHtml(pfCur) + '<div class="cp-hint" style="text-align:center">انٹرنیٹ درکار ہے</div>'; }
+  /* مالک اور ایڈمن کو: کتنی کالیں / واٹس ایپ / دیکھنے والے */
+  if(pfIsOwner(rec) || isAdminSignedIn){ try{ const days = Math.max(1, Math.min(60, Math.ceil((Date.now() - ((pfCur.prof && pfCur.prof.since) || Date.now()-30*864e5))/864e5)));
+    const pk = stKey(rec.whatsapp); const r = await fetch(ST_URL + '?days=' + days + '&recs=' + pk + ',' + rk); const j = await r.json(); if(pfCur && pfCur.rk === rk){ pfCur.stats = {days, call:(j[pk]||{}).call||0, wa:(j[pk]||{}).wa||0, view:(j[rk]||{}).view||0}; pfRender(); } }catch(e){} }
 }
 function pfHtml(c){
   const r = c.kind==='doctor' ? fhDoc(c.rec) : fhSvc(c.rec), cm = ubCatMeta(c.kind==='doctor' ? 'doctor' : r.category);
   const own = c.kind==='doctor' ? {owner:'', rest:r.intro||''} : splitOwnerIntro(r.intro);
-  const p = c.prof || {}, d = p.data || {};
-  const imgs = (p.imgs||[]);
+  const p = c.prof || {}, d = p.data || {}, more = c.rec.more || {};
+  const owner = pfIsOwner(c.rec), adm = isAdminSignedIn, live = pfActive(c.rec);
+  const showFull = live || owner || adm;
+  const imgs = (showFull && (pfPhotosOn() || adm) ? (p.imgs||[]) : []);
   const gal = imgs.length ? `<div class="pf-gal">${imgs.map(x=>`<img data-pfimg="${escapeAttr(x.id)}" data-ts="${x.ts}" alt="">`).join('')}</div>` : '';
   const num = normalizePkNumber(r.whatsapp||'');
-  const phones = [num].concat(d.phones||[]).filter(Boolean);
+  const phones = [num, more.wa2].concat(d.phones||[]).filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i);
   const prow = ph=>{ const dd = String(ph).replace(/[^0-9]/g,''); return `<div class="pf-row"><span>${escapeHtml(ph)}</span><a class="c" href="tel:${dd}">📞 کال</a><a href="https://wa.me/92${dd.replace(/^0/,'')}" target="_blank" rel="noopener">💬 واٹس ایپ</a></div>`; };
   const loc = [d.addr || r.address, r.area, r.city].filter(Boolean).join('، ');
-  const owner = pfIsOwner(c.rec), adm = isAdminSignedIn;
-  const left = p.until ? Math.ceil((p.until - Date.now())/864e5) : 0;
-  return gal + `<div class="pf-top"><span class="pf-ic">${cm.emoji}</span><div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${pfActive(c.rec) ? '<span class="pf-star">⭐ پروفائل</span>' : ''}</div>
+  const mapUrl = d.map ? `https://www.google.com/maps/dir/?api=1&destination=${d.map.lat},${d.map.lon}` : (more.map || '');
+  const left = p.until ? Math.ceil((p.until - Date.now())/864e5) : null;
+  const st = c.stats;
+  return (owner && !live && p.until ? `<div class="pf-lock">🔒 آپ کی پروفائل لوگوں سے چھپی ہوئی ہے — لوگوں کو صرف سادہ کارڈ دکھ رہا ہے۔<br><b>سبسکرائب کریں تو فوراً دوبارہ چالو</b> (سب کچھ محفوظ ہے)<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">⭐ سبسکرائب کریں — سال 1000 روپے</button></div>` : '')
+    + gal + `<div class="pf-top"><span class="pf-ic">${cm.emoji}</span><div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${live ? '<span class="pf-star">⭐ پروفائل</span>' : ''}</div>
       <div class="pf-sub">${escapeHtml([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}${r.nameEn ? `<br><span style="font-family:Arial;direction:ltr">${escapeHtml(r.nameEn)}</span>` : ''}</div></div></div>`
-    + ((d.about || own.rest) ? `<div class="pf-sec"><h4>📝 تفصیل</h4><p>${escapeHtml(d.about || own.rest)}</p></div>` : '')
-    + ((d.items||[]).length ? `<div class="pf-sec"><h4>🏷️ چیزیں اور ریٹ</h4>${d.items.map(x=>`<div class="pf-it"><span>${escapeHtml(x.n)}</span>${x.p ? `<b>Rs ${escapeHtml(x.p)}</b>` : ''}</div>`).join('')}</div>` : '')
-    + ((d.hours || d.off) ? `<div class="pf-sec"><h4>🕘 اوقات</h4><p>${escapeHtml(d.hours||'')}${d.off ? `${d.hours ? ' • ' : ''}چھٹی: ${escapeHtml(d.off)}` : ''}</p></div>` : '')
+    + (st ? `<div class="pf-stats"><div><b>${st.view}</b><small>👀 دیکھا</small></div><div><b>${st.call}</b><small>📞 کالیں</small></div><div><b>${st.wa}</b><small>💬 واٹس ایپ</small></div><span>پچھلے ${st.days} دن میں — ایپ سے</span></div>` : '')
+    + (showFull && (d.about || own.rest || more.services) ? `<div class="pf-sec"><h4>📝 تفصیل</h4><p>${escapeHtml(d.about || [own.rest, more.services].filter(Boolean).join('\n'))}</p></div>` : '')
+    + (showFull && (d.items||[]).length ? `<div class="pf-sec"><h4>🏷️ خدمات / چیزیں اور ریٹ</h4>${d.items.map(x=>`<div class="pf-it"><span>${escapeHtml(x.n)}</span>${x.p ? `<b>Rs ${escapeHtml(x.p)}</b>` : ''}</div>`).join('')}</div>` : '')
+    + (showFull && (d.hours || d.off) ? `<div class="pf-sec"><h4>🕘 اوقات</h4><p>${escapeHtml(d.hours||'')}${d.off ? `${d.hours ? ' • ' : ''}چھٹی: ${escapeHtml(d.off)}` : ''}</p></div>` : '')
     + `<div class="pf-sec"><h4>📞 رابطہ</h4>${phones.map(prow).join('')}${loc ? `<div class="pf-sub" style="margin-top:6px">📍 ${escapeHtml(loc)}</div>` : ''}
-      ${d.map ? `<a class="pf-map" href="https://www.google.com/maps/dir/?api=1&destination=${d.map.lat},${d.map.lon}" target="_blank" rel="noopener">🗺️ نقشے پر راستہ دیکھیں</a>` : ''}
-      ${(d.links||[]).map(l=>`<a class="pf-lnk" href="${escapeAttr(l)}" target="_blank" rel="noopener">🌐 ${escapeHtml(l)}</a>`).join('')}</div>`
-    + ((owner || adm) ? `<div class="pf-own">${p.until ? `<div class="pf-days">${left > 0 ? `⭐ پروفائل فعال — ${left} دن باقی` : '⚠️ پروفائل کی مدت ختم — سبسکرائب کریں'}</div>` : ''}
-        ${(owner || (adm && c.prof)) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ پروفائل سنواریں — تصویریں، ریٹ، اوقات، نقشہ</button>` : ''}
-        ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('year')">➕ ایک سال بڑھائیں (ادائیگی ملنے پر)</button><button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ پروفائل ختم کریں</button>`
-          : `<button type="button" class="pf-adm" onclick="pfAdmin('make')">⭐ اس ریکارڈ کی پروفائل بنائیں (15 دن مفت)</button>`) : ''}
-        ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove()">✖ اس فون سے پروفائل ہٹائیں</button>` : ''}</div>` : '');
+      ${mapUrl ? `<a class="pf-map" href="${escapeAttr(mapUrl)}" target="_blank" rel="noopener">🗺️ نقشے پر راستہ دیکھیں</a>` : ''}
+      ${more.email ? `<a class="pf-lnk" href="mailto:${escapeAttr(more.email)}">✉️ ${escapeHtml(more.email)}</a>` : ''}${(d.links||[]).map(l=>`<a class="pf-lnk" href="${escapeAttr(l)}" target="_blank" rel="noopener">🌐 ${escapeHtml(l)}</a>`).join('')}</div>`
+    + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ پروفائل فعال — ${left} دن باقی` : '⚠️ پروفائل کی مدت ختم — سبسکرائب کریں'}</div>` : ''}
+        ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'پروفائل سنواریں' : 'پروفائل بھریں — 15 دن مفت'} — تفصیل، ریٹ، اوقات${pfPhotosOn() || adm ? '، تصویریں' : ''}</button>` : ''}
+        ${owner && left != null && left <= 5 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">⭐ سبسکرائب کریں — سال 1000 روپے</button>` : ''}
+        ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('year')">➕ ایک سال بڑھائیں (ادائیگی ملنے پر)</button><button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ پروفائل ختم کریں</button>` : '') : ''}
+        ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove('${escapeAttr(c.rk)}')">✖ اس فون کی «میری پروفائلیں» سے ہٹائیں</button>` : ''}</div>` : '');
 }
 function pfRender(){
   if(!pfCur) return;
@@ -3890,122 +3947,158 @@ async function pfAdmin(act){
   const c = pfCur; if(!c) return;
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ showToast('ایڈمن لاگ ان درکار ہے'); return; }
   try{
-    if(act === 'make'){ const r = await fetch(PF_API + '/pclaim', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk})}); const j = await r.json(); if(!j.key) throw 0; pfAct[c.rk] = {since:j.since, until:j.until}; showToast('⭐ پروفائل بن گئی — 15 دن مفت'); }
-    else {
-      if(act === 'del' && !confirm('اس دکان کی پروفائل (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
-      const until = act === 'year' ? Math.max(Date.now(), (c.prof && c.prof.until) || 0) + 365*864e5 : 0;
-      const r = await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk, act: act === 'year' ? 'until' : act, until})}); const j = await r.json(); if(!j.ok) throw 0;
-      if(act === 'year' && pfAct[c.rk]) pfAct[c.rk].until = until; if(act === 'del') delete pfAct[c.rk];
-      showToast(act === 'year' ? '✓ ایک سال بڑھ گیا' : act === 'free' ? '✓ فون سے آزاد — دکاندار نئے فون پر دوبارہ بنا سکتا ہے' : '✓ پروفائل ختم');
-    }
+    if(act === 'del' && !confirm('اس دکان کی پروفائل (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
+    const until = act === 'year' ? Math.max(Date.now(), (c.prof && c.prof.until) || 0) + 365*864e5 : 0;
+    const r = await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk, act: act === 'year' ? 'until' : act, until})}); const j = await r.json(); if(!j.ok) throw 0;
+    if(act === 'year' && pfAct[c.rk]) pfAct[c.rk].until = until; if(act === 'del') delete pfAct[c.rk];
+    showToast(act === 'year' ? '✓ ایک سال بڑھ گیا' : act === 'free' ? '✓ فون سے آزاد — دکاندار نئے فون پر دوبارہ بنا سکتا ہے' : '✓ پروفائل ختم');
     localStorage.setItem('mcsPfList', JSON.stringify(pfAct)); pfOpen(c.kind, c.rec.id); hlRenderSoon();
   }catch(e){ showToast('نہیں ہو سکا — انٹرنیٹ/ایڈمن لاگ ان دیکھیں'); }
 }
-/* ---- سنوارنے کا فارم ---- */
-let pfEd = null;   /* {imgs:[{id,ts,src,changed}], map} */
-async function pfEditOpen(){
-  const c = pfCur; if(!c) return;
-  const d = (c.prof && c.prof.data) || {};
-  pfEd = {imgs: Array.from({length:6}, ()=>null), map: d.map || null, slot: 0};
-  (c.prof && c.prof.imgs || []).forEach(x=>{ const slot = +String(x.id).split('_').pop(); if(slot >= 0 && slot < 6) pfEd.imgs[slot] = {id:x.id, ts:x.ts, src:'', changed:false}; });
-  const set = (id, v)=>{ const e = document.getElementById(id); if(e) e.value = v || ''; };
-  const own = c.kind==='doctor' ? {rest:c.rec.intro||''} : splitOwnerIntro(c.rec.intro);
-  set('pfAbout', d.about || own.rest); set('pfHours', d.hours); set('pfOff', d.off); set('pfAddr', d.addr || c.rec.address);
-  set('pfPh1', (d.phones||[])[0]); set('pfPh2', (d.phones||[])[1]); set('pfLink1', (d.links||[])[0]); set('pfLink2', (d.links||[])[1]);
-  document.getElementById('pfItems').innerHTML = ''; (d.items && d.items.length ? d.items : [{n:'',p:''},{n:'',p:''},{n:'',p:''}]).forEach(x=>pfAddItem(x));
-  pfLocShow(); pfSlotsRender(); document.getElementById('pfSaveMsg').textContent = '';
-  openModal('pfEditModal');
-  for(let i=0;i<6;i++){ const x = pfEd.imgs[i]; if(x && !x.src){ x.src = await pfImg(x.id, x.ts); pfSlotsRender(); } }
+/* ---- پروفائل کے خانے — اندراج فارم کے اندر (svcPf) اور الگ سنوارنے والے پاپ اپ (pfE) دونوں میں ایک جیسے ---- */
+const pfEd = {};   /* pre → {imgs:[...], del:{}, slot} */
+function pfFieldsHtml(pre){
+  return `<div class="pf-photos" id="${pre}PhotoBox">
+      <div class="pf-h">📸 دکان / کام کی تصویریں (${PF_MAX_IMGS} تک) <small id="${pre}PhotoNote"></small></div>
+      <div class="pf-slots" id="${pre}Slots"></div></div>
+    <div class="field"><label>📝 تفصیل — آپ کیا کرتے ہیں، کیا کیا ملتا ہے</label><textarea id="${pre}About" rows="3" maxlength="1500" placeholder="مثلاً: میں ہیئر ڈریسر ہوں — بہترین کٹنگ، شیو، فیشل۔ بچوں کی کٹنگ خاص۔"></textarea></div>
+    <div class="pf-h">🏷️ خدمات / چیزیں اور ریٹ <small>(20 تک)</small></div>
+    <div id="${pre}Items"></div>
+    <button type="button" class="pf-add" onclick="pfAddItem('${pre}')">➕ ایک اور</button>
+    <div class="pf-2"><div class="field"><label>🕘 اوقات</label><input type="text" id="${pre}Hours" maxlength="120" placeholder="صبح 9 سے رات 9"></div>
+      <div class="field"><label>🚫 چھٹی</label><select id="${pre}Off"><option value="">کوئی نہیں</option><option>جمعہ</option><option>اتوار</option><option>ہفتہ</option><option>پیر</option><option>منگل</option><option>بدھ</option><option>جمعرات</option></select></div></div>`;
 }
-function pfSlotsRender(){
-  document.getElementById('pfSlots').innerHTML = pfEd.imgs.map((x,i)=>`<div class="pf-slot" onclick="pfPickSlot(${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot(${i})">✖</i>` : '➕'}${i===0 ? '<b>پہلی</b>' : ''}</div>`).join('');
+function pfFieldsFill(pre, prof, rec){
+  const d = (prof && prof.data) || {};
+  pfEd[pre] = {imgs: Array.from({length:PF_MAX_IMGS}, ()=>null), del:{}, slot:0};
+  (prof && prof.imgs || []).forEach(x=>{ const slot = +String(x.id).split('_').pop(); if(slot >= 0 && slot < PF_MAX_IMGS) pfEd[pre].imgs[slot] = {id:x.id, ts:x.ts, src:'', changed:false}; });
+  const set = (id, v)=>{ const e = document.getElementById(pre + id); if(e) e.value = v || ''; };
+  set('About', d.about); set('Hours', d.hours); set('Off', d.off);
+  const box = document.getElementById(pre + 'Items'); box.innerHTML = '';
+  (d.items && d.items.length ? d.items : [{},{}]).forEach(x=>pfAddItem(pre, x));
+  const pb = document.getElementById(pre + 'PhotoBox'), on = pfPhotosOn();
+  if(pb) pb.style.display = (on || isAdminSignedIn) ? '' : 'none';
+  const pn = document.getElementById(pre + 'PhotoNote'); if(pn) pn.textContent = on ? '' : '(ابھی صرف ایڈمن کو — سب کے لیے بند)';
+  pfSlotsRender(pre);
+  pfEd[pre].imgs.forEach(async (x, i)=>{ if(x && !x.src){ x.src = await pfImg(x.id, x.ts); pfSlotsRender(pre); } });
 }
-function pfPickSlot(i){ pfEd.slot = i; document.getElementById('pfImgIn').click(); }
-function pfDelSlot(i){ pfEd.imgs[i] = null; pfEd.del = pfEd.del || {}; pfEd.del[i] = 1; pfSlotsRender(); }
+function pfFieldsRead(pre){
+  const v = id=>((document.getElementById(pre + id)||{}).value||'').trim();
+  const items = Array.from(document.querySelectorAll('#' + pre + 'Items .pf-irow')).map(r=>{ const i = r.querySelectorAll('input'); return {n:i[0].value.trim(), p:i[1].value.trim()}; }).filter(x=>x.n);
+  const data = {about:v('About'), hours:v('Hours'), off:v('Off'), items};
+  const S = pfEd[pre] || {imgs:[], del:{}};
+  const imgs = {}; S.imgs.forEach((x,i)=>{ if(x && x.changed) imgs[i] = x.src; }); Object.keys(S.del||{}).forEach(i=>{ if(!S.imgs[i]) imgs[i] = null; });
+  const filled = !!(data.about || data.hours || data.off || items.length || Object.keys(imgs).length);
+  return {data, imgs, filled};
+}
+function pfSlotsRender(pre){
+  const S = pfEd[pre]; const box = document.getElementById(pre + 'Slots'); if(!S || !box) return;
+  box.innerHTML = S.imgs.map((x,i)=>`<div class="pf-slot" onclick="pfPickSlot('${pre}',${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot('${pre}',${i})">✖</i>` : '➕'}${i===0 ? '<b>پہلی</b>' : ''}</div>`).join('');
+}
+let pfPickPre = '';
+function pfPickSlot(pre, i){ pfPickPre = pre; pfEd[pre].slot = i; document.getElementById('pfImgIn').click(); }
+function pfDelSlot(pre, i){ pfEd[pre].imgs[i] = null; pfEd[pre].del[i] = 1; pfSlotsRender(pre); }
 async function pfImgPicked(inp){
-  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return;
+  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; const S = pfEd[pfPickPre]; if(!S) return;
   try{ let src = await adCompress(f, 1000, 0.72); if(src.length > 420000) src = await adCompress(f, 800, 0.6);
-    pfEd.imgs[pfEd.slot] = {src, changed:true}; if(pfEd.del) delete pfEd.del[pfEd.slot]; pfSlotsRender(); }catch(e){ showToast('تصویر نہیں کھلی'); }
+    S.imgs[S.slot] = {src, changed:true}; delete S.del[S.slot]; pfSlotsRender(pfPickPre); }catch(e){ showToast('تصویر نہیں کھلی'); }
 }
-function pfAddItem(x){
-  const box = document.getElementById('pfItems'); if(box.children.length >= 20){ showToast('20 سے زیادہ نہیں'); return; }
+function pfAddItem(pre, x){
+  const box = document.getElementById(pre + 'Items'); if(box.children.length >= 20){ showToast('20 سے زیادہ نہیں'); return; }
   const row = document.createElement('div'); row.className = 'pf-irow';
-  row.innerHTML = `<input type="text" maxlength="60" placeholder="چیز / سروس" value="${escapeAttr((x&&x.n)||'')}"><input type="text" maxlength="24" inputmode="decimal" placeholder="ریٹ (روپے)" value="${escapeAttr((x&&x.p)||'')}"><button type="button" onclick="this.parentNode.remove()">✖</button>`;
+  row.innerHTML = `<input type="text" maxlength="60" placeholder="خدمت / چیز" value="${escapeAttr((x&&x.n)||'')}"><input type="text" maxlength="24" inputmode="decimal" placeholder="ریٹ (روپے)" value="${escapeAttr((x&&x.p)||'')}"><button type="button" onclick="this.parentNode.remove()">✖</button>`;
   box.appendChild(row);
 }
-function pfLocShow(){ const b = document.getElementById('pfLocBtn'); if(!b) return; b.classList.toggle('on', !!pfEd.map); b.textContent = pfEd.map ? '✅ نقشے پر جگہ لگ گئی — دوبارہ لگانے کے لیے دبائیں' : '📍 میں ابھی دکان پر ہوں — نقشے پر جگہ لگائیں'; }
-function pfGetLoc(){
-  if(!navigator.geolocation){ showToast('اس فون میں لوکیشن نہیں'); return; }
-  showToast('📍 جگہ معلوم کی جا رہی ہے…', 2000);
-  navigator.geolocation.getCurrentPosition(p=>{ pfEd.map = {lat:+p.coords.latitude.toFixed(6), lon:+p.coords.longitude.toFixed(6)}; pfLocShow(); showToast('✅ جگہ لگ گئی'); }, ()=>showToast('لوکیشن نہیں ملی — فون میں لوکیشن آن کریں', 3000), {enableHighAccuracy:true, timeout:15000});
+/* محفوظ کریں — مالک کی چابی (پہلی بار بنے تو 15 دن شروع) یا ایڈمن */
+async function pfSubmit(kind, rec, pre){
+  const {data, imgs, filled} = pfFieldsRead(pre);
+  const rk = pfKeyOf(rec, kind);
+  const had = !!(pfAct[rk] || (mpEntry(rec)||{}).key);
+  if(!filled && !had) return {skipped:true};
+  const auth = await pfEnsureKey(kind, rec);
+  let headers = {'Content-Type':'text/plain'}; if(auth.admin) headers = await vfAdminHdr();
+  if(auth.admin && !pfAct[rk]){ const r0 = await fetch(PF_API + '/pclaim', {method:'POST', headers, body: JSON.stringify({rec: rk})}); const j0 = await r0.json(); if(j0.since) pfAct[rk] = {since:j0.since, until:j0.until}; }
+  const r = await fetch(PF_API + '/psave', {method:'POST', headers, body: JSON.stringify({rec: rk, key: auth.key || '', data, imgs})});
+  const j = await r.json(); if(!j.ok) throw new Error(j.error || 'net');
+  if(pfAct[rk]) pfAct[rk].ts = j.ts; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
+  return {ok:true};
+}
+async function pfEditOpen(){
+  const c = pfCur; if(!c) return;
+  pfFieldsFill('pfE', c.prof, c.rec); document.getElementById('pfSaveMsg').textContent = '';
+  openModal('pfEditModal');
 }
 async function pfSave(){
-  const c = pfCur; if(!c || !pfEd) return;
-  const v = id=>(document.getElementById(id).value||'').trim();
-  const items = Array.from(document.querySelectorAll('#pfItems .pf-irow')).map(r=>{ const i = r.querySelectorAll('input'); return {n:i[0].value.trim(), p:i[1].value.trim()}; }).filter(x=>x.n);
-  const data = {about:v('pfAbout'), hours:v('pfHours'), off:v('pfOff'), addr:v('pfAddr'), items,
-    phones:[v('pfPh1'), v('pfPh2')].map(normalizePkNumber).filter(Boolean), links:[v('pfLink1'), v('pfLink2')].filter(Boolean).map(l=>/^https?:\/\//i.test(l) ? l : 'https://' + l), map: pfEd.map};
-  const imgs = {}; pfEd.imgs.forEach((x,i)=>{ if(x && x.changed) imgs[i] = x.src; }); Object.keys(pfEd.del||{}).forEach(i=>{ if(!pfEd.imgs[i]) imgs[i] = null; });
-  const owner = pfIsOwner(c.rec);
-  let headers = {'Content-Type':'text/plain'}; if(!owner){ try{ headers = await vfAdminHdr(); }catch(e){ showToast('ایڈمن لاگ ان درکار ہے'); return; } }
+  const c = pfCur; if(!c) return;
   const btn = document.getElementById('pfSaveBtn'), msg = document.getElementById('pfSaveMsg');
-  btn.disabled = true; msg.textContent = '⏳ محفوظ ہو رہا ہے… (تصویریں ہوں تو تھوڑا وقت)';
-  try{
-    const r = await fetch(PF_API + '/psave', {method:'POST', headers, body: JSON.stringify({rec: c.rk, key: owner ? store.myProfile.key : '', data, imgs})});
-    const j = await r.json(); if(!j.ok) throw new Error(j.error||'');
-    msg.textContent = ''; closeModal('pfEditModal'); showToast('✅ پروفائل محفوظ — سب کے فون پر'); pfOpen(c.kind, c.rec.id);
-  }catch(e){ msg.textContent = '❌ محفوظ نہیں ہوا — ' + (String(e.message) === 'bad_key' ? 'یہ پروفائل اس فون کی نہیں' : 'انٹرنیٹ چیک کر کے دوبارہ دبائیں'); }
+  btn.disabled = true; msg.textContent = '⏳ محفوظ ہو رہا ہے…';
+  try{ await pfSubmit(c.kind, c.rec, 'pfE'); msg.textContent = ''; closeModal('pfEditModal'); showToast('✅ پروفائل محفوظ — سب کے فون پر'); mpRender(); hlRenderSoon(); pfOpen(c.kind, c.rec.id); }
+  catch(e){ msg.textContent = '❌ محفوظ نہیں ہوا — ' + (String(e.message) === 'taken' ? 'یہ پروفائل کسی دوسرے فون پر بنی ہے، ہم سے رابطہ کریں' : String(e.message) === 'bad_key' ? 'یہ پروفائل اس فون کی نہیں' : 'انٹرنیٹ چیک کر کے دوبارہ دبائیں'); }
   btn.disabled = false;
 }
-function mpRec(){
-  const p = store.myProfile; if(!p || !p.id) return null;
-  const r = p.kind==='doctor' ? store.doctors.find(x=>x.id===p.id || (p.fsId && x.fsId===p.fsId)) : store.services.find(x=>x.id===p.id || (p.fsId && x.fsId===p.fsId));
-  return r ? {kind:p.kind, rec:r} : null;
-}
-function mpCity(){ const m = mpRec(); return m && m.rec.city && !isBlankVal(m.rec.city) ? m.rec.city : ''; }
-function mpLeft(){ const p = store.myProfile; if(!p) return 0; const until = p.until || ((p.since||Date.now()) + MP_FREE_DAYS*864e5); return Math.ceil((until - Date.now())/864e5); }
-function mpSet(kind, rec){
+/* اندراج فارم کھلنے پر پروفائل حصہ بھریں (ترمیم میں سرور سے موجودہ پروفائل) */
+async function pfFormLoad(kind, rec){
+  const pre = 'svcPf';
+  const box = document.getElementById('svcPfBox'); if(!box) return;
+  pfFieldsFill(pre, null, rec); box.open = false; box.dataset.rk = '';
   if(!rec) return;
-  const old = store.myProfile;
-  const same = old && (old.id===rec.id || (rec.fsId && old.fsId===rec.fsId));
-  store.myProfile = same ? Object.assign(old, {kind, id:rec.id, fsId:rec.fsId||''}) : {kind, id:rec.id, fsId:rec.fsId||'', since: Date.now()};
-  saveStore(); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRender();
-  showToast('👤 آپ کی پروفائل بن گئی — 15 دن مفت ✓', 3000);
-  pfClaim();
+  const rk = pfKeyOf(rec, kind); box.dataset.rk = rk;
+  if(!pfAct[rk]) return;
+  try{ const j = await pfGet(rk); if(box.dataset.rk === rk && j){ pfFieldsFill(pre, j, rec); box.open = true; } }catch(e){}
 }
+async function pfFormSave(kind, rec){
+  if(!rec) return;
+  try{ const r = await pfSubmit(kind, rec, 'svcPf'); if(r.ok){ showToast(isAdminSignedIn ? '⭐ پروفائل بھی محفوظ' : '⭐ آپ کی پروفائل بن گئی — 15 دن مفت، سب کو نظر آئے گی', 4000); mpRender(); hlRenderSoon(); } }
+  catch(e){ showToast(String(e.message) === 'taken' ? 'پروفائل کسی دوسرے فون پر بنی ہے — ہم سے رابطہ کریں' : 'پروفائل محفوظ نہیں ہوئی — بعد میں «پروفائل سنواریں» سے دوبارہ', 4500); }
+}
+/* ---- «میری پروفائلیں» ---- */
+function mpAdd(kind, rec, silent){
+  if(!rec) return;
+  const list = mpAll(); if(!store.myProfiles) store.myProfiles = list;
+  if(!mpEntry(rec)) list.push({kind, id:rec.id, fsId:rec.fsId||'', rk: pfKeyOf(rec, kind)});
+  saveStore(); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRenderSoon();
+  if(!silent) showToast('👤 «میری پروفائلیں» میں شامل — ⭐ پروفائل حصہ بھریں تو 15 دن مفت', 3500);
+}
+function mpSet(kind, rec){ mpAdd(kind, rec); }
 let mpWant = false, mpAskItem = null;
-function mpStartNew(){ mpWant = true; toggleAddStrip('business'); showToast('اپنی دکان کی قسم چنیں (پروفیشن ہو تو «پروفیشنلز» کا ＋ دبائیں) — فارم بھریں تو یہی آپ کی پروفائل', 4500); }
-/* نیا ریکارڈ محفوظ ہوا — ایڈمن نہیں اور ابھی پروفائل نہیں تو پوچھیں (یا «پروفیشنل بنائیں» دبا کر آئے تو سیدھا) */
+function mpStartNew(){ mpWant = true; toggleAddStrip('business'); showToast('اپنے کاروبار کی قسم چنیں (پروفیشن ہو تو «پروفیشنلز» کا ＋) — فارم میں نیچے «⭐ پروفائل» بھی بھریں', 4500); }
 function mpAfterSave(kind, rec){
   if(isAdminSignedIn || !rec) return;
-  if(mpWant){ mpWant = false; mpSet(kind, rec); return; }
-  if(store.myProfile && mpRec()) return;
+  if(mpWant || mpEntry(rec)){ mpWant = false; mpAdd(kind, rec, true); return; }
+  /* اسی فون پر پہلے سے اسی نمبر کی پروفائل ہو تو بغیر پوچھے (اسی بندے کا دوسرا کاروبار) */
+  if(mpAll().some(p=>{ const r = mpRecOf(p); return r && stKey(r.whatsapp) === stKey(rec.whatsapp); })){ mpAdd(kind, rec, true); return; }
   mpAskItem = {kind, rec};
   setTimeout(()=>{ const n = document.getElementById('mpAskName'); if(n) n.textContent = rec.nameUr || rec.name || ''; openModal('mpAskModal'); }, 700);
 }
-function mpAskDone(yes){ closeModal('mpAskModal'); if(yes && mpAskItem) mpSet(mpAskItem.kind, mpAskItem.rec); mpAskItem = null; }
-function mpRemove(){ if(!confirm('یہ پروفائل اس فون سے ہٹا دیں؟ (ریکارڈ ایپ میں رہے گا)')) return; delete store.myProfile; saveStore(); closeModal('recViewModal'); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRender(); }
-function mpSubscribe(){
+function mpAskDone(yes){ closeModal('mpAskModal'); if(yes && mpAskItem) mpAdd(mpAskItem.kind, mpAskItem.rec); mpAskItem = null; }
+function mpRemove(rk){ if(!confirm('اسے اس فون کی «میری پروفائلیں» سے ہٹا دیں؟ (ریکارڈ اور پروفائل ایپ میں رہیں گے)')) return; store.myProfiles = mpAll().filter(p=>p.rk !== rk); saveStore(); closeModal('pfModal'); closeModal('recViewModal'); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRenderSoon(); }
+function mpSubscribe(rk){
+  /* گوگل پلے سبسکرپشن جڑنے تک — ہم سے رابطہ (ہیلپ ڈیسک) */
+  const x = mpList().find(x=>x.p.rk === rk) || mpList()[0]; const nm = x ? (x.rec.nameUr||x.rec.name||'') : '';
+  try{ if(typeof openHelpDesk === 'function'){ openHelpDesk(); showToast(`⭐ «${nm}» کی سبسکرپشن (سال 1000 روپے) کے لیے پیغام بھیجیں — جلد گوگل پلے سے براہِ راست`, 5000); return; } }catch(e){}
   const c = store.contact || DEFAULT_CONTACT; const raw = String(c.whatsapp||'').replace(/[^0-9]/g,'').replace(/^0/,'');
-  const m = mpRec(); const nm = m ? (m.rec.nameUr||m.rec.name||'') : '';
   window.open('https://wa.me/92' + raw + '?text=' + encodeURIComponent(`السلام علیکم! میں My City Shines میں اپنی پروفائل «${nm}» کی سبسکرپشن (سال 1000 روپے) لینا چاہتا ہوں۔`), '_blank');
 }
 function mpRender(){
   const box = document.getElementById('mpBar'); if(!box) return;
-  if(isAdminSignedIn && !store.myProfile){ box.innerHTML = ''; return; }
-  const m = mpRec();
-  if(!m){ box.innerHTML = `<button type="button" class="mp-new" onclick="mpStartNew()">👤 اپنی دکان / پروفیشن کی پروفائل بنائیں — 15 دن مفت <small>Create your profile</small></button>`; return; }
-  const r = m.kind==='doctor' ? fhDoc(m.rec) : fhSvc(m.rec), cm = ubCatMeta(m.kind==='doctor' ? 'doctor' : r.category);
-  const own = m.kind==='doctor' ? {owner:''} : splitOwnerIntro(r.intro);
-  const left = mpLeft(), cls = left <= 0 ? 'end' : left <= 10 ? 'warn' : '';
-  if(!store.myProfile.key && !store.myProfile.taken) setTimeout(pfClaim, 1500);
-  box.innerHTML = `<div class="mp-card" onclick="pfOpen('${m.kind}','${escapeAttr(r.id)}')"><span class="mp-ic">${cm.emoji}</span>
-    <div class="mp-tx"><small>👤 میری پروفائل • My Profile</small><b>${escapeHtml(r.nameUr||r.name||'')}</b><span>${escapeHtml([own.owner, cm.ur, [r.area, r.city].filter(Boolean).join('، ')].filter(Boolean).join(' • '))}</span></div>
-    <span class="mp-cd ${cls}">${left > 0 ? `<b>${left}</b><small>دن مفت باقی<br>days free</small>` : '<small>مفت مدت<br>ختم</small>'}</span></div>`
-    + (store.myProfile.key ? `<button type="button" class="pf-btn" onclick="pfOpen('${m.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">✏️ پروفائل سنواریں — تصویریں، ریٹ، اوقات، نقشہ</button>` : (store.myProfile.taken ? '<div class="cp-hint" style="text-align:center">⚠️ یہ پروفائل کسی دوسرے فون پر بنی ہے — ہم سے رابطہ کریں</div>' : ''))
-    + (left <= 10 ? `<button type="button" class="mp-sub" onclick="mpSubscribe()">⭐ ${left > 0 ? 'مفت مدت ختم ہونے والی ہے' : 'مفت مدت ختم'} — سبسکرائب کریں (سال صرف 1000 روپے)</button>` : '');
-  /* دن میں ایک بار یاد دہانی */
-  try{ if(left <= 10){ const k = 'mcsMpRemind', d = new Date().toDateString(); if(localStorage.getItem(k) !== d){ localStorage.setItem(k, d); setTimeout(()=>showToast(left > 0 ? `⭐ آپ کی پروفائل کی مفت مدت کے ${left} دن باقی — سبسکرائب کریں` : '⭐ آپ کی پروفائل کی مفت مدت ختم — سبسکرائب کریں', 5000), 2500); } } }catch(e){}
+  const list = mpList();
+  if(!list.length){ box.innerHTML = isAdminSignedIn ? '' : `<button type="button" class="mp-new" onclick="mpStartNew()">👤 اپنی دکان / پروفیشن کی پروفائل بنائیں — 15 دن مفت <small>Create your profile</small></button>`; return; }
+  let remind = '';
+  box.innerHTML = list.map(({p, rec}, i)=>{
+    const r = p.kind==='doctor' ? fhDoc(rec) : fhSvc(rec), cm = ubCatMeta(p.kind==='doctor' ? 'doctor' : r.category);
+    const own = p.kind==='doctor' ? {owner:''} : splitOwnerIntro(r.intro);
+    const left = mpLeftOf(p), live = pfActive(rec);
+    const cls = left == null ? 'none' : left <= 0 ? 'end' : left <= 5 ? 'warn' : '';
+    if(left != null && [5,2,0].includes(Math.max(0,left)) && !remind) remind = left > 0 ? `⭐ «${r.nameUr||''}» کی پروفائل ${left} دن میں چھپ جائے گی — سبسکرائب کریں` : `⭐ «${r.nameUr||''}» کی پروفائل لوگوں سے چھپ گئی — سبسکرائب کریں تو فوراً چالو`;
+    return `<div class="mp-card${i ? ' mp-small' : ''}" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}')"><span class="mp-ic">${cm.emoji}</span>
+      <div class="mp-tx"><small>👤 ${list.length > 1 ? `میری پروفائل ${i+1}` : 'میری پروفائل'} • My Profile</small><b>${escapeHtml(r.nameUr||r.name||'')}</b><span>${escapeHtml([own.owner, cm.ur, [r.area, r.city].filter(Boolean).join('، ')].filter(Boolean).join(' • '))}</span></div>
+      <span class="mp-cd ${cls}">${left == null ? '<small>⭐ پروفائل<br>بھریں</small>' : left > 0 ? `<b>${left}</b><small>دن باقی<br>${live && left > MP_FREE_DAYS ? 'active' : 'days'}</small>` : '<small>🔒 چھپی<br>ہوئی</small>'}</span></div>`
+      + (left == null ? `<button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">⭐ پروفائل بھریں — تفصیل، ریٹ، اوقات (15 دن مفت)</button>`
+        : (left <= 5 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(p.rk)}')">⭐ ${left > 0 ? `${left} دن میں پروفائل چھپ جائے گی` : 'پروفائل چھپی ہوئی ہے'} — سبسکرائب کریں (سال 1000 روپے)</button>` : ''))
+      + (p.taken ? '<div class="cp-hint" style="text-align:center">⚠️ یہ پروفائل کسی دوسرے فون پر بنی ہے — ہم سے رابطہ کریں</div>' : '');
+  }).join('') + `<button type="button" class="mp-more" onclick="mpStartNew()">➕ ایک اور کاروبار کی پروفائل <small>(اسی نمبر پر الگ دکان / کام)</small></button>`;
+  /* 10ویں، 13ویں اور 15ویں دن ایک بار یاد دہانی */
+  try{ if(remind){ const k = 'mcsMpRemind', d = new Date().toDateString(); if(localStorage.getItem(k) !== d){ localStorage.setItem(k, d); setTimeout(()=>showToast(remind, 5000), 2500); } } }catch(e){}
 }
 /* ہوم پر نتائج — اوپر کا شہر (پروفائل) نہیں بدلتا؛ فلٹر/تلاش صرف یہ فہرست بدلتے ہیں */
 let hlShown = 30, hlT = 0;
@@ -4043,9 +4136,8 @@ function hlRender(){
 function hlOpen(kind, id){
   const rec = kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id); if(!rec) return;
   if(pfActive(rec) || pfIsOwner(rec)){ pfOpen(kind, id); return; }
-  const mine = mpRec(), isMine = mine && mine.rec.id === rec.id;
-  document.getElementById('recViewBody').innerHTML = favCardHtml(kind, rec)
-    + (isMine ? `<div class="mp-viewnote" style="text-align:center;margin-top:10px;font-size:13px;color:#0f766e;font-weight:800;">👤 یہ آپ کی پروفائل ہے${mpLeft() > 0 ? ` — ${mpLeft()} دن مفت باقی` : ''}</div><button type="button" class="hl-more" style="margin-top:8px;border-color:#dc2626;color:#b91c1c" onclick="mpRemove()">✖ اس فون سے پروفائل ہٹائیں</button>` : '');
+  if(mpEntry(rec)){ pfOpen(kind, id); return; }
+  document.getElementById('recViewBody').innerHTML = favCardHtml(kind, rec);
   openModal('recViewModal');
 }
 try{
@@ -6369,7 +6461,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU124';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU125';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6530,7 +6622,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU124';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU125';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -7583,6 +7675,7 @@ function openServiceForm(id, pendingRec){
     document.getElementById('svcIntro').value = s.intro || '';
     document.getElementById('svcWhatsapp').value = s.whatsapp || '';
     svcMoreFill(s.more);
+    try{ pfFormLoad('service', s); }catch(e){}
     setLocationFormValues('svc', s);
     resyncCapsuleSelect('svcType');
     clearNameSuggest('svcNameSuggest');
@@ -7594,6 +7687,7 @@ function openServiceForm(id, pendingRec){
     document.getElementById('svcIntro').value = '';
     document.getElementById('svcWhatsapp').value = '';
     svcMoreFill(null);
+    try{ pfFormLoad('service', null); }catch(e){}
     resetLocationFormValues('svc');
     resyncCapsuleSelect('svcType');
     clearNameSuggest('svcNameSuggest');
@@ -7697,6 +7791,7 @@ function saveService(approve){
     Object.assign(s, data);
     s.updatedAt = Date.now();
     syncServiceUpdateToFirebase(s);
+    try{ pfFormSave('service', s); }catch(e){}
   } else {
     data.id = 'svc_' + Date.now() + '_' + Math.floor(Math.random()*1000);
     data.createdAt = Date.now();
@@ -7704,7 +7799,7 @@ function saveService(approve){
     data.approved = !!isAdminSignedIn;   /* MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور */
     store.services.push(data);
     syncServiceCreateToFirebase(data);
-    try{ mpAfterSave('service', data); }catch(e){}
+    try{ const pff = pfFieldsRead('svcPf').filled; if(pff && !isAdminSignedIn) mpAdd('service', data, true); else mpAfterSave('service', data); if(pff) pfFormSave('service', data); }catch(e){}
   }
   saveStore();
   renderServiceList('list');
@@ -7948,6 +8043,7 @@ function syncAdminPanelSections(){
   set('adminAddCategoryBox', on);
   set('adminImportBox', on);
   set('adminSheetBox', on);
+  set('adminPfBox', on); try{ pfFeatRender(); }catch(e){}
   set('adminNameFixBox', on);
   set('adminFp8Box', on);
   set('cpContactBox', on);
@@ -11412,6 +11508,7 @@ function ccInit(){
   setTimeout(()=>{ if(ccPickValid()) ccCityWeather(); ccLocate(false); ccFetchRates(); }, 1500);
 }
 try{ ccInit(); }catch(e){}
+try{ document.getElementById('svcPfFields').innerHTML = pfFieldsHtml('svcPf'); document.getElementById('pfEFields').innerHTML = pfFieldsHtml('pfE'); pfFieldsFill('svcPf', null, null); }catch(e){}
 try{ mpRender(); hlRender(); setTimeout(pfLoadList, 2000); }catch(e){}
 try{ oaInit(); }catch(e){}
 ubInit();
@@ -11533,6 +11630,6 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0311TU124" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0311TU125" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 </body>
 </html>
