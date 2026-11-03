@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0311TU122">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0311TU122">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0311TU123">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0311TU123">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -3564,9 +3564,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0311TU122";
+const APP_VERSION = "MCS0311TU123";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "اندراج میں 🌍 ملک چننے کا خانہ — پوری دنیا کے ملک، پاکستان پہلے سے چنا";
+const UPDATE_NOTE = "کنٹرول پینل سے «دکانداروں کو اطلاع» اور باقی پاپ اپ اب فوراً سامنے کھلتے ہیں";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4839,7 +4839,7 @@ async function pickFromContacts(numId, nameId, ev){
 
 function goBack(){
   /* MCS510MO008: کوئی فارم/پاپ اپ کھلا ہو تو پیچھے کا بٹن پہلے اسے بند کرے، صفحہ نہیں بدلے */
-  const open = Array.from(document.querySelectorAll('.modal-overlay.active')).pop();
+  const open = topModal();
   if(open){
     if((open.id==='doctorFormModal' || open.id==='serviceFormModal') && formHasTyping(open) &&
        !confirm('لکھی ہوئی معلومات محفوظ نہیں ہوئیں۔ کیا بغیر محفوظ کیے واپس جائیں؟')) return;
@@ -4868,7 +4868,7 @@ function goHome(){
 }
 window.addEventListener('resize', ()=>{ if(mcsTyping()) return; try{ fitOpenForms(); }catch(e){} });
 window.addEventListener('popstate', ()=>{
-  const open = document.querySelector('.modal-overlay.active');
+  const open = topModal();
   if(open){
     open.classList.remove('active');
     /* MCS510MO008: فون کا بیک بٹن بھی صرف پاپ اپ بند کرے، نیچے والا صفحہ وہی رہے */
@@ -6370,7 +6370,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU122';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU123';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6531,7 +6531,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU122';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU123';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -8460,7 +8460,11 @@ function setVvh(){
 setVvh();
 window.addEventListener('resize', setVvh);
 if(window.visualViewport) window.visualViewport.addEventListener('resize', setVvh);
-function openModal(id){ document.getElementById(id).classList.add('active'); if(id==='serviceFormModal'||id==='doctorFormModal'){ try{ applyFormScale(); }catch(e){} fitFormModal(id); setTimeout(()=>fitFormModal(id),120); } }
+/* MCS0311TU123 (ہیلپ ڈیسک #29): نیا کھلنے والا پاپ اپ ہمیشہ سب سے آگے — کنٹرول پینل سے «دکانداروں کو اطلاع» وغیرہ پیچھے نہیں کھلتے */
+function modalZ(m){ return parseInt(m.style.zIndex,10) || 1000; }
+function topModal(){ let top=null; document.querySelectorAll('.modal-overlay.active').forEach(m=>{ if(!top || modalZ(m) >= modalZ(top)) top=m; }); return top; }
+function openModal(id){ const el=document.getElementById(id); const others=[...document.querySelectorAll('.modal-overlay.active')].filter(m=>m!==el);
+  el.style.zIndex = others.length ? Math.max(...others.map(modalZ)) + 1 : ''; el.classList.add('active'); if(id==='serviceFormModal'||id==='doctorFormModal'){ try{ applyFormScale(); }catch(e){} fitFormModal(id); setTimeout(()=>fitFormModal(id),120); } }
 function closeModal(id){ document.getElementById(id).classList.remove('active'); }
 
 
@@ -11528,6 +11532,6 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0311TU122" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0311TU123" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 </body>
 </html>
