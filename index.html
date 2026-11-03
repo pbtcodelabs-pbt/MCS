@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0211MO118">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0211MO118">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0311TU119">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0311TU119">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -2644,6 +2644,19 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
 </div>
 
 <!-- ===================== SERVICE FORM MODAL (باقی سب کیٹگریز) ===================== -->
+<style>
+.fm-more{margin:10px 0 4px;border:1.5px dashed #94a3b8;border-radius:14px;padding:6px 10px;background:rgba(148,163,184,.08)}
+.fm-more>summary{cursor:pointer;font-weight:800;padding:6px 2px}.fm-more>summary small{font-weight:600;opacity:.7;font-size:.8em}
+.fm-more[open]>summary{margin-bottom:6px}
+.fm-more label small{font-weight:600;opacity:.7;font-size:.8em;direction:ltr;unicode-bidi:isolate}
+.fm-more-note{font-size:.82em;opacity:.85;margin:0 0 8px;line-height:1.9}
+.fm-more-hint{display:block;font-size:.78em;opacity:.75;margin-top:4px;line-height:1.8}
+.fm-geo{display:block;width:100%;margin:2px 0 8px;padding:9px 12px;border-radius:999px;border:0;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font:inherit;font-weight:800;cursor:pointer;box-shadow:0 3px 0 #92400e}.fm-geo small{font-weight:600;opacity:.85}
+.fm-more-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:380px){.fm-more-row{grid-template-columns:1fr}}
+.ub-more{margin:4px 10px 6px;font-size:.86em;line-height:1.9}.ub-more a{text-decoration:none;font-weight:800}
+.ub-more .ubm-l{display:block;white-space:normal}
+</style>
 <div class="modal-overlay fm-overlay" id="serviceFormModal">
   <div class="modal-box">
     <div class="fm-head">
@@ -2659,7 +2672,7 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
       <div class="field mcs-off" id="svcCategoryField"><label>🗂️ کیٹگری تبدیل کریں (ایڈمن)</label><select id="svcCategory" onchange="svcCategoryChanged()"></select></div>
       <button type="button" class="fm-scan" onclick="startBoardScan('svc')">📷 دکان کا بورڈ اسکین کریں — نام اور نمبر خود</button>
       <div class="field fm-phone">
-        <label>📱 موبائل / واٹس ایپ</label>
+        <label>📱 موبائل / واٹس ایپ 🟥 <small style="font-weight:600;opacity:.75">Mobile Number</small></label>
         <div class="field-with-add">
           <input type="text" id="svcWhatsapp" name="mcs_svc_num_x" placeholder="03xx-xxxxxxx" dir="ltr" inputmode="tel" maxlength="16" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="next" data-lpignore="true">
           <button type="button" class="add-circle pick-contact" onclick="pickFromContacts('svcWhatsapp','svcNameEn',event)" aria-label="فون بک سے نمبر"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></button>
@@ -2672,7 +2685,7 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
       </div>
       <div class="name-suggest" id="svcNameSuggest"></div>
       <div class="field" id="svcOwnerField">
-        <label>👤 دکاندار کا نام <small style="font-weight:600;opacity:.75">(جس کا یہ نمبر ہے)</small></label>
+        <label>👤 مالک / پروفیشنل کا نام 🟥 <small style="font-weight:600;opacity:.75">Owner / Professional Name</small></label>
         <input type="text" id="svcOwner" placeholder="مثلاً علی سلیمان" autocomplete="off" enterkeyhint="next">
       </div>
       <div class="field mcs-off"><label>Name (English)</label><input type="text" id="svcNameEn" dir="ltr" oninput="svcNameSuggestUpdate()"></div>
@@ -2703,8 +2716,21 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
       </div>
     </div>
     </div>
-    <!-- یہ خانے فی الحال چھپے ہیں (ڈیٹا محفوظ رہتا ہے) -->
-    <div class="field mcs-off" id="svcAddressField"><label>📍 پتہ <small style="font-weight:600;opacity:.75">(بورڈ اسکین سے آیا — غلط ہو تو مٹا دیں)</small></label><input type="text" id="svcAddress"></div>
+    <!-- MCS0311TU119 (ہیلپ ڈیسک #15): مکمل تفصیل — اردو + English؛ 🟥 = ضروری (نئے اندراج میں) -->
+    <details class="fm-more" id="svcMoreBox">
+      <summary>➕ مزید تفصیل <small>More details — خدمات، مکمل پتہ، نقشہ، ای میل</small></summary>
+      <div class="fm-more-note">🟥 والے خانے ضروری ہیں: مالک / پروفیشنل کا نام، کاروبار کا نام، قسم، صوبہ، ضلع، شہر، موبائل نمبر · ملک: 🇵🇰 پاکستان</div>
+      <div class="field"><label>🛠️ خدمات / مال</label><textarea id="svcServices" rows="2" maxlength="400" placeholder="Services Offered — مثلاً: موبائل ریپئرنگ، نئی بیٹری"></textarea></div>
+      <div class="field" id="svcAddressField"><label>🏠 مکمل پتہ</label><input type="text" id="svcAddress" maxlength="200" placeholder="Complete Address — دکان نمبر 5، مین بازار"></div>
+      <div class="fm-more-row">
+        <div class="field"><label>📮 پوسٹل کوڈ</label><input type="text" id="svcPostal" inputmode="numeric" maxlength="8" dir="ltr" placeholder="Postal Code — 54000"></div>
+        <div class="field"><label>💬 الگ واٹس ایپ</label><input type="text" id="svcWa2" inputmode="tel" maxlength="16" dir="ltr" placeholder="WhatsApp (if different) 03xx-xxxxxxx"></div>
+      </div>
+      <div class="field"><label>✉️ ای میل</label><input type="email" id="svcEmail" maxlength="80" dir="ltr" placeholder="Email — name@gmail.com"></div>
+      <div class="field"><label>🗺️ گوگل میپ لوکیشن</label><input type="text" id="svcMap" maxlength="300" dir="ltr" placeholder="Google Map link — یا نیچے 📍 دبائیں"></div>
+      <button type="button" class="fm-geo" onclick="svcMapHere()">📍 میری موجودہ جگہ لگائیں <small>(دکان پر کھڑے ہو کر)</small></button>
+      <div class="fm-more-hint">🖼️ دکان / مالک کی تصویریں: ریکارڈ محفوظ ہونے کے بعد کارڈ پر «پروفائل» سے لگائیں</div>
+    </details>
     <div class="field mcs-off"><label>تعارف</label><textarea id="svcIntro" rows="1"></textarea></div>
     </div>
     <div class="form-save-bar">
@@ -3527,9 +3553,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0211MO118";
+const APP_VERSION = "MCS0311TU119";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "تلاش میں سب فلٹر ہٹ کر تمام شہروں کے ریکارڈ ایک لائن میں؛ SOS اوپر";
+const UPDATE_NOTE = "اندراج میں مزید تفصیل: خدمات، مکمل پتہ، پوسٹل کوڈ، نقشہ، ای میل، الگ واٹس ایپ؛ ضروری خانوں پر 🟥";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4366,7 +4392,7 @@ function renderUserSearch(){
     const meta = CATEGORY_META[s.category]||{};
     return userResultCard({
       kind:'service', cat:s.category, id:s.id, fsId:s.fsId, category:s.category, nameUr:s.nameUr, nameEn:s.nameEn, emoji:meta.emoji||'🏷️', tag:meta.ur||'',
-      sub:isBlankVal(s.type)?'':s.type, city:s.city, area:s.area, address:s.address, intro:s.intro, whatsapp:s.whatsapp, approved:s.approved
+      sub:isBlankVal(s.type)?'':s.type, city:s.city, area:s.area, address:s.address, intro:s.intro, whatsapp:s.whatsapp, approved:s.approved, more:s.more
     });
   }).join('');
 
@@ -4683,7 +4709,7 @@ function favCardHtml(kind, rec){
     sub:[d.specialty, d.hospital].filter(Boolean).join(' • ') || (d.dept||''), city:d.city, area:d.area, address:d.address, intro:d.intro, whatsapp:d.whatsapp, approved:d.approved}); }
   const x = fhSvc(rec), m = CATEGORY_META[x.category]||{};
   return userResultCard({kind:'service', cat:x.category, id:x.id, fsId:x.fsId, category:x.category, nameUr:x.nameUr, nameEn:x.nameEn, emoji:m.emoji||'🏷️', tag:m.ur||'',
-    sub:isBlankVal(x.type)?'':x.type, city:x.city, area:x.area, address:x.address, intro:x.intro, whatsapp:x.whatsapp, approved:x.approved});
+    sub:isBlankVal(x.type)?'':x.type, city:x.city, area:x.area, address:x.address, intro:x.intro, whatsapp:x.whatsapp, approved:x.approved, more:x.more});
 }
 function renderFavSearch(){
   const box = document.getElementById('favSearchBox'), wrap = document.getElementById('favSearchWrap'); if(!box || !wrap) return;
@@ -4743,6 +4769,7 @@ function userResultCard(item){
         </div>
       </div>
       ${item.intro ? `<div class="ub-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
+      ${svcMoreHtml(item.more)}
       ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
       ${item.id ? pfBtn(item.kind, item) : ''}
       ${mkAdBtn(item.kind, item.id)}
@@ -5122,7 +5149,7 @@ function enhanceCapsuleSelect(selectId){
 /* MCS2610MO062: ہر ➕ والے خانے کے نیچے چھوٹی ہدایت */
 function addPlusHints(){
   document.querySelectorAll('.fm-body .field-with-add').forEach(f=>{
-    const plus = f.querySelector('.add-circle:not(.pick-contact)'); if(!plus || f.nextElementSibling && f.nextElementSibling.classList.contains('plus-hint')) return;
+    const plus = f.querySelector('.add-circle:not(.pick-contact):not(.no-hint)'); if(!plus || f.nextElementSibling && f.nextElementSibling.classList.contains('plus-hint')) return;
     const h = document.createElement('div'); h.className = 'plus-hint'; h.textContent = '➕ فہرست میں نہ ہو تو نیا شامل کرنے کے لیے پیلا ➕ دبائیں';
     f.insertAdjacentElement('afterend', h);
   });
@@ -6298,7 +6325,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO118';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU119';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6459,7 +6486,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0211MO118';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU119';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -7362,6 +7389,7 @@ function fhOn(pre, key){ return fhForm[pre].has(key); }
    اب پتہ ہو تو خانہ فارم میں نظر آتا ہے (مٹا سکیں یا 👁 سے چھپا سکیں)، خالی ہو تو چھپا رہتا ہے۔ */
 function addrFieldSync(pre){
   const el = document.getElementById(pre+'Address'), f = document.getElementById(pre+'AddressField');
+  if(pre==='svc'){ if(f) f.classList.remove('mcs-off'); return; }   /* MCS0311TU119: مکمل پتہ اب «مزید تفصیل» میں ہمیشہ */
   if(el && f) f.classList.toggle('mcs-off', !el.value.trim());
 }
 function fhLoad(pre, rec){ fhForm[pre] = new Set((rec && Array.isArray(rec.hide)) ? rec.hide : []); addrFieldSync(pre); fhApply(); }
@@ -7430,6 +7458,50 @@ function svcOwnerMerge(){
   const p = splitOwnerIntro(i.value), owner = o.value.trim() || '';
   i.value = (owner ? OWNER_PREFIX + owner : '') + (owner && p.rest ? '\n' : '') + p.rest;
 }
+/* ===================== MCS0311TU119 (ہیلپ ڈیسک #15): مزید تفصیل — خدمات، پوسٹل کوڈ، الگ واٹس ایپ، ای میل، نقشہ =====================
+   فائربیس میں الگ خانہ `more` (الگ تحریر — یہ نہ لکھا جا سکے تو بھی اصل ریکارڈ محفوظ رہتا ہے) */
+const SVC_MORE = {services:'svcServices', postal:'svcPostal', wa2:'svcWa2', email:'svcEmail', map:'svcMap'};
+function svcMoreFill(m){
+  m = m || {};
+  Object.entries(SVC_MORE).forEach(([k, id])=>{ const el = document.getElementById(id); if(el) el.value = m[k] || ''; });
+  const box = document.getElementById('svcMoreBox'); if(box) box.open = !!(m && Object.values(m).some(Boolean));
+}
+function svcMoreRead(){
+  const m = {};
+  Object.entries(SVC_MORE).forEach(([k, id])=>{ const el = document.getElementById(id); const v = el ? el.value.trim() : ''; if(v) m[k] = v; });
+  if(m.wa2) m.wa2 = normalizePkNumber(m.wa2);
+  return m;
+}
+function svcMapHere(){
+  if(!navigator.geolocation){ showToast('اس فون میں جگہ معلوم کرنے کی سہولت نہیں'); return; }
+  showToast('📍 جگہ معلوم ہو رہی ہے…');
+  navigator.geolocation.getCurrentPosition(p=>{
+    const v = 'https://maps.google.com/?q=' + p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6);
+    document.getElementById('svcMap').value = v; showToast('✅ نقشے پر جگہ لگ گئی');
+  }, ()=>showToast('جگہ نہیں ملی — لوکیشن آن کریں یا لنک پیسٹ کریں', 3500), {enableHighAccuracy:true, timeout:15000});
+}
+function svcMoreValid(m){
+  if(m.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m.email)){ showToast('ای میل درست نہیں'); return false; }
+  if(m.wa2 && !/^03\d{2}-\d{7}$/.test(m.wa2)){ showToast('الگ واٹس ایپ نمبر درست نہیں — 03xx-xxxxxxx'); return false; }
+  if(m.map && !/^https?:\/\//i.test(m.map)){ showToast('نقشے کا لنک https سے شروع ہو — یا 📍 دبائیں'); return false; }
+  return true;
+}
+function pushMoreToFirebase(col, fsId, more){
+  const FB = window.MCSFirebase; if(!FB || !fsId) return;
+  try{ FB.updateDoc(FB.doc(FB.db, col, fsId), {more: more || {}}).catch(e=>console.warn('more', e && e.code)); }catch(e){}
+}
+function svcMoreHtml(m){
+  if(!m) return '';
+  const L = [];
+  if(m.services) L.push(`<span class="ubm-l">🛠️ ${escapeHtml(m.services)}</span>`);
+  if(m.postal) L.push(`<span class="ubm-l">📮 پوسٹل کوڈ: <bdi dir="ltr">${escapeHtml(m.postal)}</bdi></span>`);
+  const links = [];
+  if(m.map) links.push(`<a href="${escapeAttr(m.map)}" target="_blank" rel="noopener">🗺️ نقشہ</a>`);
+  if(m.wa2){ const d = m.wa2.replace(/[^0-9]/g,''); links.push(`<a href="https://wa.me/92${d.replace(/^0/,'')}" target="_blank" rel="noopener">💬 <bdi dir="ltr">${escapeHtml(m.wa2)}</bdi></a>`); }
+  if(m.email) links.push(`<a href="mailto:${escapeAttr(m.email)}">✉️ <bdi dir="ltr">${escapeHtml(m.email)}</bdi></a>`);
+  if(links.length) L.push(`<span class="ubm-l">${links.join(' · ')}</span>`);
+  return L.length ? `<div class="ub-more">${L.join('')}</div>` : '';
+}
 function openServiceForm(id, pendingRec){
   editingServiceId = pendingRec ? null : (id || null);
   if(!pendingRec) pendingFormCtx = null;
@@ -7466,6 +7538,7 @@ function openServiceForm(id, pendingRec){
     document.getElementById('svcAddress').value = s.address || '';
     document.getElementById('svcIntro').value = s.intro || '';
     document.getElementById('svcWhatsapp').value = s.whatsapp || '';
+    svcMoreFill(s.more);
     setLocationFormValues('svc', s);
     resyncCapsuleSelect('svcType');
     clearNameSuggest('svcNameSuggest');
@@ -7476,6 +7549,7 @@ function openServiceForm(id, pendingRec){
     document.getElementById('svcAddress').value = '';
     document.getElementById('svcIntro').value = '';
     document.getElementById('svcWhatsapp').value = '';
+    svcMoreFill(null);
     resetLocationFormValues('svc');
     resyncCapsuleSelect('svcType');
     clearNameSuggest('svcNameSuggest');
@@ -7546,12 +7620,23 @@ function saveService(approve){
   if(anyNum ? !/^[0-9][0-9-]{1,15}$/.test(whatsapp) : !/^03\d{2}-\d{7}$/.test(whatsapp)){ showToast(anyNum ? 'نمبر درست نہیں — صرف ہندسے لکھیں' : 'نمبر درست نہیں — 11 ہندسوں کا نمبر لکھیں جو 03 سے شروع ہو، مثلاً 0300-1234567'); return; }
   if(!document.getElementById('svcCity').value){ showToast('شہر منتخب کریں'); return; }
   const loc = readLocationFormValues('svc');
+  const more = svcMoreRead();
+  if(!svcMoreValid(more)){ const b = document.getElementById('svcMoreBox'); if(b) b.open = true; return; }
+  /* MCS0311TU119: 🟥 ضروری خانے — صرف نئے اندراج میں اور کاروبار / پروفیشنل کیٹگری (ایمرجنسی / سرکاری نہیں) */
+  if(!editingServiceId && !anyNum){
+    const own = (document.getElementById('svcOwner') || {}).value || '';
+    if(!own.trim()){ showToast('🟥 مالک / پروفیشنل کا نام لکھیں'); return; }
+    if(!document.getElementById('svcType').value){ showToast('🟥 قسم منتخب کریں'); return; }
+    if(!loc.province){ showToast('🟥 صوبہ منتخب کریں'); return; }
+    if(!loc.district){ showToast('🟥 ضلع منتخب کریں'); return; }
+  }
   const data = {
     category: currentServiceCategory, nameUr, nameEn, address, intro, whatsapp,
     type: document.getElementById('svcType').value,
     country: loc.country, province: loc.province, district: loc.district,
     city: loc.city, area: loc.area,
     hide: fhList('svc'),
+    more,
   };
   let movedTo = null;
   if(editingServiceId && isAdminSignedIn){
@@ -7715,6 +7800,7 @@ function syncServiceCreateToFirebase(local){
   };
   /* MCS29SEPTU0344AM: local id ہی فائربیس کی id ہے (دیکھیں syncDoctorCreateToFirebase) */
   if(!local.fsId){ local.fsId = local.id; saveStore(); }
+  if(local.more && Object.keys(local.more).length) setTimeout(()=>pushMoreToFirebase('services', local.fsId, local.more), 2500);   /* MCS0311TU119 */
   FB.setDoc(FB.doc(FB.db,'services', local.fsId), payload)
     .then(()=>{ local.synced = true; saveStore(); if(local.hide && local.hide.length) pushHideToFirebase('services', local.fsId, local.hide); })   /* سرور نے وصول کر لیا — اب صرف ایڈمن کی منظوری باقی */
     .catch((e)=>{ if(e && e.code==='permission-denied') showToast('سرور نے اندراج قبول نہیں کیا — ایڈمن سے رابطہ کریں'); });
@@ -7748,7 +7834,7 @@ function syncServiceUpdateToFirebase(local){
     address: local.address, intro: local.intro || '', whatsapp: local.whatsapp,
     country: local.country, province: local.province, district: local.district,
     city: local.city, area: local.area
-  }).then(ok=>{ if(ok) pushHideToFirebase('services', local.fsId, local.hide); });
+  }).then(ok=>{ if(ok){ pushHideToFirebase('services', local.fsId, local.hide); pushMoreToFirebase('services', local.fsId, local.more); } });
 }
 
 /* ---------- Dev chat ---------- */
@@ -11397,6 +11483,6 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0211MO116" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0311TU119" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 </body>
 </html>
