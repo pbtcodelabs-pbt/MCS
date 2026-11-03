@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0311TU121">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0311TU121">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0311TU122">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0311TU122">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -2604,6 +2604,10 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
     <div class="fm-col fm-col-loc">
       <div class="fm-col-title">📍 مقام <small>(پچھلا یاد رہتا ہے)</small></div>
       <div class="field">
+        <label>🌍 ملک</label>
+        <select id="docCountry" onchange="onCountryChange('doc')"></select>
+      </div>
+      <div class="field">
         <label>صوبہ</label>
         <select id="docProvince" onchange="onProvinceChange('doc')"></select>
         <input type="text" id="docProvinceCustom" placeholder="صوبے کا نام" style="display:none;margin-top:4px;">
@@ -2701,6 +2705,10 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
     <div class="fm-col fm-col-loc">
       <div class="fm-col-title">📍 مقام <small>(پچھلا یاد رہتا ہے)</small></div>
       <div class="field">
+        <label class="req">🌍 ملک</label>
+        <select id="svcCountry" onchange="onCountryChange('svc')"></select>
+      </div>
+      <div class="field">
         <label class="req">صوبہ</label>
         <select id="svcProvince" onchange="onProvinceChange('svc')"></select>
         <input type="text" id="svcProvinceCustom" placeholder="صوبے کا نام" style="display:none;margin-top:4px;">
@@ -2723,7 +2731,7 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
     <!-- MCS0311TU119 (ہیلپ ڈیسک #15): مکمل تفصیل — اردو + English؛ 🟥 = ضروری (نئے اندراج میں) -->
     <details class="fm-more" id="svcMoreBox">
       <summary>➕ مزید تفصیل <small>(اختیاری) خدمات، مکمل پتہ، نقشہ، ای میل</small></summary>
-      <div class="fm-more-note"><b class="req-dot">*</b> والے خانے ضروری ہیں · یہاں سب خانے اختیاری · ملک: 🇵🇰 پاکستان</div>
+      <div class="fm-more-note"><b class="req-dot">*</b> والے خانے ضروری ہیں · یہاں سب خانے اختیاری</div>
       <div class="field"><label>🛠️ خدمات / مال</label><textarea id="svcServices" rows="2" maxlength="400" placeholder="Services Offered — مثلاً: موبائل ریپئرنگ، نئی بیٹری"></textarea></div>
       <div class="field" id="svcAddressField"><label>🏠 مکمل پتہ</label><input type="text" id="svcAddress" maxlength="200" placeholder="Complete Address — دکان نمبر 5، مین بازار"></div>
       <div class="fm-more-row">
@@ -3556,9 +3564,9 @@ html.mcs-dark .hs-filter:not(.on){background:#173438 !important;color:#9fe3d6 !i
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0311TU121";
+const APP_VERSION = "MCS0311TU122";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "اندراج کا فارم صاف: ضروری خانوں پر باریک *، ہدایتی لکھائی چھوٹی، دونوں فون نمبر ایک جگہ";
+const UPDATE_NOTE = "اندراج میں 🌍 ملک چننے کا خانہ — پوری دنیا کے ملک، پاکستان پہلے سے چنا";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4926,6 +4934,38 @@ function populateDistrictDropdown(prefix, province, selectedValue){
   if(selectedValue) sel.value = selectedValue;
   resyncCapsuleSelect(prefix+'District');
 }
+/* MCS0311TU122 (ہیلپ ڈیسک #26): 🌍 ملک — پوری دنیا کے ملک، پاکستان پہلے سے چنا؛ اردو نام براؤزر سے (Intl.DisplayNames) */
+const COUNTRY_CODES = 'PK SA AE QA OM KW BH GB US CA AU AF IN BD CN IR TR MY ID DE FR IT ES NL SE NO DK FI BE CH AT IE NZ ZA EG JO IQ SY LB PS YE LY MA DZ TN SD NG KE ET TZ UG GH SN SO ZW ZM MZ AO CM CI JP KR KP SG TH LK NP BT MV MM KH LA VN PH BN TW HK MO MN KZ UZ TM TJ KG AZ AM GE RU UA BY PL CZ SK HU RO BG GR PT RS HR SI BA ME MK AL XK LT LV EE IS LU MT CY MC LI SM AD VA BR AR MX CL CO PE VE EC BO PY UY GY SR CU DO HT JM TT BS BB PA CR NI HN SV GT BZ PR FJ PG WS TO VU SB KI TV NR MH FM PW RW BI CD CG GA GQ TD CF NE ML BF MR GM GN GW SL LR TG BJ ER DJ MG MU SC KM CV ST LS SZ BW NA MW SS EH GL FO GI BM KY VG AI MS TC AW CW SX BQ GP MQ GF RE YT NC PF WF PM BL MF IM JE GG AX AS GU MP UM VI CK NU TK PN NF CX CC SH FK GS IO TF HM BV SJ AQ AG DM GD KN LC VC'.split(' ');
+let COUNTRY_LIST = null;
+function countryList(){
+  if(COUNTRY_LIST) return COUNTRY_LIST;
+  let dn = null; try{ dn = new Intl.DisplayNames(['ur'], {type:'region'}); }catch(e){}
+  let en = null; try{ en = new Intl.DisplayNames(['en'], {type:'region'}); }catch(e){}
+  const seen = new Set();
+  COUNTRY_LIST = COUNTRY_CODES.map((c, i)=>{ let ur = c === 'PK' ? 'پاکستان' : ''; try{ if(!ur && dn) ur = dn.of(c); }catch(e){} let e = c; try{ if(en) e = en.of(c); }catch(_){} return {c, ur: ur || e, en: e, top: i < 15}; })
+    .filter(x=>{ if(seen.has(x.ur)) return false; seen.add(x.ur); return true; });
+  const top = COUNTRY_LIST.filter(x=>x.top), rest = COUNTRY_LIST.filter(x=>!x.top).sort((a, b)=>a.ur.localeCompare(b.ur, 'ur'));
+  COUNTRY_LIST = top.concat(rest);
+  return COUNTRY_LIST;
+}
+function populateCountryDropdown(prefix, value){
+  const sel = document.getElementById(prefix+'Country'); if(!sel) return;
+  const v = value || 'پاکستان';
+  const L = countryList();
+  sel.innerHTML = L.map(x=>optionHtml(x.ur, x.en)).join('') + (L.some(x=>x.ur===v) ? '' : optionHtml(v, ''));
+  sel.value = v;
+  resyncCapsuleSelect(prefix+'Country');
+}
+function readCountry(prefix){ const sel = document.getElementById(prefix+'Country'); return (sel && sel.value) || 'پاکستان'; }
+/* پاکستان کے علاوہ ملک ہو تو صوبہ / ضلع «دیگر (خود لکھیں)» پر — ہاتھ سے لکھیں */
+function onCountryChange(prefix){
+  const pk = readCountry(prefix) === 'پاکستان';
+  const p = document.getElementById(prefix+'Province');
+  if(pk){ populateProvinceDropdown(prefix); onProvinceChange(prefix); const dc = document.getElementById(prefix+'DistrictCustom'); if(dc){ dc.style.display = 'none'; dc.value = ''; } return; }
+  if(p){ p.value = CUSTOM_OPTION; resyncCapsuleSelect(prefix+'Province'); onProvinceChange(prefix); }
+  const d = document.getElementById(prefix+'District');
+  if(d && [...d.options].some(o=>o.value===CUSTOM_OPTION)){ d.value = CUSTOM_OPTION; resyncCapsuleSelect(prefix+'District'); const dc = document.getElementById(prefix+'DistrictCustom'); if(dc) dc.style.display = 'block'; }
+}
 function onProvinceChange(prefix){
   prefix = prefix || 'doc';
   const province = document.getElementById(prefix+'Province').value;
@@ -4935,6 +4975,7 @@ function onProvinceChange(prefix){
 }
 function setLocationFormValues(prefix, d){
   prefix = prefix || 'doc';
+  populateCountryDropdown(prefix, d.country);
   const province = d.province || '';
   const inList = (PROVINCES['پاکستان']||[]).includes(province);
   document.getElementById(prefix+'Province').value = inList ? province : (province ? CUSTOM_OPTION : (PROVINCES['پاکستان']||[])[0]||'');
@@ -4961,7 +5002,7 @@ function setLocationFormValues(prefix, d){
 function setLastLocation(loc){
   const old = store.lastLocation || {};
   const v = (k)=> (loc[k] && loc[k]!==CUSTOM_OPTION) ? loc[k] : (old[k]||'');
-  store.lastLocation = {province:v('province'), district:v('district'), city:v('city'), area:(loc.area||'').trim()};
+  store.lastLocation = {country:v('country'), province:v('province'), district:v('district'), city:v('city'), area:(loc.area||'').trim()};
   if(!store.lastLocation.area && old.area && !(loc.city && loc.city!==old.city)) store.lastLocation.area = old.area;
 }
 function resetLocationFormValues(prefix){
@@ -4970,6 +5011,7 @@ function resetLocationFormValues(prefix){
      لگاتار ایک ہی علاقے کے اندراج فیڈ کرتے وقت ہر بار نئے سرے سے منتخب نہ کرنا پڑے۔
      بدلنا ہو تو عام طریقے سے ڈراپ ڈاؤن سے بدلا جا سکتا ہے۔ */
   const last = store.lastLocation || null;
+  populateCountryDropdown(prefix, last && last.country);
   populateProvinceDropdown(prefix);
   const provinceList = PROVINCES['پاکستان'] || [];
   const wantProvince = (last && last.province && provinceList.includes(last.province)) ? last.province : (provinceList[0] || '');
@@ -5004,7 +5046,7 @@ function readLocationFormValues(prefix){
   const districtSel = document.getElementById(prefix+'District').value;
   const district = districtSel===CUSTOM_OPTION ? document.getElementById(prefix+'DistrictCustom').value.trim() : districtSel;
   return {
-    country: 'پاکستان',
+    country: readCountry(prefix),
     province, district,
     city: document.getElementById(prefix+'City').value,
     area: document.getElementById(prefix+'Area').value.trim()
@@ -6328,7 +6370,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU121';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU122';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6489,7 +6531,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU121';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0311TU122';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -7630,8 +7672,8 @@ function saveService(approve){
     const own = (document.getElementById('svcOwner') || {}).value || '';
     if(!own.trim()){ showToast('* مالک / پروفیشنل کا نام لکھیں'); return; }
     if(!document.getElementById('svcType').value){ showToast('* قسم منتخب کریں'); return; }
-    if(!loc.province){ showToast('* صوبہ منتخب کریں'); return; }
-    if(!loc.district){ showToast('* ضلع منتخب کریں'); return; }
+    if(!loc.province){ showToast('* صوبہ منتخب کریں' + (loc.country !== 'پاکستان' ? ' / لکھیں' : '')); return; }
+    if(!loc.district && loc.country === 'پاکستان'){ showToast('* ضلع منتخب کریں'); return; }
   }
   const data = {
     category: currentServiceCategory, nameUr, nameEn, address, intro, whatsapp,
@@ -11486,6 +11528,6 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0311TU121" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0311TU122" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 </body>
 </html>
