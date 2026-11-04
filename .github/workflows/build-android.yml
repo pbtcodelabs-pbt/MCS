@@ -98,23 +98,15 @@ jobs:
 
       - name: Latest Android target SDK (Play Console requirement)
         run: |
+          # سب سے نیا API (اب 37) — targetSdk اسی پر؛ compileSdk ٹول کا اپنا (36) رہتا ہے، TWA کو نئی API نہیں چاہیے
           SM="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
-          PKG=$("$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+(\.0)?$|platforms;android-[0-9]+(\.0)? " | tr -d ' ' | sort -uV | tail -1)
-          [ -n "$PKG" ] || PKG=$("$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+(\.[0-9]+)?" | sort -uV | grep -E "android-[0-9]+(\.0)?$" | tail -1)
-          VER=${PKG#platforms;android-}; MAJ=${VER%%.*}
-          echo "latest platform: $PKG (API $MAJ)"
-          yes | "$SM" "$PKG" > /dev/null || true
-          ls "$ANDROID_SDK_ROOT/platforms"
+          MAJ=$("$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+" | sed 's/.*android-//' | sort -n | tail -1)
+          [ -n "$MAJ" ] && [ "$MAJ" -ge 37 ] || MAJ=37
+          echo "targetSdk: $MAJ"
           f=./android-build/app/build.gradle
-          # پرانا AGP «android-37.0» نام نہیں پہچانتا — اسی پلیٹ فارم کی نقل «android-37» نام سے
-          P="$ANDROID_SDK_ROOT/platforms"
-          if [ "$VER" != "$MAJ" ] && [ -d "$P/android-$VER" ] && [ ! -d "$P/android-$MAJ" ]; then
-            cp -r "$P/android-$VER" "$P/android-$MAJ"
-            sed -i "s#platforms;android-$VER#platforms;android-$MAJ#" "$P/android-$MAJ/package.xml" || true
-          fi
-          sed -i -E "s/(compileSdkVersion|compileSdk)[ =]+[0-9]+/\1 $MAJ/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 $MAJ/" "$f"
-          echo "android.suppressUnsupportedCompileSdk=$VER,$MAJ" >> ./android-build/gradle.properties
+          sed -i -E "s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 $MAJ/" "$f"
           grep -nE "compileSdk|targetSdk|minSdk" "$f"
+          grep -qE "targetSdk(Version)? $MAJ" "$f"
 
       - name: Build signed APK + AAB
         working-directory: ./android-build
