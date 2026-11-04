@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0511TH135">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0511TH135">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0511TH136">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0511TH136">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -2294,6 +2294,14 @@ body.d2 .hf,body.d2 .ad-slot,body.d2 .hl,body.d2 .oa{margin-left:10px;margin-rig
   body.d2 .d2-p b{font-size:15px;} body.d2 .d2-p small{font-size:12px;}
 }
 @media (max-width:370px){ body.d2 .qt-t b{font-size:10.5px !important;} body.d2 .qt-t small{font-size:9px !important;} body.d2 .d2-bt b{font-size:16px;} body.d2 .d2-logo{width:36px;height:36px;} body.d2 .qt-ic{font-size:24px;} body.d2 .d2-pt{padding:0 4px;} body.d2 .d2-p b{font-size:10.5px;} body.d2 .d2-p small{font-size:9.5px;} }
+
+/* MCS0511TH136: 👥 کو-ڈویلپر جانچ موڈ کی پٹی */
+#cdBar{position:fixed;top:0;left:0;right:0;z-index:9000;display:flex;align-items:center;gap:6px;padding:4px 8px;background:#1e293b;color:#fde68a;font-size:12.5px;direction:rtl;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+#cdBar span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cdBar small{color:#cbd5e1;font-size:10.5px;margin-inline-start:4px}
+#cdBar button{border:0;border-radius:999px;padding:3px 10px;font:inherit;font-size:12px;background:#facc15;color:#111;cursor:pointer;white-space:nowrap}
+#cdBar button.x{background:#475569;color:#fff;padding:3px 8px}
+body.cdOn{padding-top:30px}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -2449,7 +2457,7 @@ body.d2 .hf,body.d2 .ad-slot,body.d2 .hl,body.d2 .oa{margin-left:10px;margin-rig
       <svg class="hero-skyline" viewBox="0 0 400 70" preserveAspectRatio="none" fill="#fff"><path d="M0 70V48h18V30h14v18h10V20h16v28h8V38h12v10h14V12h6V4h4v8h6v36h12V28h18v20h10V36h8V22h14v26h12V8l10-6 10 6v40h14V32h16v16h8V26h12v22h14V16h18v32h10V40h12v8h14V30h16v18h12V22h14v26h12V36h10v34z"/></svg>
       <div class="hero-top">
         <!-- MCS0311TU126 (ہیلپ ڈیسک #35، ڈیزائن 2): لوگو + نام + «میرا شہر، میری پہچان» -->
-        <div class="d2-brand"><img src="icons/icon-192.png?v=MCS0511TH135" alt="" class="d2-logo"><div class="d2-bt"><b>My City Shines</b><span>میرا شہر، میری پہچان</span></div></div>
+        <div class="d2-brand"><img src="icons/icon-192.png?v=MCS0511TH136" alt="" class="d2-logo"><div class="d2-bt"><b>My City Shines</b><span>میرا شہر، میری پہچان</span></div></div>
         <button class="hero-status" id="heroStatus" onclick="showNetStatus()" aria-label="ورژن اور انٹرنیٹ کی حالت">
           <span class="hs-ver" id="hsVer"></span>
           <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
@@ -3243,6 +3251,7 @@ body.d2 .hf,body.d2 .ad-slot,body.d2 .hl,body.d2 .oa{margin-left:10px;margin-rig
         <div class="backup-card-title">🔒 منظوری اور کیٹگریز</div>
         <div class="cp-hint" style="margin-bottom:10px;">زیر منظوری اندراجات اور نئی کیٹگری شامل کرنے والے حصے صرف ایڈمن لاگ ان کے بعد کھلتے ہیں۔</div>
         <button class="btn block secondary" onclick="openAdminLoginFromPanel(event)">🛡️ ایڈمن لاگ ان کریں</button>
+        <button class="link-btn" style="padding:8px 0 0;width:100%" onclick="cdLoginOpen()">👥 کو-ڈویلپر (جانچ کرنے والے) — لاگ اِن</button>
       </div>
 
       <div class="backup-card" id="adminStatsBox" style="display:none;">
@@ -3259,6 +3268,7 @@ body.d2 .hf,body.d2 .ad-slot,body.d2 .hl,body.d2 .oa{margin-left:10px;margin-rig
         <div id="pendingApprovalsWrap"></div>
         <button class="btn block" style="margin-top:10px;background:linear-gradient(135deg,#7c3aed,#4c1d95);color:#fff" onclick="aaOpen()">👤 Account Access <small>— پروفائل کی مدت دیں</small></button>
         <button class="btn block" style="margin-top:10px;background:linear-gradient(135deg,#0f766e,#0d3b66);color:#fff" onclick="agAdminOpen()">🤝 ایجنٹ اور ریفرل کوڈ <small id="agAdminCount"></small></button>
+        <button class="btn block" style="margin-top:10px;background:linear-gradient(135deg,#475569,#1e293b);color:#fff" onclick="cdAdminOpen()">👥 کو-ڈویلپر <small>— جانچ کرنے والے (موبائل + PIN)</small></button>
         <button class="btn block secondary" style="margin-top:10px;" onclick="adminLogout()">لاگ آؤٹ</button>
       </div>
 
@@ -3754,9 +3764,9 @@ body.d2 .hf,body.d2 .ad-slot,body.d2 .hl,body.d2 .oa{margin-left:10px;margin-rig
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0511TH135";
+const APP_VERSION = "MCS0511TH136";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "پروفائل ID / ریفرل نمبر کے ساتھ 📋 کاپی، ایجنٹ کے خانے میں 📋 پیسٹ — ہاتھ سے لکھنے کی ضرورت نہیں";
+const UPDATE_NOTE = "👥 کو-ڈویلپر جانچ موڈ — اپنے کاروبار کے بغیر ہر چیز کھول کر دیکھیں، کچھ محفوظ نہیں ہوتا، مسئلہ / تجویز ہیلپ ڈیسک سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4026,13 +4036,15 @@ function mpAll(){
   return Array.isArray(store.myProfiles) ? store.myProfiles : [];
 }
 function mpRecOf(p){ const r = p.kind==='doctor' ? store.doctors.find(x=>x.id===p.id || (p.fsId && x.fsId===p.fsId)) : store.services.find(x=>x.id===p.id || (p.fsId && x.fsId===p.fsId)); return r || null; }
-function mpList(){ return mpAll().map(p=>({p, rec: mpRecOf(p)})).filter(x=>x.rec); }
-function mpRec(){ const x = mpList()[0]; return x ? {kind:x.p.kind, rec:x.rec} : null; }
+function mpListReal(){ return mpAll().map(p=>({p, rec: mpRecOf(p)})).filter(x=>x.rec); }
+/* MCS0511TH136: کو-ڈویلپر کے پاس اپنا کاروبار نہ ہو تو جانچ کے لیے ایک نمونہ (کچھ محفوظ نہیں ہوتا) */
+function mpList(){ const L = mpListReal(); return L.length || !codevOn() ? L : codevDemo(); }
+function mpRec(){ const x = mpListReal()[0]; return x ? {kind:x.p.kind, rec:x.rec} : null; }
 function mpCity(){ const m = mpRec(); return m && m.rec.city && !isBlankVal(m.rec.city) ? m.rec.city : ''; }
 function mpEntry(rec){ const rk = pfKeyOf(rec); return rk ? mpAll().find(p=>p.rk === rk || p.id === rec.id || (rec.fsId && p.fsId === rec.fsId)) || null : null; }
 function mpLeftOf(p){ return p && p.until ? Math.ceil((p.until - Date.now())/864e5) : null; }
 function mpLeft(){ const x = mpList().find(x=>x.p.until); return x ? mpLeftOf(x.p) : 0; }
-function pfIsOwner(rec){ const e = rec && mpEntry(rec); return !!(e && e.key); }
+function pfIsOwner(rec){ if(rec && codevOn()) return true; const e = rec && mpEntry(rec); return !!(e && e.key); }
 function pfActive(rec){
   const k = pfKeyOf(rec); if(!k) return false;
   const e = mpAll().find(p=>p.rk === k && p.key); if(e && (e.until||0) > Date.now()) return true;
@@ -4209,7 +4221,7 @@ async function pfEditOpen(){
   openModal('pfEditModal');
 }
 async function pfSave(){
-  const c = pfCur; if(!c) return;
+  const c = pfCur; if(!c) return; if(codevBlock()) return;
   const btn = document.getElementById('pfSaveBtn'), msg = document.getElementById('pfSaveMsg');
   btn.disabled = true; msg.textContent = '⏳ محفوظ ہو رہا ہے…';
   try{ await pfSubmit(c.kind, c.rec, 'pfE'); msg.textContent = ''; closeModal('pfEditModal'); showToast('✅ پروفائل محفوظ — سب کے فون پر'); mpRender(); hlRenderSoon(); pfOpen(c.kind, c.rec.id); }
@@ -4251,7 +4263,7 @@ function mpAfterSave(kind, rec){
   setTimeout(()=>{ const n = document.getElementById('mpAskName'); if(n) n.textContent = rec.nameUr || rec.name || ''; openModal('mpAskModal'); }, 700);
 }
 function mpAskDone(yes){ closeModal('mpAskModal'); if(yes && mpAskItem) mpAdd(mpAskItem.kind, mpAskItem.rec); mpAskItem = null; }
-function mpRemove(rk){ if(!confirm('اسے اس فون کی «میری پروفائلیں» سے ہٹا دیں؟ (ریکارڈ اور پروفائل ایپ میں رہیں گے)')) return; store.myProfiles = mpAll().filter(p=>p.rk !== rk); saveStore(); closeModal('pfModal'); closeModal('recViewModal'); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRenderSoon(); }
+function mpRemove(rk){ if(codevBlock()) return; if(!confirm('اسے اس فون کی «میری پروفائلیں» سے ہٹا دیں؟ (ریکارڈ اور پروفائل ایپ میں رہیں گے)')) return; store.myProfiles = mpAll().filter(p=>p.rk !== rk); saveStore(); closeModal('pfModal'); closeModal('recViewModal'); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRenderSoon(); }
 /* MCS0411WE132 (مالک کا حکم — AIO جیسا، پلے اسٹور): قیمت / واٹس ایپ نہیں؛ «📨 تفصیل ڈویلپر کو بھیجیں» → ہیلپ ڈیسک (خود جاتی ہے)؛ ڈویلپر «👤 Account Access» میں پیسٹ کر کے مدت دے */
 function mpSubscribe(rk){
   const x = mpList().find(x=>x.p.rk === rk) || mpList()[0]; if(!x) return;
@@ -4277,6 +4289,7 @@ function mcsReview(rows, onOk, onBack){
     <button type="button" class="btn block secondary" style="margin-top:6px" onclick="window._mcsRvBack()">✏️ درست کریں</button>`);
 }
 function mpSendDetails(rk){
+  if(codevBlock()) return;
   const x = mpList().find(x=>x.p.rk === rk); if(!x) return;
   const v = id => (document.getElementById(id).value||'').trim(), err = t => { document.getElementById('msErr').textContent = t; };
   const n = v('msName'), ph = v('msPhone'), wa = v('msWa'), m = v('msMail').toLowerCase();
@@ -4315,6 +4328,7 @@ function adRequestOpen(){
     </div>`);
 }
 function adRequestSend(){
+  if(codevBlock()) return;
   const v = id => (document.getElementById(id).value||'').trim(), err = t => { document.getElementById('adrErr').textContent = t; };
   const d = {shop: v('adrShop'), name: v('adrName'), phone: v('adrPhone'), kind: v('adrKind'), area: v('adrArea'), line: v('adrLine')};
   if(!d.shop || !d.name) return err('⚠️ دکان اور اپنا نام لکھیں');
@@ -5848,6 +5862,7 @@ function openDoctorForm(id, pendingRec){
   flowStart('doctorFormModal', !id && !pendingRec);
 }
 function saveDoctor(approve){
+  if(codevBlock()) return;
   if(pendingFormCtx && pendingFormCtx.col==='doctors') return savePendingFromForm('doctors', !!approve);
   const nameUr = document.getElementById('docNameUr').value.trim();
   const nameEn = document.getElementById('docNameEn').value.trim();
@@ -6761,7 +6776,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH135';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH136';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -6922,7 +6937,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH135';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH136';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -8047,6 +8062,7 @@ function svcCategoryChanged(){
   if(k!==currentServiceCategory) showToast('محفوظ کرنے پر یہ ریکارڈ "' + m.ur + '" میں چلا جائے گا');
 }
 function saveService(approve){
+  if(codevBlock()) return;
   if(pendingFormCtx && pendingFormCtx.col==='services') return savePendingFromForm('services', !!approve);
   const nameUr = document.getElementById('svcNameUr').value.trim();
   const nameEn = document.getElementById('svcNameEn').value.trim();
@@ -9822,6 +9838,7 @@ async function agPick(inp, k){
 }
 function agShowPic(k){ const el = document.getElementById('agP_' + k); if(el){ el.classList.add('has'); el.style.backgroundImage = 'url(' + agImgs[k] + ')'; } }
 async function agSend(){
+  if(codevBlock()) return;
   const v = id => (document.getElementById(id).value||'').trim(), err = t => { document.getElementById('agErr').textContent = t; };
   const mine = mpList(), bi = mine[parseInt(v('agBiz'),10)||0], rec = bi ? bi.rec : {};
   const cnic = v('agCnic').replace(/\D/g,''), phone = v('agPhone').replace(/\D/g,'');
@@ -9845,6 +9862,75 @@ async function agSend(){
 let agList = [], agTab = 'pending', agQ = '';
 async function agAdminCall(body){ const r = await fetch(AG_API + '/agadmin', {method:'POST', headers: await vfAdminHdr(), body: JSON.stringify(body)}); return r.json(); }
 function agRefRecs(code){ return code ? (store.services||[]).filter(x=> x.more && agNormCode(x.more.ref) === code) : []; }
+/* ===== MCS0511TH136 (مالک کا حکم): 👥 کو-ڈویلپر جانچ موڈ — مانی بھائی / عمران بھائی اپنے کاروبار کے بغیر ہر چیز کھول کر دیکھ سکیں
+   (پروفائل، پوسٹر / تفصیل، ایجنٹ فارم، اشتہار، فارم بھرنا)؛ کچھ محفوظ / منظور / بھیجا نہیں جاتا؛ ادائیگی، Account Access، منظوری صرف مالک (ایڈمن)۔
+   ان کا ہر مسئلہ / تجویز ہیلپ ڈیسک سے مالک کے پاس۔ لاگ اِن: موبائل + PIN (سرور `/codev`، مالک ایڈمن پینل `/codevadmin` سے بناتا / ہٹاتا ہے) */
+function codevMe(){ try{ return JSON.parse(localStorage.getItem('mcsCodev')||'null'); }catch(e){ return null; } }
+function codevOn(){ const m = codevMe(); return !!(m && m.phone && !isAdminSignedIn); }
+function codevBlock(){ if(!codevOn()) return false; showToast('👥 جانچ موڈ — یہ کام اصل میں محفوظ / بھیجا نہیں ہوتا۔ کچھ غلط لگے تو اوپر «🆘 مسئلہ / تجویز» دبائیں', 5000); return true; }
+function codevDemo(){
+  const r = (store.services||[]).find(x=>x && x.whatsapp && x.nameUr && x.category !== 'emergencyNumbers' && x.category !== 'govOffices');
+  return r ? [{p:{kind:'service', id:r.id, fsId:r.fsId||'', rk: pfKeyOf(r, 'service'), demo:true}, rec:r}] : [];
+}
+function cdBar(){
+  let b = document.getElementById('cdBar'); const m = codevMe();
+  if(!codevOn()){ if(b) b.remove(); document.body.classList.remove('cdOn'); return; }
+  if(!b){ b = document.createElement('div'); b.id = 'cdBar'; document.body.appendChild(b); }
+  document.body.classList.add('cdOn');
+  b.innerHTML = `<span>👥 جانچ موڈ — ${escapeHtml(m.name||'')} <small>کچھ محفوظ / منظور نہیں ہوتا</small></span><button type="button" onclick="cdReport()">🆘 مسئلہ / تجویز</button><button type="button" class="x" onclick="cdLogout()">✖</button>`;
+}
+function cdReport(){
+  const m = codevMe() || {}; const text = '👥 کو-ڈویلپر (' + (m.name||'') + ', 0' + String(m.phone||'').slice(2) + ') — جانچ میں:\n';
+  try{ if(window.PBTHelp){ window.PBTHelp.open({ app:'MCS', ver: APP_VERSION, phone: '0' + String(m.phone||'').slice(2), name: m.name||'', text, type:'idea' }); return; } }catch(e){}
+  if(typeof openHelpDesk === 'function') openHelpDesk();
+}
+function cdLoginOpen(){
+  agModal(`<div class="ag-hd">👥 کو-ڈویلپر لاگ اِن <small>Co-developer test mode</small></div>
+    <div class="cp-hint">صرف وہی جنہیں مالک (پی بی ٹی کوڈ لیبز) نے موبائل نمبر اور PIN دیا ہو۔ اس موڈ میں ایپ کی ہر چیز کھول کر دیکھ سکتے ہیں، مگر کچھ محفوظ، منظور یا بھیجا نہیں ہوتا — آپ کا ہر مسئلہ / تجویز ہیلپ ڈیسک سے مالک کے پاس جاتی ہے۔</div>
+    <div class="ag-f"><label>📱 موبائل نمبر</label><input id="cdPh" inputmode="tel" dir="ltr" placeholder="03xx xxxxxxx"><label>🔑 PIN</label><input id="cdPin" inputmode="numeric" dir="ltr" maxlength="6"></div>
+    <div id="cdMsg" class="cp-hint" style="text-align:center"></div>
+    <button type="button" class="btn block" onclick="cdLogin()">✅ جانچ موڈ کھولیں</button>`);
+}
+async function cdLogin(){
+  const ph = document.getElementById('cdPh').value.replace(/\D/g,''), pin = document.getElementById('cdPin').value.replace(/\D/g,''), msg = document.getElementById('cdMsg');
+  if(ph.length < 10 || pin.length < 4){ msg.textContent = 'موبائل نمبر اور PIN لکھیں'; return; }
+  msg.textContent = '⏳ …';
+  try{ const j = await (await fetch(AG_API + '/codev', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: ph, pin})})).json();
+    if(!j || !j.ok){ msg.textContent = '❌ نمبر یا PIN درست نہیں'; return; }
+    localStorage.setItem('mcsCodev', JSON.stringify({phone: '92' + ph.slice(-10), pin, name: j.name, at: Date.now()}));
+    closeModal('agModal'); closeModal('controlPanelModal'); cdBar(); mpRender(); hlRenderSoon(); showToast('👥 خوش آمدید ' + j.name + ' — جانچ موڈ کھل گیا', 4000);
+  }catch(e){ msg.textContent = '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'; }
+}
+function cdLogout(){ if(!confirm('جانچ موڈ بند کریں؟')) return; localStorage.removeItem('mcsCodev'); cdBar(); mpRender(); hlRenderSoon(); }
+/* ہر 12 گھنٹے میں ایک بار: مالک نے ہٹا دیا ہو تو جانچ موڈ خود بند */
+async function cdRecheck(){
+  const m = codevMe(); if(!m || !m.phone || Date.now() - (m.at||0) < 12*36e5) return;
+  try{ const j = await (await fetch(AG_API + '/codev', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: m.phone, pin: m.pin})})).json();
+    if(j && j.ok){ m.at = Date.now(); m.name = j.name; localStorage.setItem('mcsCodev', JSON.stringify(m)); }
+    else if(j && j.reason === 'login'){ localStorage.removeItem('mcsCodev'); cdBar(); mpRender(); }
+  }catch(e){}
+}
+/* مالک (ایڈمن): کو-ڈویلپر بنائیں / ہٹائیں — PIN خود بنتا ہے */
+let cdList = [];
+async function cdAdminCall(body){ const r = await fetch(AG_API + '/codevadmin', {method:'POST', headers: await vfAdminHdr(), body: JSON.stringify(body)}); return r.json(); }
+async function cdAdminOpen(body){
+  agModal('<div class="ag-st">⏳ لوڈ ہو رہا ہے…</div>');
+  try{ const j = await cdAdminCall(body || {op:'list'}); if(!j || !j.ok) throw new Error(j && j.reason || 'x'); cdList = j.list || []; cdAdminRender(); }
+  catch(e){ agModal('<div class="ag-st">⚠️ ' + (e.message === 'bad_phone' ? 'موبائل نمبر درست نہیں' : 'پہلے ایڈمن لاگ اِن کریں / انٹرنیٹ چیک کریں') + '</div><button type="button" class="btn block" onclick="cdAdminOpen()">🔄 دوبارہ</button>'); }
+}
+function cdMsgOf(c){ return 'السلام علیکم ' + c.name + '\nMy City Shines — 👥 کو-ڈویلپر جانچ موڈ\nایپ ← ⚙️ کنٹرول پینل (My Account) ← «👥 کو-ڈویلپر — لاگ اِن»\nموبائل: 0' + String(c.phone).slice(2) + '\nPIN: ' + c.pin + '\nجو بھی مسئلہ یا تجویز ہو، اوپر کی پٹی کے «🆘 مسئلہ / تجویز» سے بھیجیں۔'; }
+function cdAdminRender(){
+  const E = s => escapeHtml(s||'');
+  agModal(`<div class="ag-hd">👥 کو-ڈویلپر <small>جانچ کرنے والے</small></div>
+    <div class="cp-hint">یہ ایپ کی ہر چیز کھول کر دیکھ سکتے ہیں (اپنے کاروبار کے بغیر بھی)؛ کچھ محفوظ، منظور یا بھیجا نہیں ہوتا؛ ادائیگی / Account Access / منظوری نہیں۔ ان کی ہر تجویز ہیلپ ڈیسک میں «👥 کو-ڈویلپر» کے نام سے آپ کے پاس۔</div>
+    ${cdList.length ? cdList.map(c=>`<div class="ag-row" style="display:block;border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin:6px 0">
+      <b>${E(c.name)}</b> <span dir="ltr">0${E(String(c.phone).slice(2))}</span><br>
+      🔑 PIN: <b dir="ltr" onclick="agCopy('${escapeAttr(c.pin)}')">${E(c.pin)} 📋</b> <small>${c.seen ? '• آخری بار: ' + new Date(c.seen*864e5).toLocaleDateString('ur-PK') : '• ابھی لاگ اِن نہیں کیا'}</small>
+      <div class="cp-btn-row" style="margin-top:6px;gap:6px"><a class="btn" style="flex:1;text-align:center" target="_blank" rel="noopener" href="https://wa.me/${E(c.phone)}?text=${encodeURIComponent(cdMsgOf(c))}">💬 PIN واٹس ایپ پر</a><button type="button" class="btn secondary" onclick="if(confirm('${escapeAttr(c.name)} کا نیا PIN بنائیں؟ پرانا بند ہو جائے گا')) cdAdminOpen({op:'add', phone:'${escapeAttr(c.phone)}', name:'${escapeAttr(c.name)}'})">🔄 نیا PIN</button><button type="button" class="btn secondary" style="color:#b91c1c" onclick="if(confirm('${escapeAttr(c.name)} کو ہٹا دیں؟ جانچ موڈ ان کے فون پر بند ہو جائے گا')) cdAdminOpen({op:'del', phone:'${escapeAttr(c.phone)}'})">🗑️</button></div></div>`).join('') : '<div class="cp-hint" style="text-align:center">ابھی کوئی کو-ڈویلپر نہیں</div>'}
+    <div class="ag-f" style="margin-top:10px"><label>➕ نیا کو-ڈویلپر — نام</label><input id="cdNName" maxlength="60"><label>📱 موبائل نمبر</label><input id="cdNPh" inputmode="tel" dir="ltr" placeholder="03xx xxxxxxx"></div>
+    <button type="button" class="btn block" onclick="const n=document.getElementById('cdNName').value.trim(), p=document.getElementById('cdNPh').value.trim(); if(!n||!p){showToast('نام اور نمبر لکھیں');return;} cdAdminOpen({op:'add', name:n, phone:p})">➕ شامل کریں (PIN خود بنے گا)</button>`);
+}
+document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(()=>{ try{ cdBar(); cdRecheck(); if(codevOn()) mpRender(); }catch(e){} }, 800); });
 async function agAdminOpen(){
   agModal('<div class="ag-st">⏳ لوڈ ہو رہا ہے…</div>');
   try{ const r = await agAdminCall({op:'list'}); agList = (r && r.list) || []; agAdminRender(); }
@@ -12165,6 +12251,6 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0511TH135" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0511TH136" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 </body>
 </html>
