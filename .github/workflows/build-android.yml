@@ -106,7 +106,13 @@ jobs:
           yes | "$SM" "$PKG" > /dev/null || true
           ls "$ANDROID_SDK_ROOT/platforms"
           f=./android-build/app/build.gradle
-          sed -i -E "s/(compileSdkVersion|compileSdk)[ =]+[0-9]+/compileSdkVersion 'android-$VER'/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 $MAJ/" "$f"
+          # پرانا AGP «android-37.0» نام نہیں پہچانتا — اسی پلیٹ فارم کی نقل «android-37» نام سے
+          P="$ANDROID_SDK_ROOT/platforms"
+          if [ "$VER" != "$MAJ" ] && [ -d "$P/android-$VER" ] && [ ! -d "$P/android-$MAJ" ]; then
+            cp -r "$P/android-$VER" "$P/android-$MAJ"
+            sed -i "s#platforms;android-$VER#platforms;android-$MAJ#" "$P/android-$MAJ/package.xml" || true
+          fi
+          sed -i -E "s/(compileSdkVersion|compileSdk)[ =]+[0-9]+/\1 $MAJ/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 $MAJ/" "$f"
           echo "android.suppressUnsupportedCompileSdk=$VER,$MAJ" >> ./android-build/gradle.properties
           grep -nE "compileSdk|targetSdk|minSdk" "$f"
 
