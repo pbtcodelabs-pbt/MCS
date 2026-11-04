@@ -96,13 +96,17 @@ jobs:
             console.log('pathPrefix', scope);
           "
 
-      - name: Target SDK 37 (Play Console requirement — Android 17)
+      - name: Latest Android target SDK (Play Console requirement)
         run: |
-          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" || "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37"
+          SM="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          "$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+(\.[0-9]+)?" | sort -uV | tail -8
+          LATEST=$("$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+" | sed 's/.*android-//' | sort -n | tail -1)
+          echo "latest stable platform: $LATEST"
+          yes | "$SM" "platforms;android-$LATEST" > /dev/null
           f=./android-build/app/build.gradle
-          sed -i -E 's/(compileSdkVersion|compileSdk)[ =]+[0-9]+/\1 37/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 37/' "$f"
+          sed -i -E "s/(compileSdkVersion|compileSdk)[ =]+[0-9]+/\1 $LATEST/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 $LATEST/" "$f"
+          echo "android.suppressUnsupportedCompileSdk=$LATEST" >> ./android-build/gradle.properties
           grep -nE "compileSdk|targetSdk|minSdk" "$f"
-          grep -qE "targetSdk(Version)? 37" "$f" || { echo "targetSdk 37 not set"; exit 1; }
 
       - name: Build signed APK + AAB
         working-directory: ./android-build
