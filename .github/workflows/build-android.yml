@@ -99,13 +99,15 @@ jobs:
       - name: Latest Android target SDK (Play Console requirement)
         run: |
           SM="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
-          "$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+(\.[0-9]+)?" | sort -uV | tail -8
-          LATEST=$("$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+" | sed 's/.*android-//' | sort -n | tail -1)
-          echo "latest stable platform: $LATEST"
-          yes | "$SM" "platforms;android-$LATEST" > /dev/null
+          PKG=$("$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+(\.0)?$|platforms;android-[0-9]+(\.0)? " | tr -d ' ' | sort -uV | tail -1)
+          [ -n "$PKG" ] || PKG=$("$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+(\.[0-9]+)?" | sort -uV | grep -E "android-[0-9]+(\.0)?$" | tail -1)
+          VER=${PKG#platforms;android-}; MAJ=${VER%%.*}
+          echo "latest platform: $PKG (API $MAJ)"
+          yes | "$SM" "$PKG" > /dev/null || true
+          ls "$ANDROID_SDK_ROOT/platforms"
           f=./android-build/app/build.gradle
-          sed -i -E "s/(compileSdkVersion|compileSdk)[ =]+[0-9]+/\1 $LATEST/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 $LATEST/" "$f"
-          echo "android.suppressUnsupportedCompileSdk=$LATEST" >> ./android-build/gradle.properties
+          sed -i -E "s/(compileSdkVersion|compileSdk)[ =]+[0-9]+/compileSdkVersion 'android-$VER'/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 $MAJ/" "$f"
+          echo "android.suppressUnsupportedCompileSdk=$VER,$MAJ" >> ./android-build/gradle.properties
           grep -nE "compileSdk|targetSdk|minSdk" "$f"
 
       - name: Build signed APK + AAB
