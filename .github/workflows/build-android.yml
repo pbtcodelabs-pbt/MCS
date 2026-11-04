@@ -96,6 +96,14 @@ jobs:
             console.log('pathPrefix', scope);
           "
 
+      - name: Target SDK 37 (Play Console requirement — Android 17)
+        run: |
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" || "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37"
+          f=./android-build/app/build.gradle
+          sed -i -E 's/(compileSdkVersion|compileSdk)[ =]+[0-9]+/\1 37/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 37/' "$f"
+          grep -nE "compileSdk|targetSdk|minSdk" "$f"
+          grep -qE "targetSdk(Version)? 37" "$f" || { echo "targetSdk 37 not set"; exit 1; }
+
       - name: Build signed APK + AAB
         working-directory: ./android-build
         env:
