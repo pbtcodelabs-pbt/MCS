@@ -96,13 +96,17 @@ jobs:
             console.log('pathPrefix', scope);
           "
 
-      - name: Target SDK 37 (Play Console requirement — Android 17)
+      - name: Latest Android target SDK (Play Console requirement)
         run: |
-          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0" || "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37"
+          # سب سے نیا API (اب 37) — targetSdk اسی پر؛ compileSdk ٹول کا اپنا (36) رہتا ہے، TWA کو نئی API نہیں چاہیے
+          SM="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          MAJ=$("$SM" --list 2>/dev/null | grep -oE "platforms;android-[0-9]+" | sed 's/.*android-//' | sort -n | tail -1)
+          [ -n "$MAJ" ] && [ "$MAJ" -ge 37 ] || MAJ=37
+          echo "targetSdk: $MAJ"
           f=./android-build/app/build.gradle
-          sed -i -E 's/(compileSdkVersion|compileSdk)[ =]+[0-9]+/\1 37/; s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 37/' "$f"
+          sed -i -E "s/(targetSdkVersion|targetSdk)[ =]+[0-9]+/\1 $MAJ/" "$f"
           grep -nE "compileSdk|targetSdk|minSdk" "$f"
-          grep -qE "targetSdk(Version)? 37" "$f" || { echo "targetSdk 37 not set"; exit 1; }
+          grep -qE "targetSdk(Version)? $MAJ" "$f"
 
       - name: Build signed APK + AAB
         working-directory: ./android-build
