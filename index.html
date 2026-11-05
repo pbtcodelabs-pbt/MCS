@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0511TH157">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0511TH157">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0511TH158">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0511TH158">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -2605,11 +2605,11 @@ body.cdOn{padding-top:30px}
         <div class="h2-d"><div>📅 <span id="h2G"></span></div><div>🌙 <span id="h2H"></span></div><div>🍃 <span id="h2D"></span></div></div>
         <div class="h2-q" id="h2QSlot"></div>
         <div class="h2-w"><div class="h2-wel"><small>Welcome To</small><b>خوش آمدید: میرا روشن شہر</b></div><div id="h2CitySlot"></div><div id="h2WxSlotM"></div></div>
-        <div class="h2-r"><div class="h2-rt"><span id="h2ShareSlot"></span><img src="icons/icon-192.png?v=MCS0511TH157" alt="My City Shines" class="h2-logo"></div><div id="h2WxSlot"></div></div>
+        <div class="h2-r"><div class="h2-rt"><span id="h2ShareSlot"></span><img src="icons/icon-192.png?v=MCS0511TH158" alt="My City Shines" class="h2-logo"></div><div id="h2WxSlot"></div></div>
       </div>
       <div class="hero-top">
         <!-- MCS0311TU126 (ہیلپ ڈیسک #35، ڈیزائن 2): لوگو + نام + «میرا شہر، میری پہچان» -->
-        <div class="d2-brand"><img src="icons/icon-192.png?v=MCS0511TH157" alt="" class="d2-logo"><div class="d2-bt"><b>My City Shines</b><span>میرا شہر، میری پہچان</span></div></div>
+        <div class="d2-brand"><img src="icons/icon-192.png?v=MCS0511TH158" alt="" class="d2-logo"><div class="d2-bt"><b>My City Shines</b><span>میرا شہر، میری پہچان</span></div></div>
         <button class="hero-status" id="heroStatus" onclick="showNetStatus()" aria-label="ورژن اور انٹرنیٹ کی حالت">
           <span class="hs-ver" id="hsVer"></span>
           <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
@@ -3939,9 +3939,9 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0511TH157";
+const APP_VERSION = "MCS0511TH158";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "سادہ کارڈ پر «یہ میرا کاروبار ہے» — دکاندار خود ممبرشپ بنائے، منظوری کے بعد 15 دن مفت";
+const UPDATE_NOTE = "ریفرل میں ڈویلپر (PBT-D) اور کو-ڈویلپر (PBT-C) کے کوڈ";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -4374,7 +4374,7 @@ function pfFieldsRead(pre){
   const v = id=>((document.getElementById(pre + id)||{}).value||'').trim();
   const items = Array.from(document.querySelectorAll('#' + pre + 'Items .pf-irow')).map(r=>{ const i = r.querySelectorAll('input'); return {n:i[0].value.trim(), p:i[1].value.trim()}; }).filter(x=>x.n);
   const data = {about:v('About'), hours:v('Hours'), off:v('Off'), items};
-  if(pre === 'pfE' && v('Ref')) data.ref = agNormCode(v('Ref')) || v('Ref');
+  if(pre === 'pfE' && v('Ref')) data.ref = /^pbt/i.test(v('Ref')) ? v('Ref').toUpperCase().replace(/\s+/g,'') : (agNormCode(v('Ref')) || v('Ref'));   /* MCS0511TH158: PBT-D ڈویلپر / PBT-C کو-ڈویلپر */
   const S = pfEd[pre] || {imgs:[], del:{}};
   const imgs = {}; S.imgs.forEach((x,i)=>{ if(x && x.changed) imgs[i] = x.src; }); Object.keys(S.del||{}).forEach(i=>{ if(!S.imgs[i]) imgs[i] = null; });
   const filled = !!(data.about || data.hours || data.off || items.length || Object.keys(imgs).length);
@@ -4412,7 +4412,7 @@ async function pfSubmit(kind, rec, pre){
   if(!data.ref) data.ref = (oldRef && oldRef !== 'PBT' ? oldRef : '') || (rec.more && rec.more.ref) || 'PBT';
   const r = await fetch(PF_API + '/psave', {method:'POST', headers, body: JSON.stringify({rec: rk, key: auth.key || '', data, imgs})});
   const j = await r.json(); if(!j.ok) throw new Error(j.error || 'net');
-  if(data.ref !== 'PBT' && data.ref !== oldRef){ try{ fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: data.ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(kind==='doctor' ? 'doctor' : rec.category)||{}).ur||'', city: rec.city||''})}).then(x=>x.json()).then(x=>{ if(x && x.ok === false && x.reason === 'bad_code') showToast('⚠️ ریفرل کوڈ «' + data.ref + '» نہیں ملا — درست کوڈ لکھیں یا خالی چھوڑیں', 5000); }).catch(()=>{}); }catch(e){} }
+  if(!/^PBT/.test(data.ref) && data.ref !== oldRef){ try{ fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: data.ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(kind==='doctor' ? 'doctor' : rec.category)||{}).ur||'', city: rec.city||''})}).then(x=>x.json()).then(x=>{ if(x && x.ok === false && x.reason === 'bad_code') showToast('⚠️ ریفرل کوڈ «' + data.ref + '» نہیں ملا — درست کوڈ لکھیں یا خالی چھوڑیں', 5000); }).catch(()=>{}); }catch(e){} }
   if(pfAct[rk]) pfAct[rk].ts = j.ts; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
   return {ok:true};
 }
@@ -7144,7 +7144,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH157';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH158';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -7305,7 +7305,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH157';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH158';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -12870,7 +12870,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0511TH157" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0511TH158" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
