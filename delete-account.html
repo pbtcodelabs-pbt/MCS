@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Delete Account — My City Shines</title>
+<meta name="description" content="Delete your My City Shines account and its data.">
+<style>
+:root{--blue:#0b2f8f;--ink:#0f1f45;--mut:#5b6b8c;--line:#d5deee}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:radial-gradient(120% 60% at 50% 0%,#fff,#eef4ff 55%,#e6f0ff)}
+.w{max-width:440px;margin:0 auto;padding:22px 18px 40px}
+img{display:block;width:96px;height:96px;margin:0 auto;border-radius:22px;box-shadow:0 8px 24px rgba(21,70,192,.18)}
+h1{text-align:center;font-size:22px;color:var(--blue);margin:12px 0 4px}
+.sub{text-align:center;color:var(--mut);font-size:14px;margin-bottom:14px}
+.card{background:#fff;border:1px solid #e3eaf7;border-radius:18px;padding:16px;box-shadow:0 10px 30px rgba(15,31,69,.08)}
+input{width:100%;height:48px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;margin-bottom:10px}
+button{width:100%;height:48px;border:0;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:10px}
+.b{background:linear-gradient(180deg,#2563eb,#0b2f8f);color:#fff}.r{background:#dc2626;color:#fff}.o{background:#fff;border:1.5px solid #9db4e8;color:var(--blue)}
+.err{color:#b91c1c;font-weight:700;text-align:center;min-height:20px;margin-bottom:6px}
+.ok{color:#15803d;font-weight:800;text-align:center;font-size:17px}
+ul{font-size:14px;line-height:1.8;color:#334155;padding-left:20px}
+.ur{direction:rtl;text-align:right;font-size:15px;line-height:1.9;color:#334155}
+#g{display:flex;justify-content:center;margin-bottom:10px;min-height:44px}
+</style></head><body><div class="w">
+<img src="icons/icon-512.png" alt="My City Shines">
+<h1>Delete your account</h1>
+<div class="sub">My City Shines — PBT Code Labs</div>
+<div class="card" id="box">
+ <ul>
+  <li>Deleted immediately and permanently: your name, mobile number, email, password and all login sessions.</li>
+  <li>Business listings you published are public directory entries; to remove one too, write to <b>pbtcodelabs@gmail.com</b>.</li>
+ </ul>
+ <p class="ur">اکاؤنٹ حذف کرنے سے آپ کا نام، موبائل، ای میل، پاس ورڈ اور لاگ اِن فوراً اور ہمیشہ کے لیے ختم ہو جاتے ہیں۔</p>
+ <input id="id" placeholder="Account ID / Mobile No. / Email" autocomplete="username">
+ <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+ <div class="err" id="err"></div>
+ <button class="b" onclick="login()">Sign in to continue</button>
+ <div id="g"></div>
+</div>
+</div>
+<script>
+const API = 'https://aio-pos-verify.pbtcodelabs.workers.dev/mcsauth';
+const GCID = '954131537356-2be2rne30mje71l9qibosblvj3j0eqoj.apps.googleusercontent.com';
+const E = { login:'Wrong ID or password.', wait:'Too many attempts — try again in 15 minutes.', no_pw:'This account uses Google — use Continue with Google.', google:'Google verification failed.', net:'No internet connection.', new:'No account found for this Google email.', old:'Wrong password.', session:'Please sign in again.' };
+let tok = '', pwUsed = '';
+async function api(b){ try{ return await (await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(b) })).json(); }catch(e){ return { ok:false, reason:'net' }; } }
+const err = r => document.getElementById('err').textContent = r ? (E[r] || r) : '';
+async function login(){ const id = document.getElementById('id').value.trim(), pw = document.getElementById('pw').value; if(!id || !pw) return err('login'); const r = await api({ op:'login', id, pw }); if(!r.ok) return err(r.reason); tok = r.tok; pwUsed = pw; confirmBox(r.user); }
+async function gcb(c){ const r = await api({ op:'google', gtoken: c.credential }); if(!r.ok) return err(r.reason); tok = r.tok; pwUsed = ''; confirmBox(r.user); }
+function confirmBox(u){
+  document.getElementById('box').innerHTML = `<p style="font-size:15px;line-height:1.9">Account <b>${u.id}</b><br>${u.name} — ${u.mobile}${u.email ? '<br>' + u.email : ''}</p><div class="err" id="err"></div>
+  <button class="r" onclick="del()">🗑️ Permanently delete this account</button><button class="o" onclick="location.reload()">Cancel</button>`;
+}
+async function del(){ if(!confirm('Delete this account permanently? This cannot be undone.')) return; const r = await api({ op:'delete', tok, old: pwUsed }); if(!r.ok) return err(r.reason);
+  document.getElementById('box').innerHTML = '<p class="ok">✅ Your account has been deleted.</p><p class="ur">✅ آپ کا اکاؤنٹ حذف ہو گیا۔</p>'; }
+(function(){ const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true; s.onload = () => { try{ google.accounts.id.initialize({ client_id: GCID, callback: gcb, ux_mode:'popup' }); google.accounts.id.renderButton(document.getElementById('g'), { theme:'outline', size:'large', text:'continue_with', width: 300 }); }catch(e){} }; document.head.appendChild(s); })();
+</script></body></html>
