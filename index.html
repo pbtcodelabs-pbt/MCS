@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0511TH165">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0511TH165">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0611FR170">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0611FR170">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -1246,7 +1246,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
 .zp-title span{direction:ltr;color:#0f766e;}
 .zp-row{display:flex;align-items:center;gap:8px;direction:ltr;}
 .zp-row input{flex:1;accent-color:#0f766e;height:28px;}
-.zp-row button{width:38px;height:34px;border:none;border-radius:9px;background:#0f766e;color:#fff;font-weight:800;font-size:14px;}
+.zp-v{min-width:52px;text-align:center;font-size:16px}.zp-row button{width:64px;height:44px;font-size:24px!important;border:none;border-radius:9px;background:#0f766e;color:#fff;font-weight:800;font-size:14px;}
 .zp-reset{display:block;width:100%;margin-top:8px;height:32px;border:1px solid #d1d5db;border-radius:9px;background:#f9fafb;font-family:inherit;font-size:13px;}
 /* --- زوم: صفحات اور ڈبے بڑے، چوڑائی وہی؛ متن اگلی لائن میں جائے، کٹے نہیں --- */
 #app, .modal-overlay > .modal-box, .admin-pop{zoom:var(--ui-zoom,1);}
@@ -2581,9 +2581,9 @@ body.cdOn{padding-top:30px}
 <div class="zoom-panel" id="zoomPanel" style="display:none;" onclick="event.stopPropagation()">
   <div class="zp-title">🔍 متن کا سائز <span id="zoomPct">100%</span></div>
   <div class="zp-row">
-    <button type="button" onclick="stepZoom(-1)" aria-label="چھوٹا">A-</button>
-    <input type="range" id="zoomRange" min="80" max="200" step="5" value="100" oninput="setZoom(this.value/100)" dir="ltr">
-    <button type="button" onclick="stepZoom(1)" aria-label="بڑا">A+</button>
+    <button type="button" onclick="stepZoom(-1)" aria-label="چھوٹا">−</button>
+    <b class="zp-v" id="zoomPct2">100%</b>
+    <button type="button" onclick="stepZoom(1)" aria-label="بڑا">+</button>
   </div>
   <button type="button" class="zp-reset" onclick="setZoom(1)">عام سائز (100%)</button>
 </div>
@@ -2628,11 +2628,11 @@ body.cdOn{padding-top:30px}
         <div class="h2-d"><div>📅 <span id="h2G"></span></div><div>🌙 <span id="h2H"></span></div><div>🍃 <span id="h2D"></span></div></div>
         <div class="h2-q" id="h2QSlot"></div>
         <div class="h2-w"><div class="h2-wel"><small>Welcome To</small><b>خوش آمدید: میرا روشن شہر</b></div><div id="h2CitySlot"></div><div id="h2WxSlotM"></div></div>
-        <div class="h2-r"><div class="h2-rt"><span id="h2ShareSlot"></span><img src="icons/icon-192.png?v=MCS0511TH165" alt="My City Shines" class="h2-logo"></div><div id="h2WxSlot"></div></div>
+        <div class="h2-r"><div class="h2-rt"><span id="h2ShareSlot"></span><img src="icons/icon-192.png?v=MCS0611FR170" alt="My City Shines" class="h2-logo"></div><div id="h2WxSlot"></div></div>
       </div>
       <div class="hero-top">
         <!-- MCS0311TU126 (ہیلپ ڈیسک #35، ڈیزائن 2): لوگو + نام + «میرا شہر، میری پہچان» -->
-        <div class="d2-brand"><img src="icons/icon-192.png?v=MCS0511TH165" alt="" class="d2-logo"><div class="d2-bt"><b>My City Shines</b><span>میرا شہر، میری پہچان</span></div></div>
+        <div class="d2-brand"><img src="icons/icon-192.png?v=MCS0611FR170" alt="" class="d2-logo"><div class="d2-bt"><b>My City Shines</b><span>میرا شہر، میری پہچان</span></div></div>
         <button class="hero-status" id="heroStatus" onclick="showNetStatus()" aria-label="ورژن اور انٹرنیٹ کی حالت">
           <span class="hs-ver" id="hsVer"></span>
           <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
@@ -3005,7 +3005,15 @@ body.cdOn{padding-top:30px}
 .ag-pics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .ag-pic{position:relative;display:flex!important;align-items:center;justify-content:center;aspect-ratio:1;border:2px dashed #94a3b8;border-radius:12px;background:#f8fafc center/cover no-repeat;cursor:pointer;margin:0!important;text-align:center}
 .ag-pic input{display:none}.ag-pic span{font-size:22px;line-height:1.3}.ag-pic b{display:block;font-size:11px;font-weight:700}
-.ag-pic.has{border:2px solid #16a34a}.ag-pic.has span{background:rgba(255,255,255,.85);border-radius:8px;padding:2px 4px;font-size:14px}
+.ag-pic.has{border:2px solid #16a34a}
+.pt-box{max-width:520px;padding:0!important;overflow:hidden}.pt-hd{padding:14px 14px 12px;color:#fff;position:relative}.pt-hd.dev{background:linear-gradient(135deg,#0f172a,#334155)}.pt-hd.codev{background:linear-gradient(135deg,#312e81,#6366f1)}.pt-hd.biz{background:linear-gradient(135deg,#0f766e,#14b8a6)}.pt-hd.prof{background:linear-gradient(135deg,#1e3a8a,#3b82f6)}.pt-hd.user{background:linear-gradient(135deg,#15803d,#4ade80)}
+.pt-hd .x{position:absolute;top:8px;left:8px;background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:9px;font-size:16px}.pt-av{font-size:34px;line-height:1}.pt-nm{font-size:18px;font-weight:900;margin-top:4px}.pt-sub{font-size:12px;opacity:.9;margin-top:2px;direction:ltr;text-align:right}.pt-role{display:inline-block;margin-top:6px;background:rgba(255,255,255,.22);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:800}
+.pt-body{padding:10px 12px 14px;max-height:72vh;overflow-y:auto}.pt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.pt-t{position:relative;border:1.5px solid #e2e8f0;background:#fff;border-radius:14px;padding:10px 6px;text-align:center;font-family:inherit;font-weight:800;font-size:13px;color:#0f172a;min-height:64px}.pt-t i{display:block;font-style:normal;font-size:22px;margin-bottom:2px}.pt-t small{display:block;font-weight:600;font-size:10.5px;color:#64748b}.pt-t b.n{position:absolute;top:4px;right:6px;background:#dc2626;color:#fff;border-radius:10px;font-size:11px;padding:0 6px}.pt-t.red{color:#b91c1c;border-color:#fecaca}
+.pt-sec{font-size:12px;font-weight:900;color:#475569;margin:8px 2px 4px}.pt-card{border:1.5px solid #e2e8f0;border-radius:14px;padding:8px 10px;margin-bottom:8px;background:#f8fafc}.pt-card b{display:block;font-size:14px}.pt-card .r{display:flex;gap:6px;margin-top:6px}.pt-card .r button{flex:1;border:none;border-radius:10px;padding:8px 4px;font-family:inherit;font-weight:800;font-size:12.5px;background:#e2e8f0}.pt-card .r button.p{background:#0f766e;color:#fff}.pt-code{font-size:24px;font-weight:900;direction:ltr;text-align:center;letter-spacing:1px;background:#ecfeff;border:2px dashed #14b8a6;border-radius:12px;padding:8px;margin:4px 0}
+.pt-f input{width:100%;box-sizing:border-box;margin:3px 0 6px;padding:9px;border:1.5px solid #cbd5e1;border-radius:10px;font-family:inherit}
+.ag-badge{position:absolute;top:-9px;left:10px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;background:linear-gradient(145deg,#2dd4bf,#0f766e);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:3}.ag-badge.wait{background:linear-gradient(145deg,#fbbf24,#d97706)}
+.doc-card:has(.ag-badge){position:relative;box-shadow:0 0 0 2px #2dd4bf,0 3px 10px rgba(15,118,110,.35)}.doc-card:has(.ag-badge.wait){box-shadow:0 0 0 2px #fbbf24,0 3px 10px rgba(217,119,6,.3)}
+.agc-box{max-width:520px}.agc-cv{display:block;margin:6px auto;max-width:100%;border:2px solid #0d9488;border-radius:10px;background:#fff;touch-action:none}.agc-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;font-weight:700}.agc-row input[type=range]{flex:1}.agc-row button{border:none;border-radius:10px;background:#e2e8f0;padding:8px 12px;font-family:inherit;font-weight:800}.ag-pic.has span{background:rgba(255,255,255,.85);border-radius:8px;padding:2px 4px;font-size:14px}
 .ag-agree{display:flex!important;gap:8px;align-items:flex-start;font-weight:600!important;font-size:12.5px!important;line-height:1.8;margin-top:10px!important}.ag-agree input{width:auto!important;margin-top:6px}
 .ag-err{color:#dc2626;font-weight:800;min-height:1.4em;margin:6px 0}
 .ag-st,.ag-wait,.ag-ok,.ag-no,.ag-need{font-weight:800;font-size:15px;line-height:1.9;margin:8px 0;text-align:center}.ag-ok{color:#15803d}.ag-no{color:#b91c1c}.ag-wait{color:#b45309}
@@ -3963,7 +3971,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0511TH165";
+const APP_VERSION = "MCS0611FR170";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -4328,7 +4336,7 @@ function pfHtml(c){
     + ((owner || adm) && c.rk ? `<div class="pf-id">🆔 کاروبار ID: <b dir="ltr">${escapeHtml(c.rk)}</b><button type="button" onclick="agCopy('${escapeAttr(c.rk)}')">📋 کاپی</button></div>` : '')
     + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ ممبرشپ فعال — ${left} دن باقی` : '⚠️ ممبرشپ کی مدت ختم — جاری رکھنے کے لیے تفصیل بھیجیں'}</div>` : ''}
         ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں — 15 دن مفت'} — تفصیل، ریٹ، اوقات${pfPhotosOn() || adm ? '، تصویریں' : ''}</button>` : ''}
-        ${owner && left != null && (left <= 15 || mcsPlayOk()) ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">${mcsPlayOk() ? '⭐ ممبرشپ ایک سال کے لیے جاری رکھیں — Google Play' : '📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں'}</button>` : ''}
+        ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">${mcsPlayOk() ? '⭐ ممبرشپ ایک سال کے لیے جاری رکھیں — Google Play' : '📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں'}</button>` : ''}
         ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('year')">➕ ایک سال بڑھائیں</button><button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ ممبرشپ ختم کریں</button>` : '') : ''}
         ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove('${escapeAttr(c.rk)}')">✖ اس فون کی «میرا کاروبار / پروفیشن» سے ہٹائیں</button>` : ''}</div>` : '')
     + (!owner && !adm && !codevOn() ? `<button type="button" class="pf-mine" onclick="pfClaimMine()">👤 یہ میرا کاروبار ہے — «میرا کاروبار / پروفیشن» میں جوڑیں</button>` : '');
@@ -4501,6 +4509,23 @@ function mpRemove(rk){ if(codevBlock()) return; if(!confirm('اسے اس فون 
    اس لیے خریداری پر پہلا خالی پیکج؛ تصدیق اور مدت سرور (/mcsbuy) پر — ٹوکن جس ممبرشپ سے جڑا ہمیشہ اسی کی مدت بڑھاتا ہے */
 const MCS_PLAY_SKUS = ['mcs_mem_default', 'mcs_mem_1', 'mcs_mem_2', 'mcs_mem_3', 'mcs_mem_4'];
 const MCS_PLAY_NAMES = {mcs_mem_default:'Membership default', mcs_mem_1:'Mem 1', mcs_mem_2:'Mem 2', mcs_mem_3:'Mem 3', mcs_mem_4:'Mem 4'};
+/* MCS0611FR170 (مالک کا حکم): Google Play کے پیکج اور قیمت دکھائیں — قیمت Play Console سے آتی ہے (getDetails)، فون میں محفوظ رہتی ہے */
+async function mcsPlayDetails(){
+  let det = null;
+  if(mcsPlayOk()){ try{ const svc = await mcsPlaySvc(); const d = await svc.getDetails(MCS_PLAY_SKUS); if(d && d.length){ det = {}; d.forEach(x=>{ det[x.itemId] = {t: x.title || '', p: x.price ? (x.price.currency + ' ' + x.price.value) : '', per: x.subscriptionPeriod || ''}; }); localStorage.setItem('mcsPlayDet', JSON.stringify({at: Date.now(), det})); } }catch(e){} }
+  if(!det){ try{ const c = JSON.parse(localStorage.getItem('mcsPlayDet') || 'null'); if(c && c.det) det = c.det; }catch(e){} }
+  return det;
+}
+function mcsPlayPer(p){ return /^P1Y$/i.test(p) ? ' / سال' : /^P1M$/i.test(p) ? ' / ماہ' : (p ? ' / ' + escapeHtml(p) : ''); }
+async function mcsPlayPackages(){
+  agModal('<div class="ag-st">⏳ Play سے پیکج دیکھے جا رہے ہیں…</div>');
+  const det = await mcsPlayDetails(); let owned = [];
+  if(mcsPlayOk()){ try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(x => x.itemId); }catch(e){} }
+  const rows = MCS_PLAY_SKUS.map((k, i)=>{ const d = det && det[k];
+    return `<div class="pt-card"><b>${i + 1}. ${escapeHtml(MCS_PLAY_NAMES[k] || k)} <small dir="ltr">${k}</small></b>${d ? `${escapeHtml(d.t)} — <b dir="ltr">${escapeHtml(d.p || '—')}</b>${mcsPlayPer(d.per)}` : '<span style="color:#dc2626">⚠️ Play Console میں نہیں ملا</span>'}${owned.includes(k) ? ' <span style="color:#16a34a">✅ اس گوگل اکاؤنٹ پر فعال</span>' : ''}</div>`; }).join('');
+  agModal(`<div class="ag-hd">💳 Google Play کے پیکج اور قیمت <small>ہر گوگل اکاؤنٹ پر 5 ممبرشپس تک — ہر ایک کا الگ پیکج</small></div>${rows}
+    <div class="cp-hint">${mcsPlayOk() ? (det ? 'قیمتیں Google Play سے آئیں۔ بدلنی ہوں تو Play Console ← Monetize ← Products میں بدلیں۔' : '⚠️ Play سے کوئی پیکج نہیں آیا۔ Play Console ← Monetize ← Products میں یہ پانچوں ID (اوپر لکھی) بنائیں، Active کریں اور ایپ کو اسی ٹریک پر رکھیں جہاں ٹیسٹ ہو رہا ہے۔') : 'ℹ️ قیمتیں صرف Play Store سے انسٹال کی ہوئی ایپ میں آتی ہیں۔ جو آخری بار دیکھی تھیں وہی دکھ رہی ہیں (اگر دیکھی ہوں)۔'}</div>`);
+}
 function mcsPlayOk(){ return typeof window.getDigitalGoodsService === 'function'; }
 async function mcsPlaySvc(){ return await window.getDigitalGoodsService('https://play.google.com/billing'); }
 async function mcsPlayVerify(token, sku, rk){
@@ -4548,16 +4573,19 @@ async function mcsPlaySync(force){
     localStorage.setItem('mcsPlaySyncAt', String(Date.now()));
   }catch(e){}
 }
-document.addEventListener('DOMContentLoaded', () => setTimeout(() => { try{ mcsPlaySync(); }catch(e){} }, 5000));
+document.addEventListener('DOMContentLoaded', () => setTimeout(() => { try{ mcsPlaySync(); mcsPlayDetails(); }catch(e){} }, 5000));
 function mpSubscribe(rk, noPlay){
   const x = mpList().find(x=>x.p.rk === rk) || mpList()[0]; if(!x) return;
   if(mcsPlayOk() && !noPlay){
     const r0 = x.rec, cat0 = ubCatMeta(x.p.kind==='doctor' ? 'doctor' : r0.category).ur, left0 = mpLeftOf(x.p);
     agModal(`<div class="ag-hd">⭐ ممبرشپ ایک سال کے لیے <small>Membership — 1 year</small></div>
       <div class="cp-hint">ممبرشپ: <b>${escapeHtml(r0.nameUr||r0.name||'')}</b> (${escapeHtml(cat0)})${left0 > 0 ? `<br>آپ کے باقی ${left0} دن بھی ساتھ رہیں گے۔` : ''}</div>
+      <div class="pt-code" id="mpPlayPrice" style="font-size:18px">⏳ قیمت…</div>
       <button type="button" class="btn block" onclick="mcsPlayBuy('${escapeAttr(x.p.rk)}')">▶️ Google Play سے جاری کریں</button>
+      <button type="button" class="link-btn" style="width:100%" onclick="mcsPlayPackages()">💳 سب پیکج اور قیمتیں دیکھیں</button>
       <div class="cp-hint" style="text-align:center">ادائیگی Google Play کے ذریعے — ہر سال خود تجدید، جب چاہیں Play Store سے بند کریں۔</div>
       <button type="button" class="mp-more" onclick="mpSubscribe('${escapeAttr(x.p.rk)}', true)">📨 اکاؤنٹ کی تفصیل ڈویلپر کو بھیجیں <small>Send account details to developer</small></button>`);
+    (async()=>{ const e = document.getElementById('mpPlayPrice'); try{ const det = await mcsPlayDetails(); let owned = []; try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(y => y.itemId); }catch(_){} const k = MCS_PLAY_SKUS.find(z => !owned.includes(z)), d = det && k && det[k]; if(e) e.innerHTML = d && d.p ? '💰 قیمت: <span dir="ltr">' + escapeHtml(d.p) + '</span>' + mcsPlayPer(d.per) : '💰 قیمت Google Play کی خریداری والی سکرین پر دکھے گی'; }catch(_){ if(e) e.textContent = ''; } })();
     return;
   }
   const r = x.rec, more = r.more || {}, own = x.p.kind==='doctor' ? {owner:''} : splitOwnerIntro(r.intro), cat = ubCatMeta(x.p.kind==='doctor' ? 'doctor' : r.category).ur;
@@ -4727,7 +4755,7 @@ function mpRender(){
       + (p.pend ? `<div class="cp-hint" style="text-align:center">⏳ آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے — منظور ہوتے ہی 15 دن مفت سب کو نظر آئے گی</div><button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">✏️ پوری تفصیل بھریں / سنواریں</button>`
         : left == null ? `<button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">⭐ پوری تفصیل بھریں — ریٹ، اوقات (15 دن مفت)</button>`
         : (left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(p.rk)}')">⭐ ${left > 0 ? `${left} دن باقی` : 'ممبرشپ چھپی ہوئی ہے'} — ایک سال کے لیے جاری رکھیں${left > 0 ? `<small>باقی ${left} دن جمع ہو جائیں گے</small>` : ''}</button>`
-          : (mcsPlayOk() ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(p.rk)}')">⭐ ایک سال اور بڑھائیں — Google Play<small>باقی ${left} دن جمع رہیں گے</small></button>` : '')))
+          : ''))
       + (p.taken ? '<div class="cp-hint" style="text-align:center">⚠️ یہ کاروبار کسی دوسرے فون سے جڑا ہے — ہم سے رابطہ کریں</div>' : '');
   }).join('');
   const hasB = list.some(x => mpGroupOf(x.p.kind) !== 'prof'), hasP = list.some(x => mpGroupOf(x.p.kind) === 'prof');
@@ -7193,7 +7221,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH165';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0611FR170';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -7335,7 +7363,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0511TH165';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0611FR170';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -10015,7 +10043,7 @@ function initFirebaseSync(){
     isAdminSignedIn = !!user;
     document.documentElement.toggleAttribute('data-admin', isAdminSignedIn);   /* MCS1310TU006 */
     updateAdminBadge();
-    if(isAdminSignedIn) markDevDevice();
+    if(isAdminSignedIn){ markDevDevice(); setTimeout(agKnownLoad, 1500); setTimeout(()=>{ try{ ptDevFirst(); }catch(e){} }, 2200); }
     syncAdminPanelSections();
     if(isAdminSignedIn){ startPendingApprovalsListener(); renderAdminCategoryList(); } else stopPendingApprovalsListener();
     if(currentScreen==='doctor-list') renderDoctorList('list');
@@ -10202,10 +10230,11 @@ async function agOpen(){
 function agStatusView(r){
   const E = s => escapeHtml(s||'');
   if(r.status === 'approved'){
+    try{ const m0 = agMe(); if(m0 && r.code && m0.code !== r.code){ m0.code = r.code; localStorage.setItem('mcsAgent', JSON.stringify(m0)); } }catch(e){}   /* MCS0611FR170: پورٹل میں ریفرل کوڈ ایک دبانے سے */
     agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><div class="ag-ok">✅ مبارک ہو ${E(r.name)}! آپ MCS ایجنٹ ہیں</div>
       <div class="ag-codeL">آپ کا ریفرل کوڈ</div><div class="ag-code" dir="ltr" style="font-size:24px" onclick="agCopy('${escapeAttr(r.code)}')">${E(r.code)} <small>📋</small></div>
       ${r.pin ? `<div class="ag-codeL">🔑 ایجنٹ پورٹل کا PIN — ڈویلپر کے دیے پورٹل میں موبائل نمبر کے ساتھ</div><div class="ag-code" dir="ltr" onclick="agCopy('${escapeAttr(r.pin)}')">${E(r.pin)} <small>📋</small></div>` : ''}
-      ${r.docs === false ? `<div class="ag-docs">📷 <b>ایک کام باقی:</b> اپنا شناختی کارڈ نمبر، کارڈ کی دونوں طرف کی تصویر اور سیلفی لگائیں<button type="button" class="btn block" onclick="agDocsForm()">📷 ابھی لگائیں</button></div>` : ''}
+      ${r.docs === true ? (agDocsMark(false), '') : ''}${r.docs === false && agDocsDone() ? '<div class="cp-hint" style="text-align:center">✅ شناختی کارڈ اور سیلفی جمع ہو چکی ہیں</div>' : ''}${r.docs === false && !agDocsDone() ? `<div class="ag-docs">📷 <b>ایک کام باقی:</b> اپنا شناختی کارڈ نمبر، کارڈ کی دونوں طرف کی تصویر اور سیلفی لگائیں<button type="button" class="btn block" onclick="agDocsForm()">📷 ابھی لگائیں</button></div>` : ''}
       <div class="cp-hint" style="text-align:center">🏪 آپ کے ذریعے درج کاروبار: <b>${+r.refs||0}</b></div>
       <button type="button" class="btn block" onclick="agCopy('${escapeAttr(r.code)}')">📋 ریفرل کوڈ کاپی کریں</button>
       <button type="button" class="btn block secondary" style="margin-top:6px" onclick="agShare('${escapeAttr(r.code)}')">📤 ریفرل کوڈ شیئر کریں</button>
@@ -10217,6 +10246,136 @@ function agStatusView(r){
     return;
   }
   agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><div class="ag-wait">⏳ آپ کی درخواست موصول ہو گئی ہے — جائزہ جاری ہے</div><div class="cp-hint">منظوری کے بعد یہیں آپ کا ایجنٹ کوڈ نظر آئے گا۔</div><button type="button" class="btn block secondary" onclick="agForm()">✏️ درخواست میں تبدیلی</button>`);
+}
+/* ===== MCS0611FR170 (مالک کا حکم): پانچ الگ پورٹل — ڈویلپر / کو-ڈویلپر / کاروبار / پروفیشن / عام یوزر =====
+   فون اپنی حیثیت یاد رکھتا ہے: ایڈمن لاگ اِن، کو-ڈویلپر لاگ اِن، ممبرشپ (کاروبار / پروفیشن) اور یوزر اکاؤنٹ؛ اوپر کی پٹی دبائیں تو اپنا پورٹل کھلے */
+function ptRole(){
+  try{
+    if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'dev';
+    if(codevOn()) return 'codev';
+    if(typeof adminRestoring !== 'undefined' && adminRestoring && adminWasIn()) return 'dev';
+    const L = mpListReal();
+    if(L.length){ const hp = L.some(x=>mpGroupOf(x.p.kind) === 'prof'), hb = L.some(x=>mpGroupOf(x.p.kind) !== 'prof'); return hp && !hb ? 'prof' : 'biz'; }
+  }catch(e){}
+  return 'user';
+}
+const PT_META = {dev:['🛠️','ڈویلپر پورٹل','Developer'], codev:['👥','کو-ڈویلپر پورٹل','Co-Developer'], biz:['🏪','کاروبار پورٹل','Business'], prof:['👔','پروفیشن پورٹل','Profession'], user:['👤','میرا پورٹل','User']};
+function ptDevProf(){ try{ return JSON.parse(localStorage.getItem('mcsDevProfile')||'null') || {}; }catch(e){ return {}; } }
+function ptEmail(){ try{ const u = window.MCSFirebase && window.MCSFirebase.auth && window.MCSFirebase.auth.currentUser; return (u && u.email) || localStorage.getItem(ADMIN_EMAIL_KEY) || ''; }catch(e){ return ''; } }
+function ptDevFirst(){ if(isAdminSignedIn && !localStorage.getItem('mcsDevProfile')) ptOpen(true); }
+function ptDo(fn, a, b){ closeModal('portalModal'); setTimeout(()=>{ try{ const f = window[fn]; if(typeof f === 'function') f(a, b); }catch(e){ showToast('⚠️ ' + (e.message||'')); } }, 160); }
+function ptT(ic, lb, sub, fn, n, cls){ return `<button type="button" class="pt-t ${cls||''}" onclick="ptDo('${fn}')"><i>${ic}</i>${lb}${sub ? `<small>${sub}</small>` : ''}${n ? `<b class="n">${n}</b>` : ''}</button>`; }
+function ptHelp(){ const m = ptRole(); const a = (typeof uaMe === 'function' && uaMe()) || null, me = agMe() || {}; const text = '(' + PT_META[m][2] + ' پورٹل سے)\n';
+  try{ if(window.PBTHelp){ window.PBTHelp.open({app:'MCS', ver: APP_VERSION, phone: me.phone ? '0' + String(me.phone).slice(2) : '', name: me.name || (a && a.user && a.user.name) || '', text, type:'ask'}); return; } }catch(e){} showToast('Help Desk ابھی دستیاب نہیں'); }
+function ptDevSave(){ const g = id => (document.getElementById(id)||{}).value || ''; localStorage.setItem('mcsDevProfile', JSON.stringify({name: g('ptN').trim(), phone: g('ptP').trim(), city: g('ptC').trim(), at: Date.now()})); showToast('✅ پروفائل محفوظ'); ptOpen(); }
+function ptEdit(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalModal'); setTimeout(()=>{ pfOpen(x.p.kind, x.rec.id); setTimeout(()=>{ try{ pfEditOpen(); }catch(e){} }, 900); }, 160); }
+function ptView(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalModal'); setTimeout(()=>pfOpen(x.p.kind, x.rec.id), 160); }
+function ptSub(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalModal'); setTimeout(()=>mpSubscribe(x.p.rk), 160); }
+function ptOpen(editProf){
+  const rl = ptRole(), M = PT_META[rl], a = (typeof uaMe === 'function' && uaMe()) || null, me = agMe() || {}, cd = codevMe() || {};
+  let m = document.getElementById('portalModal');
+  if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'portalModal'; document.body.appendChild(m); }
+  let nm = '', sub = '', body = '';
+  if(rl === 'dev'){ const p = ptDevProf(); nm = p.name || 'ڈویلپر'; sub = [ptEmail(), p.phone, p.city].filter(Boolean).join(' • ');
+    const pend = (typeof pendingApprovals !== 'undefined' && pendingApprovals.length) || '', pfn = ((document.getElementById('pfPendN')||{}).textContent || '').replace(/\D/g,'');
+    body = `<div class="pt-sec">📥 روزانہ کے کام</div><div class="pt-grid">${ptT('🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend)}${ptT('⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn)}${ptT('✏️','ترمیم درخواستیں','','edOpen')}${ptT('❓','Help Desk','','ptHelp')}</div>
+      <div class="pt-sec">⭐ ممبرشپ اور ایجنٹ</div><div class="pt-grid">${ptT('👤','Account Access','مدت دیں','aaOpen')}${ptT('🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen')}${ptT('📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen')}${ptT('👥','کو-ڈویلپر','موبائل + PIN','cdAdminOpen')}</div>
+      <div class="pt-sec">📣 رپورٹ اور اشتہار</div><div class="pt-grid">${ptT('📊','کالوں کی رپورٹ','','stOpenAdmin')}${ptT('📢','اشتہار','','adOpenAdmin')}${ptT('📩','اطلاع','دکانداروں کو','ntOpen')}${ptT('📰','خبروں کی پٹی','','openTickerAdmin')}</div>
+      <div class="pt-sec">🧰 باقی سب کچھ</div><div class="pt-grid">${ptT('👀','وزیٹرز','کون کتنی بار کھولتا ہے','vlOpen')}${ptT('💳','Play پیکج اور قیمت','5 پیکج','mcsPlayPackages')}${ptT('🗂️','کیٹگری، امپورٹ، شیٹ','ڈویلپر پینل','openDevPanel')}${ptT('⚙️','سیٹنگز اور بیک اپ','','openControlPanel')}${ptT('⎋','لاگ آؤٹ','','adminLogout','', 'red')}</div>
+      <div class="pt-card pt-f"><b>🪪 میرا پروفائل ${p.name ? '' : '<small style="color:#dc2626">— پہلی بار بھر دیں</small>'}</b><input id="ptN" placeholder="نام" value="${escapeAttr(p.name||'')}"><input id="ptP" dir="ltr" inputmode="tel" placeholder="موبائل نمبر" value="${escapeAttr(p.phone||'')}"><input id="ptC" placeholder="شہر" value="${escapeAttr(p.city||'')}"><div class="r"><button type="button" class="p" onclick="ptDevSave()">✅ محفوظ</button></div></div>`;
+  } else if(rl === 'codev'){ nm = cd.name || 'کو-ڈویلپر'; sub = cd.phone ? '0' + String(cd.phone).slice(2) : '';
+    body = `<div class="cp-hint" style="margin:0 0 8px">👥 جانچ موڈ — ہر چیز کھول کر دیکھیں؛ کچھ محفوظ / منظور نہیں ہوتا۔ مسئلہ یا تجویز Help Desk سے مالک کو۔</div><div class="pt-grid">${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('➕','کاروبار جوڑنا','جانچ','d2AddOpen')}${ptT('🤝','ایجنٹ بنانا','جانچ','agCreateOpen')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
+  } else {
+    const L = mpListReal(); nm = (a && a.user && a.user.name) || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
+    sub = (a && a.user && a.user.id) || (me.phone ? '0' + String(me.phone).slice(2) : '');
+    const code = me.code || '', refNo = me.phone ? agRefNo(me.phone) : '';
+    if(L.length){
+      body = `<div class="pt-sec">${rl === 'prof' ? '👔 میرا پروفیشن' : '🏪 میرا کاروبار'}</div>` + L.map(({p, rec}, i)=>{ const r = p.kind === 'doctor' ? fhDoc(rec) : fhSvc(rec), left = mpLeftOf(p);
+        const st = p.pend ? '⏳ منظوری کا انتظار' : left == null ? '⭕ تفصیل باقی' : left > 0 ? '✅ فعال — ' + left + ' دن باقی' : '⛔ مدت ختم';
+        return `<div class="pt-card"><b>${escapeHtml(r.nameUr || r.name || '')}</b><small>${st}</small><div class="r"><button type="button" onclick="ptView(${i})">👁️ دیکھیں</button><button type="button" class="p" onclick="ptEdit(${i})">✏️ تفصیل سنواریں</button>${left != null && left <= 15 && !p.pend ? `<button type="button" onclick="ptSub(${i})">⭐ جاری رکھیں</button>` : ''}</div></div>`; }).join('');
+    }
+    body += `<div class="pt-sec">🤝 ریفرل</div>` + (code ? `<div class="pt-card"><small>میرا ریفرل کوڈ</small><div class="pt-code" onclick="agCopy('${escapeAttr(code)}')">${escapeHtml(code)}</div><div class="r"><button type="button" class="p" onclick="agCopy('${escapeAttr(code)}')">📋 کاپی</button><button type="button" onclick="agShare('${escapeAttr(code)}')">📤 شیئر</button></div>${refNo ? `<small>یا اپنا موبائل نمبر بھی بتا سکتے ہیں: ${refNo}</small>` : ''}</div>` : `<div class="pt-grid">${ptT('🤝','MCS ایجنٹ بنیں','ریفرل کوڈ / حالت','agOpen')}</div>`);
+    body += `<div class="pt-grid">${ptT('➕', L.length ? 'ایک اور کاروبار / پروفیشن' : 'اپنا کاروبار / پروفیشن جوڑیں', L.length ? '' : '15 دن مفت', 'mpNewMore')}${a ? ptT('👤','میرا اکاؤنٹ','','uaAccount') : ptT('🔐','Login / Sign Up','','uaLogin')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','رنگ، فونٹ، بیک اپ','openControlPanel')}</div>`;
+  }
+  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="closeModal('portalModal')">×</button><div class="pt-av">${M[0]}</div><div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span></div><div class="pt-body">${body}</div></div>`;
+  openModal('portalModal');
+  if(editProf){ setTimeout(()=>{ const e = document.getElementById('ptN'); if(e){ e.scrollIntoView({block:'center'}); e.focus(); } }, 300); }
+}
+function ptDevPend(){ openDevPanel(); setTimeout(()=>{ const e = document.getElementById('pendingApprovalsWrap'); if(e) e.scrollIntoView({behavior:'smooth', block:'start'}); }, 350); }
+function ptHome(){ try{ goHome(); }catch(e){} }
+document.addEventListener('DOMContentLoaded', ()=>{ const t = document.getElementById('h2Type'); if(t) t.addEventListener('click', e=>{ const rl = ptRole(), a = (typeof uaMe === 'function') && uaMe(), ag = agMe(); if(rl !== 'user' || a || (ag && (ag.pin || ag.code))){ e.stopImmediatePropagation(); ptOpen(); } }, true); });
+/* ===== MCS0611FR170 (مالک کا حکم): پہلی بار شہر پوچھنا + وزیٹر ریکارڈ (کون کتنی بار ایپ کھولتا ہے) =====
+   شہر: mcsHomeCity — اسی شہر کے ریکارڈ سب سے پہلے؛ فلٹر بدلیں تو دوسرا شہر۔
+   وزیٹر: Firestore `visitors/{ڈیوائس}` — نام، موبائل، شہر، کتنی بار کھولی، آخری بار؛ ڈویلپر پورٹل ← «👀 وزیٹرز» */
+function hcGet(){ try{ return localStorage.getItem('mcsHomeCity') || ''; }catch(e){ return ''; } }
+function hcSet(c){
+  c = String(c || '').trim(); if(!c) return;
+  try{ localStorage.setItem('mcsHomeCity', c); localStorage.removeItem('mcsCityPick'); }catch(e){}
+  closeModal('cityFirstModal');
+  try{ ccApplyCity(true); ccCityWeather(); }catch(e){} try{ hlRenderSoon(); }catch(e){}
+  showToast('📍 ' + c + ' — اسی شہر کے ریکارڈ پہلے نظر آئیں گے', 3500); vlPing(true);
+}
+function hcOpen(){
+  let m = document.getElementById('cityFirstModal');
+  if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'cityFirstModal'; document.body.appendChild(m); }
+  const top = (typeof ccCityList === 'function' ? ccCityList() : []).slice(0, 12);
+  m.innerHTML = `<div class="modal-box ag-box"><div class="ag-hd">📍 آپ کا شہر کون سا ہے؟ <small>اسی شہر کے ریکارڈ سب سے پہلے نظر آئیں گے</small></div>
+    <div class="pt-grid">${top.map(x=>`<button type="button" class="pt-t" onclick="hcSet(this.dataset.c)" data-c="${escapeAttr(x.city)}">${escapeHtml(x.city)}<small>${x.n} ریکارڈ</small></button>`).join('')}</div>
+    <div class="pt-f"><input id="hcIn" placeholder="یا اپنے شہر کا نام لکھیں" maxlength="60"></div>
+    <button type="button" class="btn block ag-send" onclick="hcSet(document.getElementById('hcIn').value)">✅ یہی میرا شہر ہے</button>
+    <button type="button" class="link-btn" style="width:100%" onclick="try{sessionStorage.setItem('mcsHcSkip','1')}catch(e){};closeModal('cityFirstModal')">بعد میں</button></div>`;
+  openModal('cityFirstModal');
+}
+function hcCheck(){
+  if(hcGet()) return true;
+  try{ if(sessionStorage.getItem('mcsHcSkip')) return true; }catch(e){}
+  let staff = false; try{ staff = isAdminSignedIn || codevOn(); }catch(e){} if(staff) return true;
+  const mc = (typeof mpCity === 'function') ? mpCity() : ''; if(mc){ try{ localStorage.setItem('mcsHomeCity', mc); }catch(e){} return true; }
+  const ua = document.getElementById('uaOv'); if(ua && ua.classList.contains('on')) return false;   /* لاگ اِن کا صفحہ کھلا ہو تو بعد میں */
+  hcOpen(); return true;
+}
+document.addEventListener('DOMContentLoaded', ()=>{ let n = 0; const t = setInterval(()=>{ try{ if(hcCheck() || ++n > 40) clearInterval(t); }catch(e){ clearInterval(t); } }, 3000); });
+
+function vlWho(){
+  const ua = (typeof uaMe === 'function' && uaMe()) || null, u = (ua && ua.user) || {}, ag = agMe() || {}, L = (typeof mpListReal === 'function') ? mpListReal() : [], r0 = L[0] && L[0].rec;
+  const phone = (ag.phone ? '0' + String(ag.phone).slice(2) : '') || u.mobile || u.phone || (r0 && (r0.whatsapp || '')) || '';
+  return {name: u.name || ag.name || (r0 && (r0.nameUr || r0.name)) || '', phone: String(phone || ''), email: u.email || '', city: hcGet() || (typeof mpCity === 'function' ? mpCity() : '') || '', role: (typeof ptRole === 'function' ? ptRole() : ''), hasBiz: L.length ? 1 : 0, agent: (ag.pin || ag.code) ? 1 : 0};
+}
+function vlPing(force){
+  try{
+    const FB = window.MCSFirebase; if(!FB || !FB.setDoc){ window.addEventListener('mcs-firebase-ready', ()=>vlPing(force), {once:true}); return; }
+    try{ if(isAdminSignedIn || codevOn()) return; }catch(e){}   /* ہمارا اپنا کھولنا نہیں گنتے */
+    const now = Date.now(), last = +localStorage.getItem('mcsVlLast') || 0;
+    let n = +localStorage.getItem('mcsVlN') || 0, first = +localStorage.getItem('mcsVlFirst') || 0;
+    if(!first){ first = now; localStorage.setItem('mcsVlFirst', String(first)); }
+    if(!force && now - last < 20*60e3) return;
+    if(!force){ n++; localStorage.setItem('mcsVlN', String(n)); localStorage.setItem('mcsVlLast', String(now)); }
+    const w = vlWho();
+    FB.setDoc(FB.doc(FB.db, 'visitors', agDev()), Object.assign({opens: n, firstOpen: first, lastOpen: now, ver: APP_VERSION}, w), {merge:true}).catch(()=>{});
+  }catch(e){}
+}
+document.addEventListener('DOMContentLoaded', ()=> setTimeout(()=>vlPing(false), 6000));
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible') setTimeout(()=>vlPing(false), 800); });
+let vlList = [], vlQ = '', vlSort = 'opens';
+async function vlOpen(){
+  const FB = window.MCSFirebase;
+  if(!FB || !FB.getDocs){ showToast('انٹرنیٹ درکار'); return; }
+  agModal('<div class="ag-st">⏳ وزیٹرز لوڈ ہو رہے ہیں…</div>');
+  try{ const sn = await FB.getDocs(FB.collection(FB.db, 'visitors')); vlList = []; sn.forEach(d=>vlList.push(Object.assign({id: d.id}, d.data()))); vlRender(); }
+  catch(e){ agModal(`<div class="ag-hd">👀 وزیٹرز</div><div class="ag-no">⚠️ فہرست نہیں کھلی (${escapeHtml(e.code || e.message || '')})</div><div class="cp-hint">Firebase ← Firestore ← Rules میں <b dir="ltr">visitors</b> کی اجازت چاہیے: پڑھنا صرف ایڈمن، لکھنا سب کو۔ نیچے کا ٹکڑا شامل کریں:<br><code dir="ltr" style="display:block;font-size:11px;background:#f1f5f9;padding:6px;border-radius:8px;margin-top:4px">match /visitors/{id} {<br>&nbsp;allow create, update: if true;<br>&nbsp;allow read: if request.auth != null;<br>}</code></div>`); }
+}
+function vlRender(){
+  const q = vlQ.trim().toLowerCase().replace(/\s/g, '');
+  let L = vlList.filter(v => !q || [v.name, v.phone, v.city, v.email].join(' ').toLowerCase().replace(/\s/g, '').includes(q));
+  L.sort((a, b) => vlSort === 'recent' ? (b.lastOpen||0) - (a.lastOpen||0) : (b.opens||0) - (a.opens||0));
+  const hot = vlList.filter(v => (v.opens||0) >= 10 && !v.hasBiz && !v.agent).length, ago = t => { const d = Math.floor((Date.now() - (t||0)) / 864e5); return d <= 0 ? 'آج' : d + ' دن پہلے'; };
+  const msg = 'السلام علیکم! آپ My City Shines ایپ باقاعدگی سے استعمال کر رہے ہیں، شکریہ 🌟\nاپنا کاروبار یا پروفیشن ایپ پر مفت جوڑیں (15 دن مفت) اور مزید فائدے اٹھائیں — یا ہمارے ایجنٹ بنیں اور کمائیں۔';
+  agModal(`<div class="ag-hd">👀 وزیٹرز <small>کل ${vlList.length} فون • ${hot} ایسے جو 10+ بار کھول چکے مگر کاروبار / ایجنٹ نہیں</small></div>
+    <input type="search" class="ag-q" placeholder="🔍 نام، موبائل، شہر…" value="${escapeAttr(vlQ)}" oninput="vlQ=this.value;clearTimeout(window._vlT);window._vlT=setTimeout(()=>{vlRender();const i=document.querySelector('#agModal .ag-q');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},350)">
+    <div class="pt-grid" style="margin:6px 0"><button type="button" class="pt-t" style="min-height:40px" onclick="vlSort='opens';vlRender()">🔥 زیادہ کھولنے والے</button><button type="button" class="pt-t" style="min-height:40px" onclick="vlSort='recent';vlRender()">🕒 تازہ ترین</button></div>
+    ${L.slice(0, 80).map(v => { const d = String(v.phone || '').replace(/\D/g, ''), w = d.length >= 10 ? '92' + d.slice(-10) : '';
+      return `<div class="pt-card"><b>${escapeHtml(v.name || 'نامعلوم')} <small dir="ltr">${escapeHtml(v.phone || '')}</small></b><small>📍 ${escapeHtml(v.city || '—')} • 🔁 <b>${v.opens || 0}</b> بار • ${ago(v.lastOpen)} • ${v.agent ? '🤝 ایجنٹ' : v.hasBiz ? '🏪 کاروبار ہے' : '👤 کاروبار نہیں'}</small>${w ? `<div class="r"><a class="p" style="flex:1;text-align:center;padding:8px;border-radius:10px;background:#0f766e;color:#fff;font-weight:800;text-decoration:none" href="tel:${d}">📞 کال</a><a style="flex:1;text-align:center;padding:8px;border-radius:10px;background:#16a34a;color:#fff;font-weight:800;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${w}?text=${encodeURIComponent(msg)}">💬 واٹس ایپ</a></div>` : ''}</div>`; }).join('') || '<div class="ag-st">کوئی نہیں ملا</div>'}
+    ${L.length > 80 ? `<div class="cp-hint" style="text-align:center">پہلے 80 دکھائے — تلاش سے باقی ڈھونڈیں</div>` : ''}`);
 }
 function agCopy(c){ const ok = ()=>showToast('📋 ' + c + ' کاپی ہو گیا'); try{ navigator.clipboard.writeText(c).then(ok, ()=>{ prompt('کاپی کریں', c); }); }catch(e){ prompt('کاپی کریں', c); } }
 /* MCS0511TH135: «ایجنٹ کا ریفرل نمبر» خانے میں 📋 پیسٹ — ہاتھ سے لکھنے کی غلطی نہیں */
@@ -10247,6 +10406,9 @@ async function refResolve(){
 }
 function agShare(c){ const t = 'My City Shines — میرا ایجنٹ ریفرل کوڈ: ' + c + '\nاپنا کاروبار درج کرواتے وقت «🤝 ایجنٹ کا ریفرل کوڈ» میں یہ لکھیں۔'; if(navigator.share) navigator.share({text: t}).catch(()=>{}); else agCopy(c); }
 const agImgs = {};
+/* MCS0611FR170: تصویریں ایک بار پہنچ گئیں تو دوبارہ نہ مانگے (سرور کا جواب دیر سے بدلے تب بھی) */
+function agDocsDone(){ const me = agMe(); try{ const d = JSON.parse(localStorage.getItem('mcsAgDocs')||'{}'); return !!(me && me.phone && d[me.phone]); }catch(e){ return false; } }
+function agDocsMark(on){ const me = agMe(); if(!me || !me.phone) return; try{ const d = JSON.parse(localStorage.getItem('mcsAgDocs')||'{}'); if(on) d[me.phone] = Date.now(); else delete d[me.phone]; localStorage.setItem('mcsAgDocs', JSON.stringify(d)); }catch(e){} }
 function agForm(){
   const mine = mpList();
   if(!mine.length){
@@ -10295,9 +10457,68 @@ function agForm(){
     </div>`);
   ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); });
 }
-async function agPick(inp, k){
-  const f = inp.files && inp.files[0]; if(!f) return;
-  try{ let d = await adCompress(f, 1100, 0.72); if(d.length > 600000) d = await adCompress(f, 800, 0.6); agImgs[k] = d; agShowPic(k); }catch(e){ showToast('تصویر نہیں لگی — دوبارہ کوشش کریں'); }
+/* MCS0611FR170 (مالک کا حکم): کارڈ / سیلفی لگانے سے پہلے کاٹیں، سیدھا کریں، بہتر بنائیں — چوکھٹے میں جو دکھے وہی محفوظ ہوتا ہے */
+const AGC = {img:null, k:'', W:0, H:0, q:0, fine:0, zoom:1, ox:0, oy:0, enh:true, ptr:{}, pd:0};
+function agPick(inp, k){
+  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return;
+  const im = new Image();
+  im.onload = ()=>{ const sc = Math.min(1, 2000 / Math.max(im.width, im.height)); const c = document.createElement('canvas'); c.width = Math.round(im.width*sc); c.height = Math.round(im.height*sc); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(im.src); agCropOpen(c, k); };
+  im.onerror = ()=> showToast('تصویر نہیں لگی — دوبارہ کوشش کریں');
+  im.src = URL.createObjectURL(f);
+}
+function agCropOpen(c, k){
+  Object.assign(AGC, {img:c, k, q:0, fine:0, zoom:1, ox:0, oy:0, enh:true, ptr:{}});
+  const card = k !== 'selfie'; AGC.W = card ? 1100 : 840; AGC.H = card ? 694 : 1050;
+  let m = document.getElementById('agCropModal');
+  if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'agCropModal'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="modal-box agc-box"><div class="ag-hd">✂️ ${k==='selfie' ? 'سیلفی' : (k==='front' ? 'کارڈ سامنے' : 'کارڈ پیچھے')} — کاٹیں اور سنواریں <small>${k==='selfie' ? 'چہرہ چوکھٹے کے بیچ میں رکھیں' : 'کارڈ چوکھٹے میں پورا بھر دیں، کنارے سیدھے'} — انگلی سے کھسکائیں، دو انگلیوں سے بڑا / چھوٹا</small></div>
+    <canvas id="agcCv" class="agc-cv" width="${AGC.W/2}" height="${AGC.H/2}" style="aspect-ratio:${AGC.W}/${AGC.H};width:${card ? '100%' : '72%'}"></canvas>
+    <div class="agc-row"><span>🔍</span><input type="range" id="agcZ" min="100" max="400" value="100"><button type="button" onclick="agcRot()">↻ گھمائیں</button></div>
+    <div class="agc-row"><span>📐 سیدھا</span><input type="range" id="agcF" min="-100" max="100" value="0"></div>
+    <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="agcE" checked> ✨ روشنی، کنٹراسٹ اور صفائی خود بہتر کریں</label></div>
+    <button type="button" class="btn block ag-send" onclick="agcDone()">✅ یہی تصویر لگائیں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agCropModal')">✖ رہنے دیں</button></div>`;
+  openModal('agCropModal');
+  const cv = document.getElementById('agcCv');
+  document.getElementById('agcZ').oninput = e=>{ AGC.zoom = e.target.value/100; agcDraw(); };
+  document.getElementById('agcF').oninput = e=>{ AGC.fine = e.target.value/10; agcDraw(); };
+  document.getElementById('agcE').onchange = e=>{ AGC.enh = e.target.checked; agcDraw(); };
+  cv.onpointerdown = e=>{ cv.setPointerCapture(e.pointerId); AGC.ptr[e.pointerId] = {x:e.clientX, y:e.clientY}; AGC.pd = 0; };
+  cv.onpointerup = cv.onpointercancel = e=>{ delete AGC.ptr[e.pointerId]; AGC.pd = 0; };
+  cv.onpointermove = e=>{
+    const p = AGC.ptr[e.pointerId]; if(!p) return; const ids = Object.keys(AGC.ptr), r = cv.getBoundingClientRect();
+    if(ids.length >= 2){ AGC.ptr[e.pointerId] = {x:e.clientX, y:e.clientY}; const a = AGC.ptr[ids[0]], b = AGC.ptr[ids[1]], d = Math.hypot(a.x-b.x, a.y-b.y); if(AGC.pd){ AGC.zoom = Math.max(1, Math.min(4, AGC.zoom * d / AGC.pd)); document.getElementById('agcZ').value = Math.round(AGC.zoom*100); } AGC.pd = d; agcDraw(); return; }
+    AGC.ox += (e.clientX - p.x) / r.width; AGC.oy += (e.clientY - p.y) / r.height; p.x = e.clientX; p.y = e.clientY; agcDraw();
+  };
+  agcDraw();
+}
+function agcRot(){ AGC.q = (AGC.q + 1) % 4; AGC.ox = AGC.oy = 0; agcDraw(); }
+function agcPaint(cv, W, H){
+  const ctx = cv.getContext('2d'), im = AGC.img, odd = AGC.q % 2, iw = odd ? im.height : im.width, ih = odd ? im.width : im.height;
+  const rad = AGC.fine * Math.PI / 180, cs = Math.abs(Math.cos(rad)), sn = Math.abs(Math.sin(rad));
+  const s = Math.max((W*cs + H*sn) / iw, (W*sn + H*cs) / ih) * AGC.zoom;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H); ctx.save();
+  ctx.translate(W/2 + AGC.ox*W, H/2 + AGC.oy*H); ctx.rotate(rad); ctx.scale(s, s); ctx.rotate(AGC.q * Math.PI / 2); ctx.drawImage(im, -im.width/2, -im.height/2); ctx.restore();
+}
+function agcDraw(){ const cv = document.getElementById('agcCv'); if(!cv) return; agcPaint(cv, cv.width, cv.height); cv.style.filter = AGC.enh ? 'contrast(1.12) brightness(1.04)' : ''; }
+/* خود بہتری: روشنی پھیلاؤ (2% – 98%) + ہلکی صفائی */
+function agcEnhance(cv){
+  const ctx = cv.getContext('2d'), w = cv.width, h = cv.height, id = ctx.getImageData(0, 0, w, h), d = id.data, hist = new Uint32Array(256);
+  for(let i = 0; i < d.length; i += 4) hist[(d[i]*.3 + d[i+1]*.59 + d[i+2]*.11) | 0]++;
+  const tot = w*h; let a = 0, lo = 0, hi = 255; for(let v = 0; v < 256; v++){ a += hist[v]; if(a > tot*.02){ lo = v; break; } } a = 0; for(let v = 255; v >= 0; v--){ a += hist[v]; if(a > tot*.02){ hi = v; break; } }
+  if(hi - lo < 40){ lo = Math.max(0, lo - 10); hi = Math.min(255, lo + 120); }
+  const k = 255 / (hi - lo), lut = new Uint8Array(256); for(let v = 0; v < 256; v++) lut[v] = Math.max(0, Math.min(255, (v - lo) * k));
+  for(let i = 0; i < d.length; i += 4){ d[i] = lut[d[i]]; d[i+1] = lut[d[i+1]]; d[i+2] = lut[d[i+2]]; }
+  const src = new Uint8ClampedArray(d), amt = .55;
+  for(let y = 1; y < h-1; y++) for(let x = 1; x < w-1; x++){ const p = (y*w + x) * 4; for(let c = 0; c < 3; c++){ const n = src[p+c-4] + src[p+c+4] + src[p+c-w*4] + src[p+c+w*4]; d[p+c] = Math.max(0, Math.min(255, src[p+c] + amt * (4*src[p+c] - n))); } }
+  ctx.putImageData(id, 0, 0);
+}
+function agcDone(){
+  const out = document.createElement('canvas'); out.width = AGC.W; out.height = AGC.H; agcPaint(out, AGC.W, AGC.H);
+  if(AGC.enh){ try{ agcEnhance(out); }catch(e){} }
+  let d = out.toDataURL('image/jpeg', .84);
+  if(d.length > 600000){ const o2 = document.createElement('canvas'); o2.width = Math.round(AGC.W*.75); o2.height = Math.round(AGC.H*.75); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', .72); }
+  agImgs[AGC.k] = d; agShowPic(AGC.k); closeModal('agCropModal'); showToast('✅ تصویر لگ گئی');
 }
 function agCnicFmt(el){ const d = el.value.replace(/[^0-9۰-۹٠-٩]/g,'').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)).slice(0,13); el.value = d.length > 12 ? d.slice(0,5)+'-'+d.slice(5,12)+'-'+d.slice(12) : d.length > 5 ? d.slice(0,5)+'-'+d.slice(5) : d; el.classList.toggle('ok', d.length === 13); }
 function agShowPic(k){ const el = document.getElementById('agP_' + k); if(el){ el.classList.add('has'); el.style.backgroundImage = 'url(' + agImgs[k] + ')'; } }
@@ -10322,7 +10543,28 @@ async function agSend(){
 }
 /* ---- ایڈمن: درخواستیں، ریفرل کوڈز کی فہرست، ہر کوڈ کے کاروبار ---- */
 let agList = [], agTab = 'pending', agQ = '';
-async function agAdminCall(body){ const r = await fetch(AG_API + '/agadmin', {method:'POST', headers: await vfAdminHdr(), body: JSON.stringify(body)}); return r.json(); }
+/* MCS0611FR170 (مالک کا حکم): جو بندہ ایک بار ایجنٹ بن گیا اس کے کارڈ سے «ایجنٹ بنائیں» بٹن ہٹ جائے — ایجنٹوں کی فہرست فون میں یاد رکھی جاتی ہے */
+var agKnown = {codes:{}, phones:{}}; try{ const k = JSON.parse(localStorage.getItem('mcsAgKnown')||'null'); if(k && k.codes && k.phones) agKnown = k; }catch(e){}
+function agKnownSave(){ try{ localStorage.setItem('mcsAgKnown', JSON.stringify(agKnown)); }catch(e){} }
+function agKnownAdd(phone, code, st){ const p = String(phone||'').replace(/\D/g,'').slice(-10); st = st || 'approved'; if(p.length === 10) agKnown.phones[p] = st; if(code) agKnown.codes[code] = st; agKnownSave(); agKnownRefresh(); }
+function agKnownBuild(list){ const k = {codes:{}, phones:{}}; (list||[]).forEach(a=>{ if(!a || a.status === 'rejected') return; const p = String(a.phone||'').replace(/\D/g,'').slice(-10); if(p.length === 10) k.phones[p] = a.status || 'approved'; if(a.code) k.codes[a.code] = a.status || 'approved'; }); agKnown = k; agKnownSave(); agKnownRefresh(); }
+function agKnownRefresh(){ try{ if(currentScreen==='doctor-list') renderDoctorList('list'); if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list'); hlRenderSoon(); }catch(e){} }
+function agKnownOf(kind, id){
+  const rec = kind==='doctor' ? (store.doctors||[]).find(x=>x.id===id) : (store.services||[]).find(x=>x.id===id); if(!rec) return '';
+  let rk = ''; try{ rk = pfKeyOf(rec, kind); }catch(e){}
+  const p = String(rec.whatsapp || rec.phone || '').replace(/\D/g,'').slice(-10);
+  return (rk && agKnown.codes[rk]) || (p.length === 10 && agKnown.phones[p]) || '';
+}
+async function agKnownLoad(){ try{ const r = await agAdminCall({op:'list'}); if(r && r.list) agList = r.list; }catch(e){} }
+async function agAdminCall(body){
+  const r = await (await fetch(AG_API + '/agadmin', {method:'POST', headers: await vfAdminHdr(), body: JSON.stringify(body)})).json();
+  try{
+    if(body && body.op === 'list' && r && r.list) agKnownBuild(r.list);
+    else if(body && body.op === 'create' && r && r.ok && r.agent) agKnownAdd(r.agent.phone, r.agent.code, 'approved');
+    else if(body && body.op !== 'list' && r && r.ok) setTimeout(agKnownLoad, 400);
+  }catch(e){}
+  return r;
+}
 function agRefRecs(code){ return code ? (store.services||[]).filter(x=> x.more && agNormCode(x.more.ref) === code) : []; }
 /* ===== MCS0511TH136 (مالک کا حکم): 👥 کو-ڈویلپر جانچ موڈ — مانی بھائی / عمران بھائی اپنے کاروبار کے بغیر ہر چیز کھول کر دیکھ سکیں
    (ممبرشپ، پوسٹر / تفصیل، ایجنٹ فارم، اشتہار، فارم بھرنا)؛ کچھ محفوظ / منظور / بھیجا نہیں جاتا؛ ادائیگی، Account Access، منظوری صرف مالک (ایڈمن)۔
@@ -10407,7 +10649,7 @@ async function agPinGo(){
   try{ const r = await (await fetch(AG_API + '/agstatus', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: ph, pin, dev: agDev()})})).json();
     if(!r || !r.ok){ e.textContent = '❌ نمبر یا PIN درست نہیں'; return; }
     localStorage.setItem('mcsAgent', JSON.stringify({phone: '92' + ph.slice(-10), name: r.name, pin, at: Date.now()}));
-    agStatusView(r); if(r.docs === false) setTimeout(agDocsForm, 600);
+    agStatusView(r); if(r.docs === false && !agDocsDone()) setTimeout(agDocsForm, 600);
   }catch(x){ e.textContent = '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'; }
 }
 function agDocsForm(){
@@ -10437,7 +10679,7 @@ async function agDocsSend(){
   const btn = document.getElementById('agSendBtn'); btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہیں…';
   try{ const r = await (await fetch(AG_API + '/agdocs', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: me.phone, pin: me.pin, dev: agDev(), cnic, father: (document.getElementById('agFather').value||'').trim(), img: agImgs})})).json();
     if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; return err('⚠️ ' + ({login:'دوبارہ «میں پہلے سے ایجنٹ ہوں» سے موبائل اور PIN لکھیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر درست نہیں — دوبارہ لگائیں', cnic_taken:'یہ شناختی کارڈ کسی اور ایجنٹ کا ہے'}[r && r.reason] || 'نہیں گیا — دوبارہ کوشش کریں')); }
-    ['front','back','selfie'].forEach(k=> delete agImgs[k]); showToast('✅ تصویریں پہنچ گئیں — شکریہ', 3500); agOpen();
+    agDocsMark(true); ['front','back','selfie'].forEach(k=> delete agImgs[k]); showToast('✅ تصویریں پہنچ گئیں — شکریہ', 3500); agOpen();
   }catch(x){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; err('📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
 }
 /* مالک: ➕ خود ایجنٹ بنائیں */
@@ -10462,6 +10704,7 @@ async function agCreateGo(){
       agModal(`<div class="ag-hd">⏳ منظوری کے لیے بھیج دیا</div><div class="ag-wait">${escapeHtml(c.name)} — مالک (پی بی ٹی کوڈ لیبز) کی منظوری کے بعد ایجنٹ بنے گا۔ منظوری پر PIN مالک خود ایجنٹ کو بھیجیں گے۔</div>`); }
     catch(x){ e.textContent = '📶 انٹرنیٹ نہیں'; } return; }
   try{ const r = await agAdminCall({op:'create', c});
+    if(r && !r.ok && (r.reason === 'exists' || r.reason === 'code_taken')) agKnownAdd(c.phone, r.reason === 'code_taken' ? c.code : '', 'approved');
     if(!r || !r.ok){ e.textContent = '⚠️ ' + ({exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', missing:'خانے بھریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں بنا'); return; }
     const a = r.agent, msg = 'السلام علیکم ' + a.name + '\nآپ My City Shines کے ایجنٹ بن گئے ہیں 🤝\nآپ کا ریفرل کوڈ: ' + a.code + '\n🔑 PIN: ' + a.pin + '\n\nایپ ← «🤝 MCS ایجنٹ بنیں» ← «🔑 میں پہلے سے ایجنٹ ہوں» ← اپنا موبائل نمبر اور یہ PIN لکھیں، پھر اپنے شناختی کارڈ کی دونوں طرف کی تصویر اور سیلفی لگا دیں۔';
     agModal(`<div class="ag-hd">✅ ایجنٹ بن گیا</div><div class="ag-ok">${escapeHtml(a.name)}</div>
@@ -11041,13 +11284,13 @@ function flowDone(modal){
   if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
 }
 function flowSchedule(fromId, ms){
-  flowCancel();
+  flowCancel(); return;   /* MCS0611FR170 (مالک کا حکم): کرسر خود اگلے خانے میں نہیں بھاگتا — جہاں انگلی رکھی وہیں رہے */
   if(!getAutoSpeed()) return;
   flowTimer = setTimeout(()=>{ flowTimer = null; flowNext(fromId); }, ms);
 }
 function flowStart(modal, isNew){
   renderAutoSpeed();
-  flowCancel();
+  flowCancel(); return;   /* MCS0611FR170: فارم کھلتے ہی بھی کرسر خود نہیں چلتا */
   if(!isNew) return;   /* ترمیم میں کرسر خود نہیں چلتا */
   setTimeout(()=>{ const first = document.getElementById(flowList(modal)[0]); if(first) flowFocus(first); }, 280);
 }
@@ -11566,9 +11809,9 @@ function boardApply(save){
 
 /* ===== MCS11OCTSU0913AM: پوری ایپ کے متن کا سائز — ہر صفحے پر نیچے Aa بٹن =====
    CSS zoom پورا صفحہ اسی چوڑائی میں دوبارہ ترتیب دیتا ہے: متن بڑا ہو کر اگلی لائن میں جاتا ہے، ڈبے سے باہر نہیں */
-function getZoom(){ const v = parseFloat(localStorage.getItem('mcsZoom')); return (v>=0.8 && v<=2) ? v : 1; }
+function getZoom(){ const v = parseFloat(localStorage.getItem('mcsZoom')); return (v>=1 && v<=2) ? Math.round(v*10)/10 : 1; }
 function setZoom(v){
-  v = Math.round(Math.min(2, Math.max(0.8, parseFloat(v)||1))*20)/20;
+  v = Math.round(Math.min(2, Math.max(1, parseFloat(v)||1))*10)/10;   /* MCS0611FR170: 100% سے 200%، دس دس کا قدم */
   try{ localStorage.setItem('mcsZoom', v); }catch(e){}
   applyZoom();
 }
@@ -11578,7 +11821,7 @@ function applyZoom(){
   document.documentElement.style.setProperty('--ui-zoom', v);
   document.body.classList.toggle('zoom-up', v > 1.02);
   const pct = Math.round(v*100) + '%';
-  ['zoomPct','bnZoomVal'].forEach(id=>{ const e = document.getElementById(id); if(e) e.textContent = pct; });
+  ['zoomPct','zoomPct2','fzVal','bnZoomVal'].forEach(id=>{ const e = document.getElementById(id); if(e) e.textContent = pct; });
   const r = document.getElementById('zoomRange'); if(r) r.value = Math.round(v*100);
   if(typeof queueFitCards==='function') queueFitCards();
 }
@@ -11589,6 +11832,15 @@ function toggleZoomPanel(ev){
 }
 document.addEventListener('click', ()=>{ const p = document.getElementById('zoomPanel'); if(p) p.style.display='none'; });
 applyZoom();
+/* MCS0611FR170: فارم بھرتے وقت اسی صفحے پر + / − زوم (چھوٹا سا بٹن اوپر دائیں کونے میں) */
+(function(){
+  const st = document.createElement('style'); st.textContent = '#fzCtl{position:fixed;top:6px;right:6px;z-index:99990;display:none;align-items:center;gap:2px;direction:ltr;background:rgba(15,23,42,.88);border-radius:22px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.4)}#fzCtl button{width:38px;height:34px;border:none;border-radius:18px;background:#fff;color:#0f172a;font-size:22px;font-weight:900;line-height:1}#fzCtl span{color:#fff;font-size:12px;font-weight:800;min-width:42px;text-align:center}';
+  document.head.appendChild(st);
+  const c = document.createElement('div'); c.id = 'fzCtl'; c.innerHTML = '<button type="button" onclick="stepZoom(-1)" aria-label="چھوٹا">−</button><span id="fzVal">100%</span><button type="button" onclick="stepZoom(1)" aria-label="بڑا">+</button>'; document.body.appendChild(c);
+  const SEL = 'input:not([type=hidden]):not([type=file]):not([type=range]):not([type=checkbox]):not([type=radio]):not([type=search]),textarea';
+  setInterval(()=>{ const on = [...document.querySelectorAll('.modal-overlay.active')].some(m => m.id !== 'agCropModal' && m.querySelector(SEL)); c.style.display = on ? 'flex' : 'none'; }, 500);
+  applyZoom();
+})();
 
 /* MCS2410SA054: نیا اندراج لکھتے وقت ہر حرف فون میں محفوظ (ڈرافٹ) — فارم غلطی سے بند ہو جائے، بیک دب جائے یا
    ایپ تازہ ہو جائے تب بھی لکھا ہوا ضائع نہیں؛ اسی کیٹگری میں «نیا» کھولیں تو سب واپس آ جاتا ہے۔
@@ -12305,11 +12557,15 @@ function adForRec(kind, id){ const k = adRecKey(kind, id); return (adList||[]).f
 function mkAdBtn(kind, id){
   if(!isAdminSignedIn || !id) return '';
   const i = adForRec(kind, id), a = i > -1 ? adList[i] : null, live = a && (!a.until || a.until > Date.now());
-  return `<button type="button" class="mk-ad" style="background:linear-gradient(180deg,#14b8a6,#0f766e);margin-bottom:6px" onclick="agFromRecord('${escapeAttr(kind)}','${escapeAttr(id)}')">🤝 اس بندے کو ایجنٹ بنائیں</button><button type="button" class="mk-ad${live?' on':''}" onclick="adFromRecord('${escapeAttr(kind)}','${escapeAttr(id)}')">${live ? '📢 اشتہار چل رہا ہے — رنگ/تفصیل بدلیں' : '📢 اس کارڈ کا اشتہار بنائیں'}</button>`;
+  const ak = agKnownOf(kind, id);   /* MCS0611FR170: پہلے سے ایجنٹ ہے تو بٹن نہیں — صرف چھوٹی سی حالت */
+  const agPart = ak ? `<span class="ag-badge${ak === 'pending' ? ' wait' : ''}" aria-label="ایجنٹ">${ak === 'pending' ? '⏳' : '🤝'}</span>`
+    : `<button type="button" class="mk-ad" style="background:linear-gradient(180deg,#14b8a6,#0f766e);margin-bottom:6px" onclick="agFromRecord('${escapeAttr(kind)}','${escapeAttr(id)}')">🤝 اس بندے کو ایجنٹ بنائیں</button>`;
+  return agPart + `<button type="button" class="mk-ad${live?' on':''}" onclick="adFromRecord('${escapeAttr(kind)}','${escapeAttr(id)}')">${live ? '📢 اشتہار چل رہا ہے — رنگ/تفصیل بدلیں' : '📢 اس کارڈ کا اشتہار بنائیں'}</button>`;
 }
 /* #103 (مالک کا حکم): کسی بھی کارڈ (کاروبار / پیشہ) سے سیدھا ایجنٹ — نام، موبائل، کاروبار ID، شہر خود بھرے؛ صرف شناختی کارڈ لکھنا */
 function agFromRecord(kind, id){
   if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ ان کریں'); return; }
+  if(agKnownOf(kind, id)){ showToast('✅ یہ بندہ پہلے سے ایجنٹ ہے'); return; }
   const rec = kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id); if(!rec) return;
   agCreateOpen();
   setTimeout(() => {
@@ -12468,9 +12724,13 @@ function h2Sync(){
   set('h2H', sp(g('ccHijri'))); set('h2D', sp(g('ccDesi')) + ' (دیسی)');
   let type = '👤 Normal', out = false;
   try{
-    if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){ type = '🛠️ Developer'; out = true; }
-    else if(typeof codevOn === 'function' && codevOn()){ type = '🛠️ Developer'; out = true; }
-    else { const a = typeof agMe === 'function' ? agMe() : null; if(a && (a.pin || a.code)){ type = '🤝 Agent'; out = true; } }
+    const rl = ptRole();   /* MCS0611FR170: پانچ پورٹل — ڈویلپر / کو-ڈویلپر / کاروبار / پروفیشن / عام یوزر؛ فون یاد رکھتا ہے */
+    try{ localStorage.setItem('mcsRole', rl); }catch(e){}
+    if(rl === 'dev'){ type = '🛠️ Developer'; out = true; }
+    else if(rl === 'codev'){ type = '👥 Co-Developer'; out = true; }
+    else if(rl === 'prof'){ type = '👔 Profession'; }
+    else if(rl === 'biz'){ type = '🏪 Business'; }
+    { const a = typeof agMe === 'function' ? agMe() : null; if(a && (a.pin || a.code)){ if(rl === 'user') type = '🤝 Agent'; else type += ' 🤝'; out = out || rl === 'user'; } }
   }catch(e){}
   set('h2Type', type); const ty = document.getElementById('h2Type'); if(ty) ty.classList.toggle('on', out); const o = document.getElementById('h2Out'); if(o) o.style.display = out ? '' : 'none';
 }
@@ -12631,6 +12891,7 @@ function ccPickValid(){
 function ccActiveCity(){
   { const mc = mpCity(); if(mc) return mc; }   /* MCS0211MO113: ممبرشپ والے کا اپنا شہر پکا اوپر */
   const pick = ccPickValid(); if(pick) return pick.city;
+  { let hc = ''; try{ hc = localStorage.getItem('mcsHomeCity') || ''; }catch(e){} if(hc) return ccMatchCity([hc]) || hc; }   /* MCS0611FR170: پہلی بار جو شہر لکھا وہی سب سے پہلے */
   const g = ccLS('mcsGeo'); if(g && g.cands){ const m = ccMatchCity(g.cands); if(m) return m; if(g.near && g.near.km <= 60 && ccCityList().some(x=>x.city===g.near.city)) return g.near.city; }
   return '';
 }
@@ -12913,7 +13174,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0511TH165" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0611FR170" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
