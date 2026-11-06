@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0711SA176">
-<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0711SA176">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=MCS0711SA177">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=MCS0711SA177">
 <meta name="theme-color" content="#0d3b66">
 <script>/* MCS3010FR078: رات کا رنگ — خودکار (فون کے مطابق) / دن / رات؛ صفحہ بننے سے پہلے لگے تاکہ سفید جھلک نہ آئے */
 (function(){ try{ var t = localStorage.getItem('mcsTheme') || 'auto';
@@ -2628,11 +2628,11 @@ body.cdOn{padding-top:30px}
         <div class="h2-d"><div>📅 <span id="h2G"></span></div><div>🌙 <span id="h2H"></span></div><div>🍃 <span id="h2D"></span></div></div>
         <div class="h2-q" id="h2QSlot"></div>
         <div class="h2-w"><div class="h2-wel"><small>Welcome To</small><b>خوش آمدید: میرا روشن شہر</b></div><div id="h2CitySlot"></div><div id="h2WxSlotM"></div></div>
-        <div class="h2-r"><div class="h2-rt"><span id="h2ShareSlot"></span><img src="icons/icon-192.png?v=MCS0711SA176" alt="My City Shines" class="h2-logo"></div><div id="h2WxSlot"></div></div>
+        <div class="h2-r"><div class="h2-rt"><span id="h2ShareSlot"></span><img src="icons/icon-192.png?v=MCS0711SA177" alt="My City Shines" class="h2-logo"></div><div id="h2WxSlot"></div></div>
       </div>
       <div class="hero-top">
         <!-- MCS0311TU126 (ہیلپ ڈیسک #35، ڈیزائن 2): لوگو + نام + «میرا شہر، میری پہچان» -->
-        <div class="d2-brand"><img src="icons/icon-192.png?v=MCS0711SA176" alt="" class="d2-logo"><div class="d2-bt"><b>My City Shines</b><span>میرا شہر، میری پہچان</span></div></div>
+        <div class="d2-brand"><img src="icons/icon-192.png?v=MCS0711SA177" alt="" class="d2-logo"><div class="d2-bt"><b>My City Shines</b><span>میرا شہر، میری پہچان</span></div></div>
         <button class="hero-status" id="heroStatus" onclick="showNetStatus()" aria-label="ورژن اور انٹرنیٹ کی حالت">
           <span class="hs-ver" id="hsVer"></span>
           <span class="hs-net"><i class="hs-dot"></i><span id="hsNet">آن لائن</span></span>
@@ -3058,7 +3058,7 @@ body.cdOn{padding-top:30px}
 #pfModal .pf-box,#agModal .mem-green{background:#dcfce7}
 .mem-green{padding:10px;border-radius:12px}
 .svc-mem-btn{display:block;width:100%;margin-top:8px;padding:12px 10px;border:0;border-radius:12px;background:linear-gradient(180deg,#22c55e,#15803d);color:#fff;font:inherit;font-size:14px;font-weight:700;line-height:1.7;cursor:pointer}
-.svc-earn-btn{display:block;width:100%;margin-top:8px;padding:12px 10px;border:0;border-radius:12px;background:linear-gradient(180deg,#f59e0b,#b45309);color:#fff;font:inherit;font-size:15px;font-weight:800;direction:ltr;cursor:pointer}
+.svc-earn-btn{display:block;width:fit-content;margin:8px auto 0 0;padding:8px 18px 8px 26px;border:0;border-radius:0 999px 999px 0;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,12px 50%);background:linear-gradient(180deg,#f59e0b,#b45309);color:#fff;font:inherit;font-size:15px;font-weight:800;direction:ltr;cursor:pointer}
 </style>
 <div class="modal-overlay fm-overlay" id="serviceFormModal">
   <div class="modal-box">
@@ -3988,7 +3988,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA176";
+const APP_VERSION = "MCS0711SA177";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -5627,16 +5627,21 @@ function userResultCard(item){
       ${svcMoreHtml(item.more)}
       ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
       ${(()=>{ const _r = (item.kind==='service' && item.id) ? store.services.find(x=>x.id===item.id) : null;
-        if(_r && _r.stage==='basic') return svcCanRegister(_r) ? `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();svcRegisterOpen('${escapeAttr(item.id)}')">📝 اس کاروبار / پروفیشن کی رجسٹریشن کریں</button>` : '';
-        const _mine = _r && _r.stage==='registered' && !isAdminSignedIn && (svcMyBasic().includes(_r.id) || pfIsOwner(_r));
-        let _strip = '';
-        if(_mine){
-          const _cn = ubCatMeta(_r.category).ur || 'کاروبار';
-          _strip = pfActive(_r)
-            ? `<button type="button" class="svc-earn-btn" onclick="event.stopPropagation();agForm()">💰 Earn with MCS</button>`
-            : `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${escapeAttr(item.id)}')">⭐ ایک سال کے لیے «${escapeHtml(_cn)}» کی ممبرشپ حاصل کریں اور اپنا کاروبار پورے ملک کے سامنے نمایاں کریں</button>`;
+        if(!_r) return (item.id ? pfBtn(item.kind, item) : '');
+        const _anyNum = _r.category==='emergencyNumbers' || _r.category==='govOffices';
+        if(_anyNum) return pfBtn(item.kind, item);
+        const _eid = escapeAttr(item.id);
+        /* ① بنیادی ڈیٹا ہو چکا (نئے یا پرانے کارڈ) → صرف «رجسٹریشن مکمل کریں» */
+        if(_r.stage==='basic' || !_r.stage) return svcCanRegister(_r) ? `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();svcRegisterOpen('${_eid}')">📝 رجسٹریشن مکمل کریں</button>` : '';
+        const _mine = !isAdminSignedIn && (svcMyBasic().includes(_r.id) || pfIsOwner(_r));
+        const _live = pfActive(_r);
+        /* ② رجسٹریشن مکمل → صرف «ممبرشپ مکمل کریں» */
+        if(_r.stage==='registered' && !_live){
+          if(_mine) return `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⭐ ممبرشپ مکمل کریں</button>`;
+          return isAdminSignedIn ? `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('service','${_eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
         }
-        return (item.id ? pfBtn(item.kind, item) : '') + _strip + mkAdBtn(item.kind, item.id); })()}
+        /* ③ ایک سال کی ممبرشپ ہو گئی → پوری تفصیل کا بٹن، اور مالک کو بائیں طرف ربن */
+        return pfBtn(item.kind, item) + (_live && _mine ? `<button type="button" class="svc-earn-btn" onclick="event.stopPropagation();agForm()">💰 Earn with MCS</button>` : ''); })()}
     </div>`;
 }
 
@@ -7248,7 +7253,7 @@ function buildShareCanvasOld(kind, item, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0711SA176';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0711SA177';
 
     function finishFooter(){
     // footer CTA banner — bold gold ribbon
@@ -7390,7 +7395,7 @@ function buildAppPromoCanvas(customText, opts){
       drawRest();
     };
     headerLogo.onerror = drawRest;
-    headerLogo.src = 'icons/icon-192.png?v=MCS0711SA176';
+    headerLogo.src = 'icons/icon-192.png?v=MCS0711SA177';
 
     function finishFooter(){
       const fY = 770, fH = 220;
@@ -8396,7 +8401,7 @@ function svcMoreHtml(m){
 let svcStage = 'full', svcRegFlag = false;
 function svcMyBasic(){ try{ return JSON.parse(localStorage.getItem('mcsMyBasic')||'[]'); }catch(e){ return []; } }
 function svcMyBasicAdd(id){ try{ const a = svcMyBasic(); if(!a.includes(id)){ a.push(id); localStorage.setItem('mcsMyBasic', JSON.stringify(a)); } }catch(e){} }
-function svcCanRegister(rec){ return !!rec && rec.stage==='basic' && (isAdminSignedIn || svcMyBasic().includes(rec.id)); }
+function svcCanRegister(rec){ return !!rec && (rec.stage==='basic' || !rec.stage) && (isAdminSignedIn || svcMyBasic().includes(rec.id)); }
 function svcRegisterOpen(id){
   const r = store.services.find(x=>x.id===id); if(!r) return;
   if(r.category && CATEGORY_META[r.category]) currentServiceCategory = r.category;
@@ -8429,7 +8434,7 @@ function svcApplyStage(id, pendingRec){
   let st = 'full', rec = null;
   if(!pendingRec && !anyNum){
     if(!id) st = 'basic';
-    else { rec = store.services.find(x=>x.id===id); if(rec && rec.stage==='basic') st = svcRegFlag ? 'reg' : 'basic'; }
+    else { rec = store.services.find(x=>x.id===id); if(rec && (rec.stage==='basic' || (!rec.stage && svcRegFlag))) st = svcRegFlag ? 'reg' : 'basic'; }
   }
   svcRegFlag = false; svcStage = st;
   const M = document.getElementById('serviceFormModal');
@@ -10367,7 +10372,7 @@ function ptRole(){
     if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'dev';
     if(codevOn()) return 'codev';
     if(typeof adminRestoring !== 'undefined' && adminRestoring && adminWasIn()) return 'dev';
-    { const ag0 = agMe(); if(ag0 && ag0.phone && (ag0.pin || ag0.code)) return 'agent'; }   /* MCS0711SA176: ایجنٹ کا اپنا پورٹل */
+    { const ag0 = agMe(); if(ag0 && ag0.phone && (ag0.pin || ag0.code)) return 'agent'; }   /* MCS0711SA177: ایجنٹ کا اپنا پورٹل */
     const L = mpListReal();
     if(L.length){ const hp = L.some(x=>mpGroupOf(x.p.kind) === 'prof'), hb = L.some(x=>mpGroupOf(x.p.kind) !== 'prof'); return hp && !hb ? 'prof' : 'biz'; }
   }catch(e){}
@@ -10417,7 +10422,7 @@ function ptOpen(editProf){
   if(editProf){ setTimeout(()=>{ const e = document.getElementById('ptN'); if(e){ e.scrollIntoView({block:'center'}); e.focus(); } }, 300); }
 }
 
-/* ===== MCS0711SA176 (مالک کا حکم): 🤝 ایجنٹ پورٹل + 📈 ڈویلپر / کو-ڈویلپر کے لیے ایجنٹ کارکردگی ===========
+/* ===== MCS0711SA177 (مالک کا حکم): 🤝 ایجنٹ پورٹل + 📈 ڈویلپر / کو-ڈویلپر کے لیے ایجنٹ کارکردگی ===========
    ⚠️ پلے اسٹور: اس میں کہیں رقم / کمیشن / ادائیگی نہیں — صرف کتنے کاروبار، کتنے دن باقی، کب آخری بار فیڈ کیا۔
    ڈیٹا: کاروبار = store.services / store.doctors میں more.ref == ایجنٹ کوڈ؛ دن = pfAct[رکن کی چابی] (since / until) */
 const AP_SLOW_DAYS = 3;
@@ -13374,7 +13379,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0711SA176" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0711SA177" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
