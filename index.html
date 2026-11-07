@@ -260,6 +260,15 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
     background:linear-gradient(145deg,#fff3cd,#ffe082);border:1.5px solid #d4a017;color:#5a3d00;
     border-radius:14px;padding:10px 14px;margin:0 16px 12px;font-size:13px;font-weight:700;cursor:pointer;
     box-shadow:0 3px 8px rgba(0,0,0,.1);}
+  /* MCS0711SA202 (مالک کا حکم): ڈویلپر کو منظوری والے کاروبار / پروفیشن ہوم پیج پر ہی نظر آئیں؛ دبائیں تو سیدھا وہی کھلے */
+  #pendingHomeList{margin:-4px 16px 12px;display:flex;flex-direction:column;gap:6px;}
+  #pendingHomeList .phl-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fffbeb;border:1.5px solid #f59e0b;border-radius:12px;padding:8px 12px;cursor:pointer;color:#5a3d00;font-family:inherit;text-align:right;width:100%;}
+  #pendingHomeList .phl-t{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  #pendingHomeList .phl-t b{font-size:14px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #pendingHomeList .phl-t small{font-size:11.5px;font-weight:600;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #pendingHomeList .phl-go{flex:none;background:#e11d48;color:#fff;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;}
+  #pendingHomeList .phl-go.m{background:#b45309;}
+  #pendingHomeList .phl-more{background:none;border:none;color:#b45309;font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit;padding:2px;}
   #pendingHomeBanner .phb-count{background:#e11d48;color:#fff;border-radius:999px;padding:2px 10px;font-size:12.5px;
     font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;}
   .hero-text{position:relative;margin-top:22px;}
@@ -1692,7 +1701,9 @@ html.mcs-dark .hl-tx b,html.mcs-dark .hl-h b{color:#e2f5f2;}html.mcs-dark .hl-tx
 .ub-row>.pf-tag{position:absolute;left:6px;top:6px;margin:0;width:auto;min-width:0;max-width:96px;padding:3px 7px;border-width:1.5px;border-radius:9px;gap:0;line-height:1.25;z-index:4}
 .ub-row>.ag-corner~.pf-tag{top:52px}
 .ub-row>.pf-tag b{font-size:10.5px;font-weight:800;white-space:nowrap}
-.ub-row>.pf-tag small{font-size:8.5px;font-weight:600;opacity:.95;white-space:nowrap}
+.ub-row>.pf-tag small{font-size:8px;font-weight:600;opacity:.95;white-space:nowrap;display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.ub-row>.pf-tag{max-width:112px;padding:2px 6px}
+.ub-row>.pf-tag b{font-size:9.5px}
 .ub-row>.pf-tag.trial{padding:2px 6px;border-radius:8px}
 .ub-row>.pf-tag.trial b{font-size:9.5px}
 .ub-row>.pf-tag.trial small{font-size:8px}
@@ -2475,6 +2486,7 @@ body.cdOn{padding-top:30px}
 
 /* ===== MCS0511TH156 (ہیلپ ڈیسک #83): ورژن ہیڈر سے ہٹا — کنٹرول پینل کے نیچے (7 ٹیپ = ڈویلپر پینل) ===== */
 .h2 #h2StatusSlot{display:none !important}
+.h2 .h2-ver{direction:ltr;unicode-bidi:isolate;font:700 9.5px/1.3 Inter,Arial,sans-serif;color:rgba(255,255,255,.75);letter-spacing:.2px;margin-top:1px}
 .cp-ver{margin-top:14px;text-align:center;font:700 12px Inter,Arial;color:var(--muted);direction:ltr;user-select:none;-webkit-tap-highlight-color:transparent;cursor:default;padding:6px}
 .cp-ver i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-left:6px;vertical-align:1px}
 .cp-ver i.off{background:#ef4444}
@@ -2653,7 +2665,7 @@ body.cdOn{padding-top:30px}
       <!-- MCS0511TH156 (ہیلپ ڈیسک #79، کو-ڈویلپر کا ڈیزائن، مالک کی منظوری ⚡): کمپیکٹ ہیڈر — بائیں نام / ورژن ● / اکاؤنٹ کی قسم / Log Out؛ تاریخیں؛ قبلہ؛ خوش آمدید + شہر؛ شیئر + لوگو + موسم.
            پرانے عناصر (heroStatus، ccQibla، ccCity، ccWx، شیئر) اسی ID کے ساتھ یہاں منتقل (h2Init)؛ نیچے کے تین تاریخ والے ڈبے ختم -->
       <div class="h2" id="hdr2">
-        <div class="h2-l"><div class="h2-title">My City <i>Shines</i></div><div id="h2StatusSlot"></div>
+        <div class="h2-l"><div class="h2-title">My City <i>Shines</i></div><div id="h2StatusSlot"></div><div class="h2-ver" id="h2Ver"></div>
           <div class="h2-acct"><span class="h2-type" id="h2Type">👤 Normal</span><button type="button" class="h2-out" id="h2Out" onclick="h2Logout()" style="display:none">⎋ Log Out</button></div></div>
         <div class="h2-d"><div>📅 <span id="h2G"></span></div><div>🌙 <span id="h2H"></span></div><div>🍃 <span id="h2D"></span></div></div>
         <div class="h2-q" id="h2QSlot"></div>
@@ -2717,9 +2729,10 @@ body.cdOn{padding-top:30px}
     </header>
     <!-- MCS0311TU126 (ڈیزائن 2): نماز کے اوقات کی الگ پٹی (ccNamazShow بھرتا ہے) -->
     <div class="d2-prays" id="d2Prays" onclick="ccNamazAll()"><div class="d2-pt"><span>🕌</span><b>اوقاتِ نماز</b><small>Prayer Times</small></div><div class="d2-pl" id="d2PrayList"></div></div>
-    <!-- MCS0211MO113: میری ممبرشپ — جس نے اپنا ریکارڈ فیڈ کیا، اوپر اس کی دکان/پروفیشن؛ 15 دن مفت کی الٹی گنتی -->
+    <!-- MCS0211MO113: میری ممبرشپ — جس نے اپنا ریکارڈ فیڈ کیا، اوپر اس کی دکان/پروفیشن؛ 7 دن مفت کی الٹی گنتی -->
     <div class="mp-bar" id="mpBar"></div>
     <div id="pendingHomeBanner" style="display:none;" onclick="openControlPanel()"></div>
+    <div id="pendingHomeList" style="display:none;"></div>
 
     <!-- MCS0311TU126 (ہیلپ ڈیسک #35، ڈیزائن 2): ایک قطار میں پانچ ہلکے رنگ کے ٹائل — بزنس، پروفیشنلز، ایمرجنسی، خاص نمبر، ہیلپ ڈیسک -->
     <section class="qt-grid">
@@ -3171,10 +3184,10 @@ body.cdOn{padding-top:30px}
       <div class="field"><label>🗺️ گوگل میپ لوکیشن</label><input type="text" id="svcMap" maxlength="300" dir="ltr" placeholder="Google Map link — یا نیچے 📍 دبائیں"></div>
       <button type="button" class="fm-geo" onclick="svcMapHere()">📍 میری موجودہ جگہ لگائیں <small>(دکان پر کھڑے ہو کر)</small></button>
     </details>
-    <!-- MCS0311TU125: ⭐ ممبرشپ — اسی ریکارڈ کا دوسرا حصہ (الگ انٹری نہیں)؛ بھرنے کے دن سے 15 دن مفت، پھر سبسکرپشن -->
+    <!-- MCS0311TU125: ⭐ ممبرشپ — اسی ریکارڈ کا دوسرا حصہ (الگ انٹری نہیں)؛ بھرنے کے دن سے 7 دن مفت، پھر سبسکرپشن -->
     <details class="fm-more fm-pf" id="svcPfBox">
-      <summary>⭐ میرا کاروبار / پروفیشن — پوری تفصیل <small>15 دن مفت — تفصیل، ریٹ، اوقات، تصویریں</small></summary>
-      <div class="fm-more-note">اوپر والے خانے (سادہ کارڈ) <b>ہمیشہ مفت</b>۔ یہ حصہ بھریں تو 15 دن آپ کی پوری تفصیل سب کو دکھے گی — پھر جاری رکھنے کے لیے «📨 تفصیل ڈویلپر کو بھیجیں»؛ جاری نہ ہو تو پوری تفصیل چھپ جائے گی، مٹے گی نہیں، اور سادہ کارڈ چلتا رہے گا۔</div>
+      <summary>⭐ میرا کاروبار / پروفیشن — پوری تفصیل <small>7 دن مفت — تفصیل، ریٹ، اوقات، تصویریں</small></summary>
+      <div class="fm-more-note">اوپر والے خانے (سادہ کارڈ) <b>ہمیشہ مفت</b>۔ یہ حصہ بھریں تو 7 دن آپ کی پوری تفصیل سب کو دکھے گی — پھر جاری رکھنے کے لیے «📨 تفصیل ڈویلپر کو بھیجیں»؛ جاری نہ ہو تو پوری تفصیل چھپ جائے گی، مٹے گی نہیں، اور سادہ کارڈ چلتا رہے گا۔</div>
       <div id="svcPfFields"></div>
     </details>
     <div class="field mcs-off"><label>تعارف</label><textarea id="svcIntro" rows="1"></textarea></div>
@@ -3387,7 +3400,7 @@ body.cdOn{padding-top:30px}
     <div class="mp-ask-ic">👤</div>
     <div class="mp-ask-t">کیا یہ آپ کی اپنی دکان / کام ہے؟</div>
     <div class="mp-ask-n" id="mpAskName"></div>
-    <div class="mp-ask-h">«ہاں» دبائیں تو یہ آپ کی <b>ممبرشپ</b> بن جائے گی — ایپ کھولتے ہی سب سے اوپر آپ کی دکان اور آپ کا شہر، اور <b>15 دن بالکل مفت</b>۔</div>
+    <div class="mp-ask-h">«ہاں» دبائیں تو یہ آپ کی <b>ممبرشپ</b> بن جائے گی — ایپ کھولتے ہی سب سے اوپر آپ کی دکان اور آپ کا شہر، اور <b>7 دن بالکل مفت</b>۔</div>
     <div class="mp-ask-btns"><button type="button" class="no" onclick="mpAskDone(false)">نہیں، کسی اور کی ہے</button><button type="button" class="yes" onclick="mpAskDone(true)">✅ ہاں، میری ہے</button></div>
   </div>
 </div>
@@ -4029,7 +4042,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA198";
+const APP_VERSION = "MCS0711SA201";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -4284,10 +4297,14 @@ const ADMIN_QUICK_PIN_HASH = '8b5a43764420e5af43f7c4623ad3a6699a628be06269051d38
 async function mcsSha256(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join(''); }
 /* MCS2810WE069: ہوم کی تلاش سے سیدھا تلاش والا صفحہ — لکھا ہوا لفظ ساتھ، یا فلٹر کھلا ہوا */
 /* ===== MCS0211MO113: میری ممبرشپ + ہوم پر کیپسول نتائج ===== */
-/* ===== MCS0311TU125: ممبرشپ — ایک ریکارڈ، دو حصے: سادہ کارڈ ہمیشہ مفت؛ «⭐ ممبرشپ» (تفصیل، ریٹ، اوقات، تصویریں) 15 دن مفت پھر سبسکرپشن
+/* ===== MCS0311TU125: ممبرشپ — ایک ریکارڈ، دو حصے: سادہ کارڈ ہمیشہ مفت؛ «⭐ ممبرشپ» (تفصیل، ریٹ، اوقات، تصویریں) 7 دن مفت پھر سبسکرپشن
    ممبرشپ کی پہچان = فون + کاروبار کی قسم (ایک نمبر کی کئی دکانیں، ہر ایک کی الگ ممبرشپ)؛ سرور /pclaim /pget /psave /pimg /plist /padmin ===== */
 const PF_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
-const MP_FREE_DAYS = 15;          /* مفت آزمائش — ممبرشپ حصہ پہلی بار بھرنے کے دن سے، ہر نمبر+قسم کو ایک بار */
+const MP_FREE_DAYS = 7;   /* MCS0711SA202 (مالک کا حکم): مفت ٹرائل صرف 7 دن (پہلے 15) */
+const MP_TRIAL_MAX = 17;  /* پرانے 15 دن والے ٹرائل بھی ٹرائل ہی پہچانے جائیں */
+/* ٹرائل کے دن سبسکرپشن میں جمع نہیں ہوتے: ٹرائل ہو تو ایک سال آج سے؛ سالانہ کی تجدید پر باقی دن جمع */
+function mpIsTrialSpan(since, until){ const span = (since && until) ? (until - since)/864e5 : 0; return !!(span && span <= MP_TRIAL_MAX); }
+function mpYearUntil(since, until){ const base = (!until || mpIsTrialSpan(since, until)) ? Date.now() : Math.max(Date.now(), until); return base + 365*864e5; }          /* مفت آزمائش — ممبرشپ حصہ پہلی بار بھرنے کے دن سے، ہر نمبر+قسم کو ایک بار */
 const PF_MAX_IMGS = 2;   /* MCS0711SA194: صرف دو تصویریں — 0 = دکان (سامنے سے، تفصیل میں بڑی)، 1 = سیلفی (کارڈ پر گول) */
 let pfAct = {}; try{ pfAct = JSON.parse(localStorage.getItem('mcsPfList')||'{}') || {}; }catch(e){}
 let pfFeat = {}; try{ pfFeat = JSON.parse(localStorage.getItem('mcsPfFeat')||'{}') || {}; }catch(e){}
@@ -4319,6 +4336,7 @@ async function pfLoadList(){
   try{ const r = await fetch(PF_API + '/plist'); const j = await r.json(); if(j && typeof j === 'object' && !j.error){ pfAct = j; localStorage.setItem('mcsPfList', JSON.stringify(j));
     let ch = false; mpAll().forEach(p=>{ if(p.rk && j[p.rk]){ p.until = j[p.rk].until; p.since = j[p.rk].since; p.pend = j[p.rk].pend ? 1 : 0; ch = true; } }); if(ch) saveStore();
     try{ const pn = document.getElementById('pfPendN'); if(pn){ const n = Object.values(j).filter(x=>x && x.pend).length; pn.textContent = n ? '(' + n + ')' : ''; } }catch(e){}
+    try{ if(typeof pendingHomeListRender === 'function') pendingHomeListRender(); }catch(e){}
     try{ hlRenderSoon(); mpRender(); if(currentScreen==='service-list') renderServiceList('list'); }catch(e){} } }catch(e){}
   try{ const FB = window.MCSFirebase; if(FB && FB.getDoc){ const sn = await FB.getDoc(FB.doc(FB.db,'appConfig','features')); pfFeat = (sn.exists() && sn.data()) || {}; localStorage.setItem('mcsPfFeat', JSON.stringify(pfFeat)); } }catch(e){}
 }
@@ -4339,7 +4357,8 @@ function pfTag(kind, rec){
   const trial = info.mode === 'free';
   const left = Math.max(1, Math.ceil((info.until - Date.now())/864e5));
   const title = kind === 'doctor' ? 'رجسٹرڈ پروفیشن' : 'رجسٹرڈ بزنس';
-  const sub = trial ? `ٹرائل — ${left} دن باقی` : (info.until ? `<span dir=\"ltr\">${new Date(info.until).toLocaleDateString('en-GB')}</span> تک` : 'سبسکرپشن فعال');
+  const total = Math.max(365, left);
+  const sub = trial ? `ٹرائل — ${left} دن باقی` : (info.until ? `<span>${total} میں سے ${left} دن باقی</span><span dir=\"ltr\">${new Date(info.until).toLocaleDateString('en-GB')}</span>` : 'سبسکرپشن فعال');
   return `<button type="button" class="pf-tag ${trial ? 'trial' : 'paid'}" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')"><b>${trial ? '🎁' : '✅'} ${title}</b><small>${sub}</small></button>`;
 }
 function pfBtn(kind, rec){ return pfTag(kind, rec); }
@@ -4354,7 +4373,7 @@ async function pfEnsureKey(kind, rec){
   const r = await fetch(PF_API + '/pclaim', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({rec: e.rk, inv: window._fedInvCode || undefined})});
   const j = await r.json();
   if(j.key){ Object.assign(e, {key:j.key, since:j.since, until:j.until, pend: j.pend ? 1 : 0}); pfAct[e.rk] = Object.assign({since:j.since, until:j.until, ts:Date.now()}, j.pend ? {pend:1} : {}); saveStore();
-    if(!j.pend && j.until && j.until <= Date.now() + 5*60e3) setTimeout(()=>alert('⭐ یہ آپ کا اگلا کاروبار / پروفیشن ہے — 15 دن مفت صرف پہلے پر ہوتے ہیں۔\nسادہ کارڈ ہمیشہ مفت دکھتا رہے گا۔ ⭐ پوری ممبرشپ (تفصیل، ریٹ، تصویریں) سب کو دکھانے کے لیے «📨 ایک سال کے لیے جاری رکھیں» دبائیں۔'), 600);
+    if(!j.pend && j.until && j.until <= Date.now() + 5*60e3) setTimeout(()=>alert('⭐ یہ آپ کا اگلا کاروبار / پروفیشن ہے — 7 دن مفت صرف پہلے پر ہوتے ہیں۔\nسادہ کارڈ ہمیشہ مفت دکھتا رہے گا۔ ⭐ پوری ممبرشپ (تفصیل، ریٹ، تصویریں) سب کو دکھانے کے لیے «📨 ایک سال کے لیے جاری رکھیں» دبائیں۔'), 600);
     return {key:j.key}; }
   if(j.error === 'taken'){ e.taken = true; saveStore(); throw new Error('taken'); }
   throw new Error(j.error || 'net');
@@ -4393,7 +4412,7 @@ function pfHtml(c){
   const left = p.until && !p.pend ? Math.ceil((p.until - Date.now())/864e5) : null;
   const st = c.stats;
   const pend = !!p.pend;
-  return (pend && (owner || adm) ? `<div class="pf-lock" style="background:#fffbeb;border-color:#f59e0b">⏳ ${adm ? 'یہ کاروبار / پروفیشن دکاندار نے خود جوڑا ہے — آپ کی منظوری کا انتظار۔ منظور کریں تو 15 دن مفت شروع اور سب کو نظر آئے گی۔' : 'آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے۔ نیچے «✏️ تفصیل سنواریں» سے تفصیل، ریٹ، اوقات پوری بھریں — منظور ہوتے ہی 15 دن مفت سب کو نظر آئے گی۔'}${adm ? `<div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="pf-adm" style="background:#16a34a;color:#fff" onclick="pfAdmin('approve')">✅ منظور — 15 دن شروع</button><button type="button" class="pf-adm red" onclick="pfAdmin('reject')">❌ ابھی نہیں</button></div>` : ''}</div>` : '')
+  return (pend && (owner || adm) ? `<div class="pf-lock" style="background:#fffbeb;border-color:#f59e0b">⏳ ${adm ? 'یہ کاروبار / پروفیشن دکاندار نے خود جوڑا ہے — آپ کی منظوری کا انتظار۔ منظور کریں تو 7 دن مفت شروع اور سب کو نظر آئے گی۔' : 'آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے۔ نیچے «✏️ تفصیل سنواریں» سے تفصیل، ریٹ، اوقات پوری بھریں — منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی۔'}${adm ? `<div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="pf-adm" style="background:#16a34a;color:#fff" onclick="pfAdmin('approve')">✅ منظور — 7 دن شروع</button><button type="button" class="pf-adm red" onclick="pfAdmin('reject')">❌ ابھی نہیں</button></div>` : ''}</div>` : '')
     + (owner && !live && p.until && !pend ? `<div class="pf-lock">🔒 آپ کی پوری تفصیل لوگوں سے چھپی ہوئی ہے — لوگوں کو صرف سادہ کارڈ دکھ رہا ہے۔<br><b>تفصیل ڈویلپر کو بھیجیں — جاری ہوتے ہی فوراً دوبارہ چالو</b> (سب کچھ محفوظ ہے)<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں</button></div>` : '')
     + gal + `<div class="pf-top">${sfThumb ? `<span class="pf-ic sf"><img src="${escapeAttr(sfThumb)}" alt=""></span>` : `<span class="pf-ic">${cm.emoji}</span>`}<div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${live ? '<span class="pf-star">⭐ نمایاں</span>' : ''}</div>
       <div class="pf-sub">${escapeHtml([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}${r.nameEn ? `<br><span style="font-family:Arial;direction:ltr">${escapeHtml(r.nameEn)}</span>` : ''}</div></div></div>`
@@ -4406,7 +4425,7 @@ function pfHtml(c){
       ${more.email ? `<a class="pf-lnk" href="mailto:${escapeAttr(more.email)}">✉️ ${escapeHtml(more.email)}</a>` : ''}${(d.links||[]).map(l=>`<a class="pf-lnk" href="${escapeAttr(l)}" target="_blank" rel="noopener">🌐 ${escapeHtml(l)}</a>`).join('')}</div>`
     + ((owner || adm) && c.rk ? `<div class="pf-id">🆔 کاروبار ID: <b dir="ltr">${escapeHtml(c.rk)}</b><button type="button" onclick="agCopy('${escapeAttr(c.rk)}')">📋 کاپی</button></div>` : '')
     + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ ممبرشپ فعال — ${left} دن باقی` : '⚠️ ممبرشپ کی مدت ختم — جاری رکھنے کے لیے تفصیل بھیجیں'}</div>` : ''}
-        ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں — 15 دن مفت'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
+        ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں — 7 دن مفت'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
         ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">${mcsPlayOk() ? '⭐ ممبرشپ ایک سال کے لیے جاری رکھیں — Google Play' : '📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں'}</button>` : ''}
         ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('year')">➕ ایک سال بڑھائیں</button><button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ ممبرشپ ختم کریں</button>` : '') : ''}
         ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove('${escapeAttr(c.rk)}')">✖ اس فون کی «میرا کاروبار / پروفیشن» سے ہٹائیں</button>` : ''}</div>` : '')
@@ -4437,11 +4456,12 @@ async function pfAdmin(act){
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ showToast('ایڈمن لاگ ان درکار ہے'); return; }
   try{
     if(act === 'del' && !confirm('اس دکان کی ممبرشپ (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
-    const until = act === 'year' ? Math.max(Date.now(), (c.prof && c.prof.until) || 0) + 365*864e5 : 0;
+    const _pa = pfAct[c.rk] || {}, _pu = (c.prof && c.prof.until) || _pa.until || 0, _ps = (c.prof && c.prof.since) || _pa.since || 0;
+    const until = act === 'year' ? mpYearUntil(_ps, _pu) : 0;
     const r = await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk, act: act === 'year' ? 'until' : act, until})}); const j = await r.json(); if(!j.ok) throw 0;
     if(act === 'year' && pfAct[c.rk]) pfAct[c.rk].until = until; if(act === 'del') delete pfAct[c.rk];
     if((act === 'approve' || act === 'reject') && pfAct[c.rk]){ delete pfAct[c.rk].pend; if(act === 'approve') pfAct[c.rk].until = Date.now() + MP_FREE_DAYS*864e5; }
-    showToast(act === 'approve' ? '✅ منظور — 15 دن مفت شروع، سب کو نظر آئے گی' : act === 'reject' ? '✓ ابھی منظور نہیں — سادہ کارڈ ویسے ہی' : act === 'year' ? '✓ ایک سال بڑھ گیا' : act === 'free' ? '✓ فون سے آزاد — دکاندار نئے فون پر دوبارہ بنا سکتا ہے' : '✓ ممبرشپ ختم');
+    showToast(act === 'approve' ? '✅ منظور — 7 دن مفت شروع، سب کو نظر آئے گی' : act === 'reject' ? '✓ ابھی منظور نہیں — سادہ کارڈ ویسے ہی' : act === 'year' ? '✓ ایک سال بڑھ گیا' : act === 'free' ? '✓ فون سے آزاد — دکاندار نئے فون پر دوبارہ بنا سکتا ہے' : '✓ ممبرشپ ختم');
     localStorage.setItem('mcsPfList', JSON.stringify(pfAct)); pfOpen(c.kind, c.rec.id); hlRenderSoon();
   }catch(e){ showToast('نہیں ہو سکا — انٹرنیٹ/ایڈمن لاگ ان دیکھیں'); }
 }
@@ -4490,7 +4510,7 @@ function pfSlotsRender(pre){
 }
 let pfPickPre = '';
 
-/* ===== MCS0711SA198 (مالک کا حکم): دکان کی چورس تصویر اور سیلفی — گیلری / کیمرہ، کاٹنا، روشنی، صفائی، گھمانا، زوم ===== */
+/* ===== MCS0711SA201 (مالک کا حکم): دکان کی چورس تصویر اور سیلفی — گیلری / کیمرہ، کاٹنا، روشنی، صفائی، گھمانا، زوم ===== */
 const PH = {img:null, mode:'shop', q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh:false, ptr:{}, pd:0};
 function phChoose(){
   let m = document.getElementById('phChooseModal');
@@ -4585,7 +4605,7 @@ function pfPickSlot(pre, i){ pfPickPre = pre; pfEd[pre].slot = i; phChoose(); }
 function pfDelSlot(pre, i){ pfEd[pre].imgs[i] = null; pfEd[pre].del[i] = 1; if(i === 1){ pfEd[pre].thumb = ''; pfEd[pre].thumbChanged = true; } pfSlotsRender(pre); }
 async function pfImgPicked(inp){
   const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; if(!pfEd[pfPickPre]) return;
-  phFromFile(f, 'shop');   /* MCS0711SA198: پہلے کاٹیں / سنواریں، پھر لگے */
+  phFromFile(f, 'shop');   /* MCS0711SA201: پہلے کاٹیں / سنواریں، پھر لگے */
 }
 /* MCS0711SA194: سیلفی — بیچ سے چوکور کاٹ کر (چہرہ اوپر کی طرف)، بڑی (سرور کے لیے) اور چھوٹی (کارڈ کے لیے) */
 function pfSquare(src, size, q){
@@ -4643,7 +4663,7 @@ async function pfSave(){
   const c = pfCur; if(!c) return; if(codevBlock()) return;
   const btn = document.getElementById('pfSaveBtn'), msg = document.getElementById('pfSaveMsg');
   btn.disabled = true; msg.textContent = '⏳ محفوظ ہو رہا ہے…';
-  try{ await pfSubmit(c.kind, c.rec, 'pfE'); msg.textContent = ''; closeModal('pfEditModal'); const pe = mpEntry(c.rec); showToast(pe && pe.pend && !isAdminSignedIn ? '✅ محفوظ — منظوری کے لیے بھیج دی گئی؛ منظور ہوتے ہی 15 دن مفت سب کو نظر آئے گی' : '✅ تفصیل محفوظ — سب کے فون پر', 5000); mpRender(); hlRenderSoon(); pfOpen(c.kind, c.rec.id); }
+  try{ await pfSubmit(c.kind, c.rec, 'pfE'); msg.textContent = ''; closeModal('pfEditModal'); const pe = mpEntry(c.rec); showToast(pe && pe.pend && !isAdminSignedIn ? '✅ محفوظ — منظوری کے لیے بھیج دی گئی؛ منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی' : '✅ تفصیل محفوظ — سب کے فون پر', 5000); mpRender(); hlRenderSoon(); pfOpen(c.kind, c.rec.id); }
   catch(e){ msg.textContent = '❌ محفوظ نہیں ہوا — ' + (String(e.message) === 'taken' ? 'یہ کاروبار کسی دوسرے فون سے جڑا ہے، ہم سے رابطہ کریں' : String(e.message) === 'bad_key' ? 'یہ کاروبار اس فون سے نہیں جڑا' : 'انٹرنیٹ چیک کر کے دوبارہ دبائیں'); }
   btn.disabled = false;
 }
@@ -4659,7 +4679,7 @@ async function pfFormLoad(kind, rec){
 }
 async function pfFormSave(kind, rec){
   if(!rec) return;
-  try{ const r = await pfSubmit(kind, rec, 'svcPf'); if(r.ok){ showToast(isAdminSignedIn ? '⭐ پوری تفصیل بھی محفوظ' : ((mpEntry(rec)||{}).pend ? '⭐ آپ کا کاروبار منظوری کے لیے بھیج دیا گیا — منظور ہوتے ہی 15 دن مفت سب کو نظر آئے گی' : '⭐ آپ کی تفصیل محفوظ ہو گئی'), 5000); mpRender(); hlRenderSoon(); } }
+  try{ const r = await pfSubmit(kind, rec, 'svcPf'); if(r.ok){ showToast(isAdminSignedIn ? '⭐ پوری تفصیل بھی محفوظ' : ((mpEntry(rec)||{}).pend ? '⭐ آپ کا کاروبار منظوری کے لیے بھیج دیا گیا — منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی' : '⭐ آپ کی تفصیل محفوظ ہو گئی'), 5000); mpRender(); hlRenderSoon(); } }
   catch(e){ showToast(String(e.message) === 'taken' ? 'یہ کاروبار کسی دوسرے فون سے جڑا ہے — ہم سے رابطہ کریں' : 'تفصیل محفوظ نہیں ہوئی — بعد میں «تفصیل سنواریں» سے دوبارہ', 4500); }
 }
 /* ---- «میرا کاروبار / پروفیشن» ---- */
@@ -4674,7 +4694,7 @@ function mpAdd(kind, rec, silent){
     list.push({kind, id:rec.id, fsId:rec.fsId||'', rk: pfKeyOf(rec, kind)});
   }
   saveStore(); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRenderSoon();
-  if(!silent) showToast('👤 «میرا کاروبار / پروفیشن» میں شامل — ⭐ پوری تفصیل بھریں تو 15 دن مفت', 3500);
+  if(!silent) showToast('👤 «میرا کاروبار / پروفیشن» میں شامل — ⭐ پوری تفصیل بھریں تو 7 دن مفت', 3500);
 }
 function mpSet(kind, rec){ mpAdd(kind, rec); }
 let mpWant = false, mpAskItem = null;
@@ -4779,7 +4799,7 @@ function mpSubscribe(rk, noPlay){
   const r = x.rec, more = r.more || {}, own = x.p.kind==='doctor' ? {owner:''} : splitOwnerIntro(r.intro), cat = ubCatMeta(x.p.kind==='doctor' ? 'doctor' : r.category).ur;
   const left = mpLeftOf(x.p);
   agModal(`<div class="ag-hd">📨 تفصیل ڈویلپر کو بھیجیں <small>Send account details to developer</small></div>
-    <div class="cp-hint">ممبرشپ: <b>${escapeHtml(r.nameUr||r.name||'')}</b> (${escapeHtml(cat)}) — ایک سال کے لیے جاری ہوگی${left > 0 ? `؛ آپ کے باقی ${left} دن بھی ساتھ جمع ہو جائیں گے` : ''}۔</div>
+    <div class="cp-hint">ممبرشپ: <b>${escapeHtml(r.nameUr||r.name||'')}</b> (${escapeHtml(cat)}) — ایک سال کے لیے جاری ہوگی${left > 0 ? (mpIsTrialSpan(x.p.since, x.p.until) ? '؛ پورا ایک سال آج سے شروع ہو گا — ٹرائل کے دن شامل نہیں ہوں گے' : `؛ آپ کے باقی ${left} دن بھی ساتھ جمع ہو جائیں گے`) : ''}۔</div>
     <div class="ag-f mem-green">
       <label>🤝 ایجنٹ کا ریفرل کوڈ <small>(کوڈ، ایجنٹ کا موبائل یا شناختی کارڈ — اختیاری)</small></label><input id="msRef" dir="ltr" maxlength="32" placeholder="MS-001 / 03xx-xxxxxxx / شناختی کارڈ" onchange="msRefResolve()"><div class="cp-hint" id="msRefOk"></div>
       <label>👤 نام *</label><input id="msName" maxlength="80" value="${escapeAttr(own.owner || r.nameUr || '')}">
@@ -4814,10 +4834,10 @@ function mpSendDetails(rk){
     if(typeof openHelpDesk === 'function') openHelpDesk();
   }, ()=>{ mpSubscribe(rk); setTimeout(()=>{ const s0 = (id, val)=>{ const e = document.getElementById(id); if(e) e.value = val; }; s0('msName', n); s0('msPhone', ph); s0('msWa', wa); s0('msMail', m); s0('msRef', rf); }, 50); });
 }
-/* اگلی ممبرشپ: پہلے بتا دیں کہ 15 دن مفت صرف پہلی پر */
+/* اگلی ممبرشپ: پہلے بتا دیں کہ 7 دن مفت صرف پہلی پر */
 function mpNewMore(){
   agModal(`<div class="ag-hd">➕ ایک اور کاروبار / پروفیشن <small>(کاروبار / پروفیشن)</small></div>
-    <div class="ag-need" style="text-align:right;font-weight:600">ہر کاروبار کی اپنی الگ ممبرشپ اور اپنی الگ مدت ہوتی ہے۔<br>• کاروبار 5 تک (My Business + 4 مزید)، اور پروفیشن بھی ایک (ڈیفالٹ) + 4 مزید۔<br>• سادہ کارڈ (نام، نمبر، پتہ) ہمیشہ مفت۔<br>• ⭐ پوری ممبرشپ (تفصیل، ریٹ، تصویریں): 15 دن مفت صرف پہلی ممبرشپ پر — یہ نئی ممبرشپ بنتے ہی «📨 ایک سال کے لیے جاری رکھیں» سے چالو ہوگی۔</div>
+    <div class="ag-need" style="text-align:right;font-weight:600">ہر کاروبار کی اپنی الگ ممبرشپ اور اپنی الگ مدت ہوتی ہے۔<br>• کاروبار 5 تک (My Business + 4 مزید)، اور پروفیشن بھی ایک (ڈیفالٹ) + 4 مزید۔<br>• سادہ کارڈ (نام، نمبر، پتہ) ہمیشہ مفت۔<br>• ⭐ پوری ممبرشپ (تفصیل، ریٹ، تصویریں): 7 دن مفت صرف پہلی ممبرشپ پر — یہ نئی ممبرشپ بنتے ہی «📨 ایک سال کے لیے جاری رکھیں» سے چالو ہوگی۔</div>
     <button type="button" class="btn block" onclick="closeModal('agModal'); mpStartNew()">➕ ٹھیک ہے — نیا کاروبار / پروفیشن جوڑیں</button>`);
 }
 /* ---- 📢 اشتہار کی درخواست (MCS0411WE133، پلے اسٹور: قیمت / واٹس ایپ نہیں — ہیلپ ڈیسک سے) ---- */
@@ -4857,7 +4877,7 @@ function aaOpen(){
     <div class="ag-f">
       <textarea id="aaPaste" rows="3" placeholder="📋 ہیلپ ڈیسک سے کاپی کی ہوئی تفصیل یہاں پیسٹ کریں — ممبرشپ، نام، نمبر، Gmail خود" oninput="aaFill(this.value)"></textarea>
       <div id="aaInfo" class="cp-hint"></div>
-      <div class="aa-pack">📦 پیکج: <b>1 سال</b> <small>(باقی دن ساتھ جمع ہوتے ہیں)</small></div>
+      <div class="aa-pack">📦 پیکج: <b>1 سال</b> <small>(ٹرائل کے دن شامل نہیں؛ سالانہ کی تجدید پر باقی دن جمع)</small></div>
       <div class="ag-err" id="aaErr"></div>
       <button type="button" class="btn block" onclick="aaGive()">✅ Give / extend</button>
     </div>`);
@@ -4867,7 +4887,7 @@ async function aaFill(t){
   const rk = g(/Profile ID\s*:\s*(\S+)/i); aaCur = rk ? { rk, prof: g(/Profile\s*:\s*(.+)$/im), name: g(/^\s*Name\s*:\s*(.+)$/im), phone: g(/Mobile(?:\s*no\.?)?\s*:\s*(.+)$/im), mail: g(/Gmail\s*:\s*(.+)$/im), uid: g(/UID\s*:\s*(\S+)/i) } : null;
   const box = document.getElementById('aaInfo'); if(!box) return;
   if(!aaCur){ box.innerHTML = t.trim() ? '⚠️ پیغام میں «Profile ID» نہیں ملا' : ''; return; }
-  let until = 0; try{ const l = await (await fetch(PF_API + '/plist')).json(); until = (l[rk] && l[rk].until) || 0; aaCur.until = until; aaCur.has = !!l[rk]; }catch(e){}
+  let until = 0; try{ const l = await (await fetch(PF_API + '/plist')).json(); until = (l[rk] && l[rk].until) || 0; aaCur.until = until; aaCur.since = (l[rk] && l[rk].since) || 0; aaCur.has = !!l[rk]; }catch(e){}
   box.innerHTML = `🏪 <b>${escapeHtml(aaCur.prof)}</b><br>👤 ${escapeHtml(aaCur.name)} · 📱 <bdi dir="ltr">${escapeHtml(aaCur.phone)}</bdi><br>✉️ <bdi dir="ltr">${escapeHtml(aaCur.mail)}</bdi><br>⏳ ابھی: ${aaCur.has ? (until > Date.now() ? 'فعال — ' + new Date(until).toLocaleDateString('en-GB') + ' تک' : 'ختم / چھپی ہوئی') : '⚠️ سرور پر یہ ممبرشپ نہیں ملی'}`;
 }
 async function aaGive(){
@@ -4875,7 +4895,7 @@ async function aaGive(){
   if(!aaCur) return err('⚠️ پہلے ہیلپ ڈیسک والی تفصیل پیسٹ کریں');
   if(aaCur.has === false) return err('⚠️ یہ ممبرشپ سرور پر نہیں — دکاندار پہلے «⭐ ممبرشپ» بھرے');
   const days = 365;   /* MCS0411WE133 (مالک کا حکم): صرف ایک سال کا پیکج */
-  const until = Math.max(Date.now(), aaCur.until || 0) + days * 864e5;
+  const until = days === 365 ? mpYearUntil(aaCur.since, aaCur.until) : Math.max(Date.now(), aaCur.until || 0) + days * 864e5;
   if(!confirm('کیا آپ نے اکاؤنٹ کی تمام تفصیلات مکمل طور پر چیک کر لی ہیں؟ ان میں کوئی غلطی تو نہیں، اور کوئی بات باقی تو نہیں رہ گئی؟\n\n🏪 ' + aaCur.prof + '\n👤 ' + aaCur.name + '\n📱 ' + aaCur.phone + '\n📧 ' + aaCur.mail + '\n📦 1 سال → ' + new Date(until).toLocaleDateString('en-GB') + ' تک\n\nOK = سب مکمل ہے، ممبرشپ جاری کر دیں')) return;
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ return err('⚠️ پہلے ایڈمن لاگ اِن کریں'); }
   try{
@@ -4890,7 +4910,7 @@ async function aaGive(){
 /* MCS0511TH157 (مالک کا حکم): ختم ہونے سے 3 دن پہلے روز ایک بار — کتنے لوگوں نے رابطہ کیا + جاری رکھنے کا بٹن */
 async function mpTrialWarn(p, rec, left){
   let calls = 0, wa = 0, views = 0;
-  try{ const days = Math.max(1, Math.min(60, Math.ceil((Date.now() - (p.since || Date.now() - 15*864e5))/864e5))); const pk = stKey(rec.whatsapp);
+  try{ const days = Math.max(1, Math.min(60, Math.ceil((Date.now() - (p.since || Date.now() - MP_FREE_DAYS*864e5))/864e5))); const pk = stKey(rec.whatsapp);
     const r = await fetch(ST_URL + '?days=' + days + '&recs=' + pk + ',' + p.rk); const j = await r.json(); calls = (j[pk]||{}).call||0; wa = (j[pk]||{}).wa||0; views = (j[p.rk]||{}).view||0; }catch(e){}
   agModal(`<div class="ag-hd">⏰ ممبرشپ کے ${left} دن باقی <small>${escapeHtml(rec.nameUr||rec.name||'')}</small></div>
     <div class="cp-hint" style="font-size:15px;line-height:2">ان دنوں میں ایپ سے آپ کو:<br>👀 <b>${views}</b> لوگوں نے آپ کا کاروبار دیکھا · 📞 <b>${calls}</b> کالیں · 💬 <b>${wa}</b> واٹس ایپ<br>کیا آپ کا کاروبار بڑھ رہا ہے؟ اسی طرح سب کو نظر آتے رہنے کے لیے ممبرشپ ایک سال کے لیے جاری رکھیں — آپ کے باقی ${left} دن بھی ساتھ جمع ہو جائیں گے۔</div>
@@ -4921,7 +4941,7 @@ function mpRender(){
      ہر کارڈ: تصویر (ممبرشپ کی پہلی تصویر، ورنہ نشان)، نام، قسم، مقام، Active / Expired، Valid till؛ دبائیں تو تفصیل (pfOpen)؛ ایک سے زیادہ ہوں تو «View All» */
   const box = document.getElementById('mpBar'); if(!box) return;
   const list = mpList();
-  if(!list.length){ box.innerHTML = `<div class="mpx"><div class="mpx-hd"><span class="mpx-hi">👤</span><b>My Business <span>(میرا کاروبار)</span></b></div><button type="button" class="mp-new" onclick="mpWant = true; d2AddOpen()">➕ اپنی دکان / پروفیشن جوڑیں — 15 دن مفت <small>پھر <bdi dir="ltr">Google Play</bdi> سے ایک سال<br><bdi dir="ltr">Create your membership</bdi></small></button></div>`; return; }
+  if(!list.length){ box.innerHTML = `<div class="mpx"><div class="mpx-hd"><span class="mpx-hi">👤</span><b>My Business <span>(میرا کاروبار)</span></b></div><button type="button" class="mp-new" onclick="mpWant = true; d2AddOpen()">➕ اپنی دکان / پروفیشن جوڑیں — 7 دن مفت <small>پھر <bdi dir="ltr">Google Play</bdi> سے ایک سال<br><bdi dir="ltr">Create your membership</bdi></small></button></div>`; return; }
   let remind = '';
   const fmtD = t => new Date(t).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
   const shown = mpShowAll ? list : list.slice(0, 1);
@@ -4930,7 +4950,7 @@ function mpRender(){
     const r = p.kind==='doctor' ? fhDoc(rec) : fhSvc(rec), cm = ubCatMeta(p.kind==='doctor' ? 'doctor' : r.category);
     const left = mpLeftOf(p), live = pfActive(rec);
     if(left != null && left <= 3 && left > 0 && !remind && mpRemindDue(p.rk)) setTimeout(()=>mpTrialWarn(p, rec, left), 2500);
-    if(left != null && left <= 0 && !remind && mpRemindDue(p.rk)) remind = left > 0 ? `⭐ «${r.nameUr||''}» کی ممبرشپ کے ${left} دن باقی — ابھی ایک سال کے لیے جاری کریں؛ آپ کے باقی ${left} دن ضائع نہیں ہوں گے، نئے سال میں جمع ہو جائیں گے` : `⭐ «${r.nameUr||''}» کی ممبرشپ لوگوں سے چھپ گئی — جاری کریں، ہوتے ہی چالو`;
+    if(left != null && left <= 0 && !remind && mpRemindDue(p.rk)) remind = left > 0 ? `⭐ «${r.nameUr||''}» کی ممبرشپ کے ${left} دن باقی — ابھی ایک سال کے لیے جاری کریں` : `⭐ «${r.nameUr||''}» کی ممبرشپ لوگوں سے چھپ گئی — جاری کریں، ہوتے ہی چالو`;
     const st = p.pend ? ['none', '⏳ منظوری کا انتظار', 'Pending'] : left == null ? ['none', '⭕ تفصیل بھریں', 'Not started'] : left > 0 ? ['on', '✅ Active', 'فعال'] : ['off', '⛔ Expired', 'ختم'];
     const pa = pfAct[p.rk];
     const img = pa ? `<img data-mpimg="${escapeAttr(p.rk + '_0')}" data-ts="${escapeAttr(String(pa.ts||''))}" alt="" style="display:none">` : '';
@@ -4941,9 +4961,9 @@ function mpRender(){
           <span class="mpx-loc">📍 ${escapeHtml([r.area, r.city].filter(Boolean).join('، ') || '—')}</span>
           <span class="mpx-row"><span class="mpx-st ${st[0]}">${st[1]}</span>${p.until && !p.pend ? `<span class="mpx-val">📅 <small>Valid till</small> <b dir="ltr">${fmtD(p.until)}</b></span>` : ''}</span></div>
         ${(()=>{ const d = String(r.whatsapp||'').replace(/\D/g,''); return d ? `<span class="mpx-act" onclick="event.stopPropagation()"><a class="mpx-wa" href="https://wa.me/92${d.replace(/^0/,'').slice(-10)}" target="_blank" rel="noopener">💬</a><a class="mpx-tel" href="tel:${d}">📞</a></span>` : '<i class="mpx-go">›</i>'; })()}</div>`
-      + (p.pend ? `<div class="cp-hint" style="text-align:center">⏳ آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے — منظور ہوتے ہی 15 دن مفت سب کو نظر آئے گی</div><button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">✏️ پوری تفصیل بھریں / سنواریں</button>`
-        : left == null ? `<button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">⭐ پوری تفصیل بھریں — ریٹ، اوقات (15 دن مفت)</button>`
-        : (left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(p.rk)}')">⭐ ${left > 0 ? `${left} دن باقی` : 'ممبرشپ چھپی ہوئی ہے'} — ایک سال کے لیے جاری رکھیں${left > 0 ? `<small>باقی ${left} دن جمع ہو جائیں گے</small>` : ''}</button>`
+      + (p.pend ? `<div class="cp-hint" style="text-align:center">⏳ آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے — منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی</div><button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">✏️ پوری تفصیل بھریں / سنواریں</button>`
+        : left == null ? `<button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">⭐ پوری تفصیل بھریں — ریٹ، اوقات (7 دن مفت)</button>`
+        : (left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(p.rk)}')">⭐ ${left > 0 ? `${left} دن باقی` : 'ممبرشپ چھپی ہوئی ہے'} — ایک سال کے لیے جاری رکھیں${left > 0 ? (mpIsTrialSpan(p.since, p.until) ? `<small>ایک سال آج سے شروع — ٹرائل کے دن شامل نہیں</small>` : `<small>باقی ${left} دن جمع ہو جائیں گے</small>`) : ''}</button>`
           : ''))
       + (p.taken ? '<div class="cp-hint" style="text-align:center">⚠️ یہ کاروبار کسی دوسرے فون سے جڑا ہے — ہم سے رابطہ کریں</div>' : '');
   }).join('');
@@ -5004,7 +5024,7 @@ function hlOpen(kind, id){
   if(pfActive(rec) || pfIsOwner(rec)){ pfOpen(kind, id); return; }
   if(mpEntry(rec)){ pfOpen(kind, id); return; }
   document.getElementById('recViewBody').innerHTML = favCardHtml(kind, rec)
-    + (!isAdminSignedIn && !codevOn() ? `<button type="button" class="pf-mine" onclick="pfClaimPlain('${kind}','${escapeAttr(id)}')">👤 یہ میرا کاروبار ہے — اپنے نام کریں <small>(15 دن مفت — تفصیل، ریٹ، اوقات)</small></button>` : '');
+    + (!isAdminSignedIn && !codevOn() ? `<button type="button" class="pf-mine" onclick="pfClaimPlain('${kind}','${escapeAttr(id)}')">👤 یہ میرا کاروبار ہے — اپنے نام کریں <small>(7 دن مفت — تفصیل، ریٹ، اوقات)</small></button>` : '');
   openModal('recViewModal');
 }
 /* MCS0511TH157 (مالک کا حکم): سادہ کارڈ والا دکاندار خود — اپنے فون سے جوڑے، ممبرشپ فارم بھرے؛ 15 دن ایڈمن کی منظوری کے بعد */
@@ -7859,8 +7879,7 @@ function docCardHtml(d, mode){
         ${([d.address,d.area,d.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[d.address,d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
         <div class="doc-recid">ID: ${escapeHtml(shortRecordId('doctor',d))}</div>
       </div>
-      ${pfBtn('doctor', d)}
-      ${mode==='list' ? mkAdBtn('doctor', d.id) : ''}
+      ${cardStageBtn('doctor', d)}
       ${d.approved===false ? `<div class="doc-pending-line">${d.synced?'⏳ Pending Approval...':'📡 انٹرنیٹ کے انتظار میں — ابھی ایڈمن تک نہیں پہنچا'}</div>` : ``}
     </div>`;
 }
@@ -9034,8 +9053,7 @@ function svcCardHtml(s, meta){
         ${([s.address,s.area,s.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[s.address,s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
         <div class="doc-recid">ID: ${escapeHtml(shortRecordId('service',s))}</div>
       </div>
-      ${pfBtn('service', s)}
-      ${mkAdBtn('service', s.id)}
+      ${cardStageBtn('service', s)}
       ${s.approved===false ? `<div class="doc-pending-line">${s.synced?'⏳ Pending Approval...':'📡 انٹرنیٹ کے انتظار میں — ابھی ایڈمن تک نہیں پہنچا'}</div>` : ``}
     </div>`;
 }
@@ -10604,7 +10622,9 @@ function saveTickerMessages(msgs){
 function renderVersionLabel(){
   const el = document.getElementById('hsVer');
   if(el) el.textContent = APP_VERSION;
+  const e2 = document.getElementById('h2Ver'); if(e2) e2.textContent = APP_VERSION;   /* MCS0711SA201: ہیڈر میں ورژن چھوٹا سا — پہلے والا خانہ چھپا ہوا تھا */
 }
+try{ document.addEventListener('DOMContentLoaded', ()=>{ try{ renderVersionLabel(); }catch(e){} }); setTimeout(()=>{ try{ renderVersionLabel(); }catch(e){} }, 800); }catch(e){}
 
 /* =========================================================
    FIREBASE SYNC (multi-device, real-time, approval workflow)
@@ -10903,6 +10923,23 @@ function updatePendingHomeIndicator(){
       banner.innerHTML = '';
     }
   }
+  pendingHomeListRender();
+}
+function pendingHomeListRender(){
+  const box = document.getElementById('pendingHomeList'); if(!box) return;
+  if(!isAdminSignedIn){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  const rows = [];
+  pendingApprovals.forEach(d=>{
+    const isService = d._col==='services', cm = isService ? CATEGORY_META[d.category] : {emoji:'🩺', ur:'ڈاکٹر'};
+    const sub = [cm ? cm.ur : '', d.specialty||d.type, d.area, d.city].filter(Boolean).map(escapeHtml).join(' • ');
+    rows.push(`<button type="button" class="phl-row" onclick="openPendingInForm('${escapeAttr(d.fsId)}')"><span class="phl-t"><b>${(cm&&cm.emoji)||'🏷️'} ${escapeHtml(d.nameUr || d.name || '(بلا نام)')}</b><small>${sub}</small></span><span class="phl-go">کھولیں</span></button>`);
+  });
+  try{ pfPendList().forEach(x=>{ if(!x.rec) return;
+    rows.push(`<button type="button" class="phl-row" onclick="pfOpen('${x.kind}','${escapeAttr(x.rec.id)}')"><span class="phl-t"><b>🏪 ${escapeHtml(x.rec.nameUr || x.rec.name || '')}</b><small>ممبرشپ کی منظوری — ${escapeHtml([x.rec.area, x.rec.city].filter(Boolean).join('، '))}</small></span><span class="phl-go m">منظور کریں</span></button>`); }); }catch(e){}
+  if(!rows.length){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  const MAXR = 5;
+  box.style.display = 'flex';
+  box.innerHTML = rows.slice(0, MAXR).join('') + (rows.length > MAXR ? `<button type="button" class="phl-more" onclick="openControlPanel()">باقی ${rows.length - MAXR} — سب دیکھیں ›</button>` : '');
 }
 function renderPendingApprovals(){
   updatePendingHomeIndicator();
@@ -11065,7 +11102,7 @@ function ptOpen(editProf, prev){
         return `<div class="pt-card"><b>${escapeHtml(r.nameUr || r.name || '')}</b><small>${st}</small><div class="r"><button type="button" onclick="ptView(${i})">👁️ دیکھیں</button><button type="button" class="p" onclick="ptEdit(${i})">✏️ تفصیل سنواریں</button>${left != null && left <= 15 && !p.pend ? `<button type="button" onclick="ptSub(${i})">⭐ جاری رکھیں</button>` : ''}</div></div>`; }).join('');
     }
     body += `<div class="pt-sec">🤝 ریفرل</div>` + (code ? `<div class="pt-card"><small>میرا ریفرل کوڈ</small><div class="pt-code" onclick="agCopy('${escapeAttr(code)}')">${escapeHtml(code)}</div><div class="r"><button type="button" class="p" onclick="agCopy('${escapeAttr(code)}')">📋 کاپی</button><button type="button" onclick="agShare('${escapeAttr(code)}')">📤 شیئر</button></div>${refNo ? `<small>یا اپنا موبائل نمبر بھی بتا سکتے ہیں: ${refNo}</small>` : ''}</div>` : `<div class="pt-grid">${ptT('🤝','MCS ایجنٹ بنیں','ریفرل کوڈ / حالت','agOpen')}</div>`);
-    body += `<div class="pt-grid">${ptT('➕', L.length ? 'ایک اور کاروبار / پروفیشن' : 'اپنا کاروبار / پروفیشن جوڑیں', L.length ? '' : '15 دن مفت', 'mpNewMore')}${a ? ptT('👤','میرا اکاؤنٹ','','uaAccount') : ptT('🔐','Login / Sign Up','','uaLogin')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','رنگ، فونٹ، بیک اپ','openControlPanel')}</div>`;
+    body += `<div class="pt-grid">${ptT('➕', L.length ? 'ایک اور کاروبار / پروفیشن' : 'اپنا کاروبار / پروفیشن جوڑیں', L.length ? '' : '7 دن مفت', 'mpNewMore')}${a ? ptT('👤','میرا اکاؤنٹ','','uaAccount') : ptT('🔐','Login / Sign Up','','uaLogin')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','رنگ، فونٹ، بیک اپ','openControlPanel')}</div>`;
   }
   m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${ptPrev ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av">${(()=>{ let sv = ''; try{ sv = ptPrev ? '' : (localStorage.getItem('mcsSelfie') || ''); }catch(e){} return sv ? `<img src="${escapeAttr(sv)}" alt="">` : M[0]; })()}</div><div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span></div><div class="pt-body">${ptPrev ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ڈویلپر پورٹل</button></div>' : ''}${body}</div></div>`;
   openModal('portalModal');
@@ -11087,7 +11124,7 @@ function apInfo(x){
   if(a.pend) return {mode:'pend', left:null};
   const until = a.until || 0; if(!until) return {mode:'none', left:null};
   const left = Math.ceil((until - Date.now())/864e5), span = a.since ? (until - a.since)/864e5 : 0;
-  return {mode: (span && span <= MP_FREE_DAYS + 2) ? 'free' : 'paid', left, until}; }
+  return {mode: (span && span <= MP_TRIAL_MAX) ? 'free' : 'paid', left, until, since: a.since || 0}; }
 function apStatus(i){
   if(i.mode === 'none') return ['n', '⭕ ممبرشپ شروع نہیں ہوئی'];
   if(i.mode === 'pend') return ['b', '⏳ منظوری کا انتظار'];
@@ -11377,7 +11414,7 @@ function vlRender(){
   let L = vlList.filter(v => !q || [v.name, v.phone, v.city, v.email].join(' ').toLowerCase().replace(/\s/g, '').includes(q));
   L.sort((a, b) => vlSort === 'recent' ? (b.lastOpen||0) - (a.lastOpen||0) : (b.opens||0) - (a.opens||0));
   const hot = vlList.filter(v => (v.opens||0) >= 10 && !v.hasBiz && !v.agent).length, ago = t => { const d = Math.floor((Date.now() - (t||0)) / 864e5); return d <= 0 ? 'آج' : d + ' دن پہلے'; };
-  const msg = 'السلام علیکم! آپ My City Shines ایپ باقاعدگی سے استعمال کر رہے ہیں، شکریہ 🌟\nاپنا کاروبار یا پروفیشن ایپ پر مفت جوڑیں (15 دن مفت) اور مزید فائدے اٹھائیں — یا ہمارے ایجنٹ بنیں اور کمائیں۔';
+  const msg = 'السلام علیکم! آپ My City Shines ایپ باقاعدگی سے استعمال کر رہے ہیں، شکریہ 🌟\nاپنا کاروبار یا پروفیشن ایپ پر مفت جوڑیں (7 دن مفت) اور مزید فائدے اٹھائیں — یا ہمارے ایجنٹ بنیں اور کمائیں۔';
   agModal(`<div class="ag-hd">👀 وزیٹرز <small>کل ${vlList.length} فون • ${hot} ایسے جو 10+ بار کھول چکے مگر کاروبار / ایجنٹ نہیں</small></div>
     <input type="search" class="ag-q" placeholder="🔍 نام، موبائل، شہر…" value="${escapeAttr(vlQ)}" oninput="vlQ=this.value;clearTimeout(window._vlT);window._vlT=setTimeout(()=>{vlRender();const i=document.querySelector('#agModal .ag-q');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}},350)">
     <div class="pt-grid" style="margin:6px 0"><button type="button" class="pt-t" style="min-height:40px" onclick="vlSort='opens';vlRender()">🔥 زیادہ کھولنے والے</button><button type="button" class="pt-t" style="min-height:40px" onclick="vlSort='recent';vlRender()">🕒 تازہ ترین</button></div>
@@ -11785,7 +11822,7 @@ async function agWaFinish(rec, o){
     const rk = pfKeyOf(rec, 'service'), hdr = await vfAdminHdr();
     const j0 = await (await fetch(PF_API + '/pclaim', {method:'POST', headers: hdr, body: JSON.stringify({rec: rk})})).json();
     if(j0 && j0.since) pfAct[rk] = {since: j0.since, until: j0.until};
-    const until = Math.max(Date.now(), (j0 && j0.until) || 0) + 365*864e5;
+    const until = mpYearUntil(j0 && j0.since, j0 && j0.until);
     await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: rk, act:'until', until})});
     if(pfAct[rk]) pfAct[rk].until = until; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
     const r = await agAdminCall({op:'create', c:{name: o.name, phone: o.phone, code: rk, city: o.city, biz: rec.nameUr || o.biz, cnic: o.cnic || ''}});
@@ -13566,14 +13603,32 @@ function adStPrev(){
 try{ ['adTitle','adLine','adPhone'].forEach(id=>document.getElementById(id).addEventListener('input', ()=>adStPrev())); }catch(e){}
 function adRecKey(kind, id){ return kind + ':' + id; }
 function adForRec(kind, id){ const k = adRecKey(kind, id); return (adList||[]).findIndex(a=>a && a.rec === k); }
-function mkAdBtn(kind, id){
-  if(!isAdminSignedIn || !id) return '';
-  const i = adForRec(kind, id), a = i > -1 ? adList[i] : null, live = a && (!a.until || a.until > Date.now());
-  const ak = agKnownOf(kind, id);   /* MCS0611FR170: پہلے سے ایجنٹ ہے تو بٹن نہیں — صرف چھوٹی سی حالت */
-  const agPart = ak ? `<span class="ag-badge${ak === 'pending' ? ' wait' : ''}" aria-label="ایجنٹ">${ak === 'pending' ? '⏳' : '🤝'}</span>`
-    : `<button type="button" class="mk-ad" style="background:linear-gradient(180deg,#14b8a6,#0f766e);margin-bottom:6px" onclick="agFromRecord('${escapeAttr(kind)}','${escapeAttr(id)}')">🤝 اس بندے کو ایجنٹ بنائیں</button>`;
-  const fedPart = `<button type="button" class="mk-ad" style="background:linear-gradient(180deg,#6366f1,#4338ca);margin-bottom:6px" onclick="fedFromRecord('${escapeAttr(kind)}','${escapeAttr(id)}')">📨 اس بندے کا لاگ اِن / دعوتی میسج</button>`;   /* MCS0611FR171 */
-  return fedPart + agPart + `<button type="button" class="mk-ad${live?' on':''}" onclick="adFromRecord('${escapeAttr(kind)}','${escapeAttr(id)}')">${live ? '📢 اشتہار چل رہا ہے — رنگ/تفصیل بدلیں' : '📢 اس کارڈ کا اشتہار بنائیں'}</button>`;
+/* MCS0711SA201 (مالک کا حکم): کارڈ پر یہ تین لمبے بٹن (دعوتی میسج / ایجنٹ بنائیں / اشتہار بنائیں) ہمیشہ کے لیے ختم —
+   فنکشن خالی رکھا ہے تاکہ کسی بھی جگہ سے بلایا جائے تو کچھ نہ بنے؛ کارڈ پر اب صرف مرحلے کا ایک بٹن (cardStageBtn) */
+function mkAdBtn(kind, id){ return ''; }
+/* کارڈ کے نیچے صرف مرحلہ: خالی کارڈ ← «رجسٹریشن مکمل کریں»؛ رجسٹریشن ہو گئی ← «ممبرشپ مکمل کریں»؛ ممبرشپ فعال ← «رجسٹرڈ» ٹیگ (صرف اسی کاروبار کے مالک / ایڈمن کو) */
+function cardStageBtn(kind, rec){
+  try{
+    if(!rec || !rec.id) return '';
+    const isDoc = kind === 'doctor';
+    if(!isDoc && (rec.category === 'emergencyNumbers' || rec.category === 'govOffices')) return '';
+    const eid = escapeAttr(rec.id), live = pfActive(rec);
+    const mine = !isAdminSignedIn && (svcMyBasic().includes(rec.id) || !!mpEntry(rec) || pfIsOwner(rec));
+    const agentOwn = agOwnsRec(rec);
+    if(!live){
+      const basic = isDoc ? rec.stage !== 'registered' : (rec.stage === 'basic' || !rec.stage);
+      if(basic){
+        if(!(isAdminSignedIn || mine || agentOwn)) return '';
+        return `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();${isDoc ? `docRegOpen('${eid}')` : `svcRegisterOpen('${eid}')`}">📝 رجسٹریشن مکمل کریں</button>`;
+      }
+      if(rec.stage === 'registered'){
+        if(mine) return `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${eid}','${kind}')">⭐ ممبرشپ مکمل کریں</button>`;
+        if(isAdminSignedIn || agentOwn) return `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('${kind}','${eid}')">⭐ ممبرشپ مکمل کریں</button>`;
+      }
+      return '';
+    }
+    return (mine || isAdminSignedIn) ? pfTag(kind, rec) : '';
+  }catch(e){ return ''; }
 }
 /* #103 (مالک کا حکم): کسی بھی کارڈ (کاروبار / پیشہ) سے سیدھا ایجنٹ — نام، موبائل، کاروبار ID، شہر خود بھرے؛ صرف شناختی کارڈ لکھنا */
 function agFromRecord(kind, id){
@@ -14324,6 +14379,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     login:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h5v16h-5"/><path d="M3 12h11M10 8l4 4-4 4"/></svg>',
     exit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 4H5v16h5"/><path d="M21 12H10M17 8l4 4-4 4"/></svg>',
     add:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5M19 8v6M16 11h6"/></svg>',
+    pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
     guest:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>'
   };
   const $ = id => document.getElementById(id);
@@ -14333,7 +14389,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function staff(){ try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } }
   window.uaOk = function(){ return !!uaMe() || staff(); };
   const ERR = {
-    name:'پورا نام لکھیں', mobile:'درست موبائل نمبر لکھیں (03XXXXXXXXX)', email:'ای میل درست نہیں', pw:'پاس ورڈ کم از کم 6 حروف کا ہو',
+    name:'پورا نام لکھیں', city:'اپنا شہر لکھیں یا چنیں', mobile:'درست موبائل نمبر لکھیں (03XXXXXXXXX)', email:'ای میل درست نہیں', pw:'پاس ورڈ کم از کم 6 حروف کا ہو',
     mobile_taken:'اس موبائل نمبر سے پہلے ہی اکاؤنٹ بنا ہوا ہے — LOGIN کریں', email_taken:'اس ای میل سے پہلے ہی اکاؤنٹ ہے — LOGIN کریں', gmail_taken:'اس Gmail سے پہلے ہی اکاؤنٹ ہے — Continue with Google دبائیں',
     login:'Account ID / موبائل / ای میل یا پاس ورڈ غلط ہے', wait:'کئی بار غلط پاس ورڈ — 15 منٹ بعد دوبارہ کوشش کریں', no_pw:'یہ اکاؤنٹ Google سے بنا ہے — «Continue with Google» دبائیں',
     google:'Google سے تصدیق نہیں ہو سکی — دوبارہ کوشش کریں', session:'دوبارہ لاگ اِن کریں', old:'موجودہ پاس ورڈ غلط ہے', net:'انٹرنیٹ نہیں — انٹرنیٹ چلا کر دوبارہ کوشش کریں'
@@ -14393,6 +14449,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       <div class="uaHd"><i>${IC.add}</i><h2>${g ? 'Almost done' : 'Sign Up'}</h2></div><div class="uaSub">${g ? 'Google: <b>' + esc(pre.gmail) + '</b> — add your mobile number' : 'Create a new account to join My City Shines'}</div>
       ${field('uaName', 'user', 'Full Name', { rq:1, ac:'name', v: pre && pre.name })}
       ${field('uaMob', 'phone', 'Mobile Number (e.g. 03XXXXXXXXX)', { rq:1, im:'tel', ac:'tel' })}
+      <label class="uaF">${IC.pin}<input id="uaCity" list="uaCityDl" placeholder="Your City — آپ کا شہر" autocomplete="off" maxlength="60" value="${esc(((pre && pre.city) || (typeof hcGet === 'function' ? hcGet() : '')) || '')}"><span class="rq">*</span><datalist id="uaCityDl">${(() => { try{ return ccCityList().slice(0, 60).map(x => '<option value="' + esc(x.city) + '">').join(''); }catch(e){ return ''; } })()}</datalist></label>
       ${g ? '' : field('uaEmail', 'mail', 'Email Address (Optional)', { type:'email', ac:'email' })}
       ${field('uaPw2', 'lock', g ? 'Create Password (Optional)' : 'Create Password', { type:'password', rq: !g, ac:'new-password' })}
       <label class="uaChk"><input type="checkbox" id="uaAgree"><span>I agree to the <a href="privacy.html#terms" target="_blank">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank">Privacy Policy</a></span></label>
@@ -14413,12 +14470,16 @@ body.d2 #homeAds .ad-ribbon{display:none}
     const name = ($('uaName').value || '').trim(), mobile = ($('uaMob').value || '').trim(), email = $('uaEmail') ? ($('uaEmail').value || '').trim() : '', pw = $('uaPw2').value || '';
     if(name.length < 2) return setErr('name');
     if(mobile.replace(/\D/g, '').length < 10) return setErr('mobile');
+    const city = (($('uaCity') || {}).value || '').trim().replace(/\s+/g, ' ');   /* MCS0711SA201 (مالک کا حکم): نام + موبائل + شہر تینوں لازمی */
+    if(city.length < 2) return setErr('city');
     if(!gPend && pw.length < 6) return setErr('pw');
     if(pw && pw.length < 6) return setErr('pw');
     if(!$('uaAgree').checked){ $('uaErr').textContent = 'Terms & Conditions اور Privacy Policy پر ✓ لگائیں'; return; }
-    busy(1); setErr(''); const r = await api({ op:'signup', name, mobile, email, pw, gtoken: gPend ? gPend.gtoken : '' }); busy(0);
+    busy(1); setErr(''); const r = await api({ op:'signup', name, mobile, email, pw, city, gtoken: gPend ? gPend.gtoken : '' }); busy(0);
     if(!r.ok) return setErr(r.reason);
+    try{ r.user = Object.assign({}, r.user, { city: (r.user && r.user.city) || city }); localStorage.setItem('mcsHomeCity', city); localStorage.removeItem('mcsCityPick'); }catch(e){}   /* شہر اسی فون میں یاد، سرور بھی لے تو ٹھیک */
     done(r, '✅ اکاؤنٹ بن گیا — آپ کی Account ID: ' + r.user.id);
+    try{ ccApplyCity(true); ccCityWeather(); vlPing(true); }catch(e){}
   };
   window.uaGoogle = async function(cred){
     if(window.__uaInvMode) return uaInvGoogle(cred);
@@ -14510,7 +14571,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ڈویلپر کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
-     پیسٹ کرے → اکاؤنٹ + لاگ اِن + کاروبار کا جڑنا + 15 دن مفت، سب خود بخود۔
+     پیسٹ کرے → اکاؤنٹ + لاگ اِن + کاروبار کا جڑنا + 7 دن مفت، سب خود بخود۔
      • میسج کے آخر میں ایک لمبی لائن MCS-INV:1:… ہوتی ہے (اسی میں نام، موبائل، Gmail، کاروبار کی ID) — اسے مٹانا نہیں۔
      • کاروبار کا ریکارڈ نئے فون پر سرور سے آنے والا منظور شدہ ریکارڈ ہی استعمال ہوتا ہے؛ منظور نہ ہو تو کچھ نہیں جڑتا۔
      • Gmail لکھا ہو تو نئے بندے کو اسی Gmail سے Google سائن اِن کرنا لازم؛ نہ لکھا ہو تو فون کا کوئی بھی Google (یا پاس ورڈ)۔
@@ -14549,7 +14610,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     L.push('🆔 کاروبار ID: ' + fedBizId(f.kind, f.id));
     if(me && me.name) L.push('🤝 درج کرنے والا: ' + me.name + (me.id ? ' (' + me.id + ')' : ''));
     L.push('', '*لاگ اِن کا طریقہ (صرف ایک بار):*', '1️⃣ My City Shines ایپ کھولیں', '2️⃣ لاگ اِن صفحے پر سب سے نیچے «میں پہلے سے رجسٹرڈ ہوں» پر ٹک لگائیں',
-      '3️⃣ یہ پورا میسج وہاں پیسٹ کریں — آپ خود بخود لاگ اِن ہو جائیں گے، آپ کا کاروبار کھل جائے گا اور 15 دن مفت شروع ہوں گے', '⚠️ نیچے کی لمبی لائن (MCS-INV…) مٹائیں نہیں', '', fedToken(fedPayload(f)));
+      '3️⃣ یہ پورا میسج وہاں پیسٹ کریں — آپ خود بخود لاگ اِن ہو جائیں گے، آپ کا کاروبار کھل جائے گا اور 7 دن مفت شروع ہوں گے', '⚠️ نیچے کی لمبی لائن (MCS-INV…) مٹائیں نہیں', '', fedToken(fedPayload(f)));
     return L.join('\n');
   }
   function fedCopyText(t, okMsg){ const ok = () => { try{ showToast(okMsg || '📋 کاپی ہو گیا'); }catch(e){} }; try{ navigator.clipboard.writeText(t).then(ok, () => prompt('کاپی کریں', t)); }catch(e){ prompt('کاپی کریں', t); } }
@@ -14678,7 +14739,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     let em = ''; try{ em = (JSON.parse(decodeURIComponent(escape(atob(cred.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))).email || '').toLowerCase(); }catch(e){}
     if(inv.g && em && em !== inv.g) return setMsg('یہ Google اکاؤنٹ (' + em + ') دعوت والے Gmail (' + inv.g + ') سے مختلف ہے — فون میں درست Gmail چنیں');
     busy(1); setErr(''); let r = await api({ op:'google', gtoken: cred });
-    if(!r.ok && r.reason === 'new') r = await api({ op:'signup', name: inv.n, mobile: inv.m, email:'', pw:'', gtoken: cred });
+    if(!r.ok && r.reason === 'new') r = await api({ op:'signup', name: inv.n, mobile: inv.m, email:'', pw:'', city: inv.c || '', gtoken: cred });
     busy(0);
     if(!r.ok) return setMsg(r.reason === 'mobile_taken' ? 'اس موبائل پر اکاؤنٹ پہلے سے ہے — نیچے «LOGIN» دبائیں' : (ERR[r.reason] || ('خرابی: ' + r.reason)));
     window.__uaInvMode = false; done(r, '✅ خوش آمدید — آپ کی Account ID: ' + ((r.user && r.user.id) || ''));
@@ -14686,12 +14747,12 @@ body.d2 #homeAds .ad-ribbon{display:none}
   window.uaInvPwGo = async function(){
     const inv = invGet(); if(!inv) return uaLogin(); const pw = ($('uaInvPw').value || '');
     if(pw.length < 6) return setErr('pw');
-    busy(1); setErr(''); const r = await api({ op:'signup', name: inv.n, mobile: inv.m, email: inv.g || '', pw, gtoken:'' }); busy(0);
+    busy(1); setErr(''); const r = await api({ op:'signup', name: inv.n, mobile: inv.m, email: inv.g || '', pw, city: inv.c || '', gtoken:'' }); busy(0);
     if(!r.ok) return setMsg(({ mobile_taken:'اس موبائل پر اکاؤنٹ پہلے سے ہے — نیچے «LOGIN» دبائیں', email_taken:'اس Gmail پر اکاؤنٹ پہلے سے ہے — «LOGIN» یا Google دبائیں' })[r.reason] || ERR[r.reason] || ('خرابی: ' + r.reason));
     window.__uaInvMode = false; done(r, '✅ اکاؤنٹ بن گیا — آپ کی Account ID: ' + ((r.user && r.user.id) || ''));
   };
 
-  /* ---- دعوت لگانا: اکاؤنٹ ← کاروبار کا جڑنا ← 15 دن مفت ---- */
+  /* ---- دعوت لگانا: اکاؤنٹ ← کاروبار کا جڑنا ← 7 دن مفت ---- */
   let fedBusy = false;
   window.fedApplyPending = async function(){
     const inv = invGet(); if(!inv || fedBusy) return; const a = uaMe(); if(!a || !a.user) return;
@@ -14717,8 +14778,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
       agModal(`<div class="ag-hd">🎉 مبارک ہو ${esc(u.name || inv.n)}!</div>
         <div class="ag-ok">🏪 ${esc(rec.nameUr || rec.name || '')}<br><small>🆔 ${fedBizId(inv.k, inv.i)} • Account ID: ${esc(u.id || '')}</small></div>
         ${taken ? '<div class="ag-wait" style="margin:8px 0">⚠️ یہ کاروبار کسی دوسرے فون سے جڑا ہوا ہے — Help Desk پر بتائیں، ڈویلپر «فون سے آزاد» کر دیں گے۔</div>'
-          : (e && e.pend) ? '<div class="ag-wait" style="margin:8px 0">⏳ آپ کا کاروبار / پروفیشن جڑ گیا — ڈویلپر کی ایک منظوری کے فوراً بعد 15 دن مفت شروع اور سب کو پوری تفصیل نظر آئے گی۔</div>'
-          : `<div class="ag-ok" style="margin:8px 0">🎁 15 دن مفت شروع${left ? ' — ' + left + ' دن باقی' : ''}۔ اب «⭐ پوری تفصیل» بھریں — ریٹ، اوقات، تصویریں۔</div>`}
+          : (e && e.pend) ? '<div class="ag-wait" style="margin:8px 0">⏳ آپ کا کاروبار / پروفیشن جڑ گیا — ڈویلپر کی ایک منظوری کے فوراً بعد 7 دن مفت شروع اور سب کو پوری تفصیل نظر آئے گی۔</div>'
+          : `<div class="ag-ok" style="margin:8px 0">🎁 7 دن مفت شروع${left ? ' — ' + left + ' دن باقی' : ''}۔ اب «⭐ پوری تفصیل» بھریں — ریٹ، اوقات، تصویریں۔</div>`}
         <button type="button" class="btn block ag-send" onclick="closeModal('agModal');pfOpen('${kind}','${escapeAttr(rec.id)}')">🏪 میرا کاروبار کھولیں</button>`);
     }finally{ fedBusy = false; }
   };
