@@ -4027,7 +4027,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA196";
+const APP_VERSION = "MCS0711SA197";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -4888,24 +4888,9 @@ function hlCap(it){
 /* MCS0511TH159 (ہیلپ ڈیسک #89): «Business Promotions / Order Now — اپنے کاروبار کی تشہیر کریں» — جاری ممبرشپ والے کاروبار (اس شہر کے پہلے)، ورنہ تشہیر کی دعوت */
 let bpDay = '';
 function bpRender(){
+  /* MCS0711SA197 (مالک کا حکم): ہوم پر کسی دکان / کاروبار کا کارڈ نہیں — صرف اشتہار کی دعوت؛ کارڈ صرف تلاش / کیٹیگری میں */
   const box = document.getElementById('bizPromo'); if(!box) return;
-  let L = []; try{ L = hlItems().list.filter(it => pfActive(it.rec)); }catch(e){}
-  if(!L.length){ try{ L = [...(store.services||[]).filter(r => pfActive(r)).map(r => ({kind:'service', rec:r})), ...(store.doctors||[]).filter(r => pfActive(r)).map(r => ({kind:'doctor', rec:r}))]; }catch(e){} }   /* #96: اپنے شہر میں نہ ہو تو کسی بھی شہر کا جاری کاروبار — خالی ڈبہ نہیں */
-  const d = new Date().toDateString(), k = L.length ? (d.split('').reduce((a,c)=>a+c.charCodeAt(0),0) % L.length) : 0;   /* روز نیا کاروبار آگے */
-  L = L.slice(k).concat(L.slice(0, k)).slice(0, 2);
-  box.innerHTML = `<div class="bp-hd"><b dir="ltr">Business Promotion</b><button type="button" class="bp-on" onclick="adRequestOpen()">Order Now</button><span>اپنے کاروبار کی تشہیر کریں</span></div>`   /* #96 (محمد عمران، مالک کی ⚡ منظوری): عنوان / [Order Now] بٹن / اردو، نیچے کاروبار کا کارڈ */
-    + (L.length ? L.map(it => `<div class="bp-card" onclick="if(!event.target.closest('a,button'))hlOpen('${it.kind}','${escapeAttr(it.rec.id)}')">${favCardHtml(it.kind, it.rec)}</div>`).join('')
-      : `<button type="button" class="bp-ask" onclick="adRequestOpen()">📢 اپنا کاروبار یہاں دکھائیں — <b>Order Now</b></button>`);
-  /* MCS0711SA183 (مالک کا حکم): اوپر چنے ہوئے شہر (یا فون کی لوکیشن والے شہر) کے سب کاروبار نیچے — صرف ممبرشپ والے دو نہیں */
-  try{
-    const hi = hlItems(); if(hi.q) return;
-    const rest = hi.list.filter(it => it.kind === 'service' && (CATEGORY_META[it.cat] || {}).group === 'business' && !L.some(p => p.rec === it.rec));
-    if(!rest.length) return;
-    const where = hf.area || hf.city || hf.district || hf.province || 'سب شہر';
-    box.insertAdjacentHTML('beforeend', `<div class="hl-h" style="margin:10px 4px 6px"><b>📋 ${escapeHtml(where)} کے کاروبار<small>Businesses</small></b><span>${rest.length}</span></div>`
-      + rest.slice(0, bpShown).map(it => `<div class="bp-card" onclick="if(!event.target.closest('a,button'))hlOpen('${it.kind}','${escapeAttr(it.rec.id)}')">${favCardHtml(it.kind, it.rec)}</div>`).join('')
-      + (rest.length > bpShown ? `<button type="button" class="hl-more" onclick="bpMore()">▼ مزید دکھائیں (${rest.length - bpShown} باقی) • Show more</button>` : ''));
-  }catch(e){}
+  box.innerHTML = `<div class="bp-hd"><b dir="ltr">Business Promotion</b><button type="button" class="bp-on" onclick="adRequestOpen()">Order Now</button><span>اپنی دکان کا اشتہار لگوائیں</span></div>`;
 }
 let bpShown = 10;
 function bpMore(){ bpShown += 10; bpRender(); }
@@ -13102,10 +13087,11 @@ let adList = [];
 try{ adList = JSON.parse(localStorage.getItem('mcsAds')||'[]') || []; }catch(e){}
 let adIdx = 0, adTimer = 0;
 function adPromos(){
-  const c = store.contact || DEFAULT_CONTACT; const raw = String(c.whatsapp||'').replace(/[^0-9]/g,'').replace(/^0/,'');
+  /* MCS0711SA197 (مالک کا حکم): ہوم پر صرف ہمارے اپنے چار اشتہار (یا ایڈمن کی منظور شدہ، ادائیگی والی دکان) — 15 دن 500، مہینہ 800 */
   return [
-    ...(adFreeLeft() > 0 ? [{promo:1, ic:'🎁', title:'پہلی 5 دکانوں کا اشتہار 7 دن بالکل مفت!', line: adFreeUsed() ? `${adFreeUsed()} ${adFreeUsed()===1?'دکان':'دکانوں'} کا اشتہار لگ چکا — صرف ${adFreeLeft()} باقی، اگلی دکان آپ کی ہو سکتی ہے!` : '7 دن بالکل مفت — پہلی 5 دکانوں میں آپ بھی شامل ہوں', req:1, freeBar:1}] : []),
-    {promo:1, ic:'📢', title:'اپنی دکان کا اشتہار یہاں لگوائیں', line:'شہر کے لوگ روز یہ ایپ کھولتے ہیں — سب سے پہلے آپ کی دکان نظر آئے', req:1},
+    ...(adFreeLeft() > 0 ? [{promo:1, ic:'🎁', title:'پہلی 5 دکانوں کا اشتہار 7 دن بالکل مفت!', line: adFreeUsed() ? `${adFreeUsed()} دکانوں کا اشتہار لگ چکا — صرف ${adFreeLeft()} باقی` : '7 دن بالکل مفت — پہلی 5 دکانوں میں آپ بھی شامل ہوں', req:1, freeBar:1}] : [{promo:1, ic:'📢', title:'اپنی دکان کا اشتہار یہاں لگوائیں', line:'شہر کے لوگ روز یہ ایپ کھولتے ہیں — سب سے پہلے آپ کی دکان نظر آئے', req:1, plans:1}]),
+    {promo:1, ic:'📅', title:'15 دن کا اشتہار — صرف 500 روپے', line:'اپنی دکان کا اشتہار ہوم پیج پر لگوائیں', req:1},
+    {promo:1, ic:'🗓️', title:'ایک مہینے کا اشتہار — صرف 800 روپے', line:'پورا مہینہ ہوم پیج پر آپ کی دکان کا اشتہار', req:1},
     {promo:1, ic:'🏪', title:'اپنی دکان مفت درج کروائیں', line:'ایپ میں اپنا نمبر ڈالیں، گاہک سیدھا آپ کو کال کریں', add:1}
   ];
 }
@@ -13120,9 +13106,8 @@ function adActive(){ const now = Date.now(); return (adList||[]).filter(a=>a && 
 function adSlides(){
   const paid = adActive(), pr = adPromos();
   if(!paid.length) return pr;
-  const main = pr[0];  /* مفت والا (جگہ باقی ہو) یا «اشتہار لگوائیں» پیکج والا */
-  const out = []; paid.forEach((a,i)=>{ out.push(a); if(i % 2 === 1 && i < paid.length - 1) out.push(main); });
-  out.push(main); if(paid.length < 3 && pr[1]) out.push(pr[1]);
+  const out = []; paid.forEach((a,i)=>{ out.push(a); if(pr[i % pr.length]) out.push(pr[i % pr.length]); });
+  pr.forEach(x=>{ if(!out.includes(x)) out.push(x); });
   return out;
 }
 function adRender(){
@@ -13148,6 +13133,7 @@ appVh(); window.addEventListener('resize', ()=>{ if(!mcsTyping()) appVh(); });
 function fitHome(){
   try{
     if(currentScreen !== 'home' || mcsTyping()) return;
+    if(document.body.classList.contains('d2')){ const a2 = document.getElementById('homeAds'); if(a2){ a2.classList.remove('slim','tight','fitted'); a2.style.height = ''; } return; }
     const ads = document.getElementById('homeAds'), apps = document.getElementById('ourApps');
     const nav = document.getElementById('bnav'); if(!ads || !apps) return;
     const limit = (nav && nav.getBoundingClientRect().height ? nav.getBoundingClientRect().top : window.innerHeight) - 6;
@@ -14153,6 +14139,33 @@ if('serviceWorker' in navigator){
 .doc-avatar,.ub-ico{width:26px !important;height:26px !important;min-width:26px !important;font-size:14px !important;margin:0 !important}
 .doc-avatar span{font-size:14px !important}
 .ub-intro{font-size:12px !important;line-height:1.35 !important;margin-top:2px !important}
+
+/* ===== MCS0711SA197 (مالک کا حکم): ہوم صاف — کوئی دکان کارڈ نہیں، نیچے سے کوئی فہرست نہیں؛ اپنی ممبرشپ کارڈ چھوٹا؛ جگہ میں ہمارے بڑے اشتہار ===== */
+body.d2 #homeList,body.d2 #homeFinder,body.d2 #ourApps{display:none !important}
+body.d2 #bizPromo .bp-card,body.d2 #bizPromo .hl-h,body.d2 #bizPromo .hl-more,body.d2 #bizPromo .bp-ask{display:none !important}
+body.d2 #bizPromo{margin:4px 10px 0 !important;padding:0 !important;background:none !important;border:0 !important;box-shadow:none !important}
+body.d2 #bizPromo .bp-hd{margin-bottom:6px}
+body.d2 .mp-bar{margin:0 26px 8px !important}
+body.d2 .mpx{margin:4px 0 !important;padding:6px 7px 5px !important;border-radius:15px !important}
+body.d2 .mpx-hd{margin-bottom:4px !important;gap:6px !important}
+body.d2 .mpx-hi{width:26px !important;height:26px !important;font-size:14px !important;border-radius:8px !important}
+body.d2 .mpx-hd b{font-size:14px !important}
+body.d2 .mpx-hd b span{font-size:13px !important}
+body.d2 .mpx-card{padding:5px !important;gap:7px !important;margin-bottom:3px !important;border-radius:12px !important}
+body.d2 .mpx-ph{width:50px !important;height:50px !important;border-radius:10px !important}
+body.d2 .mpx-em{font-size:26px !important}
+body.d2 .mpx-tx b{font-size:15px !important;line-height:1.4 !important}
+body.d2 .mpx-cat,body.d2 .mpx-loc{font-size:11.5px !important}
+body.d2 .mpx-more{display:flex;gap:4px;flex-wrap:wrap}
+body.d2 .mpx-more .mp-more{font-size:11.5px !important;padding:4px 8px !important;flex:1 1 45%;margin:0 !important}
+body.d2 #homeAds{display:block !important;height:auto !important;min-height:150px !important;flex:none !important;margin:4px 10px 14px !important}
+body.d2 #homeAds .ad-card{min-height:150px !important;padding:16px 14px 20px !important;flex-direction:column !important;justify-content:center;align-items:stretch !important;gap:10px !important}
+body.d2 #homeAds .ad-ic{width:60px !important;height:60px !important;font-size:34px !important}
+body.d2 #homeAds .ad-tx b{font-size:23px !important;line-height:1.5 !important;white-space:normal !important}
+body.d2 #homeAds .ad-tx span{font-size:15px !important;line-height:1.65 !important;white-space:normal !important;overflow:visible !important}
+body.d2 #homeAds .ad-go{flex-direction:row !important;justify-content:center}
+body.d2 #homeAds .ad-go a,body.d2 #homeAds .ad-go button{min-height:42px !important;font-size:15px !important;padding:0 20px !important}
+body.d2 #homeAds .ad-ribbon{display:none}
 </style>
 <!-- ===== MCS0511TH163 (مالک کا حکم، ہیلپ ڈیسک #95): 🔐 لاگ اِن / سائن اَپ / Guest — سرور aio-pos-verify `/mcsauth`؛ Google سائن اِن (GIS)، SMS OTP نہیں؛
      Guest صرف دیکھ / تلاش سکتا ہے — کاروبار بنانا، تبدیلی، ممبرشپ، ایجنٹ، اشتہار سب سے پہلے سائن اِن (`uaGuard`)؛ ایڈمن / کو-ڈویلپر پر روک نہیں۔
