@@ -3643,6 +3643,7 @@ body.cdOn{padding-top:30px}
           <input id="nlDist" type="text" placeholder="ضلع" oninput="nlReparse()" style="flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid #d8dee4;">
         </div>
         <button class="btn block accent" onclick="prepTajran()">📋 انجمن تاجران فتح پور کی لسٹ — خود کیٹگریوں میں تقسیم (فائل یا کیٹگری چننے کی ضرورت نہیں)</button>
+        <button class="btn block accent" style="margin-top:8px;" onclick="prepTajranB5()">📋 انجمن تاجران — بلاک ۵ (ڈاکٹر اعظم ہسپتال روڈ تا چک 107/ML) — ایک بٹن</button>
         <div class="cp-hint" style="margin:10px 0 4px;text-align:center;">یا کوئی بھی نئی لسٹ — PDF</div>
         <button class="btn block accent" onclick="document.getElementById('pdfFileInput').click()">📄 PDF لسٹ چنیں — نام، موبائل، شناختی کارڈ، کیٹگری خود</button>
         <input type="file" id="pdfFileInput" accept=".pdf,application/pdf" style="display:none;" onchange="pdfChosen(this)">
@@ -4079,11 +4080,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA210";
+const APP_VERSION = "MCS0711SA211";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS0711SA210": "✅ نماز کے اوقات، ہوم کے ڈبے اور کیٹگری کے ہندسے Arial میں چھوٹے اور فِٹ — ہر زوم پر کوئی ڈبہ باہر نہیں نکلتا، ایک دوسرے پر نہیں چڑھتا"
+  "MCS0711SA211": "✅ نماز کے اوقات، ہوم کے ڈبے اور کیٹگری کے ہندسے Arial میں چھوٹے اور فِٹ — ہر زوم پر کوئی ڈبہ باہر نہیں نکلتا، ایک دوسرے پر نہیں چڑھتا"
 };
 const _OLD_NOTES = {
   "MCS0711SA207": "✅ کارڈ پر «رجسٹریشن مکمل کریں» بٹن اب گول بٹنوں کے نیچے نہیں چھپتا • PDF امپورٹ رکے تو وجہ صاف لکھی آئے گی • ہر جگہ انگلش ہندسے (0-9)"
@@ -13884,7 +13885,7 @@ function ccPrayerTimes(date, lat, lon){
   return out;
 }
 const ccHM = d => d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
-/* MCS0711SA210: وقت اور AM/PM الگ الگ تاکہ ڈبے میں پورا آئے */
+/* MCS0711SA211: وقت اور AM/PM الگ الگ تاکہ ڈبے میں پورا آئے */
 const ccHMs = d => { const m = ccHM(d).match(/^(\d+:\d+)\s*(AM|PM)$/i); return m ? `<span class="tm">${m[1]}</span><em>${m[2].toUpperCase()}</em>` : ccHM(d); };
 function ccNamazNow(){
   const c = ccCoords(); if(!c) return null;
@@ -14854,7 +14855,7 @@ body .doc-card .doc-side svg{width:14px !important;height:14px !important}
 body .doc-card .doc-foot{order:5 !important;flex:1 1 100% !important;margin:0 !important;padding:5px 0 0 !important;border-top:1px solid rgba(255,255,255,.16) !important}
 body .doc-card .doc-pending-line{order:6 !important;flex:1 1 100% !important}
 
-/* ===== MCS0711SA210 (مالک کا حکم): نماز کی پٹی، ہیرو اور ڈبے ہر زوم (100%-200%) پر فِٹ؛ ہندسے Arial، چھوٹے اور باریک ===== */
+/* ===== MCS0711SA211 (مالک کا حکم): نماز کی پٹی، ہیرو اور ڈبے ہر زوم (100%-200%) پر فِٹ؛ ہندسے Arial، چھوٹے اور باریک ===== */
 :root{--zf:calc(1 - (var(--ui-zoom,1) - 1) * .5);}
 body.d2 .d2-prays{gap:4px;padding:6px 6px;margin-left:8px;margin-right:8px;overflow:hidden;}
 body.d2 .d2-pt{padding:0 4px;max-width:27%;min-width:0;}
@@ -14893,13 +14894,13 @@ body.d2 .qt-n{font:700 10px/17px Arial,sans-serif !important;}
   .h2-logo{width:calc(42px * var(--zf));height:calc(42px * var(--zf));}
   .h2 .hero-btn-share{width:calc(32px * var(--zf)) !important;height:calc(32px * var(--zf)) !important;}
 }
-/* MCS0711SA210: Business Promotion پٹی اور صفحے کی چوڑائی */
+/* MCS0711SA211: Business Promotion پٹی اور صفحے کی چوڑائی */
 .bp-hd{flex-wrap:wrap;overflow:hidden;row-gap:2px;}
 .bp-hd b{font-size:calc(13px * var(--zf));min-width:0;}
 .bp-hd span{white-space:normal !important;min-width:0;flex:1 1 auto;text-align:center;font-size:calc(14px * var(--zf)) !important;line-height:1.6;}
 .bp-on{font-size:calc(12px * var(--zf)) !important;}
 html,body{max-width:100%;overflow-x:clip;}
-/* MCS0711SA210: ٹائلز کے بیج/پلس، تاریخ والی پٹیاں، سرچ ذیلی سطر */
+/* MCS0711SA211: ٹائلز کے بیج/پلس، تاریخ والی پٹیاں، سرچ ذیلی سطر */
 body.d2 .qt-ic{font-size:min(24px,36cqw) !important;margin-top:2px;}
 body.d2 .qt-n,body.d2 .qt:has(.qt-plus) .qt-n{left:3px !important;top:3px !important;height:15px !important;line-height:15px !important;min-width:15px !important;font:700 9.5px/15px Arial,sans-serif !important;padding:0 4px !important;}
 body.d2 .qt-plus{top:3px !important;bottom:auto !important;left:auto !important;right:3px !important;width:16px !important;height:16px !important;font-size:11px !important;line-height:1 !important;padding:0 !important;display:flex;align-items:center;justify-content:center;}
@@ -14911,7 +14912,7 @@ body.d2 .qt-plus{top:3px !important;bottom:auto !important;left:auto !important;
 }
 .sr-ht small{white-space:normal !important;overflow:visible !important;text-overflow:clip !important;line-height:1.5;}
 .sr-ht{min-width:0;}
-/* MCS0711SA210: تاریخ کی پٹیاں اور قبلہ ڈبہ ایک دوسرے پر نہ چڑھیں */
+/* MCS0711SA211: تاریخ کی پٹیاں اور قبلہ ڈبہ ایک دوسرے پر نہ چڑھیں */
 @media (max-width:699px){
   .hero .h2{grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) minmax(0,.95fr);}
   .h2-d{container-type:inline-size;}
@@ -14921,14 +14922,14 @@ body.d2 .qt-plus{top:3px !important;bottom:auto !important;left:auto !important;
   .h2 .cc-qibla .cq-t{font-size:calc(9.5px * var(--zf)) !important;padding:0 5px;}
   .h2-q{min-width:0;overflow:hidden;}
 }
-/* MCS0711SA210: ہجری تاریخ مکمل + قبلہ پٹی */
+/* MCS0711SA211: ہجری تاریخ مکمل + قبلہ پٹی */
 @media (max-width:699px){
   .h2-d>div{font-size:min(calc(11px * var(--zf)),8.2cqw) !important;padding:1px 4px;text-overflow:clip !important;}
   .h2-d>div:first-child{font-size:min(calc(10.5px * var(--zf)),8.6cqw) !important;}
   .h2 .cc-qibla .cq-t{font-size:calc(8.8px * var(--zf)) !important;padding:0 3px;}
   .h2 .cc-qibla .cq-t b{font-size:calc(10px * var(--zf)) !important;}
 }
-/* MCS0711SA210: کیٹگری کے ہندسے چھوٹے اور باریک؛ اوپر کی ٹول پٹی لپٹ کر پوری نظر آئے */
+/* MCS0711SA211: کیٹگری کے ہندسے چھوٹے اور باریک؛ اوپر کی ٹول پٹی لپٹ کر پوری نظر آئے */
 .cat-grid .cat-item .cat-count,.cat-item .cat-count{font-size:calc(12px * var(--zf)) !important;font-weight:700 !important;min-width:26px !important;height:22px !important;padding:0 6px !important;border-width:1.5px !important;text-shadow:none !important;}
 .entry-count{font-size:calc(12px * var(--zf)) !important;font-weight:700 !important;min-width:28px !important;height:28px !important;}
 .cat-bar{flex-wrap:wrap !important;overflow-x:visible !important;row-gap:5px;}
@@ -14939,7 +14940,7 @@ html:has(#screen-home.active){overflow-y:hidden;}
 </style>
 
 <script>
-/* MCS0711SA210 (مالک کا حکم): ہوم پیج سکرول کے بغیر — اوپر کا حصہ، نماز، ٹائلز، سرچ، اشتہار سب ایک اسکرین میں؛ جگہ کم ہو تو پورا ہوم خود چھوٹا ہو کر فِٹ بیٹھتا ہے */
+/* MCS0711SA211 (مالک کا حکم): ہوم پیج سکرول کے بغیر — اوپر کا حصہ، نماز، ٹائلز، سرچ، اشتہار سب ایک اسکرین میں؛ جگہ کم ہو تو پورا ہوم خود چھوٹا ہو کر فِٹ بیٹھتا ہے */
 (function(){
   var busy=false;
   function fit(){
@@ -14972,6 +14973,48 @@ html:has(#screen-home.active){overflow-y:hidden;}
   setInterval(function(){ if(!document.hidden) q(); },1500);
   var oz=window.applyZoom; if(typeof oz==='function'){ window.applyZoom=function(){ var r=oz.apply(this,arguments); q(); return r; }; }
 })();
+</script>
+
+<script>
+/* MCS0711SA211 (مالک کا حکم): انجمن تاجران فتح پور — ڈاکٹر اعظم ہسپتال روڈ تا چک 107/ML بلاک 5 (تصویری لسٹ، ہاتھ سے پڑھی گئی)
+   ہر قطار: [دکان کا نام، دکاندار کا نام (ولدیت کے بغیر)، موبائل، شناختی کارڈ]۔ خراب/ادھورے/دہرے نمبر امپورٹ کے وقت خود چھوٹ جاتے ہیں۔ */
+const TAJRAN_B5 = [["الحبیب نقد جالی","حبیب احمد","0349-842291","32202-2511728-5"],["مشتاق آٹو سروس","مشتاق احمد","0304-1780231","32202-9781568-1"],["میاں فوڈ شاپ","اظہر","0345-12528","38104-5144126-5"],["صائم ہیئر حمام","راشد علی","0345-1651752","32202-4917908-3"],["جمیل حمام","عبدالرحمن","0303-7477988","32202-033902-7"],["شفیق ٹیلرز","شفیق","0308-3875813","32202-8547248-7"],["قمر الیکٹرونک سٹور","محمد عرفان","0306-7776839","32202-5306968-9"],["بسم اللہ فوڈ ڈولی","زین العابدین","0346-1609349","32202-1176067-5"],["اعظم ہوٹل","محمد اعظم","0303-7448022","32202-1177112-5"],["میاں ہنڈا سروس","اعجاز حسین","0303-7450880","32202-6848671-3"],["اعظم وڑائچ ہسپتال","محمد اعظم وڑائچ","0300-8761000","32202-1142848-9"],["میاں فاسٹ فوڈ","عبدالجلیل","0345-7152278","38104-6730760-5"],["بسم اللہ فوڈ","محمد عباس","0340-0647918",""],["ارشد لاہوری نان شاپ","ارشاد","0306-9075995",""],["ڈیسنٹ بک ڈپو","حماد حسن","0348-348858",""],["رانا ملک شاپ","محمد زبیر","0301-8492226","32202-4873559-9"],["رانا ٹائر شاپ","اکرم","0303-6637949",""],["صائم سٹور","اکرام مسیح","0342-4411613","32202-2512639-1"],["گجر ٹی شاپ","محمد افضل","0308-6508629","32202-3965415-5"],["کالا آٹو سروس","رفاقت","0302-6546136",""],["لیوش بیوٹی پارلر","طیب","0314-5930122",""],["مانی گرم حمام","عمران","0302-9609091","32202-5329384-0"],["دھوبی","اقبال حسین","0342-5249535","33303-9832079-7"],["گیس پوائنٹ","رانا قمر","0302-4178453","32202-8020909-1"],["خیام الیکٹرک سٹور","رانا ظہیر","0348-7382898","33202-6413568-7"],["ندیم آٹوز","محمد ندیم","0308-2480737","32202-8438257-5"],["مٹھو ڈرائی کلین","اسد","0334-0349451","32202-7099152-5"],["عابد آٹوز","عابد علی","0306-4867651",""],["برادر سپر سٹور","عثمان","0344-0653881","32202-4828292-7"],["اکرم ہوٹل","اکرم","0304-7756940","32202-2504458-9"],["موسی ہیئر سیلون","شاہد","0308-7785299","32202-3137027-5"],["ماشاء اللہ ملک شاپ","محمد شفیع","0342-1645990","32202-1911266-3"],["المدینہ آئس شاپ","محمد طارق","0306-2940734",""],["جلیبی پوائنٹ","محمد شفیق","0320-2375230",""],["تنویر ٹیلرز","تنویر","0340-7455935","32202-69143293"],["منظور ڈرائی کلینرز","منظور","0345-3211861",""],["آمین کریانہ سٹور","محمد آمین","0307-6312282","32202-6009160-3"],["آٹا چکی","زاہد حسین","0318-2617392",""],["الجزیرہ فاسٹ فوڈ","محمد احسان","0324-7016997","32201-1245503-9"],["آصف حمام","محمد آصف","0301-7626414","32202-3741862-9"],["فیصل فارمیسی","فیصل شہزاد","0306-7433258","32202-9447524-3"],["احسن دواخانہ","حکیم یوسف چیمہ","0300-6762249",""],["النونس فرنیچر","النونس","0347-4432290",""],["علی ٹیلرز","علی رضا","0325-7392985",""],["تک شاپ","یونس","0308-4994765",""],["مبشر کریانہ سٹور","مبشر حسین","0304-7429588","32202-5128837-7"],["ماشاء اللہ ویلڈنگ ورکس","محمد منشاء","0308-8926613","32202-9516219-5"],["عبدالغنی سپر سٹور","خالد محمود","0347-7101700","32203-2082006-3"],["فوجی کریانہ سٹور","محمد ریاض","0303-4970272","32202-4201631-5"],["کریانہ سٹور","محمد شفیق","0306-0542944","32201-0502767-7"],["سائیکل ورکس","مشتاق احمد","0306-8933451","32202-2506613-7"],["نیو عمران الیکٹرک سٹور","عمران شہزاد","0305-2347588","32202-6271527-5"],["بک ڈپو سبزی","آصف","0308-7531267","32202-1033872-7"],["الحمد سپر سٹور","محمد امجد","0306-4358810","32202-5651293-7"],["ندیم سٹیل ورکس","طاہر ندیم","0309-9707450","32202-9761586-1"],["حافظ ڈی سی واٹر پمپ","محمد انور جاوید","0300-8765841","32202-2506162-7"],["سنی حمام","فیض رسول","0302-3741809",""],["فرنیچر شاپ","ارشد مسیح","",""],["داتا کریانہ سٹور","سکندر","0346-6544295","32202-0116792-9"],["ڈیسنٹ آئس کریم","امیر حمزہ","0326-5734048","38303-6777942-1"],["شنگریلا ہوٹل","عبدالرزاق","0307-3945240","32202-6441742-7"],["عدیل سپر سٹور","محمد ارشد","0347-8025900",""],["اللہ سپر سٹور","اللہ ڈتہ","0303-0539238","32202-4191480-7"],["الجنت سویٹس اینڈ بیکرز","محمد عدیل","0344-1101474","32202-2099283-5"],["عمر کولنگ پوائنٹ","عمر","0307-5358929",""],["FG سکول","عثمان علی","",""],["عامر الیکٹرک سٹور","حاجی عامر","0300-2031249","32202-409905-3"],["اشتیاق میڈیکل سٹور","اشتیاق علی","0300-2157285","32202-2485924-3"],["بلال گیس شاپ","محمد بلال","0306-7605291",""],["العزیز موبائل زون","محمد ابوبکر","0344-8338002","32202-0729883-5"],["الحمد کراکری","محمد اسجد علی","0301-206445","32202-1645915-1"],["کلیئر ویژن آپٹکس","علی حسنین","0312-4898540","34601-0666341-5"],["میاں دواخانہ","مقبول احمد","0300-8763449","32202-6485602-1"],["امجد بیوٹی سیلون","امجد علی","0307-6508552","32202-1017228-9"],["شانی فوٹو سٹوڈیو","شانی","0320-6962326",""],["عمار آپٹیکل","بابر","0306-5003948",""],["الرحمن میڈیکل سٹور","ضیاء الرحمن","0300-4890803",""],["غوشیہ نان شاپ","حبیب الرحمن","0306-7306135","32202-9819862-3"],["مدثر آٹوز","مدثر شفیق","0308-870220","32202-165028-7"],["کوئٹہ کارپوریشن","غلام محمد","0345-7553635","32303-83130031-1"],["لاہور لیب","منور حسین","0300-5121496","32202-2413581-3"],["الوہاب چاول سٹور","محمد رمضان","0346-7573626","38103-80597455"],["بسم اللہ گیس پوائنٹ","محمد زاہد اقبال","0306-6764298","32202-0549006-3"],["پرنس ٹیلرز","محمد ارشاد حسین","0300-6380298","32202-2544468-5"],["عابد فوٹو سٹیٹ","چوہدری عابد حسین","0301-7840240","32202-2511105-3"],["میاں PVC","نوید حسین","0302-7154250","32202-1196950-1"],["بسم اللہ چاول سٹور","ڈاکٹر مشتاق","0300-8975842","32202-7464678-1"],["ہائی رائز آرکیٹیکٹ اینڈ بلڈرز","حافظ راشد علی","0302-7440546","32202-3744503-3"],["لاہور ڈرائی کلیئرز","مظہر اقبال","0307-4577516","32202-1349465-5"],["ابرار احمد فوڈ پوائنٹ","محمد ابرار","0347-7054606","33100-99664-9"],["دانش جدید طریقہ افزائش نسل","ڈاکٹر نصیر عباس","0300-676575","32202-2480092"],["چیمہ سپر سٹور","محمد یونس جاوید","0300-8762886","32202-2510503-3"],["رحمن سموسہ پوائنٹ","واحد حسین","0309-7733255","32202-6686255-5"],["اعظم میڈیکل سٹور","فقیر حسین","0300-8762985","32202-9800537-1"],["روشن کریانہ سٹور","ایم نثار","0345-8402003","32202-2546421-9"],["لاہور کلینک","ڈاکٹر رضوان الزمان","0300-876507","32202-8237784-1"],["الہادی میڈیکل کلینک","محمد حسن","0302-7301005","32202-8721838-3"],["پاکستان کلاتھ ہاؤس","خرم مغل","0348-249390","32202-9711234-9"],["ڈاکٹر اجمل کلینک","ڈاکٹر محمد اجمل","0300-6763389","32202-9711234-9"],["محمود ڈینٹل کلینک","محمد فرحان اسلم","0308-353859",""],["الشفاء ہومیو","زاہد لطیف","0347-1705841","32202-7947311-5"],["فینسی شوز سنٹر","اجمل حسین","0300-7512423","32202-2507367"],["انمول لیبارٹری","محمد عامر","0300-7276426","33100-5305628-1"],["گڈوے سرجیکل","توصیف","0307-0221068","32202-9441307-3"],["The Trend Room","محمد وقاص","0340-4095217","32202-5841489-5"],["تنویر فوٹوگرافی","حسنین علی","0308-4663531","32202-1955331-1"],["عامر رشید کلاتھ","محمد عامر","0301-7791114","32202-2563130-5"],["بابر ٹیلرز","بابر","0340-7278200","32202-0406152-1"],["آکاش شوز","آکاش","0302-9739873","38104-150358-3"],["فاطمہ لیب","تقدیر خان","0306-0782786","32202-3975649-5"],["صائم میڈیکل سٹور","محمد صائم اقبال","0302-414007","61101-3528685-3"],["ڈاکٹر لیب","اکبر علی","0344-7102207","32202-1919780-1"],["المدینہ کاج اور لاک","محمد ندیم","0308-2906764",""],["شکیل میڈیکل سٹور","شکیل عباس","0333-6202273","32202-8783395-7"],["شہریار کویت حمام","علی رضا","0340-3313430","32202-6944755-5"],["لاہوری نان شاپ","محمد صفدر","0345-7815187","32202-6994097-3"],["رائل ٹائیلرز اینڈ کلاتھ","محمد رفیق","0303-663334","32202-8688674-1"],["الرشید لیب","محمد رشید","0348-1140299","32202-5762001-3"],["سٹی لیب","عبدالغفور","0300-8260961","32202-2755062-7"]];
+const TAJRAN_B5_PAGES = 6;
+function prepTajranB5(){
+  try{
+    const have = new Set();
+    [...store.services, ...store.doctors].forEach(x=>{ const a = String(x.whatsapp||'').replace(/\D/g,''); if(a) have.add(a); const w2 = x.more && x.more.wa2; if(w2) have.add(String(w2).replace(/\D/g,'')); });
+    const EXTRA = [['testingLab',['لیب']],['beautyParlor',['حمام']],['restaurant',['فوڈ','سموسہ','آئس کریم','نان']]];
+    const b5Cat = t=>{ let k = pdCat(t); if(k) return k; const n = impNorm(t); for(const [c, ws] of EXTRA){ if(CATEGORY_META[c] && ws.some(w=>n.includes(impNorm(w)))) return c; } return ''; };
+    const seen = new Set(), out = [], skip = [];
+    TAJRAN_B5.forEach(r=>{
+      const shop = String(r[0]||'').trim(), owner = String(r[1]||'').trim(), label = shop || owner;
+      const ph = pdPhones(String(r[2]||''));
+      if(!ph.good.length){ skip.push([label, ph.bad.length ? 'موبائل ادھورا / خراب: ' + ph.bad.join('، ') : 'موبائل نہیں']); return; }
+      const keep = []; let dF = 0, dA = 0;
+      ph.good.forEach(n=>{ const d = n.replace(/\D/g,''); if(keep.some(x=>x.d===d)) return; if(seen.has(d)){ dF++; return; } if(have.has(d)){ dA++; return; } keep.push({n, d}); });
+      if(!keep.length){ skip.push([label, dF ? 'فائل میں دہرا نمبر' : 'ایپ میں پہلے سے موجود']); return; }
+      keep.forEach(x=>seen.add(x.d));
+      let key = (shop && b5Cat(shop)) || UNASSIGNED_KEY;
+      if(key !== UNASSIGNED_KEY && !CATEGORY_META[key]) key = UNASSIGNED_KEY;
+      const cn = pdCnic(String(r[3]||''));
+      out.push({category:key, nameUr: shop || owner, nameEn:'', type:'', intro: (shop && owner) ? ('دکاندار: ' + owner) : '', address:'', whatsapp: keep[0].n,
+        country:'پاکستان', province:'پنجاب', district:'لیہ', city:'فتح پور', area:'', stage:'basic', _cnic: cn.length === 13 ? cn : ''});
+    });
+    importReady = out;
+    const nC = out.filter(x=>x._cnic).length, byCat = {}; out.forEach(x=>{ byCat[x.category] = (byCat[x.category]||0)+1; });
+    const lab = k=> k === UNASSIGNED_KEY ? '❓ غیر مختص (بعد میں خود چن لیں)' : `${(CATEGORY_META[k] && CATEGORY_META[k].emoji) || '🏷️'} ${escapeHtml((CATEGORY_META[k] && CATEGORY_META[k].ur) || k)}`;
+    const box = document.getElementById('importPreview');
+    box.innerHTML = `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;">
+      <b>📋 انجمن تاجران — بلاک ۵ (صفحہ ۱ سے ${urduDigits(TAJRAN_B5_PAGES)}) — نئے کارڈ: ${urduDigits(out.length)}</b> &nbsp;(🪪 شناختی کارڈ والے: ${urduDigits(nC)})<br>
+      ${Object.keys(byCat).sort((p,q)=>(p===UNASSIGNED_KEY)-(q===UNASSIGNED_KEY) || byCat[q]-byCat[p]).map(k=>`${lab(k)}: ${urduDigits(byCat[k])}`).join('<br>')}
+      ${skip.length ? `<hr style="border:none;border-top:1px solid #d1fae5;margin:6px 0;"><b>چھوڑے گئے: ${urduDigits(skip.length)}</b><br>${skip.map(s=>`• ${escapeHtml(s[0])} — ${escapeHtml(s[1])}`).join('<br>')}` : ''}
+    </div>
+    ${out.length ? `<button class="btn block accent" style="margin-top:10px;" id="importGoBtn" onclick="runImport(true)">📥 ${urduDigits(out.length)} کارڈ اپنی اپنی کیٹگری میں امپورٹ کریں</button>` : '<div class="cp-hint" style="margin-top:6px;">✓ سب ریکارڈ پہلے ہی ایپ میں ہیں</div>'}
+    <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
+    document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
+  }catch(e){ showToast('⚠️ ' + (e.message||e)); }
+}
 </script>
 </body>
 </html>
