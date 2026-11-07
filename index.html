@@ -56,14 +56,14 @@
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js">
 <style>
   @font-face{
-    font-family:MCSDigits,'Jameel Noori Nastaleeq Regular';
+    font-family:'Jameel Noori Nastaleeq Regular';
     src:url('./JameelNooriNastaleeqRegular.ttf') format('truetype');
     font-weight:normal;
     font-style:normal;
     font-display:swap;
   }
   @font-face{
-    font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda';
+    font-family:'Jameel Noori Nastaleeq Kasheeda';
     src:url('./JameelNooriNastaleeqKasheeda.ttf') format('truetype');
     font-weight:normal;
     font-style:normal;
@@ -336,8 +336,8 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .entry-card .txt{width:100%;}
   .entry-count{position:absolute;left:14px;top:50%;transform:translateY(-50%);
     background:#ffffff;color:#000000;direction:ltr;unicode-bidi:isolate;
-    font-family:MCSDigits,'Arial Black','Arial Bold',Gadget,sans-serif;
-    font-size:14px;font-weight:900;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
+    font-family:MCSDigits,Arial,Helvetica,sans-serif;
+    font-size:13px;font-weight:700;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
     min-width:34px;height:34px;padding:0 10px;box-sizing:border-box;white-space:nowrap;
     border:1px solid #d8dee4;box-shadow:0 2px 5px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.7);}
   /* MCS2310FR041: ہوم کے بڑے بٹنوں کا عنوان کشیدہ میں */
@@ -567,8 +567,8 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .cat-item.soon{opacity:.6;}
   .cat-count{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
     background:#ffffff;color:#000000;direction:ltr;unicode-bidi:isolate;
-    font-family:MCSDigits,'Arial Black','Arial Bold',Gadget,sans-serif;
-    font-size:11px;font-weight:900;border-radius:999px;display:inline-flex;align-items:center;white-space:nowrap;
+    font-family:MCSDigits,Arial,Helvetica,sans-serif;
+    font-size:10.5px;font-weight:700;border-radius:999px;display:inline-flex;align-items:center;white-space:nowrap;
     justify-content:center;min-width:22px;height:22px;padding:0 7px;box-sizing:border-box;
     border:1px solid #d8dee4;
     box-shadow:0 2px 4px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.7);}
@@ -4079,9 +4079,16 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA206";
+const APP_VERSION = "MCS0711SA209";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
+/* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
+const UPDATE_NOTES = {
+  "MCS0711SA209": "✅ نماز کے اوقات، ہوم کے ڈبے اور کیٹگری کے ہندسے Arial میں چھوٹے اور فِٹ — ہر زوم پر کوئی ڈبہ باہر نہیں نکلتا، ایک دوسرے پر نہیں چڑھتا"
+};
+const _OLD_NOTES = {
+  "MCS0711SA207": "✅ کارڈ پر «رجسٹریشن مکمل کریں» بٹن اب گول بٹنوں کے نیچے نہیں چھپتا • PDF امپورٹ رکے تو وجہ صاف لکھی آئے گی • ہر جگہ انگلش ہندسے (0-9)"
+};
+const UPDATE_NOTE = UPDATE_NOTES[APP_VERSION] || "";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
 
 /* ---------- Location data: Country > Province > District (fixed geography) ----------
@@ -13877,6 +13884,8 @@ function ccPrayerTimes(date, lat, lon){
   return out;
 }
 const ccHM = d => d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+/* MCS0711SA209: وقت اور AM/PM الگ الگ تاکہ ڈبے میں پورا آئے */
+const ccHMs = d => { const m = ccHM(d).match(/^(\d+:\d+)\s*(AM|PM)$/i); return m ? `<span class="tm">${m[1]}</span><em>${m[2].toUpperCase()}</em>` : ccHM(d); };
 function ccNamazNow(){
   const c = ccCoords(); if(!c) return null;
   const now = new Date(), t = ccPrayerTimes(now, c.lat, c.lon), tm = ccPrayerTimes(new Date(now.getTime()+864e5), c.lat, c.lon), ty = ccPrayerTimes(new Date(now.getTime()-864e5), c.lat, c.lon);
@@ -13889,11 +13898,11 @@ function ccNamazShow(){
   const n = ccNamazNow();
   /* MCS0111SU112: تاریخوں اور ریٹ کے ساتھ باری باری پانچوں نمازوں کی قطار — اس وقت کی نماز نارنجی */
   const pr = document.getElementById('ccPrays');
-  if(pr){ const h = n ? NAMAZ.filter(x=>x[0] !== 'sunrise').map(([k,u,e])=>`<div class="cc-box${n.cur[0] === k ? ' now' : ''}"><span class="cc-k">${u} <i>${e}</i></span><b>${ccHM(n.t[k])}</b></div>`).join('')
+  if(pr){ const h = n ? NAMAZ.filter(x=>x[0] !== 'sunrise').map(([k,u,e])=>`<div class="cc-box${n.cur[0] === k ? ' now' : ''}"><span class="cc-k">${u} <i>${e}</i></span><b>${ccHMs(n.t[k])}</b></div>`).join('')
       : '<div class="cc-box" style="grid-column:1/-1"><b>🕌 لوکیشن آن کریں یا شہر چنیں — نماز کے اوقات آ جائیں گے</b></div>'; if(pr.innerHTML !== h) pr.innerHTML = h; }
   /* MCS0311TU126 (ڈیزائن 2): ہوم کی الگ نماز پٹی */
   const d2 = document.getElementById('d2PrayList');
-  if(d2){ const h2 = n ? NAMAZ.filter(x=>x[0] !== 'sunrise').map(([k,u,e])=>`<div class="d2-p${n.cur[0] === k ? ' now' : ''}"><small>${e} <i>${u}</i></small><b>${ccHM(n.t[k])}</b></div>`).join('')
+  if(d2){ const h2 = n ? NAMAZ.filter(x=>x[0] !== 'sunrise').map(([k,u,e])=>`<div class="d2-p${n.cur[0] === k ? ' now' : ''}"><small>${e} <i>${u}</i></small><b>${ccHMs(n.t[k])}</b></div>`).join('')
       : '<div class="d2-p0">📍 شہر چنیں یا لوکیشن آن کریں — نماز کے اوقات آ جائیں گے</div>'; if(d2.innerHTML !== h2) d2.innerHTML = h2; }
   if(!n){ el.textContent = ''; return; }
   const nm = k => NAMAZ.find(x => x[0] === k);
@@ -14844,6 +14853,86 @@ body .doc-card .doc-side a,body .doc-card .doc-side button{width:30px !important
 body .doc-card .doc-side svg{width:14px !important;height:14px !important}
 body .doc-card .doc-foot{order:5 !important;flex:1 1 100% !important;margin:0 !important;padding:5px 0 0 !important;border-top:1px solid rgba(255,255,255,.16) !important}
 body .doc-card .doc-pending-line{order:6 !important;flex:1 1 100% !important}
+
+/* ===== MCS0711SA209 (مالک کا حکم): نماز کی پٹی، ہیرو اور ڈبے ہر زوم (100%-200%) پر فِٹ؛ ہندسے Arial، چھوٹے اور باریک ===== */
+:root{--zf:calc(1 - (var(--ui-zoom,1) - 1) * .5);}
+body.d2 .d2-prays{gap:4px;padding:6px 6px;margin-left:8px;margin-right:8px;overflow:hidden;}
+body.d2 .d2-pt{padding:0 4px;max-width:27%;min-width:0;}
+body.d2 .d2-pt span{font-size:calc(20px * var(--zf));}
+body.d2 .d2-pt b{font-size:calc(11px * var(--zf));white-space:nowrap;}
+body.d2 .d2-pt small{font-size:calc(8.5px * var(--zf));white-space:nowrap;}
+body.d2 .d2-pl{grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;}
+body.d2 .d2-p{container-type:inline-size;min-width:0;overflow:hidden;padding:3px 0;border-radius:9px;}
+body.d2 .d2-p small{font:700 min(10px,15cqw) Arial,sans-serif;white-space:nowrap;}
+body.d2 .d2-p small i{font-family:inherit;font-size:min(11px,16cqw);}
+body.d2 .d2-p b{display:flex;flex-direction:column;align-items:center;gap:0;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:min(12px,30cqw);line-height:1.15;white-space:nowrap;direction:ltr;}
+body.d2 .d2-p b .tm{font-size:min(12px,30cqw);}
+body.d2 .d2-p b em{font-style:normal;font-weight:700;font-size:min(8.5px,21cqw);opacity:.8;line-height:1.1;}
+@media (min-width:700px){ body.d2 .d2-p small{font-size:12px;} body.d2 .d2-p b,body.d2 .d2-p b .tm{font-size:15px;} body.d2 .d2-p b em{font-size:10px;} }
+.cc-prays .cc-box b{display:flex;flex-direction:column;align-items:center;font-weight:700;} .cc-prays .cc-box b em{font-style:normal;font-size:8px;opacity:.8;}
+body.d2 .qt-grid{grid-template-columns:repeat(auto-fit,minmax(49px,1fr)) !important;gap:4px !important;margin:0 8px 10px !important;}
+body.d2 .qt{container-type:inline-size;min-width:0;overflow:hidden;padding:8px 1px 5px;}
+body.d2 .qt-ic{font-size:min(27px,42cqw) !important;}
+body.d2 .qt-t b{white-space:normal !important;overflow-wrap:anywhere;font-size:min(12.5px,19cqw) !important;line-height:1.5 !important;}
+body.d2 .qt-t small{font:700 min(10.5px,13.5cqw) Arial,sans-serif !important;white-space:nowrap;}
+body.d2 .qt-n{font:700 10px/17px Arial,sans-serif !important;}
+@media (min-width:700px){ body.d2 .qt-grid{grid-template-columns:repeat(5,minmax(0,1fr)) !important;} body.d2 .qt-ic{font-size:32px !important;} body.d2 .qt-t b{font-size:15px !important;} body.d2 .qt-t small{font-size:12px !important;} }
+@media (max-width:699px){
+  .hero .h2{grid-template-columns:minmax(0,1.15fr) minmax(0,.8fr) minmax(0,1.1fr);}
+  .h2-l,.h2-d,.h2-q,.h2-w,.h2-r,.h2-rt{min-width:0;max-width:100%;}
+  .h2-title{font-size:calc(19px * var(--zf));}
+  .h2-d>div{font-size:calc(12px * var(--zf));}
+  .h2-d>div:first-child{font-size:calc(11px * var(--zf));}
+  .h2-wel small{font-size:calc(10px * var(--zf));}
+  .h2-wel b{white-space:normal;font-size:calc(13px * var(--zf));}
+  .h2 .cc-city b{font-size:calc(15px * var(--zf)) !important;}
+  .h2 .cc-wx{font-size:calc(11.5px * var(--zf));white-space:normal;}
+  .h2 .cc-qibla .cq-dial{width:calc(52px * var(--zf)) !important;height:calc(52px * var(--zf)) !important;}
+  .h2 .cc-qibla .cq-t{font-size:calc(10.5px * var(--zf)) !important;white-space:nowrap;}
+  .h2-r{flex-wrap:wrap;justify-content:flex-end;}
+  .h2-logo{width:calc(42px * var(--zf));height:calc(42px * var(--zf));}
+  .h2 .hero-btn-share{width:calc(32px * var(--zf)) !important;height:calc(32px * var(--zf)) !important;}
+}
+/* MCS0711SA209: Business Promotion پٹی اور صفحے کی چوڑائی */
+.bp-hd{flex-wrap:wrap;overflow:hidden;row-gap:2px;}
+.bp-hd b{font-size:calc(13px * var(--zf));min-width:0;}
+.bp-hd span{white-space:normal !important;min-width:0;flex:1 1 auto;text-align:center;font-size:calc(14px * var(--zf)) !important;line-height:1.6;}
+.bp-on{font-size:calc(12px * var(--zf)) !important;}
+html,body{max-width:100%;overflow-x:hidden;}
+/* MCS0711SA209: ٹائلز کے بیج/پلس، تاریخ والی پٹیاں، سرچ ذیلی سطر */
+body.d2 .qt-ic{font-size:min(24px,36cqw) !important;margin-top:2px;}
+body.d2 .qt-n,body.d2 .qt:has(.qt-plus) .qt-n{left:3px !important;top:3px !important;height:15px !important;line-height:15px !important;min-width:15px !important;font:700 9.5px/15px Arial,sans-serif !important;padding:0 4px !important;}
+body.d2 .qt-plus{top:3px !important;bottom:auto !important;left:auto !important;right:3px !important;width:16px !important;height:16px !important;font-size:11px !important;line-height:1 !important;padding:0 !important;display:flex;align-items:center;justify-content:center;}
+@media (max-width:699px){
+  .hero .h2{grid-template-columns:minmax(0,1.4fr) minmax(0,.8fr) minmax(0,1fr);}
+  .h2-d>div{font-size:calc(11.5px * var(--zf));padding:1px 6px;}
+  .h2-d>div:first-child{font-size:calc(10.5px * var(--zf));}
+  .h2 .cc-qibla .cq-dial{width:calc(46px * var(--zf)) !important;height:calc(46px * var(--zf)) !important;}
+}
+.sr-ht small{white-space:normal !important;overflow:visible !important;text-overflow:clip !important;line-height:1.5;}
+.sr-ht{min-width:0;}
+/* MCS0711SA209: تاریخ کی پٹیاں اور قبلہ ڈبہ ایک دوسرے پر نہ چڑھیں */
+@media (max-width:699px){
+  .hero .h2{grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) minmax(0,.95fr);}
+  .h2-d{container-type:inline-size;}
+  .h2-d>div{font-size:min(calc(11.5px * var(--zf)),9.6cqw) !important;padding:1px 5px;}
+  .h2-d>div:first-child{font-size:min(calc(10.5px * var(--zf)),9cqw) !important;}
+  .h2 .cc-qibla{max-width:100%;box-sizing:border-box;padding:3px 3px !important;}
+  .h2 .cc-qibla .cq-t{font-size:calc(9.5px * var(--zf)) !important;padding:0 5px;}
+  .h2-q{min-width:0;overflow:hidden;}
+}
+/* MCS0711SA209: ہجری تاریخ مکمل + قبلہ پٹی */
+@media (max-width:699px){
+  .h2-d>div{font-size:min(calc(11px * var(--zf)),8.2cqw) !important;padding:1px 4px;text-overflow:clip !important;}
+  .h2-d>div:first-child{font-size:min(calc(10.5px * var(--zf)),8.6cqw) !important;}
+  .h2 .cc-qibla .cq-t{font-size:calc(8.8px * var(--zf)) !important;padding:0 3px;}
+  .h2 .cc-qibla .cq-t b{font-size:calc(10px * var(--zf)) !important;}
+}
+/* MCS0711SA209: کیٹگری کے ہندسے چھوٹے اور باریک؛ اوپر کی ٹول پٹی لپٹ کر پوری نظر آئے */
+.cat-grid .cat-item .cat-count,.cat-item .cat-count{font-size:calc(12px * var(--zf)) !important;font-weight:700 !important;min-width:26px !important;height:22px !important;padding:0 6px !important;border-width:1.5px !important;text-shadow:none !important;}
+.entry-count{font-size:calc(12px * var(--zf)) !important;font-weight:700 !important;min-width:28px !important;height:28px !important;}
+.cat-bar{flex-wrap:wrap !important;overflow-x:visible !important;row-gap:5px;}
+.cat-bar .cb-grp{max-width:100%;}
 </style>
 </body>
 </html>
