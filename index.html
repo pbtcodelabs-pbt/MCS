@@ -2478,8 +2478,25 @@ body.cdOn{padding-top:30px}
 .cp-ver{margin-top:14px;text-align:center;font:700 12px Inter,Arial;color:var(--muted);direction:ltr;user-select:none;-webkit-tap-highlight-color:transparent;cursor:default;padding:6px}
 .cp-ver i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-left:6px;vertical-align:1px}
 .cp-ver i.off{background:#ef4444}
-.h2-type{cursor:pointer}
+.h2-type{cursor:default;pointer-events:none}   /* MCS0711SA194: اوپر کا «Developer» صرف نشان — دبانے پر کچھ نہیں کھلتا؛ سب کچھ My Account میں */
 .pf-mine{display:block;width:100%;margin:10px 0 4px;padding:11px;border-radius:14px;border:1.5px dashed #0f766e;background:#ecfdf5;color:#0f766e;font-weight:800;font-size:15px;cursor:pointer}
+
+/* MCS0711SA194: دو تصویریں — دکان + سیلفی */
+.pf-slots2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pf-s2{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.pf-s2 b{font-size:13px}.pf-s2 small{font-size:11px;color:var(--muted,#64748b);line-height:1.5}
+.pf-s2 .pf-slot{width:100%;aspect-ratio:4/3}
+.pf-s2 .pf-slot.selfie{width:62%;aspect-ratio:1;border-radius:50%}
+.pf-reuse{border:1px solid #16a34a;background:#f0fdf4;color:#166534;border-radius:10px;padding:4px 8px;font-size:12px;cursor:pointer}
+#svcPfPhotoBox{margin:10px 0;padding:10px;border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc}
+.pf-shop{margin:0 0 12px;padding:6px;border-radius:22px;background:linear-gradient(135deg,#f5b83d,#0f766e);box-shadow:0 6px 16px rgba(0,0,0,.22)}
+.pf-shop img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:17px;background:#e2e8f0;border:3px solid #fff}
+.pf-ic.sf{border-radius:50%;overflow:hidden;padding:0;background:#fff;border:3px solid #f59e0b;width:64px;height:64px}
+.pf-ic.sf img{width:100%;height:100%;object-fit:cover;display:block}
+.doc-card .doc-avatar.sf{width:48px !important;height:48px !important;min-width:48px !important;border-radius:50% !important;overflow:hidden;padding:0 !important;background:#fff !important;border:2.5px solid #f59e0b !important}
+.doc-card .doc-avatar.sf img{width:100%;height:100%;object-fit:cover;display:block}
+.doc-card .doc-avatar.sf svg,.doc-card .doc-avatar.sf span{display:none !important}
+.pt-av img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);display:block;margin:0 auto}
 </style>
 <script>window.APP_UPD_LANG='ur';</script>
 <script>
@@ -3357,6 +3374,7 @@ body.cdOn{padding-top:30px}
     <h3>⭐ اپنی تفصیل سنواریں</h3>
     <div style="clear:both;"></div>
     <input type="file" accept="image/*" id="pfImgIn" hidden onchange="pfImgPicked(this)">
+    <input type="file" accept="image/*" capture="user" id="pfSelfieIn" hidden onchange="pfSelfiePicked(this)">
     <div id="pfEFields"></div>
     <button type="button" class="btn block accent" id="pfSaveBtn" onclick="pfSave()">💾 ممبرشپ محفوظ کریں</button>
     <div class="cp-hint" id="pfSaveMsg" style="margin-top:6px;text-align:center"></div>
@@ -3436,7 +3454,7 @@ body.cdOn{padding-top:30px}
           <button class="btn accent" style="flex:1;" onclick="closeModal('controlPanelModal'); setTimeout(()=>{ const b=document.getElementById('mpBar'); if(b) b.scrollIntoView({behavior:'smooth', block:'start'}); }, 250)">⭐ میری ممبرشپس</button>
           <button class="btn secondary" style="flex:1;" onclick="closeModal('controlPanelModal'); agOpen()">🤝 MCS ایجنٹ</button>
         </div>
-        <button class="btn block" id="cpDevBtn" style="display:none;margin-top:8px;background:linear-gradient(135deg,#475569,#1e293b);color:#fff" onclick="closeModal('controlPanelModal'); openDevPanel()">🛠️ ڈویلپر پینل</button>
+        <!-- MCS0711SA194: ڈویلپر پینل کا بٹن یہاں سے ہٹایا — My Account ← «کیٹگری، امپورٹ، شیٹ» -->
       </div>
       <div class="theme-row"><b>🌙 رات کا رنگ <small>Theme</small></b>
         <div class="theme-seg" id="themeSeg">
@@ -3573,6 +3591,10 @@ body.cdOn{padding-top:30px}
           <input id="nlDist" type="text" placeholder="ضلع" oninput="nlReparse()" style="flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid #d8dee4;">
         </div>
         <button class="btn block accent" onclick="prepTajran()">📋 انجمن تاجران فتح پور کی لسٹ — خود کیٹگریوں میں تقسیم (فائل یا کیٹگری چننے کی ضرورت نہیں)</button>
+        <div class="cp-hint" style="margin:10px 0 4px;text-align:center;">یا کوئی بھی نئی لسٹ — PDF</div>
+        <button class="btn block accent" onclick="document.getElementById('pdfFileInput').click()">📄 PDF لسٹ چنیں — نام، موبائل، شناختی کارڈ، کیٹگری خود</button>
+        <input type="file" id="pdfFileInput" accept=".pdf,application/pdf" style="display:none;" onchange="pdfChosen(this)">
+        <div class="cp-hint" style="margin:4px 0 0;text-align:center;font-size:12px;">دکان کا نام جوں کا توں • مالک بغیر ولدیت • خراب / ادھورے / دہرے موبائل نہیں • دو نمبر: ایک مین، ایک واٹس ایپ</div>
         <div class="cp-hint" style="margin:8px 0 4px;text-align:center;">یا نئی لسٹ</div>
         <button class="btn block secondary" onclick="document.getElementById('importFileInput').click()">📂 فائل چنیں (Excel / CSV)</button>
         <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv,.txt" style="display:none;" onchange="nlFileChosen(this)">
@@ -4005,7 +4027,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA193";
+const APP_VERSION = "MCS0711SA196";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -4264,10 +4286,10 @@ async function mcsSha256(t){ const b = await crypto.subtle.digest('SHA-256', new
    ممبرشپ کی پہچان = فون + کاروبار کی قسم (ایک نمبر کی کئی دکانیں، ہر ایک کی الگ ممبرشپ)؛ سرور /pclaim /pget /psave /pimg /plist /padmin ===== */
 const PF_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
 const MP_FREE_DAYS = 15;          /* مفت آزمائش — ممبرشپ حصہ پہلی بار بھرنے کے دن سے، ہر نمبر+قسم کو ایک بار */
-const PF_MAX_IMGS = 4;
+const PF_MAX_IMGS = 2;   /* MCS0711SA194: صرف دو تصویریں — 0 = دکان (سامنے سے، تفصیل میں بڑی)، 1 = سیلفی (کارڈ پر گول) */
 let pfAct = {}; try{ pfAct = JSON.parse(localStorage.getItem('mcsPfList')||'{}') || {}; }catch(e){}
 let pfFeat = {}; try{ pfFeat = JSON.parse(localStorage.getItem('mcsPfFeat')||'{}') || {}; }catch(e){}
-function pfPhotosOn(){ return !!pfFeat.photos; }
+function pfPhotosOn(){ return true; }   /* MCS0711SA194: دو تصویروں کی سہولت ہمیشہ چالو */
 function pfCatTag(kind, rec){ const c = kind==='doctor' || !rec.category ? 'doctor' : String(rec.category); let h = 0; for(let i=0;i<c.length;i++) h = (h*31 + c.charCodeAt(i)) >>> 0; return h.toString(36).slice(0, 7); }
 function pfKindOf(rec){ return rec && rec.category ? 'service' : 'doctor'; }
 function pfKeyOf(rec, kind){ const k = rec ? stKey(rec.whatsapp) : ''; return k ? k + '_' + pfCatTag(kind || pfKindOf(rec), rec) : ''; }
@@ -4358,8 +4380,9 @@ function pfHtml(c){
   const p = c.prof || {}, d = p.data || {}, more = c.rec.more || {};
   const owner = pfIsOwner(c.rec), adm = isAdminSignedIn, live = pfActive(c.rec);
   const showFull = live || owner || adm;
-  const imgs = (showFull && (pfPhotosOn() || adm) ? (p.imgs||[]) : []);
-  const gal = imgs.length ? `<div class="pf-gal">${imgs.map(x=>`<img data-pfimg="${escapeAttr(x.id)}" data-ts="${x.ts}" alt="">`).join('')}</div>` : '';
+  const shopImg = showFull ? (p.imgs||[]).find(x=>String(x.id).split('_').pop() === '0') : null;   /* MCS0711SA194: دکان کی بڑی تصویر خوبصورت فریم میں */
+  const gal = shopImg ? `<div class="pf-shop"><img data-pfimg="${escapeAttr(shopImg.id)}" data-ts="${shopImg.ts}" alt=""></div>` : '';
+  const sfThumb = showFull && more.selfie ? more.selfie : '';
   const num = normalizePkNumber(r.whatsapp||'');
   const phones = [num, more.wa2].concat(d.phones||[]).filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i);
   const prow = ph=>{ const dd = String(ph).replace(/[^0-9]/g,''); return `<div class="pf-row"><span>${escapeHtml(ph)}</span><a class="c" href="tel:${dd}">📞 کال</a><a href="https://wa.me/92${dd.replace(/^0/,'')}" target="_blank" rel="noopener">💬 واٹس ایپ</a></div>`; };
@@ -4370,7 +4393,7 @@ function pfHtml(c){
   const pend = !!p.pend;
   return (pend && (owner || adm) ? `<div class="pf-lock" style="background:#fffbeb;border-color:#f59e0b">⏳ ${adm ? 'یہ کاروبار / پروفیشن دکاندار نے خود جوڑا ہے — آپ کی منظوری کا انتظار۔ منظور کریں تو 15 دن مفت شروع اور سب کو نظر آئے گی۔' : 'آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے۔ نیچے «✏️ تفصیل سنواریں» سے تفصیل، ریٹ، اوقات پوری بھریں — منظور ہوتے ہی 15 دن مفت سب کو نظر آئے گی۔'}${adm ? `<div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="pf-adm" style="background:#16a34a;color:#fff" onclick="pfAdmin('approve')">✅ منظور — 15 دن شروع</button><button type="button" class="pf-adm red" onclick="pfAdmin('reject')">❌ ابھی نہیں</button></div>` : ''}</div>` : '')
     + (owner && !live && p.until && !pend ? `<div class="pf-lock">🔒 آپ کی پوری تفصیل لوگوں سے چھپی ہوئی ہے — لوگوں کو صرف سادہ کارڈ دکھ رہا ہے۔<br><b>تفصیل ڈویلپر کو بھیجیں — جاری ہوتے ہی فوراً دوبارہ چالو</b> (سب کچھ محفوظ ہے)<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں</button></div>` : '')
-    + gal + `<div class="pf-top"><span class="pf-ic">${cm.emoji}</span><div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${live ? '<span class="pf-star">⭐ نمایاں</span>' : ''}</div>
+    + gal + `<div class="pf-top">${sfThumb ? `<span class="pf-ic sf"><img src="${escapeAttr(sfThumb)}" alt=""></span>` : `<span class="pf-ic">${cm.emoji}</span>`}<div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${live ? '<span class="pf-star">⭐ نمایاں</span>' : ''}</div>
       <div class="pf-sub">${escapeHtml([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}${r.nameEn ? `<br><span style="font-family:Arial;direction:ltr">${escapeHtml(r.nameEn)}</span>` : ''}</div></div></div>`
     + (st ? `<div class="pf-stats"><div><b>${st.view}</b><small>👀 دیکھا</small></div><div><b>${st.call}</b><small>📞 کالیں</small></div><div><b>${st.wa}</b><small>💬 واٹس ایپ</small></div><span>پچھلے ${st.days} دن میں — ایپ سے</span></div>` : '')
     + (showFull && (d.about || own.rest || more.services) ? `<div class="pf-sec"><h4>📝 تفصیل</h4><p>${escapeHtml(d.about || [own.rest, more.services].filter(Boolean).join('\n'))}</p></div>` : '')
@@ -4381,7 +4404,7 @@ function pfHtml(c){
       ${more.email ? `<a class="pf-lnk" href="mailto:${escapeAttr(more.email)}">✉️ ${escapeHtml(more.email)}</a>` : ''}${(d.links||[]).map(l=>`<a class="pf-lnk" href="${escapeAttr(l)}" target="_blank" rel="noopener">🌐 ${escapeHtml(l)}</a>`).join('')}</div>`
     + ((owner || adm) && c.rk ? `<div class="pf-id">🆔 کاروبار ID: <b dir="ltr">${escapeHtml(c.rk)}</b><button type="button" onclick="agCopy('${escapeAttr(c.rk)}')">📋 کاپی</button></div>` : '')
     + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ ممبرشپ فعال — ${left} دن باقی` : '⚠️ ممبرشپ کی مدت ختم — جاری رکھنے کے لیے تفصیل بھیجیں'}</div>` : ''}
-        ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں — 15 دن مفت'} — تفصیل، ریٹ، اوقات${pfPhotosOn() || adm ? '، تصویریں' : ''}</button>` : ''}
+        ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں — 15 دن مفت'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
         ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">${mcsPlayOk() ? '⭐ ممبرشپ ایک سال کے لیے جاری رکھیں — Google Play' : '📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں'}</button>` : ''}
         ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('year')">➕ ایک سال بڑھائیں</button><button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ ممبرشپ ختم کریں</button>` : '') : ''}
         ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove('${escapeAttr(c.rk)}')">✖ اس فون کی «میرا کاروبار / پروفیشن» سے ہٹائیں</button>` : ''}</div>` : '')
@@ -4424,8 +4447,8 @@ async function pfAdmin(act){
 const pfEd = {};   /* pre → {imgs:[...], del:{}, slot} */
 function pfFieldsHtml(pre){
   return (pre === 'pfE' ? `<div class="field"><label>🤝 ایجنٹ کا ریفرل کوڈ <small>(اگر کسی ایجنٹ نے بتایا ہو — ورنہ خالی چھوڑیں)</small></label><input type="text" id="pfERef" maxlength="20" dir="ltr" placeholder="MS-001"><div class="ref-self" data-for="pfERef"></div></div>` : '') + `<div class="pf-photos" id="${pre}PhotoBox">
-      <div class="pf-h">📸 دکان / کام کی تصویریں (${PF_MAX_IMGS} تک) <small id="${pre}PhotoNote"></small></div>
-      <div class="pf-slots" id="${pre}Slots"></div></div>
+      <div class="pf-h">📸 دو تصویریں <small id="${pre}PhotoNote">سیلفی کارڈ پر گول، دکان کی تصویر تفصیل میں بڑی</small></div>
+      <div class="pf-slots2" id="${pre}Slots"></div></div>
     <div class="field"><label>📝 تفصیل — آپ کیا کرتے ہیں، کیا کیا ملتا ہے</label><textarea id="${pre}About" rows="3" maxlength="1500" placeholder="مثلاً: میں ہیئر ڈریسر ہوں — بہترین کٹنگ، شیو، فیشل۔ بچوں کی کٹنگ خاص۔"></textarea></div>
     <div class="pf-h">🏷️ خدمات / چیزیں اور ریٹ <small>(20 تک)</small></div>
     <div id="${pre}Items"></div>
@@ -4435,16 +4458,13 @@ function pfFieldsHtml(pre){
 }
 function pfFieldsFill(pre, prof, rec){
   const d = (prof && prof.data) || {};
-  pfEd[pre] = {imgs: Array.from({length:PF_MAX_IMGS}, ()=>null), del:{}, slot:0};
+  pfEd[pre] = {imgs: Array.from({length:PF_MAX_IMGS}, ()=>null), del:{}, slot:0, thumb:(rec && rec.more && rec.more.selfie) || '', thumbChanged:false};
   (prof && prof.imgs || []).forEach(x=>{ const slot = +String(x.id).split('_').pop(); if(slot >= 0 && slot < PF_MAX_IMGS) pfEd[pre].imgs[slot] = {id:x.id, ts:x.ts, src:'', changed:false}; });
   const set = (id, v)=>{ const e = document.getElementById(pre + id); if(e) e.value = v || ''; };
   set('About', d.about); set('Hours', d.hours); set('Off', d.off); set('Ref', d.ref && d.ref !== 'PBT' ? d.ref : '');
   if(pre === 'pfE'){ const rf = document.getElementById('pfERef'); if(rf){ const fld = rf.closest('.field'); if(fld) fld.style.display = (isAdminSignedIn || !(d.ref && d.ref !== 'PBT')) ? '' : 'none'; } }
   const box = document.getElementById(pre + 'Items'); box.innerHTML = '';
   (d.items && d.items.length ? d.items : [{},{}]).forEach(x=>pfAddItem(pre, x));
-  const pb = document.getElementById(pre + 'PhotoBox'), on = pfPhotosOn();
-  if(pb) pb.style.display = (on || isAdminSignedIn) ? '' : 'none';
-  const pn = document.getElementById(pre + 'PhotoNote'); if(pn) pn.textContent = on ? '' : '(ابھی صرف ایڈمن کو — سب کے لیے بند)';
   pfSlotsRender(pre);
   pfEd[pre].imgs.forEach(async (x, i)=>{ if(x && !x.src){ x.src = await pfImg(x.id, x.ts); pfSlotsRender(pre); } });
 }
@@ -4456,20 +4476,46 @@ function pfFieldsRead(pre){
   const S = pfEd[pre] || {imgs:[], del:{}};
   const imgs = {}; S.imgs.forEach((x,i)=>{ if(x && x.changed) imgs[i] = x.src; }); Object.keys(S.del||{}).forEach(i=>{ if(!S.imgs[i]) imgs[i] = null; });
   const filled = !!(data.about || data.hours || data.off || items.length || Object.keys(imgs).length);
-  return {data, imgs, filled};
+  return {data, imgs, filled, thumb:S.thumb || '', thumbChanged:!!S.thumbChanged};
 }
 function pfSlotsRender(pre){
   const S = pfEd[pre]; const box = document.getElementById(pre + 'Slots'); if(!S || !box) return;
-  box.innerHTML = S.imgs.map((x,i)=>`<div class="pf-slot" onclick="pfPickSlot('${pre}',${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot('${pre}',${i})">✖</i>` : '➕'}${i===0 ? '<b>پہلی</b>' : ''}</div>`).join('');
+  const L = [['🏪 دکان کی تصویر', 'سامنے سے دکان — تفصیل میں بڑی نظر آئے گی', 'shop'], ['🤳 اپنی سیلفی', 'گول فریم — کارڈ پر لگے گی', 'selfie']];
+  let saved = ''; try{ saved = localStorage.getItem('mcsSelfie') || ''; }catch(e){}
+  box.innerHTML = L.map((l, i)=>{ const x = S.imgs[i];
+    return `<div class="pf-s2"><div class="pf-slot ${l[2]}" onclick="pfPickSlot('${pre}',${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot('${pre}',${i})">✖</i>` : '➕'}</div><b>${l[0]}</b><small>${l[1]}</small>`
+      + (i === 1 && !x && saved ? `<button type="button" class="pf-reuse" onclick="pfUseSavedSelfie('${pre}')">↩️ پہلے والی اپنی سیلفی لگائیں</button>` : '') + `</div>`; }).join('');
 }
 let pfPickPre = '';
-function pfPickSlot(pre, i){ pfPickPre = pre; pfEd[pre].slot = i; document.getElementById('pfImgIn').click(); }
-function pfDelSlot(pre, i){ pfEd[pre].imgs[i] = null; pfEd[pre].del[i] = 1; pfSlotsRender(pre); }
+function pfPickSlot(pre, i){ pfPickPre = pre; pfEd[pre].slot = i; document.getElementById(i === 1 ? 'pfSelfieIn' : 'pfImgIn').click(); }
+function pfDelSlot(pre, i){ pfEd[pre].imgs[i] = null; pfEd[pre].del[i] = 1; if(i === 1){ pfEd[pre].thumb = ''; pfEd[pre].thumbChanged = true; } pfSlotsRender(pre); }
 async function pfImgPicked(inp){
   const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; const S = pfEd[pfPickPre]; if(!S) return;
   try{ let src = await adCompress(f, 1000, 0.72); if(src.length > 420000) src = await adCompress(f, 800, 0.6);
-    S.imgs[S.slot] = {src, changed:true}; delete S.del[S.slot]; pfSlotsRender(pfPickPre); }catch(e){ showToast('تصویر نہیں کھلی'); }
+    S.imgs[0] = {src, changed:true}; delete S.del[0]; pfSlotsRender(pfPickPre); }catch(e){ showToast('تصویر نہیں کھلی'); }
 }
+/* MCS0711SA194: سیلفی — بیچ سے چوکور کاٹ کر (چہرہ اوپر کی طرف)، بڑی (سرور کے لیے) اور چھوٹی (کارڈ کے لیے) */
+function pfSquare(src, size, q){
+  return new Promise((res, rej)=>{ const im = new Image(); im.onload = ()=>{
+    const s0 = Math.min(im.width, im.height), sx = (im.width - s0)/2, sy = (im.height - s0) * (im.height > im.width ? .25 : .5);
+    const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0,0,size,size); x.drawImage(im, sx, sy, s0, s0, 0, 0, size, size);
+    res(c.toDataURL('image/jpeg', q)); }; im.onerror = ()=>rej(new Error('img')); im.src = src; });
+}
+function pfFileUrl(f){ return new Promise((res, rej)=>{ const r = new FileReader(); r.onload = ()=>res(r.result); r.onerror = ()=>rej(new Error('read')); r.readAsDataURL(f); }); }
+async function pfSetSelfie(pre, srcAny){
+  const S = pfEd[pre]; if(!S) return;
+  const big = await pfSquare(srcAny, 480, .8), thumb = await pfSquare(srcAny, 120, .7);
+  S.imgs[1] = {src:big, changed:true}; delete S.del[1]; S.thumb = thumb; S.thumbChanged = true;
+  try{ localStorage.setItem('mcsSelfie', big); }catch(e){}
+  pfSlotsRender(pre);
+}
+async function pfSelfiePicked(inp){
+  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return;
+  try{ await pfSetSelfie(pfPickPre, await pfFileUrl(f)); }catch(e){ showToast('سیلفی نہیں کھلی'); }
+}
+async function pfUseSavedSelfie(pre){ let sv = ''; try{ sv = localStorage.getItem('mcsSelfie') || ''; }catch(e){} if(!sv) return; try{ await pfSetSelfie(pre, sv); }catch(e){} }
+/* ایجنٹ بنتے وقت جو سیلفی دی، وہ بھی اسی فون میں یاد رہے — کاروبار میں دوبارہ نہ مانگنی پڑے */
+async function selfieSaveLocal(d){ try{ localStorage.setItem('mcsSelfie', await pfSquare(d, 480, .8)); }catch(e){} }
 function pfAddItem(pre, x){
   const box = document.getElementById(pre + 'Items'); if(box.children.length >= 20){ showToast('20 سے زیادہ نہیں'); return; }
   const row = document.createElement('div'); row.className = 'pf-irow';
@@ -4492,6 +4538,7 @@ async function pfSubmit(kind, rec, pre){
   const j = await r.json(); if(!j.ok) throw new Error(j.error || 'net');
   if(!/^PBT/.test(data.ref) && data.ref !== oldRef){ try{ fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: data.ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(kind==='doctor' ? 'doctor' : rec.category)||{}).ur||'', city: rec.city||''})}).then(x=>x.json()).then(x=>{ if(x && x.ok === false && x.reason === 'bad_code') showToast('⚠️ ریفرل کوڈ «' + data.ref + '» نہیں ملا — درست کوڈ لکھیں یا خالی چھوڑیں', 5000); }).catch(()=>{}); }catch(e){} }
   if(pfAct[rk]) pfAct[rk].ts = j.ts; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
+  try{ const S = pfEd[pre]; if(S && S.thumbChanged){ rec.more = rec.more || {}; if(S.thumb) rec.more.selfie = S.thumb; else delete rec.more.selfie; S.thumbChanged = false; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); } }catch(e){}   /* MCS0711SA194 */
   return {ok:true};
 }
 async function pfEditOpen(){
@@ -7132,6 +7179,10 @@ async function buildShareCanvas(kind, item, opts){
   const ag = x.createLinearGradient(ax, ay, ax+90, ay+90); ag.addColorStop(0,'#ffd27a'); ag.addColorStop(1,'#f59e0b');
   x.fillStyle = ag; shareRoundRect(x, ax, ay, 90, 90, 24); x.fill();
   x.textAlign = 'center'; x.font = '54px "Segoe UI Emoji","Noto Color Emoji",sans-serif'; x.fillText(m.emoji||'🏷️', ax+45, ay+66);
+  /* MCS0711SA194: ممبر کی گول سیلفی — ایموجی کی جگہ */
+  try{ const sfu = (item.more && item.more.selfie && pfActive(item)) ? item.more.selfie : '';
+    if(sfu){ const si = await new Promise(r=>{ const im = new Image(); im.onload = ()=>r(im); im.onerror = ()=>r(null); im.src = sfu; setTimeout(()=>r(null), 1500); });
+      if(si){ x.save(); x.beginPath(); x.arc(ax+45, ay+45, 50, 0, 7); x.fillStyle = '#fff'; x.fill(); x.clip(); x.drawImage(si, ax-5, ay-5, 100, 100); x.restore(); x.strokeStyle = '#f59e0b'; x.lineWidth = 6; x.beginPath(); x.arc(ax+45, ay+45, 50, 0, 7); x.stroke(); } } }catch(e){}
   /* لکھائی — دائیں سے، ہر لائن کارڈ کے اندر سکڑ کر */
   const tx = ax - 26, maxW = tx - cardX - 40;
   let y = cardTop + 92; x.textAlign = 'right';
@@ -7698,10 +7749,11 @@ function docCardHtml(d, mode){
     const intl = '92' + digits.replace(/^0/,'');
     const sub = [d.specialty, d.hospital].filter(Boolean).map(escapeHtml).join('<span class="dot">•</span>');
     const nameUr = d.nameUr || d.name || '';
+    const sfOnD = pfActive(d) && d.more && d.more.selfie;
     return `
     <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}">${ewRib('doctor', d)}
       <div class="doc-toprow">
-      <div class="doc-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
+      <div class="doc-avatar${sfOnD ? ' sf' : ''}">${sfOnD ? `<img src="${escapeAttr(d.more.selfie)}" alt="">` : ''}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
       <div class="doc-body">
         <div class="doc-top">
           <div class="doc-name">${escapeHtml(nameUr)}${newBadge(d)}</div>
@@ -8445,6 +8497,7 @@ function svcMoreRead(){
   Object.entries(SVC_MORE).forEach(([k, id])=>{ const el = document.getElementById(id); const v = el ? el.value.trim() : ''; if(v) m[k] = v; });
   if(m.wa2) m.wa2 = normalizePkNumber(m.wa2);
   if(m.ref) m.ref = agNormCode(m.ref);
+  try{ const S = pfEd.svcPf; if(S && S.thumb) m.selfie = S.thumb; }catch(e){}   /* MCS0711SA194: کارڈ کی گول سیلفی (چھوٹی) */
   return m;
 }
 function svcMapHere(){
@@ -8579,6 +8632,7 @@ function svcApplyStage(id, pendingRec){
   hide(p1, st==='reg');
   hide(p2, st==='basic');
   hide([document.getElementById('svcPfBox')], st!=='full');
+  hide([document.getElementById('svcPfPhotoBox')], st==='basic');   /* MCS0711SA194: دو تصویریں رجسٹریشن (reg) اور مکمل (full) میں */
   hide([document.getElementById('svcCnicField')], st!=='reg');
   const introF = fieldOf('svcIntro');
   if(introF){
@@ -8872,10 +8926,11 @@ function svcCardHtml(s, meta){
     const num = normalizePkNumber(s.whatsapp||'');
     const digits = num.replace(/[^0-9]/g,'');
     const intl = '92' + digits.replace(/^0/,'');
+    const sfOn = pfActive(s) && s.more && s.more.selfie;   /* MCS0711SA194: ایک سال کے رجسٹرڈ ممبر کے کارڈ پر گول سیلفی */
     return `
     <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}">${ewRib('service', s)}
       <div class="doc-toprow">
-      <div class="doc-avatar"><span style="font-size:20px;">${meta.emoji}</span></div>
+      <div class="doc-avatar${sfOn ? ' sf' : ''}">${sfOn ? `<img src="${escapeAttr(s.more.selfie)}" alt="">` : `<span style="font-size:20px;">${meta.emoji}</span>`}</div>
       <div class="doc-body">
         <div class="doc-top"><div class="doc-name">${escapeHtml(s.nameUr)}${newBadge(s)}</div>${s.nameEn ? `<div class="doc-name-en">${escapeHtml(s.nameEn)}</div>` : ``}</div>
         ${splitOwnerIntro(s.intro).owner ? `<div class="doc-owner">👤 ${escapeHtml(splitOwnerIntro(s.intro).owner)}</div>` : ``}
@@ -9010,7 +9065,7 @@ function toggleAdminPasswordVisibility(){
 /* MCS0511TH156 (ہیلپ ڈیسک #83): ڈویلپر پینل — ایڈمن کے حصے یہاں منتقل؛ ورژن پر 7 ٹیپ یا «Developer» دبانے سے */
 function dpInit(){
   const body = document.getElementById('devPanelBody'); if(!body || body.dataset.ok) return;
-  ['adminLockedHint','adminStatsBox','adminPanelBox','adminAddCategoryBox','adminPfBox','adminSheetBox','adminNameFixBox','adminImportBox','cpContactBox'].forEach(id => { const e = document.getElementById(id); if(e) body.appendChild(e); });
+  ['adminLockedHint','adminImportBox','adminStatsBox','adminPanelBox','adminAddCategoryBox','adminPfBox','adminSheetBox','adminNameFixBox','cpContactBox'].forEach(id => { const e = document.getElementById(id); if(e) body.appendChild(e); });
   const tk = document.querySelector('#cpContent [onclick*="openTickerAdmin"]'); if(tk){ const c = tk.closest('.backup-card'); if(c) body.appendChild(c); }
   const sum = document.getElementById('cpDataSummary'); if(sum){ const f = sum.closest('.field'); if(f) body.appendChild(f); }
   const rs = document.querySelector('#cpContent [onclick="resetAllData()"]'); if(rs) body.appendChild(rs);
@@ -9027,9 +9082,9 @@ function cpAcctSync(){
   const v = document.getElementById('cpVer'); if(v) v.innerHTML = dpVerText();
 }
 let dpTaps = 0, dpTapT = 0;
-function dpVerTap(){ const now = Date.now(); if(now - dpTapT > 2500) dpTaps = 0; dpTapT = now; dpTaps++; if(dpTaps >= 7){ dpTaps = 0; if(!isAdminSignedIn) return; closeModal('controlPanelModal'); openDevPanel(); } }
+function dpVerTap(){ const now = Date.now(); if(now - dpTapT > 2500) dpTaps = 0; dpTapT = now; dpTaps = 0; /* MCS0711SA194: 7 ٹیپ ختم */ }
 function openDevPanel(){
-  if(!isAdminSignedIn) return;   /* MCS0711SA187: کو-ڈویلپر / عام یوزر کے لیے نہیں */
+  if(!isAdminSignedIn){ try{ showToast(adminRestoring ? '🔄 ایڈمن جڑ رہا ہے — چند سیکنڈ بعد دوبارہ دبائیں' : '🔒 پہلے ایڈمن لاگ اِن کریں'); }catch(e){} return; }   /* MCS0711SA187: کو-ڈویلپر / عام یوزر کے لیے نہیں */
   dpInit();
   try{ document.getElementById('cpWhatsapp').value = store.contact.whatsapp; document.getElementById('cpGmail').value = store.contact.gmail; }catch(e){}
   try{ syncAdminPanelSections(); }catch(e){}
@@ -9037,7 +9092,7 @@ function openDevPanel(){
   const v = document.getElementById('dpVer'); if(v) v.textContent = typeof APP_VERSION !== 'undefined' ? APP_VERSION : '';
   openModal('devPanelModal');
 }
-document.addEventListener('DOMContentLoaded', () => { try{ dpInit(); }catch(e){} const t = document.getElementById('h2Type'); if(t) t.addEventListener('click', () => { const on = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn); if(on) openDevPanel(); }); });
+document.addEventListener('DOMContentLoaded', () => { try{ dpInit(); }catch(e){} });   /* MCS0711SA194: h2Type سے ڈویلپر پینل کھولنا ختم */
 function openControlPanel(){
   document.getElementById('cpWhatsapp').value = store.contact.whatsapp;
   document.getElementById('cpGmail').value = store.contact.gmail;
@@ -9200,6 +9255,233 @@ function prepFatehpurNew(){
     <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
   document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
 }
+/* ===== MCS0711SA195 (مالک کا حکم): 📄 PDF لسٹ — ہر آنے والی لسٹ ایک ہی طریقے سے =====
+   PDF (کمپیوٹر سے بنی ہوئی) → قطاریں اور خانے (کالم) پہچانے جاتے ہیں → ہر کالم کا کردار خود چنا جاتا ہے (بدل بھی سکتے ہیں) →
+   نام / موبائل / شناختی کارڈ → خود کیٹگری (دکان کے نام اور قسم سے) → پیش نظارہ → امپورٹ۔
+   قاعدے: دکان کا نام جوں کا توں؛ مالک کا نام بغیر ولدیت؛ موبائل — خراب / ادھورا / دہرا (فائل میں یا ایپ میں پہلے سے) نہیں؛
+   دو موبائل ہوں تو ایک مین نمبر، دوسرا الگ واٹس ایپ؛ شناختی کارڈ ادھورا ہو تو رکھا نہیں جاتا مگر ریکارڈ (نام + موبائل) رہتا ہے۔ */
+let pdfJsP = null, PDF_ST = null;
+function loadPdfJs(){
+  if(window.pdfjsLib) return Promise.resolve();
+  if(pdfJsP) return pdfJsP;
+  const base = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  pdfJsP = new Promise((res, rej)=>{
+    const sc = document.createElement('script'); sc.src = base + 'pdf.min.js';
+    sc.onload = async ()=>{
+      try{ const t = await (await fetch(base + 'pdf.worker.min.js')).text(); pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([t], {type:'text/javascript'})); }
+      catch(e){ try{ pdfjsLib.GlobalWorkerOptions.workerSrc = base + 'pdf.worker.min.js'; }catch(_){} }
+      res();
+    };
+    sc.onerror = ()=>{ pdfJsP = null; rej(new Error('lib')); };
+    document.head.appendChild(sc);
+  });
+  return pdfJsP;
+}
+function pdNum(t){ return String(t||'').replace(/[۰-۹]/g, c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g, c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)); }
+function pdClean(t){ return pdNum(String(t||'').normalize('NFKC')).replace(/[​-‏‪-‮⁦-⁩]/g, '').replace(/\s+/g, ' ').trim(); }
+const pdDig = t => String(t||'').replace(/\D/g, '').length;
+/* ---- 1) PDF سے قطاریں ---- */
+function pdCells(its){
+  its.sort((a,b)=>a.x-b.x);
+  const cells = []; let cur = null;
+  its.forEach(it=>{
+    const gap = cur ? it.x - cur.x1 : 0, th = Math.max(7, it.h*.8);
+    if(cur && gap <= th){ cur.parts.push(it); cur.x1 = Math.max(cur.x1, it.x + it.w); }
+    else { cur = {parts:[it], x0:it.x, x1:it.x + it.w}; cells.push(cur); }
+  });
+  return cells.map(c=>{ const ar = c.parts.some(p=>/[؀-ۿﭐ-﻿]/.test(p.s)); const ps = c.parts.slice().sort((a,b)=> ar ? b.x - a.x : a.x - b.x); return {t: pdClean(ps.map(p=>p.s).join(' ')), x0:c.x0, x1:c.x1}; }).filter(c=>c.t);
+}
+async function pdfExtract(file, prog){
+  await loadPdfJs();
+  const pdf = await pdfjsLib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
+  const lines = []; let nText = 0;
+  for(let p = 1; p <= pdf.numPages; p++){
+    if(prog) prog(p, pdf.numPages);
+    const tc = await (await pdf.getPage(p)).getTextContent();
+    const its = tc.items.filter(i=>i.str && i.str.trim()).map(i=>({s:i.str, x:i.transform[4], w:i.width||0, y:i.transform[5], h:Math.abs(i.transform[3]) || Math.abs(i.transform[0]) || 10}));
+    its.sort((a,b)=>b.y - a.y);
+    const ls = [];
+    its.forEach(it=>{ const L = ls.find(l=>Math.abs(l.y - it.y) <= Math.max(3, it.h*.5)); if(L) L.it.push(it); else ls.push({y:it.y, h:it.h, it:[it]}); });
+    ls.sort((a,b)=>b.y - a.y);
+    ls.forEach(l=>{ l.page = p; l.cells = pdCells(l.it); delete l.it; lines.push(l); nText += l.cells.length; });
+  }
+  return {lines, nText, pages: pdf.numPages};
+}
+/* ---- 2) قطاریں → ریکارڈ (ایک ریکارڈ کی لپٹی ہوئی لائنیں جڑ جاتی ہیں) اور کالم ---- */
+function pdAnalyze(ex){
+  const isRec = l => l.cells.some(c=>pdDig(c.t) >= 7);
+  const isSerial = t => /^\d{1,4}[.)\-]?$/.test(t);
+  const recs = []; let cur = null, headLines = [];
+  ex.lines.forEach((l, i)=>{
+    if(isRec(l)){ cur = {lines:[l], y:l.y, page:l.page}; recs.push(cur); }
+    else if(cur && cur.page === l.page && !l.cells.some(c=>isSerial(c.t)) && (cur.y - l.y) < Math.max(l.h, 10) * 1.9){ cur.lines.push(l); cur.y = l.y; }
+    else { cur = null; if(!recs.length) headLines.push(l); }
+  });
+  /* کالم کی پٹیاں — سب خانوں کے پھیلاؤ کا میل */
+  const iv = []; recs.forEach(r=>r.lines.forEach(l=>l.cells.forEach(c=>iv.push([c.x0, c.x1]))));
+  iv.sort((a,b)=>a[0]-b[0]); const bands = [];
+  iv.forEach(v=>{ const b = bands[bands.length-1]; if(b && v[0] <= b.x1 + 5){ b.x1 = Math.max(b.x1, v[1]); } else bands.push({x0:v[0], x1:v[1]}); });
+  const bi = c => { const m = (c.x0 + c.x1)/2; let k = bands.findIndex(b=>m >= b.x0 - 1 && m <= b.x1 + 1); if(k < 0){ let d = 1e9; bands.forEach((b,j)=>{ const dd = Math.min(Math.abs(m-b.x0), Math.abs(m-b.x1)); if(dd < d){ d = dd; k = j; } }); } return k; };
+  const rows = recs.map(r=>{ const cols = bands.map(()=>''); r.lines.forEach(l=>l.cells.forEach(c=>{ const k = bi(c); cols[k] = (cols[k] ? cols[k] + ' ' : '') + c.t; })); return cols; });
+  const heads = bands.map(()=>''); headLines.slice(-4).forEach(l=>l.cells.forEach(c=>{ const k = bi(c); heads[k] = (heads[k] ? heads[k] + ' ' : '') + c.t; }));
+  const rtl = (()=>{ let a = 0, o = 0; rows.slice(0, 80).forEach(r=>r.forEach(t=>{ a += (t.match(/[؀-ۿﭐ-﻿]/g)||[]).length; o += (t.match(/[A-Za-z]/g)||[]).length; })); return a >= o; })();
+  const n = Math.max(rows.length, 1);
+  const cols = bands.map((b, k)=>{
+    const vals = rows.map(r=>r[k]).filter(Boolean), cnt = f => vals.filter(f).length;
+    const nCn = cnt(t=>/^\d{5}-?\d{7}-?\d$/.test(t.replace(/\s/g, ''))), nSe = cnt(isSerial), nPh = cnt(t=>pdDig(t) >= 9 && !/^\d{5}-?\d{7}-?\d$/.test(t.replace(/\s/g, ''))), nTx = cnt(t=>/[^\d\s\-+.,()\/]/.test(t));
+    let role = 'ignore';
+    if(nCn/n >= .25) role = 'cnic'; else if(nSe/n >= .6 && nTx/n < .3) role = 'serial'; else if(nPh/n >= .25 && nTx/n < .5) role = 'phone'; else if(nTx > 0) role = 'text';
+    return {k, x:(b.x0 + b.x1)/2, head: heads[k] || '', role, samples: vals.slice(0, 3)};
+  });
+  /* لکھائی والے کالم کے کردار: عنوان سے، ورنہ ترتیب سے (اردو میں دائیں سے بائیں) */
+  const H = h => impNorm(h);
+  const txt = cols.filter(c=>c.role === 'text'); const unk = [];
+  txt.forEach(c=>{
+    const h = H(c.head);
+    if(/ولد|والد|باپ/.test(h)) c.role = 'father';
+    else if(/دکان(?!دار)|ادارہ|ادارے|شاپ|فرم|کاروبارکانام/.test(h)) c.role = 'shop';
+    else if(/مالک|دکاندار|پروپرائٹر|نمائندہ/.test(h)) c.role = 'owner';
+    else if(/نوعیت|قسم|کیٹگری|زمرہ|شعبہ|کاروبار/.test(h)) c.role = 'type';
+    else if(/پتہ|علاقہ|ایڈریس|محلہ|مقام/.test(h)) c.role = 'addr';
+    else unk.push(c);
+  });
+  unk.sort((a,b)=> rtl ? b.x - a.x : a.x - b.x);
+  const have = new Set(cols.map(c=>c.role));
+  const seq = ['shop', 'owner', 'father'].filter(r=>!have.has(r));
+  if(unk.length === 1 && !have.has('shop') && !have.has('owner')) unk[0].role = 'shop';
+  else unk.forEach((c, i)=>{ c.role = seq[i] || 'ignore'; });
+  return {cols, rows, rtl, nRecs: recs.length};
+}
+/* ---- 3) موبائل / شناختی کارڈ ---- */
+function pdPhoneNorm(d){
+  let m;
+  if((m = d.match(/^0092(3\d{9})$/)) || (m = d.match(/^92(3\d{9})$/)) || (m = d.match(/^0(3\d{9})$/)) || (m = d.match(/^(3\d{9})$/))) d = '0' + m[1]; else return '';
+  if(!/^03[0-4]\d{8}$/.test(d)) return '';
+  const last7 = d.slice(4);
+  if(/^(\d)\1{6}$/.test(last7) || last7 === '1234567' || last7 === '7654321') return '';
+  return d.slice(0, 4) + '-' + d.slice(4);
+}
+function pdPhones(text){
+  const good = [], bad = [];
+  const toks = pdNum(text).match(/\+?\d[\d-]*\d|\d/g) || [];
+  let acc = '';
+  const flush = ()=>{ if(!acc) return; const n = pdPhoneNorm(acc); if(n) good.push(n); else if(acc.length >= 7) bad.push(acc); acc = ''; };
+  toks.forEach(t=>{
+    const d = t.replace(/\D/g, '');
+    if(/^\d{5}-\d{7}-\d$/.test(t) || d.length === 13 && !/^0092/.test(d) && !/^03/.test(d) || (d.length === 12 && /^\d{5}-\d{7}$/.test(t))){ flush(); return; }   /* شناختی کارڈ جیسا — موبائل نہیں */
+    if(acc && !pdPhoneNorm(acc) && (acc + d).length <= 14 && /^(0|3|92)/.test(acc)) acc += d; else { flush(); acc = d; }
+  });
+  flush();
+  return {good, bad};
+}
+function pdCnic(text){
+  const t = pdNum(text); const m = t.match(/(?<!\d)\d{5}\s*-?\s*\d{7}\s*-?\s*\d(?!\d)/);
+  return m ? m[0].replace(/\D/g, '') : '';
+}
+/* ---- 4) کیٹگری — دکان کے نام / قسم سے ---- */
+const PD_KW = [
+  ['homeopathic', ['ہومیو']],
+  ['medicalStore', ['میڈیکل', 'میڈیکوز', 'فارمیسی', 'فارمیسی', 'ادویات', 'میڈیسن', 'ڈرگ']],
+  ['testingLab', ['لیبارٹری', 'ڈائگناسٹک', 'ٹیسٹنگ']],
+  ['jewelryShop', ['جیولر', 'جیولری', 'سنار', 'زیورات', 'گولڈ']],
+  ['beautyParlor', ['پارلر', 'سیلون', 'بیوٹی', 'حجام', 'ہیئر', 'باربر']],
+  ['bakery', ['بیکری', 'بیکرز', 'مٹھائی', 'سویٹس', 'سوئٹ', 'کیک']],
+  ['restaurant', ['ہوٹل', 'ریسٹورنٹ', 'ریسٹورینٹ', 'تکہ', 'کڑاہی', 'پکوان', 'چائے', 'ٹیسٹال', 'ٹیاسٹال', 'برگر', 'پیزا', 'نان', 'بروسٹ', 'فاسٹفوڈ', 'جوس', 'کھانا', 'دیگ']],
+  ['furnitureShop', ['فرنیچر', 'فرنیچ']],
+  ['autoParts', ['آٹو', 'اٹو', 'سپیئر', 'اسپیئر', 'سپیر', 'پارٹس', 'ٹائر', 'بیٹری', 'ورکشاپ', 'لبریکنٹ', 'موبل', 'آئل', 'موٹرسائیکل', 'موٹرز']],
+  ['hardwareStore', ['ہارڈویئر', 'ہارڈوئیر', 'ہارڈ ویئر', 'پینٹ', 'سینیٹری', 'سینٹری', 'ٹائلز', 'سیمنٹ', 'اسٹیل', 'سٹیل', 'لوہا', 'پائپ', 'میٹریل', 'بلڈنگ', 'الیکٹریکل']],
+  ['mobileElectronics', ['موبائل', 'الیکٹرانک', 'الیکٹرک', 'کمپیوٹر', 'ایزیلوڈ', 'ٹیلی', 'موبی']],
+  ['clothesShop', ['کلاتھ', 'کپڑ', 'گارمنٹ', 'ٹیلر', 'بوتیک', 'ریڈیمیڈ', 'شوز', 'جوتے', 'جوتا', 'ٹیکسٹائل', 'خواتین', 'ہوزری']],
+  ['groceryStore', ['کریانہ', 'کرانہ', 'گروسری', 'ڈیری', 'دودھ', 'فلور', 'آٹا', 'اٹا', 'چکی', 'ہول سیل', 'ہولسیل']],
+  ['otherShop', ['جنرل']]
+];
+function pdCat(text){
+  const n = impNorm(text); if(!n) return '';
+  for(const [k, ws] of PD_KW){ if(!CATEGORY_META[k]) continue; if(ws.some(w=>n.includes(impNorm(w)))) return k; }
+  for(const k of Object.keys(CATEGORY_META)){ const m = CATEGORY_META[k]; if(m && m.group === 'business' && k !== 'otherShop' && impNorm(m.ur).length > 3 && n.includes(impNorm(m.ur))) return k; }
+  return '';
+}
+function pdOwner(t){ return String(t||'').replace(/\s*[\(\[][^)\]]*[\)\]]\s*/g, ' ').split(/\s+(?:ولد(?:یت)?|s\/o|d\/o|w\/o)\s+/i)[0].replace(/^[\s\-.,،:]+|[\s\-.,،:]+$/g, '').replace(/\s+/g, ' ').trim(); }
+function pdName(t){ return String(t||'').replace(/^\d{1,4}[.)\-]\s*/, '').replace(/^[\s\-.,،:]+|[\s\-.,،:]+$/g, '').replace(/\s+/g, ' ').trim(); }
+/* ---- 5) ریکارڈ بنانا ---- */
+function pdBuild(){
+  const S = PDF_ST; if(!S) return;
+  const have = new Set();
+  [...store.services, ...store.doctors].forEach(x=>{ const a = String(x.whatsapp||'').replace(/\D/g, ''); if(a) have.add(a); const w2 = x.more && x.more.wa2; if(w2) have.add(String(w2).replace(/\D/g, '')); });
+  const seen = new Set(), out = [], skip = [];
+  const defCat = (document.getElementById('nlCat') || {}).value || '';
+  const defCity = ((document.getElementById('nlCity') || {}).value || '').trim(), defDist = ((document.getElementById('nlDist') || {}).value || '').trim();
+  const R = role => S.cols.filter(c=>c.role === role).map(c=>c.k);
+  const get = (r, role) => R(role).map(k=>r[k]).filter(Boolean).join(' ').trim();
+  const noPhoneCols = new Set([...R('cnic'), ...R('serial')]);
+  let nBad = 0, nDupF = 0, nDupA = 0, nNoName = 0, nNoCnic = 0;
+  S.rows.forEach((r, idx)=>{
+    const allTxt = r.map((t,k)=> noPhoneCols.has(k) ? '' : pdNum(t).replace(/(?<!\d)\d{5}\s*-\s*\d{7}(?:\s*-\s*\d?)?(?!\d)/g, ' | ').replace(/(?<!\d)\d{12,13}(?!\d)/g, m=>/^(0092|03)/.test(m) ? m : ' | ')).join(' | ');
+    const ph = pdPhones(allTxt);
+    const cn = pdCnic(R('cnic').map(k=>r[k]).join(' ') || r.join(' | '));   /* پورا 13 ہندسوں کا نہ ہو تو خالی — ریکارڈ پھر بھی بنتا ہے */
+    const shop = pdName(get(r, 'shop')), owner = pdOwner(get(r, 'owner')), type = get(r, 'type');
+    const label = (shop || owner || r.join(' ')).slice(0, 40);
+    if(!ph.good.length){ nBad++; skip.push([label, ph.bad.length ? 'موبائل ادھورا / خراب: ' + ph.bad.join('، ') : 'موبائل نہیں']); return; }
+    const keep = []; let dF = 0, dA = 0;
+    ph.good.forEach(n=>{ const d = n.replace(/\D/g, ''); if(keep.some(x=>x.d === d)) return; if(seen.has(d)){ dF++; return; } if(have.has(d)){ dA++; return; } keep.push({n, d}); });
+    if(!keep.length){ if(dF){ nDupF++; skip.push([label, 'فائل میں دہرا نمبر']); } else { nDupA++; skip.push([label, 'ایپ میں پہلے سے موجود']); } return; }
+    if(!(shop || owner)){ nNoName++; skip.push([r.join(' ').slice(0, 40), 'نام نہیں ملا']); return; }
+    keep.forEach(x=>seen.add(x.d));
+    let key = pdCat([shop, type].filter(Boolean).join(' ')) || (!shop ? pdCat(owner) : '') || defCat || UNASSIGNED_KEY;
+    if(key !== UNASSIGNED_KEY && !CATEGORY_META[key]) key = UNASSIGNED_KEY;
+    const area = get(r, 'addr'), district = defDist;
+    const rec = {category:key, nameUr: shop || owner, nameEn:'', type:'', intro: (shop && owner) ? ('دکاندار: ' + owner) : '', address:'', whatsapp: keep[0].n,
+      country:'پاکستان', province: impProvinceOf(district) || 'پنجاب', district, city: defCity, area, stage: area ? '' : 'basic', _cnic: cn.length === 13 ? cn : ''};
+    if(keep[1]) rec.more = {wa2: keep[1].n};
+    if(!rec._cnic) nNoCnic++;
+    out.push(rec);
+  });
+  importReady = out;
+  S.res = {out, skip, nBad, nDupF, nDupA, nNoName, nNoCnic};
+}
+/* ---- 6) اسکرین ---- */
+const PD_ROLES = [['ignore','— نظر انداز'], ['shop','🏪 دکان / ادارے کا نام'], ['owner','👤 مالک کا نام (ولدیت خود کٹے گی)'], ['father','✂️ ولدیت (چھوڑ دیں)'], ['type','🏷️ کاروبار کی قسم'], ['addr','📍 پتہ / علاقہ'], ['phone','📱 موبائل'], ['cnic','🪪 شناختی کارڈ'], ['serial','# نمبر شمار']];
+function pdRoleSet(k, v){ const c = PDF_ST && PDF_ST.cols.find(x=>x.k === k); if(!c) return; c.role = v; pdBuild(); pdRender(); }
+function pdRender(){
+  const S = PDF_ST, box = document.getElementById('importPreview'); if(!S || !box) return;
+  const R = S.res || {out:[], skip:[]}, E = escapeHtml;
+  const byCat = {}; R.out.forEach(x=>{ byCat[x.category] = (byCat[x.category]||0) + 1; });
+  const lab = k=> k === UNASSIGNED_KEY ? '❓ غیر مختص' : `${(CATEGORY_META[k] && CATEGORY_META[k].emoji) || '🏷️'} ${E((CATEGORY_META[k] && CATEGORY_META[k].ur) || k)}`;
+  const nC = R.out.filter(x=>x._cnic).length, nW = R.out.filter(x=>x.more && x.more.wa2).length;
+  const cat = k=> (CATEGORY_META[k] && CATEGORY_META[k].ur) || 'غیر مختص';
+  box.innerHTML = `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;">
+      <b>📄 ${E(S.file)}</b> — ${urduDigits(S.pages)} صفحے، ${urduDigits(S.nRecs)} قطاریں<br>
+      <b>کالم جیسے پہچانے گئے</b> (غلط ہو تو یہیں بدل دیں — نیچے نتیجہ فوراً بدل جائے گا):
+      ${S.cols.map(c=>`<div style="display:flex;gap:6px;align-items:center;margin:4px 0;"><select onchange="pdRoleSet(${c.k}, this.value)" style="flex:0 0 52%;padding:6px;border-radius:8px;border:1px solid #cbd5e1;">${PD_ROLES.map(r=>`<option value="${r[0]}"${c.role === r[0] || (c.role === 'text' && r[0] === 'ignore') ? ' selected' : ''}>${r[1]}</option>`).join('')}</select><small style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.head ? '<b>' + E(c.head) + '</b>: ' : ''}${E(c.samples.join(' ‖ '))}</small></div>`).join('')}
+    </div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;margin-top:8px;">
+      <b>✅ امپورٹ کے لیے تیار: ${urduDigits(R.out.length)}</b> &nbsp;<br>🪪 پورے شناختی کارڈ والے: ${urduDigits(nC)} • ادھورے / بغیر شناختی کارڈ والے: ${urduDigits(R.nNoCnic||0)} (<b>یہ بھی لیے گئے</b> — صرف شناختی کارڈ کا خانہ خالی)<br>📱 دو نمبر والے: ${urduDigits(nW)}<br>
+      ${Object.keys(byCat).sort((p,q)=>(p===UNASSIGNED_KEY)-(q===UNASSIGNED_KEY) || byCat[q]-byCat[p]).map(k=>`${lab(k)}: ${urduDigits(byCat[k])}`).join('<br>')}
+      ${R.out.length ? '<hr style="border:none;border-top:1px solid #d1fae5;margin:6px 0;">' + R.out.slice(0, 8).map(x=>`• <b>${E(x.nameUr)}</b>${x.intro ? ' — ' + E(x.intro.replace('دکاندار: ', '')) : ''} — <span dir="ltr">${x.whatsapp}${x.more ? ' / ' + x.more.wa2 : ''}</span> <small>(${E(cat(x.category))})</small>`).join('<br>') + (R.out.length > 8 ? '<br>…' : '') : ''}
+      <hr style="border:none;border-top:1px solid #d1fae5;margin:6px 0;">
+      ❌ موبائل ادھورا / خراب / نہیں — <b>یہ ریکارڈ نہیں لیے</b>: ${urduDigits(R.nBad)}<br>
+      فائل میں دہرے نمبر (چھوڑے): ${urduDigits(R.nDupF)}<br>
+      ایپ میں پہلے سے موجود (چھوڑے): ${urduDigits(R.nDupA)}${R.nNoName ? '<br>نام نہیں ملا (چھوڑے): ' + urduDigits(R.nNoName) : ''}
+    </div>
+    ${R.skip.length ? `<details style="margin-top:8px;"><summary style="cursor:pointer;font-size:13px;">🔎 چھوڑے گئے ${urduDigits(R.skip.length)} ریکارڈ دیکھیں</summary><div style="font-size:12px;line-height:1.8;max-height:220px;overflow:auto;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:6px;">${R.skip.slice(0, 300).map(s=>`• ${E(s[0])} — <i>${E(s[1])}</i>`).join('<br>')}</div></details>` : ''}
+    ${R.out.length ? `<button class="btn block accent" style="margin-top:10px;" id="importGoBtn" onclick="runImport(true)">📥 ${urduDigits(R.out.length)} کارڈ امپورٹ کریں</button>` : '<div class="cp-hint" style="margin-top:6px;">کوئی نیا ریکارڈ نہیں ملا — اوپر کالم کے کردار دیکھ لیں</div>'}
+    <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
+}
+async function pdfChosen(inp){
+  const file = inp.files && inp.files[0]; inp.value = ''; if(!file) return;
+  try{ nlFillCats(); }catch(e){}
+  const box = document.getElementById('importPreview'); box.innerHTML = '<div class="cp-hint">📄 PDF پڑھی جا رہی ہے…</div>';
+  document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
+  try{
+    let ex; try{ ex = await pdfExtract(file, (p, n)=>{ box.innerHTML = `<div class="cp-hint">📄 PDF پڑھی جا رہی ہے… صفحہ ${urduDigits(p)} / ${urduDigits(n)}</div>`; }); }
+    catch(e){ box.innerHTML = '<div class="cp-hint" style="color:#b91c1c;">PDF پڑھنے کا پروگرام لوڈ نہیں ہوا یا فائل خراب ہے — انٹرنیٹ چیک کریں</div>'; return; }
+    if(ex.nText < 20){ box.innerHTML = '<div class="cp-hint" style="color:#b91c1c;">اس PDF میں لکھائی نہیں ملی (شاید اسکین / تصویر ہے)۔ کمپیوٹر سے بنی ہوئی PDF دیں، یا لسٹ Excel میں بدل کر دیں۔</div>'; return; }
+    const A = pdAnalyze(ex);
+    if(!A.nRecs){ box.innerHTML = '<div class="cp-hint" style="color:#b91c1c;">اس PDF میں موبائل / شناختی کارڈ کی کوئی قطار نہیں ملی۔</div>'; return; }
+    PDF_ST = {file: file.name, pages: ex.pages, ...A}; pdBuild(); pdRender();
+  }catch(e){ box.innerHTML = '<div class="cp-hint" style="color:#b91c1c;">لسٹ نہیں بن سکی — ' + escapeHtml(String(e && e.message || e)) + '</div>'; }
+}
+
 /* ===== MCS0711SA191: سادہ «نئی لسٹ شامل کریں» =====
    فائل (Excel/CSV) یا چسپاں متن → خود نام، موبائل، شناختی کارڈ پہچانتا ہے → پیش نظارہ → ایک بٹن۔
    فائل میں «کیٹگری» کا خانہ ہو تو ہر ریکارڈ اپنی کیٹگری میں جاتا ہے، ورنہ اوپر چنی ہوئی کیٹگری میں۔ */
@@ -10686,7 +10968,7 @@ function ptOpen(editProf, prev){
   let nm = '', sub = '', body = '';
   if(rl === 'dev'){ const p = ptDevProf(); nm = p.name || 'ڈویلپر'; sub = [ptEmail(), p.phone, p.city].filter(Boolean).join(' • ');
     const pend = (typeof pendingApprovals !== 'undefined' && pendingApprovals.length) || '', pfn = ((document.getElementById('pfPendN')||{}).textContent || '').replace(/\D/g,'');
-    body = `<div class="pt-sec">📥 روزانہ کے کام</div><div class="pt-grid">${ptT('🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend)}${ptT('⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn)}${ptT('✏️','ترمیم درخواستیں','','edOpen')}${ptT('❓','Help Desk','','ptHelp')}</div>
+    body = `<div class="pt-sec">📥 روزانہ کے کام</div><div class="pt-grid">${ptT('🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend)}${ptT('⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn)}${ptT('✏️','ترمیم درخواستیں','','edOpen')}${ptT('❓','Help Desk','','ptHelp')}${ptT('📋','انجمن تاجران','فتح پور — لسٹ امپورٹ','ptTajran')}</div>
       <div class="pt-sec">🧭 میرے پورٹل</div><div class="pt-grid">${ptT('👥','کو-ڈویلپر پورٹل','دیکھیں','ptPrevCodev')}${ptT('🤝','ایجنٹ پورٹل','کسی بھی ایجنٹ کا','ptPrevAgent')}${ptT('➕','ایجنٹ بنائیں','کاروبار چن کر','agPickOpen')}${ptT('🤝','میرے رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen')}${ptT('🏪','میرے رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen')}</div>
       <div class="pt-sec">⭐ ممبرشپ اور ایجنٹ</div><div class="pt-grid">${ptT('👤','Account Access','مدت دیں','aaOpen')}${ptT('🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen')}${ptT('📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen')}${ptT('👥','کو-ڈویلپر','موبائل + PIN','cdAdminOpen')}${ptT('📈','ایجنٹ کارکردگی','سست / ایکٹو','agPerfOpen')}</div>
       <div class="pt-sec">📣 رپورٹ اور اشتہار</div><div class="pt-grid">${ptT('📊','کالوں کی رپورٹ','','stOpenAdmin')}${ptT('📢','اشتہار','','adOpenAdmin')}${ptT('📩','اطلاع','دکانداروں کو','ntOpen')}${ptT('📰','خبروں کی پٹی','','openTickerAdmin')}</div>
@@ -10707,7 +10989,7 @@ function ptOpen(editProf, prev){
     body += `<div class="pt-sec">🤝 ریفرل</div>` + (code ? `<div class="pt-card"><small>میرا ریفرل کوڈ</small><div class="pt-code" onclick="agCopy('${escapeAttr(code)}')">${escapeHtml(code)}</div><div class="r"><button type="button" class="p" onclick="agCopy('${escapeAttr(code)}')">📋 کاپی</button><button type="button" onclick="agShare('${escapeAttr(code)}')">📤 شیئر</button></div>${refNo ? `<small>یا اپنا موبائل نمبر بھی بتا سکتے ہیں: ${refNo}</small>` : ''}</div>` : `<div class="pt-grid">${ptT('🤝','MCS ایجنٹ بنیں','ریفرل کوڈ / حالت','agOpen')}</div>`);
     body += `<div class="pt-grid">${ptT('➕', L.length ? 'ایک اور کاروبار / پروفیشن' : 'اپنا کاروبار / پروفیشن جوڑیں', L.length ? '' : '15 دن مفت', 'mpNewMore')}${a ? ptT('👤','میرا اکاؤنٹ','','uaAccount') : ptT('🔐','Login / Sign Up','','uaLogin')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','رنگ، فونٹ، بیک اپ','openControlPanel')}</div>`;
   }
-  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${ptPrev ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av">${M[0]}</div><div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span></div><div class="pt-body">${ptPrev ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ڈویلپر پورٹل</button></div>' : ''}${body}</div></div>`;
+  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${ptPrev ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av">${(()=>{ let sv = ''; try{ sv = ptPrev ? '' : (localStorage.getItem('mcsSelfie') || ''); }catch(e){} return sv ? `<img src="${escapeAttr(sv)}" alt="">` : M[0]; })()}</div><div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span></div><div class="pt-body">${ptPrev ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ڈویلپر پورٹل</button></div>' : ''}${body}</div></div>`;
   openModal('portalModal');
   if(editProf){ setTimeout(()=>{ const e = document.getElementById('ptN'); if(e){ e.scrollIntoView({block:'center'}); e.focus(); } }, 300); }
 }
@@ -10797,7 +11079,9 @@ function apNudge(i){ const x = apPerf[i]; if(!x) return; const a = x.a; window.o
 function apNudgeCopy(i){ const x = apPerf[i]; if(!x) return; const t = apNudgeText(x.a, x.days, x.never); try{ navigator.clipboard.writeText(t).then(()=>showToast('📋 پیغام کاپی ہو گیا'), ()=>prompt('کاپی کریں', t)); }catch(e){ prompt('کاپی کریں', t); } }
 function ptDevPend(){ openDevPanel(); setTimeout(()=>{ const e = document.getElementById('pendingApprovalsWrap'); if(e) e.scrollIntoView({behavior:'smooth', block:'start'}); }, 350); }
 function ptHome(){ try{ goHome(); }catch(e){} }
-document.addEventListener('DOMContentLoaded', ()=>{ const t = document.getElementById('h2Type'); if(t) t.addEventListener('click', e=>{ const rl = ptRole(), a = (typeof uaMe === 'function') && uaMe(), ag = agMe(); if(rl !== 'user' || a || (ag && (ag.pin || ag.code))){ e.stopImmediatePropagation(); ptOpen(); } }, true); });
+/* MCS0711SA194: انجمن تاجران فتح پور — ایک دبانے سے ڈویلپر پینل کھلے، پیش نظارہ بنے اور امپورٹ کا بٹن سامنے آئے */
+function ptTajran(){ openDevPanel(); if(!isAdminSignedIn) return; setTimeout(()=>{ try{ prepTajran(); }catch(e){ showToast('⚠️ ' + (e.message||'')); } }, 450); }
+/* MCS0711SA194: h2Type دبانے سے پورٹل کھلنا ختم — پورٹل صرف My Account سے */
 /* ===== MCS0711SA180 (مالک کا حکم): Earn with MCS ربن + ڈویلپر پورٹل (کو-ڈویلپر / ایجنٹ پورٹل پیش منظر، ایجنٹ بنانا، میرے رجسٹرڈ ایجنٹس / بزنس) + ایجنٹ پورٹل سے کاروبار رجسٹر ===== */
 function ewRib(kind, rec){
   try{
@@ -10837,7 +11121,7 @@ window.addEventListener('load', ()=> setTimeout(()=>{ ['openServiceForm','openDo
   w._af = 1; window[fn] = w; }); }, 1500));
 /* ===== MCS0711SA187 (مالک کا حکم): مائی اکاؤنٹ ← ایجنٹ پورٹل (ذاتی تفصیل، سارے کاروبار، رجسٹریشن مکمل کرنا)
    ⚠️ پلے اسٹور: رقم / کمیشن / ادائیگی کا کوئی نظام یہاں نہیں — وہ الگ ویب سائٹ پر بنے گا */
-function d2Account(){ try{ if(ptRole() === 'agent'){ ptOpen(); return; } }catch(e){} openControlPanel(); }
+function d2Account(){ try{ ptOpen(); return; }catch(e){ console.error(e); } openControlPanel(); }   /* MCS0711SA194: My Account = ایک ہی پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / کاروبار / پروفیشن / یوزر) */
 function apMeCard(me, rows){
   const E = escapeHtml, ph = me.phone ? '0' + String(me.phone).slice(2) : '', nB = rows.filter(x=>x.kind !== 'doctor').length, nP = rows.length - nB;
   const L = [['👤 نام', me.name], ['📱 موبائل', ph], ['🆔 ایجنٹ کوڈ', me.code], ['🏙️ شہر', me.city]].filter(x=>x[1]);
@@ -11164,7 +11448,7 @@ function agcDone(){
   if(AGC.enh){ try{ agcEnhance(out); }catch(e){} }
   let d = out.toDataURL('image/jpeg', .84);
   if(d.length > 600000){ const o2 = document.createElement('canvas'); o2.width = Math.round(AGC.W*.75); o2.height = Math.round(AGC.H*.75); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', .72); }
-  agImgs[AGC.k] = d; agShowPic(AGC.k); closeModal('agCropModal'); showToast('✅ تصویر لگ گئی');
+  agImgs[AGC.k] = d; agShowPic(AGC.k); closeModal('agCropModal'); if(AGC.k === 'selfie') selfieSaveLocal(d); showToast('✅ تصویر لگ گئی');
 }
 function agCnicFmt(el){ const d = el.value.replace(/[^0-9۰-۹٠-٩]/g,'').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)).slice(0,13); el.value = d.length > 12 ? d.slice(0,5)+'-'+d.slice(5,12)+'-'+d.slice(12) : d.length > 5 ? d.slice(0,5)+'-'+d.slice(5) : d; el.classList.toggle('ok', d.length === 13); }
 function agShowPic(k){ const el = document.getElementById('agP_' + k); if(el){ el.classList.add('has'); el.style.backgroundImage = 'url(' + agImgs[k] + ')'; } }
@@ -13702,7 +13986,7 @@ function ccInit(){
   setTimeout(()=>{ if(ccPickValid()) ccCityWeather(); ccLocate(false); ccFetchRates(); }, 1500);
 }
 try{ ccInit(); }catch(e){}
-try{ document.getElementById('svcPfFields').innerHTML = pfFieldsHtml('svcPf'); document.getElementById('pfEFields').innerHTML = pfFieldsHtml('pfE'); pfFieldsFill('svcPf', null, null); }catch(e){}
+try{ document.getElementById('svcPfFields').innerHTML = pfFieldsHtml('svcPf'); document.getElementById('pfEFields').innerHTML = pfFieldsHtml('pfE'); pfFieldsFill('svcPf', null, null); const pbx = document.getElementById('svcPfPhotoBox'), bx0 = document.getElementById('svcPfBox'); if(pbx && bx0) bx0.parentNode.insertBefore(pbx, bx0); }catch(e){}   /* MCS0711SA194: دو تصویریں رجسٹریشن فارم میں سامنے */
 try{ mpRender(); hlRender(); setTimeout(pfLoadList, 2000); }catch(e){}
 try{ oaInit(); }catch(e){}
 ubInit();
@@ -14114,7 +14398,7 @@ if('serviceWorker' in navigator){
     try{ const s0 = window.h2Sync; if(typeof s0 === 'function' && !s0.__ua){ window.h2Sync = function(){ const r = s0.apply(this, arguments); uaSync(); return r; }; window.h2Sync.__ua = 1; } }catch(e){}
     try{ const l0 = window.h2Logout; if(typeof l0 === 'function' && !l0.__ua){ window.h2Logout = function(){ if(uaMe() && !staff() && !(typeof agMe === 'function' && agMe() && (agMe().pin || agMe().code))) return uaLogout(); return l0.apply(this, arguments); }; window.h2Logout.__ua = 1; } }catch(e){}
     try{ const c0 = window.cpAcctSync; if(typeof c0 === 'function' && !c0.__ua){ window.cpAcctSync = function(){ const r = c0.apply(this, arguments); uaSync(); return r; }; window.cpAcctSync.__ua = 1; } }catch(e){}
-    try{ const t = $('h2Type'); if(t) t.addEventListener('click', e => { if(uaMe() && !staff() && /^👤 /.test(t.textContent) && !/Normal/.test(t.textContent)){ e.stopImmediatePropagation(); uaAccount(); } }, true); }catch(e){}
+    /* MCS0711SA194: h2Type کلک ختم */
   }
   async function recheck(){ const a = uaMe(); if(!a || Date.now() - (a.chk || 0) < 6 * 3600e3) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ ls.set('mcsAuth', null); ls.set('mcsGuest', '1'); uaSync(); } }
   /* ===================================================================================================
