@@ -4080,10 +4080,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA213";
+const APP_VERSION = "MCS0711SA214";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0711SA214": "✅ امپورٹ اب سیدھی Firestore REST سے — ہر قدم سکرین پر لکھا آتا ہے اور ناکامی پر سرور کا اصل جواب نظر آتا ہے",
   "MCS0711SA213": "✅ امپورٹ کے دوران گزرے سیکنڈ اور نیٹ کی حالت سکرین پر نظر آتی ہے تاکہ پتا چلے کہ کام چل رہا ہے یا رکا ہے",
   "MCS0711SA212": "✅ انجمن تاجران بلاک ۵ کے صفحہ ۱ سے ۴۰ تک سب رابطے شامل؛ امپورٹ اب چھوٹے گروپوں میں، ہر گروپ کی 3 کوششیں، رکنے پر وہیں سے آگے؛ کمزور نیٹ پر 0٪ پر نہیں اٹکتا",
   "MCS0711SA211": "✅ نماز کے اوقات، ہوم کے ڈبے اور کیٹگری کے ہندسے Arial میں چھوٹے اور فِٹ — ہر زوم پر کوئی ڈبہ باہر نہیں نکلتا، ایک دوسرے پر نہیں چڑھتا"
@@ -9731,9 +9732,41 @@ function nlBuild(){
     ${out.length ? `<button class="btn block accent" style="margin-top:10px;" id="importGoBtn" onclick="runImport(true)">📥 ${urduDigits(out.length)} اندراجات امپورٹ کریں</button>` : (nlRows.length ? '<div class="cp-hint" style="margin-top:6px;">کوئی نیا ریکارڈ نہیں ملا</div>' : '')}
     <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
 }
+/* MCS0711SA214: امپورٹ اب Firebase SDK کی بجائے سیدھی Firestore REST سے — SDK کی قطار/IndexedDB میں اٹکنے کا مسئلہ ختم، اور ہر ناکامی کا اصل جواب سکرین پر */
+const FS_PROJECT = 'my-city-shines';
+function fsValue(v){
+  if(typeof v === 'boolean') return {booleanValue: v};
+  if(typeof v === 'number') return Number.isInteger(v) ? {integerValue: String(v)} : {doubleValue: v};
+  return {stringValue: String(v == null ? '' : v)};
+}
+function fsWrite(col, id, data, withTs){
+  const fields = {}; Object.keys(data).forEach(k=>{ if(data[k] !== undefined) fields[k] = fsValue(data[k]); });
+  const w = {update: {name: `projects/${FS_PROJECT}/databases/(default)/documents/${col}/${id}`, fields}};
+  if(withTs) w.updateTransforms = [{fieldPath: withTs, setToServerValue: 'REQUEST_TIME'}];
+  return w;
+}
+async function fsRestCommit(token, writes, ms){
+  const ctl = new AbortController(); const timer = setTimeout(()=>ctl.abort(), ms || 25000);
+  try{
+    const r = await fetch(`https://firestore.googleapis.com/v1/projects/${FS_PROJECT}/databases/(default)/documents:commit`, {
+      method:'POST', signal: ctl.signal,
+      headers:{'Content-Type':'application/json', 'Authorization':'Bearer ' + token},
+      body: JSON.stringify({writes})
+    });
+    if(!r.ok){
+      let msg = ''; try{ const j = await r.json(); msg = (j.error && (j.error.status + ': ' + j.error.message)) || ''; }catch(_){}
+      const err = new Error(msg || ('HTTP ' + r.status)); err.code = r.status === 403 || r.status === 401 ? 'permission-denied' : ('http-' + r.status); err.detail = msg; throw err;
+    }
+    return true;
+  }catch(e){
+    if(e && e.name === 'AbortError'){ const t = new Error('timeout'); t.code = 'timeout'; throw t; }
+    if(e && e.code) throw e;
+    const n = new Error((e && e.message) || 'network'); n.code = 'network'; throw n;
+  }finally{ clearTimeout(timer); }
+}
 async function runImport(noConfirm){
   const FB = window.MCSFirebase;
-  if(!FB || !FB.writeBatch){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
+  if(!FB || !FB.auth){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
   if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ ان کریں'); return; }
   const all = importReady.slice();
   if(!all.length) return;
@@ -9742,41 +9775,33 @@ async function runImport(noConfirm){
   const prog = document.getElementById('importProgress');
   const stamp = Date.now();
   const withTimeout = (p, ms)=>Promise.race([p, new Promise((_, rej)=>setTimeout(()=>rej({code:'timeout'}), ms))]);
-  /* MCS0711SA212: ہر کارڈ کی شناخت پہلے سے طے — دوبارہ دبانے پر جو پہلے محفوظ ہو چکے وہ چھوڑ کر وہیں سے آگے چلتا ہے */
   const items = all.map((x, k)=>({x, id: 'imp_p' + (String(x.whatsapp||'').replace(/\D/g,'') || (stamp + '_' + k))}));
   const have = new Set(store.services.map(s=>s.fsId || s.id));
   const todo = items.filter(it=>!have.has(it.id));
   const total = all.length; let done = total - todo.length; const cnicAll = [];
-  let note = '';
-  const t0 = Date.now(); let tick = null;
+  let note = '', stage = 'شروع', tick = null; const t0 = Date.now();
   const showProg = ()=>{
     const pct = Math.round(done*100/total);
     const sec = Math.round((Date.now()-t0)/1000), net = navigator.onLine === false ? ' — ❌ فون آف لائن ہے' : '';
-    if(prog) prog.innerHTML = `<div style="font-size:13px;margin-bottom:4px;">⏳ بھیجا جا رہا ہے… ${urduDigits(done)} / ${urduDigits(total)} (${urduDigits(pct)}٪) — ${urduDigits(sec)} سیکنڈ${net} — صفحہ بند نہ کریں</div>
-      <div style="height:12px;background:#e5e7eb;border-radius:8px;overflow:hidden;"><div style="height:100%;width:${Math.max(pct,3)}%;background:#0f766e;transition:width .3s;"></div></div>${note ? `<div style="font-size:12px;color:#b45309;margin-top:4px;">${escapeHtml(note)}</div>` : ''}`;
+    if(prog) prog.innerHTML = `<div style="font-size:13px;margin-bottom:4px;">⏳ بھیجا جا رہا ہے… ${urduDigits(done)} / ${urduDigits(total)} (${urduDigits(pct)}٪) — ${urduDigits(sec)} سیکنڈ${net}</div>
+      <div style="height:12px;background:#e5e7eb;border-radius:8px;overflow:hidden;"><div style="height:100%;width:${Math.max(pct,3)}%;background:#0f766e;transition:width .3s;"></div></div>
+      <div style="font-size:12px;color:#475569;margin-top:4px;">قدم: ${escapeHtml(stage)}</div>${note ? `<div style="font-size:12px;color:#b45309;margin-top:4px;">${escapeHtml(note)}</div>` : ''}`;
   };
   showProg(); tick = setInterval(showProg, 1000);
-  /* غیر مختص کیٹگری: سرور جواب نہ دے تو بھی کارڈ نہ رکیں (کیٹگری بعد میں خود محفوظ ہو جائے گی) */
-  if(items.some(it=>it.x.category === UNASSIGNED_KEY)){ try{ await withTimeout(ensureUnassignedCat(), 15000); }catch(e){ note = 'غیر مختص کیٹگری ابھی سرور پر محفوظ نہیں ہوئی — کارڈ پھر بھی بھیجے جا رہے ہیں'; showProg(); } }
-  const CH = 10, TRIES = 3;
   try{
+    stage = 'ایڈمن کی اجازت (ٹوکن) لی جا رہی ہے'; showProg();
+    const user = FB.auth.currentUser;
+    if(!user) throw Object.assign(new Error('ایڈمن لاگ اِن نہیں ملا'), {code:'no-user'});
+    const token = await withTimeout(user.getIdToken(), 20000);
+    const CH = 50, TRIES = 3;
     for(let i=0; i<todo.length; i+=CH){
       const chunk = todo.slice(i, i+CH);
+      const writes = chunk.map(it=>{ const xx = {...it.x}; delete xx._cnic; return fsWrite('services', it.id, cleanFsPayload({...xx, approved:true, source:'import'}), 'createdAt'); });
       let ok = false, lastErr = null;
       for(let t=1; t<=TRIES && !ok; t++){
-        try{
-          const batch = FB.writeBatch(FB.db);
-          chunk.forEach(it=>{
-            const xx = {...it.x}; delete xx._cnic;   /* شناختی کارڈ عام ریکارڈ میں نہیں جاتا */
-            batch.set(FB.doc(FB.db, 'services', it.id), cleanFsPayload({...xx, approved:true, source:'import', createdAt: FB.serverTimestamp()}));
-          });
-          await withTimeout(batch.commit(), 25000);
-          ok = true;
-        }catch(e){
-          lastErr = e;
-          if(e && e.code === 'permission-denied') break;   /* اجازت کا مسئلہ دوبارہ کوشش سے ٹھیک نہیں ہوتا */
-          note = `⚠️ ${urduDigits(done+1)} سے آگے بھیجنے میں رکاوٹ (${(e&&e.code)||'error'}) — دوبارہ کوشش ${urduDigits(t)}/${urduDigits(TRIES)}`; showProg();
-        }
+        stage = `گروپ ${urduDigits(Math.floor(i/CH)+1)} / ${urduDigits(Math.ceil(todo.length/CH))} سرور کو بھیجا جا رہا ہے (کوشش ${urduDigits(t)})`; showProg();
+        try{ await fsRestCommit(token, writes, 25000); ok = true; }
+        catch(e){ lastErr = e; if(e.code === 'permission-denied') break; note = `⚠️ رکاوٹ (${e.code}) — دوبارہ کوشش`; showProg(); await new Promise(r=>setTimeout(r, 800)); }
       }
       if(!ok) throw lastErr || {code:'error'};
       note = '';
@@ -9789,17 +9814,15 @@ async function runImport(noConfirm){
       done += chunk.length;
       showProg();
     }
-    /* شناختی کارڈ: آخر میں ایک ہی بار، بیک گراؤنڈ میں — ناکام بھی ہوں تو کارڈ اور امپورٹ نہیں رکتے */
     let cnicMsg = '';
     if(cnicAll.length){
+      stage = 'شناختی کارڈ نمبر محفوظ ہو رہے ہیں'; showProg();
       try{ const m = JSON.parse(localStorage.getItem('mcsRegCnic') || '{}'); cnicAll.forEach(c=>{ m[c.id] = c.cn; }); localStorage.setItem('mcsRegCnic', JSON.stringify(m)); }catch(e){}
       try{
         for(let i=0; i<cnicAll.length; i+=100){
-          const b2 = FB.writeBatch(FB.db);
-          cnicAll.slice(i, i+100).forEach(c=>b2.set(FB.doc(FB.db, 'regPrivate', c.id), {cnic:c.cn, nameUr:c.nameUr, whatsapp:c.whatsapp, ts:Date.now()}, {merge:true}));
-          await withTimeout(b2.commit(), 20000);
+          await fsRestCommit(token, cnicAll.slice(i, i+100).map(c=>fsWrite('regPrivate', c.id, {cnic:c.cn, nameUr:c.nameUr, whatsapp:c.whatsapp, ts:Date.now()})), 20000);
         }
-      }catch(e){ cnicMsg = `<br><span style="color:#b45309;font-size:12px;">ℹ️ کارڈ سب بن گئے، مگر ${urduDigits(cnicAll.length)} شناختی کارڈ نمبر سرور پر محفوظ نہیں ہوئے (${escapeHtml((e&&e.code)||'error')}) — Firestore rules میں regPrivate کی اجازت چاہیے۔ یہ نمبر فی الحال اس فون میں محفوظ ہیں۔</span>`; }
+      }catch(e){ cnicMsg = `<br><span style="color:#b45309;font-size:12px;">ℹ️ کارڈ سب بن گئے، مگر شناختی کارڈ نمبر سرور پر محفوظ نہیں ہوئے (${escapeHtml((e&&e.code)||'error')}) — Firestore rules میں regPrivate کی اجازت چاہیے۔ یہ نمبر فی الحال اس فون میں محفوظ ہیں۔</span>`; }
     }
     clearInterval(tick);
     importReady = []; nlRows = []; try{ const t = document.getElementById('nlText'); if(t) t.value = ''; }catch(e){}
@@ -9808,7 +9831,9 @@ async function runImport(noConfirm){
     if(btn) btn.remove();
   }catch(e){
     clearInterval(tick);
-    if(prog) { const _c = (e&&e.code)||'error'; const _why = _c==='timeout' ? 'سرور سے جواب نہیں آیا — انٹرنیٹ / Firebase دیکھیں، پھر یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا' : _c==='permission-denied' ? 'Firebase Rules نے services میں لکھنے کی اجازت نہیں دی — ایڈمن لاگ اِن اور Rules دیکھیں' : 'یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا'; prog.innerHTML = `<span style=\"color:#b91c1c;\">رکاوٹ آ گئی (${escapeHtml(_c)}) — ${urduDigits(done)} / ${urduDigits(total)} محفوظ ہو چکے ہیں۔ ${_why}۔</span>`; }
+    const _c = (e&&e.code)||'error', _d = (e && (e.detail || e.message)) || '';
+    const _why = _c==='timeout' ? 'سرور سے جواب نہیں آیا — انٹرنیٹ دیکھیں، پھر یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا' : _c==='permission-denied' ? 'Firebase Rules نے services میں لکھنے کی اجازت نہیں دی' : _c==='network' ? 'نیٹ سے رابطہ نہیں ہو سکا — کنکشن دیکھیں اور یہی بٹن دوبارہ دبائیں' : 'یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا';
+    if(prog) prog.innerHTML = `<span style="color:#b91c1c;">رکاوٹ آ گئی (${escapeHtml(_c)}) — ${urduDigits(done)} / ${urduDigits(total)} محفوظ ہو چکے ہیں۔ ${_why}۔</span><div style="direction:ltr;font-size:11px;color:#475569;margin-top:4px;word-break:break-all;">${escapeHtml(String(_d).slice(0,300))}</div>`;
     if(btn){ btn.disabled = false; btn.style.opacity = 1; }
   }
 }
