@@ -3989,7 +3989,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA181";
+const APP_VERSION = "MCS0711SA183";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -4819,7 +4819,19 @@ function bpRender(){
   box.innerHTML = `<div class="bp-hd"><b dir="ltr">Business Promotion</b><button type="button" class="bp-on" onclick="adRequestOpen()">Order Now</button><span>اپنے کاروبار کی تشہیر کریں</span></div>`   /* #96 (محمد عمران، مالک کی ⚡ منظوری): عنوان / [Order Now] بٹن / اردو، نیچے کاروبار کا کارڈ */
     + (L.length ? L.map(it => `<div class="bp-card" onclick="if(!event.target.closest('a,button'))hlOpen('${it.kind}','${escapeAttr(it.rec.id)}')">${favCardHtml(it.kind, it.rec)}</div>`).join('')
       : `<button type="button" class="bp-ask" onclick="adRequestOpen()">📢 اپنا کاروبار یہاں دکھائیں — <b>Order Now</b></button>`);
+  /* MCS0711SA183 (مالک کا حکم): اوپر چنے ہوئے شہر (یا فون کی لوکیشن والے شہر) کے سب کاروبار نیچے — صرف ممبرشپ والے دو نہیں */
+  try{
+    const hi = hlItems(); if(hi.q) return;
+    const rest = hi.list.filter(it => it.kind === 'service' && (CATEGORY_META[it.cat] || {}).group === 'business' && !L.some(p => p.rec === it.rec));
+    if(!rest.length) return;
+    const where = hf.area || hf.city || hf.district || hf.province || 'سب شہر';
+    box.insertAdjacentHTML('beforeend', `<div class="hl-h" style="margin:10px 4px 6px"><b>📋 ${escapeHtml(where)} کے کاروبار<small>Businesses</small></b><span>${rest.length}</span></div>`
+      + rest.slice(0, bpShown).map(it => `<div class="bp-card" onclick="if(!event.target.closest('a,button'))hlOpen('${it.kind}','${escapeAttr(it.rec.id)}')">${favCardHtml(it.kind, it.rec)}</div>`).join('')
+      + (rest.length > bpShown ? `<button type="button" class="hl-more" onclick="bpMore()">▼ مزید دکھائیں (${rest.length - bpShown} باقی) • Show more</button>` : ''));
+  }catch(e){}
 }
+let bpShown = 10;
+function bpMore(){ bpShown += 10; bpRender(); }
 function hlRender(){
   try{ setTimeout(bpRender, 50); }catch(e){}
   const box = document.getElementById('homeList'); if(!box) return;
@@ -7622,7 +7634,7 @@ function docCardHtml(d, mode){
     const sub = [d.specialty, d.hospital].filter(Boolean).map(escapeHtml).join('<span class="dot">•</span>');
     const nameUr = d.nameUr || d.name || '';
     return `
-    <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}">${ewRib()}
+    <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}">${ewRib('doctor', d)}
       <div class="doc-toprow">
       <div class="doc-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
       <div class="doc-body">
@@ -8425,7 +8437,7 @@ function agIsRec(kind, rec){
   try{ const me = agMe(), p = String(rec.whatsapp||'').replace(/\D/g,'').slice(-10); if(me && me.phone && p.length===10 && String(me.phone).replace(/\D/g,'').slice(-10)===p) return true; }catch(_){}
   return false;
 }
-function agBadgeHtml(kind, rec){ return agIsRec(kind, rec) ? `<div class="ag-corner" title="MCS Agent"><svg viewBox="0 0 64 44" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#fcd34d"/><stop offset="1" stop-color="#d98a06"/></linearGradient><linearGradient id="d" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#b45309"/></linearGradient></defs><g stroke="#0b2a5b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M1.5 12 L10 9.5 L14 29 L5.5 31.5 Z" fill="url(#d)"/><path d="M62.5 12 L54 9.5 L50 29 L58.5 31.5 Z" fill="url(#d)"/><path d="M13 11 L25 8 Q31 7 36 10 L44 15 L35 24 L26 31 Q22 33 19 30 L13.5 28 Z" fill="url(#d)"/><path d="M51 11 L41 9 Q34 7.5 29 12 L22 18.5 Q20 21.5 23 24 L36 36 Q39.5 38.5 42.5 36 L45 33.5 L50 30 Z" fill="url(#g)"/><path d="M27 21.5 L33 27.5 M31.5 17.5 L39.5 25.5 M36 14.5 L45 23.5" fill="none" stroke-width="1.3"/><path d="M25 8.5 Q32 5.5 38 11 Q34 15.5 29 14 Z" fill="#fff3b0"/></g></svg><small>MCS</small></div>` : ''; }
+function agBadgeHtml(kind, rec){ return agIsRec(kind, rec) ? `<div class="ag-corner" title="MCS Agent"><svg viewBox="0 0 64 44" aria-hidden="true"><defs><linearGradient id="agBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#fcd34d"/><stop offset="1" stop-color="#d98a06"/></linearGradient><linearGradient id="agBd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#b45309"/></linearGradient></defs><g stroke="#0b2a5b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M1.5 12 L10 9.5 L14 29 L5.5 31.5 Z" fill="url(#agBd)"/><path d="M62.5 12 L54 9.5 L50 29 L58.5 31.5 Z" fill="url(#agBd)"/><path d="M13 11 L25 8 Q31 7 36 10 L44 15 L35 24 L26 31 Q22 33 19 30 L13.5 28 Z" fill="url(#agBd)"/><path d="M51 11 L41 9 Q34 7.5 29 12 L22 18.5 Q20 21.5 23 24 L36 36 Q39.5 38.5 42.5 36 L45 33.5 L50 30 Z" fill="url(#agBg)"/><path d="M27 21.5 L33 27.5 M31.5 17.5 L39.5 25.5 M36 14.5 L45 23.5" fill="none" stroke-width="1.3"/><path d="M25 8.5 Q32 5.5 38 11 Q34 15.5 29 14 Z" fill="#fff3b0"/></g></svg><small>MCS</small></div>` : ''; }
 function agMarkRecords(){
   const FB = window.MCSFirebase; if(!FB || !isAdminSignedIn) return;
   [['doctors','doctor'],['services','service']].forEach(([col,kind])=>{ (store[col]||[]).forEach(r=>{
@@ -8793,7 +8805,7 @@ function svcCardHtml(s, meta){
     const digits = num.replace(/[^0-9]/g,'');
     const intl = '92' + digits.replace(/^0/,'');
     return `
-    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}">${ewRib()}
+    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}">${ewRib('service', s)}
       <div class="doc-toprow">
       <div class="doc-avatar"><span style="font-size:20px;">${meta.emoji}</span></div>
       <div class="doc-body">
@@ -10566,7 +10578,17 @@ function ptDevPend(){ openDevPanel(); setTimeout(()=>{ const e = document.getEle
 function ptHome(){ try{ goHome(); }catch(e){} }
 document.addEventListener('DOMContentLoaded', ()=>{ const t = document.getElementById('h2Type'); if(t) t.addEventListener('click', e=>{ const rl = ptRole(), a = (typeof uaMe === 'function') && uaMe(), ag = agMe(); if(rl !== 'user' || a || (ag && (ag.pin || ag.code))){ e.stopImmediatePropagation(); ptOpen(); } }, true); });
 /* ===== MCS0711SA180 (مالک کا حکم): Earn with MCS ربن + ڈویلپر پورٹل (کو-ڈویلپر / ایجنٹ پورٹل پیش منظر، ایجنٹ بنانا، میرے رجسٹرڈ ایجنٹس / بزنس) + ایجنٹ پورٹل سے کاروبار رجسٹر ===== */
-function ewRib(){ try{ if(isAdminSignedIn || codevOn()) return ''; const a = agMe(); if(a && a.phone && (a.pin || a.code)) return ''; }catch(e){} return '<button type="button" class="ew-rb" aria-label="Earn with MCS" onclick="event.stopPropagation();agEarnOpen()"><span>Earn with MCS</span></button>'; }
+function ewRib(kind, rec){
+  try{
+    if(!rec || isAdminSignedIn || codevOn()) return '';
+    if(!(typeof uaMe === 'function' && uaMe())) return '';   /* صرف لاگ اِن بندے کو */
+    const a = agMe(); if(a && a.phone && (a.pin || a.code)) return '';
+    if(agIsRec(kind, rec)) return '';                         /* ایجنٹ بن چکا — اس پر ایجنٹ کا نشان */
+    if(!mpEntry(rec)) return '';                              /* اسی فون کا اپنا رجسٹرڈ کاروبار / پروفیشن */
+    const inf = apInfo({rec, kind}); if(!(inf.mode === 'paid' && inf.left > 0)) return '';   /* ایک سال کی ممبرشپ لے چکا */
+    return '<button type="button" class="ew-rb" aria-label="Earn with MCS" onclick="event.stopPropagation();agEarnOpen()"><span>Earn with MCS</span></button>';
+  }catch(e){} return '';
+}
 function agEarnOpen(){
   const a = agMe(), isAg = !!(a && a.phone && (a.pin || a.code));
   agModal(`<div class="ag-hd">💰 Earn with MCS <small>MCS کے ساتھ جڑیں</small></div>
