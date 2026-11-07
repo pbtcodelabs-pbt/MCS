@@ -1,6 +1,43 @@
 <!DOCTYPE html>
 <html lang="ur" dir="rtl">
 <head>
+<style id="mcsDigitsFont">
+/* MCS0711SA206: ہندسے ہمیشہ Arial (انگلش) — صرف 0-9 کے لیے */
+@font-face{font-family:MCSDigits;src:local('Arial'),local('ArialMT'),local('Arimo'),local('Liberation Sans'),local('Helvetica'),local('Roboto'),local('Noto Sans');unicode-range:U+0030-0039;font-display:swap}
+</style>
+<script>
+/* MCS0711SA206 (مالک کا حکم): پوری ایپ میں اردو ہندسے (۰-۹) کہیں نہیں — پیغام، پرمٹ، لسٹ، واٹس ایپ، PDF؛ سب انگلش 0-9 */
+(function(){
+  var RE=/[\u06F0-\u06F9\u0660-\u0669]/;
+  var REG=/[\u06F0-\u06F9\u0660-\u0669]/g;
+  function cv(t){ return (typeof t==='string' && t) ? t.replace(REG,function(c){var k=c.charCodeAt(0);return String(k>=0x06F0?k-0x06F0:k-0x0660);}) : t; }
+  window.mcsEnDigits=cv;
+  try{ var _a=window.alert; window.alert=function(m){return _a.call(window,cv(String(m)));}; var _c=window.confirm; window.confirm=function(m){return _c.call(window,cv(String(m)));}; var _p=window.prompt; window.prompt=function(m,d){return _p.call(window,cv(String(m)),cv(d));}; }catch(e){}
+  try{ var _e=window.encodeURIComponent; window.encodeURIComponent=function(x){return _e(cv(String(x)));}; }catch(e){}
+  try{ if(navigator.clipboard && navigator.clipboard.writeText){ var _w=navigator.clipboard.writeText.bind(navigator.clipboard); navigator.clipboard.writeText=function(t){return _w(cv(String(t)));}; } }catch(e){}
+  try{ if(navigator.share){ var _s=navigator.share.bind(navigator); navigator.share=function(o){ if(o){ o=Object.assign({},o); if(o.text) o.text=cv(o.text); if(o.title) o.title=cv(o.title);} return _s(o); }; } }catch(e){}
+  try{ var P=CanvasRenderingContext2D.prototype; ['fillText','strokeText'].forEach(function(n){var f=P[n]; P[n]=function(t){arguments[0]=cv(String(t)); return f.apply(this,arguments);};}); var mt=P.measureText; P.measureText=function(t){return mt.call(this,cv(String(t)));}; }catch(e){}
+  function walk(n){
+    if(!n) return;
+    if(n.nodeType===3){ var v=n.nodeValue; if(RE.test(v)) n.nodeValue=cv(v); return; }
+    if(n.nodeType!==1) return;
+    var tg=n.nodeName; if(tg==='SCRIPT'||tg==='STYLE') return;
+    ['placeholder','title','aria-label','alt'].forEach(function(a){ var x=n.getAttribute&&n.getAttribute(a); if(x && RE.test(x)) n.setAttribute(a,cv(x)); });
+    var c=n.firstChild; while(c){ walk(c); c=c.nextSibling; }
+  }
+  function start(){
+    walk(document.body); try{ document.title=cv(document.title); }catch(e){}
+    new MutationObserver(function(ms){ ms.forEach(function(m){
+      if(m.type==='characterData'){ var v=m.target.nodeValue; if(RE.test(v)) m.target.nodeValue=cv(v); }
+      else if(m.type==='attributes'){ var x=m.target.getAttribute(m.attributeName); if(x && RE.test(x)) m.target.setAttribute(m.attributeName,cv(x)); }
+      else m.addedNodes.forEach(walk);
+    }); }).observe(document.documentElement,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['placeholder','title','aria-label']});
+    document.addEventListener('input',function(ev){ var t=ev.target; if(!t||typeof t.value!=='string'||!RE.test(t.value)) return; var ty=(t.type||'text'); if(ty==='password'||ty==='file') return; var a=null,b=null; try{a=t.selectionStart;b=t.selectionEnd;}catch(e){} t.value=cv(t.value); try{ if(a!=null) t.setSelectionRange(a,b); }catch(e){} },true);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>مائی سٹی شائنز</title>
@@ -19,14 +56,14 @@
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js">
 <style>
   @font-face{
-    font-family:'Jameel Noori Nastaleeq Regular';
+    font-family:MCSDigits,'Jameel Noori Nastaleeq Regular';
     src:url('./JameelNooriNastaleeqRegular.ttf') format('truetype');
     font-weight:normal;
     font-style:normal;
     font-display:swap;
   }
   @font-face{
-    font-family:'Jameel Noori Nastaleeq Kasheeda';
+    font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda';
     src:url('./JameelNooriNastaleeqKasheeda.ttf') format('truetype');
     font-weight:normal;
     font-style:normal;
@@ -49,7 +86,7 @@
   button,input,select,textarea{font-family:inherit;}
   html,body{margin:0;padding:0;height:100%;}
   body{
-    font-family:'Jameel Noori Nastaleeq Regular','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    font-family:MCSDigits,'Jameel Noori Nastaleeq Regular','Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
     background:var(--bg);
     color:var(--text);
     overflow-x:hidden;
@@ -57,7 +94,7 @@
     line-height:1.9;
   }
   .topbar h1, .welcome h2, .screen-head h2, .lock-title, .doctorFormTitle, h3{
-    font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular','Segoe UI',sans-serif;
+    font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular','Segoe UI',sans-serif;
   }
   #app{min-height:100vh;display:flex;flex-direction:column;}
 
@@ -125,7 +162,7 @@
   :root{
     --ticker-mid-bg1:#0d3b66; --ticker-mid-bg2:#123a5e; --ticker-text:#f4d58d;
     --ticker-border-color:#d4a017; --ticker-h:34px; --ticker-font-size:14px;
-    --ticker-font-family:'Jameel Noori Nastaleeq Regular'; --ticker-gap:48px;
+    --ticker-font-family:MCSDigits,'Jameel Noori Nastaleeq Regular'; --ticker-gap:48px;
   }
   .mcs-ticker{position:fixed;top:0;left:0;right:0;z-index:9999;
     height:var(--ticker-h);box-sizing:border-box;
@@ -137,7 +174,7 @@
     display:flex;align-items:center;}
   .mcs-ticker-track{position:absolute;left:0;right:0;top:0;bottom:0;direction:ltr;overflow:hidden;}
   .tkr-item{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center;white-space:nowrap;will-change:transform;}
-  .mcs-ticker-track span{font-size:var(--ticker-font-size);font-family:var(--ticker-font-family),'Segoe UI',sans-serif;
+  .mcs-ticker-track span{font-size:var(--ticker-font-size);font-family:MCSDigits,var(--ticker-font-family),'Segoe UI',sans-serif;
     color:var(--ticker-text);font-weight:600;white-space:nowrap;line-height:1.6;
     display:inline-flex;align-items:center;padding-top:2px;direction:rtl;unicode-bidi:isolate;}
   .mcs-ticker-track span.tkr-pill-custom{padding:2px 12px;border-radius:999px;border:1.5px solid transparent;}
@@ -255,7 +292,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .hero-badge{position:absolute;top:-6px;left:-6px;min-width:18px;height:18px;padding:0 4px;
     background:#e11d48;color:#fff;border-radius:999px;font-size:10.5px;font-weight:800;
     display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #0d3b66;
-    font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;}
+    font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;}
   #pendingHomeBanner{display:flex;align-items:center;justify-content:space-between;gap:8px;
     background:linear-gradient(145deg,#fff3cd,#ffe082);border:1.5px solid #d4a017;color:#5a3d00;
     border-radius:14px;padding:10px 14px;margin:0 16px 12px;font-size:13px;font-weight:700;cursor:pointer;
@@ -270,9 +307,9 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   #pendingHomeList .phl-go.m{background:#b45309;}
   #pendingHomeList .phl-more{background:none;border:none;color:#b45309;font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit;padding:2px;}
   #pendingHomeBanner .phb-count{background:#e11d48;color:#fff;border-radius:999px;padding:2px 10px;font-size:12.5px;
-    font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;}
+    font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;}
   .hero-text{position:relative;margin-top:22px;}
-  .hero-text h1{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;
+  .hero-text h1{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;
     font-size:34px;font-weight:normal;margin:0;line-height:1.7;}
   .hero-text p{margin:2px 0 0;font-size:17px;opacity:.9;line-height:1.8;}
   .search-pill{
@@ -299,13 +336,13 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .entry-card .txt{width:100%;}
   .entry-count{position:absolute;left:14px;top:50%;transform:translateY(-50%);
     background:#ffffff;color:#000000;direction:ltr;unicode-bidi:isolate;
-    font-family:'Arial Black','Arial Bold',Gadget,sans-serif;
+    font-family:MCSDigits,'Arial Black','Arial Bold',Gadget,sans-serif;
     font-size:14px;font-weight:900;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
     min-width:34px;height:34px;padding:0 10px;box-sizing:border-box;white-space:nowrap;
     border:1px solid #d8dee4;box-shadow:0 2px 5px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.7);}
   /* MCS2310FR041: ہوم کے بڑے بٹنوں کا عنوان کشیدہ میں */
-  .entry-card .txt b{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;display:block;font-size:18px;font-weight:800;letter-spacing:.4px;color:#fff;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.3);}
-  .entry-en{display:block;font-family:'Segoe UI',Roboto,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.85);margin-top:1px;}
+  .entry-card .txt b{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;display:block;font-size:18px;font-weight:800;letter-spacing:.4px;color:#fff;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .entry-en{display:block;font-family:MCSDigits,'Segoe UI',Roboto,sans-serif;font-size:10.5px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.85);margin-top:1px;}
   .e-teal{--c1:#22c1b0;--c2:#0f766e;}
   .e-amber{--c1:#f6ad3c;--c2:#c2740a;}
   .e-rose{--c1:#a78bfa;--c2:#6d28d9;}
@@ -313,7 +350,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   /* MCS2510SU057: ایمرجنسی صفحے پر ملک گیر نمبر — دباتے ہی کال */
   .emg-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}
   .emg-quick a{display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:#fff;border-radius:14px;padding:6px 4px;background:linear-gradient(145deg,#ef4444,#991b1b);box-shadow:0 3px 0 rgba(0,0,0,.2)}
-  .emg-quick a b{font-family:Arial,sans-serif;font-size:22px;line-height:1.1}
+  .emg-quick a b{font-family:MCSDigits,Arial,sans-serif;font-size:22px;line-height:1.1}
   .emg-quick a span{font-size:13px;line-height:1.5}
   .emg-note{grid-column:1/-1;text-align:center;font-size:12.5px;color:#6b7280}
   /* MCS2310FR044: فیورٹ کا دل — شیئر جیسا گول بٹن */
@@ -339,31 +376,31 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   html[data-ctheme="black"] .doc-card{border:1.5px solid #d4af37!important}
   .a-dl{width:32px;height:32px;min-width:32px;border-radius:50%;border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;color:#fff;padding:0;cursor:pointer;background:linear-gradient(145deg,#38bdf8,#0369a1);box-shadow:inset 0 2px 1px rgba(255,255,255,.42),inset 0 -2px 2px rgba(0,0,0,.26),0 3px 0 rgba(0,0,0,.2),0 4px 8px rgba(0,0,0,.25)}
   .a-dl svg{width:15px;height:15px}
-  .lc-share .lc-congrats{margin:12px 14px 0;background:#fffdf3;border:2px solid #f4c45a;border-radius:16px;padding:8px 12px 10px;text-align:center;color:#0b2a44;font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:16px;line-height:1.95}
-  .lc-share .lc-congrats b{color:#0f766e;font-family:Arial,sans-serif;font-size:14px}
+  .lc-share .lc-congrats{margin:12px 14px 0;background:#fffdf3;border:2px solid #f4c45a;border-radius:16px;padding:8px 12px 10px;text-align:center;color:#0b2a44;font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-size:16px;line-height:1.95}
+  .lc-share .lc-congrats b{color:#0f766e;font-family:MCSDigits,Arial,sans-serif;font-size:14px}
   .fav-add{box-sizing:border-box;width:calc(100% - 20px);max-width:440px;background:#fff;border:1.5px solid #e9d5ff;border-radius:18px;padding:10px 10px 8px;margin:0 auto 12px;box-shadow:0 4px 12px rgba(109,40,217,.12)}
-  .fav-add-t{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;color:#6d28d9;text-align:center;line-height:1.7}
+  .fav-add-t{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;color:#6d28d9;text-align:center;line-height:1.7}
   .fav-search{margin:4px 0 8px}
   .fav-go{display:flex;gap:8px;justify-content:center}
   .fav-go button{flex:1;border:0;border-radius:14px;padding:8px 6px;color:#fff;font-family:inherit;font-weight:800;font-size:15px;box-shadow:0 3px 0 rgba(0,0,0,.18)}
   .fav-go .fg-pro{background:linear-gradient(145deg,#22c1b0,#0f766e)}.fav-go .fg-biz{background:linear-gradient(145deg,#f6ad3c,#c2740a)}
   .fav-hint{text-align:center;font-size:13px;color:#6b7280;margin:6px 0 2px}
   .fav-none{text-align:center;font-size:13px;color:#6b7280;margin:6px 0}
-  .fav-list-t{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:19px;color:#be123c;text-align:center;line-height:1.7;margin:2px 0 4px}
+  .fav-list-t{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:19px;color:#be123c;text-align:center;line-height:1.7;margin:2px 0 4px}
   .e-blue{--c1:#f0578a;--c2:#be123c;}
   .home-total{width:max-content;margin:6px auto 0;padding:2px 12px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:13px;font-weight:700;line-height:1.7;position:relative;z-index:1}
-  .home-total b{font-family:Arial,sans-serif;font-size:14px;color:#ffe08a}
+  .home-total b{font-family:MCSDigits,Arial,sans-serif;font-size:14px;color:#ffe08a}
   .home-logo-big{display:block;width:88px;height:88px;border-radius:24px;margin:6px auto 0;
     box-shadow:0 10px 26px rgba(0,0,0,.3);object-fit:cover;}
   .home-footer{text-align:center;padding:18px 16px 4px;font-size:12px;color:#9aa3ad;line-height:1.8;}
-  .home-footer .ver{font-family:'Segoe UI',Roboto,sans-serif;direction:ltr;display:inline-block;}
+  .home-footer .ver{font-family:MCSDigits,'Segoe UI',Roboto,sans-serif;direction:ltr;display:inline-block;}
 
   /* ===== Hero status pill (ورژن + آن لائن/آف لائن) — سادہ، بغیر چمک ===== */
   .hero-status{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
     height:40px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.12);
     border:1px solid rgba(255,255,255,.22);color:#fff;cursor:pointer;}
   .hero-status:active{background:rgba(255,255,255,.22);}
-  .hero-status .hs-ver{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;
+  .hero-status .hs-ver{font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;
     font-size:11px;font-weight:700;letter-spacing:.3px;line-height:1.35;color:#fff;white-space:nowrap;}
   .hero-status .hs-net{display:flex;align-items:center;gap:5px;font-size:11px;line-height:1.45;color:#d8efe9;}
   .hero-status .hs-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.28);flex:none;}
@@ -397,7 +434,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .ub-opt{border:1px solid #d5e3e0;background:#f3f8f7;color:#0b2a44;border-radius:999px;padding:2px 12px;font-size:14px;line-height:1.8;
     display:inline-flex;align-items:center;gap:6px;}
   .ub-opt.active{background:#0f766e;border-color:#0f766e;color:#fff;}
-  .ub-opt small{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:10px;opacity:.7;}
+  .ub-opt small{font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:10px;opacity:.7;}
   .ub-none{font-size:12.5px;color:var(--muted);padding:4px 6px;}
 
   /* ===== MCS: سرچ بار کے نیچے گروپ + 4 کیپسول فلٹر + تلاش/صاف بٹن (سرچ بار کی چوڑائی میں) ===== */
@@ -427,7 +464,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .ub-panel.cat-mode .uo-e{font-size:22px;line-height:1;flex:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));}
   .ub-panel.cat-mode .uo-n{flex:1;min-width:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ub-panel.cat-mode .ub-opt small{flex:none;min-width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
-    font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:900;opacity:1;background:#fff;color:#0b2a44;
+    font-family:MCSDigits,Arial,Helvetica,sans-serif;font-size:12px;font-weight:900;opacity:1;background:#fff;color:#0b2a44;
     box-shadow:0 2px 4px rgba(0,0,0,.25),inset 0 1px 0 #fff;}
   .ub-panel.cat-mode .ub-opt.active small{background:#fff;color:#0f766e;}
   .ub-catrow{margin-top:6px;}
@@ -448,23 +485,23 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .ub-top{display:flex;align-items:flex-start;gap:10px;}
   .ub-ico{width:38px;height:38px;min-width:38px;border-radius:12px;background:var(--rbg);display:flex;align-items:center;justify-content:center;font-size:20px;margin-top:2px;}
   .ub-body{flex:1;min-width:0;}
-  .ub-name{font-family:var(--docCardFont);font-size:calc(18px*var(--docCardScale));line-height:1.5;color:#0b2a44;font-weight:bold;
+  .ub-name{font-family:MCSDigits,var(--docCardFont);font-size:calc(18px*var(--docCardScale));line-height:1.5;color:#0b2a44;font-weight:bold;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .ub-enrow{display:flex;align-items:center;justify-content:space-between;gap:8px;direction:ltr;}
-  .ub-en{flex:1;min-width:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;text-align:left;unicode-bidi:isolate;font-size:11.5px;font-weight:600;
+  .ub-en{flex:1;min-width:0;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;text-align:left;unicode-bidi:isolate;font-size:11.5px;font-weight:600;
     color:#9a4b06;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ub-sub{font-size:12.5px;color:#3f5568;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ub-loc{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5b6b78;line-height:1.6;}
   .ub-loc-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .ub-id{flex:none;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;font-size:9.5px;color:#9aa5b1;}
+  .ub-id{flex:none;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;font-size:9.5px;color:#9aa5b1;}
   .ub-bot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;}
-  .ub-num{direction:ltr;unicode-bidi:isolate;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;font-weight:700;color:#0d3b66;letter-spacing:.3px;}
+  .ub-num{direction:ltr;unicode-bidi:isolate;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;font-weight:700;color:#0d3b66;letter-spacing:.3px;}
   .ub-acts{display:flex;gap:5px;align-items:center;flex:none;}
   .ub-acts a,.ub-acts button{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
     color:#fff;border:none;padding:0;box-shadow:0 2px 5px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.35);}
   .ub-acts a svg,.ub-acts button svg{width:14px;height:14px;}
   .ub-acts .ub-edit{background:#eef2f6;color:#334;font-size:13px;}
-  .ub-intro{font-family:var(--docCardFont);font-size:calc(12.5px*var(--docCardScale));color:#7a5600;background:#fff6d9;border-radius:999px;
+  .ub-intro{font-family:MCSDigits,var(--docCardFont);font-size:calc(12.5px*var(--docCardScale));color:#7a5600;background:#fff6d9;border-radius:999px;
     padding:1px 12px;margin-top:5px;line-height:1.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .ub-row .doc-pending-line{margin-top:5px;}
 
@@ -474,7 +511,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
     border:1px solid rgba(255,255,255,.35);
     box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 -4px 8px rgba(6,20,80,.35) inset,
                0 3px 0 #1233a0,0 6px 0 #0e2880,0 12px 18px rgba(13,40,128,.4);}
-  .dev-box-title{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:19px;font-weight:800;letter-spacing:.4px;line-height:1.35;
+  .dev-box-title{font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:19px;font-weight:800;letter-spacing:.4px;line-height:1.35;
     color:#fff;margin:0;text-shadow:0 2px 3px rgba(6,20,80,.55);}
   .dev-box-sub{font-size:13px;color:#e3edff;line-height:1.6;margin:0 0 7px;text-shadow:0 1px 2px rgba(6,20,80,.4);}
   .dev-box-btns{display:flex;justify-content:center;gap:16px;margin-bottom:7px;}
@@ -530,7 +567,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .cat-item.soon{opacity:.6;}
   .cat-count{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
     background:#ffffff;color:#000000;direction:ltr;unicode-bidi:isolate;
-    font-family:'Arial Black','Arial Bold',Gadget,sans-serif;
+    font-family:MCSDigits,'Arial Black','Arial Bold',Gadget,sans-serif;
     font-size:11px;font-weight:900;border-radius:999px;display:inline-flex;align-items:center;white-space:nowrap;
     justify-content:center;min-width:22px;height:22px;padding:0 7px;box-sizing:border-box;
     border:1px solid #d8dee4;
@@ -574,9 +611,9 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
      with justify-content:flex-start the two stay bunched together as one
      small compact capsule instead of stretching across the whole row. */
   .csel-label{display:flex;align-items:center;gap:6px;flex:1;min-width:0;justify-content:flex-start;overflow:hidden;}
-  .csel-label .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:calc(10.5px*var(--form-scale));color:#9a4b06;
+  .csel-label .csel-en{font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:calc(10.5px*var(--form-scale));color:#9a4b06;
     background:#fbdfb4;padding:1px 7px;border-radius:999px;white-space:nowrap;flex:none;}
-  .csel-label .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:calc(15px*var(--form-scale));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .csel-label .csel-ur{font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-size:calc(15px*var(--form-scale));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .csel-panel{
     position:absolute;top:calc(100% + 6px);right:0;left:0;z-index:60;
     background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22);
@@ -597,10 +634,10 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .csel-opt.active{background:linear-gradient(90deg,#0d3b66,#0f766e);}
   .csel-opt.active .csel-ur{color:#fff;}
   .csel-opt.active .csel-en{background:rgba(255,255,255,.3);color:#fff;}
-  .csel-opt .csel-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:12.5px;font-weight:700;color:#475569;
+  .csel-opt .csel-en{font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;font-size:12.5px;font-weight:700;color:#475569;
     background:none;padding:0;white-space:nowrap;flex:none;}
-  .csel-opt .csel-ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:18px;font-weight:700;color:#0b2a44;line-height:1.9;}
-  .csel-az{flex-wrap:nowrap !important;gap:4px !important}.csel-az button{flex:1 1 0;padding:2px 4px !important;font-size:12px !important;white-space:nowrap}.csel-az small{font-family:Arial,sans-serif;font-size:10px;opacity:.8}
+  .csel-opt .csel-ur{font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-size:18px;font-weight:700;color:#0b2a44;line-height:1.9;}
+  .csel-az{flex-wrap:nowrap !important;gap:4px !important}.csel-az button{flex:1 1 0;padding:2px 4px !important;font-size:12px !important;white-space:nowrap}.csel-az small{font-family:MCSDigits,Arial,sans-serif;font-size:10px;opacity:.8}
   .field.fm-ref{flex-wrap:wrap;row-gap:4px}
   .field.fm-ref > label,.field.fm-ref > .cp-hint,.field.fm-ref > .ref-self{flex:1 1 100%}
   .field.fm-ref > .field-with-add{flex:1 1 100%}
@@ -635,10 +672,10 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .doc-avatar svg{width:22px;height:22px;}
   .doc-body{flex:1;min-width:0;}
   .doc-top{display:flex;align-items:center;gap:6px;}
-  .doc-name{flex:1;min-width:0;font-family:var(--docCardFont);
+  .doc-name{flex:1;min-width:0;font-family:MCSDigits,var(--docCardFont);
     font-size:calc(22px*var(--docCardScale));line-height:1.45;color:#fff;font-weight:bold;white-space:normal;overflow-wrap:break-word;
     text-shadow:0 1px 2px rgba(0,0,0,.4);}
-  .doc-name-en{font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;text-align:left;unicode-bidi:isolate;
+  .doc-name-en{font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;text-align:left;unicode-bidi:isolate;
     font-size:calc(13px*var(--docCardScale));font-weight:600;letter-spacing:.3px;color:#ffe4a8;line-height:1.5;white-space:normal;overflow-wrap:break-word;}
   .doc-mini{display:flex;gap:4px;}
   .doc-mini button{width:26px;height:22px;border-radius:8px;border:none;padding:0;background:rgba(255,255,255,.15);color:#fff;
@@ -648,17 +685,17 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .doc-sub{font-size:calc(13.5px*var(--docCardScale));font-weight:600;color:#e0f2f1;line-height:1.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .doc-sub .dot{color:#7dd3c8;margin:0 4px;}
   .doc-address{font-size:calc(12.5px*var(--docCardScale));color:#cfe8e4;line-height:1.6;text-align:center;white-space:normal;overflow-wrap:break-word;}
-  .doc-intro{display:block;width:100%;box-sizing:border-box;font-family:var(--docCardFont);
+  .doc-intro{display:block;width:100%;box-sizing:border-box;font-family:MCSDigits,var(--docCardFont);
     font-size:calc(12.5px*var(--docCardScale));color:#5a3d00;text-align:center;
     background:linear-gradient(145deg,#fff3cd,#ffe082);border:1px solid rgba(180,130,20,.35);border-radius:999px;
     padding:5px 16px;margin:7px 0 4px;line-height:1.45;white-space:normal;overflow-wrap:break-word;}
   .doc-bottom{display:flex;align-items:center;gap:8px;margin-top:2px;}
-  .doc-num{direction:ltr;unicode-bidi:isolate;text-align:right;font-family:'Segoe UI',Roboto,Arial,sans-serif;
+  .doc-num{direction:ltr;unicode-bidi:isolate;text-align:right;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;
     font-size:calc(13.5px*var(--docCardScale));font-weight:700;color:#ffe4a8;letter-spacing:.4px;line-height:1.5;}
   .doc-pending-badge{display:inline-block;background:#fde68a;color:#7c4a03;font-size:10.5px;font-weight:700;
     padding:2px 8px;border-radius:8px;margin-top:2px;}
   .doc-pending-line{display:block;width:100%;box-sizing:border-box;text-align:center;background:#fde68a;color:#7c4a03;
-    font-size:10.5px;font-weight:700;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;
+    font-size:10.5px;font-weight:700;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;direction:ltr;unicode-bidi:isolate;
     padding:4px 8px;border-radius:8px;margin-top:6px;}
   .doc-side{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;width:100%;margin:6px 0 2px;}
   .doc-acts{display:flex;flex-wrap:nowrap;gap:5px;}
@@ -742,7 +779,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .cols-pick button.on{background:linear-gradient(135deg,#0d3b66,#0f766e);border-color:transparent;color:#fff;}
   .cc-tmpl-btn{padding:8px 12px;border-radius:20px;border:1px solid #d8dee4;background:#f6f7f9;font-size:12px;color:#334;cursor:pointer;}
   .cc-tmpl-btn.active{background:#0d3b66;color:#f4d58d;border-color:#0d3b66;font-weight:700;}
-  .num-ltr{direction:ltr;unicode-bidi:isolate;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
+  .num-ltr{direction:ltr;unicode-bidi:isolate;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;}
 
   .empty-state{text-align:center;color:var(--muted);padding:40px 10px;font-size:13px;}
   .empty-state .e-emoji{font-size:40px;display:block;margin-bottom:10px;}
@@ -874,7 +911,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
     display:flex;align-items:center;justify-content:center;box-sizing:border-box;}
   .entry-card .txt b{font-size:20px;line-height:1.3;}
   .entry-en{font-size:9.5px;letter-spacing:1.6px;margin-top:0;}
-  .entry-count,.cat-count{font-family:Arial,Helvetica,sans-serif !important;font-weight:700;direction:ltr;unicode-bidi:isolate;
+  .entry-count,.cat-count{font-family:MCSDigits,Arial,Helvetica,sans-serif !important;font-weight:700;direction:ltr;unicode-bidi:isolate;
     background:linear-gradient(145deg,#0f766e,#064e3b);color:#fff;border:2px solid #ffd27a;
     box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3);letter-spacing:0;text-shadow:0 1px 1px rgba(0,0,0,.35);}
   .entry-count{left:12px;font-size:14px;min-width:32px;height:32px;padding:0 6px;}
@@ -891,7 +928,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .doc-name{font-size:calc(17px*var(--docCardScale));line-height:1.3;}
   .doc-name-en{font-size:calc(10.5px*var(--docCardScale));}
   .doc-sub{font-size:calc(11px*var(--docCardScale));line-height:1.3;}
-  .doc-num{font-size:calc(11.5px*var(--docCardScale));font-family:Arial,Helvetica,sans-serif;}
+  .doc-num{font-size:calc(11.5px*var(--docCardScale));font-family:MCSDigits,Arial,Helvetica,sans-serif;}
   .doc-address{font-size:calc(10.5px*var(--docCardScale));line-height:1.35;}
   .doc-intro{font-size:calc(10.5px*var(--docCardScale));padding:1px 10px;margin:3px 0 1px;}
   .doc-acts a,.a-share,.a-reqadmin{width:24px;height:24px;min-width:24px;}
@@ -901,7 +938,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
   .ub-en{font-size:10px;}
   .ub-sub{font-size:11px;line-height:1.3;}
   .ub-loc{font-size:10px;}
-  .ub-num{font-size:11.5px;font-family:Arial,Helvetica,sans-serif;}
+  .ub-num{font-size:11.5px;font-family:MCSDigits,Arial,Helvetica,sans-serif;}
   .ub-acts a,.ub-acts button{width:24px;height:24px;min-width:24px;}
   .ub-search{background:linear-gradient(150deg,#15803d 0%,#0f766e 55%,#065f46 100%);border:1px solid rgba(255,255,255,.15);height:38px;
     box-shadow:0 1px 0 rgba(255,255,255,.15) inset,0 4px 10px rgba(6,95,70,.35);}
@@ -916,7 +953,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
 
   /* ===== v4 (MCS28SEPMO0443PM): کیٹگری کارڈز کے اعداد — بڑے گول سبز ڈبے، سفید Arial ہندسے (کم از کم دو ہندسوں کی جگہ) ===== */
   .cat-grid .cat-item .cat-count,.cat-item .cat-count{
-    font-family:Arial,Helvetica,sans-serif !important;font-size:15px !important;font-weight:700 !important;
+    font-family:MCSDigits,Arial,Helvetica,sans-serif !important;font-size:15px !important;font-weight:700 !important;
     color:#ffffff !important;-webkit-text-fill-color:#ffffff;text-shadow:0 1px 1px rgba(0,0,0,.4);
     background:linear-gradient(145deg,#0f766e,#064e3b) !important;border:2px solid #ffd27a !important;
     min-width:34px !important;height:28px !important;padding:0 8px !important;border-radius:999px !important;
@@ -1038,7 +1075,7 @@ body.nav-on .version-badge{bottom:calc(var(--nav-h) + 8px + env(safe-area-inset-
 .name-suggest .ns-row{width:100%;text-align:right;background:#ffffff;border:none;border-top:1px solid #f1f1f1;font-family:inherit;cursor:pointer;}
 .name-suggest .ns-row:first-of-type{border-top:none;}
 .name-suggest .ns-row:active{background:#e8f6f3;}
-.name-suggest .ns-en{font-size:11.5px;color:#334155;direction:ltr;text-align:right;unicode-bidi:plaintext;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
+.name-suggest .ns-en{font-size:11.5px;color:#334155;direction:ltr;text-align:right;unicode-bidi:plaintext;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;}
 .name-suggest mark.ns-hl{background:#ffe08a;color:#3a2c00;border-radius:4px;padding:0 2px;font-weight:700;}
 .fm-body{position:relative;}
 /* ===== MCS510MO008: چھپے خانے، رفتار بٹن، گلی/محلہ فہرست، شیٹ ایڈیٹر ===== */
@@ -1129,16 +1166,16 @@ body.nav-on #doctorFormModal, body.nav-on #serviceFormModal{padding-bottom:10px;
 /* MCS2310FR041: محفوظ کے بعد والا پاپ اپ اور کارڈ اسکرین فارم کے اوپر */
 #afterSaveModal.active{z-index:1090;align-items:center;}
 /* MCS2310FR041: شیئر تصویر کے لیے اصل کارڈ (اسکرین سے باہر بنتا ہے) */
-.lc-share{position:fixed;left:-10000px;top:0;width:400px;padding:16px 0 18px;background:linear-gradient(180deg,#0d3b66,#0a2747);border-radius:0;direction:rtl;font-family:'Jameel Noori Nastaleeq Regular',serif}
+.lc-share{position:fixed;left:-10000px;top:0;width:400px;padding:16px 0 18px;background:linear-gradient(180deg,#0d3b66,#0a2747);border-radius:0;direction:rtl;font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif}
 .lc-share .lc-head{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px}
 .lc-share .lc-head img{width:38px;height:38px;border-radius:50%;background:#fff}
-.lc-share .lc-head b{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:26px;color:#f4d58d;font-weight:normal}
+.lc-share .lc-head b{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:26px;color:#f4d58d;font-weight:normal}
 .lc-share .lc-card{padding:0 6px}
 .lc-share .doc-card{width:94%!important;max-width:none!important;margin:0 auto!important}
 .lc-share .lc-foot{margin:14px 14px 0;background:linear-gradient(180deg,#f7dd9c,#c99a34);border-radius:16px;padding:8px 10px 10px;text-align:center;color:#3a2600}
-.lc-share .lc-t{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:17px;line-height:1.7}
+.lc-share .lc-t{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:17px;line-height:1.7}
 .lc-share .lc-gp{display:inline-flex;align-items:center;gap:8px;background:#000;border:1.5px solid #a6a6a6;border-radius:9px;padding:4px 14px;direction:ltr;margin:4px 0 2px}
-.lc-share .lc-gpt{text-align:left;color:#fff;font-family:Arial,sans-serif}
+.lc-share .lc-gpt{text-align:left;color:#fff;font-family:MCSDigits,Arial,sans-serif}
 .lc-share .lc-g1{font-size:9px;line-height:11px;letter-spacing:.5px;font-weight:600}.lc-share .lc-g2{font-size:18px;line-height:20px;font-weight:700}
 /* html2canvas اندرونی سایہ دھندلی تہہ بنا دیتا ہے — تصویر میں صرف باہر کا سایہ */
 .lc-share .doc-card{box-shadow:0 6px 14px rgba(0,0,0,.35)!important}
@@ -1169,10 +1206,10 @@ html[data-ctxall] .doc-card .doc-owner,html[data-ctxall] .doc-card .doc-num,html
 #cardCustomizeModal .field:has(#ccFontFamily),#cardCustomizeModal .backup-card-title,#ccBorderTemplates,#cardCustomizeModal .cp-btn-row:has(input[type=range]){display:none!important}
 #liveNoticeModal .modal-box{border-radius:22px;}
 /* MCS2310FR041: منظوری / لائیو کا خوبصورت پیغام — نوری نستعلیق */
-.mcs-note-block{font-family:'Jameel Noori Nastaleeq Regular',serif;background:linear-gradient(180deg,#fffaf0,#fff3d6);border:2px solid #f4c45a;border-radius:18px;padding:12px 16px 14px;margin:0 0 12px;text-align:center;color:#3a2600;box-shadow:0 6px 16px rgba(0,0,0,.12)}
-.mcs-note-block .mnb-t{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:24px;line-height:1.7;color:#15803d}
+.mcs-note-block{font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;background:linear-gradient(180deg,#fffaf0,#fff3d6);border:2px solid #f4c45a;border-radius:18px;padding:12px 16px 14px;margin:0 0 12px;text-align:center;color:#3a2600;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.mcs-note-block .mnb-t{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:24px;line-height:1.7;color:#15803d}
 .mcs-note-block p{font-size:17px;line-height:2;margin:4px 0}
-.mcs-note-block .mnb-w{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;line-height:1.8;background:#0d3b66;color:#ffd166;border-radius:12px;padding:4px 10px;margin-top:6px}
+.mcs-note-block .mnb-w{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;line-height:1.8;background:#0d3b66;color:#ffd166;border-radius:12px;padding:4px 10px;margin-top:6px}
 .mcs-note-block .mnb-s{font-size:14px;opacity:.8}
 .mcs-note-block.live{background:linear-gradient(180deg,#f0fdf4,#dcfce7);border-color:#4ade80;color:#14532d}
 /* MCS2310FR041: خانہ چھپانے/دکھانے کا 👁 */
@@ -1188,7 +1225,7 @@ html[data-ctxall] .doc-card .doc-owner,html[data-ctxall] .doc-card .doc-num,html
 #cardCustomizeModal.active{z-index:1070;}
 .aos-box{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 10px;max-height:34vh;overflow-y:auto;}
 .aos-box .aos-h{width:100%;font-size:12px;font-weight:700;color:#3f5568;}
-.aos-box button{border:1.5px solid #cfe0dd;background:#f3faf8;border-radius:16px;padding:4px 12px;font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:16px;color:#0b2a44;}
+.aos-box button{border:1.5px solid #cfe0dd;background:#f3faf8;border-radius:16px;padding:4px 12px;font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-size:16px;color:#0b2a44;}
 .aos-box button mark{background:#ffe08a;border-radius:3px;padding:0 1px;}
 #doctorFormModal, #serviceFormModal{padding:14px 8px 10px !important;}
 #doctorFormModal .modal-box, #serviceFormModal .modal-box{max-width:520px;}
@@ -1210,7 +1247,7 @@ html[data-ctxall] .doc-card .doc-owner,html[data-ctxall] .doc-card .doc-num,html
 .fm-body .fm-cols .csel-btn{min-height:34px;padding:2px 8px !important;}
 .fm-body .fm-cols .csel-btn .csel-en{display:none;}
 .fm-body .fm-cols .add-circle{width:28px !important;height:28px !important;min-width:28px !important;font-size:16px !important;}
-.fm-body .fm-phone input{direction:ltr;text-align:left;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:15px !important;letter-spacing:.5px;font-weight:700;}
+.fm-body .fm-phone input{direction:ltr;text-align:left;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;font-size:15px !important;letter-spacing:.5px;font-weight:700;}
 .ph-dup{display:none;margin-top:3px;background:#fee2e2;color:#991b1b;border-radius:8px;padding:2px 6px;font-size:11px;line-height:1.6;}
 .fm-overlay .name-suggest{left:6px;right:6px;}
 .form-save-bar{padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px)) !important;}
@@ -1229,7 +1266,7 @@ html[data-ctxall] .doc-card .doc-owner,html[data-ctxall] .doc-card .doc-num,html
 .pa-txt{flex:1;min-width:0;cursor:pointer;}
 .pa-l1{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;line-height:1.6;font-size:13px;}
 .pa-l1 b{overflow-wrap:anywhere;}
-.pa-ph{direction:ltr;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;color:#0f766e;font-weight:700;}
+.pa-ph{direction:ltr;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;color:#0f766e;font-weight:700;}
 .pa-l2{font-size:11.5px;color:#4b5563;line-height:1.6;overflow-wrap:anywhere;}
 .pa-dup .pa-l2{color:#991b1b;}
 .pa-acts{display:flex;gap:4px;flex:none;}
@@ -1240,7 +1277,7 @@ html[data-ctxall] .doc-card .doc-owner,html[data-ctxall] .doc-card .doc-num,html
 .bnav .bn-zoom, .bnav .bn-admin{position:absolute;top:50%;transform:translateY(-50%);width:44px !important;height:46px !important;border-radius:12px;
   flex-direction:column;gap:0;padding:0;background:rgba(255,255,255,.12) !important;border:1px solid rgba(255,255,255,.3) !important;box-shadow:none !important;}
 .bnav .bn-zoom{right:6px;} .bnav .bn-admin{left:6px;}
-.bnav .bn-zoom b{font-size:16px;font-family:Georgia,serif;color:#ffe7a3;line-height:1.1;}
+.bnav .bn-zoom b{font-size:16px;font-family:MCSDigits,Georgia,serif;color:#ffe7a3;line-height:1.1;}
 .bnav .bn-zoom span, .bnav .bn-admin span{font-size:9.5px;font-weight:700;color:#fff;line-height:1.3;}
 .bnav .bn-admin b{font-size:15px;line-height:1.2;}
 .bnav .bn-admin{background:#b91c1c !important;border-color:#fca5a5 !important;}
@@ -1298,7 +1335,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
 .bs-chip.on{background:#0f766e;color:#fff;border-color:#0f766e;}
 .bs-none{font-size:11.5px;color:#9a3412;}
 .bs-wrap input{width:100%;height:38px;border:1.5px solid #d1d5db;border-radius:10px;padding:0 10px;font-size:15px;box-sizing:border-box;font-family:inherit;}
-#bsPhone{font-family:'Segoe UI',Roboto,Arial,sans-serif;font-weight:700;text-align:left;}
+#bsPhone{font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;font-weight:700;text-align:left;}
 .bs-btns{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 .bs-btns .btn{flex:1 1 auto;padding:8px 10px;font-size:13.5px;border-radius:11px;}
 .bs-save{background:#0f8a5f;color:#fff;} .bs-fill{background:#dbeafe;color:#1e40af;} .bs-again{background:#f3f4f6;color:#374151;}
@@ -1326,7 +1363,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
 .ls-n{color:#9ca3af;font-size:11px;min-width:18px;}
 .ls-name{flex:1 1 auto;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ls-cat{color:#4b5563;font-size:12px;white-space:nowrap;max-width:30%;overflow:hidden;text-overflow:ellipsis;}
-.ls-num{direction:ltr;color:#1d4ed8;font-size:12px;font-family:Arial,sans-serif;white-space:nowrap;}
+.ls-num{direction:ltr;color:#1d4ed8;font-size:12px;font-family:MCSDigits,Arial,sans-serif;white-space:nowrap;}
 .ls-opt{display:flex;align-items:center;gap:6px;font-size:12.5px;margin:8px 2px;}
 .ls-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
 .ls-btns .btn{padding:11px 8px;font-size:13.5px;}
@@ -1357,7 +1394,7 @@ body.kbd .bnav .bn-zoom span, body.kbd .bnav .bn-admin span{display:none;}
   background:rgba(255,255,255,.25);color:#fff;font-size:20px;line-height:1;}
 .upd-done .ub{padding:12px 16px 14px;text-align:center;}
 .upd-done .uv{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #e5e7eb;border-radius:12px;padding:6px 12px;margin:6px 0;font-size:13.5px;}
-.upd-done .uv b{direction:ltr;font-family:Arial,sans-serif;font-size:15px;letter-spacing:.5px;}
+.upd-done .uv b{direction:ltr;font-family:MCSDigits,Arial,sans-serif;font-size:15px;letter-spacing:.5px;}
 .upd-done .uv.old b{color:#9ca3af;text-decoration:line-through;}
 .upd-done .uv.new{border-color:#34d399;background:#ecfdf5;}
 .upd-done .uv.new b{color:#047857;}
@@ -1424,7 +1461,7 @@ html[data-cat-emoji] .cat-grid .cat-item[style*="display:none"],html[data-cat-em
 .cat-recs .cr-more{display:block;margin:10px auto 4px;border:1.5px solid #cfe0dd;background:#fff;border-radius:12px;padding:6px 16px;font-family:inherit;font-weight:800;color:#0d3b66;}
 
 /* MCS1810SU021: دکاندار کا نام دکان کے نام کے نیچے */
-.ub-owner,.doc-owner{font-family:var(--docCardFont);font-size:calc(15px*var(--docCardScale));line-height:1.6;font-weight:bold;color:#fde68a;text-shadow:0 1px 2px rgba(0,0,0,.35);margin:1px 0 2px;}
+.ub-owner,.doc-owner{font-family:MCSDigits,var(--docCardFont);font-size:calc(15px*var(--docCardScale));line-height:1.6;font-weight:bold;color:#fde68a;text-shadow:0 1px 2px rgba(0,0,0,.35);margin:1px 0 2px;}
 
 /* MCS2310FR051: تلاش چپکی ہوئی + کارڈ کھینچ کر ترتیب */
 .cat-tools{display:contents;}
@@ -1485,10 +1522,10 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
 .hf{margin:6px 2px 14px;background:#fff;border:1.5px solid #cfe3df;border-radius:20px;padding:12px;box-shadow:0 6px 0 #d7e6e3,0 10px 22px rgba(13,59,102,.10);}
 .hf-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 2px 8px;}
 .hf-h b{font-size:16px;color:#0b2a44;font-weight:800;}
-.hf-h small{font-size:11px;color:#64748b;font-family:system-ui,sans-serif;}
+.hf-h small{font-size:11px;color:#64748b;font-family:MCSDigits,system-ui,sans-serif;}
 .hf-grp{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .hf-g{min-height:58px;border-radius:16px;border:2px solid #b7d3cf;background:linear-gradient(180deg,#fff,#eef7f5);font-family:inherit;font-weight:800;font-size:17px;color:#0b2a44;box-shadow:0 4px 0 #b7d3cf;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.5;cursor:pointer;}
-.hf-g small{font-size:11px;font-family:system-ui,sans-serif;color:#0f766e;letter-spacing:.5px;}
+.hf-g small{font-size:11px;font-family:MCSDigits,system-ui,sans-serif;color:#0f766e;letter-spacing:.5px;}
 .hf-g.on{background:linear-gradient(135deg,#0d3b66,#0f766e);color:#fff;border-color:transparent;box-shadow:0 4px 0 #072a49;}
 .hf-g.on small{color:#bff3e8;}
 .hf-g:active,.hf-c:active{transform:translateY(3px);box-shadow:none;}
@@ -1497,7 +1534,7 @@ body.cat-drag-on .cat-grid .cat-item:nth-child(2n){animation-delay:.25s;}
 .hf-lbl{font-size:13px;font-weight:800;color:#0f766e;margin:0 4px 6px;display:flex;align-items:center;gap:6px;}
 .hf-chips{display:flex;flex-wrap:wrap;gap:8px;}
 .hf-c{min-height:42px;padding:4px 14px;border-radius:14px;border:1.5px solid #cfe3df;background:#f7fbfa;font-family:inherit;font-weight:700;font-size:15px;color:#0b2a44;box-shadow:0 3px 0 #cfe3df;display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
-.hf-c small{font-size:11px;font-family:system-ui,sans-serif;background:#e3f4f1;color:#0f766e;border-radius:999px;padding:1px 7px;}
+.hf-c small{font-size:11px;font-family:MCSDigits,system-ui,sans-serif;background:#e3f4f1;color:#0f766e;border-radius:999px;padding:1px 7px;}
 .hf-c.on{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-color:transparent;box-shadow:0 3px 0 #92400e;}
 .hf-c.on small{background:rgba(255,255,255,.25);color:#fff;}
 .hf-c.more{background:#fff;border-style:dashed;color:#0f766e;}
@@ -1539,7 +1576,7 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 .oa{margin:16px 2px 10px;background:linear-gradient(160deg,#0d3b66,#0f766e);border-radius:20px;padding:12px 0 14px;box-shadow:0 8px 0 #072a49,0 12px 24px rgba(13,59,102,.2);color:#fff;overflow:hidden;}
 .oa-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 14px 8px;}
 .oa-h b{font-size:16px;font-weight:800;}
-.oa-h small{font-size:10.5px;letter-spacing:1px;color:#bff3e8;font-family:system-ui,sans-serif;}
+.oa-h small{font-size:10.5px;letter-spacing:1px;color:#bff3e8;font-family:MCSDigits,system-ui,sans-serif;}
 .oa-strip{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:4px 12px 8px;-webkit-overflow-scrolling:touch;}
 .oa-strip::-webkit-scrollbar{display:none;}
 .oa-app{flex:0 0 auto;width:96px;background:#fff;border-radius:16px;padding:10px 6px 8px;text-decoration:none;color:#0b2a44;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 4px 0 rgba(0,0,0,.25);position:relative;}
@@ -1547,7 +1584,7 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 .oa-app img{width:52px;height:52px;border-radius:14px;object-fit:cover;background:#e3f4f1;}
 .oa-app b{font-size:13.5px;font-weight:800;line-height:1.5;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;direction:rtl;}
 .oa-app small{font-size:10.5px;color:#64748b;line-height:1.4;text-align:center;direction:rtl;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
-.oa-app i{position:absolute;top:5px;right:5px;font-style:normal;font-size:9px;font-weight:800;background:#16a34a;color:#fff;border-radius:6px;padding:1px 4px;font-family:system-ui,sans-serif;}
+.oa-app i{position:absolute;top:5px;right:5px;font-style:normal;font-size:9px;font-weight:800;background:#16a34a;color:#fff;border-radius:6px;padding:1px 4px;font-family:MCSDigits,system-ui,sans-serif;}
 .oa-btns{display:flex;gap:8px;padding:6px 12px 0;}
 .oa-btns a{min-height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-weight:800;font-size:14.5px;}
 .oa-play{flex:1;background:#fff;color:#0b2a44;box-shadow:0 4px 0 rgba(0,0,0,.25);}
@@ -1620,7 +1657,7 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 .city-card::before{content:"";position:absolute;inset:0 0 55% 0;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,0));pointer-events:none;}
 .cc-top{display:flex;justify-content:space-between;gap:10px;position:relative;}
 .cc-hello{font-size:13px;opacity:.92;line-height:1.7;}
-.cc-hello small,.cr-t small{font-family:Arial,sans-serif;font-size:10.5px;opacity:.8;margin-inline-start:4px;}
+.cc-hello small,.cr-t small{font-family:MCSDigits,Arial,sans-serif;font-size:10.5px;opacity:.8;margin-inline-start:4px;}
 .cc-city{display:flex;align-items:center;gap:6px;margin:2px 0;}
 .cc-city b{font-size:30px;line-height:1.5;color:#ffe08a;text-shadow:0 2px 4px rgba(0,0,0,.35);}
 .cc-pin{font-size:20px;}
@@ -1643,7 +1680,7 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 .mp-ic{flex:0 0 auto;width:44px;height:44px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 2px 6px rgba(0,0,0,.12);}
 .mp-tx{flex:1;min-width:0;line-height:1.45;}
 .mp-tx small{display:block;font-size:10.5px;color:#92400e;font-weight:800;}
-.mp-tx b{display:block;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:19px;color:#7a3e00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mp-tx b{display:block;font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:19px;color:#7a3e00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mp-tx span{display:block;font-size:12px;color:#5a3a00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mp-cd{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:64px;padding:4px 6px;border-radius:12px;background:#16a34a;color:#fff;line-height:1.3;text-align:center;}
 .mp-cd b{font:800 18px Arial,sans-serif;}
@@ -1654,7 +1691,7 @@ button.cc-city{border:none;background:rgba(255,255,255,.12);border:1px solid rgb
 .mp-new small{font:700 11px Arial,sans-serif;opacity:.85;}
 .mp-ask{text-align:center;max-width:380px;}
 .mp-ask-ic{font-size:42px;}.mp-ask-t{font-weight:800;font-size:19px;color:#0f766e;}
-.mp-ask-n{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:22px;color:#7a3e00;margin:6px 0;}
+.mp-ask-n{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:22px;color:#7a3e00;margin:6px 0;}
 .mp-ask-h{font-size:14px;line-height:2;color:#334155;margin-bottom:10px;}
 .mp-ask-btns{display:grid;grid-template-columns:1fr 1.3fr;gap:8px;}
 .mp-ask-btns button{min-height:48px;border:none;border-radius:14px;font-family:inherit;font-weight:800;font-size:15px;}
@@ -1715,7 +1752,7 @@ html.mcs-dark .hl-tx b,html.mcs-dark .hl-h b{color:#e2f5f2;}html.mcs-dark .hl-tx
 .pf-gal .pf-ph{display:flex;align-items:center;justify-content:center;font-size:40px;color:#94a3b8;}
 .pf-top{display:flex;align-items:center;gap:10px;}
 .pf-ic{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#ffe08a,#f5b83d);display:flex;align-items:center;justify-content:center;font-size:28px;flex:0 0 auto;}
-.pf-nm{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:26px;line-height:1.5;color:#7a3e00;}
+.pf-nm{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:26px;line-height:1.5;color:#7a3e00;}
 .pf-sub{font-size:13px;color:#475569;line-height:1.7;}
 .pf-sec{margin-top:12px;padding:10px 12px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0;}
 .pf-sec h4{margin:0 0 4px;font-size:15px;color:#0f766e;}
@@ -1874,7 +1911,7 @@ button.cc-city{padding:0 8px 0 6px;}
 .qt-n{top:3px !important;left:6px !important;background:none !important;box-shadow:none !important;color:var(--c) !important;font-size:11px !important;padding:0 !important;height:auto !important;line-height:1.2 !important;}
 .qt-plus{top:auto !important;bottom:3px;right:auto !important;left:4px;width:20px !important;height:20px !important;font-size:13px !important;border-color:var(--c) !important;color:var(--c) !important;background:var(--card) !important;}
 .theme-row{background:var(--card);border:1px solid #d5e0de;border-radius:14px;padding:10px;margin:6px 0 12px;}
-.theme-row b small{font-family:Arial,sans-serif;font-size:10.5px;color:var(--muted);font-weight:600;}
+.theme-row b small{font-family:MCSDigits,Arial,sans-serif;font-size:10.5px;color:var(--muted);font-weight:600;}
 .theme-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
 .theme-seg button{min-height:44px;border-radius:12px;border:1.5px solid #cfe3df;background:#f7fbfa;font-weight:800;font-size:14px;color:var(--text);}
 .theme-seg button.on{background:linear-gradient(135deg,#0d3b66,#0f766e);color:#fff;border-color:transparent;}
@@ -1901,7 +1938,7 @@ html.mcs-dark .theme-seg button:not(.on){background:#0D2226;border-color:#21403F
 .home-search{margin:6px 2px 4px !important;}
 /* MCS3010FR081: گنتی، اشتہار، اطلاع */
 .st-line{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;padding:4px 8px;border-radius:10px;background:#eef7f5;color:#0b5c56;font-size:12px;font-weight:700;line-height:1.7;}
-.st-line b{font-family:Arial,sans-serif;font-size:12.5px;}
+.st-line b{font-family:MCSDigits,Arial,sans-serif;font-size:12.5px;}
 .st-line .st-t{color:#64748b;font-weight:600;font-size:11px;}
 html.mcs-dark .st-line{background:#173438;color:#9fe3d6;}
 .ad-slot{margin:4px 2px 6px;}
@@ -1933,7 +1970,7 @@ html.mcs-dark .ad-card.paid{background:linear-gradient(135deg,#0c2a22,#0f3a2e);c
 .st-row,.nt-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid #e2eeec;}
 .st-row .nm,.nt-row .nm{flex:1;min-width:0;}
 .st-row .nm b,.nt-row .nm b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.st-row .nm small,.nt-row .nm small{font-family:Arial,sans-serif;color:#64748b;font-size:11.5px;direction:ltr;display:inline-block;}
+.st-row .nm small,.nt-row .nm small{font-family:MCSDigits,Arial,sans-serif;color:#64748b;font-size:11.5px;direction:ltr;display:inline-block;}
 .st-row .cnt{font:800 13px Arial,sans-serif;color:#0b5c56;white-space:nowrap;}
 .nt-list{max-height:55vh;overflow:auto;}
 .nt-row button,.nt-row a{flex:0 0 auto;min-height:36px;padding:0 10px;border-radius:10px;border:none;background:#16a34a;color:#fff;font-family:inherit;font-weight:800;font-size:13px;text-decoration:none;display:flex;align-items:center;}
@@ -1960,7 +1997,7 @@ html.mcs-dark .st-kpi{background:#173438;}html.mcs-dark .st-kpi b{color:#9fe3d6;
 .nt-bar{height:8px;border-radius:6px;background:#e2eeec;margin:6px 0 4px;overflow:hidden;}
 .nt-bar i{display:block;height:100%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:6px;}
 .nt-cat{position:sticky;top:0;z-index:1;background:#0f766e;color:#fff;font-weight:800;padding:3px 10px;border-radius:8px;margin:8px 0 2px;font-size:14px;}
-.nt-cat small{font-family:Arial,sans-serif;opacity:.85;}
+.nt-cat small{font-family:MCSDigits,Arial,sans-serif;opacity:.85;}
 .nt-n{font:700 11px Arial,sans-serif;color:#94a3b8;min-width:22px;text-align:center;}
 .nt-row .nt-tick{min-width:58px;background:#e2eeec !important;color:#0b2a44 !important;font-size:16px !important;justify-content:center;}
 .nt-row .nt-tick.ready{background:#16a34a !important;color:#fff !important;font-size:13px !important;}
@@ -1978,7 +2015,7 @@ body.nav-on.tkr-hidden #screen-home.active{min-height:var(--app-vh,100dvh) !impo
 #homeAds .ad-card.paid{background:linear-gradient(135deg,#e7fbf1 0%,#bff0d6 60%,#93e2bb 100%) !important;box-shadow:0 5px 0 #10b981,0 10px 20px rgba(16,185,129,.25) !important;}
 #homeAds .ad-row{display:flex;align-items:center;gap:10px;position:relative;}
 #homeAds .ad-ic{width:54px !important;height:54px !important;font-size:30px !important;border-radius:16px !important;background:#fff !important;box-shadow:0 3px 8px rgba(0,0,0,.12);}
-#homeAds .ad-tx b{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:22px !important;line-height:1.55 !important;font-weight:700;white-space:normal !important;color:#7a3e00;}
+#homeAds .ad-tx b{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:22px !important;line-height:1.55 !important;font-weight:700;white-space:normal !important;color:#7a3e00;}
 #homeAds .ad-card.paid .ad-tx b{color:#064e3b;}
 #homeAds .ad-tx span{font-size:14.5px !important;line-height:1.7 !important;font-weight:700;white-space:normal !important;overflow:visible !important;color:#5a3a00;}
 #homeAds .ad-card.paid .ad-tx span{color:#065f46;}
@@ -2009,7 +2046,7 @@ html.mcs-dark #homeAds .ad-tx b,html.mcs-dark #homeAds .ad-tx span{color:#ffe2a8
 .vf-card .vf-ic{width:52px;height:52px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;flex:0 0 auto;}
 .vf-card b{display:block;font-size:20px;line-height:1.5;}
 .vf-card span{display:block;font-size:13px;opacity:.9;line-height:1.6;}
-.vf-card .vf-num{font-family:Arial,sans-serif;direction:ltr;text-align:right;color:#ffe08a;font-weight:700;}
+.vf-card .vf-num{font-family:MCSDigits,Arial,sans-serif;direction:ltr;text-align:right;color:#ffe08a;font-weight:700;}
 .vf-yes,.vf-edit{display:block;width:100%;min-height:52px;border:none;border-radius:14px;font-family:inherit;font-weight:800;font-size:17px;margin-top:8px;color:#fff;background:#16a34a;box-shadow:0 4px 0 #0f6b32;}
 .vf-edit{background:#fff;color:#b45309;border:2px solid #f59e0b;box-shadow:0 4px 0 #f5d08a;}
 .vf-done{padding:8px 10px;border-radius:12px;background:#dcfce7;color:#15803d;font-weight:800;text-align:center;}
@@ -2062,7 +2099,7 @@ body.nav-on #screen-home.active{min-height:0 !important;}
 .ad-stprev .ad-go{flex-direction:column !important;}
 .ad-stprev .ad-go a{min-height:32px;padding:0 10px;font-size:12.5px;}
 .adv-st .adv-c{color:#064e3b;}.adv-st .adv-c b{color:#0f766e;}
-.ad-stprev .ad-tx b{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;white-space:normal;}
+.ad-stprev .ad-tx b{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;white-space:normal;}
 .ad-stprev .ad-tx span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mk-ad{display:block;width:100%;margin-top:6px;min-height:34px;border:none;border-radius:10px;font-family:inherit;font-weight:800;font-size:13.5px;color:#fff;background:linear-gradient(135deg,#f59e0b,#ea580c);box-shadow:0 3px 0 #b45309;cursor:pointer;}
 .mk-ad.on{background:linear-gradient(135deg,#10b981,#0f766e);box-shadow:0 3px 0 #065f46;}
@@ -2091,7 +2128,7 @@ body.nav-on #screen-home.active{min-height:0 !important;}
 .crop-btns .btn{min-height:46px;padding:0 6px;font-size:14px;}
 .adv-img{display:block;width:100%;max-height:46vh;object-fit:contain;border-radius:14px;background:#f1f5f9;box-shadow:0 4px 12px rgba(0,0,0,.18);cursor:zoom-in;}
 .adv-load{padding:30px 10px;text-align:center;background:#f1f5f9;border-radius:14px;color:#475569;}
-.adv-t{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:26px;color:#064e3b;text-align:center;margin-top:10px;line-height:1.6;}
+.adv-t{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:26px;color:#064e3b;text-align:center;margin-top:10px;line-height:1.6;}
 .adv-l{font-size:15px;line-height:1.9;text-align:center;color:#334155;}
 .adv-a{font-size:14px;text-align:center;color:#0f766e;margin-top:4px;}
 .adv-cs{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
@@ -2397,8 +2434,8 @@ body.cdOn{padding-top:30px}
 .h2-type{background:linear-gradient(#16a34a,#15803d);color:#fff;font:800 12px Inter,Arial;border-radius:999px;padding:3px 10px;border:1px solid rgba(255,255,255,.45)}
 .h2-out{background:linear-gradient(#ef4444,#b91c1c);color:#fff;font:800 12px Inter,Arial;border-radius:999px;padding:3px 10px;border:1px solid rgba(255,255,255,.45);cursor:pointer}
 .h2-d{grid-area:d;display:flex;flex-direction:column;gap:4px;direction:rtl}
-.h2-d>div{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:10px;padding:2px 7px;color:#fff;font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:13px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.h2-d>div:first-child{font-family:Inter,Arial;font-weight:700;font-size:11.5px;direction:ltr;text-align:left;line-height:1.9}
+.h2-d>div{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:10px;padding:2px 7px;color:#fff;font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-size:13px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h2-d>div:first-child{font-family:MCSDigits,Inter,Arial;font-weight:700;font-size:11.5px;direction:ltr;text-align:left;line-height:1.9}
 .h2-q{grid-area:q;display:flex;justify-content:center}
 .h2 .cc-qibla{position:static !important;margin:0 !important;width:auto !important;background:rgba(255,255,255,.1) !important;border:1.5px solid #fde047 !important;border-radius:16px !important;padding:4px 6px !important;display:flex !important;flex-direction:column;align-items:center;gap:2px}
 .h2 .cc-qibla .cq-dial{width:64px !important;height:64px !important}
@@ -2406,7 +2443,7 @@ body.cdOn{padding-top:30px}
 .h2-w{grid-area:w;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;direction:rtl;min-width:0}
 .h2-wel{color:#fff;line-height:1.25}
 .h2-wel small{display:block;font:800 11px Inter,Arial;color:#ccfbf1}
-.h2-wel b{display:block;font-family:'Jameel Noori Nastaleeq Regular',serif;font-weight:normal;font-size:14px;color:#fde047;line-height:1.7;white-space:nowrap}
+.h2-wel b{display:block;font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-weight:normal;font-size:14px;color:#fde047;line-height:1.7;white-space:nowrap}
 .h2 .cc-city{background:rgba(255,255,255,.9) !important;border:0 !important;border-radius:999px !important;padding:2px 12px !important;box-shadow:0 2px 8px rgba(0,0,0,.18) !important;max-width:100%;margin:0 !important}
 .h2 .cc-city .cc-pin,.h2 .cc-city .cc-chg{display:none !important}
 .h2 .cc-city b{color:#0b4f5c !important;font-size:17px !important;-webkit-text-fill-color:#0b4f5c !important;background:none !important;text-shadow:none !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
@@ -2452,7 +2489,7 @@ body.cdOn{padding-top:30px}
 .bp{margin:8px 10px;background:#fff;border:1px solid #d7ece8;border-radius:20px;padding:8px;box-shadow:0 6px 16px rgba(15,118,110,.10)}
 .bp-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;background:linear-gradient(90deg,#0f766e,#0d3b66);color:#fff;border-radius:14px;padding:6px 12px;margin-bottom:8px}
 .bp-hd b{font:900 15px Inter,Arial;white-space:nowrap}.bp-hd b i{font-style:normal;color:#fde047}
-.bp-hd span{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:16px;white-space:nowrap}
+.bp-hd span{font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-size:16px;white-space:nowrap}
 .bp-card{margin-bottom:6px;cursor:pointer}
 .bp-on{flex:none;border:0;border-radius:999px;padding:4px 11px;background:linear-gradient(180deg,#fde047,#f59e0b);color:#3b2300;font:900 12.5px/1.3 Inter,Arial;box-shadow:0 2px 0 #b45309;cursor:pointer;white-space:nowrap}
 .bp-ask{width:100%;border:2px dashed #f59e0b;background:#fffbeb;color:#92400e;border-radius:14px;padding:12px;font-size:16px;cursor:pointer}
@@ -2462,7 +2499,7 @@ body.cdOn{padding-top:30px}
 .mpx-hd{display:flex;align-items:center;gap:8px;direction:ltr;margin-bottom:8px}
 .mpx-hi{width:34px;height:34px;border-radius:10px;background:linear-gradient(#14a394,#0f766e);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
 .mpx-hd b{font:900 17px Inter,Arial;color:#0f172a;flex:1;white-space:nowrap}
-.mpx-hd b span{font-family:'Jameel Noori Nastaleeq Regular',serif;font-weight:normal;font-size:16px}
+.mpx-hd b span{font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-weight:normal;font-size:16px}
 .mpx-all{background:none;border:0;color:#0f766e;font:800 13px Inter,Arial;cursor:pointer;white-space:nowrap}
 .mpx-card{display:flex;align-items:center;gap:10px;direction:ltr;background:#f8fbfa;border:1px solid #e2efec;border-radius:16px;padding:8px;cursor:pointer;margin-bottom:6px}
 .mpx-ph{width:84px;height:84px;border-radius:12px;flex:none;overflow:hidden;background:linear-gradient(145deg,#e6f6f1,#cdeee6);display:flex;align-items:center;justify-content:center}
@@ -2543,7 +2580,7 @@ body.cdOn{padding-top:30px}
   + '.aupd-card .ah{background:linear-gradient(135deg,#059669,#10b981);color:#fff;padding:14px 12px 12px;font-size:18px;font-weight:800;line-height:1.5}'
   + '.aupd-card .ab{padding:12px 16px 4px}'
   + '.aupd-card .av{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #e5e7eb;border-radius:12px;padding:7px 12px;margin:6px 0;font-size:13px;color:#374151}'
-  + '.aupd-card .av b{direction:ltr;unicode-bidi:isolate;font-family:Arial,sans-serif;font-size:14.5px;letter-spacing:.4px}'
+  + '.aupd-card .av b{direction:ltr;unicode-bidi:isolate;font-family:MCSDigits,Arial,sans-serif;font-size:14.5px;letter-spacing:.4px}'
   + '.aupd-card .av.o b{color:#9ca3af;text-decoration:line-through}.aupd-card .av.n{border-color:#34d399;background:#ecfdf5}.aupd-card .av.n b{color:#047857}'
   + '.aupd-card .aa{color:#10b981;font-size:16px;line-height:1}'
   + '.aupd-card .anote{margin:10px 0 4px;padding:8px 12px;border-radius:12px;background:#fffbeb;border:1px solid #fcd34d;color:#78350f;font-size:13.5px;font-weight:700;line-height:1.7;'
@@ -2632,7 +2669,7 @@ body.cdOn{padding-top:30px}
 <div class="backup-strip" id="backupStrip">
   <div class="backup-strip-label" id="backupStripLabel">بیک اپ ہو رہا ہے...</div>
   <div class="backup-progress-track"><div class="backup-progress-fill" id="backupProgressFill"></div></div>
-  <div class="backup-progress-pct" id="backupProgressPct">۰٪</div>
+  <div class="backup-progress-pct" id="backupProgressPct">0٪</div>
 </div>
 
 <!-- ===================== ADMIN POPUP (صرف ڈیولپر کی ڈیوائس) ===================== -->
@@ -3019,7 +3056,7 @@ body.cdOn{padding-top:30px}
 .fm-pv-btn{background:#fff !important;color:#111 !important;border:2px solid #111 !important;font-weight:800}
 #fmPvOv{position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:12px}
 #fmPvOv.on{display:flex}
-#fmPvOv .pvBox{background:#fff;color:#000;width:100%;max-width:560px;max-height:88vh;overflow:auto;border-radius:12px;border:2px solid #000;padding:10px 12px;direction:rtl;font-family:'Jameel Noori Nastaleeq Regular',serif}
+#fmPvOv .pvBox{background:#fff;color:#000;width:100%;max-width:560px;max-height:88vh;overflow:auto;border-radius:12px;border:2px solid #000;padding:10px 12px;direction:rtl;font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif}
 #fmPvOv .pvH{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:4px}
 #fmPvOv .pvH b{font-size:19px}
 #fmPvOv .pvX{background:#fff;border:1.5px solid #000;border-radius:8px;color:#000;font:inherit;font-weight:800;cursor:pointer;padding:0 10px}
@@ -3599,7 +3636,7 @@ body.cdOn{padding-top:30px}
       <!-- MCS0711SA191: ایک سادہ «نئی لسٹ شامل کریں» — کیٹگری چنیں، فائل چنیں یا نمبر چسپاں کریں، ایک بٹن -->
       <div class="backup-card" id="adminImportBox" style="display:none;">
         <div class="backup-card-title">📥 نئی لسٹ شامل کریں</div>
-        <div class="cp-hint" style="margin-bottom:10px;">۱) کیٹگری چنیں &nbsp; ۲) فائل چنیں یا نام اور نمبر چسپاں کریں &nbsp; ۳) «امپورٹ» دبائیں۔ غلط، دہرے اور ایپ میں پہلے سے موجود نمبر خود چھوڑ دیے جاتے ہیں۔ شناختی کارڈ ہو تو الگ محفوظ ہوتا ہے۔</div>
+        <div class="cp-hint" style="margin-bottom:10px;">1) کیٹگری چنیں &nbsp; 2) فائل چنیں یا نام اور نمبر چسپاں کریں &nbsp; 3) «امپورٹ» دبائیں۔ غلط، دہرے اور ایپ میں پہلے سے موجود نمبر خود چھوڑ دیے جاتے ہیں۔ شناختی کارڈ ہو تو الگ محفوظ ہوتا ہے۔</div>
         <select id="nlCat" class="ag-big" onfocus="nlFillCats()" onchange="nlReparse()" style="width:100%;margin-bottom:8px;"><option value="">— کیٹگری چنیں —</option></select>
         <div style="display:flex;gap:8px;margin-bottom:8px;">
           <input id="nlCity" type="text" placeholder="شہر" oninput="nlReparse()" style="flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid #d8dee4;">
@@ -3667,7 +3704,7 @@ body.cdOn{padding-top:30px}
 <div class="modal-overlay" id="devPanelModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('devPanelModal')">×</button>
-    <h3>🛠️ ڈویلپر پینل <small style="font-family:Inter,Arial;font-size:12px;color:var(--muted)" id="dpVer"></small></h3>
+    <h3>🛠️ ڈویلپر پینل <small style="font-family:MCSDigits,Inter,Arial;font-size:12px;color:var(--muted)" id="dpVer"></small></h3>
     <div style="clear:both;"></div>
     <div id="devPanelBody"></div>
   </div>
@@ -3776,7 +3813,7 @@ body.cdOn{padding-top:30px}
 
     <div class="field">
       <label>اپنا متن لکھیں</label>
-      <textarea id="promoTextInput" rows="4" dir="rtl" oninput="promoTextChanged()" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;line-height:2;"></textarea>
+      <textarea id="promoTextInput" rows="4" dir="rtl" oninput="promoTextChanged()" style="width:100%;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:20px;line-height:2;"></textarea>
       <button class="link-btn" type="button" onclick="resetPromoText()">↺ پہلا متن واپس لائیں</button>
     </div>
 
@@ -4024,7 +4061,7 @@ body.cdOn{padding-top:30px}
     <button class="modal-close" onclick="closeModal('autoSnapshotsModal')">×</button>
     <h3>🕒 خودکار محفوظ کاپیاں</h3>
     <div style="clear:both;"></div>
-    <div class="cp-hint" style="margin-bottom:10px;">یہ کاپیاں دن میں خودکار طور پر (صبح ۸، دوپہر ۱۲، رات ۸ بجے ایپ کھلنے پر) اور بڑی تبدیلیوں سے پہلے فون کے اندر ہی محفوظ ہوتی ہیں — ڈاؤن لوڈ فولڈر میں نہیں جاتیں۔</div>
+    <div class="cp-hint" style="margin-bottom:10px;">یہ کاپیاں دن میں خودکار طور پر (صبح 8، دوپہر 12، رات 8 بجے ایپ کھلنے پر) اور بڑی تبدیلیوں سے پہلے فون کے اندر ہی محفوظ ہوتی ہیں — ڈاؤن لوڈ فولڈر میں نہیں جاتیں۔</div>
     <div id="autoSnapshotsListWrap"></div>
   </div>
 </div>
@@ -4042,7 +4079,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA204";
+const APP_VERSION = "MCS0711SA206";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -4415,7 +4452,7 @@ function pfHtml(c){
   return (pend && (owner || adm) ? `<div class="pf-lock" style="background:#fffbeb;border-color:#f59e0b">⏳ ${adm ? 'یہ کاروبار / پروفیشن دکاندار نے خود جوڑا ہے — آپ کی منظوری کا انتظار۔ منظور کریں تو 7 دن مفت شروع اور سب کو نظر آئے گی۔' : 'آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے۔ نیچے «✏️ تفصیل سنواریں» سے تفصیل، ریٹ، اوقات پوری بھریں — منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی۔'}${adm ? `<div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="pf-adm" style="background:#16a34a;color:#fff" onclick="pfAdmin('approve')">✅ منظور — 7 دن شروع</button><button type="button" class="pf-adm red" onclick="pfAdmin('reject')">❌ ابھی نہیں</button></div>` : ''}</div>` : '')
     + (owner && !live && p.until && !pend ? `<div class="pf-lock">🔒 آپ کی پوری تفصیل لوگوں سے چھپی ہوئی ہے — لوگوں کو صرف سادہ کارڈ دکھ رہا ہے۔<br><b>تفصیل ڈویلپر کو بھیجیں — جاری ہوتے ہی فوراً دوبارہ چالو</b> (سب کچھ محفوظ ہے)<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں</button></div>` : '')
     + gal + `<div class="pf-top">${sfThumb ? `<span class="pf-ic sf"><img src="${escapeAttr(sfThumb)}" alt=""></span>` : `<span class="pf-ic">${cm.emoji}</span>`}<div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${live ? '<span class="pf-star">⭐ نمایاں</span>' : ''}</div>
-      <div class="pf-sub">${escapeHtml([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}${r.nameEn ? `<br><span style="font-family:Arial;direction:ltr">${escapeHtml(r.nameEn)}</span>` : ''}</div></div></div>`
+      <div class="pf-sub">${escapeHtml([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}${r.nameEn ? `<br><span style="font-family:MCSDigits,Arial;direction:ltr">${escapeHtml(r.nameEn)}</span>` : ''}</div></div></div>`
     + (st ? `<div class="pf-stats"><div><b>${st.view}</b><small>👀 دیکھا</small></div><div><b>${st.call}</b><small>📞 کالیں</small></div><div><b>${st.wa}</b><small>💬 واٹس ایپ</small></div><span>پچھلے ${st.days} دن میں — ایپ سے</span></div>` : '')
     + (showFull && (d.about || own.rest || more.services) ? `<div class="pf-sec"><h4>📝 تفصیل</h4><p>${escapeHtml(d.about || [own.rest, more.services].filter(Boolean).join('\n'))}</p></div>` : '')
     + (showFull && (d.items||[]).length ? `<div class="pf-sec"><h4>🏷️ خدمات / چیزیں اور ریٹ</h4>${d.items.map(x=>`<div class="pf-it"><span>${escapeHtml(x.n)}</span>${x.p ? `<b>Rs ${escapeHtml(x.p)}</b>` : ''}</div>`).join('')}</div>` : '')
@@ -9703,23 +9740,23 @@ async function runImport(noConfirm){
   };
   showProg();
   try{
-    for(let i=0; i<list.length; i+=100){
-      const chunk = list.slice(i, i+100);
+    for(let i=0; i<list.length; i+=25){
+      const chunk = list.slice(i, i+25);
       const batch = FB.writeBatch(FB.db);
       const locals = [];
       const cnics = [];
       chunk.forEach((x, j)=>{
-        const id = 'imp_' + stamp + '_' + (i+j);
+        const id = 'imp_p' + (String(x.whatsapp||'').replace(/\D/g,'') || (stamp + '_' + (i+j)));   /* MCS0711SA204: شناخت موبائل نمبر سے — دوبارہ کوشش پر دہرے کارڈ نہیں بنتے */
         const xx = {...x}; const cn = String(xx._cnic || '').replace(/\D/g,''); delete xx._cnic;   /* شناختی کارڈ عام ریکارڈ میں نہیں جاتا */
         const payload = cleanFsPayload({...xx, approved:true, source:'import', createdAt: FB.serverTimestamp()});
         batch.set(FB.doc(FB.db, 'services', id), payload);
         locals.push({...xx, id, fsId:id, approved:true, synced:true, createdAt:stamp, updatedAt:stamp});
         if(cn.length === 13) cnics.push({id, cn, nameUr: xx.nameUr || '', whatsapp: xx.whatsapp || ''});
       });
-      await batch.commit();
+      await Promise.race([batch.commit(), new Promise((_, rej)=>setTimeout(()=>rej({code:'timeout'}), 30000))]);   /* MCS0711SA204: سرور جواب نہ دے تو 0٪ پر خاموش نہ رکے */
       if(cnics.length){
         try{ const m = JSON.parse(localStorage.getItem('mcsRegCnic') || '{}'); cnics.forEach(c=>{ m[c.id] = c.cn; }); localStorage.setItem('mcsRegCnic', JSON.stringify(m)); }catch(e){}
-        try{ const b2 = FB.writeBatch(FB.db); cnics.forEach(c=>b2.set(FB.doc(FB.db, 'regPrivate', c.id), {cnic:c.cn, nameUr:c.nameUr, whatsapp:c.whatsapp, ts:Date.now()}, {merge:true})); await b2.commit(); }
+        try{ const b2 = FB.writeBatch(FB.db); cnics.forEach(c=>b2.set(FB.doc(FB.db, 'regPrivate', c.id), {cnic:c.cn, nameUr:c.nameUr, whatsapp:c.whatsapp, ts:Date.now()}, {merge:true})); b2.commit().catch(e=>{ showToast('کارڈ بن گئے مگر شناختی کارڈ سرور پر محفوظ نہیں ہوئے — Firestore rules میں regPrivate کھولنا ہوگا', 6000); }); }   /* MCS0711SA204: شناختی کارڈ کی وجہ سے کارڈ نہ رکیں */
         catch(e){ showToast('کارڈ بن گئے مگر شناختی کارڈ سرور پر محفوظ نہیں ہوئے — Firestore rules میں regPrivate کھولنا ہوگا', 6000); }
       }
       locals.forEach(l=>{ if(!store.services.some(s=>s.fsId===l.fsId)) store.services.push(l); });
@@ -9732,7 +9769,7 @@ async function runImport(noConfirm){
     if(prog) prog.innerHTML = `<b style="color:#047857;">✓ ${urduDigits(done)} اندراجات امپورٹ ہو گئے</b>`;
     if(btn) btn.remove();
   }catch(e){
-    if(prog) prog.innerHTML = `<span style="color:#b91c1c;">رکاوٹ آ گئی (${escapeHtml((e&&e.code)||'error')}) — ${urduDigits(done)} بھیجے جا چکے ہیں۔ فائل دوبارہ چنیں، بھیجے گئے نمبر خود چھوڑ دیے جائیں گے۔</span>`;
+    if(prog) { const _c = (e&&e.code)||'error'; const _why = _c==='timeout' ? 'سرور سے جواب نہیں آیا — انٹرنیٹ / Firebase دیکھیں، پھر وہی PDF دوبارہ چنیں' : _c==='permission-denied' ? 'Firebase Rules نے لکھنے کی اجازت نہیں دی — services میں لکھنے کی اجازت چاہیے، اور ایڈمن لاگ اِن ہو' : 'فائل دوبارہ چنیں'; prog.innerHTML = `<span style=\"color:#b91c1c;\">رکاوٹ آ گئی (${escapeHtml(_c)}) — ${urduDigits(done)} بھیجے جا چکے ہیں۔ ${_why}۔ بھیجے گئے نمبر خود چھوڑ دیے جائیں گے۔</span>`; }
     if(btn){ btn.disabled = false; btn.style.opacity = 1; }
   }
 }
@@ -9810,7 +9847,7 @@ function setCardTextPref(key, val){
 function showBackupProgress(label){
   document.getElementById('backupStripLabel').textContent = label;
   document.getElementById('backupProgressFill').style.width = '0%';
-  document.getElementById('backupProgressPct').textContent = '۰٪';
+  document.getElementById('backupProgressPct').textContent = '0٪';
   document.getElementById('backupStrip').classList.add('active');
 }
 function setBackupProgress(pct){
@@ -10192,10 +10229,7 @@ function escapeAttr(str){
 }
 
 /* ---------- Version badge + online/offline ---------- */
-function urduDigits(n){
-  const map = {'0':'۰','1':'۱','2':'۲','3':'۳','4':'۴','5':'۵','6':'۶','7':'۷','8':'۸','9':'۹'};
-  return String(n).replace(/[0-9]/g, d=>map[d]);
-}
+function urduDigits(n){ return String(n); }   /* MCS0711SA206: مالک کا حکم — ہر جگہ انگلش ہندسے (0-9)، اردو ہندسے کہیں نہیں */
 const urduMonths = ["جنوری","فروری","مارچ","اپریل","مئی","جون","جولائی","اگست","ستمبر","اکتوبر","نومبر","دسمبر"];
 function updateVersionBadge(){
   const now = new Date();
@@ -10636,7 +10670,7 @@ try{ document.addEventListener('DOMContentLoaded', ()=>{ try{ renderVersionLabel
    never breaks the local experience.
    ========================================================= */
 let isAdminSignedIn = false;
-/* ایڈمن بٹن صرف ڈیولپر کی ڈیوائس پر نظر آتا ہے: (۱) ایڈمن لاگ ان ہو، یا (۲) اس ڈیوائس پر
+/* ایڈمن بٹن صرف ڈیولپر کی ڈیوائس پر نظر آتا ہے: (1) ایڈمن لاگ ان ہو، یا (2) اس ڈیوائس پر
    ایک بار یوزر سرچ میں ایڈمن PIN لکھا گیا ہو۔ باقی سب لوگوں کو بٹن دکھائی ہی نہیں دیتا۔ */
 const DEV_KEY = 'mcsDevDevice';
 /* MCS2310FR041: ایڈمن آخری بار لاگ اِن تھا تو ایپ کھلتے ہی «لاگ آؤٹ» کے بجائے «جڑ رہا ہے» — فائربیس چند لمحے بعد خود لاگ اِن بحال کرتا ہے */
@@ -11674,7 +11708,7 @@ function cdAdminRender(){
     <div class="cp-hint">یہ ایپ کی ہر چیز کھول کر دیکھ سکتے ہیں (اپنے کاروبار کے بغیر بھی)؛ کچھ محفوظ، منظور یا بھیجا نہیں ہوتا؛ ادائیگی / Account Access / منظوری نہیں۔ ان کی ہر تجویز ہیلپ ڈیسک میں «👥 کو-ڈویلپر» کے نام سے آپ کے پاس۔</div>
     ${cdList.length ? cdList.map(c=>`<div class="ag-row" style="display:block;border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin:6px 0">
       <b>${E(c.name)}</b> <span dir="ltr">0${E(String(c.phone).slice(2))}</span><br>
-      🔑 PIN: <b dir="ltr" onclick="agCopy('${escapeAttr(c.pin)}')">${E(c.pin)} 📋</b> <small>${c.seen ? '• آخری بار: ' + new Date(c.seen*864e5).toLocaleDateString('ur-PK') : '• ابھی لاگ اِن نہیں کیا'}</small>
+      🔑 PIN: <b dir="ltr" onclick="agCopy('${escapeAttr(c.pin)}')">${E(c.pin)} 📋</b> <small>${c.seen ? '• آخری بار: ' + new Date(c.seen*864e5).toLocaleDateString('en-GB') : '• ابھی لاگ اِن نہیں کیا'}</small>
       <div class="cp-btn-row" style="margin-top:6px;gap:6px"><a class="btn" style="flex:1;text-align:center" target="_blank" rel="noopener" href="https://wa.me/${E(c.phone)}?text=${encodeURIComponent(cdMsgOf(c))}">💬 PIN واٹس ایپ پر</a><button type="button" class="btn secondary" onclick="if(confirm('${escapeAttr(c.name)} کا نیا PIN بنائیں؟ پرانا بند ہو جائے گا')) cdAdminOpen({op:'add', phone:'${escapeAttr(c.phone)}', name:'${escapeAttr(c.name)}'})">🔄 نیا PIN</button><button type="button" class="btn secondary" style="color:#b91c1c" onclick="if(confirm('${escapeAttr(c.name)} کو ہٹا دیں؟ جانچ موڈ ان کے فون پر بند ہو جائے گا')) cdAdminOpen({op:'del', phone:'${escapeAttr(c.phone)}'})">🗑️</button></div></div>`).join('') : '<div class="cp-hint" style="text-align:center">ابھی کوئی کو-ڈویلپر نہیں</div>'}
     <div class="ag-f" style="margin-top:10px"><label>➕ نیا کو-ڈویلپر — نام</label><input id="cdNName" maxlength="60"><label>📱 موبائل نمبر</label><input id="cdNPh" inputmode="tel" dir="ltr" placeholder="03xx xxxxxxx"></div>
     <button type="button" class="btn block" onclick="const n=document.getElementById('cdNName').value.trim(), p=document.getElementById('cdNPh').value.trim(); if(!n||!p){showToast('نام اور نمبر لکھیں');return;} cdAdminOpen({op:'add', name:n, phone:p})">➕ شامل کریں (PIN خود بنے گا)</button>`);
@@ -13046,7 +13080,7 @@ async function stLoadAdmin(){
   const nm = k=>{ const it = map[k]; const r = it ? it.rec : null; return r ? escapeHtml(r.nameUr || r.name || r.nameEn || '') : '<span style="color:#94a3b8">(ریکارڈ نہیں ملا)</span>'; };
   const ph = k=>'0' + k.slice(1);
   const row = (x, extra)=>`<div class="st-row"><div class="nm"><b>${nm(x.rec)}</b><small>${ph(x.rec)}</small></div><div class="cnt">${extra}</div></div>`;
-  const dayRows = Object.keys(perDay).sort().reverse().map(d=>{ const v = perDay[d]; return `<div class="st-row"><div class="nm"><b style="font-family:Arial">${d.slice(6,8)}-${d.slice(4,6)}-${d.slice(0,4)}</b></div><div class="cnt">📱 ${v.open||0} • 📞 ${v.call||0} • 💬 ${v.wa||0} • ✉️ ${v.sms||0}</div></div>`; }).join('');
+  const dayRows = Object.keys(perDay).sort().reverse().map(d=>{ const v = perDay[d]; return `<div class="st-row"><div class="nm"><b style="font-family:MCSDigits,Arial">${d.slice(6,8)}-${d.slice(4,6)}-${d.slice(0,4)}</b></div><div class="cnt">📱 ${v.open||0} • 📞 ${v.call||0} • 💬 ${v.wa||0} • ✉️ ${v.sms||0}</div></div>`; }).join('');
   w.innerHTML = `<div class="st-kpis">
       <div class="st-kpi"><b>${sum.open||0}</b><span>📱 ایپ کھلی (روزانہ فون)</span></div>
       <div class="st-kpi"><b>${sum.call||0}</b><span>📞 کالیں</span></div>
@@ -14319,13 +14353,13 @@ body.d2 #homeAds .ad-ribbon{display:none}
      Guest صرف دیکھ / تلاش سکتا ہے — کاروبار بنانا، تبدیلی، ممبرشپ، ایجنٹ، اشتہار سب سے پہلے سائن اِن (`uaGuard`)؛ ایڈمن / کو-ڈویلپر پر روک نہیں۔
      فون پر: `mcsAuth` {tok, user}، `mcsGuest`۔ اکاؤنٹ حذف: ایپ میں «👤 میرا اکاؤنٹ» اور ویب `delete-account.html` (پلے اسٹور کا اصول) ===== -->
 <style>
-#uaOv{position:fixed;inset:0;z-index:2147483000;display:none;overflow:auto;background:radial-gradient(120% 60% at 50% 0%,#fff 0%,#eef4ff 55%,#e6f0ff 100%);font-family:"Segoe UI",Roboto,Arial,sans-serif;color:#0f1f45;direction:ltr}
+#uaOv{position:fixed;inset:0;z-index:2147483000;display:none;overflow:auto;background:radial-gradient(120% 60% at 50% 0%,#fff 0%,#eef4ff 55%,#e6f0ff 100%);font-family:MCSDigits,"Segoe UI",Roboto,Arial,sans-serif;color:#0f1f45;direction:ltr}
 #uaOv.on{display:block}
 #uaOv .uaWave{position:absolute;left:-10%;right:-10%;top:-70px;height:170px;border-radius:0 0 50% 50%;background:linear-gradient(120deg,#1d4ed8,#0ea5e9 55%,#22c55e);opacity:.16;pointer-events:none}
 #uaOv .uaWrap{position:relative;z-index:2;max-width:430px;margin:0 auto;padding:16px 20px 150px}
 #uaOv .uaLogo{display:block;width:132px;height:132px;margin:4px auto 0;border-radius:28px;object-fit:cover;box-shadow:0 10px 30px rgba(21,70,192,.18),0 0 0 4px #fff}
 #uaOv .uaTag{text-align:center;margin:9px 0 0;font-size:13px;color:#5b6b8c;font-weight:600}
-#uaOv .uaTag u{font-family:"Jameel Noori Nastaleeq","JameelNoori",serif;text-decoration:none;display:block;font-size:17px;color:#1e3a8a;margin-top:2px;direction:rtl}
+#uaOv .uaTag u{font-family:MCSDigits,"Jameel Noori Nastaleeq","JameelNoori",serif;text-decoration:none;display:block;font-size:17px;color:#1e3a8a;margin-top:2px;direction:rtl}
 #uaOv .uaCard{margin-top:12px;background:rgba(255,255,255,.9);border:1px solid #e3eaf7;border-radius:22px;padding:15px 15px 16px;box-shadow:0 14px 40px rgba(15,31,69,.10)}
 #uaOv .uaHd{display:flex;align-items:center;justify-content:center;gap:10px}
 #uaOv .uaHd i{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#eaf1ff,#d6e4ff);font-style:normal}
@@ -14353,8 +14387,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
 #uaOv .uaChk input{width:20px;height:20px;margin:0;flex:none;accent-color:#16a34a}
 #uaOv .uaChk a{text-decoration:underline}
 #uaOv .uaFoot{text-align:center;font-size:14.5px;color:#334155;margin-top:4px}
-#uaOv .uaErr{min-height:18px;color:#b91c1c;font-weight:800;font-size:13.5px;text-align:center;margin:0 0 8px;direction:rtl;font-family:"Jameel Noori Nastaleeq",Tahoma,sans-serif}
-#uaOv .uaMsg{background:#fef3c7;border:1px solid #f59e0b;color:#78350f;border-radius:12px;padding:8px 10px;font-weight:800;font-size:14px;text-align:center;margin-bottom:10px;direction:rtl;font-family:"Jameel Noori Nastaleeq",Tahoma,sans-serif}
+#uaOv .uaErr{min-height:18px;color:#b91c1c;font-weight:800;font-size:13.5px;text-align:center;margin:0 0 8px;direction:rtl;font-family:MCSDigits,"Jameel Noori Nastaleeq",Tahoma,sans-serif}
+#uaOv .uaMsg{background:#fef3c7;border:1px solid #f59e0b;color:#78350f;border-radius:12px;padding:8px 10px;font-weight:800;font-size:14px;text-align:center;margin-bottom:10px;direction:rtl;font-family:MCSDigits,"Jameel Noori Nastaleeq",Tahoma,sans-serif}
 #uaOv .uaG{display:flex;justify-content:center;min-height:46px;margin-bottom:10px}
 #uaOv .uaX{position:absolute;top:10px;right:12px;z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15);font-size:18px;cursor:pointer}
 #uaOv .uaCity{position:fixed;left:0;right:0;bottom:0;height:130px;z-index:1;pointer-events:none}
