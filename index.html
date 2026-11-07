@@ -2587,7 +2587,7 @@ body.cdOn{padding-top:30px}
   <button type="button" class="d2n" id="d2nExp" onclick="navPress(srOpen)" aria-label="تلاش"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><b>Explore</b><span>تلاش</span></button>
   <button type="button" class="d2n d2n-add" onclick="d2AddOpen()" aria-label="ممبرشپ بنائیں"><i>＋</i><b>Membership</b><span>ممبرشپ بنائیں</span></button>
   <button type="button" class="d2n" id="d2nFav" onclick="navPress(()=>goScreen('favorites'))" aria-label="پسندیدہ"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><b>Favorites</b><span>پسندیدہ</span></button>
-  <button type="button" class="d2n" id="d2nAcc" onclick="openControlPanel()" aria-label="میرا اکاؤنٹ"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><b>My Account</b><span>میرا اکاؤنٹ</span></button>
+  <button type="button" class="d2n" id="d2nAcc" onclick="d2Account()" aria-label="میرا اکاؤنٹ"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><b>My Account</b><span>میرا اکاؤنٹ</span></button>
   <button type="button" class="bn-zoom" id="bnZoom" onclick="toggleZoomPanel(event)" aria-label="متن کا سائز"><b>Aa</b><span id="bnZoomVal">100%</span></button>
   <button type="button" class="bn-admin" id="bnAdmin" style="display:none;" onclick="toggleAdminPop(event)" aria-label="ایڈمن"><b id="bnAdminIc">🔒</b><span id="bnAdminTxt">آؤٹ</span></button>
 </nav>
@@ -5680,7 +5680,7 @@ function userResultCard(item){
         /* ② رجسٹریشن مکمل → صرف «ممبرشپ مکمل کریں» */
         if(_r.stage==='registered' && !_live){
           if(_mine) return `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⭐ ممبرشپ مکمل کریں</button>`;
-          return isAdminSignedIn ? `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('service','${_eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
+          return (isAdminSignedIn || agOwnsRec(_r)) ? `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('service','${_eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
         }
         /* ③ ایک سال کی ممبرشپ ہو گئی → پوری تفصیل کا بٹن، اور مالک کو بائیں طرف ربن */
         return '' + (_live && _mine && !agIsRec('service', _r) ? `<button type="button" class="svc-earn-btn" onclick="event.stopPropagation();agForm()">💰 Earn with MCS</button>` : ''); })()}
@@ -8477,7 +8477,8 @@ function svcMoreHtml(m){
 let svcStage = 'full', svcRegFlag = false;
 function svcMyBasic(){ try{ return JSON.parse(localStorage.getItem('mcsMyBasic')||'[]'); }catch(e){ return []; } }
 function svcMyBasicAdd(id){ try{ const a = svcMyBasic(); if(!a.includes(id)){ a.push(id); localStorage.setItem('mcsMyBasic', JSON.stringify(a)); } }catch(e){} }
-function svcCanRegister(rec){ return !!rec && (rec.stage==='basic' || !rec.stage) && (isAdminSignedIn || svcMyBasic().includes(rec.id)); }
+function agOwnsRec(rec){ try{ const me = agMe(); if(!me || !me.code || !rec || !rec.more) return false; return agNormCode(rec.more.ref) === agNormCode(me.code); }catch(e){ return false; } }   /* MCS0711SA187: ایجنٹ کے کوڈ سے درج کاروبار */
+function svcCanRegister(rec){ return !!rec && (rec.stage==='basic' || !rec.stage) && (isAdminSignedIn || svcMyBasic().includes(rec.id) || agOwnsRec(rec)); }
 function svcRegisterOpen(id){
   const r = store.services.find(x=>x.id===id); if(!r) return;
   if(r.category && CATEGORY_META[r.category]) currentServiceCategory = r.category;
@@ -8509,9 +8510,9 @@ function agMarkRecords(){
 function docStageBtn(d){
   const eid = escapeAttr(d.id), mine = !isAdminSignedIn && (svcMyBasic().includes(d.id) || !!mpEntry(d)), live = pfActive(d);
   if(!live){
-    if(d.stage!=='registered') return (isAdminSignedIn || mine) ? `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();docRegOpen('${eid}')">📝 رجسٹریشن مکمل کریں</button>` : '';
+    if(d.stage!=='registered') return (isAdminSignedIn || mine || agOwnsRec(d)) ? `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();docRegOpen('${eid}')">📝 رجسٹریشن مکمل کریں</button>` : '';
     if(mine) return `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${eid}','doctor')">⭐ ممبرشپ مکمل کریں</button>`;
-    return isAdminSignedIn ? `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('doctor','${eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
+    return (isAdminSignedIn || agOwnsRec(d)) ? `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('doctor','${eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
   }
   return pfBtn('doctor', d) + (mine && !agIsRec('doctor', d) ? `<button type="button" class="svc-earn-btn" onclick="event.stopPropagation();agForm()">💰 Earn with MCS</button>` : '');
 }
@@ -9014,13 +9015,14 @@ function dpInit(){
 function dpVerText(){ const v = (typeof APP_VERSION !== 'undefined' ? APP_VERSION : ''); return `ورژن ${v} <i class="${navigator.onLine ? '' : 'off'}"></i>`; }
 function cpAcctSync(){
   const t = document.getElementById('cpAcctType'), h = document.getElementById('h2Type'); if(t) t.textContent = 'اکاؤنٹ کی قسم: ' + ((h && h.textContent) || '👤 Normal');
-  const on = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn());
+  const on = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn);   /* MCS0711SA187: ڈویلپر پینل صرف ڈویلپر کو، کو-ڈویلپر کو نہیں */
   const b = document.getElementById('cpDevBtn'); if(b) b.style.display = on ? '' : 'none';
   const v = document.getElementById('cpVer'); if(v) v.innerHTML = dpVerText();
 }
 let dpTaps = 0, dpTapT = 0;
-function dpVerTap(){ const now = Date.now(); if(now - dpTapT > 2500) dpTaps = 0; dpTapT = now; dpTaps++; if(dpTaps >= 7){ dpTaps = 0; closeModal('controlPanelModal'); openDevPanel(); } }
+function dpVerTap(){ const now = Date.now(); if(now - dpTapT > 2500) dpTaps = 0; dpTapT = now; dpTaps++; if(dpTaps >= 7){ dpTaps = 0; if(!isAdminSignedIn) return; closeModal('controlPanelModal'); openDevPanel(); } }
 function openDevPanel(){
+  if(!isAdminSignedIn) return;   /* MCS0711SA187: کو-ڈویلپر / عام یوزر کے لیے نہیں */
   dpInit();
   try{ document.getElementById('cpWhatsapp').value = store.contact.whatsapp; document.getElementById('cpGmail').value = store.contact.gmail; }catch(e){}
   try{ syncAdminPanelSections(); }catch(e){}
@@ -9028,7 +9030,7 @@ function openDevPanel(){
   const v = document.getElementById('dpVer'); if(v) v.textContent = typeof APP_VERSION !== 'undefined' ? APP_VERSION : '';
   openModal('devPanelModal');
 }
-document.addEventListener('DOMContentLoaded', () => { try{ dpInit(); }catch(e){} const t = document.getElementById('h2Type'); if(t) t.addEventListener('click', () => { const on = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()); if(on) openDevPanel(); }); });
+document.addEventListener('DOMContentLoaded', () => { try{ dpInit(); }catch(e){} const t = document.getElementById('h2Type'); if(t) t.addEventListener('click', () => { const on = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn); if(on) openDevPanel(); }); });
 function openControlPanel(){
   document.getElementById('cpWhatsapp').value = store.contact.whatsapp;
   document.getElementById('cpGmail').value = store.contact.gmail;
@@ -10587,7 +10589,7 @@ function apBody(me, prev){
   const cnt = f => rows.filter(f).length;
   const last = rows.reduce((m,x)=>Math.max(m, apCreated(x.rec)), 0);
   const lastTxt = last ? (Math.floor((Date.now() - last)/864e5) === 0 ? 'آج' : Math.floor((Date.now() - last)/864e5) + ' دن پہلے') : '—';
-  let h = `<div class="ap-st"><div><b>${rows.length}</b>کل کاروبار</div><div><b>${cnt(x=>x.info.mode==='paid' && x.info.left>0)}</b>سالانہ فعال</div><div><b>${cnt(x=>x.info.mode==='free' && x.info.left>0)}</b>مفت موڈ</div><div><b>${cnt(x=>x.info.mode!=='none' && x.info.mode!=='pend' && x.info.left<=0)}</b>مدت ختم</div></div>`;
+  let h = apMeCard(me, rows) + `<div class="ap-st"><div><b>${rows.length}</b>کل کاروبار</div><div><b>${cnt(x=>x.info.mode==='paid' && x.info.left>0)}</b>سالانہ فعال</div><div><b>${cnt(x=>x.info.mode==='free' && x.info.left>0)}</b>مفت موڈ</div><div><b>${cnt(x=>x.info.mode!=='none' && x.info.mode!=='pend' && x.info.left<=0)}</b>مدت ختم</div></div>`;
   h += `<div class="cp-hint" style="margin:0 0 8px">🕒 آخری بار کاروبار فیڈ کیا: <b>${lastTxt}</b></div>`;
   if(code) h += `<div class="pt-card"><small>میرا ریفرل کوڈ</small><div class="pt-code" onclick="agCopy('${escapeAttr(code)}')">${escapeHtml(code)}</div><div class="r"><button type="button" class="p" onclick="agCopy('${escapeAttr(code)}')">📋 کاپی</button><button type="button" onclick="agShare('${escapeAttr(code)}')">📤 شیئر</button></div></div>`;
   h += `<div class="pt-sec">🏪 میرے فیڈ کیے ہوئے کاروبار / پروفیشن <small>(کم دن باقی ہوں تو اوپر)</small></div>`;
@@ -10596,7 +10598,7 @@ function apBody(me, prev){
       ${r.whatsapp || r.phone ? `<div class="r"><a href="tel:0${String(r.whatsapp||r.phone).replace(/\D/g,'').slice(-10)}" class="p" style="text-decoration:none;padding:6px 12px;border-radius:10px">📞 کال</a>${urgent || x.info.mode === 'paid' || x.info.left <= 0 ? `<button type="button" onclick="apRenewMsg(${i}, '${escapeAttr(me.name||'')}')">💬 دوبارہ سبسکرائب کا پیغام</button>` : ''}</div>` : ''}</div>`; }).join('')
     : `<div class="cp-hint" style="text-align:center">${code ? 'ابھی کوئی کاروبار آپ کے کوڈ سے درج نہیں' : '⏳ آپ کا کوڈ لوڈ ہو رہا ہے…'}</div>`;
   const L = mpListReal();
-  if(!prev) h += `<div class="pt-grid">${ptT('🏪','بزنس رجسٹر کریں','کسی اور کا کاروبار','apFeedBiz')}${ptT('👔','پروفیشن رجسٹر کریں','','apFeedProf')}${ptT('🤝','ایجنٹ کی حالت','کوڈ، PIN','agOpen')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','','openControlPanel')}</div>`;
+  if(!prev) h += `<div class="pt-grid">${ptT('📋','سارے کاروبار','رجسٹریشن مکمل کریں','apAllOpen', rows.filter(x=>!pfActive(x.rec)).length || '')}${ptT('🏪','بزنس رجسٹر کریں','کسی اور کا کاروبار','apFeedBiz')}${ptT('👔','پروفیشن رجسٹر کریں','','apFeedProf')}${ptT('🤝','ایجنٹ کی حالت','کوڈ، PIN','agOpen')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','','openControlPanel')}</div>`;
   if(!prev && L.length) h += `<div class="pt-sec">🏪 میرا اپنا کاروبار</div>` + L.map(({p, rec}, i)=>{ const r = p.kind === 'doctor' ? fhDoc(rec) : fhSvc(rec); return `<div class="pt-card"><b>${escapeHtml(r.nameUr || r.name || '')}</b><div class="r"><button type="button" onclick="ptView(${i})">👁️ دیکھیں</button><button type="button" class="p" onclick="ptEdit(${i})">✏️ تفصیل سنواریں</button></div></div>`; }).join('');
   if(!prev && !apBody.loaded){ apBody.loaded = 1; setTimeout(async ()=>{ try{ await pfLoadList(); const m = document.getElementById('portalModal'); if(m && m.classList.contains('active') && ptRole() === 'agent') ptOpen(); }catch(e){} apBody.loaded = 0; }, 400); }
   return h; }
@@ -10674,6 +10676,49 @@ function apFeedProf(){ apFeedGo('professional'); }
 window.addEventListener('load', ()=> setTimeout(()=>{ ['openServiceForm','openDoctorForm'].forEach(fn=>{ const o = window[fn]; if(typeof o !== 'function' || o._af) return;
   const w = function(id){ const r = o.apply(this, arguments); if(apFeedRef && !id){ setTimeout(()=>{ const i = document.getElementById('svcRef') || document.getElementById('docRef'); if(i && apFeedRef){ i.value = apFeedRef; i.dispatchEvent(new Event('input', {bubbles:true})); try{ refResolve(); }catch(e){} apFeedRef = ''; } }, 450); } return r; };
   w._af = 1; window[fn] = w; }); }, 1500));
+/* ===== MCS0711SA187 (مالک کا حکم): مائی اکاؤنٹ ← ایجنٹ پورٹل (ذاتی تفصیل، سارے کاروبار، رجسٹریشن مکمل کرنا)
+   ⚠️ پلے اسٹور: رقم / کمیشن / ادائیگی کا کوئی نظام یہاں نہیں — وہ الگ ویب سائٹ پر بنے گا */
+function d2Account(){ try{ if(ptRole() === 'agent'){ ptOpen(); return; } }catch(e){} openControlPanel(); }
+function apMeCard(me, rows){
+  const E = escapeHtml, ph = me.phone ? '0' + String(me.phone).slice(2) : '', nB = rows.filter(x=>x.kind !== 'doctor').length, nP = rows.length - nB;
+  const L = [['👤 نام', me.name], ['📱 موبائل', ph], ['🆔 ایجنٹ کوڈ', me.code], ['🏙️ شہر', me.city]].filter(x=>x[1]);
+  return `<div class="pt-card"><b>🪪 میرا اکاؤنٹ</b>${L.map(x=>`<div style="font-size:13px;line-height:1.9"><span style="opacity:.7">${x[0]}:</span> <bdi dir="ltr">${E(String(x[1]))}</bdi></div>`).join('')}<div style="font-size:13px;line-height:1.9"><span style="opacity:.7">🏪 فیڈ کیے:</span> ${nB} کاروبار · ${nP} پروفیشن</div></div>`;
+}
+let apAllTab = 'todo';
+function apStageOf(x){ if(pfActive(x.rec)) return 'live'; return x.rec.stage === 'registered' ? 'reg' : 'basic'; }
+async function apAllOpen(){
+  const me = agMe() || {}; agModal('<div class="ag-st">⏳ آپ کے کاروبار آ رہے ہیں…</div>');
+  try{ await pfLoadList(); }catch(e){}
+  apAllTab = 'todo'; apAllRender();
+}
+function apAllRender(){
+  const me = agMe() || {}, E = escapeHtml;
+  const rows = apRecs(me.code || '').map(x=>({...x, info: apInfo(x), st: null})); rows.forEach(x=>{ x.st = apStageOf(x); });
+  rows.sort((a,b)=>{ const o = {basic:0, reg:1, live:2}; return (o[a.st] - o[b.st]) || ((a.info.left==null?9e9:a.info.left) - (b.info.left==null?9e9:b.info.left)); });
+  apAllRows = rows;
+  const nT = rows.filter(x=>x.st !== 'live').length, L = rows.filter(x=> apAllTab === 'all' || x.st !== 'live');
+  const lbl = {basic:['n','📝 رجسٹریشن باقی'], reg:['b','⭐ ممبرشپ باقی'], live:['g','✅ مکمل']};
+  agModal(`<div class="ag-hd">📋 میرے سارے کاروبار <small>رجسٹریشن مکمل کریں</small></div>
+    <div class="ag-tabs">${[['todo','⏳ باقی کام',nT],['all','سب',rows.length]].map(([k,t,n])=>`<button type="button" class="${apAllTab===k?'on':''}" onclick="apAllTab='${k}';apAllRender()">${t} <b>${n}</b></button>`).join('')}</div>
+    ${L.map(x=>{ const i = rows.indexOf(x), r = x.rec, ph = String(r.whatsapp || r.phone || '').replace(/\D/g,'').slice(-10), st = lbl[x.st], ap = apStatus(x.info);
+      return `<div class="pt-card"><b>${E(r.nameUr || r.name || '')}</b> <small>${x.kind==='doctor' ? '👔 پروفیشن' : '🏪 کاروبار'} · ${E([r.area, r.city].filter(Boolean).join('، '))}</small>
+        <div><span class="ap-bd ${st[0]}">${st[1]}</span>${x.st === 'live' ? ` <span class="ap-bd ${ap[0]}">${ap[1]}</span>` : ''}</div>
+        <div class="r">${x.st === 'basic' ? `<button type="button" class="p" onclick="apAllGo(${i},'reg')">📝 رجسٹریشن مکمل کریں</button>` : ''}${x.st === 'reg' ? `<button type="button" class="p" onclick="apAllGo(${i},'view')">⭐ تفصیل کھولیں</button><button type="button" onclick="apAllMsg(${i})">💬 مالک کو پیغام</button>` : ''}${x.st === 'live' ? `<button type="button" onclick="apAllGo(${i},'view')">👁️ دیکھیں</button>` : ''}${ph.length === 10 ? `<a href="tel:0${ph}" class="p" style="text-decoration:none;padding:6px 12px;border-radius:10px">📞 کال</a>` : ''}</div></div>`; }).join('') || '<div class="cp-hint" style="text-align:center">' + (me.code ? 'کوئی کام باقی نہیں 🎉' : '⏳ آپ کا کوڈ لوڈ ہو رہا ہے…') + '</div>'}
+    <button type="button" class="btn block secondary" onclick="closeModal('agModal')">بند کریں</button>`);
+}
+let apAllRows = [];
+function apAllGo(i, what){
+  const x = apAllRows[i]; if(!x) return; const id = x.rec.id, kind = x.kind;
+  closeModal('agModal'); closeModal('portalModal');
+  setTimeout(()=>{ try{
+    if(what === 'reg'){ if(kind === 'doctor') docRegOpen(id); else svcRegisterOpen(id); }
+    else pfOpen(kind, id);
+  }catch(e){ showToast('⚠️ ' + (e.message || '')); } }, 200);
+}
+function apAllMsg(i){
+  const x = apAllRows[i]; if(!x) return; const r = x.rec, me = agMe() || {};
+  apWa(r.whatsapp || r.phone, `السلام علیکم!\nMy City Shines پر آپ کے «${r.nameUr || r.name || ''}» کی رجسٹریشن ہو چکی ہے۔ اب ایپ میں «⭐ ممبرشپ مکمل کریں» دبا کر ممبرشپ مکمل کر لیں تاکہ آپ کی پوری تفصیل لوگوں کو نظر آئے۔\nشکریہ 🌟 — ${me.name || 'MCS ایجنٹ'}`);
+}
 /* ---- ڈویلپر پورٹل ---- */
 async function ptLoadAgents(){ try{ const r = await agAdminCall({op:'list'}); if(r && r.list){ agList = r.list; return true; } }catch(e){} return false; }
 function ptPrevCodev(){ ptOpen(false, {role:'codev'}); }
