@@ -1688,6 +1688,14 @@ html.mcs-dark .hl-tx b,html.mcs-dark .hl-h b{color:#e2f5f2;}html.mcs-dark .hl-tx
 .pf-tag small{font-size:12.5px;font-weight:700;opacity:.97}
 .pf-tag.paid{background:linear-gradient(180deg,#16a34a,#14532d)}
 .pf-tag.trial{background:linear-gradient(180deg,#f59e0b,#b45309)}
+/* MCS0711SA187 (مالک کا حکم): لمبی پٹی ختم — کارڈ کے اوپر بائیں کارنر میں چھوٹا ٹیگ۔ سبسکرائب: سبز «رجسٹرڈ بزنس» اور نیچے باریک تاریخ؛ ٹرائل: چھوٹا نارنجی ٹیگ + باقی دن؛ MCS بیج ہو تو ٹیگ اس کے نیچے */
+.ub-row>.pf-tag{position:absolute;left:6px;top:6px;margin:0;width:auto;min-width:0;max-width:96px;padding:3px 7px;border-width:1.5px;border-radius:9px;gap:0;line-height:1.25;z-index:4}
+.ub-row>.ag-corner~.pf-tag{top:52px}
+.ub-row>.pf-tag b{font-size:10.5px;font-weight:800;white-space:nowrap}
+.ub-row>.pf-tag small{font-size:8.5px;font-weight:600;opacity:.95;white-space:nowrap}
+.ub-row>.pf-tag.trial{padding:2px 6px;border-radius:8px}
+.ub-row>.pf-tag.trial b{font-size:9.5px}
+.ub-row>.pf-tag.trial small{font-size:8px}
 .pf-btn{display:block;width:100%;margin-top:6px;min-height:36px;border:none;border-radius:10px;font-family:inherit;font-weight:800;font-size:13.5px;color:#5a3a00;background:linear-gradient(135deg,#ffe08a,#f5b83d);box-shadow:0 3px 0 #c98a1a;cursor:pointer;}
 .pf-star{display:inline-block;font-size:10.5px;font-weight:800;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:999px;padding:0 7px;margin-inline-start:4px;vertical-align:middle;line-height:1.7;}
 .pf-box{max-width:520px;}
@@ -4304,7 +4312,7 @@ function pfTag(kind, rec){
   const trial = info.mode === 'free';
   const left = Math.max(1, Math.ceil((info.until - Date.now())/864e5));
   const title = kind === 'doctor' ? 'رجسٹرڈ پروفیشن' : 'رجسٹرڈ بزنس';
-  const sub = trial ? `ٹرائل پیریڈ — ${left} دن باقی` : (info.until ? `سبسکرپشن ختم: ${new Date(info.until).toLocaleDateString('en-GB')}` : 'سبسکرپشن فعال');
+  const sub = trial ? `ٹرائل — ${left} دن باقی` : (info.until ? `<span dir=\"ltr\">${new Date(info.until).toLocaleDateString('en-GB')}</span> تک` : 'سبسکرپشن فعال');
   return `<button type="button" class="pf-tag ${trial ? 'trial' : 'paid'}" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')"><b>${trial ? '🎁' : '✅'} ${title}</b><small>${sub}</small></button>`;
 }
 function pfBtn(kind, rec){ return pfTag(kind, rec); }
