@@ -3989,7 +3989,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA183";
+const APP_VERSION = "MCS0711SA184";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -6645,19 +6645,44 @@ function shareCardAndCaption(blob, kind, item, mode){
 }
 /* اندراج کا نمبر بین الاقوامی شکل میں (0300-1234567 → 923001234567)، درست نہ ہو تو خالی */
 function ownerWaIntl(item){
-  const digits = normalizePkNumber(item.whatsapp||'').replace(/[^0-9]/g,'');
-  return /^03\d{9}$/.test(digits) ? ('92' + digits.slice(1)) : '';
+  const l = ownerWaList(item);
+  return l.length ? l[0].intl : '';
+}
+/* واٹس ایپ نمبروں کی فہرست ترجیح کے ساتھ: پہلے «الگ واٹس ایپ» (more.wa2)، پھر موبائل نمبر۔
+   دونوں ایک ہی ہوں تو ایک ہی نمبر۔ */
+function ownerWaList(item){
+  const out = [], seen = new Set();
+  [(item && item.more && item.more.wa2) || '', (item && item.whatsapp) || ''].forEach(raw=>{
+    const d = normalizePkNumber(raw).replace(/[^0-9]/g,'');
+    if(/^03\d{9}$/.test(d) && !seen.has(d)){ seen.add(d); out.push({disp: d.slice(0,4)+'-'+d.slice(4), intl: '92' + d.slice(1)}); }
+  });
+  return out;
+}
+/* دو نمبر ہوں تو پہلی بار واٹس ایپ والا نمبر؛ اگر وہ واٹس ایپ پر نہ نکلے اور 10 منٹ کے اندر دوبارہ «بھیجیں» دبایا جائے
+   تو اسی ریکارڈ کا دوسرا نمبر (براؤزر یہ چیک نہیں کر سکتا کہ نمبر واٹس ایپ پر ہے یا نہیں) */
+function ownerWaPick(item){
+  const l = ownerWaList(item);
+  if(l.length < 2) return {to: l.length ? l[0].intl : '', note: ''};
+  const key = 'mcsWaTry_' + (item.fsId || item.id || l[0].intl);
+  let idx = 0;
+  try{
+    const prev = JSON.parse(localStorage.getItem(key) || 'null');
+    if(prev && Date.now() - prev.t < 10*60*1000) idx = (prev.i + 1) % l.length;
+    localStorage.setItem(key, JSON.stringify({i: idx, t: Date.now()}));
+  }catch(e){}
+  const other = l[(idx+1) % l.length].disp;
+  return {to: l[idx].intl, note: '📞 ' + l[idx].disp + ' پر بھیج رہے ہیں — اگر یہ واٹس ایپ پر نہ ہو تو دوبارہ «بھیجیں» دبائیں، ' + other + ' پر جائے گا'};
 }
 /* MCS2310FR043: «اسی کو بھیجیں» — نمبر فون میں محفوظ کیے بغیر سیدھی اسی نمبر کی واٹس ایپ چیٹ، پورا پیغام لکھا ہوا۔
    واٹس ایپ کا لنک تصویر ساتھ نہیں لے جا سکتا، اس لیے کارڈ پہلے سے تیار رہتا ہے اور دبانے کے ساتھ ہی
    (1) کاپی ہو جاتا ہے — چیٹ میں لکھنے کی جگہ دبا کر Paste، اور (2) گیلری میں سب سے پہلی تصویر — 📎 سے فوراً۔ */
 function sendCardToOwnerChat(blob, caption, item){
-  const to = ownerWaIntl(item);
+  const pick = ownerWaPick(item), to = pick.to;
   if(blob){
     try{ if(navigator.clipboard && window.ClipboardItem) navigator.clipboard.write([new ClipboardItem({'image/png': blob})]).catch(()=>{}); }catch(e){}
   }
   /* MCS2310FR045: گیلری میں محفوظ کرنا بند — صرف کاپی؛ واٹس ایپ میں Paste سے تصویر لگ جاتی ہے */
-  showToast(to ? '✅ پیغام چیٹ میں لکھا ہے — 📷 کارڈ کاپی ہو گیا: لکھنے کی جگہ دبا کر Paste کریں' : 'نمبر درست نہیں — واٹس ایپ میں رابطہ خود چنیں', 6000);
+  showToast(to ? (pick.note ? pick.note + '\n' : '') + '✅ پیغام چیٹ میں لکھا ہے — 📷 کارڈ کاپی ہو گیا: لکھنے کی جگہ دبا کر Paste کریں' : 'نمبر درست نہیں — واٹس ایپ میں رابطہ خود چنیں', pick.note ? 8000 : 6000);
   waOpen(to, caption);
 }
 /* MCS2310FR041: شیئر/بھیجنا سیدھا واٹس ایپ بزنس (com.whatsapp.w4b) میں — اینڈرائیڈ پر intent سے؛
