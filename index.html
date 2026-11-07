@@ -3374,7 +3374,9 @@ body.cdOn{padding-top:30px}
     <h3>⭐ اپنی تفصیل سنواریں</h3>
     <div style="clear:both;"></div>
     <input type="file" accept="image/*" id="pfImgIn" hidden onchange="pfImgPicked(this)">
-    <input type="file" accept="image/*" capture="user" id="pfSelfieIn" hidden onchange="pfSelfiePicked(this)">
+    <input type="file" accept="image/*" id="pfSelfieIn" hidden onchange="pfSelfiePicked(this)">
+    <input type="file" accept="image/*" capture="environment" id="pfImgCam" hidden onchange="pfImgPicked(this)">
+    <input type="file" accept="image/*" capture="user" id="pfSelfieCam" hidden onchange="pfSelfiePicked(this)">
     <div id="pfEFields"></div>
     <button type="button" class="btn block accent" id="pfSaveBtn" onclick="pfSave()">💾 ممبرشپ محفوظ کریں</button>
     <div class="cp-hint" id="pfSaveMsg" style="margin-top:6px;text-align:center"></div>
@@ -4027,7 +4029,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA197";
+const APP_VERSION = "MCS0711SA198";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -4487,12 +4489,103 @@ function pfSlotsRender(pre){
       + (i === 1 && !x && saved ? `<button type="button" class="pf-reuse" onclick="pfUseSavedSelfie('${pre}')">↩️ پہلے والی اپنی سیلفی لگائیں</button>` : '') + `</div>`; }).join('');
 }
 let pfPickPre = '';
-function pfPickSlot(pre, i){ pfPickPre = pre; pfEd[pre].slot = i; document.getElementById(i === 1 ? 'pfSelfieIn' : 'pfImgIn').click(); }
+
+/* ===== MCS0711SA198 (مالک کا حکم): دکان کی چورس تصویر اور سیلفی — گیلری / کیمرہ، کاٹنا، روشنی، صفائی، گھمانا، زوم ===== */
+const PH = {img:null, mode:'shop', q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh:false, ptr:{}, pd:0};
+function phChoose(){
+  let m = document.getElementById('phChooseModal');
+  if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'phChooseModal'; m.style.zIndex = '2147481000'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="modal-box" style="max-width:340px;text-align:center"><div class="ag-hd" style="margin-bottom:8px">📸 تصویر کہاں سے لگائیں؟</div>
+    <button type="button" class="btn block" onclick="phPick('gal')">🖼️ گیلری سے چنیں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="phPick('cam')">📷 کیمرے سے کھینچیں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('phChooseModal')">✖ رہنے دیں</button></div>`;
+  openModal('phChooseModal');
+}
+function phPick(how){
+  closeModal('phChooseModal');
+  const sf = (pfEd[pfPickPre] || {}).slot === 1;
+  const id = sf ? (how === 'cam' ? 'pfSelfieCam' : 'pfSelfieIn') : (how === 'cam' ? 'pfImgCam' : 'pfImgIn');
+  const el = document.getElementById(id); if(el) el.click();
+}
+function phFromFile(f, mode){
+  const im = new Image(); const url = URL.createObjectURL(f);
+  im.onload = ()=>{ const sc = Math.min(1, 2000 / Math.max(im.width, im.height)); const c = document.createElement('canvas'); c.width = Math.round(im.width*sc); c.height = Math.round(im.height*sc); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url); phOpen(c, mode); };
+  im.onerror = ()=>{ URL.revokeObjectURL(url); showToast('تصویر نہیں کھلی — دوبارہ کوشش کریں'); };
+  im.src = url;
+}
+function phOpen(c, mode){
+  Object.assign(PH, {img:c, mode, q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh: mode === 'shop', ptr:{}, pd:0});
+  const sf = mode === 'selfie';
+  let m = document.getElementById('phCropModal');
+  if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'phCropModal'; m.style.zIndex = '2147482000'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="modal-box agc-box"><div class="ag-hd">✂️ ${sf ? 'اپنی سیلفی' : 'دکان کی تصویر'} — کاٹیں اور سنواریں <small>${sf ? 'چہرہ گول فریم کے بیچ میں رکھیں' : 'دکان چوکور چوکھٹے میں رکھیں'} — انگلی سے کھسکائیں، دو انگلیوں سے بڑا / چھوٹا</small></div>
+    <canvas id="phCv" class="agc-cv" width="480" height="480" style="width:min(100%,340px);aspect-ratio:1;${sf ? 'border-radius:50%' : ''}"></canvas>
+    <div class="agc-row"><button type="button" onclick="phZoomStep(-25)" aria-label="چھوٹا">➖</button><span>🔍 زوم</span><input type="range" id="phZ" min="50" max="400" value="100" style="flex:1"><button type="button" onclick="phZoomStep(25)" aria-label="بڑا">➕</button></div>
+    <div class="agc-row"><button type="button" onclick="phRot(-1)">↺ بائیں گھمائیں</button><button type="button" onclick="phRot(1)">↻ دائیں گھمائیں</button></div>
+    <div class="agc-row"><span>📐 سیدھا</span><input type="range" id="phF" min="-100" max="100" value="0" style="flex:1"></div>
+    <div class="agc-row"><span>☀️ روشنی</span><input type="range" id="phB" min="60" max="170" value="100" style="flex:1"></div>
+    <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="phE" ${PH.enh ? 'checked' : ''}> ✨ صاف ستھرا کریں (کنٹراسٹ اور صفائی خود بہتر)</label></div>
+    <div class="agc-row"><button type="button" onclick="phReset()">↩️ شروع سے</button></div>
+    <button type="button" class="btn block ag-send" onclick="phDone()">✅ یہی تصویر لگائیں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('phCropModal')">✖ رہنے دیں</button></div>`;
+  openModal('phCropModal');
+  const cv = document.getElementById('phCv');
+  document.getElementById('phZ').oninput = e=>{ PH.zoom = e.target.value/100; phDraw(); };
+  document.getElementById('phF').oninput = e=>{ PH.fine = e.target.value/10; phDraw(); };
+  document.getElementById('phB').oninput = e=>{ PH.br = +e.target.value; phDraw(); };
+  document.getElementById('phE').onchange = e=>{ PH.enh = e.target.checked; phDraw(); };
+  cv.onpointerdown = e=>{ cv.setPointerCapture(e.pointerId); PH.ptr[e.pointerId] = {x:e.clientX, y:e.clientY}; PH.pd = 0; };
+  cv.onpointerup = cv.onpointercancel = e=>{ delete PH.ptr[e.pointerId]; PH.pd = 0; };
+  cv.onpointermove = e=>{
+    const p = PH.ptr[e.pointerId]; if(!p) return; const ids = Object.keys(PH.ptr), r = cv.getBoundingClientRect();
+    if(ids.length >= 2){ PH.ptr[e.pointerId] = {x:e.clientX, y:e.clientY}; const a = PH.ptr[ids[0]], b = PH.ptr[ids[1]], d = Math.hypot(a.x-b.x, a.y-b.y); if(PH.pd){ phSetZoom(PH.zoom * d / PH.pd); } PH.pd = d; return; }
+    PH.ox += (e.clientX - p.x) / r.width; PH.oy += (e.clientY - p.y) / r.height; p.x = e.clientX; p.y = e.clientY; phDraw();
+  };
+  phDraw();
+}
+function phSetZoom(z){ PH.zoom = Math.max(.5, Math.min(4, z)); const el = document.getElementById('phZ'); if(el) el.value = Math.round(PH.zoom*100); phDraw(); }
+function phZoomStep(d){ phSetZoom(PH.zoom + d/100); }
+function phRot(d){ PH.q = (PH.q + d + 4) % 4; PH.ox = PH.oy = 0; phDraw(); }
+function phReset(){
+  Object.assign(PH, {q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh: PH.mode === 'shop'});
+  const set = (id, v)=>{ const e = document.getElementById(id); if(e) e.value = v; };
+  set('phZ', 100); set('phF', 0); set('phB', 100); const ce = document.getElementById('phE'); if(ce) ce.checked = PH.enh; phDraw();
+}
+function phPaint(cv, S){
+  const ctx = cv.getContext('2d'), im = PH.img, odd = PH.q % 2, iw = odd ? im.height : im.width, ih = odd ? im.width : im.height;
+  const rad = PH.fine * Math.PI / 180, cs = Math.abs(Math.cos(rad)), sn = Math.abs(Math.sin(rad));
+  const sc = Math.max((S*cs + S*sn) / iw, (S*sn + S*cs) / ih) * PH.zoom;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S, S); ctx.save();
+  ctx.translate(S/2 + PH.ox*S, S/2 + PH.oy*S); ctx.rotate(rad); ctx.scale(sc, sc); ctx.rotate(PH.q * Math.PI / 2); ctx.drawImage(im, -im.width/2, -im.height/2); ctx.restore();
+}
+function phDraw(){ const cv = document.getElementById('phCv'); if(!cv) return; phPaint(cv, cv.width); cv.style.filter = `brightness(${PH.br/100}) contrast(${PH.enh ? 1.12 : 1})`; }
+/* روشنی کو اصل تصویر میں پکا کریں (کینوس فلٹر ہر فون پر نہیں چلتا، اس لیے پکسل سے) */
+function phBake(cv){
+  const ctx = cv.getContext('2d'), id = ctx.getImageData(0, 0, cv.width, cv.height), d = id.data, b = PH.br/100, c = PH.enh ? 1.12 : 1, lut = new Uint8Array(256);
+  for(let v = 0; v < 256; v++) lut[v] = Math.max(0, Math.min(255, (v*b - 128)*c + 128));
+  for(let i = 0; i < d.length; i += 4){ d[i] = lut[d[i]]; d[i+1] = lut[d[i+1]]; d[i+2] = lut[d[i+2]]; }
+  ctx.putImageData(id, 0, 0);
+}
+async function phDone(){
+  const sf = PH.mode === 'selfie', S = sf ? 600 : 1000, out = document.createElement('canvas'); out.width = out.height = S; phPaint(out, S);
+  if(PH.br !== 100 || PH.enh){ try{ phBake(out); }catch(e){} }
+  if(PH.enh){ try{ agcEnhance(out); }catch(e){} }
+  const pre = pfPickPre; closeModal('phCropModal');
+  try{
+    if(sf){ await pfSetSelfie(pre, out.toDataURL('image/jpeg', .85)); }
+    else{
+      let d = out.toDataURL('image/jpeg', .8);
+      for(const [sz, q] of [[1000,.7],[900,.62],[800,.55]]){ if(d.length <= 420000) break; const o2 = document.createElement('canvas'); o2.width = o2.height = sz; o2.getContext('2d').drawImage(out, 0, 0, sz, sz); d = o2.toDataURL('image/jpeg', q); }
+      const St = pfEd[pre]; if(!St) return; St.imgs[0] = {src:d, changed:true}; delete St.del[0]; pfSlotsRender(pre);
+    }
+    showToast('✅ تصویر لگ گئی');
+  }catch(e){ showToast('تصویر نہیں لگی — دوبارہ کوشش کریں'); }
+}
+function pfPickSlot(pre, i){ pfPickPre = pre; pfEd[pre].slot = i; phChoose(); }
 function pfDelSlot(pre, i){ pfEd[pre].imgs[i] = null; pfEd[pre].del[i] = 1; if(i === 1){ pfEd[pre].thumb = ''; pfEd[pre].thumbChanged = true; } pfSlotsRender(pre); }
 async function pfImgPicked(inp){
-  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; const S = pfEd[pfPickPre]; if(!S) return;
-  try{ let src = await adCompress(f, 1000, 0.72); if(src.length > 420000) src = await adCompress(f, 800, 0.6);
-    S.imgs[0] = {src, changed:true}; delete S.del[0]; pfSlotsRender(pfPickPre); }catch(e){ showToast('تصویر نہیں کھلی'); }
+  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; if(!pfEd[pfPickPre]) return;
+  phFromFile(f, 'shop');   /* MCS0711SA198: پہلے کاٹیں / سنواریں، پھر لگے */
 }
 /* MCS0711SA194: سیلفی — بیچ سے چوکور کاٹ کر (چہرہ اوپر کی طرف)، بڑی (سرور کے لیے) اور چھوٹی (کارڈ کے لیے) */
 function pfSquare(src, size, q){
@@ -4511,7 +4604,7 @@ async function pfSetSelfie(pre, srcAny){
 }
 async function pfSelfiePicked(inp){
   const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return;
-  try{ await pfSetSelfie(pfPickPre, await pfFileUrl(f)); }catch(e){ showToast('سیلفی نہیں کھلی'); }
+  phFromFile(f, 'selfie');
 }
 async function pfUseSavedSelfie(pre){ let sv = ''; try{ sv = localStorage.getItem('mcsSelfie') || ''; }catch(e){} if(!sv) return; try{ await pfSetSelfie(pre, sv); }catch(e){} }
 /* ایجنٹ بنتے وقت جو سیلفی دی، وہ بھی اسی فون میں یاد رہے — کاروبار میں دوبارہ نہ مانگنی پڑے */
