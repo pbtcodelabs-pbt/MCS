@@ -1683,6 +1683,11 @@ html.mcs-dark .hl-tx b,html.mcs-dark .hl-h b{color:#e2f5f2;}html.mcs-dark .hl-tx
 /* MCS0211MO116: ممبرشپ صفحہ اور سنہری کارڈ */
 .pf-gold{border:2.5px solid #e9a23b !important;box-shadow:0 0 0 2px rgba(233,162,59,.25),0 6px 16px rgba(233,162,59,.25) !important;}
 .hl-cap.pf-gold{background:linear-gradient(135deg,#fffaf0,#ffefc7) !important;}
+.pf-tag{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:fit-content;min-width:190px;max-width:100%;margin:6px auto 4px 0;padding:6px 18px;border:2px solid rgba(255,255,255,.8);border-radius:12px;font-family:inherit;line-height:1.35;color:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3);position:relative;z-index:4}
+.pf-tag b{font-size:14px;font-weight:800}
+.pf-tag small{font-size:12.5px;font-weight:700;opacity:.97}
+.pf-tag.paid{background:linear-gradient(180deg,#16a34a,#14532d)}
+.pf-tag.trial{background:linear-gradient(180deg,#f59e0b,#b45309)}
 .pf-btn{display:block;width:100%;margin-top:6px;min-height:36px;border:none;border-radius:10px;font-family:inherit;font-weight:800;font-size:13.5px;color:#5a3a00;background:linear-gradient(135deg,#ffe08a,#f5b83d);box-shadow:0 3px 0 #c98a1a;cursor:pointer;}
 .pf-star{display:inline-block;font-size:10.5px;font-weight:800;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:999px;padding:0 7px;margin-inline-start:4px;vertical-align:middle;line-height:1.7;}
 .pf-box{max-width:520px;}
@@ -3989,7 +3994,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA185";
+const APP_VERSION = "MCS0711SA186";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 const UPDATE_NOTE = "ہوم کے نیچے ریکارڈ کی فہرست ہٹائی — صاف اسکرین، تلاش «🔍 تلاش کریں» سے";
 const DEFAULT_CONTACT = { whatsapp:"0320-6793793", gmail:"pbtcodelabs@gmail.com" };
@@ -4290,7 +4295,19 @@ async function pfTogglePhotos(){
   catch(e){ alert('محفوظ نہیں ہوا: ' + (e.code||e.message)); }
 }
 function pfFeatRender(){ const b = document.getElementById('pfPhotosBtn'); if(b) b.textContent = pfPhotosOn() ? '📸 کاروبار کی تفصیل میں تصویریں: چالو ✅ (دبائیں تو بند)' : '📸 کاروبار کی تفصیل میں تصویریں: بند ⛔ (دبائیں تو چالو)'; }
-function pfBtn(kind, rec){ return (rec && rec.id && pfActive(rec)) ? `<button type="button" class="pf-btn" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')">${kind === 'doctor' ? '👔 پروفیشن' : '🏪 کاروبار'} کی پوری تفصیل — ریٹ، اوقات</button>` : ''; }
+/* MCS0711SA186 (مالک کا حکم): پرانی پیلی پٹی «کاروبار کی پوری تفصیل — ریٹ، اوقات» ختم۔ اس کی جگہ ایجنٹ بیج (MCS) کے نیچے لمبی پٹی:
+   «رجسٹرڈ بزنس / رجسٹرڈ پروفیشن» + مفت آزمائش میں «ٹرائل پیریڈ — N دن باقی»، سالانہ والے پر «سبسکرپشن ختم: تاریخ»؛ دبانے پر پوری تفصیل کھلے */
+function pfTag(kind, rec){
+  if(!(rec && rec.id && pfActive(rec))) return '';
+  let info = null; try{ info = apInfo({kind, rec}); }catch(e){}
+  if(!info || (info.mode !== 'free' && info.mode !== 'paid') || !(info.until > Date.now())) info = {mode:'paid', until:((pfAct[pfKeyOf(rec, kind)]||{}).until)||0};
+  const trial = info.mode === 'free';
+  const left = Math.max(1, Math.ceil((info.until - Date.now())/864e5));
+  const title = kind === 'doctor' ? 'رجسٹرڈ پروفیشن' : 'رجسٹرڈ بزنس';
+  const sub = trial ? `ٹرائل پیریڈ — ${left} دن باقی` : (info.until ? `سبسکرپشن ختم: ${new Date(info.until).toLocaleDateString('en-GB')}` : 'سبسکرپشن فعال');
+  return `<button type="button" class="pf-tag ${trial ? 'trial' : 'paid'}" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')"><b>${trial ? '🎁' : '✅'} ${title}</b><small>${sub}</small></button>`;
+}
+function pfBtn(kind, rec){ return pfTag(kind, rec); }
 function pfRecById(kind, id){ return kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id); }
 /* مالک یا ایڈمن کے لیے سرور پر ممبرشپ بنائیں (پہلی بار = 15 دن شروع) */
 async function pfEnsureKey(kind, rec){
@@ -5626,6 +5643,7 @@ function userResultCard(item){
           ${locLine ? `<div class="ub-loc"><span class="ub-loc-t">📍 ${escapeHtml(locLine)}</span></div>` : ``}
         </div>
       </div>
+      ${item.id ? pfTag(item.kind, item.kind==='doctor' ? (store.doctors.find(x=>x.id===item.id)||item) : (store.services.find(x=>x.id===item.id)||item)) : ''}
       <div class="ub-bot">
         <span class="ub-num">${escapeHtml(num||'—')}</span>
         <div class="ub-acts">
@@ -5642,9 +5660,9 @@ function userResultCard(item){
       ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
       ${(()=>{ const _r = (item.kind==='service' && item.id) ? store.services.find(x=>x.id===item.id) : null;
         if(item.kind==='doctor' && item.id){ const _d = store.doctors.find(x=>x.id===item.id); if(_d) return docStageBtn(_d); }
-        if(!_r) return (item.id ? pfBtn(item.kind, item) : '');
+        if(!_r) return (item.id ? '' : '');
         const _anyNum = _r.category==='emergencyNumbers' || _r.category==='govOffices';
-        if(_anyNum) return pfBtn(item.kind, item);
+        if(_anyNum) return '';
         const _eid = escapeAttr(item.id);
         const _live0 = pfActive(_r);
         /* ① بنیادی ڈیٹا ہو چکا (نئے یا پرانے کارڈ) → صرف «رجسٹریشن مکمل کریں» */
@@ -5657,7 +5675,7 @@ function userResultCard(item){
           return isAdminSignedIn ? `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('service','${_eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
         }
         /* ③ ایک سال کی ممبرشپ ہو گئی → پوری تفصیل کا بٹن، اور مالک کو بائیں طرف ربن */
-        return pfBtn(item.kind, item) + (_live && _mine && !agIsRec('service', _r) ? `<button type="button" class="svc-earn-btn" onclick="event.stopPropagation();agForm()">💰 Earn with MCS</button>` : ''); })()}
+        return '' + (_live && _mine && !agIsRec('service', _r) ? `<button type="button" class="svc-earn-btn" onclick="event.stopPropagation();agForm()">💰 Earn with MCS</button>` : ''); })()}
     </div>`;
 }
 
