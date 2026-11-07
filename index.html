@@ -4080,10 +4080,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0711SA212";
+const APP_VERSION = "MCS0711SA213";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0711SA213": "✅ امپورٹ کے دوران گزرے سیکنڈ اور نیٹ کی حالت سکرین پر نظر آتی ہے تاکہ پتا چلے کہ کام چل رہا ہے یا رکا ہے",
   "MCS0711SA212": "✅ انجمن تاجران بلاک ۵ کے صفحہ ۱ سے ۴۰ تک سب رابطے شامل؛ امپورٹ اب چھوٹے گروپوں میں، ہر گروپ کی 3 کوششیں، رکنے پر وہیں سے آگے؛ کمزور نیٹ پر 0٪ پر نہیں اٹکتا",
   "MCS0711SA211": "✅ نماز کے اوقات، ہوم کے ڈبے اور کیٹگری کے ہندسے Arial میں چھوٹے اور فِٹ — ہر زوم پر کوئی ڈبہ باہر نہیں نکلتا، ایک دوسرے پر نہیں چڑھتا"
 };
@@ -9747,12 +9748,14 @@ async function runImport(noConfirm){
   const todo = items.filter(it=>!have.has(it.id));
   const total = all.length; let done = total - todo.length; const cnicAll = [];
   let note = '';
+  const t0 = Date.now(); let tick = null;
   const showProg = ()=>{
     const pct = Math.round(done*100/total);
-    if(prog) prog.innerHTML = `<div style="font-size:13px;margin-bottom:4px;">⏳ بھیجا جا رہا ہے… ${urduDigits(done)} / ${urduDigits(total)} (${urduDigits(pct)}٪) — صفحہ بند نہ کریں</div>
+    const sec = Math.round((Date.now()-t0)/1000), net = navigator.onLine === false ? ' — ❌ فون آف لائن ہے' : '';
+    if(prog) prog.innerHTML = `<div style="font-size:13px;margin-bottom:4px;">⏳ بھیجا جا رہا ہے… ${urduDigits(done)} / ${urduDigits(total)} (${urduDigits(pct)}٪) — ${urduDigits(sec)} سیکنڈ${net} — صفحہ بند نہ کریں</div>
       <div style="height:12px;background:#e5e7eb;border-radius:8px;overflow:hidden;"><div style="height:100%;width:${Math.max(pct,3)}%;background:#0f766e;transition:width .3s;"></div></div>${note ? `<div style="font-size:12px;color:#b45309;margin-top:4px;">${escapeHtml(note)}</div>` : ''}`;
   };
-  showProg();
+  showProg(); tick = setInterval(showProg, 1000);
   /* غیر مختص کیٹگری: سرور جواب نہ دے تو بھی کارڈ نہ رکیں (کیٹگری بعد میں خود محفوظ ہو جائے گی) */
   if(items.some(it=>it.x.category === UNASSIGNED_KEY)){ try{ await withTimeout(ensureUnassignedCat(), 15000); }catch(e){ note = 'غیر مختص کیٹگری ابھی سرور پر محفوظ نہیں ہوئی — کارڈ پھر بھی بھیجے جا رہے ہیں'; showProg(); } }
   const CH = 10, TRIES = 3;
@@ -9798,11 +9801,13 @@ async function runImport(noConfirm){
         }
       }catch(e){ cnicMsg = `<br><span style="color:#b45309;font-size:12px;">ℹ️ کارڈ سب بن گئے، مگر ${urduDigits(cnicAll.length)} شناختی کارڈ نمبر سرور پر محفوظ نہیں ہوئے (${escapeHtml((e&&e.code)||'error')}) — Firestore rules میں regPrivate کی اجازت چاہیے۔ یہ نمبر فی الحال اس فون میں محفوظ ہیں۔</span>`; }
     }
+    clearInterval(tick);
     importReady = []; nlRows = []; try{ const t = document.getElementById('nlText'); if(t) t.value = ''; }catch(e){}
     showToast(`${done} اندراجات امپورٹ ہو گئے ✓`);
     if(prog) prog.innerHTML = `<b style="color:#047857;">✓ ${urduDigits(done)} اندراجات امپورٹ ہو گئے</b>${cnicMsg}`;
     if(btn) btn.remove();
   }catch(e){
+    clearInterval(tick);
     if(prog) { const _c = (e&&e.code)||'error'; const _why = _c==='timeout' ? 'سرور سے جواب نہیں آیا — انٹرنیٹ / Firebase دیکھیں، پھر یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا' : _c==='permission-denied' ? 'Firebase Rules نے services میں لکھنے کی اجازت نہیں دی — ایڈمن لاگ اِن اور Rules دیکھیں' : 'یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا'; prog.innerHTML = `<span style=\"color:#b91c1c;\">رکاوٹ آ گئی (${escapeHtml(_c)}) — ${urduDigits(done)} / ${urduDigits(total)} محفوظ ہو چکے ہیں۔ ${_why}۔</span>`; }
     if(btn){ btn.disabled = false; btn.style.opacity = 1; }
   }
