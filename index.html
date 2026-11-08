@@ -3437,8 +3437,8 @@ body.cdOn{padding-top:30px}
       <div class="field"><label>کتنے دن چلے</label><input type="number" id="adDays" value="7" min="1" max="365" oninput="this.dataset.touched=1"></div>
       <div class="ad-plans" id="adPlans">
         <button type="button" data-plan="free">🎁 مفت<small>7 دن</small></button>
-        <button type="button" data-plan="15">📅 15 دن<small>500 روپے</small></button>
-        <button type="button" data-plan="30">🗓️ مہینہ<small>800 روپے</small></button>
+        <button type="button" data-plan="15">📅 15 دن<small>اشتہار</small></button>
+        <button type="button" data-plan="30">🗓️ مہینہ<small>30 دن</small></button>
       </div>
       <input type="hidden" id="adPrice" value="0">
       <label class="ad-freechk"><input type="checkbox" id="adFree" checked onchange="const d=document.getElementById('adDays'); if(d && !d.dataset.touched) d.value=this.checked?7:30;"> 🎁 مفت تعارفی اشتہار — 7 دن (پہلے 5 میں سے) <small id="adFreeInfo"></small></label>
@@ -4160,10 +4160,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU248";
+const APP_VERSION = "MCS0811SU249";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0811SU249": "📢 اشتہار سے ہر جگہ قیمت (روپے) ہٹائی — ہوم کا کارڈ اور اشتہار کا فارم بھی (پلے اسٹور کا اصول)",
   "MCS0811SU248": "✉️ دکاندار کو اطلاع والا پیغام مختصر اور صاف — تفصیل چیک، تبدیلی / حذف کی درخواست، رجسٹریشن، ایپ مفت",
   "MCS0811SU247": "📢 ہوم کے اشتہار والے کارڈ سے قیمت (روپے) ہٹائی — پلے اسٹور کا اصول",
   "MCS0811SU246": "🏪 پورٹل میں ایک «کاروبار» بٹن: نیا / پہلے سے درج کاروبار (رجسٹریشن، ایک سال ممبرشپ، دکاندار کا لاگ اِن میسج) / ایجنٹ — ریفرل کوڈ خود",
@@ -13730,7 +13731,7 @@ function adRender(){
 function adStAttr(st){ if(!st) return ''; return ` style="--ab0:${st.bg};--ab1:${st.bg2||st.bg};--abr:${st.br};--atx:${st.tx}"`; }
 function adCardHtml(a, go, fx){
   const stc = (!a.promo && a.st) ? ' st shp-' + (a.st.shape||'round') : '';
-  return `<div class="ad-card${a.promo?'':' paid'}${stc}${fx && fx!=='none' ? ' fx-' + fx + (adDir < 0 ? ' fx-back' : '') : ''}"${stc ? adStAttr(a.st) : ''}${a.promo?'':` onclick="if(!event.target.closest('a,button'))adView(${a.id})"`}><span class="ad-tag">${a.promo?'📢 اشتہار کی جگہ':'AD • اشتہار'}</span>${(!a.promo && isAdminSignedIn && a.until) ? adCdHtml(a).replace('class="ad-cd', 'class="ad-cd ad-cd-home') : ''}${a.promo?'<span class="ad-ribbon">خالی</span>':''}<div class="ad-row">${(!a.promo && a.img) ? (adImgCache[a.img] ? `<img class="ad-vc" src="${adImgCache[a.img]}" alt="" >` : (adImg(a.img), `<span class="ad-ic">${a.ic||'🏪'}</span>`)) : `<span class="ad-ic">${a.ic || '🏪'}</span>`}<div class="ad-tx"><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.line || (a.owner ? '👤 ' + a.owner : '') || '')}</span>${a.freeBar ? adFreeBar() : ''}${a.plans ? '<div class="ad-planchips"><i>📅 15 دن — 500</i><i class="best">🗓️ مہینہ — 800</i></div>' : ''}</div></div><div class="ad-go">${go}</div>${isAdminSignedIn?'<button type="button" class="ad-admin" onclick="adOpenAdmin()">⚙️</button>':''}</div>`;
+  return `<div class="ad-card${a.promo?'':' paid'}${stc}${fx && fx!=='none' ? ' fx-' + fx + (adDir < 0 ? ' fx-back' : '') : ''}"${stc ? adStAttr(a.st) : ''}${a.promo?'':` onclick="if(!event.target.closest('a,button'))adView(${a.id})"`}><span class="ad-tag">${a.promo?'📢 اشتہار کی جگہ':'AD • اشتہار'}</span>${(!a.promo && isAdminSignedIn && a.until) ? adCdHtml(a).replace('class="ad-cd', 'class="ad-cd ad-cd-home') : ''}${a.promo?'<span class="ad-ribbon">خالی</span>':''}<div class="ad-row">${(!a.promo && a.img) ? (adImgCache[a.img] ? `<img class="ad-vc" src="${adImgCache[a.img]}" alt="" >` : (adImg(a.img), `<span class="ad-ic">${a.ic||'🏪'}</span>`)) : `<span class="ad-ic">${a.ic || '🏪'}</span>`}<div class="ad-tx"><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.line || (a.owner ? '👤 ' + a.owner : '') || '')}</span>${a.freeBar ? adFreeBar() : ''}${a.plans ? '<div class="ad-planchips"><i>📅 15 دن</i><i class="best">🗓️ ایک مہینہ</i></div>' : ''}</div></div><div class="ad-go">${go}</div>${isAdminSignedIn?'<button type="button" class="ad-admin" onclick="adOpenAdmin()">⚙️</button>':''}</div>`;
 }
 function appVh(){ try{ document.documentElement.style.setProperty('--app-vh', window.innerHeight + 'px'); }catch(e){} }
 appVh(); window.addEventListener('resize', ()=>{ if(!mcsTyping()) appVh(); });
@@ -14150,8 +14151,8 @@ function adRenderAdmin(){
   const fc = document.getElementById('adFree'); if(fc && !document.getElementById('adEditId').value && !(document.getElementById('adDays')||{}).dataset.touched){ adPickPlan(adFreeLeft() > 0 ? 'free' : '30'); delete document.getElementById('adDays').dataset.touched; }
   const now = Date.now();
   const paidAds = (adList||[]).filter(a=>a.free === false), income = paidAds.reduce((t,a)=>t + (+a.price||0), 0) + (+adIncomeOld||0);
-  const sumHtml = `<div class="ad-income"><span>💰 کل آمدن <b>${income.toLocaleString('en-US')} روپے</b></span><span>پیسے والے <b>${paidAds.length}</b></span><span>مفت <b>${adFreeUsed()}/${AD_FREE_TOTAL}</b></span></div>`;
-  box.innerHTML = sumHtml + ((adList||[]).length ? adList.map((a,i)=>`<div class="nt-row${a.until && a.until < now ? ' sent':''}"><div class="nm"><b>${a.free !== false ? '<span class="ad-ftag">🎁 مفت</span> ' : `<span class="ad-ftag paid">💰 ${a.price ? a.price + ' روپے' : ''}</span> `}${escapeHtml(a.title)}</b><small>${escapeHtml(a.phone||'')}</small> <small>${a.until ? (a.until < now ? 'ختم ہو گیا' : 'آخری تاریخ ' + new Date(a.until).toLocaleDateString('en-GB')) : ''}</small>${a.until && a.until > now ? '<div>' + adCdHtml(a) + '</div>' : ''}</div><div style="display:flex;flex-direction:column;gap:4px">${adInRecords(a) ? '<small class="adrec-ok">📋 ریکارڈ میں ہے</small>' : `<button type="button" class="adrec-add" onclick="adAskRecord(adList[${i}])">➕ ریکارڈ میں درج</button>`}<button type="button" onclick="adEdit(${i})">✏️ ترمیم</button><button type="button" class="del" onclick="adDelete(${i})">🗑️ ہٹائیں</button></div></div>`).join('') : '<div class="cp-hint">ابھی کوئی اشتہار نہیں — جگہ پر «یہاں اشتہار لگوائیں» کے پیغام چل رہے ہیں</div>');
+  const sumHtml = `<div class="ad-income"><span>📢 پیکج والے <b>${paidAds.length}</b></span><span>مفت <b>${adFreeUsed()}/${AD_FREE_TOTAL}</b></span></div>`;
+  box.innerHTML = sumHtml + ((adList||[]).length ? adList.map((a,i)=>`<div class="nt-row${a.until && a.until < now ? ' sent':''}"><div class="nm"><b>${a.free !== false ? '<span class="ad-ftag">🎁 مفت</span> ' : `<span class="ad-ftag paid">📢 ${({500:'15 دن',800:'مہینہ'})[+a.price] || 'پیکج'}</span> `}${escapeHtml(a.title)}</b><small>${escapeHtml(a.phone||'')}</small> <small>${a.until ? (a.until < now ? 'ختم ہو گیا' : 'آخری تاریخ ' + new Date(a.until).toLocaleDateString('en-GB')) : ''}</small>${a.until && a.until > now ? '<div>' + adCdHtml(a) + '</div>' : ''}</div><div style="display:flex;flex-direction:column;gap:4px">${adInRecords(a) ? '<small class="adrec-ok">📋 ریکارڈ میں ہے</small>' : `<button type="button" class="adrec-add" onclick="adAskRecord(adList[${i}])">➕ ریکارڈ میں درج</button>`}<button type="button" onclick="adEdit(${i})">✏️ ترمیم</button><button type="button" class="del" onclick="adDelete(${i})">🗑️ ہٹائیں</button></div></div>`).join('') : '<div class="cp-hint">ابھی کوئی اشتہار نہیں — جگہ پر «یہاں اشتہار لگوائیں» کے پیغام چل رہے ہیں</div>');
 }
 function adSaveList(list){
   const FB = window.MCSFirebase; if(!FB){ showToast('انٹرنیٹ درکار ہے'); return; }
@@ -14719,7 +14720,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU248" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU249" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
