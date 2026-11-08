@@ -4160,10 +4160,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU245";
+const APP_VERSION = "MCS0811SU246";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0811SU246": "🏪 پورٹل میں ایک «کاروبار» بٹن: نیا / پہلے سے درج کاروبار (رجسٹریشن، ایک سال ممبرشپ، دکاندار کا لاگ اِن میسج) / ایجنٹ — ریفرل کوڈ خود",
   "MCS0811SU245": "📊 ہر فارم میں فیصد پٹی (20٪…100٪)، 100٪ پر فوراً جائزہ — غلطیاں سرخ، ➕ کی جگہ لکھیں + ملتے نام نیچے، کارڈ پر مراحل کی پٹی",
   "MCS0811SU244": "📝 کارڈ پر «رجسٹریشن مکمل کریں» اب اسی فون پر فارم کھولتا ہے (پہلے ڈویلپر کو پیغام جاتا تھا)",
   "MCS0811SU243": "🏠 ہوم صاف: «Earn with MCS» اور تلاش ایک قطار میں، کاروبار کا نیا افقی کارڈ، Add New اوپر، Explore اور فالتو بٹن ہٹائے",
@@ -11523,7 +11524,7 @@ function ptOpen(editProf, prev){
     const tab = ptDevTab, tabs = [['day','📥','روزانہ'],['biz','🏪','بزنس / ایجنٹ'],['cod','👥','کو-ڈویلپر'],['rep','📣','رپورٹ'],['more','🧰','مزید']];
     const G = {
       day: [['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['📋','انجمن تاجران','لسٹ امپورٹ','ptTajran'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
-      biz: [['➕','بزنس / پروفیشن','رجسٹر کریں','d2AddOpen'],['🤝','ایجنٹ بنائیں','کاروبار چن کر','agPickOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent']],
+      biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent']],
       cod: [['👥','کو-ڈویلپرز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','کو-ڈویلپر پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
       rep: [['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
       more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['🗂️','کیٹگری / امپورٹ','ڈویلپر پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel'],['⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red']]
@@ -11533,7 +11534,7 @@ function ptOpen(editProf, prev){
       + (tab === 'cod' ? `<div class="cp-hint">👥 ہر کو-ڈویلپر کی آخری لاگ اِن «کو-ڈویلپرز» میں اور اس کی تجاویز / مسائل Help Desk میں «کو-ڈویلپر» کے نام سے آتے ہیں۔</div>` : '')
       + (tab === 'more' ? `<details class="pt-card pt-f" ${(p.name && !editProf) ? '' : 'open'}><summary>🪪 میرا پروفائل ${p.name ? '' : '<small style="color:#dc2626">— پہلی بار بھر دیں</small>'}</summary><input id="ptN" placeholder="نام" value="${escapeAttr(p.name||'')}"><input id="ptP" dir="ltr" inputmode="tel" placeholder="موبائل نمبر" value="${escapeAttr(p.phone||'')}"><input id="ptC" placeholder="شہر" value="${escapeAttr(p.city||'')}"><div class="r"><button type="button" class="p" onclick="ptDevSave()">✅ محفوظ</button></div></details>` : '');
   } else if(rl === 'codev'){ nm = cd.name || 'کو-ڈویلپر'; sub = cd.phone ? '0' + String(cd.phone).slice(2) : '';
-    body = `<div class="cp-hint" style="margin:0 0 8px">👥 آپ نیا بزنس، پروفیشن یا ایجنٹ بھیج سکتے ہیں — ڈویلپر کی منظوری کے بعد ہی لائیو ہوگا۔ باقی چیزیں صرف جانچ کے لیے (محفوظ نہیں ہوتیں)۔ مسئلہ یا تجویز Help Desk سے۔</div><div class="pt-grid">${ptT('➕','بزنس / پروفیشن','منظوری کے لیے بھیجیں','d2AddOpen')}${ptT('🤝','ایجنٹ بنائیں','منظوری کے لیے','agCreateOpen')}${ptT('🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
+    body = `<div class="cp-hint" style="margin:0 0 8px">👥 آپ نیا بزنس، پروفیشن یا ایجنٹ بھیج سکتے ہیں — ڈویلپر کی منظوری کے بعد ہی لائیو ہوگا۔ باقی چیزیں صرف جانچ کے لیے (محفوظ نہیں ہوتیں)۔ مسئلہ یا تجویز Help Desk سے۔</div><div class="pt-grid">${ptT('🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen')}${ptT('🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
   } else if(rl === 'agent'){ nm = me.name || 'ایجنٹ'; sub = me.phone ? '0' + String(me.phone).slice(2) : ''; { const am = (ptPrev && ptPrev.a) ? {name: ptPrev.a.name, phone: ptPrev.a.phone, code: ptPrev.a.code} : me; nm = am.name || 'ایجنٹ'; sub = am.phone ? '0' + String(am.phone).slice(2) : ''; body = apBody(am, !!ptPrev); }
   } else {
     const L = mpListReal(); nm = (a && a.user && a.user.name) || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
@@ -11598,7 +11599,7 @@ function apBody(me, prev){
       ${r.whatsapp || r.phone ? `<div class="r"><a href="tel:0${String(r.whatsapp||r.phone).replace(/\D/g,'').slice(-10)}" class="p" style="text-decoration:none;padding:6px 12px;border-radius:10px">📞 کال</a>${urgent || x.info.mode === 'paid' || x.info.left <= 0 ? `<button type="button" onclick="apRenewMsg(${i}, '${escapeAttr(me.name||'')}')">💬 دوبارہ سبسکرائب کا پیغام</button>` : ''}</div>` : ''}</div>`; }).join('')
     : `<div class="cp-hint" style="text-align:center">${code ? 'ابھی کوئی کاروبار آپ کے کوڈ سے درج نہیں' : '⏳ آپ کا کوڈ لوڈ ہو رہا ہے…'}</div>`;
   const L = mpListReal();
-  if(!prev) h += `<div class="pt-grid">${ptT('📋','سارے کاروبار','رجسٹریشن مکمل کریں','apAllOpen', rows.filter(x=>!pfActive(x.rec)).length || '')}${ptT('🏪','بزنس رجسٹر کریں','کسی اور کا کاروبار','apFeedBiz')}${ptT('👔','پروفیشن رجسٹر کریں','','apFeedProf')}${ptT('🤝','ایجنٹ کی حالت','کوڈ، PIN','agOpen')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','','openControlPanel')}</div>`;
+  if(!prev) h += `<div class="pt-grid">${ptT('📋','سارے کاروبار','رجسٹریشن مکمل کریں','apAllOpen', rows.filter(x=>!pfActive(x.rec)).length || '')}${ptT('🏪','کاروبار','نیا · پہلے سے درج','bzHubOpen')}${ptT('🤝','ایجنٹ کی حالت','کوڈ، PIN','agOpen')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','','openControlPanel')}</div>`;
   if(!prev && L.length) h += `<div class="pt-sec">🏪 میرا اپنا کاروبار</div>` + L.map(({p, rec}, i)=>{ const r = p.kind === 'doctor' ? fhDoc(rec) : fhSvc(rec); return `<div class="pt-card"><b>${escapeHtml(r.nameUr || r.name || '')}</b><div class="r"><button type="button" onclick="ptView(${i})">👁️ دیکھیں</button><button type="button" class="p" onclick="ptEdit(${i})">✏️ تفصیل سنواریں</button></div></div>`; }).join('');
   if(!prev && !apBody.loaded){ apBody.loaded = 1; setTimeout(async ()=>{ try{ await pfLoadList(); const m = document.getElementById('portalModal'); if(m && m.classList.contains('active') && ptRole() === 'agent') ptOpen(); }catch(e){} apBody.loaded = 0; }, 400); }
   return h; }
@@ -14724,7 +14725,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU245" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU246" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16161,6 +16162,160 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
   wrapStage('cardStageBtn', a => ({kind:a[0], rec:a[1]}));
   wrapStage('docStageBtn', a => ({kind:'doctor', rec:a[0]}));
 })();
+</script>
+
+<!-- ===== MCS0811SU246 (ہیلپ ڈیسک #145، مالک کا حکم): ایک ہی «🏪 کاروبار» بٹن — نیا / پہلے سے درج (رجسٹریشن، ایک سال ممبرشپ، دکاندار کا لاگ اِن میسج) / ایجنٹ؛ ڈویلپر، کو-ڈویلپر، ایجنٹ کے پورٹل میں؛ ریفرل کوڈ خود ===== -->
+<style>
+.bz-big{display:block;width:100%;text-align:right;margin-top:8px;padding:12px 14px;border-radius:14px;border:0;font:inherit;font-weight:900;font-size:16px;cursor:pointer;color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.bz-big small{display:block;font-weight:600;font-size:12px;opacity:.92;margin-top:2px}
+.bz-big.n{background:linear-gradient(180deg,#22c55e,#15803d)}.bz-big.o{background:linear-gradient(180deg,#3b82f6,#1d4ed8)}.bz-big.a{background:linear-gradient(180deg,#f59e0b,#b45309)}
+.bz-ref{margin:6px 0 2px;padding:6px 10px;border-radius:10px;background:#ecfeff;border:1px dashed #06b6d4;font-size:13px;color:#155e75}
+.bz-row{border:1.5px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin:6px 0;background:#fff}
+.bz-row b{font-size:15px}.bz-row small{display:block;color:#475569;font-size:12px;line-height:1.7}
+.bz-row .r{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.bz-row .r button{flex:1 1 auto;border:0;border-radius:9px;padding:7px 9px;font:inherit;font-weight:800;font-size:12.5px;cursor:pointer;background:#f1f5f9;color:#0f172a}
+.bz-row .r button.p{background:#1d4ed8;color:#fff}.bz-row .r button.y{background:#f59e0b;color:#fff}.bz-row .r button.g{background:#16a34a;color:#fff}
+.bz-bd{display:inline-block;font-size:11px;font-weight:800;border-radius:99px;padding:1px 8px;margin-top:3px}
+.bz-bd.basic{background:#fee2e2;color:#991b1b}.bz-bd.reg{background:#fef3c7;color:#92400e}.bz-bd.live{background:#dcfce7;color:#166534}
+</style>
+<script>
+function bzRole(){ try{ if(isAdminSignedIn) return 'dev'; if(typeof codevOn === 'function' && codevOn()) return 'codev'; const a = agMe(); if(a && (a.code || a.pin)) return 'agent'; }catch(e){} return ''; }
+function bzRef(){ try{ const r = bzRole(); if(r === 'dev') return 'PBT-D'; if(r === 'codev') return 'PBT-C'; return (agMe() || {}).code || ''; }catch(e){ return ''; } }
+function bzHubOpen(){
+  const r = bzRole(); if(!r){ showToast('یہ حصہ ڈویلپر / کو-ڈویلپر / ایجنٹ کے لیے ہے'); return; }
+  const ref = bzRef();
+  agModal(`<div class="ag-hd">🏪 کاروبار <small>نیا بنائیں یا پہلے سے درج کاروبار مکمل کریں</small></div>
+    ${ref ? `<div class="bz-ref">🤝 جو کاروبار آپ یہاں سے مکمل کریں گے اس میں آپ کا ریفرل کوڈ <b dir="ltr">${escapeHtml(ref)}</b> خود لگ جائے گا</div>` : ''}
+    <button type="button" class="bz-big n" onclick="bzNew()">➕ نیا کاروبار / پروفیشن بنائیں<small>جو ابھی ایپ میں نہیں</small></button>
+    <button type="button" class="bz-big o" onclick="bzListOpen('basic')">📋 پہلے سے درج کاروبار<small>📝 رجسٹریشن مکمل کریں · ⭐ ایک سال ممبرشپ · 📨 دکاندار کا لاگ اِن میسج</small></button>
+    ${r !== 'agent' ? `<button type="button" class="bz-big a" onclick="bzListOpen('ag')">🤝 ایجنٹ بنائیں<small>پہلے سے درج کاروبار میں سے چن کر — صرف شناختی کارڈ لکھیں</small></button>` : ''}
+    <button type="button" class="btn block secondary" style="margin-top:10px" onclick="closeModal('agModal')">بند کریں</button>`);
+}
+function bzNew(){
+  closeModal('agModal'); try{ closeModal('portalModal'); }catch(e){}
+  try{ apFeedRef = bzRef(); }catch(e){}
+  setTimeout(()=>{ try{ d2AddOpen(); }catch(e){ try{ toggleAddStrip('business'); }catch(_){} } }, 200);
+}
+let bzQ = '', bzTab = 'basic', bzRows = [];
+function bzAll(){
+  const out = [], add = (arr, kind)=> (arr || []).forEach(r=>{ if(!r || !r.id) return; if(kind === 'service' && (r.category === 'emergencyNumbers' || r.category === 'govOffices')) return; out.push({kind, rec:r}); });
+  add(store.services, 'service'); add(store.doctors, 'doctor'); return out;
+}
+function bzStage(x){ try{ if(pfActive(x.rec)) return 'live'; }catch(e){} return x.rec.stage === 'registered' ? 'reg' : 'basic'; }
+function bzOwner(x){ try{ return x.kind === 'doctor' ? (x.rec.nameUr || x.rec.name || '') : (splitOwnerIntro(x.rec.intro).owner || ''); }catch(e){ return ''; } }
+async function bzListOpen(tab){
+  if(tab) bzTab = tab;
+  agModal('<div class="ag-st">⏳ کاروبار آ رہے ہیں…</div>');
+  try{ await pfLoadList(); }catch(e){}
+  if(bzTab === 'ag' && bzRole() === 'dev'){ try{ await ptLoadAgents(); }catch(e){} }
+  const all = bzAll(); all.forEach(x=>{ x.st = bzStage(x); });
+  const n = {basic:0, reg:0, live:0}; all.forEach(x=>{ n[x.st]++; });
+  const T = [['basic','📝 رجسٹریشن باقی', n.basic], ['reg','⭐ ممبرشپ باقی', n.reg], ['live','✅ فعال', n.live]];
+  if(bzRole() !== 'agent') T.push(['ag','🤝 ایجنٹ بنائیں', all.length]);
+  window._bzAll = all;
+  agModal(`<div class="ag-hd">📋 پہلے سے درج کاروبار <small>نام، مالک، نمبر یا شہر لکھ کر ڈھونڈیں</small></div>
+    <input type="search" class="ag-q" id="bzQIn" placeholder="🔍 نام، مالک، موبائل، شہر، علاقہ…" value="${escapeAttr(bzQ)}" oninput="bzQ=this.value;bzFill()">
+    <div class="ag-tabs">${T.map(([k,t,c])=>`<button type="button" class="${bzTab===k?'on':''}" onclick="bzTab='${k}';bzListOpen()">${t} <b>${c}</b></button>`).join('')}</div>
+    <div id="bzList"></div>
+    <button type="button" class="btn block secondary" style="margin-top:8px" onclick="bzHubOpen()">← واپس</button>`);
+  bzFill();
+}
+function bzFill(){
+  const box = document.getElementById('bzList'); if(!box) return;
+  const all = window._bzAll || [], q = bzQ.trim().toLowerCase().replace(/[\s\-]/g, ''), E = escapeHtml, role = bzRole();
+  let L = all.filter(x=> bzTab === 'ag' ? true : x.st === bzTab);
+  if(q) L = L.filter(x=> [x.rec.nameUr, x.rec.name, x.rec.nameEn, bzOwner(x), x.rec.whatsapp, x.rec.phone, x.rec.city, x.rec.area].join(' ').toLowerCase().replace(/[\s\-]/g, '').includes(q));
+  if(bzTab === 'ag'){ const taken = new Set((typeof agList !== 'undefined' ? agList : []).map(a=>a.code).filter(Boolean)); L = L.filter(x=>{ try{ return !taken.has(pfKeyOf(x.rec, x.kind)) && !agKnownOf(x.kind, x.rec.id); }catch(e){ return true; } }); }
+  const total = L.length; L = L.slice(0, 40); bzRows = L;
+  const stL = {basic:'📝 رجسٹریشن باقی', reg:'⭐ ممبرشپ باقی', live:'✅ فعال'};
+  box.innerHTML = (total > 40 ? `<div class="cp-hint">${total} میں سے پہلے 40 — نام / نمبر لکھ کر ڈھونڈیں</div>` : '')
+    + (L.map((x, i)=>{ const r = x.rec, ph = String(r.whatsapp || r.phone || ''), own = bzOwner(x), ref = (r.more && r.more.ref) || '';
+      let btn = '';
+      if(bzTab === 'ag') btn = `<button type="button" class="y" onclick="bzDo(${i},'ag')">🤝 اسے ایجنٹ بنائیں</button>`;
+      else {
+        if(x.st === 'basic') btn += `<button type="button" class="p" onclick="bzDo(${i},'reg')">📝 رجسٹریشن مکمل کریں</button>`;
+        if(x.st !== 'basic') btn += role === 'dev' ? `<button type="button" class="y" onclick="bzDo(${i},'year')">⭐ ${x.st === 'live' ? 'ایک سال اور' : 'ایک سال ممبرشپ دیں'}</button>` : (x.st === 'reg' ? `<button type="button" class="y" onclick="bzDo(${i},'yreq')">⭐ ایک سال ممبرشپ — ڈویلپر کو بھیجیں</button>` : '');
+        btn += `<button type="button" class="g" onclick="bzDo(${i},'inv')">📨 دکاندار کا لاگ اِن میسج</button>`;
+      }
+      return `<div class="bz-row"><b>${E(r.nameUr || r.name || '')}</b> <span class="bz-bd ${x.st}">${stL[x.st]}</span>
+        <small>${x.kind === 'doctor' ? '👔 پروفیشن' : '🏪 کاروبار'}${own ? ' · 👤 ' + E(own) : ''}${ph ? ' · 📱 <bdi dir="ltr">' + E(ph) + '</bdi>' : ''}${(r.area || r.city) ? ' · 📍 ' + E([r.area, r.city].filter(v=>v && !(typeof isBlankVal === 'function' && isBlankVal(v))).join('، ')) : ''}${ref ? ' · 🤝 <bdi dir="ltr">' + E(ref) + '</bdi>' : ''}</small>
+        <div class="r">${btn}</div></div>`; }).join('') || '<div class="cp-hint" style="text-align:center">کچھ نہیں ملا</div>');
+}
+function bzSetRef(kind, rec){
+  try{ const ref = bzRef(); if(!ref || !rec) return; rec.more = rec.more || {}; if(rec.more.ref) return;
+    rec.more.ref = ref; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more);
+    if(kind !== 'doctor') agRefPost(rec); }catch(e){}
+}
+function bzDo(i, what){
+  const x = bzRows[i]; if(!x) return; const rec = x.rec, kind = x.kind;
+  if(what === 'reg'){
+    closeModal('agModal'); try{ closeModal('portalModal'); }catch(e){}
+    window._bzRef = bzRef();
+    setTimeout(()=>{ try{
+      if(kind === 'doctor'){ docRegOpen(rec.id); return; }
+      svcRegisterOpen(rec.id);
+      setTimeout(()=>{ const f = document.getElementById('svcRef'); if(f && !f.value.trim() && window._bzRef){ f.value = window._bzRef; f.dispatchEvent(new Event('input', {bubbles:true})); try{ refResolve(); }catch(e){} } window._bzRef = ''; }, 450);
+    }catch(e){ showToast('⚠️ ' + (e.message || '')); } }, 200);
+    return;
+  }
+  if(what === 'inv'){ try{ fedAsk(kind, rec, {admin:1}); }catch(e){ showToast('⚠️ ' + (e.message || '')); } return; }
+  if(what === 'year') return bzGiveYear(x);
+  if(what === 'yreq') return bzYearReq(x);
+  if(what === 'ag') return bzAgent(x);
+}
+async function bzGiveYear(x){
+  if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ اِن کریں'); return; }
+  const rec = x.rec, kind = x.kind, nm = rec.nameUr || rec.name || '';
+  let rk = ''; try{ rk = pfKeyOf(rec, kind); }catch(e){}
+  if(!rk){ showToast('⚠️ اس کاروبار کا موبائل نمبر درست نہیں'); return; }
+  const cur = pfAct[rk];
+  if(!confirm(`⭐ «${nm}» کو ایک سال کی ممبرشپ دیں؟${cur && cur.until > Date.now() ? '\nباقی دن ساتھ جمع ہوں گے۔' : ''}\nریفرل: ${(rec.more && rec.more.ref) || bzRef()}`)) return;
+  agModal('<div class="ag-st">⏳ ایک سال کی ممبرشپ جاری ہو رہی ہے…</div>');
+  try{
+    const hdr = await vfAdminHdr(); let since = cur && cur.since, until = cur && cur.until;
+    if(!cur){
+      const j0 = await (await fetch(PF_API + '/pclaim', {method:'POST', headers:hdr, body: JSON.stringify({rec: rk})})).json();
+      if(!j0 || !j0.key) throw new Error((j0 && j0.error) || 'net');
+      since = j0.since; until = j0.until;
+      await fetch(PF_API + '/padmin', {method:'POST', headers:hdr, body: JSON.stringify({rec: rk, act:'free'})});   /* دکاندار کا فون بعد میں لاگ اِن میسج سے جڑ سکے */
+    } else if(cur.pend){ await fetch(PF_API + '/padmin', {method:'POST', headers:hdr, body: JSON.stringify({rec: rk, act:'approve'})}); }
+    const nu = mpYearUntil(since, until);
+    const rr = await fetch(PF_API + '/padmin', {method:'POST', headers:hdr, body: JSON.stringify({rec: rk, act:'until', until: nu})});
+    if(!rr.ok) throw new Error('server ' + rr.status);
+    pfAct[rk] = Object.assign({}, pfAct[rk] || {}, {since: since || Date.now(), until: nu}); delete pfAct[rk].pend;
+    try{ localStorage.setItem('mcsPfList', JSON.stringify(pfAct)); }catch(e){}
+    bzSetRef(kind, rec);
+    try{ refreshVisibleLists(); }catch(e){}
+    window._bzLast = x;
+    agModal(`<div class="ag-hd">✅ ممبرشپ جاری</div><div class="ag-ok">🏪 ${escapeHtml(nm)}<br>📅 ${new Date(nu).toLocaleDateString('en-GB')} تک</div>
+      <div class="cp-hint" style="margin:8px 0">اگلا قدم: دکاندار کو لاگ اِن میسج بھیجیں — وہ اپنے فون پر لاگ اِن صفحے پر پیسٹ کرے گا تو رجسٹرڈ کاروباری کے طور پر داخل ہو جائے گا۔</div>
+      <button type="button" class="btn block ag-send" onclick="fedAsk(window._bzLast.kind, window._bzLast.rec, {admin:1})">📨 دکاندار کا لاگ اِن میسج</button>
+      <button type="button" class="btn block secondary" style="margin-top:6px" onclick="bzListOpen()">← فہرست میں واپس</button>`);
+  }catch(e){ agModal(`<div class="ag-st">⚠️ ممبرشپ جاری نہیں ہوئی — ${escapeHtml(e.message === 'login' ? 'ایڈمن لاگ اِن دوبارہ کریں' : (e.message || ''))}</div><button type="button" class="btn block secondary" onclick="bzListOpen()">← واپس</button>`); }
+}
+function bzYearReq(x){
+  const rec = x.rec, kind = x.kind; let rk = ''; try{ rk = pfKeyOf(rec, kind); }catch(e){}
+  let cat = ''; try{ cat = ubCatMeta(kind === 'doctor' ? 'doctor' : rec.category).ur || ''; }catch(e){}
+  const pn = (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), ph = rec.whatsapp || rec.phone || '', who = bzRole() === 'codev' ? '👥 کو-ڈویلپر' : '🤝 ایجنٹ';
+  const text = '🔑 Account sign-in request — My City Shines\nUID: ' + agDev() + '\nProfile ID: ' + rk + '\nProfile: ' + pn + '\nName: ' + (bzOwner(x) || rec.nameUr || '') + '\nMobile no.: ' + ph + '\nAgent referral: ' + ((rec.more && rec.more.ref) || bzRef()) + '\nPackage: 1 year\nSent by: ' + who;
+  bzSetRef(kind, rec);
+  closeModal('agModal');
+  try{ if(window.PBTHelp){ window.PBTHelp.open({app:'MCS', ver: APP_VERSION, phone: ph, name: bzOwner(x), text, type:'ask'}); return; } }catch(e){}
+  if(typeof openHelpDesk === 'function') openHelpDesk();
+}
+function bzAgent(x){
+  if(bzRole() === 'agent') return;
+  const rec = x.rec, kind = x.kind;
+  closeModal('agModal'); agCreateOpen();
+  setTimeout(()=>{
+    const set = (i, v)=>{ const e = document.getElementById(i); if(e && v) e.value = v; };
+    set('acName', bzOwner(x) || rec.nameUr || ''); set('acPh', String(rec.whatsapp || rec.phone || '').replace(/\D/g, '')); try{ set('acCode', pfKeyOf(rec, kind)); }catch(e){} set('acCity', rec.city || '');
+    const c = document.getElementById('acCnic'); if(c) c.focus();
+    const h = document.getElementById('acErr'); if(h) h.innerHTML = '<span style="color:#0f766e">✅ «' + escapeHtml(rec.nameUr || rec.name || '') + '» کی تفصیل خود بھر دی — صرف شناختی کارڈ نمبر لکھ کر «ایجنٹ بنائیں» دبائیں</span>';
+  }, 120);
+}
+(function(){ const o = window.docRegSave; if(typeof o !== 'function') return;
+  window.docRegSave = function(id){ const r = o.apply(this, arguments); try{ if(window._bzRef){ const d = (store.doctors || []).find(y=>y.id === id); if(d && d.stage === 'registered') bzSetRef('doctor', d); window._bzRef = ''; } }catch(e){} return r; }; })();
 </script>
 
 </body>
