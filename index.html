@@ -4130,11 +4130,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU238";
+const APP_VERSION = "MCS0811SU239";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS0811SU238": "📝 غیر رجسٹرڈ (بنیادی) کارڈ پر زرد پٹی ختم، سب پر صرف «رجسٹریشن مکمل کریں» • 🗂️ ایڈمن/ڈویلپر کیٹگری بدلے تو ریکارڈ فوراً نئی کیٹگری میں چلا جاتا ہے (تلاش کے صفحے سے بھی) • 📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
+  "MCS0811SU239": "📥 امپورٹ اب سرور سے پوچھ کر دیکھتا ہے کون سے رکارڈ واقعی سرور پر ہیں، صرف فون میں بچے رکارڈ دوبارہ سرور پر جاتے ہیں • 📝 غیر رجسٹرڈ (بنیادی) کارڈ پر زرد پٹی ختم، سب پر صرف «رجسٹریشن مکمل کریں» • 🗂️ ایڈمن/ڈویلپر کیٹگری بدلے تو ریکارڈ فوراً نئی کیٹگری میں چلا جاتا ہے (تلاش کے صفحے سے بھی) • 📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
   "MCS0811SU235": "📥 امپورٹ آسان: صرف دو ضروری بٹن، خلاصہ فوراً بٹن کے نیچے اور اوپر بڑی پراگرس پٹی؛ اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور تبدیلی",
   "MCS0811SU234": "🏪 بلاک 1 (انجمن تاجران فتح پور): پرانے کارڈوں پر مالک کی جگہ دکان کا اصل نام — ایک بٹن سے",
   "MCS0811SU233": "📋 انجمن تاجران فتح پور: بلاک 2، 3، 4، 6، 7 کی فہرستیں (دکان کا نام، مالک، موبائل) — دہرا نمبر / نام خود نہیں لگتا",
@@ -8776,7 +8776,7 @@ let svcStage = 'full', svcRegFlag = false;
 function svcMyBasic(){ try{ return JSON.parse(localStorage.getItem('mcsMyBasic')||'[]'); }catch(e){ return []; } }
 function svcMyBasicAdd(id){ try{ const a = svcMyBasic(); if(!a.includes(id)){ a.push(id); localStorage.setItem('mcsMyBasic', JSON.stringify(a)); } }catch(e){} }
 function agOwnsRec(rec){ try{ const me = agMe(); if(!me || !me.code || !rec || !rec.more) return false; return agNormCode(rec.more.ref) === agNormCode(me.code); }catch(e){ return false; } }   /* MCS0711SA187: ایجنٹ کے کوڈ سے درج کاروبار */
-/* MCS0811SU238: بنیادی (غیر رجسٹرڈ) کارڈ پر زرد پٹی / اضافی تفصیل نہیں — صرف «رجسٹریشن مکمل کریں» */
+/* MCS0811SU239: بنیادی (غیر رجسٹرڈ) کارڈ پر زرد پٹی / اضافی تفصیل نہیں — صرف «رجسٹریشن مکمل کریں» */
 function svcHideIntro(kind, id){
   try{
     if(kind !== 'service' || !id) return false;
@@ -9036,7 +9036,7 @@ function svcCategoryChanged(){
   fhSetup();
   /* MCS2310FR052: کیٹگری چنتے ہی ریکارڈ فوراً اسی کیٹگری میں منتقل (ترمیم میں) */
   { const _s = (editingServiceId && !pendingFormCtx) ? store.services.find(x=>x.id===editingServiceId) : null;
-    if(_s){ if(k !== _s.category) svcQuickMove(_s, k); return; } }   /* MCS0811SU238: ترمیم میں کیٹگری بدلتے ہی سیدھی منتقل — فارم کی جانچ (شہر، قسم، شناختی کارڈ) پر خاموشی سے رکتی نہیں */
+    if(_s){ if(k !== _s.category) svcQuickMove(_s, k); return; } }   /* MCS0811SU239: ترمیم میں کیٹگری بدلتے ہی سیدھی منتقل — فارم کی جانچ (شہر، قسم، شناختی کارڈ) پر خاموشی سے رکتی نہیں */
   if(k!==currentServiceCategory && pendingFormCtx){ setTimeout(()=>saveService(false), 80); return; }
   if(k!==currentServiceCategory) showToast('محفوظ کرنے پر یہ ریکارڈ "' + m.ur + '" میں چلا جائے گا');
 }
@@ -9911,6 +9911,21 @@ async function fsRestCommit(token, writes, ms){
     const n = new Error((e && e.message) || 'network'); n.code = 'network'; throw n;
   }finally{ clearTimeout(timer); }
 }
+/* MCS0811SU239: سرور پر اصل میں موجود شناختیں — امپورٹ فون کے اندر کے رکارڈ پر بھروسا نہیں کرتا */
+async function fsServerIds(token){
+  const ctl = new AbortController(); const tm = setTimeout(()=>ctl.abort(), 45000);
+  try{
+    const r = await fetch(`https://firestore.googleapis.com/v1/projects/${FS_PROJECT}/databases/(default)/documents:runQuery`, {
+      method:'POST', signal: ctl.signal,
+      headers:{'Content-Type':'application/json', 'Authorization':'Bearer ' + token},
+      body: JSON.stringify({structuredQuery:{from:[{collectionId:'services'}], select:{fields:[{fieldPath:'__name__'}]}}})
+    });
+    if(!r.ok) return null;
+    const j = await r.json(); const s = new Set();
+    (Array.isArray(j) ? j : []).forEach(x=>{ if(x && x.document && x.document.name) s.add(String(x.document.name).split('/').pop()); });
+    return s;
+  }catch(e){ return null; }finally{ clearTimeout(tm); }
+}
 async function runImport(noConfirm){
   const FB = window.MCSFirebase;
   if(!FB || !FB.auth){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
@@ -9930,7 +9945,7 @@ async function runImport(noConfirm){
   const withTimeout = (p, ms)=>Promise.race([p, new Promise((_, rej)=>setTimeout(()=>rej({code:'timeout'}), ms))]);
   const items = all.map((x, k)=>({x, id: 'imp_p' + (String(x.whatsapp||'').replace(/\D/g,'') || (stamp + '_' + k))}));
   const have = new Set(store.services.map(s=>s.fsId || s.id));
-  const todo = items.filter(it=>!have.has(it.id));
+  let todo = items.filter(it=>!have.has(it.id));
   const total = all.length; let done = total - todo.length; const cnicAll = [];
   let note = '', stage = 'شروع', tick = null; const t0 = Date.now();
   const showProg = ()=>{
@@ -9947,6 +9962,8 @@ async function runImport(noConfirm){
     const user = FB.auth.currentUser;
     if(!user) throw Object.assign(new Error('ایڈمن لاگ اِن نہیں ملا'), {code:'no-user'});
     let token = await withTimeout(user.getIdToken(), 20000);
+    stage = 'دیکھ رہا ہوں کون سے رکارڈ سرور پر سچ مچ موجود ہیں'; showProg();
+    try{ const sid = await fsServerIds(token); if(sid){ todo = items.filter(it=>!sid.has(it.id)); done = total - todo.length; } }catch(_){}
     let CH = 100, okStreak = 0, fails = 0, refreshed = false, pos = 0, sinceSave = 0;
     const haveSet = new Set(store.services.map(s=>s.fsId || s.id));
     const safeSave = ()=>{ try{ saveStore(); }catch(e){} };
