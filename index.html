@@ -4160,10 +4160,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU243";
+const APP_VERSION = "MCS0811SU244";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0811SU244": "📝 کارڈ پر «رجسٹریشن مکمل کریں» اب اسی فون پر فارم کھولتا ہے (پہلے ڈویلپر کو پیغام جاتا تھا)",
   "MCS0811SU243": "🏠 ہوم صاف: «Earn with MCS» اور تلاش ایک قطار میں، کاروبار کا نیا افقی کارڈ، Add New اوپر، Explore اور فالتو بٹن ہٹائے",
   "MCS0811SU242": "⚡ امپورٹ کے دوران فون نہیں اٹکتا (لائیو فہرست کا بوجھ رکا)، شناختی کارڈ ایک ساتھ محفوظ",
   "MCS0811SU241": "🔢 ہوم کے کاروبار / ماہرین کے نمبر اب فون کی جگہ بھرنے پر بھی تازہ رہتے ہیں اور سب رکارڈ گنتے ہیں • 🔄 اپڈیٹ اب پرانی فائل کو نیا سمجھ کر محفوظ نہیں کرتی؛ ہر بار سرور سے تازہ فائل لے کر ورژن جانچتی ہے • 📥 امپورٹ اب سرور سے پوچھ کر دیکھتا ہے کون سے رکارڈ واقعی سرور پر ہیں، صرف فون میں بچے رکارڈ دوبارہ سرور پر جاتے ہیں • 📝 غیر رجسٹرڈ (بنیادی) کارڈ پر زرد پٹی ختم، سب پر صرف «رجسٹریشن مکمل کریں» • 🗂️ ایڈمن/ڈویلپر کیٹگری بدلے تو ریکارڈ فوراً نئی کیٹگری میں چلا جاتا ہے (تلاش کے صفحے سے بھی) • 📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
@@ -8834,9 +8835,25 @@ function svcHideIntro(kind, id){
 function svcRegClick(id){
   const r = store.services.find(x=>x.id===id); if(!r) return;
   if(svcCanRegister(r)){ svcRegisterOpen(id); return; }
-  const msg = 'السلام علیکم! میں اپنی دکان «' + (r.nameUr||'') + '» (' + (r.whatsapp||'') + ') کی رجسٹریشن مکمل کروانا چاہتا ہوں۔';
-  const num = String(DEFAULT_CONTACT.whatsapp).replace(/\D/g,'').replace(/^0/,'92');
-  window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(msg), '_blank');
+  svcRegClaim(id);   /* MCS0811SU244 (ہیلپ ڈیسک #141، مالک کا حکم): پہلے یہاں ڈویلپر کو واٹس ایپ پیغام جاتا تھا — اب اسی فون پر فارم */
+}
+/* MCS0811SU244: دکاندار اپنے فون سے «رجسٹریشن مکمل کریں» — کاروبار اسی فون سے جڑے (سرور /pclaim، کسی اور فون سے جڑا ہو تو روک)، پھر رجسٹریشن فارم؛
+   اس کے بعد کارڈ پر «⭐ ممبرشپ مکمل کریں» → تفصیل ڈویلپر کو → مالک کی منظوری (pend) */
+async function svcRegClaim(id){
+  const r = store.services.find(x=>x.id===id); if(!r || codevBlock()) return;
+  if(!confirm('کیا «' + (r.nameUr||'') + '» آپ کا اپنا کاروبار ہے؟\nہاں دبائیں تو یہ اسی فون پر «میرا کاروبار» میں جڑ جائے گا اور رجسٹریشن فارم کھلے گا۔')) return;
+  const had = !!mpEntry(r);
+  try{
+    await pfEnsureKey('service', r);
+    svcMyBasicAdd(id);
+    try{ mpRender(); hlRenderSoon(); }catch(_){}
+    showToast('✅ جڑ گیا — اب رجسٹریشن فارم مکمل کریں', 3500);
+    try{ closeModal('recViewModal'); }catch(_){}
+    svcRegisterOpen(id);
+  }catch(e){
+    if(!had){ try{ const rk = pfKeyOf(r, 'service'); store.myProfiles = mpAll().filter(p => p.rk !== rk && p.id !== r.id); saveStore(); mpRender(); }catch(_){} }
+    alert(String(e && e.message) === 'taken' ? '⚠️ یہ کاروبار کسی دوسرے فون سے جڑا ہوا ہے۔\nاپنے فون پر لانے کے لیے Help Desk پر بتائیں — ڈویلپر «فون سے آزاد» کر دیں گے۔' : '⚠️ ابھی جوڑا نہیں جا سکا — انٹرنیٹ دیکھ کر دوبارہ کوشش کریں۔');
+  }
 }
 function svcCanRegister(rec){ return !!rec && (rec.stage==='basic' || !rec.stage) && (isAdminSignedIn || svcMyBasic().includes(rec.id) || agOwnsRec(rec)); }
 function svcRegisterOpen(id){
@@ -14685,7 +14702,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU243" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU244" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -15021,7 +15038,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function uaDrop(){ ls.set('mcsAuth', null); uaSync(); uaLogin('دوبارہ لاگ اِن کریں'); }
   /* Guest روک: ہر «کام» سے پہلے */
   window.uaGuard = function(next, msg){ if(uaOk()) return true; uaPending = next || null; uaLogin(msg || 'یہ کام کرنے کے لیے پہلے Sign In یا Sign Up کریں — Guest صرف دیکھ سکتا ہے'); return false; };
-  const GUARD = ['mpStartNew', 'd2AddOpen', 'pickAddCategory', 'openServiceForm', 'openDoctorForm', 'agOpen', 'pfEditOpen', 'pfClaimMine', 'pfClaimPlain', 'mpSubscribe', 'adRequestOpen', 'toggleAddStrip', 'mpNewMore', 'saveService', 'saveDoctor', 'pfSave', 'agPinLogin'];
+  const GUARD = ['mpStartNew', 'd2AddOpen', 'pickAddCategory', 'openServiceForm', 'openDoctorForm', 'agOpen', 'pfEditOpen', 'pfClaimMine', 'pfClaimPlain', 'svcRegClaim', 'mpSubscribe', 'adRequestOpen', 'toggleAddStrip', 'mpNewMore', 'saveService', 'saveDoctor', 'pfSave', 'agPinLogin'];
   function wrapAll(){
     GUARD.forEach(n => { const f = window[n]; if(typeof f !== 'function' || f.__ua) return;
       const g = function(...a){ if(!uaOk()){ const self = this; uaGuard(() => g.apply(self, a)); return; } return f.apply(this, a); };
