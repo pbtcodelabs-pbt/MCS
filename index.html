@@ -2897,6 +2897,7 @@ body.cdOn{padding-top:30px}
         <span id="customCatTilesBusiness" style="display:contents;"></span>
       </div>
     </div>
+    <div style="text-align:center;margin:6px 10px 96px"><button type="button" class="btn secondary" onclick="mcsAskLogout()">⎋ Exit — لاگ آؤٹ</button></div>
   </div>
 
   <!-- ===================== DOCTOR LIST ===================== -->
@@ -3118,7 +3119,7 @@ body.cdOn{padding-top:30px}
 .pt-f input{width:100%;box-sizing:border-box;margin:3px 0 6px;padding:9px;border:1.5px solid #cbd5e1;border-radius:10px;font-family:inherit}
 .ag-badge{position:absolute;top:-9px;left:10px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;background:linear-gradient(145deg,#2dd4bf,#0f766e);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:3}.ag-badge.wait{background:linear-gradient(145deg,#fbbf24,#d97706)}
 .doc-card:has(.ag-badge){position:relative;box-shadow:0 0 0 2px #2dd4bf,0 3px 10px rgba(15,118,110,.35)}.doc-card:has(.ag-badge.wait){box-shadow:0 0 0 2px #fbbf24,0 3px 10px rgba(217,119,6,.3)}
-.agc-box{max-width:520px}.agc-cv{display:block;margin:6px auto;max-width:100%;border:2px solid #0d9488;border-radius:10px;background:#fff;touch-action:none}.agc-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;font-weight:700}.agc-row input[type=range]{flex:1}.agc-row button{border:none;border-radius:10px;background:#e2e8f0;padding:8px 12px;font-family:inherit;font-weight:800}.ag-pic.has span{background:rgba(255,255,255,.85);border-radius:8px;padding:2px 4px;font-size:14px}
+.ag-pic#agP_selfie{border-radius:50%}.agc-box{max-width:520px}.agc-cv{display:block;margin:6px auto;max-width:100%;border:2px solid #0d9488;border-radius:10px;background:#fff;touch-action:none}.agc-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;font-weight:700}.agc-row input[type=range]{flex:1}.agc-row button{border:none;border-radius:10px;background:#e2e8f0;padding:8px 12px;font-family:inherit;font-weight:800}.ag-pic.has span{background:rgba(255,255,255,.85);border-radius:8px;padding:2px 4px;font-size:14px}
 .ag-agree{display:flex!important;gap:8px;align-items:flex-start;font-weight:600!important;font-size:12.5px!important;line-height:1.8;margin-top:10px!important}.ag-agree input{width:auto!important;margin-top:6px}
 .ag-err{color:#dc2626;font-weight:800;min-height:1.4em;margin:6px 0}
 .ag-st,.ag-wait,.ag-ok,.ag-no,.ag-need{font-weight:800;font-size:15px;line-height:1.9;margin:8px 0;text-align:center}.ag-ok{color:#15803d}.ag-no{color:#b91c1c}.ag-wait{color:#b45309}
@@ -4107,7 +4108,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU218";
+const APP_VERSION = "MCS0811SU222";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
@@ -4667,6 +4668,8 @@ async function phDone(){
   if(PH.br !== 100 || PH.enh){ try{ phBake(out); }catch(e){} }
   if(PH.enh){ try{ agcEnhance(out); }catch(e){} }
   const pre = pfPickPre; closeModal('phCropModal');
+  if(sf && window._ptSR){ const sm = document.createElement('canvas'); sm.width = sm.height = 360; sm.getContext('2d').drawImage(out, 0, 0, 360, 360); ptSelfieSaved(sm.toDataURL('image/jpeg', .85)); showToast('✅ سیلفی لگ گئی'); return; }
+  if(sf && window._phAg){ window._phAg = false; agImgs.selfie = out.toDataURL('image/jpeg', .85); agShowPic('selfie'); selfieSaveLocal(agImgs.selfie); showToast('✅ سیلفی لگ گئی'); return; }
   try{
     if(sf){ await pfSetSelfie(pre, out.toDataURL('image/jpeg', .85)); }
     else{
@@ -4681,7 +4684,7 @@ function pfPickSlot(pre, i){ pfPickPre = pre; pfEd[pre].slot = i; phChoose(); }
 function pfDelSlot(pre, i){ pfEd[pre].imgs[i] = null; pfEd[pre].del[i] = 1; if(i === 1){ pfEd[pre].thumb = ''; pfEd[pre].thumbChanged = true; } pfSlotsRender(pre); }
 async function pfImgPicked(inp){
   const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; if(!pfEd[pfPickPre]) return;
-  phFromFile(f, 'shop');   /* MCS0711SA201: پہلے کاٹیں / سنواریں، پھر لگے */
+  window._ptSR = ''; window._phAg = false; phFromFile(f, 'shop');   /* MCS0711SA201: پہلے کاٹیں / سنواریں، پھر لگے */
 }
 /* MCS0711SA194: سیلفی — بیچ سے چوکور کاٹ کر (چہرہ اوپر کی طرف)، بڑی (سرور کے لیے) اور چھوٹی (کارڈ کے لیے) */
 function pfSquare(src, size, q){
@@ -4699,7 +4702,7 @@ async function pfSetSelfie(pre, srcAny){
   pfSlotsRender(pre);
 }
 async function pfSelfiePicked(inp){
-  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return;
+  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; window._ptSR = ''; window._phAg = false;
   phFromFile(f, 'selfie');
 }
 async function pfUseSavedSelfie(pre){ let sv = ''; try{ sv = localStorage.getItem('mcsSelfie') || ''; }catch(e){} if(!sv) return; try{ await pfSetSelfie(pre, sv); }catch(e){} }
@@ -6002,7 +6005,22 @@ function goHome(){
   if(steps>0){ try{ history.go(-steps); }catch(e){} }
 }
 window.addEventListener('resize', ()=>{ if(mcsTyping()) return; try{ fitOpenForms(); }catch(e){} });
-window.addEventListener('popstate', ()=>{
+/* MCS0811SU222 (مالک کا حکم): فون کا بیک بٹن ایپ بند نہ کرے — ایک پیج پیچھے؛ آخر پر «کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟» */
+function mcsAskLogout(){ let ok = true; try{ ok = confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟'); }catch(e){} if(!ok) return; if(window.mcsLogoutAll) window.mcsLogoutAll(true); else if(window.uaLogin) window.uaLogin(); }
+try{ history.replaceState({root:1},''); history.pushState({guard:1},''); }catch(e){}
+function mcsRootBack(ev){
+  const st = ev && ev.state; if(!(st && st.root)) return false;
+  try{ history.pushState({guard:1},''); }catch(e){}
+  const open = topModal();
+  if(open){ if((open.id==='doctorFormModal' || open.id==='serviceFormModal') && formHasTyping(open) && !confirm('لکھی ہوئی معلومات محفوظ نہیں ہوئیں۔ کیا بغیر محفوظ کیے واپس جائیں؟')) return true; if(typeof flowCancel==='function') flowCancel(); closeModal(open.id); return true; }
+  const ov = document.getElementById('uaOv');
+  if(ov && ov.classList.contains('on')){ try{ showToast('ایپ بند کرنے کے لیے «EXIT» کا بٹن دبائیں'); }catch(e){} return true; }
+  if(navStack.length>1){ fwdStack = []; navStack.length=0; navStack.push('home'); goScreen('home', true); return true; }
+  if(currentScreen !== 'home'){ goScreen('home', true); return true; }
+  mcsAskLogout(); return true;
+}
+window.addEventListener('popstate', (ev)=>{
+  if(mcsRootBack(ev)) return;
   const open = topModal();
   if(open){
     open.classList.remove('active');
@@ -11221,6 +11239,21 @@ function ptDevSave(){ const g = id => (document.getElementById(id)||{}).value ||
 function ptEdit(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalModal'); setTimeout(()=>{ pfOpen(x.p.kind, x.rec.id); setTimeout(()=>{ try{ pfEditOpen(); }catch(e){} }, 900); }, 160); }
 function ptView(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalModal'); setTimeout(()=>pfOpen(x.p.kind, x.rec.id), 160); }
 function ptSub(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalModal'); setTimeout(()=>mpSubscribe(x.p.rk), 160); }
+/* ===== MCS0811SU220 (مالک کا حکم): ہر پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / پروفیشن / بزنس / یوزر) کی گول سیلفی — اوپر کے دائرے کو دبائیں، کیمرہ یا گیلری، کاٹیں، لگ جائے ===== */
+function ptSelfieKey(rl){ return (rl === 'dev' || rl === 'codev' || rl === 'agent') ? 'mcsSelfie_' + rl : 'mcsSelfie'; }
+function ptSelfieGet(rl){ let v = ''; try{ v = localStorage.getItem(ptSelfieKey(rl)) || ''; if(!v && (rl === 'agent')) v = localStorage.getItem('mcsSelfie') || ''; }catch(e){} return v; }
+function ptSelfieAsk(){
+  let i = document.getElementById('ptSelfieIn');
+  if(!i){ i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; i.id = 'ptSelfieIn'; i.hidden = true; i.onchange = function(){ const f = i.files && i.files[0]; i.value = ''; if(!f) return; window._ptSR = ptRole(); window._phAg = false; phFromFile(f, 'selfie'); }; document.body.appendChild(i); }
+  i.click();
+}
+function ptSelfieSaved(d){
+  const rl = window._ptSR; window._ptSR = '';
+  if(!rl) return;
+  try{ localStorage.setItem(ptSelfieKey(rl), d); }catch(e){}
+  if(rl === 'dev'){ try{ const p = ptDevProf(); p.selfie = 1; localStorage.setItem('mcsDevProfile', JSON.stringify(p)); }catch(e){} }
+  try{ ptOpen(); }catch(e){}
+}
 function ptOpen(editProf, prev){
   ptPrev = prev || null;
   const rl = ptPrev ? ptPrev.role : ptRole(), M = PT_META[rl], a = (typeof uaMe === 'function' && uaMe()) || null, me = agMe() || {}, cd = (ptPrev ? {name:'کو-ڈویلپر', phone:''} : codevMe()) || {};
@@ -11256,7 +11289,8 @@ function ptOpen(editProf, prev){
     body += `<div class="pt-sec">🤝 ریفرل</div>` + (code ? `<div class="pt-card"><small>میرا ریفرل کوڈ</small><div class="pt-code" onclick="agCopy('${escapeAttr(code)}')">${escapeHtml(code)}</div><div class="r"><button type="button" class="p" onclick="agCopy('${escapeAttr(code)}')">📋 کاپی</button><button type="button" onclick="agShare('${escapeAttr(code)}')">📤 شیئر</button></div>${refNo ? `<small>یا اپنا موبائل نمبر بھی بتا سکتے ہیں: ${refNo}</small>` : ''}</div>` : `<div class="pt-grid">${ptT('🤝','MCS ایجنٹ بنیں','ریفرل کوڈ / حالت','agOpen')}</div>`);
     body += `<div class="pt-grid">${ptT('➕', L.length ? 'ایک اور کاروبار / پروفیشن' : 'اپنا کاروبار / پروفیشن جوڑیں', L.length ? '' : '7 دن مفت', 'mpNewMore')}${a ? ptT('👤','میرا اکاؤنٹ','','uaAccount') : ptT('🔐','Login / Sign Up','','uaLogin')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','رنگ، فونٹ، بیک اپ','openControlPanel')}</div>`;
   }
-  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${ptPrev ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av">${(()=>{ let sv = ''; try{ sv = ptPrev ? '' : (localStorage.getItem('mcsSelfie') || ''); }catch(e){} return sv ? `<img src="${escapeAttr(sv)}" alt="">` : M[0]; })()}</div><div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span>${ptPrev ? '' : '<button type="button" class="pt-sw" onclick="ptSwitch()">🔄 اکاؤنٹ بدلیں</button>'}</div><div class="pt-body">${ptPrev ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ڈویلپر پورٹل</button></div>' : ''}${body}</div></div>`;
+  if(!ptPrev && rl !== 'dev') body += `<div class="pt-grid">${ptT('⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red')}</div>`;
+  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${ptPrev ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av${ptPrev ? '' : ' pt-av-ed'}"${ptPrev ? '' : ' onclick="ptSelfieAsk()"'}>${(()=>{ let sv = ''; try{ sv = ptPrev ? '' : ptSelfieGet(rl); }catch(e){} return sv ? `<img src="${escapeAttr(sv)}" alt="">` : M[0]; })()}${ptPrev ? '' : '<em class="pt-cam">📷</em>'}</div><div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span>${ptPrev ? '' : '<button type="button" class="pt-sw" onclick="ptSwitch()">🔄 اکاؤنٹ بدلیں</button>'}</div><div class="pt-body">${ptPrev ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ڈویلپر پورٹل</button></div>' : ''}${body}</div></div>`;
   openModal('portalModal');
   if(editProf){ setTimeout(()=>{ const e = document.getElementById('ptN'); if(e){ e.scrollIntoView({block:'center'}); e.focus(); } }, 300); }
 }
@@ -11658,6 +11692,7 @@ function agForm(){
 const AGC = {img:null, k:'', W:0, H:0, q:0, fine:0, zoom:1, ox:0, oy:0, enh:true, ptr:{}, pd:0};
 function agPick(inp, k){
   const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return;
+  if(k === 'selfie'){ window._ptSR = ''; window._phAg = true; phFromFile(f, 'selfie'); return; }   /* MCS0811SU221: سیلفی گول ایڈیٹر میں — زوم ➖➕، گھمائیں، روشنی، صفائی */
   const im = new Image();
   im.onload = ()=>{ const sc = Math.min(1, 2000 / Math.max(im.width, im.height)); const c = document.createElement('canvas'); c.width = Math.round(im.width*sc); c.height = Math.round(im.height*sc); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(im.src); agCropOpen(c, k); };
   im.onerror = ()=> showToast('تصویر نہیں لگی — دوبارہ کوشش کریں');
@@ -11715,7 +11750,7 @@ function agcDone(){
   if(AGC.enh){ try{ agcEnhance(out); }catch(e){} }
   let d = out.toDataURL('image/jpeg', .84);
   if(d.length > 600000){ const o2 = document.createElement('canvas'); o2.width = Math.round(AGC.W*.75); o2.height = Math.round(AGC.H*.75); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', .72); }
-  agImgs[AGC.k] = d; agShowPic(AGC.k); closeModal('agCropModal'); if(AGC.k === 'selfie') selfieSaveLocal(d); showToast('✅ تصویر لگ گئی');
+  agImgs[AGC.k] = d; agShowPic(AGC.k); closeModal('agCropModal'); if(AGC.k === 'selfie'){ if(window._ptSR) ptSelfieSaved(d); else selfieSaveLocal(d); } showToast('✅ تصویر لگ گئی');
 }
 function agCnicFmt(el){ const d = el.value.replace(/[^0-9۰-۹٠-٩]/g,'').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)).slice(0,13); el.value = d.length > 12 ? d.slice(0,5)+'-'+d.slice(5,12)+'-'+d.slice(12) : d.length > 5 ? d.slice(0,5)+'-'+d.slice(5) : d; el.classList.toggle('ok', d.length === 13); }
 function agShowPic(k){ const el = document.getElementById('agP_' + k); if(el){ el.classList.add('has'); el.style.backgroundImage = 'url(' + agImgs[k] + ')'; } }
@@ -12046,12 +12081,12 @@ function agtMsg(a){
   if(a.email) L.push('✉️ Gmail: ' + a.email);
   if(a.city) L.push('📍 شہر: ' + a.city);
   if(a.biz) L.push('🏪 کاروبار / پروفیشن: ' + a.biz);
-  L.push('🤝 ریفرل کوڈ: ' + a.code); if(a.pin) L.push('🔑 PIN: ' + a.pin);
+  L.push('🤝 ریفرل کوڈ: ' + a.code);   /* PIN میسج میں نہیں — ایجنٹ خود بنائے گا */
   L.push('', '*داخل ہونے کا طریقہ:*', '1️⃣ ایپ میں اپنے کاروبار والے اکاؤنٹ سے «لاگ آؤٹ» کریں', '2️⃣ لاگ اِن صفحے پر «اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں» والے خانے میں یہ پورا میسج پیسٹ کریں',
-    '3️⃣ نام، موبائل، Gmail خود آ جائیں گے — PIN لکھیں، یا چھوڑ دیں، یا Gmail سے داخل ہوں', '4️⃣ آپ پروفیشنل بھی رہیں گے اور ایجنٹ بھی؛ کارڈ پر ایجنٹ کا نشان، رجسٹرڈ کی علامت، باقی دن اور آپ کی گول سیلفی نظر آئے گی',
+    '3️⃣ نام، موبائل، Gmail، ضلع خود آ جائیں گے — اپنا PIN خود بنائیں، یا «ابھی نہیں» دبائیں، یا Gmail سے داخل ہوں', '4️⃣ آپ پروفیشنل بھی رہیں گے اور ایجنٹ بھی؛ کارڈ پر ایجنٹ کا نشان، رجسٹرڈ کی علامت، باقی دن اور آپ کی گول سیلفی نظر آئے گی',
     '⚠️ نیچے کی لمبی لائن (MCS-AGT…) مٹائیں نہیں', '');
   if(!a.dev) L.splice(L.length-1, 0, '📲 ایپ: ' + MCS_PLAY_URL, '');
-  L.push(agtB64({ n: a.name||'', m: ph, g: String(a.email||'').toLowerCase(), c: a.code, p: a.pin||'', b: a.biz||'', d: a.city||'' }));
+  L.push(agtB64({ n: a.name||'', m: ph, g: String(a.email||'').toLowerCase(), c: a.code, b: a.biz||'', d: a.city||'' }));
   return L.join('\n');
 }
 function agSendCode(id){
@@ -14598,21 +14633,19 @@ body.d2 #homeAds .ad-ribbon{display:none}
     }, 30);
   }
   function show(html){ window.__uaInvMode = false; window.__uaAgtMode = false; $('uaWrap').innerHTML = html; $('uaOv').classList.add('on'); $('uaOv').scrollTop = 0; document.body.style.overflow = 'hidden'; }
-  window.uaHide = function(){ const o = $('uaOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; if(!uaMe() && !staff() && !ls.get('mcsGuest')) ls.set('mcsGuest', '1'); uaPending = null; };
+  window.uaHide = function(){ const o = $('uaOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; uaPending = null; };
   window.uaLogin = function(msg){
-    show(`${head()}<div class="uaCard">
-      <div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div><div class="uaSub">Access your account to continue</div>
+    show(`${head()}<div class="uaCard uaLg">
+      <div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>
       ${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}
       ${field('uaId', 'user', 'Mobile No. / Email / Account ID', { ac:'username' })}
       ${field('uaPw', 'lock', 'Password / PIN', { type:'password', ac:'current-password' })}
-      <div class="uaSub" style="font-size:12px;margin:-4px 0 6px">🔎 ایجنٹ، کو-ڈویلپر، ڈویلپر یا عام یوزر — ایپ لاگ اِن پر خود پہچان لے گی<br>(ایجنٹ / کو-ڈویلپر: موبائل + PIN • ڈویلپر: ای میل + پاس ورڈ)</div>
+      
       <div class="uaRow"><a onclick="uaForgot()">Forgot Password?</a></div>
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bB" onclick="uaDoLogin()">${IC.login}LOGIN</button>
       <div class="uaG" id="uaGBox"></div>
-      <button class="uaBtn bY" onclick="uaGuest()">${IC.guest}Continue as Guest <small style="font-weight:700;opacity:.8">— صرف دیکھیں</small></button>
       <button class="uaBtn bO" onclick="uaExit()">${IC.exit}EXIT</button>
-      <div class="uaOr">Not registered yet?</div>
       <button class="uaBtn bG" onclick="uaSignup()">${IC.add}CREATE NEW ACCOUNT</button>
       <div class="uaOr" style="margin-top:6px">📨 اپنی رجسٹریشن کا میسج</div>
       <div id="uaRegBox">${invBox()}</div></div>`);
@@ -14658,6 +14691,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     }
     if(isMob && /^\d{4,6}$/.test(pw)){
       const post = async (path, body) => { try{ return await (await fetch(AG_API + path, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(body) })).json(); }catch(e){ return null; } };
+      try{ const op = JSON.parse(ls.get('mcsAgOwnPin') || 'null'); if(op && mob11(op.p) === mob11(d) && op.h === fnv('agpin:' + op.p + ':' + pin)){ const g0 = await post('/agstatus', { phone: d, dev: agDev() }); if(g0 && g0.ok && g0.status === 'approved'){ uaClearOthers('agent'); ls.set('mcsAgent', JSON.stringify({ phone: '92' + d.slice(-10), name: g0.name, pin, code: g0.code, at: Date.now() })); busy(0); return uaRoleDone('agent', g0.name); } } }catch(e){}
       const c = await post('/codev', { phone: d, pin });
       if(c && c.ok){ uaClearOthers('codev'); ls.set('mcsCodev', JSON.stringify({ phone: '92' + d.slice(-10), pin, name: c.name, at: Date.now() })); busy(0); return uaRoleDone('codev', c.name); }
       const g = await post('/agstatus', { phone: d, pin, dev: agDev() });
@@ -14667,11 +14701,11 @@ body.d2 #homeAds .ad-ribbon{display:none}
     if(!r.ok) return setErr(r.reason);
     uaClearOthers('user'); done(r);
   };
-  window.mcsLogoutAll = async function(){
-    try{ if(!confirm('اس فون سے لاگ آؤٹ کریں؟')) return; }catch(e){}
+  window.mcsLogoutAll = async function(skip){
+    try{ if(skip !== true && !confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return; }catch(e){}
     try{ closeModal('portalModal'); }catch(e){}
     try{ const a = uaMe(); if(a) api({ op:'logout', tok: a.tok }); }catch(e){}
-    uaClearOthers('none'); ls.set('mcsAuth', null); ls.set('mcsGuest', '1');
+    uaClearOthers('none'); ls.set('mcsAuth', null); ls.set('mcsGuest', null);
     try{ uaSync(); h2Sync(); cdBar(); mpRender(); }catch(e){}
     setTimeout(() => uaLogin(), 250);
   };
@@ -14748,8 +14782,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
     ls.set('mcsAuth', null); uaHide(); try{ showToast('🗑️ اکاؤنٹ حذف ہو گیا'); }catch(e){} uaSync();
   };
   window.uaLogout = async function(){
-    const a = uaMe(); if(!a) return; if(!confirm('اس فون پر لاگ آؤٹ کریں؟')) return;
-    api({ op:'logout', tok: a.tok }); ls.set('mcsAuth', null); ls.set('mcsGuest', '1'); uaHide(); uaSync(); try{ showToast('لاگ آؤٹ ہو گیا'); }catch(e){}
+    const a = uaMe(); if(!a) return; if(!confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return;
+    api({ op:'logout', tok: a.tok }); mcsLogoutAll(true);
   };
   function uaDrop(){ ls.set('mcsAuth', null); uaSync(); uaLogin('دوبارہ لاگ اِن کریں'); }
   /* Guest روک: ہر «کام» سے پہلے */
@@ -14833,7 +14867,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     else if(me && me.name) L.push('🤝 درج کرنے والا: ' + me.name + (me.id ? ' (' + me.id + ')' : ''));
     L.push('🔑 پاس ورڈ: ایپ میں آپ خود بنائیں گے', '', '📲 *ایپ ڈاؤن لوڈ کریں:*', MCS_PLAY_URL, '',
       '*لاگ اِن کا طریقہ (صرف ایک بار):*', '1️⃣ ایپ ڈاؤن لوڈ کر کے کھولیں', '2️⃣ لاگ اِن صفحے پر «اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں» والا خانہ دیکھیں',
-      '3️⃣ اس خانے میں یہ پورا میسج پیسٹ کریں — آپ کا نام، موبائل، Gmail، ضلع اور کاروبار خود بھر جائیں گے؛ پھر PIN / پاس ورڈ لکھیں، یا چھوڑ دیں، یا Gmail سے داخل ہوں',
+      '3️⃣ اس خانے میں یہ پورا میسج پیسٹ کریں — آپ کا نام، موبائل، Gmail، ضلع اور کاروبار خود بھر جائیں گے؛ پھر اپنا PIN خود بنائیں، یا «ابھی نہیں» دبائیں، یا Gmail سے داخل ہوں',
       '⚠️ نیچے کی لمبی لائن (MCS-INV…) مٹائیں نہیں', '', fedToken(fedPayload(f)));
     return L.join('\n');
   }
@@ -14918,10 +14952,9 @@ body.d2 #homeAds .ad-ribbon{display:none}
 
   /* ---- نیا بندہ: میسج پیسٹ ---- */
   const invBox = () => `<div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:700;line-height:1.9"><b>اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں</b> — ڈویلپر / درج کرنے والے کا بھیجا ہوا پورا میسج (کاروبار، پروفیشن یا ایجنٹ)</div>
-    <textarea id="uaInvTx" rows="4" dir="auto" placeholder="اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں…" onpaste="setTimeout(function(){uaInvGo(1)},120)" style="width:100%;box-sizing:border-box;border:1.5px solid #d5deee;border-radius:14px;padding:10px;font-size:15px;font-family:inherit;margin-bottom:8px;background:#fff;color:#0f1f45"></textarea>
+    <textarea id="uaInvTx" rows="2" dir="auto" placeholder="اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں…" onpaste="setTimeout(function(){uaInvGo(1)},120)" style="width:100%;box-sizing:border-box;border:1.5px solid #d5deee;border-radius:14px;padding:10px;font-size:15px;font-family:inherit;margin-bottom:8px;background:#fff;color:#0f1f45"></textarea>
     <div class="uaErr" id="uaInvErr"></div>
-    <button class="uaBtn bO" onclick="uaInvPaste()">📋 کلپ بورڈ سے پیسٹ</button>
-    <button class="uaBtn bB" onclick="uaInvGo()">${IC.login}داخل ہوں</button>`;
+    <div class="uaTwo"><button class="uaBtn bO" onclick="uaInvPaste()">📋 پیسٹ</button><button class="uaBtn bB" onclick="uaInvGo()">${IC.login}داخل ہوں</button></div>`;
   window.uaRegToggle = function(cb){ const b = $('uaRegBox'); if(!b) return; b.style.display = cb.checked ? 'block' : 'none'; if(cb.checked){ setTimeout(() => { try{ b.scrollIntoView({ behavior:'smooth', block:'center' }); const t = $('uaInvTx'); if(t) t.focus(); }catch(e){} }, 60); } };
   window.uaInvAsk = function(){
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.login}</i><h2 style="font-size:22px">رجسٹریشن کا میسج پیسٹ کریں</h2></div><div class="uaSub">اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں</div>${invBox()}
@@ -14948,15 +14981,14 @@ body.d2 #homeAds .ad-ribbon{display:none}
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>🎉</i><h2 style="font-size:22px">آپ کی دعوت</h2></div><div class="uaSub">Welcome to My City Shines</div>
       <div class="uaInfo">🏪 <b>${esc(inv.b || 'آپ کا کاروبار')}</b><br>👤 ${esc(inv.n)}<br>📱 <b dir="ltr">${esc(inv.m)}</b>${inv.g ? '<br>✉️ <span dir="ltr">' + esc(inv.g) + '</span>' : ''}${(inv.d || inv.c) ? '<br>📍 ضلع: ' + esc(inv.d || inv.c) : ''}${inv.r ? '<br>🤝 ریفرل کوڈ: <b dir="ltr">' + esc(inv.r) + '</b>' : ''}<br>🆔 <b dir="ltr">${fedBizId(inv.k, inv.i)}</b></div>
       ${note ? `<div class="uaMsg">${esc(note)}</div>` : ''}
-      <div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:700">${inv.g ? 'اپنے فون کا یہی Gmail (' + esc(inv.g) + ') چنیں — ایک دبانے سے اکاؤنٹ بن جائے گا' : 'اپنے فون کا Google اکاؤنٹ چنیں — ایک دبانے سے اکاؤنٹ بن جائے گا'}</div>
-      <div class="uaG" id="uaGBoxI"></div>
+      ${field('uaInvPw', 'lock', 'اپنا PIN / پاس ورڈ خود بنائیں (6 یا زیادہ)', { type:'password', ac:'new-password' })}
       <div class="uaErr" id="uaErr"></div>
-      <div class="uaOr">یا پاس ورڈ سے</div>
-      ${field('uaInvPw', 'lock', 'نیا پاس ورڈ بنائیں (6+)', { type:'password', ac:'new-password' })}
-      <button class="uaBtn bG" onclick="uaInvPwGo()">${IC.add}اکاؤنٹ بنائیں اور داخل ہوں</button>
+      <div class="uaTwo"><button class="uaBtn bG" onclick="uaInvPwGo()">${IC.add}داخل ہوں</button><button class="uaBtn bW" onclick="uaInvSkip()">⏭️ ابھی نہیں</button></div>
+      <div class="uaOr">یا ${inv.g ? 'یہی Gmail (' + esc(inv.g) + ')' : 'Google'}</div>
+      <div class="uaG" id="uaGBoxI"></div>
       <button class="uaBtn bO" onclick="uaInvLogin()">پہلے سے اکاؤنٹ ہے؟ LOGIN</button>
       <button class="uaBtn bW" onclick="ls_invCancel()">✖ دعوت منسوخ</button></div>`);
-    window.__uaInvMode = true; gBtn('uaGBoxI', 'continue_with');
+    window.__uaInvMode = true; gBtn('uaGBoxI', 'continue_with'); setTimeout(() => { const f = $('uaInvPw'); if(f) f.focus(); }, 150);
   };
   /* ---- MCS0811SU218: ایجنٹ کا تیار میسج پیسٹ ← نام، موبائل، Gmail، کوڈ خود؛ PIN لکھیں / چھوڑیں / Gmail ---- */
   function agtParse(text){
@@ -14972,24 +15004,23 @@ body.d2 #homeAds .ad-ribbon{display:none}
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>🤝</i><h2 style="font-size:22px">MCS ایجنٹ</h2></div><div class="uaSub">آپ کی رجسٹریشن کی تفصیل</div>
       <div class="uaInfo">👤 <b>${esc(o.n)}</b><br>📱 <b dir="ltr">${esc(o.m)}</b>${o.g ? '<br>✉️ <span dir="ltr">' + esc(o.g) + '</span>' : ''}${o.d ? '<br>📍 ' + esc(o.d) : ''}${o.b ? '<br>🏪 ' + esc(o.b) : ''}<br>🤝 ریفرل کوڈ: <b dir="ltr">${esc(o.c)}</b></div>
       ${note ? `<div class="uaMsg">${esc(note)}</div>` : ''}
-      ${field('uaAgPin', 'lock', 'اپنا PIN یہاں لکھیں', { type:'password', im:'numeric', ac:'one-time-code' })}
+      ${field('uaAgPin', 'lock', 'اپنا PIN خود بنائیں (4 سے 6 ہندسے)', { type:'password', im:'numeric', ac:'new-password' })}
       <div class="uaErr" id="uaErr"></div>
-      <button class="uaBtn bB" onclick="uaAgtGo(0)">${IC.login}PIN سے داخل ہوں</button>
-      <button class="uaBtn bW" onclick="uaAgtGo(1)">⏭️ چھوڑیں (Skip) — سیدھا داخل ہوں</button>
+      <div class="uaTwo"><button class="uaBtn bB" onclick="uaAgtGo(0)">${IC.login}داخل ہوں</button><button class="uaBtn bW" onclick="uaAgtGo(1)">⏭️ ابھی نہیں</button></div>
       <div class="uaOr">یا</div>
-      <div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:700">${o.g ? 'اپنے فون کا یہی Gmail (' + esc(o.g) + ') چنیں' : 'اپنے فون کا Google اکاؤنٹ چنیں'}</div>
       <div class="uaG" id="uaGBoxA"></div>
       <button class="uaBtn bO" onclick="uaAgtCancel()">✖ منسوخ</button></div>`);
-    window.__uaAgtMode = true; gBtn('uaGBoxA', 'continue_with');
+    window.__uaAgtMode = true; gBtn('uaGBoxA', 'continue_with'); setTimeout(() => { const f = $('uaAgPin'); if(f) f.focus(); }, 150);
   };
   window.uaAgtCancel = function(){ ls.set('mcsAgtInv', null); window.__uaAgtMode = false; uaLogin(); };
-  async function agtEnter(o, via){
+  async function agtEnter(o, via, pin){
     busy(1); setErr('');
-    let r = null; try{ r = await (await fetch(AG_API + '/agstatus', { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ phone: o.m, pin: o.p, dev: agDev() }) })).json(); }catch(e){}
+    let r = null; try{ r = await (await fetch(AG_API + '/agstatus', { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ phone: o.m, dev: agDev() }) })).json(); }catch(e){}
     busy(0);
-    if(!r || !r.ok){ return setMsg(r ? 'ایجنٹ کی منظوری یا PIN درست نہیں — ڈویلپر سے نیا میسج منگوائیں' : '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
+    if(!r || !r.ok || r.status !== 'approved'){ return setMsg(r ? 'ایجنٹ کی منظوری ابھی نہیں ملی — ڈویلپر سے رابطہ کریں' : '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
     uaClearOthers('agent');
-    ls.set('mcsAgent', JSON.stringify({ phone: '92' + o.m.slice(-10), name: r.name || o.n, pin: o.p, code: r.code || o.c, at: Date.now() }));
+    ls.set('mcsAgent', JSON.stringify({ phone: '92' + o.m.slice(-10), name: r.name || o.n, pin: pin || r.pin || '', code: r.code || o.c, at: Date.now() }));
+    if(pin) ls.set('mcsAgOwnPin', JSON.stringify({ p: o.m, h: fnv('agpin:' + o.m + ':' + pin) }));
     ls.set('mcsAgtInv', null); window.__uaAgtMode = false;
     try{ agKnownAdd(o.m, r.code || o.c, 'approved'); }catch(e){}
     try{ agMarkRecords(); }catch(e){}
@@ -14998,9 +15029,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
   window.uaAgtGo = async function(skip){
     const o = agtGet(); if(!o) return uaLogin();
     const typed = (($('uaAgPin') || {}).value || '').replace(/\D/g,'');
-    if(!skip){ if(typed.length < 4) return setMsg('PIN لکھیں (4 سے 6 ہندسے) — یا «چھوڑیں» دبائیں'); if(o.p && typed !== String(o.p)) return setMsg('PIN درست نہیں — میسج میں دیکھیں، یا «چھوڑیں» دبائیں'); }
-    if(!o.p) return setMsg('اس میسج میں PIN نہیں — ڈویلپر سے نیا میسج منگوائیں');
-    return agtEnter(o, skip ? 'skip' : 'pin');
+    if(!skip){ if(typed.length < 4 || typed.length > 6) return setMsg('اپنا PIN بنائیں — 4 سے 6 ہندسے؛ یا «ابھی نہیں» دبائیں'); return agtEnter(o, 'pin', typed); }
+    return agtEnter(o, 'skip', '');
   };
   window.uaAgtGoogle = async function(cred){
     const o = agtGet(); if(!o) return uaLogin();
@@ -15008,6 +15038,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     if(o.g && em && em !== o.g) return setMsg('یہ Google اکاؤنٹ (' + em + ') میسج والے Gmail (' + o.g + ') سے مختلف ہے — درست Gmail چنیں');
     return agtEnter(o, 'google');
   };
+  window.uaInvSkip = function(){ setMsg('PIN نہیں بنانا تو نیچے Gmail سے داخل ہوں'); try{ const g = $('uaGBoxI'); if(g) g.scrollIntoView({ behavior:'smooth', block:'center' }); }catch(e){} };
   window.ls_invCancel = function(){ ls.set('mcsInvite', null); window.__uaInvMode = false; uaLogin(); };
   window.uaInvLogin = function(){ window.__uaInvMode = false; uaLogin('لاگ اِن کریں — آپ کا کاروبار خود جڑ جائے گا'); };
   window.uaInvGoogle = async function(cred){
@@ -15063,15 +15094,55 @@ body.d2 #homeAds .ad-ribbon{display:none}
 
   function boot(){
     wrapAll(); hook(); uaSync();
-    if(!uaMe() && !ls.get('mcsGuest') && !staff()) setTimeout(() => { if(!uaMe() && !ls.get('mcsGuest') && !staff()) uaLogin(); }, 600);
+    ls.set('mcsGuest', null);
+    if(!uaMe() && !staff()) setTimeout(() => { if(!uaMe() && !staff()) uaLogin(); }, 600);
     setTimeout(recheck, 4000);
     setTimeout(() => { try{ if(uaMe() && invGet()) fedApplyPending(); else if(!uaMe() && invGet() && !staff()) uaInviteView(); else if(agtGet() && !agentOn() && !staff()) uaAgtView(); }catch(e){} }, 5000);
-    document.addEventListener('keydown', e => { if(e.key === 'Escape' && $('uaOv').classList.contains('on')) uaHide(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape' && $('uaOv').classList.contains('on') && (uaMe() || staff())) uaHide(); });
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(boot, 300)); else setTimeout(boot, 300);
 })();
 </script>
 
+<style id="mcsNav222">
+/* MCS0811SU222 (مالک کا حکم): نیچے کی پٹی — ہوم بالکل بیچ میں؛ اس کے بائیں «پیچھے» اور دائیں «آگے» */
+body.d2 .bnav{direction:ltr !important}
+body.d2 .bnav button{direction:rtl}
+body.d2 .bnav .bn-admin{order:0 !important}
+body.d2 .bnav::before{content:"";order:0;flex:0 0 32px}
+body.d2 .bnav:has(#bnAdmin:not([style*="none"]))::before{display:none}
+body.d2 .bnav #d2nExp{order:1 !important}
+body.d2 .bnav .d2n-add{order:2 !important}
+body.d2 .bnav #bnBack{order:3 !important}
+body.d2 .bnav #d2nHome{order:4 !important}
+body.d2 .bnav #bnFwd{order:5 !important}
+body.d2 .bnav #d2nFav{order:6 !important}
+body.d2 .bnav #d2nAcc{order:7 !important}
+body.d2 .bnav .bn-zoom{order:8 !important}
+</style>
+<style id="mcsPtSelfie220">
+#portalModal .pt-av{font-size:30px}
+#portalModal .pt-av.pt-av-ed{position:relative;display:inline-block;cursor:pointer;width:66px;height:66px;line-height:66px;border-radius:50%;background:rgba(255,255,255,.22);border:2px dashed rgba(255,255,255,.7)}
+#portalModal .pt-av.pt-av-ed img{width:66px;height:66px;border-radius:50%;object-fit:cover;border:3px solid #fff;margin:-2px 0 0 -2px;vertical-align:top}
+#portalModal .pt-av .pt-cam{position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;line-height:22px;border-radius:50%;background:#fff;font-size:12px;font-style:normal;box-shadow:0 1px 4px rgba(0,0,0,.35);text-align:center}
+</style>
+<style id="mcsLogin218">
+/* MCS0811SU218 (مالک کا حکم): لاگ اِن فارم چھوٹا — اسکرول کے اندر اسکرول نہیں */
+#uaOv .uaWrap{padding:6px 14px 24px}
+#uaOv .uaLogo{width:62px;height:62px;border-radius:16px;margin:0 auto}
+#uaOv .uaTag{margin:3px 0 0;font-size:11px}#uaOv .uaTag u{font-size:13px;margin-top:0}
+#uaOv .uaCard{margin-top:6px;padding:9px 12px 10px;border-radius:18px}
+#uaOv .uaHd h2{font-size:20px}#uaOv .uaHd i{width:30px;height:30px}
+#uaOv .uaCard .uaF{height:42px;margin-bottom:7px}
+#uaOv .uaCard .uaBtn{min-height:40px;font-size:15px;margin-bottom:7px;border-radius:12px}
+#uaOv .uaCard .uaMsg{padding:5px 8px;font-size:13px;margin-bottom:6px}
+#uaOv .uaCard .uaOr{margin:2px 0 7px;font-size:12px}
+#uaOv .uaCard .uaRow{margin:0 0 6px;font-size:13px}
+#uaOv .uaCard .uaInfo{font-size:14px;line-height:1.7;padding:6px 10px;margin-bottom:7px}
+#uaOv .uaCard textarea{margin-bottom:6px!important;padding:7px!important;font-size:14px!important}
+#uaOv .uaTwo{display:grid;grid-template-columns:1fr 1fr;gap:7px}#uaOv .uaTwo .uaBtn{margin-bottom:7px}
+#uaOv .uaG{margin-bottom:7px;min-height:0}
+</style>
 <style id="mcsCardFix204">
 /* MCS0711SA204 (مالک کا حکم): «رجسٹریشن / ممبرشپ» بٹن اب گول بٹنوں کے نیچے نہیں چھپتا —
    نام اور نمبر اوپر؛ پھر ایک قطار میں: دائیں طرف مرحلے کا بٹن، بائیں طرف گول بٹن (فری، چھوٹے-بڑے نہیں ہوتے)؛ پتہ سب سے نیچے */
