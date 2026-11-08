@@ -4108,7 +4108,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU222";
+const APP_VERSION = "MCS0811SU226";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
@@ -11215,7 +11215,7 @@ function agStatusView(r){
    فون اپنی حیثیت یاد رکھتا ہے: ایڈمن لاگ اِن، کو-ڈویلپر لاگ اِن، ممبرشپ (کاروبار / پروفیشن) اور یوزر اکاؤنٹ؛ اوپر کی پٹی دبائیں تو اپنا پورٹل کھلے */
 let ptPrev = null, ptDevTab = 'day';
 function ptDevTabGo(t){ ptDevTab = t; ptOpen(); }
-function ptSwitch(){ closeModal('portalModal'); setTimeout(()=>{ try{ uaLogin(); }catch(e){} }, 160); }   /* MCS0811SU217: پورٹل سے ہی لاگ اِن صفحہ دوبارہ کھلے */
+function ptSwitch(){ try{ if(ptRole() === 'dev') return; }catch(e){} closeModal('portalModal'); setTimeout(()=>{ try{ uaLogin(); }catch(e){} }, 160); }   /* MCS0811SU217: پورٹل سے ہی لاگ اِن صفحہ دوبارہ کھلے */
 function ptRole(){
   try{
     if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'dev';
@@ -11268,7 +11268,7 @@ function ptOpen(editProf, prev){
       biz: [['➕','بزنس / پروفیشن','رجسٹر کریں','d2AddOpen'],['🤝','ایجنٹ بنائیں','کاروبار چن کر','agPickOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent']],
       cod: [['👥','کو-ڈویلپرز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','کو-ڈویلپر پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
       rep: [['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
-      more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['🗂️','کیٹگری / امپورٹ','ڈویلپر پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel'],['🔄','اکاؤنٹ بدلیں','لاگ اِن صفحہ','ptSwitch'],['⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red']]
+      more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['🗂️','کیٹگری / امپورٹ','ڈویلپر پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel'],['⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red']]
     };
     body = `<div class="pt-tabs">${tabs.map(t=>`<button type="button" class="pt-tab${t[0]===tab?' on':''}" onclick="ptDevTabGo('${t[0]}')"><i>${t[1]}</i>${t[2]}</button>`).join('')}</div>`
       + `<div class="pt-grid">${G[tab].map(t=>ptT(t[0],t[1],t[2],t[3],t[4],t[5])).join('')}</div>`
@@ -11290,7 +11290,7 @@ function ptOpen(editProf, prev){
     body += `<div class="pt-grid">${ptT('➕', L.length ? 'ایک اور کاروبار / پروفیشن' : 'اپنا کاروبار / پروفیشن جوڑیں', L.length ? '' : '7 دن مفت', 'mpNewMore')}${a ? ptT('👤','میرا اکاؤنٹ','','uaAccount') : ptT('🔐','Login / Sign Up','','uaLogin')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','رنگ، فونٹ، بیک اپ','openControlPanel')}</div>`;
   }
   if(!ptPrev && rl !== 'dev') body += `<div class="pt-grid">${ptT('⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red')}</div>`;
-  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${ptPrev ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av${ptPrev ? '' : ' pt-av-ed'}"${ptPrev ? '' : ' onclick="ptSelfieAsk()"'}>${(()=>{ let sv = ''; try{ sv = ptPrev ? '' : ptSelfieGet(rl); }catch(e){} return sv ? `<img src="${escapeAttr(sv)}" alt="">` : M[0]; })()}${ptPrev ? '' : '<em class="pt-cam">📷</em>'}</div><div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span>${ptPrev ? '' : '<button type="button" class="pt-sw" onclick="ptSwitch()">🔄 اکاؤنٹ بدلیں</button>'}</div><div class="pt-body">${ptPrev ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ڈویلپر پورٹل</button></div>' : ''}${body}</div></div>`;
+  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${ptPrev ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av${ptPrev ? '' : ' pt-av-ed'}"${ptPrev ? '' : ' onclick="ptSelfieAsk()"'}>${(()=>{ let sv = ''; try{ sv = ptPrev ? '' : ptSelfieGet(rl); }catch(e){} return sv ? `<img src="${escapeAttr(sv)}" alt="">` : M[0]; })()}${ptPrev ? '' : '<em class="pt-cam">📷</em>'}</div>${ptPrev ? '' : '<div class="pt-avh" onclick="ptSelfieAsk()">📷 سیلفی لگائیں / بدلیں</div>'}<div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span>${(ptPrev || rl === 'dev') ? '' : '<button type="button" class="pt-sw" onclick="ptSwitch()">🔄 اکاؤنٹ بدلیں</button>'}</div><div class="pt-body">${ptPrev ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ڈویلپر پورٹل</button></div>' : ''}${body}</div></div>`;
   openModal('portalModal');
   if(editProf){ setTimeout(()=>{ const e = document.getElementById('ptN'); if(e){ e.scrollIntoView({block:'center'}); e.focus(); } }, 300); }
 }
@@ -11855,7 +11855,7 @@ async function cdAdminOpen(body){
   try{ const j = await cdAdminCall(body || {op:'list'}); if(!j || !j.ok) throw new Error(j && j.reason || 'x'); cdList = j.list || []; cdAdminRender(); }
   catch(e){ agModal('<div class="ag-st">⚠️ ' + (e.message === 'bad_phone' ? 'موبائل نمبر درست نہیں' : 'پہلے ایڈمن لاگ اِن کریں / انٹرنیٹ چیک کریں') + '</div><button type="button" class="btn block" onclick="cdAdminOpen()">🔄 دوبارہ</button>'); }
 }
-function cdMsgOf(c){ return 'السلام علیکم ' + c.name + '\nMy City Shines — 👥 کو-ڈویلپر جانچ موڈ\nایپ ← ⚙️ کنٹرول پینل (My Account) ← «👥 کو-ڈویلپر — لاگ اِن»\nموبائل: 0' + String(c.phone).slice(2) + '\nPIN: ' + c.pin + '\nجو بھی مسئلہ یا تجویز ہو، اوپر کی پٹی کے «❓ Help Desk» بٹن سے بھیجیں۔'; }
+function cdMsgOf(c){ return 'السلام علیکم ' + c.name + '\nMy City Shines — 👥 کو-ڈویلپر\n\nلاگ اِن کا طریقہ:\n1️⃣ ایپ کھولیں اور مین Login صفحے پر جائیں\n2️⃣ پہلے خانے «Mobile No.» میں اپنا موبائل نمبر لکھیں\n3️⃣ دوسرے خانے «Password / PIN» میں نیچے والا PIN لکھیں\n4️⃣ LOGIN دبائیں — آپ کو-ڈویلپر کے طور پر لاگ اِن ہو جائیں گے\n\n📱 موبائل: 0' + String(c.phone).slice(2) + '\n🔑 PIN: ' + c.pin; }
 function cdAdminRender(){
   const E = s => escapeHtml(s||'');
   agModal(`<div class="ag-hd">👥 کو-ڈویلپر <small>جانچ کرنے والے</small></div>
@@ -12852,7 +12852,9 @@ function queueFitCards(){
    → موبائل نمبر خود نکلتا ہے، اور سب سے بڑی لکھائی والی لائن دکان کا نام بنتی ہے۔
    پہلی بار انٹرنیٹ پر پڑھنے کی فائلیں (چند MB) آتی ہیں، پھر فون میں محفوظ رہتی ہیں۔ */
 let boardScanPre = 'svc', ocrWorkerP = null;
+const BOARD_SCAN_ON = false;   /* MCS0811SU223: بورڈ اسکین فی الحال بند */
 function startBoardScan(pre){
+  if(!BOARD_SCAN_ON) return;
   boardScanPre = pre || 'svc';
   const inp = document.getElementById('boardCamInput');
   inp.value = '';
@@ -15104,6 +15106,10 @@ body.d2 #homeAds .ad-ribbon{display:none}
 })();
 </script>
 
+<style id="mcsHideScan223">
+/* MCS0811SU223 (مالک کا حکم): فارم میں «دکان کا بورڈ اسکین» بٹن فی الحال چھپا — کوڈ موجود ہے، واپس چاہیے تو یہ سطر ہٹائیں اور BOARD_SCAN_ON = true کریں */
+.fm-scan{display:none !important}
+</style>
 <style id="mcsNav222">
 /* MCS0811SU222 (مالک کا حکم): نیچے کی پٹی — ہوم بالکل بیچ میں؛ اس کے بائیں «پیچھے» اور دائیں «آگے» */
 body.d2 .bnav{direction:ltr !important}
@@ -15125,6 +15131,15 @@ body.d2 .bnav .bn-zoom{order:8 !important}
 #portalModal .pt-av.pt-av-ed{position:relative;display:inline-block;cursor:pointer;width:66px;height:66px;line-height:66px;border-radius:50%;background:rgba(255,255,255,.22);border:2px dashed rgba(255,255,255,.7)}
 #portalModal .pt-av.pt-av-ed img{width:66px;height:66px;border-radius:50%;object-fit:cover;border:3px solid #fff;margin:-2px 0 0 -2px;vertical-align:top}
 #portalModal .pt-av .pt-cam{position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;line-height:22px;border-radius:50%;background:#fff;font-size:12px;font-style:normal;box-shadow:0 1px 4px rgba(0,0,0,.35);text-align:center}
+/* MCS0811SU226 (مالک کا حکم): سیلفی کا گول ڈبہ بڑا؛ «اکاؤنٹ بدلیں» تصویر پر نہ چڑھے (ڈویلپر میں ہے ہی نہیں) */
+#portalModal .pt-hd{padding:12px 12px 10px;text-align:center}
+#portalModal .pt-sub{text-align:center;direction:ltr}
+#portalModal .pt-av.pt-av-ed{width:112px;height:112px;line-height:112px;font-size:46px;border-width:3px;margin:2px auto 0;display:block;box-sizing:border-box}
+#portalModal .pt-av.pt-av-ed img{position:absolute;left:-3px;top:-3px;width:112px;height:112px;margin:0;border-width:3px;box-sizing:border-box;display:block}
+#portalModal .pt-av .pt-cam{width:32px;height:32px;line-height:32px;font-size:17px;right:2px;bottom:2px}
+#portalModal .pt-avh{display:inline-block;margin-top:6px;padding:3px 12px;border-radius:14px;background:rgba(255,255,255,.22);font-size:12px;font-weight:800;cursor:pointer}
+#portalModal .pt-nm{font-size:17px;margin-top:6px}
+#portalModal .pt-sw{position:static;display:block;margin:8px auto 0}
 </style>
 <style id="mcsLogin218">
 /* MCS0811SU218 (مالک کا حکم): لاگ اِن فارم چھوٹا — اسکرول کے اندر اسکرول نہیں */
