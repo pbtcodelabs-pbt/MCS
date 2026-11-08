@@ -2621,7 +2621,7 @@ body.cdOn{padding-top:30px}
       sh.classList.add('show'); sh.classList.toggle('passive', !!passive); w.classList.add('show'); try{ this.peek(); }catch(e){}
     },
     /* AppUpd.peek (ہیلپ ڈیسک #136، مالک کا حکم): اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور کیا بدلا — نئی فائل سرور سے پڑھ کر */
-    oldVer: function(){ var v=''; try{ v=window.APP_VERSION||''; }catch(e){} if(!v){ try{ v=APP_VERSION; }catch(e){} } if(!v){ try{ v=APP_BUILD_VERSION; }catch(e){} } if(!v){ try{ v=V; }catch(e){} } return String(v||''); },
+    oldVer: function(){ var v=window.APP_UPD_OLD||''; if(!v){ try{ v=window.APP_VERSION||''; }catch(e){} } if(!v){ try{ v=APP_VERSION; }catch(e){} } if(!v){ try{ v=APP_BUILD_VERSION; }catch(e){} } if(!v){ try{ v=V; }catch(e){} } return String(v||''); },
     peek: function(){
       var self=this, w=document.getElementById('aupdWait'); if(!w) return; var box=w.querySelector('.aw-v'); if(!box) return;
       var oldV=self.oldVer(), url=(window.APP_UPD_SRC||'')||location.pathname;
@@ -4130,10 +4130,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU235";
+const APP_VERSION = "MCS0811SU236";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0811SU236": "⚡ امپورٹ بہت تیز اور رکے بغیر: 300 کے گروپ، 3 ایک ساتھ، خودکار دوبارہ کوشش",
   "MCS0811SU235": "📥 امپورٹ آسان: صرف دو ضروری بٹن، خلاصہ فوراً بٹن کے نیچے اور اوپر بڑی پراگرس پٹی؛ اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور تبدیلی",
   "MCS0811SU234": "🏪 بلاک 1 (انجمن تاجران فتح پور): پرانے کارڈوں پر مالک کی جگہ دکان کا اصل نام — ایک بٹن سے",
   "MCS0811SU233": "📋 انجمن تاجران فتح پور: بلاک 2، 3، 4، 6، 7 کی فہرستیں (دکان کا نام، مالک، موبائل) — دہرا نمبر / نام خود نہیں لگتا",
@@ -9904,35 +9905,47 @@ async function runImport(noConfirm){
     const user = FB.auth.currentUser;
     if(!user) throw Object.assign(new Error('ایڈمن لاگ اِن نہیں ملا'), {code:'no-user'});
     const token = await withTimeout(user.getIdToken(), 20000);
-    const CH = 50, TRIES = 3;
-    for(let i=0; i<todo.length; i+=CH){
-      const chunk = todo.slice(i, i+CH);
+    /* MCS0811SU236 (مالک کا حکم: «الٹرا سپیڈ»، امپورٹ بیچ میں رکتا تھا): 300 کا ایک گروپ، 3 گروپ ایک ساتھ، ہر گروپ 45 سیکنڈ تک + 4 کوششیں؛
+       امپورٹ کے دوران فائربیس کی لائیو فہرست کا بھاری کام (ہر 50 پر پوری فہرست محفوظ + اسکرین) رکا (`_impBusy`)؛ فون میں محفوظ صرف آخر میں؛ اسکرین بند نہ ہو (wakeLock) */
+    const CH = 300, PAR = 3, TRIES = 4;
+    window._impBusy = true;
+    let wl = null; try{ if(navigator.wakeLock) wl = await navigator.wakeLock.request('screen'); }catch(_){}
+    const haveIds = new Set(store.services.map(s=>s.fsId || s.id));
+    const groups = []; for(let i=0; i<todo.length; i+=CH) groups.push(todo.slice(i, i+CH));
+    let gDone = 0, failed = null, next = 0;
+    const sendGroup = async (chunk)=>{
       const writes = chunk.map(it=>{ const xx = {...it.x}; delete xx._cnic; return fsWrite('services', it.id, cleanFsPayload({...xx, approved:true, source:'import'}), 'createdAt'); });
       let ok = false, lastErr = null;
-      for(let t=1; t<=TRIES && !ok; t++){
-        stage = `گروپ ${urduDigits(Math.floor(i/CH)+1)} / ${urduDigits(Math.ceil(todo.length/CH))} سرور کو بھیجا جا رہا ہے (کوشش ${urduDigits(t)})`; showProg();
-        try{ await fsRestCommit(token, writes, 25000); ok = true; }
-        catch(e){ lastErr = e; if(e.code === 'permission-denied') break; note = `⚠️ رکاوٹ (${e.code}) — دوبارہ کوشش`; showProg(); await new Promise(r=>setTimeout(r, 800)); }
+      for(let t=1; t<=TRIES && !ok && !failed; t++){
+        try{ await fsRestCommit(token, writes, 45000); ok = true; }
+        catch(e){ lastErr = e; if(e.code === 'permission-denied') break; note = `⚠️ رکاوٹ (${e.code}) — دوبارہ کوشش ${urduDigits(t+1)}`; showProg(); await new Promise(r=>setTimeout(r, 1000*t)); }
       }
       if(!ok) throw lastErr || {code:'error'};
-      note = '';
       chunk.forEach(it=>{
         const cn = String(it.x._cnic || '').replace(/\D/g,''); const xx = {...it.x}; delete xx._cnic;
         if(cn.length === 13) cnicAll.push({id: it.id, cn, nameUr: xx.nameUr || '', whatsapp: xx.whatsapp || ''});
-        if(!store.services.some(s=>s.fsId===it.id)) store.services.push({...xx, id: it.id, fsId: it.id, approved:true, synced:true, createdAt:stamp, updatedAt:stamp});
+        if(!haveIds.has(it.id)){ haveIds.add(it.id); store.services.push({...xx, id: it.id, fsId: it.id, approved:true, synced:true, createdAt:stamp, updatedAt:stamp}); }
       });
-      saveStore();
-      done += chunk.length;
-      showProg();
+      done += chunk.length; gDone++; note = '';
+      stage = `گروپ ${urduDigits(gDone)} / ${urduDigits(groups.length)} مکمل`; showProg();
+    };
+    const worker = async ()=>{ while(!failed && next < groups.length){ const g = groups[next++]; try{ await sendGroup(g); }catch(e){ failed = e; } } };
+    try{
+      stage = `${urduDigits(groups.length)} گروپ — ${urduDigits(PAR)} ایک ساتھ سرور کو بھیجے جا رہے ہیں`; showProg();
+      await Promise.all(Array.from({length: Math.min(PAR, groups.length)}, worker));
+    } finally {
+      window._impBusy = false;
+      try{ saveStore(); }catch(_){}
+      try{ if(wl) wl.release(); }catch(_){}
     }
+    if(failed) throw failed;
     let cnicMsg = '';
     if(cnicAll.length){
       stage = 'شناختی کارڈ نمبر محفوظ ہو رہے ہیں'; showProg();
       try{ const m = JSON.parse(localStorage.getItem('mcsRegCnic') || '{}'); cnicAll.forEach(c=>{ m[c.id] = c.cn; }); localStorage.setItem('mcsRegCnic', JSON.stringify(m)); }catch(e){}
       try{
-        for(let i=0; i<cnicAll.length; i+=100){
-          await fsRestCommit(token, cnicAll.slice(i, i+100).map(c=>fsWrite('regPrivate', c.id, {cnic:c.cn, nameUr:c.nameUr, whatsapp:c.whatsapp, ts:Date.now()})), 20000);
-        }
+        const cg = []; for(let i=0; i<cnicAll.length; i+=400) cg.push(cnicAll.slice(i, i+400));
+        await Promise.all(cg.map(g=>fsRestCommit(token, g.map(c=>fsWrite('regPrivate', c.id, {cnic:c.cn, nameUr:c.nameUr, whatsapp:c.whatsapp, ts:Date.now()})), 45000)));
       }catch(e){ cnicMsg = `<br><span style="color:#b45309;font-size:12px;">ℹ️ کارڈ سب بن گئے، مگر شناختی کارڈ نمبر سرور پر محفوظ نہیں ہوئے (${escapeHtml((e&&e.code)||'error')}) — Firestore rules میں regPrivate کی اجازت چاہیے۔ یہ نمبر فی الحال اس فون میں محفوظ ہیں۔</span>`; }
     }
     clearInterval(tick);
@@ -10952,6 +10965,7 @@ function initFirebaseSync(){
     const colRef = FB.collection(FB.db, col);
     const approvedQ = FB.query(colRef, FB.where('approved','==', true));
     FB.onSnapshot(approvedQ, {includeMetadataChanges:true}, (snap)=>{
+      if(window._impBusy) return; /* MCS0811SU236: امپورٹ کے دوران بھاری کام نہیں — ختم ہوتے ہی اگلی تبدیلی پر سب ملاپ */
       const arr = localArrayFor(col);
       /* MCS29SEPTU0344AM: سرور کی تازہ مکمل فہرست آنے پر وہ منظور شدہ اندراجات ہٹا دیں جو
          سرور سے ڈیلیٹ ہو چکے ہیں (ایپ بند تھی تو 'removed' نہیں ملا تھا)۔ */
@@ -14559,7 +14573,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU235" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU236" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
