@@ -4130,10 +4130,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU235";
+const APP_VERSION = "MCS0811SU236";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0811SU236": "📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
   "MCS0811SU235": "📥 امپورٹ آسان: صرف دو ضروری بٹن، خلاصہ فوراً بٹن کے نیچے اور اوپر بڑی پراگرس پٹی؛ اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور تبدیلی",
   "MCS0811SU234": "🏪 بلاک 1 (انجمن تاجران فتح پور): پرانے کارڈوں پر مالک کی جگہ دکان کا اصل نام — ایک بٹن سے",
   "MCS0811SU233": "📋 انجمن تاجران فتح پور: بلاک 2، 3، 4، 6، 7 کی فہرستیں (دکان کا نام، مالک، موبائل) — دہرا نمبر / نام خود نہیں لگتا",
@@ -9883,7 +9884,13 @@ async function runImport(noConfirm){
   if(!noConfirm && !confirm(`${all.length} اندراجات منظور شدہ حالت میں سب کے لیے شائع ہو جائیں گے۔ جاری رکھیں؟`)) return;
   const btn = document.getElementById('importGoBtn'); if(btn){ btn.disabled = true; btn.style.opacity = .6; }
   const prog = document.getElementById('importProgress');
-  const stamp = Date.now();
+  const sig = all.length + '|' + String((all[0]&&all[0].nameUr)||'') + '|' + String((all[all.length-1]&&all[all.length-1].nameUr)||'');
+  let stamp = Date.now();
+  try{ const sv = JSON.parse(localStorage.getItem('mcsImpStamp')||'null'); if(sv && sv.sig === sig && sv.stamp) stamp = sv.stamp; else localStorage.setItem('mcsImpStamp', JSON.stringify({sig, stamp})); }catch(_){}
+  let wl = null;
+  const onVis = ()=>{ try{ if(document.visibilityState === 'visible' && navigator.wakeLock) navigator.wakeLock.request('screen').then(x=>{ wl = x; }).catch(()=>{}); }catch(_){} };
+  try{ if(navigator.wakeLock) wl = await navigator.wakeLock.request('screen'); }catch(_){}
+  document.addEventListener('visibilitychange', onVis);
   const withTimeout = (p, ms)=>Promise.race([p, new Promise((_, rej)=>setTimeout(()=>rej({code:'timeout'}), ms))]);
   const items = all.map((x, k)=>({x, id: 'imp_p' + (String(x.whatsapp||'').replace(/\D/g,'') || (stamp + '_' + k))}));
   const have = new Set(store.services.map(s=>s.fsId || s.id));
@@ -9903,28 +9910,43 @@ async function runImport(noConfirm){
     stage = 'ایڈمن کی اجازت (ٹوکن) لی جا رہی ہے'; showProg();
     const user = FB.auth.currentUser;
     if(!user) throw Object.assign(new Error('ایڈمن لاگ اِن نہیں ملا'), {code:'no-user'});
-    const token = await withTimeout(user.getIdToken(), 20000);
-    const CH = 50, TRIES = 3;
-    for(let i=0; i<todo.length; i+=CH){
-      const chunk = todo.slice(i, i+CH);
+    let token = await withTimeout(user.getIdToken(), 20000);
+    let CH = 100, okStreak = 0, fails = 0, refreshed = false, pos = 0, sinceSave = 0;
+    const haveSet = new Set(store.services.map(s=>s.fsId || s.id));
+    const safeSave = ()=>{ try{ saveStore(); }catch(e){} };
+    while(pos < todo.length){
+      const chunk = todo.slice(pos, pos + CH);
       const writes = chunk.map(it=>{ const xx = {...it.x}; delete xx._cnic; return fsWrite('services', it.id, cleanFsPayload({...xx, approved:true, source:'import'}), 'createdAt'); });
+      for(let w=0; w<60 && navigator.onLine === false; w++){ stage = '📶 انٹرنیٹ بند ہے — چلتے ہی خود آگے بڑھے گا'; showProg(); await new Promise(r=>setTimeout(r, 1000)); }
+      stage = `کارڈ ${urduDigits(done+1)} سے ${urduDigits(done+chunk.length)} تک سرور کو بھیجے جا رہے ہیں (گروپ ${urduDigits(chunk.length)}، ناکامیاں ${urduDigits(fails)})`; showProg();
       let ok = false, lastErr = null;
-      for(let t=1; t<=TRIES && !ok; t++){
-        stage = `گروپ ${urduDigits(Math.floor(i/CH)+1)} / ${urduDigits(Math.ceil(todo.length/CH))} سرور کو بھیجا جا رہا ہے (کوشش ${urduDigits(t)})`; showProg();
-        try{ await fsRestCommit(token, writes, 25000); ok = true; }
-        catch(e){ lastErr = e; if(e.code === 'permission-denied') break; note = `⚠️ رکاوٹ (${e.code}) — دوبارہ کوشش`; showProg(); await new Promise(r=>setTimeout(r, 800)); }
+      try{ await fsRestCommit(token, writes, 30000); ok = true; }
+      catch(e){
+        lastErr = e;
+        if(e && e.code === 'permission-denied' && !refreshed){ refreshed = true; try{ token = await withTimeout(user.getIdToken(true), 20000); continue; }catch(_){} }
+        if(e && e.code === 'permission-denied') throw e;
       }
-      if(!ok) throw lastErr || {code:'error'};
-      note = '';
+      if(!ok){
+        fails++;
+        if(fails >= 10) throw lastErr || {code:'error'};
+        CH = Math.max(10, Math.floor(CH/2)); okStreak = 0;
+        note = `⚠️ رکاوٹ (${(lastErr&&lastErr.code)||'error'}) — گروپ چھوٹا کر کے دوبارہ بھیج رہا ہوں`; showProg();
+        await new Promise(r=>setTimeout(r, Math.min(800 * Math.pow(2, fails-1), 8000)));
+        continue;
+      }
+      fails = 0; note = '';
       chunk.forEach(it=>{
         const cn = String(it.x._cnic || '').replace(/\D/g,''); const xx = {...it.x}; delete xx._cnic;
         if(cn.length === 13) cnicAll.push({id: it.id, cn, nameUr: xx.nameUr || '', whatsapp: xx.whatsapp || ''});
-        if(!store.services.some(s=>s.fsId===it.id)) store.services.push({...xx, id: it.id, fsId: it.id, approved:true, synced:true, createdAt:stamp, updatedAt:stamp});
+        if(!haveSet.has(it.id)){ haveSet.add(it.id); store.services.push({...xx, id: it.id, fsId: it.id, approved:true, synced:true, createdAt:stamp, updatedAt:stamp}); }
       });
-      saveStore();
-      done += chunk.length;
+      done += chunk.length; pos += chunk.length; sinceSave += chunk.length;
+      if(++okStreak >= 3 && CH < 200){ CH = Math.min(200, CH + 50); okStreak = 0; }
+      if(sinceSave >= 600){ safeSave(); sinceSave = 0; }
       showProg();
+      await new Promise(r=>setTimeout(r, 20));   /* سکرین کو سانس لینے دیں تاکہ فون نہ اٹکے */
     }
+    safeSave();
     let cnicMsg = '';
     if(cnicAll.length){
       stage = 'شناختی کارڈ نمبر محفوظ ہو رہے ہیں'; showProg();
@@ -9935,19 +9957,21 @@ async function runImport(noConfirm){
         }
       }catch(e){ cnicMsg = `<br><span style="color:#b45309;font-size:12px;">ℹ️ کارڈ سب بن گئے، مگر شناختی کارڈ نمبر سرور پر محفوظ نہیں ہوئے (${escapeHtml((e&&e.code)||'error')}) — Firestore rules میں regPrivate کی اجازت چاہیے۔ یہ نمبر فی الحال اس فون میں محفوظ ہیں۔</span>`; }
     }
-    clearInterval(tick);
+    clearInterval(tick); try{ localStorage.removeItem('mcsImpStamp'); }catch(_){}
     importReady = []; nlRows = []; try{ const t = document.getElementById('nlText'); if(t) t.value = ''; }catch(e){}
     try{ impTop(total, total, 'کارڈ ایپ میں لگ گئے'); }catch(_){}
     showToast(`${done} اندراجات امپورٹ ہو گئے ✓`);
     if(prog) prog.innerHTML = `<b style="color:#047857;">✓ ${urduDigits(done)} اندراجات امپورٹ ہو گئے</b>${cnicMsg}`;
     if(btn) btn.remove();
   }catch(e){
-    clearInterval(tick);
+    clearInterval(tick); try{ saveStore(); }catch(_){}
     const _c = (e&&e.code)||'error', _d = (e && (e.detail || e.message)) || '';
     const _why = _c==='timeout' ? 'سرور سے جواب نہیں آیا — انٹرنیٹ دیکھیں، پھر یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا' : _c==='permission-denied' ? 'Firebase Rules نے services میں لکھنے کی اجازت نہیں دی' : _c==='network' ? 'نیٹ سے رابطہ نہیں ہو سکا — کنکشن دیکھیں اور یہی بٹن دوبارہ دبائیں' : 'یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا';
     try{ impTop(null); }catch(_){}
     if(prog) prog.innerHTML = `<span style="color:#b91c1c;">رکاوٹ آ گئی (${escapeHtml(_c)}) — ${urduDigits(done)} / ${urduDigits(total)} محفوظ ہو چکے ہیں۔ ${_why}۔</span><div style="direction:ltr;font-size:11px;color:#475569;margin-top:4px;word-break:break-all;">${escapeHtml(String(_d).slice(0,300))}</div>`;
     if(btn){ btn.disabled = false; btn.style.opacity = 1; }
+  }finally{
+    document.removeEventListener('visibilitychange', onVis); try{ if(wl) wl.release(); }catch(_){}
   }
 }
 /* MCS2710TU067: ٹوٹے ہوئے نام — [شناخت، خانہ، پرانا ٹوٹا نام، درست نام]۔ صرف تب بدلے جب فائربیس میں ابھی بھی بالکل پرانا ٹوٹا نام ہو */
