@@ -2570,6 +2570,10 @@ body.cdOn{padding-top:30px}
   +   'box-shadow:0 10px 28px rgba(0,0,0,.35);font-family:inherit;overflow:hidden}'
   + '.aupd-wait.show{display:flex;animation:aupdDrop .35s ease}'
   + '.aupd-wait .aw-t{font-size:15px;font-weight:800;line-height:1.5}.aupd-wait .aw-s{font-size:12px;opacity:.9;line-height:1.6}'
+  + '.aupd-wait .aw-v{display:none;margin-top:4px;font-size:12px;line-height:1.6}.aupd-wait .aw-v.on{display:block}'
+  + '.aupd-wait .aw-v .vv{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;direction:ltr;unicode-bidi:isolate}'
+  + '.aupd-wait .aw-v .vo{opacity:.75;text-decoration:line-through}.aupd-wait .aw-v .vn{background:#fde68a;color:#0d3b66;border-radius:8px;padding:0 7px;font-weight:800}'
+  + '.aupd-wait .aw-v .vt{display:block;margin-top:3px;padding:4px 8px;border-radius:9px;background:rgba(255,255,255,.14);font-weight:700;max-height:22vh;overflow:auto;overflow-wrap:anywhere}'
   + '.aupd-wait .aw-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:repeating-linear-gradient(-45deg,#fde68a 0 10px,#f59e0b 10px 20px);background-size:28px 28px;animation:aupdMove .7s linear infinite}'
   + '.aupd-glass{width:22px;height:30px;flex:0 0 auto;animation:aupdFlip 2.4s ease-in-out infinite}'
   + '.aupd-glass .sa{animation:aupdTop 2.4s linear infinite;transform-origin:50% 100%}.aupd-glass .sb{animation:aupdBot 2.4s linear infinite;transform-origin:50% 100%}'
@@ -2610,18 +2614,35 @@ body.cdOn{padding-top:30px}
     waiting: function(sub, passive){
       css();
       var sh = el('aupdShield','aupd-shield');
-      var w = el('aupdWait','aupd-wait', GLASS + '<div><div class="aw-t"></div><div class="aw-s"></div></div><div class="aw-bar"></div>');
+      var w = el('aupdWait','aupd-wait', GLASS + '<div><div class="aw-t"></div><div class="aw-s"></div><div class="aw-v"></div></div><div class="aw-bar"></div>');
       w.setAttribute('dir', dir); w.setAttribute('role','status');
       w.querySelector('.aw-t').textContent = T.wait;
       w.querySelector('.aw-s').textContent = sub || T.waitSub;
-      sh.classList.add('show'); sh.classList.toggle('passive', !!passive); w.classList.add('show');
+      sh.classList.add('show'); sh.classList.toggle('passive', !!passive); w.classList.add('show'); try{ this.peek(); }catch(e){}
+    },
+    /* AppUpd.peek (ہیلپ ڈیسک #136، مالک کا حکم): اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور کیا بدلا — نئی فائل سرور سے پڑھ کر */
+    oldVer: function(){ var v=''; try{ v=window.APP_VERSION||''; }catch(e){} if(!v){ try{ v=APP_VERSION; }catch(e){} } if(!v){ try{ v=APP_BUILD_VERSION; }catch(e){} } if(!v){ try{ v=V; }catch(e){} } return String(v||''); },
+    peek: function(){
+      var self=this, w=document.getElementById('aupdWait'); if(!w) return; var box=w.querySelector('.aw-v'); if(!box) return;
+      var oldV=self.oldVer(), url=(window.APP_UPD_SRC||'')||location.pathname;
+      fetch(url+(url.indexOf('?')<0?'?':'&')+'aupd='+Date.now(), {cache:'no-store'}).then(function(r){ return r.ok?r.text():''; }).then(function(t){
+        if(!t) return;
+        var m=t.match(/(?:APP_VERSION|APP_BUILD_VERSION|const\s+V)\s*=\s*["']([A-Za-z0-9]+)["']/); var nv=m?m[1]:'';
+        if(!nv || nv===oldV) return;
+        var note='', nm=t.match(new RegExp('["\']'+nv+'["\']\\s*:\\s*(["\'])((?:\\\\.|(?!\\1).)*)\\1'));
+        if(nm) note=nm[2]; else { var u=t.match(/UPDATE_NOTE\s*=\s*(["'`])((?:\\.|(?!\1).)*)\1/); if(u) note=u[2]; }
+        note=note.replace(/\\n/g,' ').replace(/\\(["'\\])/g,'$1');
+        box.innerHTML='<span class="vv">'+(oldV?'<span class="vo">'+esc(oldV)+'</span> → ':'')+'<span class="vn">'+esc(nv)+'</span></span>'
+          +(note?'<span class="vt">🛠️ '+esc(note)+'</span>':'');
+        box.classList.add('on'); self._peekV=nv; self._peekNote=note;
+      }).catch(function(){});
     },
     hideWaiting: function(){
       var w=document.getElementById('aupdWait'), sh=document.getElementById('aupdShield');
       if(w) w.classList.remove('show'); if(sh) sh.classList.remove('show','passive');
     },
     isWaiting: function(){ var w=document.getElementById('aupdWait'); return !!(w && w.classList.contains('show')); },
-    done: function(oldV, newV, note){
+    done: function(oldV, newV, note){ if(!note && this._peekNote && this._peekV===newV) note=this._peekNote;
       css(); this.hideWaiting();
       var ov = el('aupdDone','aupd-ov');
       ov.setAttribute('dir', dir);
@@ -3663,23 +3684,16 @@ body.cdOn{padding-top:30px}
       <!-- MCS0711SA191: ایک سادہ «نئی لسٹ شامل کریں» — کیٹگری چنیں، فائل چنیں یا نمبر چسپاں کریں، ایک بٹن -->
       <div class="backup-card" id="adminImportBox" style="display:none;">
         <div class="backup-card-title">📥 نئی لسٹ شامل کریں</div>
-        <div class="cp-hint" style="margin-bottom:10px;">1) کیٹگری چنیں &nbsp; 2) فائل چنیں یا نام اور نمبر چسپاں کریں &nbsp; 3) «امپورٹ» دبائیں۔ غلط، دہرے اور ایپ میں پہلے سے موجود نمبر خود چھوڑ دیے جاتے ہیں۔ شناختی کارڈ ہو تو الگ محفوظ ہوتا ہے۔</div>
+        <div class="cp-hint" style="margin-bottom:10px;line-height:1.9;">① نیچے والا بٹن دبائیں ← ② فوراً نیچے خلاصہ آئے گا (کتنے نئے کارڈ، کتنے چھوڑے) ← ③ «📥 … امپورٹ کریں» دبائیں ← اوپر پراگرس بار چلے گی، مکمل ہونے پر ✓ لکھا آئے گا۔</div>
+        <button class="btn block" style="margin-top:4px;background:#0f766e;color:#fff;font-weight:800;font-size:16px;" onclick="prepTajranAll()">📥 انجمن تاجران فتح پور — سب بلاک (1 سے 7) کے نئے کارڈ</button>
+        <button class="btn block" style="margin-top:8px;background:#1d4ed8;color:#fff;font-weight:800;font-size:16px;" onclick="prepB1ShopNames()">🏪 بلاک 1 — پرانے کارڈوں پر دکان کا اصل نام لگائیں</button>
+        <div id="importPreview" style="margin-top:10px;"></div>
+        <details style="margin-top:12px;border:1px dashed #94a3b8;border-radius:12px;padding:8px 10px;"><summary style="font-weight:800;cursor:pointer;">➕ کوئی اور نئی لسٹ (PDF / Excel / چسپاں کریں)</summary>
         <select id="nlCat" class="ag-big" onfocus="nlFillCats()" onchange="nlReparse()" style="width:100%;margin-bottom:8px;"><option value="">— کیٹگری چنیں —</option></select>
         <div style="display:flex;gap:8px;margin-bottom:8px;">
           <input id="nlCity" type="text" placeholder="شہر" oninput="nlReparse()" style="flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid #d8dee4;">
           <input id="nlDist" type="text" placeholder="ضلع" oninput="nlReparse()" style="flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid #d8dee4;">
         </div>
-        <button class="btn block accent" onclick="prepTajran()">📋 انجمن تاجران فتح پور کی لسٹ — خود کیٹگریوں میں تقسیم (فائل یا کیٹگری چننے کی ضرورت نہیں)</button>
-        <button class="btn block accent" style="margin-top:8px;" onclick="prepTajranB5()">📋 انجمن تاجران — بلاک ۵ (ڈاکٹر اعظم ہسپتال روڈ تا چک 107/ML) — ایک بٹن</button>
-        <button class="btn block accent" style="margin-top:8px;" onclick="prepTajranList(TAJRAN_K7, 'بلاک 7 (چک 250 / 247 ٹی ڈی اے)')">📋 انجمن تاجران — بلاک 7 (چک 250 / 247 ٹی ڈی اے)</button>
-        <button class="btn block accent" style="margin-top:8px;" onclick="prepTajranList(TAJRAN_K61, 'نیو غلہ منڈی فتح پور (بلاک 6)')">📋 انجمن تاجران — نیو غلہ منڈی فتح پور (بلاک 6)</button>
-        <button class="btn block" style="margin-top:8px;background:#1d4ed8;color:#fff;font-weight:700;" onclick="prepB1ShopNames()">🏪 بلاک 1 — پرانے کارڈوں پر دکان کا اصل نام لگائیں</button>
-        <button class="btn block accent" style="margin-top:8px;" onclick="prepTajranList(TAJRAN_B4, 'بلاک 4')">📋 انجمن تاجران — بلاک 4</button>
-        <button class="btn block accent" style="margin-top:8px;" onclick="prepTajranList(TAJRAN_B3A, 'بلاک 3 (پہلا حصہ)')">📋 انجمن تاجران — بلاک 3 (پہلا حصہ)</button>
-        <button class="btn block accent" style="margin-top:8px;" onclick="prepTajranList(TAJRAN_B3B, 'بلاک 3 (دوسرا حصہ)')">📋 انجمن تاجران — بلاک 3 (دوسرا حصہ)</button>
-        <button class="btn block accent" style="margin-top:8px;" onclick="prepTajranList(TAJRAN_B2, 'بلاک 2')">📋 انجمن تاجران — بلاک 2</button>
-        <button class="btn block" style="margin-top:8px;background:#0f766e;color:#fff;font-weight:700;" onclick="prepTajranAll()">📥 سب بلاک ایک ساتھ (1 سے 7) — دہرا نمبر / نام خود چھوڑ دے گا</button>
-        <div class="cp-hint" style="margin:10px 0 4px;text-align:center;">یا کوئی بھی نئی لسٹ — PDF</div>
         <button class="btn block accent" onclick="document.getElementById('pdfFileInput').click()">📄 PDF لسٹ چنیں — نام، موبائل، شناختی کارڈ، کیٹگری خود</button>
         <input type="file" id="pdfFileInput" accept=".pdf,application/pdf" style="display:none;" onchange="pdfChosen(this)">
         <div class="cp-hint" style="margin:4px 0 0;text-align:center;font-size:12px;">دکان کا نام جوں کا توں • مالک بغیر ولدیت • خراب / ادھورے / دہرے موبائل نہیں • دو نمبر: ایک مین، ایک واٹس ایپ</div>
@@ -3688,7 +3702,7 @@ body.cdOn{padding-top:30px}
         <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv,.txt" style="display:none;" onchange="nlFileChosen(this)">
         <div class="cp-hint" style="margin:8px 0 4px;text-align:center;">یا</div>
         <textarea id="nlText" rows="5" placeholder="یہاں نام اور نمبر چسپاں کریں — ہر لائن میں ایک ریکارڈ، مثلاً:&#10;ناصر عباس 0306-8665872 32304-5425775-1" oninput="nlTextInput()" style="width:100%;box-sizing:border-box;padding:10px;border-radius:10px;border:1px solid #d8dee4;font-family:inherit;"></textarea>
-        <div id="importPreview" style="margin-top:10px;"></div>
+        </details>
       </div>
 
       <hr style="margin:16px 0;border:none;border-top:1px solid #e5e7eb;">
@@ -4116,10 +4130,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU234";
+const APP_VERSION = "MCS0811SU235";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0811SU235": "📥 امپورٹ آسان: صرف دو ضروری بٹن، خلاصہ فوراً بٹن کے نیچے اور اوپر بڑی پراگرس پٹی؛ اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور تبدیلی",
   "MCS0811SU234": "🏪 بلاک 1 (انجمن تاجران فتح پور): پرانے کارڈوں پر مالک کی جگہ دکان کا اصل نام — ایک بٹن سے",
   "MCS0811SU233": "📋 انجمن تاجران فتح پور: بلاک 2، 3، 4، 6، 7 کی فہرستیں (دکان کا نام، مالک، موبائل) — دہرا نمبر / نام خود نہیں لگتا",
   "MCS0811SU217": "✅ امپورٹ اب سیدھی Firestore REST سے — ہر قدم سکرین پر لکھا آتا ہے اور ناکامی پر سرور کا اصل جواب نظر آتا ہے",
@@ -9463,7 +9478,7 @@ function prepTajran(){
     </div>
     ${importReady.length ? `<button class="btn block accent" style="margin-top:10px;" id="importGoBtn" onclick="runImport(true)">📥 ${urduDigits(importReady.length)} کارڈ اپنی اپنی کیٹگری میں امپورٹ کریں</button>` : '<div class="cp-hint" style="margin-top:6px;">✓ سب ریکارڈ پہلے ہی ایپ میں ہیں</div>'}
     <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
-  document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
+  impShowPreview();
 }
 function prepFatehpurNew(){
   const have = new Set([...store.services, ...store.doctors].map(x=>x.whatsapp).filter(Boolean));
@@ -9477,7 +9492,7 @@ function prepFatehpurNew(){
     </div>
     ${importReady.length ? `<button class="btn block accent" style="margin-top:10px;" id="importGoBtn" onclick="runImport()">📥 ${urduDigits(importReady.length)} اندراجات امپورٹ کریں</button>` : '<div class="cp-hint" style="margin-top:6px;">✓ سب ریکارڈ پہلے ہی ایپ میں ہیں</div>'}
     <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
-  document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
+  impShowPreview();
 }
 /* ===== MCS0711SA195 (مالک کا حکم): 📄 PDF لسٹ — ہر آنے والی لسٹ ایک ہی طریقے سے =====
    PDF (کمپیوٹر سے بنی ہوئی) → قطاریں اور خانے (کالم) پہچانے جاتے ہیں → ہر کالم کا کردار خود چنا جاتا ہے (بدل بھی سکتے ہیں) →
@@ -9695,7 +9710,7 @@ async function pdfChosen(inp){
   const file = inp.files && inp.files[0]; inp.value = ''; if(!file) return;
   try{ nlFillCats(); }catch(e){}
   const box = document.getElementById('importPreview'); box.innerHTML = '<div class="cp-hint">📄 PDF پڑھی جا رہی ہے…</div>';
-  document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
+  impShowPreview();
   try{
     let ex; try{ ex = await pdfExtract(file, (p, n)=>{ box.innerHTML = `<div class="cp-hint">📄 PDF پڑھی جا رہی ہے… صفحہ ${urduDigits(p)} / ${urduDigits(n)}</div>`; }); }
     catch(e){ box.innerHTML = '<div class="cp-hint" style="color:#b91c1c;">PDF پڑھنے کا پروگرام لوڈ نہیں ہوا یا فائل خراب ہے — انٹرنیٹ چیک کریں</div>'; return; }
@@ -9812,6 +9827,21 @@ function nlBuild(){
     ${out.length ? `<button class="btn block accent" style="margin-top:10px;" id="importGoBtn" onclick="runImport(true)">📥 ${urduDigits(out.length)} اندراجات امپورٹ کریں</button>` : (nlRows.length ? '<div class="cp-hint" style="margin-top:6px;">کوئی نیا ریکارڈ نہیں ملا</div>' : '')}
     <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
 }
+
+/* MCS0811SU235 (مالک کا حکم): امپورٹ / نام لگانے کے دوران اسکرین کے سب سے اوپر بڑی پراگرس پٹی */
+function impShowPreview(){ const e = document.getElementById('importPreview'); if(e) setTimeout(()=>e.scrollIntoView({behavior:'smooth', block:'start'}), 60); }
+function impTop(done, total, label){
+  let b = document.getElementById('impTopBar');
+  if(!b){ b = document.createElement('div'); b.id = 'impTopBar'; b.setAttribute('dir','rtl');
+    b.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:2147483640;background:#0f172a;color:#fff;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;box-shadow:0 4px 16px rgba(0,0,0,.35);font-family:inherit;';
+    document.body.appendChild(b); }
+  if(done === null){ b.style.display = 'none'; return; }
+  const pct = total ? Math.round(done*100/total) : 0, fin = total && done >= total;
+  b.style.display = 'block';
+  b.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800;gap:8px;"><span>${fin ? '✅' : '⏳'} ${escapeHtml(label||'')}</span><span dir="ltr" style="font-family:MCSDigits,Arial,sans-serif;">${done} / ${total} (${pct}%)</span></div>
+    <div style="height:14px;background:#334155;border-radius:9px;overflow:hidden;margin-top:6px;"><div style="height:100%;width:${Math.max(pct,3)}%;background:${fin ? '#22c55e' : 'repeating-linear-gradient(-45deg,#fbbf24 0 10px,#f59e0b 10px 20px)'};transition:width .3s;"></div></div>`;
+  if(fin){ clearTimeout(b._t); b._t = setTimeout(()=>{ b.style.display = 'none'; }, 6000); }
+}
 /* MCS0811SU217: امپورٹ اب Firebase SDK کی بجائے سیدھی Firestore REST سے — SDK کی قطار/IndexedDB میں اٹکنے کا مسئلہ ختم، اور ہر ناکامی کا اصل جواب سکرین پر */
 const FS_PROJECT = 'my-city-shines';
 function fsValue(v){
@@ -9861,6 +9891,7 @@ async function runImport(noConfirm){
   const total = all.length; let done = total - todo.length; const cnicAll = [];
   let note = '', stage = 'شروع', tick = null; const t0 = Date.now();
   const showProg = ()=>{
+    try{ impTop(done, total, done >= total ? 'کارڈ ایپ میں لگ گئے' : 'کارڈ ایپ میں لگ رہے ہیں…'); }catch(_){}
     const pct = Math.round(done*100/total);
     const sec = Math.round((Date.now()-t0)/1000), net = navigator.onLine === false ? ' — ❌ فون آف لائن ہے' : '';
     if(prog) prog.innerHTML = `<div style="font-size:13px;margin-bottom:4px;">⏳ بھیجا جا رہا ہے… ${urduDigits(done)} / ${urduDigits(total)} (${urduDigits(pct)}٪) — ${urduDigits(sec)} سیکنڈ${net}</div>
@@ -9906,6 +9937,7 @@ async function runImport(noConfirm){
     }
     clearInterval(tick);
     importReady = []; nlRows = []; try{ const t = document.getElementById('nlText'); if(t) t.value = ''; }catch(e){}
+    try{ impTop(total, total, 'کارڈ ایپ میں لگ گئے'); }catch(_){}
     showToast(`${done} اندراجات امپورٹ ہو گئے ✓`);
     if(prog) prog.innerHTML = `<b style="color:#047857;">✓ ${urduDigits(done)} اندراجات امپورٹ ہو گئے</b>${cnicMsg}`;
     if(btn) btn.remove();
@@ -9913,6 +9945,7 @@ async function runImport(noConfirm){
     clearInterval(tick);
     const _c = (e&&e.code)||'error', _d = (e && (e.detail || e.message)) || '';
     const _why = _c==='timeout' ? 'سرور سے جواب نہیں آیا — انٹرنیٹ دیکھیں، پھر یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا' : _c==='permission-denied' ? 'Firebase Rules نے services میں لکھنے کی اجازت نہیں دی' : _c==='network' ? 'نیٹ سے رابطہ نہیں ہو سکا — کنکشن دیکھیں اور یہی بٹن دوبارہ دبائیں' : 'یہی بٹن دوبارہ دبائیں، وہیں سے آگے چلے گا';
+    try{ impTop(null); }catch(_){}
     if(prog) prog.innerHTML = `<span style="color:#b91c1c;">رکاوٹ آ گئی (${escapeHtml(_c)}) — ${urduDigits(done)} / ${urduDigits(total)} محفوظ ہو چکے ہیں۔ ${_why}۔</span><div style="direction:ltr;font-size:11px;color:#475569;margin-top:4px;word-break:break-all;">${escapeHtml(String(_d).slice(0,300))}</div>`;
     if(btn){ btn.disabled = false; btn.style.opacity = 1; }
   }
@@ -14526,7 +14559,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU234" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU235" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -15413,14 +15446,14 @@ function prepB1ShopNames(){
     });
     b1FixReady = out;
     const box = document.getElementById('importPreview');
-    box.innerHTML = `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;">
+    box.innerHTML = `${out.length ? `<button class="btn block accent" style="margin:0 0 10px;font-size:16px;" id="b1FixBtn" onclick="runB1ShopNames()">🏪 ${urduDigits(out.length)} کارڈوں پر دکان کا نام لگائیں</button>` : ''}
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;">
       <b>🏪 بلاک 1 — دکانوں کے اصل نام: ${urduDigits(out.length)} کارڈ بدلیں گے</b>${same.length ? ` &nbsp;(✓ ${urduDigits(same.length)} پہلے سے درست)` : ''}<br>
       ${out.slice(0,12).map(x=>`• ${escapeHtml(x.old || '—')} ← <b>${escapeHtml(x.ch.nameUr)}</b>`).join('<br>')}${out.length > 12 ? `<br>… اور ${urduDigits(out.length-12)}` : ''}
     </div>
-    ${out.length ? `<button class="btn block accent" style="margin-top:10px;" id="b1FixBtn" onclick="runB1ShopNames()">🏪 ${urduDigits(out.length)} کارڈوں پر دکان کا نام لگائیں</button>` : ''}
     <button class="btn block" style="margin-top:8px;" onclick="prepTajranList(TAJRAN_B1S, 'بلاک 1 (جو ابھی ایپ میں نہیں)')">📋 بلاک 1 کے باقی (جو ایپ میں نہیں) — نئے کارڈ</button>
     <div class="cp-hint" id="b1FixProgress" style="margin-top:6px;"></div>`;
-    document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
+    impShowPreview();
   }catch(e){ showToast('⚠️ ' + (e.message||e)); }
 }
 async function runB1ShopNames(){
@@ -15431,19 +15464,21 @@ async function runB1ShopNames(){
   const btn = document.getElementById('b1FixBtn'); if(btn){ btn.disabled = true; btn.style.opacity = .6; }
   const prog = document.getElementById('b1FixProgress'); let done = 0;
   try{
+    impTop(0, all.length, 'دکانوں کے نام لگ رہے ہیں…');
     const token = await FB.auth.currentUser.getIdToken();
     for(let i=0; i<all.length; i+=100){
       const chunk = all.slice(i, i+100);
       const writes = chunk.map(it=>{ const w = fsWrite('services', it.id, {...it.ch, updatedAt: Date.now()}); w.updateMask = {fieldPaths: Object.keys(it.ch).concat('updatedAt')}; w.currentDocument = {exists: true}; return w; });
       await fsRestCommit(token, writes, 25000);
       chunk.forEach(it=>{ const l = store.services.find(s=>(s.fsId||s.id)===it.id); if(l) Object.assign(l, it.ch); });
-      done += chunk.length; if(prog) prog.textContent = `⏳ ${urduDigits(done)} / ${urduDigits(all.length)}`;
+      done += chunk.length; if(prog) prog.textContent = `⏳ ${urduDigits(done)} / ${urduDigits(all.length)}`; impTop(done, all.length, done >= all.length ? 'دکانوں کے نام لگ گئے' : 'دکانوں کے نام لگ رہے ہیں…');
     }
     saveStore(); if(typeof renderAll==='function') renderAll();
     b1FixReady = [];
     if(prog) prog.innerHTML = `<b style="color:#047857;">✓ ${urduDigits(done)} کارڈوں پر دکان کا نام لگ گیا</b>`;
     showToast(`${done} نام درست ہو گئے ✓`); if(btn) btn.remove();
   }catch(e){
+    impTop(null);
     if(prog) prog.innerHTML = `<span style="color:#b91c1c;">رکاوٹ آ گئی (${escapeHtml((e&&e.code)||'error')}) — ${urduDigits(done)} ہو چکے، دوبارہ دبائیں تو باقی ہوں گے</span>`;
     if(btn){ btn.disabled = false; btn.style.opacity = 1; }
   }
@@ -15490,14 +15525,14 @@ function prepTajranList(LIST, title){
     const nC = out.filter(x=>x._cnic).length, byCat = {}; out.forEach(x=>{ byCat[x.category] = (byCat[x.category]||0)+1; });
     const lab = k=> k === UNASSIGNED_KEY ? '❓ غیر مختص (بعد میں خود چن لیں)' : `${(CATEGORY_META[k] && CATEGORY_META[k].emoji) || '🏷️'} ${escapeHtml((CATEGORY_META[k] && CATEGORY_META[k].ur) || k)}`;
     const box = document.getElementById('importPreview');
-    box.innerHTML = `<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;">
+    box.innerHTML = `${out.length ? `<button class="btn block accent" style="margin:0 0 10px;font-size:16px;" id="importGoBtn" onclick="runImport(true)">📥 ${urduDigits(out.length)} کارڈ اپنی اپنی کیٹگری میں امپورٹ کریں</button>` : '<div class="cp-hint" style="margin-top:6px;">✓ سب ریکارڈ پہلے ہی ایپ میں ہیں</div>'}
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px;font-size:13px;line-height:1.9;">
       <b>📋 انجمن تاجران — ${escapeHtml(title)} — نئے کارڈ: ${urduDigits(out.length)}</b> &nbsp;(🪪 شناختی کارڈ والے: ${urduDigits(nC)})<br>
       ${Object.keys(byCat).sort((p,q)=>(p===UNASSIGNED_KEY)-(q===UNASSIGNED_KEY) || byCat[q]-byCat[p]).map(k=>`${lab(k)}: ${urduDigits(byCat[k])}`).join('<br>')}
-      ${skip.length ? `<hr style="border:none;border-top:1px solid #d1fae5;margin:6px 0;"><b>چھوڑے گئے: ${urduDigits(skip.length)}</b><br>${skip.map(s=>`• ${escapeHtml(s[0])} — ${escapeHtml(s[1])}`).join('<br>')}` : ''}
+      ${skip.length ? `<hr style="border:none;border-top:1px solid #d1fae5;margin:6px 0;"><details><summary style="cursor:pointer;"><b>چھوڑے گئے: ${urduDigits(skip.length)}</b> (دبا کر دیکھیں)</summary>${skip.map(s=>`• ${escapeHtml(s[0])} — ${escapeHtml(s[1])}`).join('<br>')}</details>` : ''}
     </div>
-    ${out.length ? `<button class="btn block accent" style="margin-top:10px;" id="importGoBtn" onclick="runImport(true)">📥 ${urduDigits(out.length)} کارڈ اپنی اپنی کیٹگری میں امپورٹ کریں</button>` : '<div class="cp-hint" style="margin-top:6px;">✓ سب ریکارڈ پہلے ہی ایپ میں ہیں</div>'}
     <div class="cp-hint" id="importProgress" style="margin-top:6px;"></div>`;
-    document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
+    impShowPreview();
   }catch(e){ showToast('⚠️ ' + (e.message||e)); }
 }
 </script>
