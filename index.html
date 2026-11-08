@@ -4107,7 +4107,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU217";
+const APP_VERSION = "MCS0811SU218";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
@@ -11191,7 +11191,7 @@ function agStatusView(r){
     agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><div class="ag-no">❌ آپ کی درخواست منظور نہیں ہوئی</div>${r.note ? `<div class="cp-hint">${E(r.note)}</div>` : ''}<button type="button" class="btn block" onclick="agForm()">📝 دوبارہ درخواست دیں</button>`);
     return;
   }
-  agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><div class="ag-wait">⏳ آپ کی درخواست موصول ہو گئی ہے — جائزہ جاری ہے</div><div class="cp-hint">منظوری کے بعد یہیں آپ کا ایجنٹ کوڈ نظر آئے گا۔</div><button type="button" class="btn block secondary" onclick="agForm()">✏️ درخواست میں تبدیلی</button>`);
+  agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><div class="ag-wait">⏳ آپ کی درخواست ڈویلپر کی منظوری کے لیے پہنچ گئی ہے</div><div class="cp-hint">ریفرل کوڈ ابھی نہیں ملا — منظوری کے بعد ڈویلپر آپ کو تیار میسج بھیجیں گے، اسے لاگ اِن صفحے پر پیسٹ کریں، تب آپ ایجنٹ بن کر کاروبار درج کر سکیں گے۔</div><button type="button" class="btn block secondary" onclick="agForm()">✏️ درخواست میں تبدیلی</button>`);
 }
 /* ===== MCS0611FR170 (مالک کا حکم): پانچ الگ پورٹل — ڈویلپر / کو-ڈویلپر / کاروبار / پروفیشن / عام یوزر =====
    فون اپنی حیثیت یاد رکھتا ہے: ایڈمن لاگ اِن، کو-ڈویلپر لاگ اِن، ممبرشپ (کاروبار / پروفیشن) اور یوزر اکاؤنٹ؛ اوپر کی پٹی دبائیں تو اپنا پورٹل کھلے */
@@ -11455,7 +11455,7 @@ function dgRows(){
   const L = agList.filter(a=> a.status === 'approved' && (!q || ptSearchKey(a).includes(q)));
   return L.length ? L.map(a=>{ const ph = '0' + String(a.phone||'').slice(2), n = a.code ? apRecs(a.code).length : 0;
     return `<div class="ag-card"><b>${E(a.name)}</b> ${a.code ? `<small dir="ltr" onclick="agCopy('${escapeAttr(a.code)}')">${E(a.code)} 📋</small>` : ''}<br>📱 <bdi dir="ltr">${E(ph)}</bdi> · 🏙️ ${E(a.city)} · 🏪 <b>${n}</b> کاروبار
-      <div class="ag-btns"><button type="button" class="ok" onclick="ptPrevAgentGo('${escapeAttr(a.id)}')">👁️ پورٹل</button><a href="tel:${E(ph)}" style="text-decoration:none"><button type="button">📞</button></a><button type="button" onclick="agSendCode('${escapeAttr(a.id)}')">💬 کوڈ بھیجیں</button></div></div>`; }).join('') : '<div class="cp-hint" style="text-align:center">ابھی کوئی ایجنٹ نہیں</div>';
+      <div class="ag-btns"><button type="button" class="ok" onclick="ptPrevAgentGo('${escapeAttr(a.id)}')">👁️ پورٹل</button><a href="tel:${E(ph)}" style="text-decoration:none"><button type="button">📞</button></a><button type="button" onclick="agSendCode('${escapeAttr(a.id)}')">💬 تیار میسج بھیجیں</button></div></div>`; }).join('') : '<div class="cp-hint" style="text-align:center">ابھی کوئی ایجنٹ نہیں</div>';
 }
 function dgFilter(v){ dgQ = v; const b = document.getElementById('dgList'); if(b) b.innerHTML = dgRows(); }
 async function devAgentsOpen(){
@@ -11609,7 +11609,7 @@ function agDocsMark(on){ const me = agMe(); if(!me || !me.phone) return; try{ co
 function agForm(){
   const mine = mpList();
   if(!mine.length){
-    agModal(`<div class="ag-hd">🤝 MCS ایجنٹ بنیں</div><div class="ag-need">ایجنٹ بننے کے لیے پہلے <b>اپنا کاروبار یا پروفیشن</b> ایپ پر درج کریں — پھر یہیں سے درخواست دیں۔</div><button type="button" class="btn block" onclick="closeModal('agModal'); mpStartNew()">➕ اپنا کاروبار / پروفیشن درج کریں</button><button type="button" class="link-btn ag-have" onclick="agPinLogin()">🔑 میں پہلے سے ایجنٹ ہوں — موبائل اور PIN لکھیں</button>`);
+    agModal(`<div class="ag-hd">🤝 MCS ایجنٹ بنیں</div><div class="ag-need">اپنے آپ کو ایجنٹ بنانے کے لیے پہلے <b>اپنا پروفیشن / کاروبار</b> درج کریں؛ ڈویلپر ایک سال کے لیے منظور کریں، پھر ایجنٹ کا فارم (شناختی کارڈ سامنے / پیچھے، سیلفی، نمبر) مکمل کر کے منظوری کے لیے بھیجیں۔</div><button type="button" class="btn block" onclick="closeModal('agModal'); mpStartNew()">➕ اپنا کاروبار / پروفیشن درج کریں</button><button type="button" class="link-btn ag-have" onclick="agPinLogin()">🔑 میں پہلے سے ایجنٹ ہوں — موبائل اور PIN لکھیں</button>`);
     return;
   }
   /* MCS0511TH139 (مالک کا حکم): کم سے کم لکھائی — نام / موبائل / شہر / کاروبار ممبرشپ سے خود؛ لکھنا صرف شناختی کارڈ نمبر؛ باقی «مزید (اختیاری)» */
@@ -11735,7 +11735,7 @@ async function agSend(){
     const p92 = '92' + phone.replace(/^0/,'').replace(/^92/,'').slice(-10);
     localStorage.setItem('mcsAgent', JSON.stringify({phone: p92, name: v('agName'), at: Date.now()}));
     ['front','back','selfie'].forEach(k=> delete agImgs[k]);
-    agStatusView({status: r.status, code: r.code, name: v('agName')});
+    agStatusView({status: 'pending', name: v('agName')});   /* MCS0811SU218: ریفرل کوڈ فارم بھرتے ہی نہیں — ڈویلپر کی منظوری کے بعد ہی */
   }catch(e){ btn.disabled = false; btn.textContent = '📨 درخواست بھیجیں'; err('📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
 }
 /* ---- ایڈمن: درخواستیں، ریفرل کوڈز کی فہرست، ہر کوڈ کے کاروبار ---- */
@@ -12012,7 +12012,7 @@ function agAdminRender(){
         <div class="ag-meta">درخواست: ${new Date(a.at).toLocaleDateString('en-GB')}${a.okAt ? ' · منظور: ' + new Date(a.okAt).toLocaleDateString('en-GB') : ''}${a.code ? ` · <a href="#" onclick="event.preventDefault();agRefShow('${escapeAttr(a.code)}')">🏪 ${refs.length} کاروبار اس کوڈ سے</a>` : ''}</div>
         <div class="ag-imgs" id="agI_${E(a.id)}"><button type="button" onclick="agLoadImgs('${escapeAttr(a.id)}')">🖼️ شناختی کارڈ اور سیلفی دیکھیں</button></div>
         <div class="ag-btns">
-          ${a.status !== 'approved' ? `<button type="button" class="ok" onclick="agAct('${escapeAttr(a.id)}','approve')">✅ منظور + کوڈ</button>` : `<button type="button" onclick="agCopy('${escapeAttr(a.code)}')">📋 کوڈ</button><button type="button" onclick="agSendCode('${escapeAttr(a.id)}')">💬 کوڈ بھیجیں</button>`}
+          ${a.status !== 'approved' ? `<button type="button" class="ok" onclick="agAct('${escapeAttr(a.id)}','approve')">✅ منظور + کوڈ</button>` : `<button type="button" onclick="agCopy('${escapeAttr(a.code)}')">📋 کوڈ</button><button type="button" onclick="agSendCode('${escapeAttr(a.id)}')">💬 تیار میسج بھیجیں</button>`}
           ${a.status !== 'rejected' ? `<button type="button" class="no" onclick="agAct('${escapeAttr(a.id)}','reject')">❌ رد</button>` : ''}
           <button type="button" class="no" onclick="agAct('${escapeAttr(a.id)}','delete')">🗑️</button>
         </div></div>`; }).join('') : '<div class="cp-hint" style="text-align:center">یہاں ابھی کچھ نہیں</div>'}`);
@@ -12036,9 +12036,28 @@ async function agAct(id, op){
     agAdminRender();
   }catch(e){ showToast('⚠️ ' + e.message); }
 }
+/* MCS0811SU218 (مالک کا حکم): منظور شدہ ایجنٹ کا تیار میسج — لاگ اِن صفحے پر پیسٹ ہو تو نام، موبائل، Gmail، ریفرل کوڈ خود آئیں؛ ایجنٹ بن کر داخل */
+const AGT_TAG = 'MCS-AGT:1:';
+function agtB64(o){ const j = JSON.stringify(o); return AGT_TAG + btoa(unescape(encodeURIComponent(j))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'') + '.' + (function(x){ let h = 2166136261; for(let i=0;i<x.length;i++){ h ^= x.charCodeAt(i); h = Math.imul(h,16777619)>>>0; } return h.toString(36); })(j); }
+function agtMsg(a){
+  const ph = '0' + String(a.phone||'').replace(/\D/g,'').slice(-10);
+  const L = ['🌟 *My City Shines* — آپ MCS ایجنٹ بن گئے ہیں ✅', '', 'السلام علیکم ' + (a.name||'') + '!', 'ایک سال کے لیے آپ کی ایجنٹ منظوری ہو چکی ہے۔ 🤝', '',
+    '📋 *آپ کی رجسٹریشن کی تفصیل*', '👤 نام: ' + (a.name||''), '📱 موبائل: ' + ph];
+  if(a.email) L.push('✉️ Gmail: ' + a.email);
+  if(a.city) L.push('📍 شہر: ' + a.city);
+  if(a.biz) L.push('🏪 کاروبار / پروفیشن: ' + a.biz);
+  L.push('🤝 ریفرل کوڈ: ' + a.code); if(a.pin) L.push('🔑 PIN: ' + a.pin);
+  L.push('', '*داخل ہونے کا طریقہ:*', '1️⃣ ایپ میں اپنے کاروبار والے اکاؤنٹ سے «لاگ آؤٹ» کریں', '2️⃣ لاگ اِن صفحے پر «اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں» والے خانے میں یہ پورا میسج پیسٹ کریں',
+    '3️⃣ نام، موبائل، Gmail خود آ جائیں گے — PIN لکھیں، یا چھوڑ دیں، یا Gmail سے داخل ہوں', '4️⃣ آپ پروفیشنل بھی رہیں گے اور ایجنٹ بھی؛ کارڈ پر ایجنٹ کا نشان، رجسٹرڈ کی علامت، باقی دن اور آپ کی گول سیلفی نظر آئے گی',
+    '⚠️ نیچے کی لمبی لائن (MCS-AGT…) مٹائیں نہیں', '');
+  if(!a.dev) L.splice(L.length-1, 0, '📲 ایپ: ' + MCS_PLAY_URL, '');
+  L.push(agtB64({ n: a.name||'', m: ph, g: String(a.email||'').toLowerCase(), c: a.code, p: a.pin||'', b: a.biz||'', d: a.city||'' }));
+  return L.join('\n');
+}
 function agSendCode(id){
   const a = agList.find(x=>x.id===id); if(!a) return;
-  const t = `السلام علیکم ${a.name}!\nMy City Shines میں آپ ایجنٹ بن گئے ہیں 🤝\nآپ کا ریفرل کوڈ: ${a.code}${a.pin ? '\n🔑 PIN: ' + a.pin : ''}\nجس کا کاروبار / پروفیشن ایپ پر درج کروائیں، فارم کے «🤝 ایجنٹ کا ریفرل کوڈ» خانے میں یہ کوڈ لکھیں۔` + (!a.dev ? '\n\n📲 ایپ ڈاؤن لوڈ کریں: ' + MCS_PLAY_URL + '\nایپ ← «🤝 MCS ایجنٹ بنیں» ← «🔑 میں پہلے سے ایجنٹ ہوں» ← موبائل نمبر اور PIN، پھر اپنے شناختی کارڈ کی دونوں طرف کی تصویر اور سیلفی لگا دیں۔' : '');
+  const t = agtMsg(a);
+  try{ navigator.clipboard.writeText(t); showToast('📋 میسج کاپی بھی ہو گیا'); }catch(e){}
   window.open('https://wa.me/' + (a.wa || a.phone) + '?text=' + encodeURIComponent(t), '_blank');
 }
 function agRefShow(code){
@@ -14578,7 +14597,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       }catch(e){ box.innerHTML = '<div style="color:#64748b;font-size:13px">Google ابھی نہیں کھل سکا — انٹرنیٹ چیک کریں</div>'; }
     }, 30);
   }
-  function show(html){ window.__uaInvMode = false; $('uaWrap').innerHTML = html; $('uaOv').classList.add('on'); $('uaOv').scrollTop = 0; document.body.style.overflow = 'hidden'; }
+  function show(html){ window.__uaInvMode = false; window.__uaAgtMode = false; $('uaWrap').innerHTML = html; $('uaOv').classList.add('on'); $('uaOv').scrollTop = 0; document.body.style.overflow = 'hidden'; }
   window.uaHide = function(){ const o = $('uaOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; if(!uaMe() && !staff() && !ls.get('mcsGuest')) ls.set('mcsGuest', '1'); uaPending = null; };
   window.uaLogin = function(msg){
     show(`${head()}<div class="uaCard">
@@ -14595,8 +14614,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
       <button class="uaBtn bO" onclick="uaExit()">${IC.exit}EXIT</button>
       <div class="uaOr">Not registered yet?</div>
       <button class="uaBtn bG" onclick="uaSignup()">${IC.add}CREATE NEW ACCOUNT</button>
-      <label class="uaChk" style="margin-top:6px;padding-top:10px;border-top:1px dashed #c7d3ea"><input type="checkbox" id="uaRegCb" onchange="uaRegToggle(this)"><span><b style="font-size:15px">میں پہلے سے رجسٹرڈ ہوں</b><br><small style="color:#5b6b8c">I am already registered</small></span></label>
-      <div id="uaRegBox" style="display:none">${invBox()}</div></div>`);
+      <div class="uaOr" style="margin-top:6px">📨 اپنی رجسٹریشن کا میسج</div>
+      <div id="uaRegBox">${invBox()}</div></div>`);
     gBtn('uaGBox', 'continue_with');
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); });
   };
@@ -14672,6 +14691,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     try{ ccApplyCity(true); ccCityWeather(); vlPing(true); }catch(e){}
   };
   window.uaGoogle = async function(cred){
+    if(window.__uaAgtMode) return uaAgtGoogle(cred);
     if(window.__uaInvMode) return uaInvGoogle(cred);
     let name = ''; try{ name = JSON.parse(decodeURIComponent(escape(atob(cred.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))).name || ''; }catch(e){}
     busy(1); setErr(''); const r = await api({ op:'google', gtoken: cred }); busy(0);
@@ -14812,8 +14832,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
     if(f.ref) L.push('🤝 ریفرل کوڈ: ' + f.ref + (f.who ? ' (' + f.who + ')' : ''));
     else if(me && me.name) L.push('🤝 درج کرنے والا: ' + me.name + (me.id ? ' (' + me.id + ')' : ''));
     L.push('🔑 پاس ورڈ: ایپ میں آپ خود بنائیں گے', '', '📲 *ایپ ڈاؤن لوڈ کریں:*', MCS_PLAY_URL, '',
-      '*لاگ اِن کا طریقہ (صرف ایک بار):*', '1️⃣ ایپ ڈاؤن لوڈ کر کے کھولیں', '2️⃣ لاگ اِن صفحے پر سب سے نیچے «میں پہلے سے رجسٹرڈ ہوں» دبائیں',
-      '3️⃣ «اپنی رجسٹریشن کی تفصیل یہاں پیسٹ کریں» والے خانے میں یہ پورا میسج پیسٹ کریں — آپ کا نام، موبائل، Gmail، ضلع اور کاروبار خود بھر جائیں گے، آپ صرف پاس ورڈ بنائیں',
+      '*لاگ اِن کا طریقہ (صرف ایک بار):*', '1️⃣ ایپ ڈاؤن لوڈ کر کے کھولیں', '2️⃣ لاگ اِن صفحے پر «اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں» والا خانہ دیکھیں',
+      '3️⃣ اس خانے میں یہ پورا میسج پیسٹ کریں — آپ کا نام، موبائل، Gmail، ضلع اور کاروبار خود بھر جائیں گے؛ پھر PIN / پاس ورڈ لکھیں، یا چھوڑ دیں، یا Gmail سے داخل ہوں',
       '⚠️ نیچے کی لمبی لائن (MCS-INV…) مٹائیں نہیں', '', fedToken(fedPayload(f)));
     return L.join('\n');
   }
@@ -14859,7 +14879,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   window.fedShow = function(i){
     const f = fedAll()[i]; if(!f) return; const msg = fedMsg(f), mob = mob11(f.mobile);
     agModal(`<div class="ag-hd">📨 دعوتی میسج تیار <small>${escapeHtml(f.nm || '')}</small></div>
-      <div class="cp-hint" style="margin:0 0 8px">یہ میسج <b>${escapeHtml(f.ownerName)}</b> کو بھیجیں۔ وہ ایپ کے لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر پیسٹ کرے۔</div>
+      <div class="cp-hint" style="margin:0 0 8px">یہ میسج <b>${escapeHtml(f.ownerName)}</b> کو بھیجیں۔ وہ ایپ کے لاگ اِن صفحے پر «اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں» والے خانے میں پیسٹ کرے۔</div>
       <textarea readonly rows="9" dir="auto" onclick="this.select()" style="width:100%;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:12px;padding:10px;font-size:13.5px;line-height:1.8;font-family:inherit">${escapeHtml(msg)}</textarea>
       <a class="btn block ag-send" style="text-align:center;margin-top:8px" target="_blank" rel="noopener" href="https://wa.me/92${mob.replace(/^0/, '')}?text=${encodeURIComponent(msg)}">📤 واٹس ایپ پر بھیجیں</a>
       <button type="button" class="btn block secondary" style="margin-top:6px" onclick="fedCopy(${i})">📋 میسج کاپی کریں</button>
@@ -14897,14 +14917,14 @@ body.d2 #homeAds .ad-ribbon{display:none}
   };
 
   /* ---- نیا بندہ: میسج پیسٹ ---- */
-  const invBox = () => `<div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:700;line-height:1.9"><b>اپنی رجسٹریشن کی تفصیل یہاں پیسٹ کریں</b> — جس نے آپ کا کاروبار / پروفیشن درج کیا اس کا بھیجا ہوا پورا میسج</div>
-    <textarea id="uaInvTx" rows="4" dir="auto" placeholder="یہاں پیسٹ کریں…" onpaste="setTimeout(function(){uaInvGo(1)},120)" style="width:100%;box-sizing:border-box;border:1.5px solid #d5deee;border-radius:14px;padding:10px;font-size:15px;font-family:inherit;margin-bottom:8px;background:#fff;color:#0f1f45"></textarea>
+  const invBox = () => `<div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:700;line-height:1.9"><b>اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں</b> — ڈویلپر / درج کرنے والے کا بھیجا ہوا پورا میسج (کاروبار، پروفیشن یا ایجنٹ)</div>
+    <textarea id="uaInvTx" rows="4" dir="auto" placeholder="اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں…" onpaste="setTimeout(function(){uaInvGo(1)},120)" style="width:100%;box-sizing:border-box;border:1.5px solid #d5deee;border-radius:14px;padding:10px;font-size:15px;font-family:inherit;margin-bottom:8px;background:#fff;color:#0f1f45"></textarea>
     <div class="uaErr" id="uaInvErr"></div>
     <button class="uaBtn bO" onclick="uaInvPaste()">📋 کلپ بورڈ سے پیسٹ</button>
     <button class="uaBtn bB" onclick="uaInvGo()">${IC.login}داخل ہوں</button>`;
   window.uaRegToggle = function(cb){ const b = $('uaRegBox'); if(!b) return; b.style.display = cb.checked ? 'block' : 'none'; if(cb.checked){ setTimeout(() => { try{ b.scrollIntoView({ behavior:'smooth', block:'center' }); const t = $('uaInvTx'); if(t) t.focus(); }catch(e){} }, 60); } };
   window.uaInvAsk = function(){
-    show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.login}</i><h2 style="font-size:22px">میں پہلے سے رجسٹرڈ ہوں</h2></div><div class="uaSub">Already registered — paste your invitation message</div>${invBox()}
+    show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.login}</i><h2 style="font-size:22px">رجسٹریشن کا میسج پیسٹ کریں</h2></div><div class="uaSub">اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں</div>${invBox()}
       <button class="uaBtn bO" onclick="${uaMe() ? 'uaAccount()' : 'uaLogin()'}">← واپس</button></div>`);
   };
   window.uaInvPaste = async function(){
@@ -14914,6 +14934,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   window.uaInvGo = function(auto){
     const t = ($('uaInvTx') || {}).value || '', e = $('uaInvErr'); if(e) e.textContent = '';
     if(!t.trim()){ if(!auto && e) e.textContent = 'پہلے میسج پیسٹ کریں'; return; }
+    { const ag = agtParse(t); if(ag){ ls.set('mcsAgtInv', JSON.stringify(ag)); return uaAgtView(); } }
     const inv = fedParse(t);
     if(!inv){ if(e) e.textContent = '⚠️ میسج مکمل نہیں — بھیجنے والے سے پورا میسج (آخری لمبی MCS-INV لائن سمیت) دوبارہ منگوا کر پیسٹ کریں'; return; }
     ls.set('mcsInvite', JSON.stringify(inv));
@@ -14936,6 +14957,56 @@ body.d2 #homeAds .ad-ribbon{display:none}
       <button class="uaBtn bO" onclick="uaInvLogin()">پہلے سے اکاؤنٹ ہے؟ LOGIN</button>
       <button class="uaBtn bW" onclick="ls_invCancel()">✖ دعوت منسوخ</button></div>`);
     window.__uaInvMode = true; gBtn('uaGBoxI', 'continue_with');
+  };
+  /* ---- MCS0811SU218: ایجنٹ کا تیار میسج پیسٹ ← نام، موبائل، Gmail، کوڈ خود؛ PIN لکھیں / چھوڑیں / Gmail ---- */
+  function agtParse(text){
+    const t = String(text||''), at = t.indexOf(AGT_TAG); if(at < 0) return null;
+    const m = t.slice(at + AGT_TAG.length).match(/^([A-Za-z0-9_\-\s]*?)\.([a-z0-9]{3,9})/); if(!m) return null;
+    let j, o; try{ j = b64dec(m[1].replace(/\s+/g,'')); o = JSON.parse(j); }catch(e){ return null; }
+    if(fnv(j) !== m[2] || !o || !o.c || mob11(o.m).length !== 11) return null;
+    o.m = mob11(o.m); if(o.g) o.g = String(o.g).trim().toLowerCase(); return o;
+  }
+  function agtGet(){ try{ const o = JSON.parse(ls.get('mcsAgtInv')||'null'); return o && o.c && o.m ? o : null; }catch(e){ return null; } }
+  window.uaAgtView = function(note){
+    const o = agtGet(); if(!o) return uaLogin();
+    show(`${head()}<div class="uaCard"><div class="uaHd"><i>🤝</i><h2 style="font-size:22px">MCS ایجنٹ</h2></div><div class="uaSub">آپ کی رجسٹریشن کی تفصیل</div>
+      <div class="uaInfo">👤 <b>${esc(o.n)}</b><br>📱 <b dir="ltr">${esc(o.m)}</b>${o.g ? '<br>✉️ <span dir="ltr">' + esc(o.g) + '</span>' : ''}${o.d ? '<br>📍 ' + esc(o.d) : ''}${o.b ? '<br>🏪 ' + esc(o.b) : ''}<br>🤝 ریفرل کوڈ: <b dir="ltr">${esc(o.c)}</b></div>
+      ${note ? `<div class="uaMsg">${esc(note)}</div>` : ''}
+      ${field('uaAgPin', 'lock', 'اپنا PIN یہاں لکھیں', { type:'password', im:'numeric', ac:'one-time-code' })}
+      <div class="uaErr" id="uaErr"></div>
+      <button class="uaBtn bB" onclick="uaAgtGo(0)">${IC.login}PIN سے داخل ہوں</button>
+      <button class="uaBtn bW" onclick="uaAgtGo(1)">⏭️ چھوڑیں (Skip) — سیدھا داخل ہوں</button>
+      <div class="uaOr">یا</div>
+      <div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:700">${o.g ? 'اپنے فون کا یہی Gmail (' + esc(o.g) + ') چنیں' : 'اپنے فون کا Google اکاؤنٹ چنیں'}</div>
+      <div class="uaG" id="uaGBoxA"></div>
+      <button class="uaBtn bO" onclick="uaAgtCancel()">✖ منسوخ</button></div>`);
+    window.__uaAgtMode = true; gBtn('uaGBoxA', 'continue_with');
+  };
+  window.uaAgtCancel = function(){ ls.set('mcsAgtInv', null); window.__uaAgtMode = false; uaLogin(); };
+  async function agtEnter(o, via){
+    busy(1); setErr('');
+    let r = null; try{ r = await (await fetch(AG_API + '/agstatus', { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ phone: o.m, pin: o.p, dev: agDev() }) })).json(); }catch(e){}
+    busy(0);
+    if(!r || !r.ok){ return setMsg(r ? 'ایجنٹ کی منظوری یا PIN درست نہیں — ڈویلپر سے نیا میسج منگوائیں' : '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
+    uaClearOthers('agent');
+    ls.set('mcsAgent', JSON.stringify({ phone: '92' + o.m.slice(-10), name: r.name || o.n, pin: o.p, code: r.code || o.c, at: Date.now() }));
+    ls.set('mcsAgtInv', null); window.__uaAgtMode = false;
+    try{ agKnownAdd(o.m, r.code || o.c, 'approved'); }catch(e){}
+    try{ agMarkRecords(); }catch(e){}
+    uaRoleDone('agent', r.name || o.n);
+  }
+  window.uaAgtGo = async function(skip){
+    const o = agtGet(); if(!o) return uaLogin();
+    const typed = (($('uaAgPin') || {}).value || '').replace(/\D/g,'');
+    if(!skip){ if(typed.length < 4) return setMsg('PIN لکھیں (4 سے 6 ہندسے) — یا «چھوڑیں» دبائیں'); if(o.p && typed !== String(o.p)) return setMsg('PIN درست نہیں — میسج میں دیکھیں، یا «چھوڑیں» دبائیں'); }
+    if(!o.p) return setMsg('اس میسج میں PIN نہیں — ڈویلپر سے نیا میسج منگوائیں');
+    return agtEnter(o, skip ? 'skip' : 'pin');
+  };
+  window.uaAgtGoogle = async function(cred){
+    const o = agtGet(); if(!o) return uaLogin();
+    let em = ''; try{ em = (JSON.parse(decodeURIComponent(escape(atob(cred.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))))).email || '').toLowerCase(); }catch(e){}
+    if(o.g && em && em !== o.g) return setMsg('یہ Google اکاؤنٹ (' + em + ') میسج والے Gmail (' + o.g + ') سے مختلف ہے — درست Gmail چنیں');
+    return agtEnter(o, 'google');
   };
   window.ls_invCancel = function(){ ls.set('mcsInvite', null); window.__uaInvMode = false; uaLogin(); };
   window.uaInvLogin = function(){ window.__uaInvMode = false; uaLogin('لاگ اِن کریں — آپ کا کاروبار خود جڑ جائے گا'); };
@@ -14994,7 +15065,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     wrapAll(); hook(); uaSync();
     if(!uaMe() && !ls.get('mcsGuest') && !staff()) setTimeout(() => { if(!uaMe() && !ls.get('mcsGuest') && !staff()) uaLogin(); }, 600);
     setTimeout(recheck, 4000);
-    setTimeout(() => { try{ if(uaMe() && invGet()) fedApplyPending(); else if(!uaMe() && invGet() && !staff()) uaInviteView(); }catch(e){} }, 5000);
+    setTimeout(() => { try{ if(uaMe() && invGet()) fedApplyPending(); else if(!uaMe() && invGet() && !staff()) uaInviteView(); else if(agtGet() && !agentOn() && !staff()) uaAgtView(); }catch(e){} }, 5000);
     document.addEventListener('keydown', e => { if(e.key === 'Escape' && $('uaOv').classList.contains('on')) uaHide(); });
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(boot, 300)); else setTimeout(boot, 300);
