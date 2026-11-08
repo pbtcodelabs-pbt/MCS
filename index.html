@@ -4130,11 +4130,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU236";
+const APP_VERSION = "MCS0811SU237";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS0811SU236": "📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
+  "MCS0811SU237": "🗂️ ایڈمن/ڈویلپر کیٹگری بدلے تو ریکارڈ فوراً نئی کیٹگری میں چلا جاتا ہے (تلاش کے صفحے سے بھی) • 📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
   "MCS0811SU235": "📥 امپورٹ آسان: صرف دو ضروری بٹن، خلاصہ فوراً بٹن کے نیچے اور اوپر بڑی پراگرس پٹی؛ اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور تبدیلی",
   "MCS0811SU234": "🏪 بلاک 1 (انجمن تاجران فتح پور): پرانے کارڈوں پر مالک کی جگہ دکان کا اصل نام — ایک بٹن سے",
   "MCS0811SU233": "📋 انجمن تاجران فتح پور: بلاک 2، 3، 4، 6، 7 کی فہرستیں (دکان کا نام، مالک، موبائل) — دہرا نمبر / نام خود نہیں لگتا",
@@ -8987,6 +8987,23 @@ function moveServiceToDoctors(){
     showToast('✅ "' + nameUr + '" ڈاکٹرز میں منتقل ہو گیا', 3000);
   });
 }
+function svcQuickMove(s, k){
+  const sel = document.getElementById('svcCategory');
+  const back = ()=>{ if(sel){ sel.value = s.category; try{ resyncCapsuleSelect('svcCategory'); }catch(e){} } };
+  if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ اِن کریں'); back(); return; }
+  const dup = findDupPhone('services', k, s.whatsapp, s.id, s.fsId);
+  if(dup){ showToast('⚠️ یہ نمبر «' + CATEGORY_META[k].ur + '» میں پہلے سے "' + (dup.nameUr||dup.name||'') + '" کے نام سے موجود ہے — منتقل نہیں ہوا', 4500); back(); return; }
+  const oldCat = s.category;
+  s.category = k; s.updatedAt = Date.now();
+  if(!s.fsId){ showToast('⚠️ یہ ریکارڈ ابھی سرور سے نہیں جڑا — منتقل نہیں ہو سکتا'); s.category = oldCat; back(); return; }
+  syncServiceUpdateToFirebase(s);
+  try{ saveStore(); }catch(e){}
+  try{ closeModal('serviceFormModal'); }catch(e){}
+  try{ if(currentScreen==='service-list') renderServiceList('list'); }catch(e){}
+  try{ if(typeof renderUserSearch==='function') renderUserSearch(); }catch(e){}
+  try{ updateCategoryCounts(); }catch(e){}
+  showToast('✓ کیٹگری بدل گئی — ' + CATEGORY_META[k].ur, 3500);
+}
 function svcCategoryChanged(){
   const k = document.getElementById('svcCategory').value;
   if(k==='__doctor__'){ moveServiceToDoctors(); return; }
@@ -9002,7 +9019,9 @@ function svcCategoryChanged(){
   document.getElementById('svcTypeLabel').textContent = m.typeLabel;
   fhSetup();
   /* MCS2310FR052: کیٹگری چنتے ہی ریکارڈ فوراً اسی کیٹگری میں منتقل (ترمیم میں) */
-  if(k!==currentServiceCategory && (editingServiceId || pendingFormCtx)){ setTimeout(()=>saveService(false), 80); return; }
+  { const _s = (editingServiceId && !pendingFormCtx) ? store.services.find(x=>x.id===editingServiceId) : null;
+    if(_s){ if(k !== _s.category) svcQuickMove(_s, k); return; } }   /* MCS0811SU237: ترمیم میں کیٹگری بدلتے ہی سیدھی منتقل — فارم کی جانچ (شہر، قسم، شناختی کارڈ) پر خاموشی سے رکتی نہیں */
+  if(k!==currentServiceCategory && pendingFormCtx){ setTimeout(()=>saveService(false), 80); return; }
   if(k!==currentServiceCategory) showToast('محفوظ کرنے پر یہ ریکارڈ "' + m.ur + '" میں چلا جائے گا');
 }
 function saveService(approve){
@@ -9036,8 +9055,9 @@ function saveService(approve){
     regCnic = (document.getElementById('svcCnic').value||'').replace(/\D/g,'');
     if(regCnic.length !== 13){ document.getElementById('svcCnic').focus(); showToast('شناختی کارڈ کے پورے 13 ہندسے لکھیں'); return; }
   }
+  const _ownCat = (editingServiceId && ((store.services.find(x=>x.id===editingServiceId)||{}).category)) || currentServiceCategory;
   const data = {
-    category: currentServiceCategory, nameUr, nameEn, address, intro, whatsapp,
+    category: _ownCat, nameUr, nameEn, address, intro, whatsapp,
     type: document.getElementById('svcType').value,
     country: loc.country, province: loc.province, district: loc.district,
     city: loc.city, area: loc.area,
@@ -9049,7 +9069,7 @@ function saveService(approve){
   let movedTo = null;
   if(editingServiceId && isAdminSignedIn){
     const sel = document.getElementById('svcCategory');
-    if(sel && sel.value && CATEGORY_META[sel.value] && sel.value!==currentServiceCategory){ data.category = sel.value; movedTo = sel.value; }
+    if(sel && sel.value && CATEGORY_META[sel.value] && sel.value!==_ownCat){ data.category = sel.value; movedTo = sel.value; }
   }
   /* MCS11OCTSU0913AM: ایک ہی کیٹگری میں ایک موبائل نمبر دو مختلف ناموں سے نہیں — ریکارڈ محفوظ نہیں ہوگا */
   const dup = findDupPhone('services', data.category, whatsapp, editingServiceId, null);
