@@ -4160,10 +4160,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU244";
+const APP_VERSION = "MCS0811SU245";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0811SU245": "📊 ہر فارم میں فیصد پٹی (20٪…100٪)، 100٪ پر فوراً جائزہ — غلطیاں سرخ، ➕ کی جگہ لکھیں + ملتے نام نیچے، کارڈ پر مراحل کی پٹی",
   "MCS0811SU244": "📝 کارڈ پر «رجسٹریشن مکمل کریں» اب اسی فون پر فارم کھولتا ہے (پہلے ڈویلپر کو پیغام جاتا تھا)",
   "MCS0811SU243": "🏠 ہوم صاف: «Earn with MCS» اور تلاش ایک قطار میں، کاروبار کا نیا افقی کارڈ، Add New اوپر، Explore اور فالتو بٹن ہٹائے",
   "MCS0811SU242": "⚡ امپورٹ کے دوران فون نہیں اٹکتا (لائیو فہرست کا بوجھ رکا)، شناختی کارڈ ایک ساتھ محفوظ",
@@ -4983,7 +4984,7 @@ function mpSendDetails(rk){
   const r = x.rec, cat = ubCatMeta(x.p.kind==='doctor' ? 'doctor' : r.category).ur, pn = (r.nameUr||r.name||'') + (cat ? ' (' + cat + ')' : '');
   mcsReview([['🏪 کاروبار', pn], ['👤 نام', n], ['📱 موبائل', ph], ['💬 واٹس ایپ', wa], ['✉️ Gmail', m], ['🤝 ایجنٹ ریفرل', rf]], ()=>{
     const text = '🔑 Account sign-in request — My City Shines\nUID: ' + agDev() + '\nProfile ID: ' + rk + '\nProfile: ' + pn + '\nName: ' + n + '\nMobile no.: ' + ph + (wa && wa !== ph ? '\nWhatsApp: ' + wa : '') + '\nGmail: ' + m + (rf ? '\nAgent referral: ' + rf : '') + '\nPackage: 1 year';
-    closeModal('agModal');
+    closeModal('agModal'); try{ if(window.fpMarkSent) fpMarkSent(rk); }catch(e){}   /* MCS0811SU245: کارڈ پر «⏳ منظوری کا انتظار» */
     try{ if(window.PBTHelp){ window.PBTHelp.open({ app: 'MCS', ver: APP_VERSION, phone: ph, name: n, text, type: 'ask' }); return; } }catch(e){}
     if(typeof openHelpDesk === 'function') openHelpDesk();
   }, ()=>{ mpSubscribe(rk); setTimeout(()=>{ const s0 = (id, val)=>{ const e = document.getElementById(id); if(e) e.value = val; }; s0('msName', n); s0('msPhone', ph); s0('msWa', wa); s0('msMail', m); s0('msRef', rf); }, 50); });
@@ -5988,16 +5989,17 @@ function userResultCard(item){
         const _eid = escapeAttr(item.id);
         const _live0 = pfActive(_r);
         /* ① بنیادی ڈیٹا ہو چکا (نئے یا پرانے کارڈ) → صرف «رجسٹریشن مکمل کریں» */
-        if((_r.stage==='basic' || !_r.stage) && !_live0) return `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();svcRegClick('${_eid}')">📝 رجسٹریشن مکمل کریں</button>`;
+        const _fps = (window.fpCardSteps ? fpCardSteps('service', _r) : '');   /* MCS0811SU245: کارڈ پر مراحل کی پٹی */
+        if((_r.stage==='basic' || !_r.stage) && !_live0) return _fps + `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();svcRegClick('${_eid}')">📝 رجسٹریشن مکمل کریں</button>`;
         const _mine = !isAdminSignedIn && (svcMyBasic().includes(_r.id) || pfIsOwner(_r));
         const _live = pfActive(_r);
         /* ② رجسٹریشن مکمل → صرف «ممبرشپ مکمل کریں» */
         if(_r.stage==='registered' && !_live){
-          if(_mine) return `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⭐ ممبرشپ مکمل کریں</button>`;
-          return (isAdminSignedIn || agOwnsRec(_r)) ? `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('service','${_eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
+          if(_mine) return _fps + (_fps.includes('منظوری') ? `<button type="button" class="svc-mem-btn fp-wait" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⏳ تفصیل بھیج دی — منظوری کا انتظار</button>` : `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⭐ ممبرشپ مکمل کریں</button>`);
+          return (isAdminSignedIn || agOwnsRec(_r)) ? _fps + `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('service','${_eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
         }
         /* ③ ایک سال کی ممبرشپ ہو گئی → پوری تفصیل کا بٹن، اور مالک کو بائیں طرف ربن */
-        return '' + (_live && _mine && !agIsRec('service', _r) ? `<button type="button" class="svc-earn-btn" onclick="event.stopPropagation();agForm()">💰 Earn with MCS</button>` : ''); })()}
+        return '' + (_live && _mine && !agIsRec('service', _r) ? _fps + `<button type="button" class="svc-earn-btn" onclick="event.stopPropagation();agForm()">💰 Earn with MCS</button>` : ''); })()}
     </div>`;
 }
 
@@ -6332,11 +6334,15 @@ function enhanceCapsuleSelect(selectId){
   }
   function outsideClick(e){ if(wrap.contains(e.target)) return;
     const nm = panel.querySelector('.csel-nomatch'); if(nm && nm.style.display === 'block' && quickAdd()) return;
+    /* MCS0811SU245: لکھا ہوا نام بالکل فہرست جیسا ہو تو وہی چن لیں */
+    const qi = panel.querySelector('.csel-q'), tt = qi ? qi.value.trim().toLowerCase() : '';
+    if(tt){ const ex = Array.from(panel.querySelectorAll('.csel-opt')).find(r=> r.dataset.v && (r.textContent||'').trim().toLowerCase() === tt); if(ex){ ex.click(); return; } }
     closePanel(); }
   function openPanel(){
     panel.innerHTML = '';
     /* MCS1310TU004: لمبی فہرست میں اوپر لکھنے کا خانہ — لکھتے ہی ملتی قسمیں/نام سامنے، Enter پر پہلا چن لیں */
-    const many = sel.options.length > 5 || BLANK_OK_SELECTS.includes(sel.id) || sel.id==='svcType' || /City$/.test(sel.id);
+    const canAdd = !!(wrap.parentNode && wrap.parentNode.querySelector('.add-circle:not(.pick-contact)'));
+    const many = canAdd || sel.options.length > 5 || BLANK_OK_SELECTS.includes(sel.id) || sel.id==='svcType' || /City$/.test(sel.id);
     let q = null;
     if(many){
       q = document.createElement('input');
@@ -6365,10 +6371,13 @@ function enhanceCapsuleSelect(selectId){
         /* MCS0411WE130 (#62): لکھا ہوا نیا نام ایک دبانے سے شامل */
         if(addBtn){ nm.innerHTML = '<button type="button" class="csel-addq">✅ «' + escapeHtml(q.value.trim()) + '» یہی لکھیں / محفوظ کریں</button>'; nm.querySelector('button').onclick = ev=>{ ev.stopPropagation(); quickAdd(); }; }
         else nm.textContent = 'کچھ نہیں ملا';
-        nm.style.display = (t && !shown) ? 'block' : 'none';
+        /* MCS0811SU245 (#142): ملتے نام نیچے چننے کو؛ نہ چنیں تو لکھا ہوا خود محفوظ — اس لیے «یہی لکھیں» ملتے ناموں کے ساتھ بھی */
+        const exact = Array.from(sel.options).some(o=> o.value && (o.textContent||'').trim().toLowerCase() === t);
+        nm.style.display = (t && (!shown || (addBtn && !exact))) ? 'block' : 'none';
+        if(nm.style.display==='block' && shown && nm.parentNode) nm.parentNode.insertBefore(nm, nm.parentNode.querySelector('.csel-opt, .csel-grp'));
       });
       q.addEventListener('keydown', e=>{
-        if(e.key==='Enter'){ e.preventDefault(); const f = panel.querySelector('.csel-opt.first'); if(f) f.click(); else quickAdd(); }
+        if(e.key==='Enter'){ e.preventDefault(); const t = q.value.trim().toLowerCase(), ex = Array.from(panel.querySelectorAll('.csel-opt')).find(r=> r.dataset.v && (r.textContent||'').trim().toLowerCase() === t), f = panel.querySelector('.csel-opt.first'); if(ex) ex.click(); else if(!quickAdd() && f) f.click(); }
       });
     }
     /* MCS1310TU007: ترتیب کے بٹن اور تلاش کا خانہ اوپر چپکے رہیں */
@@ -6426,15 +6435,17 @@ function enhanceCapsuleSelect(selectId){
     const act = panel.querySelector('.csel-opt.active');
     if(act) panel.scrollTop = Math.max(0, act.offsetTop - 40);
     try{ panel.scrollIntoView({block:'nearest'}); }catch(e){}
-    if(q && !sel.value) setTimeout(()=>{ try{ q.focus({preventScroll:true}); }catch(e){} }, 80);
+    if(q && (!sel.value || canAdd)) setTimeout(()=>{ try{ q.focus({preventScroll:true}); }catch(e){} }, 80);
   }
   function syncBtn(){
     const opt = sel.options[sel.selectedIndex];
     /* MCS2610MO062: «خالی رکھیں» والا خانہ بند حالت میں بالکل خالی نظر آئے */
+    const _ca = !!(wrap.parentNode && wrap.parentNode.querySelector('.add-circle:not(.pick-contact)'));
+    if((!opt || opt.value==='') && _ca){ btn.innerHTML = `<span class="csel-placeholder">✍️ لکھیں یا چنیں</span><span class="csel-chevron">▾</span>`; return; }   /* MCS0811SU245 */
     if(opt && opt.value==='' && BLANK_OK_SELECTS.includes(sel.id)){ btn.innerHTML = `<span class="csel-placeholder csel-empty"></span><span class="csel-chevron">▾</span>`; return; }
     btn.innerHTML = opt
       ? `<span class="csel-label">${csel_optLabel(opt)}</span><span class="csel-chevron">▾</span>`
-      : `<span class="csel-placeholder">منتخب کریں</span><span class="csel-chevron">▾</span>`;
+      : `<span class="csel-placeholder">${wrap.parentNode && wrap.parentNode.querySelector('.add-circle:not(.pick-contact)') ? '✍️ لکھیں یا چنیں' : 'منتخب کریں'}</span><span class="csel-chevron">▾</span>`;
   }
   btn.addEventListener('click', (e)=>{
     e.stopPropagation();
@@ -6452,7 +6463,7 @@ function enhanceCapsuleSelect(selectId){
 function addPlusHints(){
   document.querySelectorAll('.fm-body .field-with-add').forEach(f=>{
     const plus = f.querySelector('.add-circle:not(.pick-contact):not(.no-hint)'); if(!plus || f.nextElementSibling && f.nextElementSibling.classList.contains('plus-hint')) return;
-    const h = document.createElement('div'); h.className = 'plus-hint'; h.textContent = '✍️ فہرست میں نہ ہو تو خانہ کھول کر نام لکھ دیں — خود محفوظ ہو جائے گا';
+    const h = document.createElement('div'); h.className = 'plus-hint'; h.textContent = '✍️ خانہ دبا کر لکھیں — ملتا جلتا نام نیچے آئے گا، چن لیں؛ نہ چنیں تو آپ کا لکھا خود محفوظ';
     f.insertAdjacentElement('afterend', h);
   });
 }
@@ -8916,6 +8927,16 @@ function docRegSave(id){
   saveStore(); closeModal('agModal');
   try{ renderDoctorList('list'); refreshVisibleLists(); }catch(_){}
   showToast('✅ رجسٹریشن محفوظ ہو گئی');
+  if(!isAdminSignedIn) setTimeout(()=>fpNextStep('doctor', d), 500);   /* MCS0811SU245 */
+}
+/* MCS0811SU245 (ہیلپ ڈیسک #142): مرحلہ مکمل ہوتے ہی اگلا مرحلہ — «ممبرشپ: تفصیل ڈویلپر کو بھیجیں» → منظوری کا انتظار */
+function fpNextStep(kind, rec){
+  if(!rec) return;
+  agModal(`<div class="ag-hd">✅ رجسٹریشن مکمل <small>${escapeHtml(rec.nameUr||rec.name||'')}</small></div>
+    ${window.fpCardSteps ? fpCardSteps(kind, rec) : ''}
+    <div class="cp-hint" style="margin:8px 0">اگلا مرحلہ: <b>⭐ ممبرشپ</b> — اپنی تفصیل ڈویلپر کو بھیجیں؛ منظوری ہوتے ہی آپ کی پوری تفصیل سب کو نظر آئے گی۔</div>
+    <button type="button" class="btn block" onclick="closeModal('agModal');svcMemOpen('${escapeAttr(rec.id)}','${kind}')">📨 اگلا مرحلہ — تفصیل ڈویلپر کو بھیجیں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agModal')">بعد میں — کارڈ سے کر لوں گا</button>`);
 }
 function msRefResolve(){
   const i = document.getElementById('msRef'), ok = document.getElementById('msRefOk'); if(!i) return;
@@ -9180,6 +9201,7 @@ function saveService(approve){
   if(!editingServiceId){ nextEntryReady('svc'); openAfterSave('service', data, 'svc'); return; }
   closeModal('serviceFormModal');
   showToast(movedTo ? ('محفوظ ہو گیا ✓ — کیٹگری: ' + CATEGORY_META[movedTo].ur) : 'محفوظ ہو گیا ✓');
+  if(svcStage==='reg' && !isAdminSignedIn){ const _rs = store.services.find(x=>x.id===editingServiceId); setTimeout(()=>fpNextStep('service', _rs), 500); }   /* MCS0811SU245: اگلا مرحلہ فوراً */
   openAfterSave('service', store.services.find(x=>x.id===editingServiceId), null);
 }
 async function deleteService(id){
@@ -14702,7 +14724,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU244" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU245" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -15922,5 +15944,224 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
 })();
 
 </script>
+<!-- ===== MCS0811SU245 (ہیلپ ڈیسک #142، مالک کا حکم): ہر فارم میں پراگرس پٹی، 100٪ پر فوراً جائزہ (غلطیاں سرخ) → ✅ ٹھیک ہے → اگلا مرحلہ؛ کارڈ پر مراحل کی پٹی ===== -->
+<style>
+.fp-bar{position:sticky;top:0;z-index:30;margin:0 0 8px;padding:7px 10px 8px;border-radius:12px;background:#fff;border:2px solid #fca5a5;box-shadow:0 3px 10px rgba(0,0,0,.12);direction:rtl;cursor:pointer}
+.fp-bar .fp-t{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:#7f1d1d}
+.fp-bar .fp-t b{font-size:16px;white-space:nowrap}
+.fp-bar .fp-t span{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.fp-bar .fp-tr{height:12px;border-radius:99px;background:#f1f5f9;overflow:hidden;margin-top:5px;border:1px solid #e2e8f0}
+.fp-bar .fp-tr i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ef4444,#f97316);transition:width .45s;background-size:28px 28px}
+.fp-bar.mid{border-color:#fcd34d}.fp-bar.mid .fp-t{color:#78350f}.fp-bar.mid .fp-tr i{background:linear-gradient(90deg,#f59e0b,#eab308)}
+.fp-bar.full{border-color:#22c55e;background:#f0fdf4}.fp-bar.full .fp-t{color:#14532d}.fp-bar.full .fp-tr i{background:linear-gradient(90deg,#16a34a,#22c55e)}
+.fp-bar .fp-st{display:flex;gap:3px;margin-top:5px;flex-wrap:wrap}
+.fp-bar .fp-st em{font-style:normal;font-size:10.5px;padding:1px 6px;border-radius:99px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+.fp-bar .fp-st em.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}.fp-bar .fp-st em.ok{background:#dcfce7;color:#166534;border-color:#86efac}
+#fpRv{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:12px}
+#fpRv.on{display:flex}
+#fpRv .rvB{background:#fff;color:#111;width:100%;max-width:560px;max-height:88vh;overflow:auto;border-radius:16px;padding:12px;direction:rtl}
+#fpRv .rvH{font-size:18px;font-weight:900;border-bottom:2px solid #e5e7eb;padding-bottom:6px;margin-bottom:6px}
+#fpRv .rvH small{display:block;font-size:12px;font-weight:600;color:#475569}
+#fpRv .rvR{display:flex;gap:8px;align-items:baseline;border-bottom:1px solid #e5e7eb;padding:6px 4px;cursor:pointer;border-radius:8px}
+#fpRv .rvR:hover{background:#f8fafc}
+#fpRv .rvR span{flex:0 0 38%;font-weight:700;color:#475569;font-size:14px}
+#fpRv .rvR b{flex:1;font-size:15px;word-break:break-word}
+#fpRv .rvR.bad{background:#fef2f2;border:1.5px solid #ef4444}#fpRv .rvR.bad b{color:#b91c1c}
+#fpRv .rvR.soft b{color:#b45309}
+#fpRv .rvR i{font-style:normal}
+#fpRv .rvMiss{margin:8px 0;padding:8px;border-radius:10px;background:#fee2e2;color:#991b1b;font-weight:800;text-align:center}
+#fpRv .rvOk{display:block;width:100%;margin-top:10px;padding:12px;border:0;border-radius:12px;background:linear-gradient(180deg,#22c55e,#15803d);color:#fff;font:inherit;font-size:17px;font-weight:900;cursor:pointer}
+#fpRv .rvBack{display:block;width:100%;margin-top:6px;padding:9px;border:1.5px solid #cbd5e1;border-radius:12px;background:#fff;font:inherit;font-weight:800;cursor:pointer}
+.fp-card{margin:6px 0 2px;direction:rtl;font-size:11.5px;color:#334155}
+.fp-card .fp-ct{display:flex;justify-content:space-between;gap:6px}
+.fp-card .fp-ct b{color:#1d4ed8}
+.fp-card .fp-tr{height:7px;border-radius:99px;background:#e2e8f0;overflow:hidden;margin-top:3px}
+.fp-card .fp-tr i{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#22c55e);border-radius:99px}
+.svc-mem-btn.fp-wait{background:linear-gradient(180deg,#fef3c7,#fde68a)!important;color:#78350f!important;border-color:#f59e0b!important}
+/* ➕ کی جگہ لکھنا (مالک کا حکم): فارم کے خانوں کے ساتھ ➕ نہیں — خانہ دبا کر لکھیں، ملتی جلتی تجاویز نیچے */
+.fm-body .field-with-add > .add-circle:not(.pick-contact):not(.no-hint){display:none!important}
+</style>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const isBlank = v => (typeof isBlankVal === 'function') ? isBlankVal(v) : !v;
+  function val(el){
+    if(!el) return '';
+    if(el.tagName === 'SELECT'){
+      const o = el.options[el.selectedIndex]; let v = o && o.value && !isBlank(o.value) ? (o.textContent||'').trim() : '';
+      const f = el.closest('.field'), cu = f && f.querySelector('input[id$=Custom]');
+      if(cu && cu.style.display !== 'none') v = cu.value.trim();
+      return v;
+    }
+    return (el.value||'').trim();
+  }
+  const digits = v => String(v||'').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g,'');
+  const mailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  function lbText(lb){ const c = lb.cloneNode(true); c.querySelectorAll('small,button').forEach(x=>x.remove()); return (c.textContent||'').replace(/\s+/g,' ').trim(); }
+  function formItems(mid){
+    const box = document.querySelector('#'+mid+' .fm-body'), out = []; if(!box) return out;
+    box.querySelectorAll('.field').forEach(f=>{
+      const lb = f.querySelector(':scope > label'); if(!lb || !lb.classList.contains('req')) return;
+      if(f.closest('.mcs-off,.svc-hide') || f.offsetParent === null) return;
+      const el = f.querySelector('select, input:not([type=file]):not([type=checkbox]), textarea'); if(!el || !el.id) return;
+      const v = val(el); let ok = !!v;
+      if(/Cnic$/.test(el.id)) ok = digits(v).length === 13;
+      if(/Whatsapp$/.test(el.id)) ok = digits(v).length >= 10;
+      out.push({id:el.id, name:lbText(lb), v, ok});
+    });
+    return out;
+  }
+  const it = (id, name, v, ok, soft) => ({id, name, v, ok, soft:!!soft});
+  const SPECS = {
+    serviceFormModal(){
+      const L = formItems('serviceFormModal'), st = (typeof svcStage !== 'undefined') ? svcStage : 'full';
+      if(st === 'reg') [['svcServices','🛠️ کیا بیچا / کیا کام کیا جاتا ہے'],['svcIntro','📝 تفصیل'],['svcEmail','✉️ Gmail']].forEach(([id,n])=>{ const e = $(id); if(e) L.push(it(id, n, val(e), id==='svcEmail' ? mailOk(val(e)) : !!val(e), true)); });
+      return {items:L, stage: st==='reg' ? 2 : 1, save(){ saveService(false); }};
+    },
+    doctorFormModal(){ return {items:formItems('doctorFormModal'), stage:1, save(){ saveDoctor(false); }}; },
+    pfEditModal(){
+      const S = (typeof pfEd !== 'undefined' && pfEd.pfE) || {imgs:[]};
+      const rows = document.querySelectorAll('#pfEItems .pf-irow input:first-child'), n = Array.from(rows).filter(x=>x.value.trim()).length;
+      return {stage:3, items:[
+        it('pfEAbout', '📝 تفصیل', val($('pfEAbout')), !!val($('pfEAbout')), true),
+        it('pfEHours', '🕘 اوقات', val($('pfEHours')), !!val($('pfEHours')), true),
+        it('pfEItems', '💰 چیزیں / ریٹ', n ? n + ' چیزیں' : '', n > 0, true),
+        it('pfESlots', '🏪 دکان کی تصویر', S.imgs[0] ? '✓ لگی ہوئی' : '', !!S.imgs[0], true),
+        it('pfESlots', '🤳 اپنی سیلفی', S.imgs[1] ? '✓ لگی ہوئی' : '', !!S.imgs[1], true)],
+        save(){ pfSave(); }};
+    },
+    ag(){
+      const im = (typeof agImgs !== 'undefined') ? agImgs : {};
+      return {stage:5, items:[
+        it('agName', '👤 نام', val($('agName')), val($('agName')).length >= 2),
+        it('agPhone', '📱 موبائل', val($('agPhone')), digits(val($('agPhone'))).length >= 10),
+        it('agCity', '🏙️ شہر', val($('agCity')), !!val($('agCity'))),
+        it('agCnic', '🪪 شناختی کارڈ', val($('agCnic')), digits(val($('agCnic'))).length === 13),
+        it('agP_front', '🪪 کارڈ سامنے کی تصویر', im.front ? '✓ لگی ہوئی' : '', !!im.front),
+        it('agP_back', '🪪 کارڈ پیچھے کی تصویر', im.back ? '✓ لگی ہوئی' : '', !!im.back),
+        it('agP_selfie', '🤳 سیلفی', im.selfie ? '✓ لگی ہوئی' : '', !!im.selfie)],
+        save(){ const b = $('agSendBtn'); if(b) b.click(); }};
+    },
+    ms(){
+      return {stage:3, self:true, items:[
+        it('msName', '👤 نام', val($('msName')), val($('msName')).length >= 2),
+        it('msPhone', '📱 موبائل', val($('msPhone')), digits(val($('msPhone'))).length >= 10),
+        it('msWa', '💬 واٹس ایپ', val($('msWa')), digits(val($('msWa'))).length >= 10, true),
+        it('msMail', '✉️ Gmail', val($('msMail')), mailOk(val($('msMail'))))],
+        save(){ const b = document.querySelector('#agBody .ag-f > button.btn.block'); if(b) b.click(); }};
+    },
+    dr(){
+      return {stage:2, items:[
+        it('drCnic', '🪪 شناختی کارڈ', val($('drCnic')), digits(val($('drCnic'))).length === 13),
+        it('drMail', '✉️ Gmail', val($('drMail')), mailOk(val($('drMail')))),
+        it('drIntro', '📝 تفصیل', val($('drIntro')), !!val($('drIntro')), true)],
+        save(){ const b = document.querySelector('#agBody .ag-f > button.btn.block'); if(b) b.click(); }};
+    }
+  };
+  const STEPS = ['① کارڈ', '② رجسٹریشن', '③ ممبرشپ — تفصیل', '④ منظوری', '⑤ Earn with MCS'];
+  function active(){
+    const c = ['serviceFormModal','doctorFormModal','pfEditModal','agModal'].map($).filter(m=> m && m.classList.contains('active'));
+    if(!c.length) return null;
+    c.sort((a,b)=> (parseInt(b.style.zIndex,10)||0) - (parseInt(a.style.zIndex,10)||0));
+    const m = c[0];
+    if(m.id !== 'agModal') return {key:m.id, m, host: m.id==='pfEditModal' ? $('pfEFields') : m.querySelector('.fm-body'), before: m.id==='pfEditModal'};
+    const f = m.querySelector('#agBody .ag-f'); if(!f) return null;
+    const key = $('agCnic') ? 'ag' : $('msName') ? 'ms' : $('drCnic') ? 'dr' : ''; if(!key) return null;
+    return {key, m, host:f};
+  }
+  const FP = window._fp = {prev:{}, shown:{}, idle:0, t:0, inst:null};
+  document.addEventListener('input', ()=>{ FP.idle = Date.now(); }, true);
+  document.addEventListener('change', ()=>{ FP.idle = Date.now(); }, true);
+  function barHtml(sp, pct){
+    const miss = sp.items.filter(x=>!x.ok).map(x=>x.name.replace(/^[^؀-ۿA-Za-z]+/,'')).slice(0,3);
+    const cls = pct >= 100 ? 'full' : pct >= 50 ? 'mid' : '';
+    const st = STEPS.map((s,i)=>`<em class="${i+1 < sp.stage ? 'ok' : i+1 === sp.stage ? 'on' : ''}">${i+1 < sp.stage ? '✓ ' : ''}${s}</em>`).join('');
+    return {cls, html:`<div class="fp-t"><b>${pct >= 100 ? '✅ 100٪ مکمل' : '📊 ' + pct + '٪ مکمل'}</b><span>${pct >= 100 ? 'دبائیں — جائزہ دیکھیں' : 'باقی: ' + escapeHtml(miss.join('، '))}</span></div><div class="fp-tr"><i style="width:${Math.max(4,pct)}%"></i></div><div class="fp-st">${st}</div>`};
+  }
+  function tick(){
+    const a = active();
+    if(!a){ FP.inst = null; return; }
+    let sp; try{ sp = SPECS[a.key](); }catch(e){ return; }
+    if(!sp || !sp.items.length) return;
+    const inst = a.key + '|' + (a.key==='serviceFormModal' ? (typeof editingServiceId!=='undefined' ? editingServiceId : '') + (typeof svcStage!=='undefined' ? svcStage : '') : '') + '|' + (a.m.dataset.fpOpen || '');
+    if(FP.inst !== inst){ FP.inst = inst; FP.prev[inst] = undefined; FP.shown[inst] = false; }
+    const done = sp.items.filter(x=>x.ok).length, pct = Math.round(done / sp.items.length * 100);
+    let bar = a.host.querySelector(':scope > .fp-bar') || (a.before && a.host.previousElementSibling && a.host.previousElementSibling.classList.contains('fp-bar') ? a.host.previousElementSibling : null);
+    if(!bar){
+      bar = document.createElement('div'); bar.className = 'fp-bar';
+      bar.addEventListener('click', ()=>{ const a2 = active(); if(a2){ try{ fpReview(a2.key, SPECS[a2.key]()); }catch(e){} } });
+      if(a.before) a.host.parentNode.insertBefore(bar, a.host); else a.host.insertBefore(bar, a.host.firstChild);
+    }
+    const h = barHtml(sp, pct);
+    if(bar.dataset.h !== h.html){ bar.innerHTML = h.html; bar.dataset.h = h.html; }
+    bar.className = 'fp-bar ' + h.cls;
+    const prev = FP.prev[inst]; FP.prev[inst] = pct;
+    if(prev === undefined){ FP.base = pct; return; }
+    if(pct < 100){ FP.shown[inst] = false; FP.want = null; return; }
+    if(prev < 100) FP.want = inst;
+    if(FP.want === inst && !FP.shown[inst] && Date.now() - FP.idle > 1300 && !(document.activeElement && document.activeElement.classList && document.activeElement.classList.contains('csel-q'))){
+      FP.shown[inst] = true; FP.want = null;
+      try{ fpReview(a.key, sp); }catch(e){}
+    }
+  }
+  function goField(id){
+    const el = $(id); if(!el) return;
+    const d = el.closest('details'); if(d) d.open = true;
+    if(typeof fmPvGo === 'function' && el.closest('.fm-body')) return fmPvGo(id);
+    try{ el.scrollIntoView({block:'center', behavior:'smooth'}); }catch(e){}
+    setTimeout(()=>{ if(el.tagName==='INPUT' || el.tagName==='TEXTAREA') try{ el.focus(); }catch(e){} else el.classList.add('pv-flash'); }, 350);
+  }
+  window.fpReview = function(key, sp){
+    if(sp.self){ sp.save(); return; }   /* تفصیل ڈویلپر کو: اپنا جائزہ (mcsReview) پہلے سے */
+    let ov = $('fpRv');
+    if(!ov){ ov = document.createElement('div'); ov.id = 'fpRv'; document.body.appendChild(ov);
+      ov.addEventListener('click', e=>{
+        if(e.target === ov || e.target.closest('.rvBack')){ ov.classList.remove('on'); return; }
+        if(e.target.closest('.rvOk')){ ov.classList.remove('on'); try{ ov._save(); }catch(_){} return; }
+        const r = e.target.closest('[data-rv]'); if(r){ ov.classList.remove('on'); goField(r.dataset.rv); }
+      }); }
+    const bad = sp.items.filter(x=>!x.ok && !x.soft), soft = sp.items.filter(x=>!x.ok && x.soft);
+    ov._save = sp.save;
+    ov.innerHTML = `<div class="rvB"><div class="rvH">🔍 جائزہ — ${escapeHtml(STEPS[sp.stage-1] || '')}<small>غلطی ہو تو اسی لائن کو دبائیں — سیدھا اسی خانے میں جا کر درست کریں</small></div>
+      ${sp.items.map(x=>`<div class="rvR${!x.ok ? (x.soft ? ' soft' : ' bad') : ''}" data-rv="${escapeAttr(x.id)}"><span>${escapeHtml(x.name)}</span><b dir="auto">${x.v ? escapeHtml(x.v) : (x.soft ? '— خالی (بہتر ہے لکھ دیں)' : '— خالی (ضروری)')}${x.v && !x.ok && !x.soft ? ' ⚠️ درست نہیں' : ''}</b><i>${x.ok ? '✅' : '✏️'}</i></div>`).join('')}
+      ${bad.length ? `<div class="rvMiss">⚠️ ${bad.length} خانے ابھی درست نہیں — سرخ لائن دبا کر درست کریں</div>` : `<button type="button" class="rvOk">✅ سب ٹھیک ہے — محفوظ کریں اور اگلا مرحلہ</button>`}
+      ${!bad.length && soft.length ? `<div style="font-size:12px;color:#92400e;text-align:center;margin-top:4px">پیلی لائنیں اختیاری ہیں — لکھیں گے تو کارڈ زیادہ اچھا لگے گا</div>` : ''}
+      <button type="button" class="rvBack">✏️ واپس فارم پر</button></div>`;
+    ov.classList.add('on');
+  };
+  /* ہر بار فارم کھلنے پر نئی گنتی */
+  const _om = window.openModal;
+  if(typeof _om === 'function') window.openModal = function(id){ const el = $(id); if(el && !el.classList.contains('active')) el.dataset.fpOpen = Date.now(); return _om.apply(this, arguments); };
+  setInterval(tick, 450);
+
+  /* ===== کارڈ پر مراحل کی پٹی (کارڈ 20٪ ← رجسٹریشن 40٪ ← تفصیل بھیجی 60٪ ← منظور 80٪ ← Earn with MCS 100٪) ===== */
+  function sentMap(){ try{ return JSON.parse(localStorage.getItem('mcsMsSent') || '{}'); }catch(e){ return {}; } }
+  window.fpMarkSent = function(rk){ const m = sentMap(); m[rk] = Date.now(); try{ localStorage.setItem('mcsMsSent', JSON.stringify(m)); }catch(e){} try{ refreshVisibleLists(); }catch(e){} };
+  function sentOf(kind, rec){ try{ const rk = pfKeyOf(rec, kind), t = sentMap()[rk]; return t && Date.now() - t < 45*864e5; }catch(e){ return false; } }
+  window.fpCardSteps = function(kind, rec){
+    if(!rec) return '';
+    const isDoc = kind === 'doctor', live = (typeof pfActive === 'function') && pfActive(rec);
+    let n, next;
+    if(live){ const ag = (typeof agIsRec === 'function') && agIsRec(kind, rec); n = ag ? 5 : 4; next = ag ? '✅ سب مراحل مکمل' : 'اگلا: 💰 Earn with MCS'; }
+    else if(rec.stage === 'registered'){ const s = sentOf(kind, rec); n = s ? 3 : 2; next = s ? 'اگلا: ⏳ ڈویلپر کی منظوری' : 'اگلا: ⭐ ممبرشپ — تفصیل ڈویلپر کو'; }
+    else { n = 1; next = 'اگلا: 📝 رجسٹریشن'; }
+    const pct = n * 20;
+    return `<div class="fp-card"><div class="fp-ct"><span>📊 مرحلہ ${n} / 5 — <b>${pct}٪</b></span><span>${next}</span></div><div class="fp-tr"><i style="width:${pct}%"></i></div></div>`;
+  };
+  function wrapStage(name, kindOf){
+    const f = window[name]; if(typeof f !== 'function') return;
+    window[name] = function(){
+      const h = f.apply(this, arguments); if(!h) return h;
+      const k = kindOf(arguments), rec = k.rec; if(!rec) return h;
+      let out = h;
+      if(rec.stage === 'registered' && !pfActive(rec) && sentOf(k.kind, rec)) out = out.replace(/class="svc-mem-btn"/, 'class="svc-mem-btn fp-wait"').replace('⭐ ممبرشپ مکمل کریں', '⏳ تفصیل بھیج دی — منظوری کا انتظار');
+      return window.fpCardSteps(k.kind, rec) + out;
+    };
+  }
+  wrapStage('cardStageBtn', a => ({kind:a[0], rec:a[1]}));
+  wrapStage('docStageBtn', a => ({kind:'doctor', rec:a[0]}));
+})();
+</script>
+
 </body>
 </html>
