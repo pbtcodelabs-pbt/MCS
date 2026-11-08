@@ -4130,11 +4130,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU237";
+const APP_VERSION = "MCS0811SU238";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS0811SU237": "🗂️ ایڈمن/ڈویلپر کیٹگری بدلے تو ریکارڈ فوراً نئی کیٹگری میں چلا جاتا ہے (تلاش کے صفحے سے بھی) • 📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
+  "MCS0811SU238": "📝 غیر رجسٹرڈ (بنیادی) کارڈ پر زرد پٹی ختم، سب پر صرف «رجسٹریشن مکمل کریں» • 🗂️ ایڈمن/ڈویلپر کیٹگری بدلے تو ریکارڈ فوراً نئی کیٹگری میں چلا جاتا ہے (تلاش کے صفحے سے بھی) • 📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
   "MCS0811SU235": "📥 امپورٹ آسان: صرف دو ضروری بٹن، خلاصہ فوراً بٹن کے نیچے اور اوپر بڑی پراگرس پٹی؛ اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور تبدیلی",
   "MCS0811SU234": "🏪 بلاک 1 (انجمن تاجران فتح پور): پرانے کارڈوں پر مالک کی جگہ دکان کا اصل نام — ایک بٹن سے",
   "MCS0811SU233": "📋 انجمن تاجران فتح پور: بلاک 2، 3، 4، 6، 7 کی فہرستیں (دکان کا نام، مالک، موبائل) — دہرا نمبر / نام خود نہیں لگتا",
@@ -5930,8 +5930,8 @@ function userResultCard(item){
           ${adminBtn}
         </div>
       </div>
-      ${item.intro ? `<div class="ub-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
-      ${svcMoreHtml(item.more)}
+      ${(item.intro && !svcHideIntro(item.kind, item.id)) ? `<div class="ub-intro">💬 ${escapeHtml(item.intro)}</div>` : ``}
+      ${svcHideIntro(item.kind, item.id) ? '' : svcMoreHtml(item.more)}
       ${item.approved===false ? `<div class="doc-pending-line">⏳ Pending Approval...</div>` : ``}
       ${(()=>{ const _r = (item.kind==='service' && item.id) ? store.services.find(x=>x.id===item.id) : null;
         if(item.kind==='doctor' && item.id){ const _d = store.doctors.find(x=>x.id===item.id); if(_d) return docStageBtn(_d); }
@@ -5941,7 +5941,7 @@ function userResultCard(item){
         const _eid = escapeAttr(item.id);
         const _live0 = pfActive(_r);
         /* ① بنیادی ڈیٹا ہو چکا (نئے یا پرانے کارڈ) → صرف «رجسٹریشن مکمل کریں» */
-        if((_r.stage==='basic' || !_r.stage) && !_live0) return svcCanRegister(_r) ? `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();svcRegisterOpen('${_eid}')">📝 رجسٹریشن مکمل کریں</button>` : '';
+        if((_r.stage==='basic' || !_r.stage) && !_live0) return `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();svcRegClick('${_eid}')">📝 رجسٹریشن مکمل کریں</button>`;
         const _mine = !isAdminSignedIn && (svcMyBasic().includes(_r.id) || pfIsOwner(_r));
         const _live = pfActive(_r);
         /* ② رجسٹریشن مکمل → صرف «ممبرشپ مکمل کریں» */
@@ -8776,6 +8776,22 @@ let svcStage = 'full', svcRegFlag = false;
 function svcMyBasic(){ try{ return JSON.parse(localStorage.getItem('mcsMyBasic')||'[]'); }catch(e){ return []; } }
 function svcMyBasicAdd(id){ try{ const a = svcMyBasic(); if(!a.includes(id)){ a.push(id); localStorage.setItem('mcsMyBasic', JSON.stringify(a)); } }catch(e){} }
 function agOwnsRec(rec){ try{ const me = agMe(); if(!me || !me.code || !rec || !rec.more) return false; return agNormCode(rec.more.ref) === agNormCode(me.code); }catch(e){ return false; } }   /* MCS0711SA187: ایجنٹ کے کوڈ سے درج کاروبار */
+/* MCS0811SU238: بنیادی (غیر رجسٹرڈ) کارڈ پر زرد پٹی / اضافی تفصیل نہیں — صرف «رجسٹریشن مکمل کریں» */
+function svcHideIntro(kind, id){
+  try{
+    if(kind !== 'service' || !id) return false;
+    const r = store.services.find(x=>x.id===id); if(!r) return false;
+    if(r.category==='emergencyNumbers' || r.category==='govOffices') return false;
+    return (r.stage==='basic' || !r.stage) && !pfActive(r);
+  }catch(e){ return false; }
+}
+function svcRegClick(id){
+  const r = store.services.find(x=>x.id===id); if(!r) return;
+  if(svcCanRegister(r)){ svcRegisterOpen(id); return; }
+  const msg = 'السلام علیکم! میں اپنی دکان «' + (r.nameUr||'') + '» (' + (r.whatsapp||'') + ') کی رجسٹریشن مکمل کروانا چاہتا ہوں۔';
+  const num = String(DEFAULT_CONTACT.whatsapp).replace(/\D/g,'').replace(/^0/,'92');
+  window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(msg), '_blank');
+}
 function svcCanRegister(rec){ return !!rec && (rec.stage==='basic' || !rec.stage) && (isAdminSignedIn || svcMyBasic().includes(rec.id) || agOwnsRec(rec)); }
 function svcRegisterOpen(id){
   const r = store.services.find(x=>x.id===id); if(!r) return;
@@ -9020,7 +9036,7 @@ function svcCategoryChanged(){
   fhSetup();
   /* MCS2310FR052: کیٹگری چنتے ہی ریکارڈ فوراً اسی کیٹگری میں منتقل (ترمیم میں) */
   { const _s = (editingServiceId && !pendingFormCtx) ? store.services.find(x=>x.id===editingServiceId) : null;
-    if(_s){ if(k !== _s.category) svcQuickMove(_s, k); return; } }   /* MCS0811SU237: ترمیم میں کیٹگری بدلتے ہی سیدھی منتقل — فارم کی جانچ (شہر، قسم، شناختی کارڈ) پر خاموشی سے رکتی نہیں */
+    if(_s){ if(k !== _s.category) svcQuickMove(_s, k); return; } }   /* MCS0811SU238: ترمیم میں کیٹگری بدلتے ہی سیدھی منتقل — فارم کی جانچ (شہر، قسم، شناختی کارڈ) پر خاموشی سے رکتی نہیں */
   if(k!==currentServiceCategory && pendingFormCtx){ setTimeout(()=>saveService(false), 80); return; }
   if(k!==currentServiceCategory) showToast('محفوظ کرنے پر یہ ریکارڈ "' + m.ur + '" میں چلا جائے گا');
 }
@@ -9212,7 +9228,7 @@ function svcCardHtml(s, meta){
           <button class="mini-del" onclick="deleteService('${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>` : `<button class="a-reqadmin" onclick="openReportChoice('service','${escapeAttr(s.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`}
       </div>
-      ${splitOwnerIntro(s.intro).rest ? `<div class="doc-intro">💬 ${escapeHtml(splitOwnerIntro(s.intro).rest)}</div>` : ``}
+      ${(splitOwnerIntro(s.intro).rest && !svcHideIntro('service', s.id)) ? `<div class="doc-intro">💬 ${escapeHtml(splitOwnerIntro(s.intro).rest)}</div>` : ``}
       <div class="doc-foot">
         ${([s.address,s.area,s.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[s.address,s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
         <div class="doc-recid">ID: ${escapeHtml(shortRecordId('service',s))}</div>
@@ -13977,8 +13993,8 @@ function cardStageBtn(kind, rec){
     if(!live){
       const basic = isDoc ? rec.stage !== 'registered' : (rec.stage === 'basic' || !rec.stage);
       if(basic){
-        if(!(isAdminSignedIn || mine || agentOwn)) return '';
-        return `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();${isDoc ? `docRegOpen('${eid}')` : `svcRegisterOpen('${eid}')`}">📝 رجسٹریشن مکمل کریں</button>`;
+        if(isDoc && !(isAdminSignedIn || mine || agentOwn)) return '';
+        return `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();${isDoc ? `docRegOpen('${eid}')` : `svcRegClick('${eid}')`}">📝 رجسٹریشن مکمل کریں</button>`;
       }
       if(rec.stage === 'registered'){
         if(mine) return `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${eid}','${kind}')">⭐ ممبرشپ مکمل کریں</button>`;
