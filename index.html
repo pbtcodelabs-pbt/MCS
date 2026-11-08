@@ -4108,7 +4108,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU229";
+const APP_VERSION = "MCS0811SU230";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
@@ -4671,7 +4671,7 @@ async function phDone(){
   if(PH.br !== 100 || PH.enh){ try{ phBake(out); }catch(e){} }
   if(PH.enh){ try{ agcEnhance(out); }catch(e){} }
   const pre = pfPickPre; closeModal('phCropModal');
-  if(sf && window._ptSR){ const sm = document.createElement('canvas'); sm.width = sm.height = 360; sm.getContext('2d').drawImage(out, 0, 0, 360, 360); ptSelfieSaved(sm.toDataURL('image/jpeg', .85)); showToast('✅ سیلفی لگ گئی'); return; }
+  if(sf && window._ptSR){ const sm = document.createElement('canvas'); sm.width = sm.height = 360; sm.getContext('2d').drawImage(out, 0, 0, 360, 360); ptSelfieSaved(sm.toDataURL('image/jpeg', .85)); return; }
   if(sf && window._phAg){ window._phAg = false; agImgs.selfie = out.toDataURL('image/jpeg', .85); agShowPic('selfie'); selfieSaveLocal(agImgs.selfie); showToast('✅ سیلفی لگ گئی'); return; }
   try{
     if(sf){ await pfSetSelfie(pre, out.toDataURL('image/jpeg', .85)); }
@@ -4701,7 +4701,7 @@ async function pfSetSelfie(pre, srcAny){
   const S = pfEd[pre]; if(!S) return;
   const big = await pfSquare(srcAny, 480, .8), thumb = await pfSquare(srcAny, 120, .7);
   S.imgs[1] = {src:big, changed:true}; delete S.del[1]; S.thumb = thumb; S.thumbChanged = true;
-  try{ localStorage.setItem('mcsSelfie', big); }catch(e){}
+  try{ sfPut('mcsSelfie', big); }catch(e){}
   pfSlotsRender(pre);
 }
 async function pfSelfiePicked(inp){
@@ -4710,7 +4710,7 @@ async function pfSelfiePicked(inp){
 }
 async function pfUseSavedSelfie(pre){ let sv = ''; try{ sv = localStorage.getItem('mcsSelfie') || ''; }catch(e){} if(!sv) return; try{ await pfSetSelfie(pre, sv); }catch(e){} }
 /* ایجنٹ بنتے وقت جو سیلفی دی، وہ بھی اسی فون میں یاد رہے — کاروبار میں دوبارہ نہ مانگنی پڑے */
-async function selfieSaveLocal(d){ try{ localStorage.setItem('mcsSelfie', await pfSquare(d, 480, .8)); }catch(e){} }
+async function selfieSaveLocal(d){ try{ await sfPut('mcsSelfie', await pfSquare(d, 480, .8)); }catch(e){} }
 function pfAddItem(pre, x){
   const box = document.getElementById(pre + 'Items'); if(box.children.length >= 20){ showToast('20 سے زیادہ نہیں'); return; }
   const row = document.createElement('div'); row.className = 'pf-irow';
@@ -11254,7 +11254,8 @@ function ptView(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portal
 function ptSub(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalModal'); setTimeout(()=>mpSubscribe(x.p.rk), 160); }
 /* ===== MCS0811SU220 (مالک کا حکم): ہر پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / پروفیشن / بزنس / یوزر) کی گول سیلفی — اوپر کے دائرے کو دبائیں، کیمرہ یا گیلری، کاٹیں، لگ جائے ===== */
 function ptSelfieKey(rl){ return (rl === 'dev' || rl === 'codev' || rl === 'agent') ? 'mcsSelfie_' + rl : 'mcsSelfie'; }
-function ptSelfieGet(rl){ let v = ''; try{ v = localStorage.getItem(ptSelfieKey(rl)) || ''; if(!v && (rl === 'agent')) v = localStorage.getItem('mcsSelfie') || ''; }catch(e){} return v; }
+/* MCS0811SU230: پہلے IndexedDB سے لوڈ ہوئی یادداشت (sfMem)، پھر localStorage */
+function ptSelfieGet(rl){ const k = ptSelfieKey(rl), M = window.sfMem || {}; let v = M[k] || ''; try{ if(!v) v = localStorage.getItem(k) || ''; if(!v && rl === 'agent') v = M.mcsSelfie || localStorage.getItem('mcsSelfie') || ''; }catch(e){} return v; }
 function ptSelfieAsk(){ selfieChoose(()=>{ window._ptSR = ptRole(); window._phAg = false; }); }
 /* MCS0811SU229 (مالک کا حکم): ہر سیلفی (ڈویلپر / کو-ڈویلپر / ایجنٹ / بزنس) — پہلے چنیں: کیمرہ یا گیلری؛ پھر گول ایڈیٹر (زوم، روشنی، کھسکانا، سیدھا، گھمانا) */
 function selfieChoose(prep){
@@ -11270,6 +11271,7 @@ function selfieChoose(prep){
 function selfiePick(how){
   closeModal('selfieSrcModal');
   const id = how === 'cam' ? 'sfSrcCam' : 'sfSrcGal';
+  try{ if(window._sfPrep) window._sfPrep(); }catch(e){}   /* MCS0811SU230: کردار پہلے ہی طے */
   let i = document.getElementById(id);
   if(!i){ i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; if(how === 'cam') i.setAttribute('capture', 'user'); i.id = id; i.hidden = true;
     i.onchange = function(){ const f = i.files && i.files[0]; i.value = ''; if(!f) return; try{ if(window._sfPrep) window._sfPrep(); }catch(e){} phFromFile(f, 'selfie'); };
@@ -11277,12 +11279,21 @@ function selfiePick(how){
   i.click();
 }
 function agSelfieAsk(){ selfieChoose(()=>{ window._ptSR = ''; window._phAg = true; }); }
-function ptSelfieSaved(d){
+async function ptSelfieSaved(d){
   const rl = window._ptSR; window._ptSR = '';
   if(!rl) return;
-  try{ localStorage.setItem(ptSelfieKey(rl), d); }catch(e){}
+  /* MCS0811SU230 (مالک کا حکم): سیلفی پکی محفوظ — IndexedDB (بڑی جگہ) + localStorage؛ پہلے کی طرح خاموشی سے ناکام نہیں، نتیجہ بتاتی ہے */
+  let ok = false;
+  try{ ok = await sfPut(ptSelfieKey(rl), d); }catch(e){}
   if(rl === 'dev'){ try{ const p = ptDevProf(); p.selfie = 1; localStorage.setItem('mcsDevProfile', JSON.stringify(p)); }catch(e){} }
   if(rl === 'codev'){ try{ cdSendSelfie(d); }catch(e){} }
+  /* کاروبار / پروفیشن / ایجنٹ / یوزر: چھوٹی گول سیلفی اپنے ریکارڈ میں بھی (سرور پر بھی جائے اور کارڈ پر بھی نظر آئے) */
+  if(rl === 'biz' || rl === 'prof' || rl === 'agent' || rl === 'user'){
+    try{ const L = mpListReal(); if(L.length){ const th = await pfSquare(d, 120, .7);
+      L.forEach(({p, rec})=>{ try{ rec.more = rec.more || {}; rec.more.selfie = th; pushMoreToFirebase(p.kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); }catch(e){} });
+      try{ saveStore(); }catch(e){} } }catch(e){}
+  }
+  try{ showToast(ok ? '✅ سیلفی محفوظ ہو گئی' : '⚠️ سیلفی محفوظ نہیں ہو سکی — فون میں جگہ خالی کر کے دوبارہ لگائیں', ok ? 2500 : 5000); }catch(e){}
   try{ ptOpen(); }catch(e){}
 }
 function ptOpen(editProf, prev){
@@ -11298,7 +11309,7 @@ function ptOpen(editProf, prev){
       day: [['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['📋','انجمن تاجران','لسٹ امپورٹ','ptTajran'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
       biz: [['➕','بزنس / پروفیشن','رجسٹر کریں','d2AddOpen'],['🤝','ایجنٹ بنائیں','کاروبار چن کر','agPickOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent']],
       cod: [['👥','کو-ڈویلپرز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','کو-ڈویلپر پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
-      rep: [['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
+      rep: [['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
       more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['🗂️','کیٹگری / امپورٹ','ڈویلپر پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel'],['⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red']]
     };
     body = `<div class="pt-tabs">${tabs.map(t=>`<button type="button" class="pt-tab${t[0]===tab?' on':''}" onclick="ptDevTabGo('${t[0]}')"><i>${t[1]}</i>${t[2]}</button>`).join('')}</div>`
@@ -11306,7 +11317,7 @@ function ptOpen(editProf, prev){
       + (tab === 'cod' ? `<div class="cp-hint">👥 ہر کو-ڈویلپر کی آخری لاگ اِن «کو-ڈویلپرز» میں اور اس کی تجاویز / مسائل Help Desk میں «کو-ڈویلپر» کے نام سے آتے ہیں۔</div>` : '')
       + (tab === 'more' ? `<details class="pt-card pt-f" ${(p.name && !editProf) ? '' : 'open'}><summary>🪪 میرا پروفائل ${p.name ? '' : '<small style="color:#dc2626">— پہلی بار بھر دیں</small>'}</summary><input id="ptN" placeholder="نام" value="${escapeAttr(p.name||'')}"><input id="ptP" dir="ltr" inputmode="tel" placeholder="موبائل نمبر" value="${escapeAttr(p.phone||'')}"><input id="ptC" placeholder="شہر" value="${escapeAttr(p.city||'')}"><div class="r"><button type="button" class="p" onclick="ptDevSave()">✅ محفوظ</button></div></details>` : '');
   } else if(rl === 'codev'){ nm = cd.name || 'کو-ڈویلپر'; sub = cd.phone ? '0' + String(cd.phone).slice(2) : '';
-    body = `<div class="cp-hint" style="margin:0 0 8px">👥 آپ نیا بزنس، پروفیشن یا ایجنٹ بھیج سکتے ہیں — ڈویلپر کی منظوری کے بعد ہی لائیو ہوگا۔ باقی چیزیں صرف جانچ کے لیے (محفوظ نہیں ہوتیں)۔ مسئلہ یا تجویز Help Desk سے۔</div><div class="pt-grid">${ptT('➕','بزنس / پروفیشن','منظوری کے لیے بھیجیں','d2AddOpen')}${ptT('🤝','ایجنٹ بنائیں','منظوری کے لیے','agCreateOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
+    body = `<div class="cp-hint" style="margin:0 0 8px">👥 آپ نیا بزنس، پروفیشن یا ایجنٹ بھیج سکتے ہیں — ڈویلپر کی منظوری کے بعد ہی لائیو ہوگا۔ باقی چیزیں صرف جانچ کے لیے (محفوظ نہیں ہوتیں)۔ مسئلہ یا تجویز Help Desk سے۔</div><div class="pt-grid">${ptT('➕','بزنس / پروفیشن','منظوری کے لیے بھیجیں','d2AddOpen')}${ptT('🤝','ایجنٹ بنائیں','منظوری کے لیے','agCreateOpen')}${ptT('🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
   } else if(rl === 'agent'){ nm = me.name || 'ایجنٹ'; sub = me.phone ? '0' + String(me.phone).slice(2) : ''; { const am = (ptPrev && ptPrev.a) ? {name: ptPrev.a.name, phone: ptPrev.a.phone, code: ptPrev.a.code} : me; nm = am.name || 'ایجنٹ'; sub = am.phone ? '0' + String(am.phone).slice(2) : ''; body = apBody(am, !!ptPrev); }
   } else {
     const L = mpListReal(); nm = (a && a.user && a.user.name) || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
@@ -15391,6 +15402,196 @@ function prepTajranB5(){
     document.getElementById('adminImportBox').scrollIntoView({behavior:'smooth', block:'start'});
   }catch(e){ showToast('⚠️ ' + (e.message||e)); }
 }
+</script>
+<script>
+/* =====================================================================
+   MCS0811SU230 (مالک کا حکم)
+   1) سیلفی پکی محفوظ: IndexedDB (بڑی جگہ) + localStorage — ڈویلپر / کو-ڈویلپر / ایجنٹ / بزنس / یوزر سب کے لیے
+   2) 🏆 کارکردگی رپورٹ: پورے صفحے پر پراگریس بارز — ریفرل کوڈ سے فیڈ ہوئے کاروبار / پروفیشن کے حساب سے اوپر سے نیچے
+      ایجنٹ (اپنا کوڈ) • کو-ڈویلپر (PBT-C + اپنا نمبر) • ڈویلپر (PBT-D) • کمپنی (PBT — جس پر کوئی کوڈ نہ لگا ہو)
+   ⚠️ پلے اسٹور: کہیں رقم / کمیشن نہیں — صرف کاروبار کی گنتی
+   ===================================================================== */
+(function(){
+  /* ---------------- 1) سیلفی کی مستقل محفوظی ---------------- */
+  const SF_KEYS = ['mcsSelfie', 'mcsSelfie_dev', 'mcsSelfie_codev', 'mcsSelfie_agent'];
+  window.sfMem = window.sfMem || {};
+  function idb(){ return new Promise((res, rej)=>{ try{ const r = indexedDB.open('mcsSelfieDB', 1); r.onupgradeneeded = ()=>{ r.result.createObjectStore('s'); }; r.onsuccess = ()=>res(r.result); r.onerror = ()=>rej(r.error); r.onblocked = ()=>rej(new Error('blocked')); }catch(e){ rej(e); } }); }
+  window.sfPut = async function(k, v){
+    window.sfMem[k] = v; let ok = false;
+    try{ const db = await idb(); await new Promise((res, rej)=>{ const tx = db.transaction('s', 'readwrite'); tx.objectStore('s').put(v, k); tx.oncomplete = res; tx.onerror = tx.onabort = ()=>rej(tx.error || new Error('tx')); }); ok = true; try{ db.close(); }catch(e){} }catch(e){}
+    try{ localStorage.setItem(k, v); ok = true; }catch(e){}
+    try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+    return ok;
+  };
+  async function sfLoadAll(){
+    let changed = false;
+    try{ const db = await idb();
+      for(const k of SF_KEYS){
+        const v = await new Promise(res=>{ try{ const q = db.transaction('s').objectStore('s').get(k); q.onsuccess = ()=>res(q.result || ''); q.onerror = ()=>res(''); }catch(e){ res(''); } });
+        let l = ''; try{ l = localStorage.getItem(k) || ''; }catch(e){}
+        if(v){ window.sfMem[k] = v; if(v !== l){ changed = true; try{ localStorage.setItem(k, v); }catch(e){} } }
+        else if(l){ window.sfMem[k] = l; window.sfPut(k, l); }   /* پرانی لوکل سیلفی کو بھی محفوظ جگہ میں لے آئیں */
+      }
+      try{ db.close(); }catch(e){}
+    }catch(e){}
+    if(changed){ try{ const m = document.getElementById('portalModal'); if(m && m.classList.contains('active')) ptOpen(); }catch(e){} }
+  }
+  setTimeout(sfLoadAll, 300);
+
+  /* ---------------- 2) کارکردگی رپورٹ ---------------- */
+  const css = document.createElement('style');
+  css.textContent = `
+#pbPage{position:fixed;inset:0;z-index:2147483000;background:#f1f5f9;color:#0f172a;display:flex;flex-direction:column;direction:rtl;font-family:inherit}
+html.mcs-dark #pbPage{background:#0b1220;color:#e5e7eb}
+#pbPage .pb-top{background:linear-gradient(135deg,#0f766e,#115e59);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;box-shadow:0 2px 10px rgba(0,0,0,.25);flex:0 0 auto}
+#pbPage .pb-bar{display:flex;align-items:center;gap:8px}
+#pbPage .pb-bar h2{flex:1;margin:0;font-size:19px;font-weight:900}
+#pbPage .pb-x,#pbPage .pb-rf{border:none;background:rgba(255,255,255,.2);color:#fff;width:36px;height:36px;border-radius:11px;font-size:18px}
+#pbPage .pb-info{margin-top:8px;background:rgba(255,255,255,.14);border-radius:12px;padding:7px 10px;font-size:13px;line-height:1.7}
+#pbPage .pb-info a{color:#fff;font-weight:900;text-decoration:none;direction:ltr;unicode-bidi:embed}
+#pbPage .pb-info .cd{display:inline-block;margin:0 0 0 10px;white-space:nowrap}
+#pbPage .pb-sum{display:flex;gap:6px;margin-top:8px}
+#pbPage .pb-sum div{flex:1;background:rgba(255,255,255,.14);border-radius:10px;padding:4px 2px;text-align:center;font-size:11px}
+#pbPage .pb-sum b{display:block;font-size:17px}
+#pbPage .pb-ctl{display:flex;gap:6px;align-items:center;margin-top:8px}
+#pbPage .pb-ctl input{flex:1;min-width:0;border:none;border-radius:10px;padding:8px 10px;font:inherit;font-size:13px;color:#0f172a}
+#pbPage .pb-chip{border:none;border-radius:10px;padding:7px 9px;font:inherit;font-size:12px;font-weight:800;background:rgba(255,255,255,.2);color:#fff;white-space:nowrap}
+#pbPage .pb-chip.on{background:#fff;color:#0f766e}
+#pbPage .pb-list{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 10px calc(16px + env(safe-area-inset-bottom,0px))}
+#pbPage .pb-row{background:#fff;border-radius:14px;padding:9px 11px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+html.mcs-dark #pbPage .pb-row{background:#162033}
+#pbPage .pb-h{display:flex;align-items:center;gap:8px}
+#pbPage .pb-rk{flex:0 0 auto;min-width:28px;height:28px;border-radius:50%;background:#e2e8f0;color:#334155;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center}
+html.mcs-dark #pbPage .pb-rk{background:#334155;color:#e2e8f0}
+#pbPage .pb-rk.r1{background:#f59e0b;color:#fff}#pbPage .pb-rk.r2{background:#94a3b8;color:#fff}#pbPage .pb-rk.r3{background:#c2410c;color:#fff}
+#pbPage .pb-nm{flex:1;min-width:0;font-weight:900;font-size:14px;line-height:1.45}
+#pbPage .pb-nm small{display:block;font-weight:700;font-size:11.5px;opacity:.75}
+#pbPage .pb-nm bdi{direction:ltr;unicode-bidi:isolate}
+#pbPage .pb-n{flex:0 0 auto;text-align:center;font-weight:900;font-size:19px;line-height:1.1}
+#pbPage .pb-n small{display:block;font-size:10px;font-weight:700;opacity:.7}
+#pbPage .pb-tr{height:16px;border-radius:9px;background:#e2e8f0;margin-top:7px;overflow:hidden;direction:ltr}
+html.mcs-dark #pbPage .pb-tr{background:#0b1220}
+#pbPage .pb-fl{height:100%;border-radius:9px;transition:width .6s ease;min-width:0}
+#pbPage .pb-pc{font-size:11px;font-weight:800;opacity:.75;margin-top:3px;display:flex;justify-content:space-between}
+#pbPage .pb-tag{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;margin-right:4px;color:#fff;vertical-align:middle}
+#pbPage .pb-tag.a{background:#0d9488}#pbPage .pb-tag.c{background:#7c3aed}#pbPage .pb-tag.d{background:#1d4ed8}#pbPage .pb-tag.k{background:#b45309}
+#pbPage .pb-me{outline:2px solid #f59e0b}
+#pbPage .pb-msg{text-align:center;padding:30px 10px;font-weight:800;opacity:.8}`;
+  document.head.appendChild(css);
+
+  const PB = { rows: [], filt: [], shown: 0, tab: 'all', q: '', max: 1, total: 0, busy: false };
+  const STEP = 80;
+  const E = s => (typeof escapeHtml === 'function' ? escapeHtml(s == null ? '' : String(s)) : String(s == null ? '' : s));
+  const ph10 = v => String(v || '').replace(/\D/g, '').slice(-10);
+  const ph0 = v => { const d = ph10(v); return d.length === 10 ? '0' + d : ''; };
+  const up = v => String(v || '').trim().toUpperCase().replace(/\s+/g, '');
+  const nf = n => { try{ return typeof urduDigits === 'function' ? urduDigits(String(n)) : String(n); }catch(e){ return String(n); } };
+
+  /* کس ریفرل کوڈ سے کتنے کاروبار / پروفیشن (store.services + store.doctors) */
+  function pbTally(){
+    const T = {};
+    const add = (k, rec)=>{ const t = T[k] || (T[k] = {n: 0, act: 0, last: 0}); t.n++; try{ if(pfActive(rec)) t.act++; }catch(e){} try{ const c = apCreated(rec); if(c > t.last) t.last = c; }catch(e){} };
+    const each = arr => (arr || []).forEach(r=>{
+      if(!r) return; const m = r.more || {}, raw = String(m.ref || '').trim(), u = up(raw);
+      if(!raw || u === 'PBT'){ add('PBT', r); return; }                 /* کوئی کوڈ نہیں = خود درج کیا = کمپنی (PBT) */
+      if(u === 'PBT-D'){ add('PBT-D', r); return; }
+      if(u === 'PBT-C' || m.cdBy){ add('PBT-C:' + ph10(m.cdBy), r); return; }
+      add('A:' + agNormCode(raw), r);
+    });
+    each(typeof store !== 'undefined' && store.services); each(typeof store !== 'undefined' && store.doctors);
+    return T;
+  }
+  const grab = (T, k) => T[k] || {n: 0, act: 0, last: 0};
+
+  async function pbBuild(){
+    let ag = [], cd = [];
+    try{ const r = await agAdminCall({op: 'list'}); if(r && r.list){ agList = r.list; } }catch(e){}
+    ag = (typeof agList !== 'undefined' ? agList : []).filter(a => a && a.status === 'approved');
+    try{ const j = await cdAdminCall({op: 'list'}); if(j && j.ok) cd = j.list || []; }catch(e){}
+    try{ await pfLoadList(); }catch(e){}
+    const T = pbTally(), rows = [];
+    /* ایجنٹ */
+    ag.forEach(a=>{
+      const k1 = grab(T, 'A:' + agNormCode(a.code)), k2 = a.phone ? grab(T, 'A:' + agNormCode(a.phone)) : {n: 0, act: 0, last: 0};
+      rows.push({type: 'a', name: a.name || 'ایجنٹ', city: a.city || '', code: a.code || '', phone: ph0(a.phone), n: k1.n + k2.n, act: k1.act + k2.act, last: Math.max(k1.last, k2.last)});
+    });
+    /* کو-ڈویلپر: فہرست (ایڈمن) + ریکارڈ سے ملنے والے */
+    const seen = {};
+    cd.forEach(c=>{ const p = ph10(c.phone), k = grab(T, 'PBT-C:' + p); seen[p] = 1; rows.push({type: 'c', name: c.name || 'کو-ڈویلپر', city: c.city || '', code: 'PBT-C', phone: ph0(c.phone), n: k.n, act: k.act, last: k.last}); });
+    Object.keys(T).filter(k=>k.indexOf('PBT-C:') === 0).forEach(k=>{
+      const p = k.slice(6); if(p && seen[p]) return; const t = T[k];
+      let nm = ''; try{ const rec = [].concat(store.services || [], store.doctors || []).find(r=> r && r.more && r.more.cdBy && ph10(r.more.cdBy) === p); nm = rec ? String(rec.more.cdBy).replace(/[\d\s+\-]+$/g, '').trim() : ''; }catch(e){}
+      rows.push({type: 'c', name: nm || 'کو-ڈویلپر — نام درج نہیں', city: '', code: 'PBT-C', phone: p ? '0' + p : '', n: t.n, act: t.act, last: t.last});
+    });
+    /* ڈویلپر */
+    const dp = (typeof ptDevProf === 'function' ? ptDevProf() : {}) || {}, dk = grab(T, 'PBT-D');
+    rows.push({type: 'd', name: dp.name || 'ڈویلپر', city: dp.city || '', code: 'PBT-D', phone: dp.phone || '', n: dk.n, act: dk.act, last: dk.last});
+    /* کمپنی */
+    const ck = grab(T, 'PBT');
+    rows.push({type: 'k', name: 'پی بی ٹی کمپنی', city: '', code: 'PBT', phone: '', n: ck.n, act: ck.act, last: ck.last});
+    rows.sort((x, y)=> (y.n - x.n) || (y.last - x.last) || String(x.name).localeCompare(String(y.name)));
+    rows.forEach((r, i)=> r.rank = i + 1);
+    PB.rows = rows; PB.total = rows.reduce((s, r)=>s + r.n, 0);
+    /* کُل میں غیر منظور شدہ / نامعلوم کوڈ بھی شامل ہوں تاکہ فیصد درست رہے */
+    try{ const all = ((store.services || []).length + (store.doctors || []).length); if(all > PB.total) PB.total = all; }catch(e){}
+    PB.max = Math.max(1, rows.length ? rows[0].n : 1);
+    PB.cd = rows.filter(r=>r.type === 'c'); PB.dev = dp; PB.agN = rows.filter(r=>r.type === 'a').length;
+  }
+
+  function pbFilter(){
+    const q = PB.q.trim().toLowerCase().replace(/[\s-]/g, '');
+    PB.filt = PB.rows.filter(r => (PB.tab === 'all' || (PB.tab === 'a' && r.type === 'a') || (PB.tab === 'c' && (r.type === 'c' || r.type === 'd' || r.type === 'k'))) &&
+      (!q || [r.name, r.city, r.code, r.phone].join(' ').toLowerCase().replace(/[\s-]/g, '').includes(q)));
+    PB.shown = 0;
+  }
+  function pbRow(r){
+    const pct = PB.max ? r.n / PB.max * 100 : 0, share = PB.total ? (r.n / PB.total * 100) : 0;
+    const w = r.n ? Math.max(3, pct) : 0, col = `hsl(${Math.round(pct * 1.2)},68%,42%)`;   /* سب سے آگے = سبز، سب سے پیچھے = سرخ */
+    const tag = {a: ['a', '🤝 ایجنٹ'], c: ['c', '👥 کو-ڈویلپر'], d: ['d', '🛠️ ڈویلپر'], k: ['k', '🏢 کمپنی']}[r.type];
+    const sub = [r.city, r.code ? '' : '', ''].filter(Boolean).join('');
+    return `<div class="pb-row${r.type === 'd' || r.type === 'k' ? ' pb-me' : ''}"><div class="pb-h">
+      <div class="pb-rk ${r.rank <= 3 ? 'r' + r.rank : ''}">${nf(r.rank)}</div>
+      <div class="pb-nm">${E(r.name)}<span class="pb-tag ${tag[0]}">${tag[1]}</span><small>${[r.city ? '🏙️ ' + E(r.city) : '', r.code ? '🆔 <bdi>' + E(r.code) + '</bdi>' : '', r.phone && r.type !== 'a' ? '📞 <bdi>' + E(r.phone) + '</bdi>' : ''].filter(Boolean).join(' · ')}</small></div>
+      <div class="pb-n">${nf(r.n)}<small>کاروبار</small></div></div>
+      <div class="pb-tr"><div class="pb-fl" style="width:${w.toFixed(1)}%;background:${col}"></div></div>
+      <div class="pb-pc"><span>${r.act ? '✅ چالو ممبرشپ: ' + nf(r.act) : ''}</span><span>${nf(share.toFixed(1))}٪</span></div></div>`;
+  }
+  function pbMore(reset){
+    const box = document.getElementById('pbList'); if(!box) return;
+    if(reset){ box.innerHTML = ''; PB.shown = 0; }
+    const part = PB.filt.slice(PB.shown, PB.shown + STEP);
+    if(!PB.filt.length){ box.innerHTML = '<div class="pb-msg">یہاں کوئی نہیں</div>'; return; }
+    box.insertAdjacentHTML('beforeend', part.map(pbRow).join('')); PB.shown += part.length;
+  }
+  function pbHeader(){
+    const dp = PB.dev || {}, E2 = E;
+    const cds = (PB.cd || []).slice(0, 8).map(c=> `<span class="cd">${E2(c.name)} ${c.phone ? '<a href="tel:' + E2(c.phone) + '">' + E2(c.phone) + '</a>' : ''}</span>`).join('') + ((PB.cd || []).length > 8 ? ' +' + nf(PB.cd.length - 8) : '');
+    return `<div class="pb-info">🛠️ ڈویلپر: <b>${E2(dp.name || '')}</b> ${dp.phone ? '<a href="tel:' + E2(dp.phone) + '">' + E2(dp.phone) + '</a>' : '<span style="opacity:.8">— نمبر درج نہیں (پورٹل ← مزید ← میرا پروفائل)</span>'}<br>👥 کو-ڈویلپر: ${cds || '<span style="opacity:.8">ابھی کوئی نہیں</span>'}</div>
+      <div class="pb-sum"><div><b>${nf(PB.total)}</b>کل کاروبار</div><div><b>${nf(PB.agN)}</b>ایجنٹ</div><div><b>${nf((PB.cd || []).length)}</b>کو-ڈویلپر</div></div>
+      <div class="pb-ctl"><input type="search" id="pbQ" placeholder="🔍 نام، شہر، کوڈ…" value="${E2(PB.q)}">${[['all', 'سب'], ['a', 'ایجنٹ'], ['c', 'ٹیم']].map(([k, t])=>`<button type="button" class="pb-chip${PB.tab === k ? ' on' : ''}" data-t="${k}">${t}</button>`).join('')}</div>`;
+  }
+  function pbPaint(){
+    const pg = document.getElementById('pbPage'); if(!pg) return;
+    document.getElementById('pbHead').innerHTML = pbHeader();
+    const q = document.getElementById('pbQ'), list = document.getElementById('pbList');
+    q.oninput = ()=>{ PB.q = q.value; clearTimeout(PB._t); PB._t = setTimeout(()=>{ pbFilter(); pbMore(true); }, 250); };
+    pg.querySelectorAll('.pb-chip').forEach(b=> b.onclick = ()=>{ PB.tab = b.dataset.t; pg.querySelectorAll('.pb-chip').forEach(x=>x.classList.toggle('on', x === b)); pbFilter(); pbMore(true); list.scrollTop = 0; });
+    list.onscroll = ()=>{ if(list.scrollTop + list.clientHeight >= list.scrollHeight - 300 && PB.shown < PB.filt.length) pbMore(); };
+    pbFilter(); pbMore(true);
+  }
+  window.pbClose = function(){ const pg = document.getElementById('pbPage'); if(pg) pg.remove(); document.documentElement.style.overflow = ''; };
+  window.pbOpen = async function(){
+    if(PB.busy) return; PB.busy = true;
+    let pg = document.getElementById('pbPage');
+    if(!pg){ pg = document.createElement('div'); pg.id = 'pbPage'; document.body.appendChild(pg); }
+    pg.innerHTML = `<div class="pb-top"><div class="pb-bar"><button type="button" class="pb-x" onclick="pbClose()" aria-label="بند">✕</button><h2>🏆 کارکردگی رپورٹ</h2><button type="button" class="pb-rf" onclick="pbOpen()" aria-label="تازہ">🔄</button></div><div id="pbHead"></div></div><div class="pb-list" id="pbList"><div class="pb-msg">⏳ فہرست آ رہی ہے…</div></div>`;
+    document.documentElement.style.overflow = 'hidden';
+    try{ await pbBuild(); pbPaint(); }
+    catch(e){ const l = document.getElementById('pbList'); if(l) l.innerHTML = '<div class="pb-msg">⚠️ رپورٹ نہیں بنی — انٹرنیٹ اور لاگ اِن دیکھ کر 🔄 دبائیں</div>'; }
+    PB.busy = false;
+  };
+})();
+
 </script>
 </body>
 </html>
