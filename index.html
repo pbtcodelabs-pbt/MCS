@@ -4160,10 +4160,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU247";
+const APP_VERSION = "MCS0811SU248";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0811SU248": "✉️ دکاندار کو اطلاع والا پیغام مختصر اور صاف — تفصیل چیک، تبدیلی / حذف کی درخواست، رجسٹریشن، ایپ مفت",
   "MCS0811SU247": "📢 ہوم کے اشتہار والے کارڈ سے قیمت (روپے) ہٹائی — پلے اسٹور کا اصول",
   "MCS0811SU246": "🏪 پورٹل میں ایک «کاروبار» بٹن: نیا / پہلے سے درج کاروبار (رجسٹریشن، ایک سال ممبرشپ، دکاندار کا لاگ اِن میسج) / ایجنٹ — ریفرل کوڈ خود",
   "MCS0811SU245": "📊 ہر فارم میں فیصد پٹی (20٪…100٪)، 100٪ پر فوراً جائزہ — غلطیاں سرخ، ➕ کی جگہ لکھیں + ملتے نام نیچے، کارڈ پر مراحل کی پٹی",
@@ -7098,31 +7099,23 @@ document.addEventListener('click', e=>{
    ریکارڈ (ساتھ اس کا لائیو کارڈ تصویر میں)، ایپ کا تعارف، پلے اسٹور، رابطہ اور ہماری ویب سائٹ۔ چھپائے خانے اس میں بھی نہیں جاتے۔ */
 const PBT_SITE_URL = 'https://pbtcodelabs-pbt.github.io/';
 function ownerCaptionText(kind, item){
+  /* MCS0811SU248 (ہیلپ ڈیسک #147، مالک کا حکم): مختصر پیغام — درج ہونے کی اطلاع، تفصیل چیک، تبدیلی / حذف کی درخواست 📩 سے، رجسٹریشن مکمل کرنے کی دعوت، ایپ ہمیشہ مفت */
   item = kind==='doctor' ? fhDoc(item) : fhSvc(item);
   const catLabel = kind==='doctor' ? 'ڈاکٹر' : ((CATEGORY_META[item.category]||{}).ur || '');
   const owner = kind==='doctor' ? '' : splitOwnerIntro(item.intro).owner;
-  const lines = ['السلام علیکم ورحمۃ اللہ!', '',
-    'ہم *pbtcodelabs* کی طرف سے آپ سے مخاطب ہیں۔ ہم نے آپ کے شہر کے لیے *مائی سٹی شائنز (My City Shines)* کے نام سے ایک مفت ڈیجیٹل ڈائریکٹری ایپ بنائی ہے، اور آپ کا ریکارڈ اس میں شامل کر دیا ہے تاکہ ضرورت مند لوگ آپ تک آسانی سے پہنچ سکیں۔', '',
-    '🪪 *آپ کا ریکارڈ:*',
-    `👤 ${item.nameUr||item.name||''}${catLabel?' — '+catLabel:''}`];
-  if(owner) lines.push('🙋 ' + owner);
+  const lines = ['السلام علیکم ورحمۃ اللہ! 🌟', '',
+    'ہم نے آپ کا ریکارڈ اپنے شہر کی ڈیجیٹل ڈائریکٹری *My City Shines* میں درج کیا ہے:',
+    `🏪 ${item.nameUr||item.name||''}${catLabel?' — '+catLabel:''}`];
+  if(owner) lines.push('👤 ' + owner);
   if(item.city||item.area) lines.push('📍 ' + [item.area,item.city].filter(Boolean).join('، '));
   if(item.whatsapp) lines.push('📞 ' + waPhoneDisplay(item.whatsapp));
-  lines.push('🆔 ریکارڈ نمبر: ' + shortRecordId(kind, item),
-    '', '🖼️ ساتھ لگی تصویر آپ کا *لائیو کارڈ* ہے — بالکل اسی شکل میں جیسے ایپ میں سب کو نظر آ رہا ہے۔',
-    '✅ آپ کا ریکارڈ اس وقت ایپ پر لائیو ہے۔',
-    '', '📱 *مائی سٹی شائنز کیا ہے؟*',
-    'آپ کے شہر کی مکمل ڈائریکٹری — ڈاکٹرز، دکانیں، کاروبار اور ہنرمند، سب ایک جگہ۔ یہ بالکل مفت اور بالکل لائیو ہے؛ جو ریکارڈ اس میں ڈالا جائے وہ سب کو نظر آتا ہے۔',
-    'یہ آپ کی اپنی ایپ ہے — اپنے علاقے کے دکاندار، بزنس اور ہنرمند آپ خود فیڈ کریں؛ آپ کی ضرورتیں سہولت سے پوری ہوں گی اور گرد و نواح کے لوگوں کو بھی آسانی ہوگی۔',
-    '', '👇 *آپ کیا کر سکتے ہیں:*',
-    '1️⃣ پلے اسٹور سے ایپ ڈاؤن لوڈ کریں:', MCS_PLAY_URL,
-    '🔍 یا پلے اسٹور پر «My City Shines» لکھ کر سرچ کریں',
-    '2️⃣ ایپ میں اپنا ریکارڈ خود چیک کریں',
-    '3️⃣ اپنی ضرورت کے اور جاننے والوں کے ریکارڈ بھی خود فیڈ کریں',
-    '', '⭐ *ایک گزارش:* اگر آپ کو ہماری یہ کاوش اچھی لگی ہے اور آپ چاہتے ہیں کہ زیادہ سے زیادہ لوگ جلد از جلد اس سے فائدہ اٹھائیں، تو نیچے والے لنک سے پلے اسٹور پر اس ایپ کو *⭐⭐⭐⭐⭐ اچھی ریٹنگ* دیں اور *اچھا ریویو* لکھ کر اپنے تاثرات کا اظہار کریں:', MCS_PLAY_URL,
-    '', '💬 اپنے ریکارڈ میں تبدیلی، یا کوئی تجویز، مسئلہ یا مشورہ ہو تو ایپ کے اندر «? Help Desk» بٹن سے بتائیں — جواب وہیں ملے گا۔',
-    '', '🌐 ہماری ویب سائٹ وزٹ کرنے کے لیے یہ لنک دبائیں:', PBT_SITE_URL,
-    '', '— *pbtcodelabs* 💙');
+  lines.push('🆔 ' + shortRecordId(kind, item),
+    '', 'یہ پورے شہر کے دکانداروں، کاروباری اور پیشہ ور لوگوں کی ڈائریکٹری ہے — سب کے لیے آسانی اور کام کی چیز۔',
+    '', '✅ اپنی تفصیل چیک کر لیں — کوئی غلطی ہو یا تبدیلی چاہیں تو ہمیں بتا دیں۔',
+    '📲 ایپ پلے اسٹور سے ڈاؤن لوڈ کر کے دیکھیں:', MCS_PLAY_URL,
+    '⭐ اچھی لگے اور رجسٹریشن مکمل کرنا چاہیں تو ایپ میں اپنے کارڈ پر «📝 رجسٹریشن مکمل کریں» سے درخواست دے دیں۔',
+    '🗑️ ریکارڈ ہٹوانا ہو تو اپنے کارڈ پر 📩 بٹن دبا کر «حذف کی درخواست» بھیج دیں — ہم ہٹا دیں گے۔',
+    '', '💙 یہ ایپ سب کے لیے ہمیشہ مفت ہے۔ — *pbtcodelabs*');
   return lines.join('\n');
 }
 function shareCardToOwner(canvas, caption, item){
@@ -14726,7 +14719,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU247" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0811SU248" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
