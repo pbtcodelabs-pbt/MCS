@@ -4108,7 +4108,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU226";
+const APP_VERSION = "MCS0811SU229";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
@@ -4616,8 +4616,9 @@ function phOpen(c, mode){
   let m = document.getElementById('phCropModal');
   if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'phCropModal'; m.style.zIndex = '2147482000'; document.body.appendChild(m); }
   m.innerHTML = `<div class="modal-box agc-box"><div class="ag-hd">✂️ ${sf ? 'اپنی سیلفی' : 'دکان کی تصویر'} — کاٹیں اور سنواریں <small>${sf ? 'چہرہ گول فریم کے بیچ میں رکھیں' : 'دکان چوکور چوکھٹے میں رکھیں'} — انگلی سے کھسکائیں، دو انگلیوں سے بڑا / چھوٹا</small></div>
-    <canvas id="phCv" class="agc-cv" width="480" height="480" style="width:min(100%,340px);aspect-ratio:1;${sf ? 'border-radius:50%' : ''}"></canvas>
-    <div class="agc-row"><button type="button" onclick="phZoomStep(-25)" aria-label="چھوٹا">➖</button><span>🔍 زوم</span><input type="range" id="phZ" min="50" max="400" value="100" style="flex:1"><button type="button" onclick="phZoomStep(25)" aria-label="بڑا">➕</button></div>
+    <canvas id="phCv" class="agc-cv${sf ? ' ph-round' : ''}" width="480" height="480" style="width:min(100%,340px);aspect-ratio:1;${sf ? 'border-radius:50%' : ''}"></canvas>
+    <div class="agc-row"><button type="button" onclick="phZoomStep(-25)" aria-label="چھوٹا">➖</button><span>🔍 زوم</span><input type="range" id="phZ" min="25" max="400" value="100" style="flex:1"><button type="button" onclick="phZoomStep(25)" aria-label="بڑا">➕</button></div>
+    <div class="agc-row"><button type="button" onclick="phFit()">⤢ پوری تصویر</button><button type="button" onclick="phFill()">⤡ دائرہ بھر دیں</button></div>
     <div class="agc-row"><button type="button" onclick="phRot(-1)">↺ بائیں گھمائیں</button><button type="button" onclick="phRot(1)">↻ دائیں گھمائیں</button></div>
     <div class="agc-row"><span>📐 سیدھا</span><input type="range" id="phF" min="-100" max="100" value="0" style="flex:1"></div>
     <div class="agc-row"><span>☀️ روشنی</span><input type="range" id="phB" min="60" max="170" value="100" style="flex:1"></div>
@@ -4640,8 +4641,10 @@ function phOpen(c, mode){
   };
   phDraw();
 }
-function phSetZoom(z){ PH.zoom = Math.max(.5, Math.min(4, z)); const el = document.getElementById('phZ'); if(el) el.value = Math.round(PH.zoom*100); phDraw(); }
+function phSetZoom(z){ PH.zoom = Math.max(.25, Math.min(4, z)); const el = document.getElementById('phZ'); if(el) el.value = Math.round(PH.zoom*100); phDraw(); }
 function phZoomStep(d){ phSetZoom(PH.zoom + d/100); }
+function phFit(){ const im = PH.img, odd = PH.q % 2, iw = odd ? im.height : im.width, ih = odd ? im.width : im.height; PH.ox = PH.oy = 0; PH.fine = 0; const f = document.getElementById('phF'); if(f) f.value = 0; phSetZoom(PH.mode === 'selfie' ? Math.min(iw, ih) / Math.hypot(iw, ih) : Math.min(iw, ih) / Math.max(iw, ih)); }
+function phFill(){ PH.ox = PH.oy = 0; phSetZoom(1); }
 function phRot(d){ PH.q = (PH.q + d + 4) % 4; PH.ox = PH.oy = 0; phDraw(); }
 function phReset(){
   Object.assign(PH, {q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh: PH.mode === 'shop'});
@@ -7819,12 +7822,10 @@ async function refreshPromoPreview(){
 let promoReadyBlob = null;
 function sharePromoFromModal(target){
   const txt = document.getElementById('promoTextInput').value.trim();
-  store.promoText = (txt && txt !== DEFAULT_PROMO_TEXT) ? txt : '';
-  store.promoOpts = {...promoOpts};
-  saveStore();
+  try{ store.promoText = (txt && txt !== DEFAULT_PROMO_TEXT) ? txt : ''; store.promoOpts = {...promoOpts}; saveStore(); }catch(e){}   /* MCS0811SU229: فون کی یادداشت بھری ہو تب بھی شیئر نہ رکے */
   /* MCS2810WE070: ہر بٹن تصویر کے ساتھ فون کی شیئر فہرست کھولتا ہے */
   const caption = appPromoCaptionText();
-  if(target==='copy'){ try{ navigator.clipboard.writeText(caption); showToast('📋 پیغام اور لنک کاپی ہو گیا — جہاں چاہیں پیسٹ کریں'); }catch(e){ showToast('کاپی نہیں ہو سکا'); } return; }
+  if(target==='copy'){ promoCopyText(caption).then(ok=> showToast(ok ? '📋 پیغام اور لنک کاپی ہو گیا — جہاں چاہیں پیسٹ کریں' : 'کاپی نہیں ہو سکا')); return; }
   if(target==='sms'){ location.href = 'sms:?body=' + encodeURIComponent(caption); return; }
   if(target){ promoShareTo(target==='sheet' ? 'any' : target, txt, caption); return; }
   closeModal('promoTextModal');
@@ -7835,7 +7836,7 @@ function sharePromoFromModal(target){
    نہیں لیتا، وہاں پیسٹ کر دیں)۔ */
 async function promoShareTo(target, txt, caption){
   const names = {wa:'واٹس ایپ', fb:'فیس بک', tg:'ٹیلی گرام', any:'جس ایپ پر بھیجنا ہو'};
-  try{ navigator.clipboard && navigator.clipboard.writeText(caption).catch(()=>{}); }catch(e){}
+  try{ promoCopyText(caption); }catch(e){}
   let blob = promoReadyBlob;
   if(!blob){
     showToast('تصویر تیار ہو رہی ہے...');
@@ -7848,14 +7849,26 @@ async function promoShareTo(target, txt, caption){
     try{ await navigator.share({files:[file], text: caption, title:'مائی سٹی شائنز'}); return; }
     catch(e){ if(e && e.name==='AbortError') return; }
   }
-  /* یہ فون تصویر شیئر نہیں کر سکتا — تصویر محفوظ، پیغام کاپی، پھر وہی ایپ */
+  /* MCS0811SU229: فون تصویر ساتھ نہیں بھیج سکتا مگر شیئر فہرست دے سکتا ہے — تصویر محفوظ، پھر پیغام + پلے اسٹور لنک شیئر */
   if(blob){ try{ downloadBlob(blob, 'my-city-shines-app.png'); }catch(e){} }
+  if(navigator.share){
+    showToast('📥 تصویر محفوظ ہو گئی — اب پیغام شیئر ہوگا؛ تصویر گیلری سے لگا لیں', 5000);
+    try{ await navigator.share({title:'مائی سٹی شائنز', text: caption}); return; }
+    catch(e){ if(e && e.name==='AbortError') return; }
+  }
   const u = encodeURIComponent((typeof MCS_PLAY_URL!=='undefined' && MCS_PLAY_URL) || MCS_APP_URL), t = encodeURIComponent(caption);
   const url = target==='fb' ? 'https://www.facebook.com/sharer/sharer.php?u=' + u
             : target==='tg' ? 'https://t.me/share/url?url=' + u + '&text=' + t
             : 'https://wa.me/?text=' + t;
-  alert('یہ فون تصویر سیدھی نہیں بھیج سکتا۔\n\n📥 تصویر گیلری میں محفوظ ہو گئی ہے اور 📋 پیغام کاپی ہو گیا ہے۔\n' + (names[target]||'') + ' کھلنے پر تصویر لگائیں اور پیغام پیسٹ کر دیں۔');
-  window.open(url, '_blank');
+  showToast('📥 تصویر محفوظ، 📋 پیغام کاپی — ' + (names[target]||'ایپ') + ' کھلنے پر تصویر لگائیں اور پیغام پیسٹ کر دیں', 6000);   /* alert اینڈرائیڈ ویب ویو میں چھپ جاتا ہے */
+  if(target!=='fb' && target!=='tg'){ waOpen('', caption); return; }
+  let w = null; try{ w = window.open(url, '_blank'); }catch(e){}
+  if(!w) location.href = url;
+}
+function promoCopyOld(t){ try{ const a = document.createElement('textarea'); a.value = t; a.setAttribute('readonly',''); a.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(a); a.focus(); a.select(); a.setSelectionRange(0, t.length); const ok = document.execCommand('copy'); a.remove(); return !!ok; }catch(e){ return false; } }
+function promoCopyText(t){
+  try{ if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(()=>true, ()=>promoCopyOld(t)); }catch(e){}
+  return Promise.resolve(promoCopyOld(t));
 }
 async function shareAppPromo(customText, opts){
   showToast('کارڈ بن رہا ہے...');
@@ -11242,16 +11255,34 @@ function ptSub(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalM
 /* ===== MCS0811SU220 (مالک کا حکم): ہر پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / پروفیشن / بزنس / یوزر) کی گول سیلفی — اوپر کے دائرے کو دبائیں، کیمرہ یا گیلری، کاٹیں، لگ جائے ===== */
 function ptSelfieKey(rl){ return (rl === 'dev' || rl === 'codev' || rl === 'agent') ? 'mcsSelfie_' + rl : 'mcsSelfie'; }
 function ptSelfieGet(rl){ let v = ''; try{ v = localStorage.getItem(ptSelfieKey(rl)) || ''; if(!v && (rl === 'agent')) v = localStorage.getItem('mcsSelfie') || ''; }catch(e){} return v; }
-function ptSelfieAsk(){
-  let i = document.getElementById('ptSelfieIn');
-  if(!i){ i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; i.id = 'ptSelfieIn'; i.hidden = true; i.onchange = function(){ const f = i.files && i.files[0]; i.value = ''; if(!f) return; window._ptSR = ptRole(); window._phAg = false; phFromFile(f, 'selfie'); }; document.body.appendChild(i); }
+function ptSelfieAsk(){ selfieChoose(()=>{ window._ptSR = ptRole(); window._phAg = false; }); }
+/* MCS0811SU229 (مالک کا حکم): ہر سیلفی (ڈویلپر / کو-ڈویلپر / ایجنٹ / بزنس) — پہلے چنیں: کیمرہ یا گیلری؛ پھر گول ایڈیٹر (زوم، روشنی، کھسکانا، سیدھا، گھمانا) */
+function selfieChoose(prep){
+  let m = document.getElementById('selfieSrcModal');
+  if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'selfieSrcModal'; m.style.zIndex = '2147481000'; document.body.appendChild(m); }
+  window._sfPrep = prep;
+  m.innerHTML = `<div class="modal-box" style="max-width:340px;text-align:center"><div class="ag-hd" style="margin-bottom:8px">🤳 سیلفی کہاں سے لگائیں؟</div>
+    <button type="button" class="btn block" onclick="selfiePick('cam')">📷 کیمرہ کھولیں — ابھی سیلفی کھینچیں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="selfiePick('gal')">🖼️ گیلری سے چنیں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('selfieSrcModal')">✖ رہنے دیں</button></div>`;
+  openModal('selfieSrcModal');
+}
+function selfiePick(how){
+  closeModal('selfieSrcModal');
+  const id = how === 'cam' ? 'sfSrcCam' : 'sfSrcGal';
+  let i = document.getElementById(id);
+  if(!i){ i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; if(how === 'cam') i.setAttribute('capture', 'user'); i.id = id; i.hidden = true;
+    i.onchange = function(){ const f = i.files && i.files[0]; i.value = ''; if(!f) return; try{ if(window._sfPrep) window._sfPrep(); }catch(e){} phFromFile(f, 'selfie'); };
+    document.body.appendChild(i); }
   i.click();
 }
+function agSelfieAsk(){ selfieChoose(()=>{ window._ptSR = ''; window._phAg = true; }); }
 function ptSelfieSaved(d){
   const rl = window._ptSR; window._ptSR = '';
   if(!rl) return;
   try{ localStorage.setItem(ptSelfieKey(rl), d); }catch(e){}
   if(rl === 'dev'){ try{ const p = ptDevProf(); p.selfie = 1; localStorage.setItem('mcsDevProfile', JSON.stringify(p)); }catch(e){} }
+  if(rl === 'codev'){ try{ cdSendSelfie(d); }catch(e){} }
   try{ ptOpen(); }catch(e){}
 }
 function ptOpen(editProf, prev){
@@ -11672,7 +11703,7 @@ function agForm(){
       <div class="ag-pics">
         <label class="ag-pic" id="agP_front"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'front')"><span>🪪<b>کارڈ سامنے</b></span></label>
         <label class="ag-pic" id="agP_back"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'back')"><span>🪪<b>کارڈ پیچھے</b></span></label>
-        <label class="ag-pic" id="agP_selfie"><input type="file" accept="image/*" capture="user" onchange="agPick(this,'selfie')"><span>🤳<b>اپنی سیلفی</b></span></label>
+        <div class="ag-pic" id="agP_selfie" onclick="agSelfieAsk()"><span>🤳<b>اپنی سیلفی</b></span></div>
       </div>
       <details class="ag-more"><summary>➕ مزید تفصیل (اختیاری — نہ بھی لکھیں تو چلے گا)</summary>
         <label>👨 والد / شوہر کا نام</label><input id="agFather" maxlength="80">
@@ -11843,7 +11874,7 @@ function cdLogout(){ if(!confirm('جانچ موڈ بند کریں؟')) return; l
 async function cdRecheck(){
   const m = codevMe(); if(!m || !m.phone || Date.now() - (m.at||0) < 12*36e5) return;
   try{ const j = await (await fetch(AG_API + '/codev', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: m.phone, pin: m.pin})})).json();
-    if(j && j.ok){ m.at = Date.now(); m.name = j.name; localStorage.setItem('mcsCodev', JSON.stringify(m)); }
+    if(j && j.ok){ m.at = Date.now(); m.name = j.name; localStorage.setItem('mcsCodev', JSON.stringify(m)); try{ if(j.selfie === false){ const sv = ptSelfieGet('codev'); if(sv) cdSendSelfie(sv); } }catch(e){} }
     else if(j && j.reason === 'login'){ localStorage.removeItem('mcsCodev'); cdBar(); mpRender(); }
   }catch(e){}
 }
@@ -11858,15 +11889,27 @@ async function cdAdminOpen(body){
 function cdMsgOf(c){ return 'السلام علیکم ' + c.name + '\nMy City Shines — 👥 کو-ڈویلپر\n\nلاگ اِن کا طریقہ:\n1️⃣ ایپ کھولیں اور مین Login صفحے پر جائیں\n2️⃣ پہلے خانے «Mobile No.» میں اپنا موبائل نمبر لکھیں\n3️⃣ دوسرے خانے «Password / PIN» میں نیچے والا PIN لکھیں\n4️⃣ LOGIN دبائیں — آپ کو-ڈویلپر کے طور پر لاگ اِن ہو جائیں گے\n\n📱 موبائل: 0' + String(c.phone).slice(2) + '\n🔑 PIN: ' + c.pin; }
 function cdAdminRender(){
   const E = s => escapeHtml(s||'');
-  agModal(`<div class="ag-hd">👥 کو-ڈویلپر <small>جانچ کرنے والے</small></div>
-    <div class="cp-hint">یہ ایپ کی ہر چیز کھول کر دیکھ سکتے ہیں (اپنے کاروبار کے بغیر بھی)؛ کچھ محفوظ، منظور یا بھیجا نہیں ہوتا؛ ادائیگی / Account Access / منظوری نہیں۔ ان کی ہر تجویز ہیلپ ڈیسک میں «👥 کو-ڈویلپر» کے نام سے آپ کے پاس۔</div>
-    ${cdList.length ? cdList.map(c=>`<div class="ag-row" style="display:block;border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin:6px 0">
-      <b>${E(c.name)}</b> <span dir="ltr">0${E(String(c.phone).slice(2))}</span><br>
-      🔑 PIN: <b dir="ltr" onclick="agCopy('${escapeAttr(c.pin)}')">${E(c.pin)} 📋</b> <small>${c.seen ? '• آخری بار: ' + new Date(c.seen*864e5).toLocaleDateString('en-GB') : '• ابھی لاگ اِن نہیں کیا'}</small>
-      <div class="cp-btn-row" style="margin-top:6px;gap:6px"><a class="btn" style="flex:1;text-align:center" target="_blank" rel="noopener" href="https://wa.me/${E(c.phone)}?text=${encodeURIComponent(cdMsgOf(c))}">💬 PIN واٹس ایپ پر</a><button type="button" class="btn secondary" onclick="if(confirm('${escapeAttr(c.name)} کا نیا PIN بنائیں؟ پرانا بند ہو جائے گا')) cdAdminOpen({op:'add', phone:'${escapeAttr(c.phone)}', name:'${escapeAttr(c.name)}'})">🔄 نیا PIN</button><button type="button" class="btn secondary" style="color:#b91c1c" onclick="if(confirm('${escapeAttr(c.name)} کو ہٹا دیں؟ جانچ موڈ ان کے فون پر بند ہو جائے گا')) cdAdminOpen({op:'del', phone:'${escapeAttr(c.phone)}'})">🗑️</button></div></div>`).join('') : '<div class="cp-hint" style="text-align:center">ابھی کوئی کو-ڈویلپر نہیں</div>'}
-    <div class="ag-f" style="margin-top:10px"><label>➕ نیا کو-ڈویلپر — نام</label><input id="cdNName" maxlength="60"><label>📱 موبائل نمبر</label><input id="cdNPh" inputmode="tel" dir="ltr" placeholder="03xx xxxxxxx"></div>
-    <button type="button" class="btn block" onclick="const n=document.getElementById('cdNName').value.trim(), p=document.getElementById('cdNPh').value.trim(); if(!n||!p){showToast('نام اور نمبر لکھیں');return;} cdAdminOpen({op:'add', name:n, phone:p})">➕ شامل کریں (PIN خود بنے گا)</button>`);
+  const row = (k, v) => v ? `<div class="cd-r"><span>${k}</span><b>${E(v)}</b></div>` : '';
+  agModal(`<div class="ag-hd">👥 کو-ڈویلپر</div>
+    ${cdList.length ? cdList.map((c, i)=>{
+      const ph = '0' + String(c.phone).slice(2), msg = cdMsgOf(c);
+      return `<div class="cd-card">
+        <div class="cd-top"><div class="cd-av">${c.selfie ? `<img src="${escapeAttr(c.selfie)}" alt="">` : '👤'}</div><div class="cd-id"><b>${E(c.name)}</b><span dir="ltr">${E(ph)}</span></div></div>
+        ${row('🏙️ شہر', c.city)}${row('🪪 شناختی کارڈ', c.cnic)}${row('✉️ ای میل', c.email)}
+        <div class="cd-r"><span>🔑 PIN</span><b dir="ltr" onclick="cdCopyPin(${i})">${E(c.pin)} 📋</b></div>
+        <div class="cd-r"><span>🕒 آخری لاگ اِن</span><b>${c.seen ? new Date(c.seen*864e5).toLocaleDateString('en-GB') : 'ابھی لاگ اِن نہیں کیا'}</b></div>
+        <div class="cd-mh">✉️ لاگ اِن میسج (موبائل + PIN) — اسے بھیج سکتے ہیں</div>
+        <pre class="cd-msg">${E(msg)}</pre>
+        <div class="cp-btn-row" style="margin-top:6px;gap:6px"><a class="btn" style="flex:1;text-align:center" target="_blank" rel="noopener" href="https://wa.me/${E(c.phone)}?text=${encodeURIComponent(msg)}">💬 واٹس ایپ پر بھیجیں</a><button type="button" class="btn secondary" onclick="cdCopyMsg(${i})">📋 میسج کاپی</button></div>
+        <div class="cp-btn-row" style="margin-top:6px;gap:6px"><button type="button" class="btn secondary" onclick="cdNewPin(${i})">🔄 نیا PIN</button><button type="button" class="btn secondary" style="color:#b91c1c" onclick="cdDel(${i})">🗑️ ہٹائیں</button></div>
+      </div>`; }).join('') : '<div class="cp-hint" style="text-align:center">ابھی کوئی کو-ڈویلپر نہیں</div>'}`);
 }
+function cdCopyPin(i){ const c = cdList[i]; if(c) agCopy(String(c.pin)); }
+function cdCopyMsg(i){ const c = cdList[i]; if(!c) return; const m = cdMsgOf(c); (typeof promoCopyText === 'function' ? promoCopyText(m) : Promise.resolve(false)).then(ok=> showToast(ok ? '📋 میسج کاپی ہو گیا' : 'کاپی نہیں ہو سکا')); }
+function cdNewPin(i){ const c = cdList[i]; if(c && confirm(c.name + ' کا نیا PIN بنائیں؟ پرانا بند ہو جائے گا')) cdAdminOpen({op:'add', phone:c.phone, name:c.name}); }
+function cdDel(i){ const c = cdList[i]; if(c && confirm(c.name + ' کو ہٹا دیں؟ جانچ موڈ ان کے فون پر بند ہو جائے گا')) cdAdminOpen({op:'del', phone:c.phone}); }
+/* MCS0811SU229: کو-ڈویلپر کی سیلفی سرور کو بھیجی جائے تاکہ ڈویلپر کو اس کی فہرست میں نظر آئے (سرور اسے رکھے اور فہرست میں `selfie` واپس دے) */
+function cdSendSelfie(d){ try{ const m = codevMe(); if(!m || !m.phone || !d) return; fetch(AG_API + '/codev', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: m.phone, pin: m.pin, op:'selfie', selfie: d})}).catch(()=>{}); }catch(e){} }
 document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(()=>{ try{ cdBar(); cdRecheck(); if(codevOn()) mpRender(); }catch(e){} }, 800); });
 
 /* MCS0511TH139 (مالک کا حکم): مالک خود ایجنٹ بنائے → ایجنٹ ایپ میں «میں پہلے سے ایجنٹ ہوں» (موبائل + PIN) سے جڑے، پھر خود تصویریں لگائے */
@@ -11894,7 +11937,7 @@ function agDocsForm(){
       <div class="ag-pics">
         <label class="ag-pic" id="agP_front"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'front')"><span>🪪<b>کارڈ سامنے</b></span></label>
         <label class="ag-pic" id="agP_back"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'back')"><span>🪪<b>کارڈ پیچھے</b></span></label>
-        <label class="ag-pic" id="agP_selfie"><input type="file" accept="image/*" capture="user" onchange="agPick(this,'selfie')"><span>🤳<b>اپنی سیلفی</b></span></label>
+        <div class="ag-pic" id="agP_selfie" onclick="agSelfieAsk()"><span>🤳<b>اپنی سیلفی</b></span></div>
       </div>
       <details class="ag-more"><summary>➕ والد / شوہر کا نام (اختیاری)</summary><input id="agFather" maxlength="80"></details>
       <div class="ag-err" id="agErr"></div>
@@ -15131,7 +15174,7 @@ body.d2 .bnav .bn-zoom{order:8 !important}
 #portalModal .pt-av.pt-av-ed{position:relative;display:inline-block;cursor:pointer;width:66px;height:66px;line-height:66px;border-radius:50%;background:rgba(255,255,255,.22);border:2px dashed rgba(255,255,255,.7)}
 #portalModal .pt-av.pt-av-ed img{width:66px;height:66px;border-radius:50%;object-fit:cover;border:3px solid #fff;margin:-2px 0 0 -2px;vertical-align:top}
 #portalModal .pt-av .pt-cam{position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;line-height:22px;border-radius:50%;background:#fff;font-size:12px;font-style:normal;box-shadow:0 1px 4px rgba(0,0,0,.35);text-align:center}
-/* MCS0811SU226 (مالک کا حکم): سیلفی کا گول ڈبہ بڑا؛ «اکاؤنٹ بدلیں» تصویر پر نہ چڑھے (ڈویلپر میں ہے ہی نہیں) */
+/* MCS0811SU229 (مالک کا حکم): سیلفی کا گول ڈبہ بڑا؛ «اکاؤنٹ بدلیں» تصویر پر نہ چڑھے (ڈویلپر میں ہے ہی نہیں) */
 #portalModal .pt-hd{padding:12px 12px 10px;text-align:center}
 #portalModal .pt-sub{text-align:center;direction:ltr}
 #portalModal .pt-av.pt-av-ed{width:112px;height:112px;line-height:112px;font-size:46px;border-width:3px;margin:2px auto 0;display:block;box-sizing:border-box}
@@ -15140,6 +15183,21 @@ body.d2 .bnav .bn-zoom{order:8 !important}
 #portalModal .pt-avh{display:inline-block;margin-top:6px;padding:3px 12px;border-radius:14px;background:rgba(255,255,255,.22);font-size:12px;font-weight:800;cursor:pointer}
 #portalModal .pt-nm{font-size:17px;margin-top:6px}
 #portalModal .pt-sw{position:static;display:block;margin:8px auto 0}
+</style>
+<style id="mcsCd227">
+.cd-card{border:1px solid #e2e8f0;border-radius:14px;padding:10px;margin:8px 0;background:#fff}
+.cd-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.cd-av{width:72px;height:72px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;flex:none}
+.cd-av img{width:100%;height:100%;object-fit:cover;display:block}
+.cd-id b{display:block;font-size:17px}.cd-id span{display:block;font-size:15px;direction:ltr;text-align:right}
+.cd-r{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-top:1px dashed #e2e8f0;font-size:13px}
+.cd-r b{font-weight:800}
+.cd-mh{margin-top:8px;font-size:12px;font-weight:800;color:#0f766e}
+.cd-msg{white-space:pre-wrap;word-break:break-word;margin:4px 0 0;padding:8px;border-radius:10px;background:#f1f5f9;font:12.5px/1.8 inherit;font-family:inherit;max-height:170px;overflow:auto;direction:rtl}
+.mcs-dark .cd-card{background:#1e293b;border-color:#334155}.mcs-dark .cd-msg{background:#0f172a}.mcs-dark .cd-av{background:#334155}.mcs-dark .cd-r{border-color:#334155}
+.agc-cv.ph-round{border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #0d9488,0 8px 22px rgba(0,0,0,.3);max-width:340px}
+#portalModal .pt-av.pt-av-ed img{box-shadow:0 0 0 2px rgba(255,255,255,.4),0 4px 14px rgba(0,0,0,.35)}
+.ag-pic#agP_selfie{border-style:solid;border-width:2px}
 </style>
 <style id="mcsLogin218">
 /* MCS0811SU218 (مالک کا حکم): لاگ اِن فارم چھوٹا — اسکرول کے اندر اسکرول نہیں */
