@@ -9,7 +9,7 @@
 /* Same version string as index.html's APP_VERSION and the release zip
    filename (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS0311TU125) — keep these three in sync
    on every release so it's always clear which files go together. */
-const CACHE_NAME = 'mcs-cache-MCS0811SU240';
+const CACHE_NAME = 'mcs-cache-MCS0811SU241';
 /* MCS0311TU125: فونٹ (10-13MB) الگ مستقل کیش میں — ہر ورژن پر مٹتے نہیں تھے تو ہر اپڈیٹ کے بعد دوبارہ
    ڈاؤن لوڈ ہوتے اور تب تک نوری نستعلیق/کشیدہ نظر نہیں آتا تھا۔ */
 const FONT_CACHE = 'mcs-fonts-v1';
@@ -31,7 +31,7 @@ const APP_SHELL = [
 ];
 
 /* ---- Install: pre-cache the app shell ---- */
-/* MCS0811SU240: index.html ہمیشہ سرور کی تازہ کاپی سے — نام کے ساتھ ورژن لگا کر مانگتے ہیں تاکہ درمیان کی کیش (CDN) پرانی فائل نہ دے؛
+/* MCS0811SU241: index.html ہمیشہ سرور کی تازہ کاپی سے — نام کے ساتھ ورژن لگا کر مانگتے ہیں تاکہ درمیان کی کیش (CDN) پرانی فائل نہ دے؛
    اور اگر آئی ہوئی فائل میں یہی ورژن نہ ہو تو پرانی کو نیا کہہ کر محفوظ نہیں کرتے — دوبارہ کوشش، ناکام ہو تو پرانا ورژن چلتا رہے گا */
 const SW_VERSION = CACHE_NAME.replace('mcs-cache-', '');
 async function freshIndex(cache) {
