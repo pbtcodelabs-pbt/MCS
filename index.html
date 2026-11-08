@@ -4108,7 +4108,7 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU230";
+const APP_VERSION = "MCS0811SU231";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
@@ -6680,7 +6680,7 @@ function saveDoctor(approve){
     data.approved = !!isAdminSignedIn; // MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور؛ باقی سب ایڈمن کی منظوری کے بعد
     store.doctors.push(data);
     syncDoctorCreateToFirebase(data);
-    if(codevOn()){ const _c = codevMe() || {}; data.more = {ref:'PBT-C', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}; setTimeout(()=>pushMoreToFirebase('doctors', data.fsId || data.id, data.more), 2500); setTimeout(()=>showToast('👥 ڈویلپر کی منظوری کے لیے بھیج دیا ✓', 4000), 600); }
+    if(codevOn()){ const _c = codevMe() || {}; data.more = {ref:'PBT-C', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}; setTimeout(()=>pushMoreToFirebase('doctors', data.fsId || data.id, data.more), 2500); setTimeout(()=>showToast('👥 ڈویلپر کی منظوری کے لیے بھیج دیا ✓', 4000), 600); } else if(pbStampRef(data)){ setTimeout(()=>{ try{ pushMoreToFirebase('doctors', data.fsId || data.id, data.more); }catch(e){} }, 2500); }
     try{ mpAfterSave('doctor', data); }catch(e){}
   }
   saveStore();
@@ -9042,7 +9042,7 @@ function saveService(approve){
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
     data.approved = !!isAdminSignedIn;   /* MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور */
-    if(codevOn()){ const _c = codevMe() || {}; data.more = Object.assign({}, data.more || {}, {ref:'PBT-C', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}); setTimeout(()=>showToast('👥 ڈویلپر کی منظوری کے لیے بھیج دیا ✓', 4000), 600); }
+    if(codevOn()){ const _c = codevMe() || {}; data.more = Object.assign({}, data.more || {}, {ref:'PBT-C', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}); setTimeout(()=>showToast('👥 ڈویلپر کی منظوری کے لیے بھیج دیا ✓', 4000), 600); } else { pbStampRef(data); }
     store.services.push(data);
     if(data.stage==='basic') svcMyBasicAdd(data.id);
     syncServiceCreateToFirebase(data);
@@ -11178,6 +11178,14 @@ function setFormMode(mid){
    ⚠️ پلے اسٹور: ایپ میں کمیشن کی رقم / ادائیگی کا ذکر نہیں — یہ بات ایجنٹ سے باہر طے ہوتی ہے */
 const AG_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
 /* MCS0511TH134: ریفرل نمبر = ایجنٹ کی اپنی کاروبار ID (p3001234567_xxxx) — یا ایجنٹ کا موبائل نمبر بھی لکھا جا سکتا ہے (سرور خود ایجنٹ ڈھونڈ لیتا ہے)؛ پرانا MCS-AG-0001 بھی چلتا ہے */
+
+/* MCS0811SU231 (مالک کا حکم): نئے اندراج پر ریفرل کوڈ خود لگے — ڈویلپر PBT-D، ایجنٹ اپنا کوڈ، کو-ڈویلپر PBT-C، باقی سب PBT (کمپنی) */
+function pbDefaultRef(){
+  try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'PBT-D'; }catch(e){}
+  try{ const a = agMe(); if(a && a.code) return a.code; }catch(e){}
+  return 'PBT';
+}
+function pbStampRef(data){ try{ if(codevOn()) return false; if(data.more && data.more.ref) return false; data.more = Object.assign({}, data.more || {}, {ref: pbDefaultRef()}); return true; }catch(e){ return false; } }
 function agNormCode(v){ const t = String(v||'').trim().replace(/\s+/g,''); const m2 = /^([A-Za-z]{2})[-.]?0*(\d{1,5})$/.exec(t); if(m2) return m2[1].toUpperCase() + '-' + m2[2].padStart(3,'0');   /* MCS0511TH142: ms1 / MS 001 → MS-001 */
   { const c13 = t.replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g,''); if(c13.length === 13) return c13.slice(0,5) + '-' + c13.slice(5,12) + '-' + c13.slice(12); }   /* MCS0511TH144: ایجنٹ کا شناختی کارڈ نمبر بھی */ if(/^p\d{10}_[a-z0-9]{2,12}$/i.test(t)) return t.toLowerCase(); const d = t.replace(/\D/g,''); if(d.length >= 10) return '0' + d.slice(-10); if(/^MCS-?AG/i.test(t) && d) return 'MCS-AG-' + String(parseInt(d,10)).padStart(4,'0'); return t; }
 function agRefPost(rec){
@@ -11254,7 +11262,7 @@ function ptView(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portal
 function ptSub(i){ const x = mpListReal()[i]; if(!x) return; closeModal('portalModal'); setTimeout(()=>mpSubscribe(x.p.rk), 160); }
 /* ===== MCS0811SU220 (مالک کا حکم): ہر پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / پروفیشن / بزنس / یوزر) کی گول سیلفی — اوپر کے دائرے کو دبائیں، کیمرہ یا گیلری، کاٹیں، لگ جائے ===== */
 function ptSelfieKey(rl){ return (rl === 'dev' || rl === 'codev' || rl === 'agent') ? 'mcsSelfie_' + rl : 'mcsSelfie'; }
-/* MCS0811SU230: پہلے IndexedDB سے لوڈ ہوئی یادداشت (sfMem)، پھر localStorage */
+/* MCS0811SU231: پہلے IndexedDB سے لوڈ ہوئی یادداشت (sfMem)، پھر localStorage */
 function ptSelfieGet(rl){ const k = ptSelfieKey(rl), M = window.sfMem || {}; let v = M[k] || ''; try{ if(!v) v = localStorage.getItem(k) || ''; if(!v && rl === 'agent') v = M.mcsSelfie || localStorage.getItem('mcsSelfie') || ''; }catch(e){} return v; }
 function ptSelfieAsk(){ selfieChoose(()=>{ window._ptSR = ptRole(); window._phAg = false; }); }
 /* MCS0811SU229 (مالک کا حکم): ہر سیلفی (ڈویلپر / کو-ڈویلپر / ایجنٹ / بزنس) — پہلے چنیں: کیمرہ یا گیلری؛ پھر گول ایڈیٹر (زوم، روشنی، کھسکانا، سیدھا، گھمانا) */
@@ -11271,7 +11279,7 @@ function selfieChoose(prep){
 function selfiePick(how){
   closeModal('selfieSrcModal');
   const id = how === 'cam' ? 'sfSrcCam' : 'sfSrcGal';
-  try{ if(window._sfPrep) window._sfPrep(); }catch(e){}   /* MCS0811SU230: کردار پہلے ہی طے */
+  try{ if(window._sfPrep) window._sfPrep(); }catch(e){}   /* MCS0811SU231: کردار پہلے ہی طے */
   let i = document.getElementById(id);
   if(!i){ i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; if(how === 'cam') i.setAttribute('capture', 'user'); i.id = id; i.hidden = true;
     i.onchange = function(){ const f = i.files && i.files[0]; i.value = ''; if(!f) return; try{ if(window._sfPrep) window._sfPrep(); }catch(e){} phFromFile(f, 'selfie'); };
@@ -11282,7 +11290,7 @@ function agSelfieAsk(){ selfieChoose(()=>{ window._ptSR = ''; window._phAg = tru
 async function ptSelfieSaved(d){
   const rl = window._ptSR; window._ptSR = '';
   if(!rl) return;
-  /* MCS0811SU230 (مالک کا حکم): سیلفی پکی محفوظ — IndexedDB (بڑی جگہ) + localStorage؛ پہلے کی طرح خاموشی سے ناکام نہیں، نتیجہ بتاتی ہے */
+  /* MCS0811SU231 (مالک کا حکم): سیلفی پکی محفوظ — IndexedDB (بڑی جگہ) + localStorage؛ پہلے کی طرح خاموشی سے ناکام نہیں، نتیجہ بتاتی ہے */
   let ok = false;
   try{ ok = await sfPut(ptSelfieKey(rl), d); }catch(e){}
   if(rl === 'dev'){ try{ const p = ptDevProf(); p.selfie = 1; localStorage.setItem('mcsDevProfile', JSON.stringify(p)); }catch(e){} }
@@ -15405,7 +15413,7 @@ function prepTajranB5(){
 </script>
 <script>
 /* =====================================================================
-   MCS0811SU230 (مالک کا حکم)
+   MCS0811SU231 (مالک کا حکم)
    1) سیلفی پکی محفوظ: IndexedDB (بڑی جگہ) + localStorage — ڈویلپر / کو-ڈویلپر / ایجنٹ / بزنس / یوزر سب کے لیے
    2) 🏆 کارکردگی رپورٹ: پورے صفحے پر پراگریس بارز — ریفرل کوڈ سے فیڈ ہوئے کاروبار / پروفیشن کے حساب سے اوپر سے نیچے
       ایجنٹ (اپنا کوڈ) • کو-ڈویلپر (PBT-C + اپنا نمبر) • ڈویلپر (PBT-D) • کمپنی (PBT — جس پر کوئی کوڈ نہ لگا ہو)
@@ -15489,19 +15497,26 @@ html.mcs-dark #pbPage .pb-tr{background:#0b1220}
 
   /* کس ریفرل کوڈ سے کتنے کاروبار / پروفیشن (store.services + store.doctors) */
   function pbTally(){
-    const T = {};
-    const add = (k, rec)=>{ const t = T[k] || (T[k] = {n: 0, act: 0, last: 0}); t.n++; try{ if(pfActive(rec)) t.act++; }catch(e){} try{ const c = apCreated(rec); if(c > t.last) t.last = c; }catch(e){} };
-    const each = arr => (arr || []).forEach(r=>{
-      if(!r) return; const m = r.more || {}, raw = String(m.ref || '').trim(), u = up(raw);
-      if(!raw || u === 'PBT'){ add('PBT', r); return; }                 /* کوئی کوڈ نہیں = خود درج کیا = کمپنی (PBT) */
-      if(u === 'PBT-D'){ add('PBT-D', r); return; }
-      if(u === 'PBT-C' || m.cdBy){ add('PBT-C:' + ph10(m.cdBy), r); return; }
-      add('A:' + agNormCode(raw), r);
+    const T = {}; let skipped = 0;
+    const add = (k, rec, pend)=>{ const t = T[k] || (T[k] = {n: 0, act: 0, pend: 0, last: 0}); t.n++; if(pend) t.pend++; try{ if(!pend && pfActive(rec)) t.act++; }catch(e){} try{ const c = apCreated(rec); if(c > t.last) t.last = c; }catch(e){} };
+    const seen = {};
+    const each = (arr, pend) => (arr || []).forEach(r=>{
+      if(!r) return; const id = r.fsId || r.id; if(id){ if(seen[id]) return; seen[id] = 1; }
+      if(r.source === 'import'){ return; }                               /* امپورٹ شدہ فہرست — ریفرل سے فیڈ نہیں ہوئی */
+      const m = r.more || {}, raw = String(m.ref || '').trim(), u = up(raw);
+      if(!raw && !m.cdBy && !m.fedBy){ skipped++; return; }                /* کوئی ریفرل کوڈ نہیں — گنتی میں نہیں */
+      const isPend = pend || r.approved === false;
+      if(u === 'PBT-D'){ add('PBT-D', r, isPend); return; }
+      if(u === 'PBT-C' || m.cdBy){ add('PBT-C:' + ph10(m.cdBy), r, isPend); return; }
+      if(!raw || u === 'PBT'){ add('PBT', r, isPend); return; }
+      add('A:' + agNormCode(raw), r, isPend);
     });
-    each(typeof store !== 'undefined' && store.services); each(typeof store !== 'undefined' && store.doctors);
+    if(typeof store !== 'undefined'){ each(store.services, false); each(store.doctors, false); }
+    try{ each(typeof pendingApprovals !== 'undefined' ? pendingApprovals : [], true); }catch(e){}
+    T.__skipped = skipped;
     return T;
   }
-  const grab = (T, k) => T[k] || {n: 0, act: 0, last: 0};
+  const grab = (T, k) => T[k] || {n: 0, act: 0, pend: 0, last: 0};
 
   async function pbBuild(){
     let ag = [], cd = [];
@@ -15512,28 +15527,28 @@ html.mcs-dark #pbPage .pb-tr{background:#0b1220}
     const T = pbTally(), rows = [];
     /* ایجنٹ */
     ag.forEach(a=>{
-      const k1 = grab(T, 'A:' + agNormCode(a.code)), k2 = a.phone ? grab(T, 'A:' + agNormCode(a.phone)) : {n: 0, act: 0, last: 0};
-      rows.push({type: 'a', name: a.name || 'ایجنٹ', city: a.city || '', code: a.code || '', phone: ph0(a.phone), n: k1.n + k2.n, act: k1.act + k2.act, last: Math.max(k1.last, k2.last)});
+      const k1 = grab(T, 'A:' + agNormCode(a.code)), k2 = a.phone ? grab(T, 'A:' + agNormCode(a.phone)) : {n: 0, act: 0, pend: 0, last: 0};
+      rows.push({type: 'a', name: a.name || 'ایجنٹ', city: a.city || '', code: a.code || '', phone: ph0(a.phone), n: Math.max(k1.n + k2.n, +a.refs || 0), act: k1.act + k2.act, pend: k1.pend + k2.pend, last: Math.max(k1.last, k2.last)});
     });
     /* کو-ڈویلپر: فہرست (ایڈمن) + ریکارڈ سے ملنے والے */
     const seen = {};
-    cd.forEach(c=>{ const p = ph10(c.phone), k = grab(T, 'PBT-C:' + p); seen[p] = 1; rows.push({type: 'c', name: c.name || 'کو-ڈویلپر', city: c.city || '', code: 'PBT-C', phone: ph0(c.phone), n: k.n, act: k.act, last: k.last}); });
+    cd.forEach(c=>{ const p = ph10(c.phone), k = grab(T, 'PBT-C:' + p); seen[p] = 1; rows.push({type: 'c', name: c.name || 'کو-ڈویلپر', city: c.city || '', code: 'PBT-C', phone: ph0(c.phone), n: k.n, act: k.act, pend: k.pend, last: k.last}); });
     Object.keys(T).filter(k=>k.indexOf('PBT-C:') === 0).forEach(k=>{
       const p = k.slice(6); if(p && seen[p]) return; const t = T[k];
       let nm = ''; try{ const rec = [].concat(store.services || [], store.doctors || []).find(r=> r && r.more && r.more.cdBy && ph10(r.more.cdBy) === p); nm = rec ? String(rec.more.cdBy).replace(/[\d\s+\-]+$/g, '').trim() : ''; }catch(e){}
-      rows.push({type: 'c', name: nm || 'کو-ڈویلپر — نام درج نہیں', city: '', code: 'PBT-C', phone: p ? '0' + p : '', n: t.n, act: t.act, last: t.last});
+      rows.push({type: 'c', name: nm || 'کو-ڈویلپر — نام درج نہیں', city: '', code: 'PBT-C', phone: p ? '0' + p : '', n: t.n, act: t.act, pend: t.pend, last: t.last});
     });
     /* ڈویلپر */
     const dp = (typeof ptDevProf === 'function' ? ptDevProf() : {}) || {}, dk = grab(T, 'PBT-D');
-    rows.push({type: 'd', name: dp.name || 'ڈویلپر', city: dp.city || '', code: 'PBT-D', phone: dp.phone || '', n: dk.n, act: dk.act, last: dk.last});
+    rows.push({type: 'd', name: dp.name || 'ڈویلپر', city: dp.city || '', code: 'PBT-D', phone: dp.phone || '', n: dk.n, act: dk.act, pend: dk.pend, last: dk.last});
     /* کمپنی */
     const ck = grab(T, 'PBT');
-    rows.push({type: 'k', name: 'پی بی ٹی کمپنی', city: '', code: 'PBT', phone: '', n: ck.n, act: ck.act, last: ck.last});
+    rows.push({type: 'k', name: 'پی بی ٹی کمپنی', city: '', code: 'PBT', phone: '', n: ck.n, act: ck.act, pend: ck.pend, last: ck.last});
     rows.sort((x, y)=> (y.n - x.n) || (y.last - x.last) || String(x.name).localeCompare(String(y.name)));
     rows.forEach((r, i)=> r.rank = i + 1);
     PB.rows = rows; PB.total = rows.reduce((s, r)=>s + r.n, 0);
     /* کُل میں غیر منظور شدہ / نامعلوم کوڈ بھی شامل ہوں تاکہ فیصد درست رہے */
-    try{ const all = ((store.services || []).length + (store.doctors || []).length); if(all > PB.total) PB.total = all; }catch(e){}
+    PB.skipped = T.__skipped || 0;
     PB.max = Math.max(1, rows.length ? rows[0].n : 1);
     PB.cd = rows.filter(r=>r.type === 'c'); PB.dev = dp; PB.agN = rows.filter(r=>r.type === 'a').length;
   }
@@ -15554,7 +15569,7 @@ html.mcs-dark #pbPage .pb-tr{background:#0b1220}
       <div class="pb-nm">${E(r.name)}<span class="pb-tag ${tag[0]}">${tag[1]}</span><small>${[r.city ? '🏙️ ' + E(r.city) : '', r.code ? '🆔 <bdi>' + E(r.code) + '</bdi>' : '', r.phone && r.type !== 'a' ? '📞 <bdi>' + E(r.phone) + '</bdi>' : ''].filter(Boolean).join(' · ')}</small></div>
       <div class="pb-n">${nf(r.n)}<small>کاروبار</small></div></div>
       <div class="pb-tr"><div class="pb-fl" style="width:${w.toFixed(1)}%;background:${col}"></div></div>
-      <div class="pb-pc"><span>${r.act ? '✅ چالو ممبرشپ: ' + nf(r.act) : ''}</span><span>${nf(share.toFixed(1))}٪</span></div></div>`;
+      <div class="pb-pc"><span>${[r.act ? '✅ چالو ممبرشپ: ' + nf(r.act) : '', r.pend ? '⏳ زیر منظوری: ' + nf(r.pend) : ''].filter(Boolean).join(' · ')}</span><span>${nf(share.toFixed(1))}٪</span></div></div>`;
   }
   function pbMore(reset){
     const box = document.getElementById('pbList'); if(!box) return;
@@ -15568,6 +15583,7 @@ html.mcs-dark #pbPage .pb-tr{background:#0b1220}
     const cds = (PB.cd || []).slice(0, 8).map(c=> `<span class="cd">${E2(c.name)} ${c.phone ? '<a href="tel:' + E2(c.phone) + '">' + E2(c.phone) + '</a>' : ''}</span>`).join('') + ((PB.cd || []).length > 8 ? ' +' + nf(PB.cd.length - 8) : '');
     return `<div class="pb-info">🛠️ ڈویلپر: <b>${E2(dp.name || '')}</b> ${dp.phone ? '<a href="tel:' + E2(dp.phone) + '">' + E2(dp.phone) + '</a>' : '<span style="opacity:.8">— نمبر درج نہیں (پورٹل ← مزید ← میرا پروفائل)</span>'}<br>👥 کو-ڈویلپر: ${cds || '<span style="opacity:.8">ابھی کوئی نہیں</span>'}</div>
       <div class="pb-sum"><div><b>${nf(PB.total)}</b>کل کاروبار</div><div><b>${nf(PB.agN)}</b>ایجنٹ</div><div><b>${nf((PB.cd || []).length)}</b>کو-ڈویلپر</div></div>
+      ${PB.skipped ? `<div class="pb-info" style="margin-top:6px;font-size:11.5px">ℹ️ ${nf(PB.skipped)} پرانے / امپورٹ شدہ ریکارڈ پر کوئی ریفرل کوڈ نہیں — گنتی میں شامل نہیں</div>` : ''}
       <div class="pb-ctl"><input type="search" id="pbQ" placeholder="🔍 نام، شہر، کوڈ…" value="${E2(PB.q)}">${[['all', 'سب'], ['a', 'ایجنٹ'], ['c', 'ٹیم']].map(([k, t])=>`<button type="button" class="pb-chip${PB.tab === k ? ' on' : ''}" data-t="${k}">${t}</button>`).join('')}</div>`;
   }
   function pbPaint(){
