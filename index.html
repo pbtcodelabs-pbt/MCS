@@ -4130,11 +4130,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0811SU239";
+const APP_VERSION = "MCS0811SU240";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS0811SU239": "📥 امپورٹ اب سرور سے پوچھ کر دیکھتا ہے کون سے رکارڈ واقعی سرور پر ہیں، صرف فون میں بچے رکارڈ دوبارہ سرور پر جاتے ہیں • 📝 غیر رجسٹرڈ (بنیادی) کارڈ پر زرد پٹی ختم، سب پر صرف «رجسٹریشن مکمل کریں» • 🗂️ ایڈمن/ڈویلپر کیٹگری بدلے تو ریکارڈ فوراً نئی کیٹگری میں چلا جاتا ہے (تلاش کے صفحے سے بھی) • 📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
+  "MCS0811SU240": "🔄 اپڈیٹ اب پرانی فائل کو نیا سمجھ کر محفوظ نہیں کرتی؛ ہر بار سرور سے تازہ فائل لے کر ورژن جانچتی ہے • 📥 امپورٹ اب سرور سے پوچھ کر دیکھتا ہے کون سے رکارڈ واقعی سرور پر ہیں، صرف فون میں بچے رکارڈ دوبارہ سرور پر جاتے ہیں • 📝 غیر رجسٹرڈ (بنیادی) کارڈ پر زرد پٹی ختم، سب پر صرف «رجسٹریشن مکمل کریں» • 🗂️ ایڈمن/ڈویلپر کیٹگری بدلے تو ریکارڈ فوراً نئی کیٹگری میں چلا جاتا ہے (تلاش کے صفحے سے بھی) • 📥 امپورٹ اب اٹکتا نہیں: گروپ نیٹ کے حساب سے خود چھوٹا بڑا ہوتا ہے، ہر ناکامی پر خود دوبارہ، نیٹ بند ہو تو انتظار، اسکرین سوئے نہیں، فون پر بوجھ کم",
   "MCS0811SU235": "📥 امپورٹ آسان: صرف دو ضروری بٹن، خلاصہ فوراً بٹن کے نیچے اور اوپر بڑی پراگرس پٹی؛ اپڈیٹ کے دوران ہی پرانا → نیا ورژن اور تبدیلی",
   "MCS0811SU234": "🏪 بلاک 1 (انجمن تاجران فتح پور): پرانے کارڈوں پر مالک کی جگہ دکان کا اصل نام — ایک بٹن سے",
   "MCS0811SU233": "📋 انجمن تاجران فتح پور: بلاک 2، 3، 4، 6، 7 کی فہرستیں (دکان کا نام، مالک، موبائل) — دہرا نمبر / نام خود نہیں لگتا",
@@ -8776,7 +8776,7 @@ let svcStage = 'full', svcRegFlag = false;
 function svcMyBasic(){ try{ return JSON.parse(localStorage.getItem('mcsMyBasic')||'[]'); }catch(e){ return []; } }
 function svcMyBasicAdd(id){ try{ const a = svcMyBasic(); if(!a.includes(id)){ a.push(id); localStorage.setItem('mcsMyBasic', JSON.stringify(a)); } }catch(e){} }
 function agOwnsRec(rec){ try{ const me = agMe(); if(!me || !me.code || !rec || !rec.more) return false; return agNormCode(rec.more.ref) === agNormCode(me.code); }catch(e){ return false; } }   /* MCS0711SA187: ایجنٹ کے کوڈ سے درج کاروبار */
-/* MCS0811SU239: بنیادی (غیر رجسٹرڈ) کارڈ پر زرد پٹی / اضافی تفصیل نہیں — صرف «رجسٹریشن مکمل کریں» */
+/* MCS0811SU240: بنیادی (غیر رجسٹرڈ) کارڈ پر زرد پٹی / اضافی تفصیل نہیں — صرف «رجسٹریشن مکمل کریں» */
 function svcHideIntro(kind, id){
   try{
     if(kind !== 'service' || !id) return false;
@@ -9036,7 +9036,7 @@ function svcCategoryChanged(){
   fhSetup();
   /* MCS2310FR052: کیٹگری چنتے ہی ریکارڈ فوراً اسی کیٹگری میں منتقل (ترمیم میں) */
   { const _s = (editingServiceId && !pendingFormCtx) ? store.services.find(x=>x.id===editingServiceId) : null;
-    if(_s){ if(k !== _s.category) svcQuickMove(_s, k); return; } }   /* MCS0811SU239: ترمیم میں کیٹگری بدلتے ہی سیدھی منتقل — فارم کی جانچ (شہر، قسم، شناختی کارڈ) پر خاموشی سے رکتی نہیں */
+    if(_s){ if(k !== _s.category) svcQuickMove(_s, k); return; } }   /* MCS0811SU240: ترمیم میں کیٹگری بدلتے ہی سیدھی منتقل — فارم کی جانچ (شہر، قسم، شناختی کارڈ) پر خاموشی سے رکتی نہیں */
   if(k!==currentServiceCategory && pendingFormCtx){ setTimeout(()=>saveService(false), 80); return; }
   if(k!==currentServiceCategory) showToast('محفوظ کرنے پر یہ ریکارڈ "' + m.ur + '" میں چلا جائے گا');
 }
@@ -9911,7 +9911,7 @@ async function fsRestCommit(token, writes, ms){
     const n = new Error((e && e.message) || 'network'); n.code = 'network'; throw n;
   }finally{ clearTimeout(timer); }
 }
-/* MCS0811SU239: سرور پر اصل میں موجود شناختیں — امپورٹ فون کے اندر کے رکارڈ پر بھروسا نہیں کرتا */
+/* MCS0811SU240: سرور پر اصل میں موجود شناختیں — امپورٹ فون کے اندر کے رکارڈ پر بھروسا نہیں کرتا */
 async function fsServerIds(token){
   const ctl = new AbortController(); const tm = setTimeout(()=>ctl.abort(), 45000);
   try{

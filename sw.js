@@ -9,7 +9,7 @@
 /* Same version string as index.html's APP_VERSION and the release zip
    filename (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS0311TU125) — keep these three in sync
    on every release so it's always clear which files go together. */
-const CACHE_NAME = 'mcs-cache-MCS0811SU239';
+const CACHE_NAME = 'mcs-cache-MCS0811SU240';
 /* MCS0311TU125: فونٹ (10-13MB) الگ مستقل کیش میں — ہر ورژن پر مٹتے نہیں تھے تو ہر اپڈیٹ کے بعد دوبارہ
    ڈاؤن لوڈ ہوتے اور تب تک نوری نستعلیق/کشیدہ نظر نہیں آتا تھا۔ */
 const FONT_CACHE = 'mcs-fonts-v1';
@@ -31,12 +31,32 @@ const APP_SHELL = [
 ];
 
 /* ---- Install: pre-cache the app shell ---- */
+/* MCS0811SU240: index.html ہمیشہ سرور کی تازہ کاپی سے — نام کے ساتھ ورژن لگا کر مانگتے ہیں تاکہ درمیان کی کیش (CDN) پرانی فائل نہ دے؛
+   اور اگر آئی ہوئی فائل میں یہی ورژن نہ ہو تو پرانی کو نیا کہہ کر محفوظ نہیں کرتے — دوبارہ کوشش، ناکام ہو تو پرانا ورژن چلتا رہے گا */
+const SW_VERSION = CACHE_NAME.replace('mcs-cache-', '');
+async function freshIndex(cache) {
+  let lastErr = null;
+  for (let i = 0; i < 4; i++) {
+    try {
+      const r = await fetch('./index.html?v=' + SW_VERSION + '&t=' + Date.now() + '_' + i, { cache: 'reload' });
+      if (!r.ok) throw new Error('index http ' + r.status);
+      const txt = await r.clone().text();
+      if (txt.indexOf(SW_VERSION) < 0) throw new Error('stale index');
+      await cache.put('./index.html', r.clone());
+      await cache.put('./', r.clone());
+      return;
+    } catch (e) { lastErr = e; await new Promise((res) => setTimeout(res, 1500)); }
+  }
+  throw lastErr || new Error('index');
+}
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      /* MCS29SEPTU0352AM: cache:'reload' — براؤزر کی پرانی کاپی کے بجائے سرور سے تازہ فائل لے،
-         ورنہ نئے ورژن کے کیش میں پرانی index.html محفوظ ہو سکتی تھی۔ */
-      .then((cache) => cache.addAll(APP_SHELL.map((u) => new Request(u, { cache: 'reload' }))))
+      .then((cache) =>
+        freshIndex(cache).then(() =>
+          cache.addAll(APP_SHELL.filter((u) => u !== './' && u !== './index.html').map((u) => new Request(u, { cache: 'reload' })))
+        )
+      )
       .then(() => self.skipWaiting())
   );
 });
