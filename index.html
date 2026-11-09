@@ -4199,10 +4199,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO267";
+const APP_VERSION = "MCS0911MO268";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO268": "🔒 ہوم ہمیشہ 100٪ — زوم ➖ ➕ صرف فارم بھرتے وقت",
   "MCS0911MO267": "🪪 رجسٹرڈ کاروبار کا کارڈ چھوٹا اور صاف؛ ایجنٹ کے کارڈ پر سنہری MCS نشان؛ ڈویلپر کو کارڈ پر ریفرل والا ایجنٹ",
   "MCS0911MO266": "🤝 «خود ایجنٹ بنائیں» آسان: کاروبار تلاش کریں، دبائیں — سب تفصیل خود؛ ایجنٹ کے فون پر خود ایجنٹ کا نشان",
   "MCS0911MO265": "👤 اپنے پورٹل کی گول تصویر (DP) اب آپ کے کاروبار / پروفیشن کے ہر کارڈ پر — ہوم، فہرست، پوری تفصیل اور شیئر تصویر",
@@ -13607,7 +13608,7 @@ function stepZoom(dir){ setZoom(getZoom() + dir*0.1); }
 function applyZoom(){
   const v = getZoom();
   document.documentElement.style.setProperty('--ui-zoom', v);
-  document.body.classList.toggle('zoom-up', v > 1.02);
+  document.body.classList.toggle('zoom-up', false);   /* MCS0911MO268 (#173): ہوم پر زوم والا انداز کبھی نہیں */
   const pct = Math.round(v*100) + '%';
   ['zoomPct','zoomPct2','fzVal','bnZoomVal'].forEach(id=>{ const e = document.getElementById(id); if(e) e.textContent = pct; });
   const r = document.getElementById('zoomRange'); if(r) r.value = Math.round(v*100);
@@ -14986,7 +14987,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO267" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO268" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16647,7 +16648,7 @@ async function mstRefresh(){   /* صرف اسی ایپ کا سروس ورکر (g
 function mstOpen(){
   const ID = 'mySettingsModal', loggedIn = !!((typeof uaMe === 'function' && uaMe()) || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()) || (agMe() || {}).pin);
   let b = `<div class="pt-sec">🎨 ظاہری انداز</div><div class="pt-grid">`
-    + mpoT(ID, '🔠', 'متن کا سائز', 'Aa — بڑا / چھوٹا', 'mstZoom')
+    /* MCS0911MO268 (#173): متن کا سائز Settings سے ہٹایا — ہوم ہمیشہ 100٪، زوم صرف فارم میں (اوپر ➖ ➕) */
     + mpoT(ID, '🎨', 'رنگ، فونٹ، بیک اپ', 'کارڈ کا فونٹ / سائز', 'openControlPanel')
     + `</div><div class="pt-sec">🔔 اطلاعات اور 🔒 پرائیویسی</div><div class="pt-grid">`
     + mpoT(ID, '🔔', 'اطلاعات', mstNotifState(), 'mstNotif')
@@ -17632,5 +17633,10 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
   }catch(e){}
 })();
 </script>
+<style id="mcsHomeZoomLock">/* MCS0911MO268 (مالک کا حکم، ہیلپ ڈیسک #173): ہوم / فہرستیں ہمیشہ 100٪ — زوم (➖ ➕) صرف فارم بھرتے وقت (پاپ اپ کے اندر) */
+#app{zoom:1 !important}
+:root{--zf:1 !important}
+#bnZoom,#zoomPanel{display:none !important}
+</style>
 </body>
 </html>
