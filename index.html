@@ -3164,6 +3164,17 @@ body.cdOn{padding-top:30px}
 .ag-f label{display:block;font-weight:700;font-size:13px;margin:8px 0 3px}.ag-f label small{font-weight:600;opacity:.7}
 .ag-f input,.ag-f select,.ag-f textarea{width:100%;box-sizing:border-box;padding:9px 10px;border:1.5px solid #cbd5e1;border-radius:10px;font:inherit;font-size:15px;background:#fff}
 .ag-pics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+/* MCS0911MO267 (#189): کارڈ عام کارڈ جتنا — چھوٹا ربن، چھوٹے بٹن؛ ریفرل چپ */
+html body .doc-card .pf-tag{flex:0 0 auto !important;min-width:0 !important;width:auto !important;padding:3px 9px !important;border-width:1.5px !important;border-radius:9px !important;gap:0 !important;line-height:1.25 !important}
+html body .doc-card .pf-tag b{font-size:11.5px !important}
+html body .doc-card .pf-tag small{font-size:9.5px !important;display:flex;flex-direction:column;align-items:center}
+html body .doc-card .doc-side a,html body .doc-card .doc-side > button,html body .doc-card .doc-side .doc-mini button{width:25px !important;height:25px !important;min-width:25px !important;flex:0 0 25px !important;box-sizing:border-box !important;border-width:1.5px !important}
+body .doc-card .doc-side svg{width:13px !important;height:13px !important}
+body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:13px !important}
+.doc-card > .ag-corner{width:34px;height:34px;left:4px;top:4px}
+.ref-chip{display:inline-block;margin-top:3px;padding:2px 9px;border-radius:999px;border:1px solid #fcd34d;background:rgba(253,230,138,.95);color:#78350f;font-size:11.5px;font-weight:700;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-ag{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px;border-radius:12px;background:#fef3c7;margin-bottom:8px}.ref-ag b{font-size:17px}.ref-ag span{font:800 16px 'MCSEn',sans-serif;color:#0f766e}.ref-ag em{font-style:normal;font-size:12px;color:#b45309}.ref-ag em.ok{color:#047857}
+.ref-list{max-height:40vh;overflow:auto;border:1px solid #e2e8f0;border-radius:10px}.ref-list>div{padding:6px 10px;border-bottom:1px solid #f1f5f9;font-size:14px}.ref-list small{float:left;opacity:.7}
 /* MCS0911MO266: خود ایجنٹ بنائیں — تلاش */
 .ac-find input{width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid #0d9488;border-radius:12px;font-size:16px;background:#f0fdfa}
 .ac-res{display:flex;flex-direction:column;gap:6px;margin:8px 0;max-height:46vh;overflow:auto}
@@ -4188,10 +4199,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO266";
+const APP_VERSION = "MCS0911MO267";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO267": "🪪 رجسٹرڈ کاروبار کا کارڈ چھوٹا اور صاف؛ ایجنٹ کے کارڈ پر سنہری MCS نشان؛ ڈویلپر کو کارڈ پر ریفرل والا ایجنٹ",
   "MCS0911MO266": "🤝 «خود ایجنٹ بنائیں» آسان: کاروبار تلاش کریں، دبائیں — سب تفصیل خود؛ ایجنٹ کے فون پر خود ایجنٹ کا نشان",
   "MCS0911MO265": "👤 اپنے پورٹل کی گول تصویر (DP) اب آپ کے کاروبار / پروفیشن کے ہر کارڈ پر — ہوم، فہرست، پوری تفصیل اور شیئر تصویر",
   "MCS0911MO264": "🤝 «Earn with MCS» دبائیں تو سیدھا MCS Agent Registration Form — سب خانے، سیلفی + شناختی کارڈ، درخواست بھیجیں، منظوری کا انتظار",
@@ -8089,7 +8101,7 @@ function docCardHtml(d, mode){
     const nameUr = d.nameUr || d.name || '';
     const sfOnD = d.more && d.more.selfie;   /* MCS0911MO265 (#170) */
     return `
-    <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}">${ewRib('doctor', d)}
+    <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}">${ewRib('doctor', d)}${agBadgeHtml('doctor', d)}
       <div class="doc-toprow">
       <div class="doc-avatar${sfOnD ? ' sf' : ''}">${sfOnD ? `<img src="${escapeAttr(d.more.selfie)}" alt="">` : ''}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
       <div class="doc-body">
@@ -8097,7 +8109,7 @@ function docCardHtml(d, mode){
           <div class="doc-name">${escapeHtml(nameUr)}${newBadge(d)}</div>
           ${d.nameEn ? `<div class="doc-name-en">${escapeHtml(d.nameEn)}</div>` : ``}
         </div>
-        <div class="doc-sub">${sub || escapeHtml(d.dept||'')}</div>
+        <div class="doc-sub">${sub || escapeHtml(d.dept||'')}</div>${refChipHtml(d)}
         <div class="doc-num">${escapeHtml(num||'—')}</div>
       </div>
       </div>
@@ -8926,6 +8938,31 @@ function agIsRec(kind, rec){
   return false;
 }
 function agBadgeHtml(kind, rec){ return agIsRec(kind, rec) ? `<div class="ag-corner" title="MCS Agent"><svg viewBox="0 0 64 44" aria-hidden="true"><defs><linearGradient id="agBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#fcd34d"/><stop offset="1" stop-color="#d98a06"/></linearGradient><linearGradient id="agBd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#b45309"/></linearGradient></defs><g stroke="#0b2a5b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M1.5 12 L10 9.5 L14 29 L5.5 31.5 Z" fill="url(#agBd)"/><path d="M62.5 12 L54 9.5 L50 29 L58.5 31.5 Z" fill="url(#agBd)"/><path d="M13 11 L25 8 Q31 7 36 10 L44 15 L35 24 L26 31 Q22 33 19 30 L13.5 28 Z" fill="url(#agBd)"/><path d="M51 11 L41 9 Q34 7.5 29 12 L22 18.5 Q20 21.5 23 24 L36 36 Q39.5 38.5 42.5 36 L45 33.5 L50 30 Z" fill="url(#agBg)"/><path d="M27 21.5 L33 27.5 M31.5 17.5 L39.5 25.5 M36 14.5 L45 23.5" fill="none" stroke-width="1.3"/><path d="M25 8.5 Q32 5.5 38 11 Q34 15.5 29 14 Z" fill="#fff3b0"/></g></svg><small>MCS</small></div>` : ''; }
+/* MCS0911MO267 (مالک کا حکم، ہیلپ ڈیسک #189): کارڈ پر «🤝 ریفرل: ایجنٹ کا نام (کوڈ)» — صرف ڈویلپر / کو-ڈویلپر کو؛ دبائیں تو ایجنٹ کی تفصیل اور اس کے سب کاروبار */
+function refChipHtml(rec){
+  try{
+    if(!(isAdminSignedIn || codevOn())) return '';
+    const c = String((rec && rec.more && rec.more.ref) || '').trim(); if(!c) return '';
+    let lb = '';
+    if(c === 'PBT-D') lb = '👨‍💻 ڈویلپر خود لایا (PBT-D)';
+    else if(c === 'PBT-C') lb = '👥 کو-ڈویلپر لایا (PBT-C)';
+    else if(c === 'PBT') lb = '🏢 خود آیا (PBT)';
+    else { const a = (agList||[]).find(x=>x && (x.code === c || x.bizRk === c)); lb = '🤝 ریفرل: ' + (a ? escapeHtml(a.name) + ' ' : '') + '<bdi dir="ltr">' + escapeHtml(a && a.code || c) + '</bdi>'; }
+    return `<button type="button" class="ref-chip" onclick="event.stopPropagation();refInfoOpen('${escapeAttr(c)}')">${lb}</button>`;
+  }catch(e){ return ''; }
+}
+async function refInfoOpen(c){
+  if(/^PBT/.test(c)){ showToast(c === 'PBT-D' ? '👨‍💻 یہ کاروبار ڈویلپر خود لایا — حصہ ڈویلپر کا' : c === 'PBT-C' ? '👥 یہ کاروبار کو-ڈویلپر لایا' : '🏢 کسی ایجنٹ کا ریفرل نہیں — خود آیا', 4500); return; }
+  if(!(agList||[]).length && isAdminSignedIn){ try{ await agKnownLoad(); }catch(e){} }
+  const a = (agList||[]).find(x=>x && (x.code === c || x.bizRk === c)), code = a && a.code || c;
+  const recs = (store.services||[]).concat(store.doctors||[]).filter(x=>x && x.more && (x.more.ref === code || x.more.ref === c));
+  const E = escapeHtml;
+  agModal(`<div class="ag-hd">🤝 ریفرل والا ایجنٹ</div>
+    ${a ? `<div class="ref-ag"><b>${E(a.name)}</b><span dir="ltr">${E(code)}</span><small dir="ltr">📱 0${E(String(a.phone||'').slice(-10))}</small>${a.status !== 'approved' ? '<em>⏳ ابھی منظور نہیں</em>' : (a.off ? '<em>⛔ غیر فعال</em>' : '<em class="ok">✅ فعال ایجنٹ</em>')}</div>` : `<div class="ag-need">⚠️ «${E(c)}» کسی ایجنٹ کا کوڈ نہیں ملا — کاروبار کی تفصیل میں ریفرل کوڈ درست کریں</div>`}
+    <div class="ag-codeL">🏪 اس کوڈ سے جڑے کاروبار (${recs.length})</div>
+    <div class="ref-list">${recs.slice(0, 60).map(r=>`<div>${E(r.nameUr || r.name || '')} <small>${pfActive(r) ? '✅ ممبرشپ فعال' : r.stage === 'registered' ? '📝 رجسٹرڈ' : '—'}</small></div>`).join('') || '<div>—</div>'}</div>
+    <div class="cp-hint" style="margin-top:8px">📊 ہر فعال ممبرشپ اسی ایجنٹ کے کھاتے میں جاتی ہے۔ اس کا پورا حساب «MCS Agent» ایپ ← ڈویلپر لاگ اِن ← 👥 Agents ← <b>${a ? E(a.name) : E(code)}</b> میں۔</div>`);
+}
 function agMarkRecords(){
   const FB = window.MCSFirebase; if(!FB || !isAdminSignedIn) return;
   [['doctors','doctor'],['services','service']].forEach(([col,kind])=>{ (store[col]||[]).forEach(r=>{
@@ -9329,14 +9366,14 @@ function svcCardHtml(s, meta){
     const intl = '92' + digits.replace(/^0/,'');
     const sfOn = s.more && s.more.selfie;   /* MCS0711SA194 + MCS0911MO265 (ہیلپ ڈیسک #170): رجسٹرڈ کاروبار کے مالک کی گول تصویر (پورٹل والی DP) کارڈ پر */
     return `
-    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}">${ewRib('service', s)}
+    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}">${ewRib('service', s)}${agBadgeHtml('service', s)}
       <div class="doc-toprow">
       <div class="doc-avatar${sfOn ? ' sf' : ''}">${sfOn ? `<img src="${escapeAttr(s.more.selfie)}" alt="">` : `<span style="font-size:20px;">${meta.emoji}</span>`}</div>
       <div class="doc-body">
         <div class="doc-top"><div class="doc-name">${escapeHtml(s.nameUr)}${newBadge(s)}</div>${s.nameEn ? `<div class="doc-name-en">${escapeHtml(s.nameEn)}</div>` : ``}</div>
         ${splitOwnerIntro(s.intro).owner ? `<div class="doc-owner">👤 ${escapeHtml(splitOwnerIntro(s.intro).owner)}</div>` : ``}
         <div class="doc-sub">${isBlankVal(s.type)?'':escapeHtml(s.type)}</div>
-        <div class="doc-num">${escapeHtml(num||'—')}</div>
+        <div class="doc-num">${escapeHtml(num||'—')}</div>${refChipHtml(s)}
       </div>
       </div>
       <div class="doc-side">
@@ -12203,7 +12240,7 @@ let agList = [], agTab = 'pending', agQ = '';
 var agKnown = {codes:{}, phones:{}}; try{ const k = JSON.parse(localStorage.getItem('mcsAgKnown')||'null'); if(k && k.codes && k.phones) agKnown = k; }catch(e){}
 function agKnownSave(){ try{ localStorage.setItem('mcsAgKnown', JSON.stringify(agKnown)); }catch(e){} }
 function agKnownAdd(phone, code, st){ const p = String(phone||'').replace(/\D/g,'').slice(-10); st = st || 'approved'; if(p.length === 10) agKnown.phones[p] = st; if(code) agKnown.codes[code] = st; agKnownSave(); agKnownRefresh(); }
-function agKnownBuild(list){ const k = {codes:{}, phones:{}}; (list||[]).forEach(a=>{ if(!a || a.status === 'rejected') return; const p = String(a.phone||'').replace(/\D/g,'').slice(-10); if(p.length === 10) k.phones[p] = a.status || 'approved'; if(a.code) k.codes[a.code] = a.status || 'approved'; }); agKnown = k; agKnownSave(); try{ agMarkRecords(); }catch(_){} agKnownRefresh(); }
+function agKnownBuild(list){ const k = {codes:{}, phones:{}}; (list||[]).forEach(a=>{ if(!a || a.status === 'rejected') return; const p = String(a.phone||'').replace(/\D/g,'').slice(-10); if(p.length === 10) k.phones[p] = a.status || 'approved'; if(a.code) k.codes[a.code] = a.status || 'approved'; if(a.bizRk) k.codes[a.bizRk] = a.status || 'approved'; }); agKnown = k; agKnownSave(); try{ agMarkRecords(); }catch(_){} agKnownRefresh(); }
 function agKnownRefresh(){ try{ if(currentScreen==='doctor-list') renderDoctorList('list'); if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list'); hlRenderSoon(); }catch(e){} }
 function agKnownOf(kind, id){
   const rec = kind==='doctor' ? (store.doctors||[]).find(x=>x.id===id) : (store.services||[]).find(x=>x.id===id); if(!rec) return '';
@@ -14949,7 +14986,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO266" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO267" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16370,6 +16407,7 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
     if(live){ const ag = (typeof agIsRec === 'function') && agIsRec(kind, rec); n = ag ? 5 : 4; next = ag ? '✅ سب مراحل مکمل' : 'اگلا: 💰 Earn with MCS'; }
     else if(rec.stage === 'registered'){ const s = sentOf(kind, rec); n = s ? 3 : 2; next = s ? 'اگلا: ⏳ ڈویلپر کی منظوری' : 'اگلا: ⭐ ممبرشپ — تفصیل ڈویلپر کو'; }
     else { n = 1; next = 'اگلا: 📝 رجسٹریشن'; }
+    if(n >= 5) return '';   /* MCS0911MO267: سب مکمل — پٹی کی جگہ نہیں */
     const pct = n * 20;
     return `<div class="fp-card"><div class="fp-ct"><span>📊 مرحلہ ${n} / 5 — <b>${pct}٪</b></span><span>${next}</span></div><div class="fp-tr"><i style="width:${pct}%"></i></div></div>`;
   };
