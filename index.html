@@ -4165,10 +4165,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO257";
+const APP_VERSION = "MCS0911MO259";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO259": "📞 My Chats: ہر چیٹ کے اوپر اسی بندے کو کال / واٹس ایپ؛ اس کے نیچے الگ «📒 فون بک» (کوئی بھی نمبر چن کر کال / واٹس ایپ) اور «واٹس ایپ کھولیں» بٹن",
   "MCS0911MO257": "📍 چیٹ میں لوکیشن بھیجیں / منگوائیں • 💬 چیٹ کی فہرست واٹس ایپ جیسی — بائیں گول تصویر",
   "MCS0911MO256": "💬 چیٹ کا لکھنے کا خانہ بالکل واٹس ایپ جیسا: 🖼️ گیلری، 📎، 📷، نیلا 🎤 (دبائے رکھ کر آواز) جو لکھتے ہی ➤",
   "MCS0911MO255": "💬 چیٹ واٹس ایپ جیسی: 📎 کیمرہ / گیلری / فائل، الگ 🎤، ➕ نئی چیٹ، تلاش، ڈویلپر / کو-ڈویلپر ٹیب",
@@ -17069,6 +17070,143 @@ function mcInitAv(x, fb){
   let h = 0; for(const c of t) h = (h * 31 + c.charCodeAt(0)) | 0;
   return `<span class="mc-ini" style="background:${cols[Math.abs(h) % cols.length]}">${escapeHtml(t[0].toUpperCase())}</span>`;
 }
+</script>
+<script>
+/* ===== MCS0911MO259 (مالک کا حکم): My Chats — ہر چیٹ کے اوپر 📞 نارمل کال + واٹس ایپ بٹن (اسی بندے کو جس کی چیٹ کھلی ہو: صارف / ایجنٹ / کو-ڈویلپر / ڈویلپر / PBT Code Labs) ===== */
+(function(){
+  try{
+    const st = document.createElement('style');
+    st.textContent = '#mcModal .mc-hd .mc-cl,#mcModal .mc-hd .mc-wp{min-width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px;padding:0;flex:none}'
+      + '#mcModal .mc-hd .mc-cl{background:#fff;color:#0f766e}#mcModal .mc-hd .mc-wp{background:#25d366}#mcModal .mc-hd .mc-wp svg{width:22px;height:22px;fill:#fff}';
+    document.head.appendChild(st);
+  }catch(e){}
+  const WA_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.6.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.7a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>';
+  function norm(s){
+    const d = String(s||'').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[^\d+]/g, ' ');
+    const m = /(?:\+?92|0)?\s?(3\d{2})\s?-?\s?(\d{7})/.exec(String(s||'').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/-/g,' '));
+    if(m) return {loc: '0' + m[1] + m[2], intl: '92' + m[1] + m[2]};
+    const x = String(s||'').replace(/\D/g,'');
+    if(/^923\d{9}$/.test(x)) return {loc: '0' + x.slice(2), intl: x};
+    if(/^03\d{9}$/.test(x)) return {loc: x, intl: '92' + x.slice(1)};
+    return null;
+  }
+  function company(){ try{ return norm(DEFAULT_CONTACT.whatsapp); }catch(e){ return null; } }
+  function peerPhone(x){
+    if(!x) return null;
+    const W = (typeof mcWho === 'function' && mcWho()) || {};
+    if(x.k === 'pbt') return company();
+    if(x.k === 'cd' && W.as === 'cd') return company();
+    for(const f of ['ph','phone','wa','whatsapp','mobile','mob']){ if(x[f]){ const n = norm(x[f]); if(n) return n; } }
+    if(window._mcPeerPh && window._mcPeerPh.th === x.th){ const n = norm(window._mcPeerPh.v); if(n) return n; }
+    let n = norm([x.sub, x.title, x.lt].join(' ')); if(n) return n;
+    const name = String(x.title||'').replace(/^🤝\s*/, '').replace(/^.*↔\s*/, '').trim();
+    try{ if(name){ const a = (agList||[]).find(y => y && y.name && (String(x.title).indexOf(y.name) >= 0)); if(a){ n = norm(a.phone || a.wa); if(n) return n; } } }catch(e){}
+    try{ if(name){ const c = (cdList||[]).find(y => y && y.name && (String(x.title).indexOf(y.name) >= 0)); if(c){ n = norm(c.phone); if(n) return n; } } }catch(e){}
+    n = norm(String(x.th||'')); if(n) return n;
+    return null;
+  }
+  window.mcPeerCall = function(){ const p = peerPhone(window._mcPeer); if(!p){ showToast('⚠️ اس چیٹ کا موبائل نمبر نہیں ملا'); return; } location.href = 'tel:' + p.loc; };
+  window.mcPeerWa = function(){ const p = peerPhone(window._mcPeer); if(!p){ showToast('⚠️ اس چیٹ کا موبائل نمبر نہیں ملا'); return; } window.open('https://wa.me/' + p.intl, '_blank'); };
+  const o = window.mcGoObj;
+  if(typeof o === 'function'){
+    window.mcGoObj = function(x){
+      const r = o.apply(this, arguments);
+      try{
+        window._mcPeer = x;
+        const hd = document.querySelector('#mcModal .mc-hd');
+        if(hd && !hd.querySelector('.mc-cl')){
+          const close = hd.querySelector('button[onclick="mcClose()"]');
+          const c = document.createElement('button'); c.type = 'button'; c.className = 'mc-cl'; c.setAttribute('aria-label', 'کال'); c.textContent = '📞'; c.onclick = window.mcPeerCall;
+          const w = document.createElement('button'); w.type = 'button'; w.className = 'mc-wp'; w.setAttribute('aria-label', 'واٹس ایپ'); w.innerHTML = WA_SVG; w.onclick = window.mcPeerWa;
+          hd.insertBefore(w, close || null); hd.insertBefore(c, w);
+        }
+      }catch(e){}
+      return r;
+    };
+  }
+  const oc = window.mcCall;
+  if(typeof oc === 'function'){
+    window.mcCall = async function(body){
+      const r = await oc.apply(this, arguments);
+      try{ if(body && body.op === 'thread' && r && r.ok){ const v = r.ph || r.phone || r.wa || r.peer_phone || ''; if(v) window._mcPeerPh = {th: body.thr, v}; } }catch(e){}
+      return r;
+    };
+  }
+})();
+</script>
+<script>
+/* ===== MCS0911MO259 (مالک کا حکم): My Chats — چیٹ والے بندے کے بٹنوں کے علاوہ الگ «📒 فون بک» اور «واٹس ایپ کھولیں» (کسی بھی اور نمبر کے لیے) ===== */
+(function(){
+  try{
+    const st = document.createElement('style');
+    st.textContent = '#mcModal .mc-bar{display:flex;gap:8px;padding:6px 10px;background:#e6fffa;border-bottom:1px solid #99f6e4}'
+      + '#mcModal .mc-bar button{flex:1;border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:99px;padding:6px 8px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}'
+      + '#mcModal .mc-bar button.wa{border-color:#16a34a;color:#15803d}'
+      + '#mcPickBox{position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}'
+      + '#mcPickBox .pk{background:#fff;width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:16px;text-align:center}'
+      + '#mcPickBox .pk b{display:block;font-size:17px}#mcPickBox .pk small{display:block;direction:ltr;color:#64748b;margin:2px 0 12px;font-size:15px}'
+      + '#mcPickBox .pk button{display:block;width:100%;margin-top:8px;padding:12px;border-radius:12px;border:none;font:inherit;font-size:15px;font-weight:700;cursor:pointer;background:#0f766e;color:#fff}'
+      + '#mcPickBox .pk button.w{background:#16a34a}#mcPickBox .pk button.x{background:#e2e8f0;color:#334155}';
+    document.head.appendChild(st);
+  }catch(e){}
+  function digits(s){ return String(s||'').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g,''); }
+  function pkNorm(s){
+    let d = digits(s);
+    if(/^00/.test(d)) d = d.slice(2);
+    if(/^03\d{9}$/.test(d)) return {loc: d, intl: '92' + d.slice(1)};
+    if(/^923\d{9}$/.test(d)) return {loc: '0' + d.slice(2), intl: d};
+    if(d.length >= 8) return {loc: '+' + d, intl: d};   /* بیرونِ ملک / دوسرا نمبر جیسا ہے */
+    return null;
+  }
+  function pickBox(name, num, raw){
+    let b = document.getElementById('mcPickBox'); if(b) b.remove();
+    b = document.createElement('div'); b.id = 'mcPickBox';
+    b.onclick = e => { if(e.target === b) b.remove(); };
+    b.innerHTML = '<div class="pk"><b></b><small></small><button type="button" class="c">📞 نارمل کال</button><button type="button" class="w">واٹس ایپ پر جائیں</button><button type="button" class="x">✖ بند</button></div>';
+    b.querySelector('b').textContent = name || 'منتخب نمبر';
+    b.querySelector('small').textContent = raw || num.loc;
+    b.querySelector('.c').onclick = () => { b.remove(); location.href = 'tel:' + num.loc; };
+    b.querySelector('.w').onclick = () => { b.remove(); window.open('https://wa.me/' + num.intl, '_blank'); };
+    b.querySelector('.x').onclick = () => b.remove();
+    document.body.appendChild(b);
+  }
+  window.mcPhoneBook = async function(){
+    try{
+      if(navigator.contacts && navigator.contacts.select){
+        const r = await navigator.contacts.select(['name','tel'], {multiple:false});
+        if(!r || !r.length) return;
+        const c = r[0], raw = (c.tel && c.tel[0]) || '', num = pkNorm(raw);
+        if(!num){ showToast('⚠️ اس رابطے میں نمبر نہیں'); return; }
+        pickBox((c.name && c.name[0]) || '', num, raw); return;
+      }
+    }catch(e){ if(e && e.name === 'AbortError') return; }
+    /* پرانا / محدود براؤزر: فون کی «رابطے» ایپ کھولنے کی کوشش، ورنہ ڈائلر */
+    let hid = false; const onv = () => { if(document.hidden) hid = true; }; document.addEventListener('visibilitychange', onv);
+    try{ location.href = 'intent://#Intent;action=android.intent.action.VIEW;type=vnd.android.cursor.dir/contact;end'; }catch(e){}
+    setTimeout(() => { document.removeEventListener('visibilitychange', onv); if(!hid){ location.href = 'tel:'; } }, 1200);
+  };
+  window.mcWaOpen = function(){
+    let hid = false; const onv = () => { if(document.hidden) hid = true; }; document.addEventListener('visibilitychange', onv);
+    try{ location.href = 'whatsapp://send'; }catch(e){}
+    setTimeout(() => { document.removeEventListener('visibilitychange', onv); if(!hid){ window.open('https://wa.me/', '_blank'); } }, 1200);
+  };
+  const ob = window.mcBox;
+  if(typeof ob === 'function'){
+    window.mcBox = function(){
+      const m = ob.apply(this, arguments);
+      try{
+        const hd = m && m.querySelector('.mc-hd');
+        if(hd && !m.querySelector('.mc-bar')){
+          const bar = document.createElement('div'); bar.className = 'mc-bar';
+          bar.innerHTML = '<button type="button" class="pb">📒 فون بک</button><button type="button" class="wa">واٹس ایپ کھولیں</button>';
+          bar.querySelector('.pb').onclick = window.mcPhoneBook; bar.querySelector('.wa').onclick = window.mcWaOpen;
+          hd.parentNode.insertBefore(bar, hd.nextSibling);
+        }
+      }catch(e){}
+      return m;
+    };
+  }
+})();
 </script>
 </body>
 </html>
