@@ -4199,11 +4199,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO271";
+const APP_VERSION = "MCS0911MO274";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS0911MO271": "📄 مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر، اور 📣 بزنس پروفائل شیئر کارڈ (دکان کی تصویر، خدمات، فون، واٹس ایپ، اوقات)",
+  "MCS0911MO274": "🎨 بزنس کارڈ اپنی مرضی سے — تصویر، رنگ، فونٹ، بارڈر، کونے، فوری پیش منظر — 📣 بزنس کارڈ پر دکان کی تصویر اور مالک کی گول تصویر — 🔓 ایک بار پورٹل میں داخل ہوں تو لاگ اِن صفحہ بار بار نہیں آئے گا — 📄 مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر، اور 📣 بزنس پروفائل شیئر کارڈ (دکان کی تصویر، خدمات، فون، واٹس ایپ، اوقات)",
   "MCS0911MO268": "🔒 ہوم ہمیشہ 100٪ — زوم ➖ ➕ صرف فارم بھرتے وقت",
   "MCS0911MO267": "🪪 رجسٹرڈ کاروبار کا کارڈ چھوٹا اور صاف؛ ایجنٹ کے کارڈ پر سنہری MCS نشان؛ ڈویلپر کو کارڈ پر ریفرل والا ایجنٹ",
   "MCS0911MO266": "🤝 «خود ایجنٹ بنائیں» آسان: کاروبار تلاش کریں، دبائیں — سب تفصیل خود؛ ایجنٹ کے فون پر خود ایجنٹ کا نشان",
@@ -14992,7 +14992,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO271" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO274" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -15137,7 +15137,9 @@ body.d2 #homeAds .ad-ribbon{display:none}
   const ls = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k, v){ try{ v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); }catch(e){} } };
   window.uaMe = function(){ try{ const a = JSON.parse(ls.get('mcsAuth') || 'null'); return a && a.tok ? a : null; }catch(e){ return null; } };
   function staff(){ try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } }
-  window.uaOk = function(){ return !!uaMe() || staff() || agentOn(); };
+  /* MCS0911MO274 (مالک کا حکم): ایک بار پورٹل / ممبرشپ میں داخل ہو گئے (ڈویلپر، کو-ڈویلپر، ایجنٹ، کاروبار والا) تو لاگ اِن صفحہ بار بار نہ آئے */
+  function portalIn(){ try{ return ptRole() !== 'user'; }catch(e){ return false; } }
+  window.uaOk = function(){ return !!uaMe() || staff() || agentOn() || portalIn(); };
   const ERR = {
     name:'پورا نام لکھیں', city:'اپنا ضلع فہرست سے منتخب کریں', mobile:'درست موبائل نمبر لکھیں (03XXXXXXXXX)', email:'ای میل درست نہیں', pw:'پاس ورڈ کم از کم 6 حروف کا ہو',
     mobile_taken:'اس موبائل نمبر سے پہلے ہی اکاؤنٹ بنا ہوا ہے — LOGIN کریں', email_taken:'اس ای میل سے پہلے ہی اکاؤنٹ ہے — LOGIN کریں', gmail_taken:'اس Gmail سے پہلے ہی اکاؤنٹ ہے — Continue with Google دبائیں',
@@ -15635,7 +15637,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function boot(){
     wrapAll(); hook(); uaSync();
     ls.set('mcsGuest', null);
-    if(!uaMe() && !staff()) setTimeout(() => { if(!uaMe() && !staff()) uaLogin(); }, 600);
+    if(!uaOk()) setTimeout(() => { if(!uaOk()) uaLogin(); }, 600);
     setTimeout(recheck, 4000);
     setTimeout(() => { try{ if(uaMe() && invGet()) fedApplyPending(); else if(!uaMe() && invGet() && !staff()) uaInviteView(); else if(agtGet() && !agentOn() && !staff()) uaAgtView(); }catch(e){} }, 5000);
     document.addEventListener('keydown', e => { if(e.key === 'Escape' && $('uaOv').classList.contains('on') && (uaMe() || staff())) uaHide(); });
@@ -17645,7 +17647,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
 </style>
 <script id="mcsProfilePage">
 /* =========================================================================
-   MCS0911MO271 (مالک کا حکم): مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر
+   MCS0911MO274 (مالک کا حکم): مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر
    + بزنس پروموشن کارڈ (دکان کی تصویر، مالک کی تصویر، خدمات، پتہ، فون، واٹس ایپ، اوقات، MCS برانڈنگ)
    الگ اسکرپٹ بلاک — کوئی غلطی ہو تو باقی ایپ پر اثر نہیں پڑتا۔
    ========================================================================= */
@@ -17765,7 +17767,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
   function pageHtml(s){
     var rec = s.rec || {}, more = rec.more || {}, secs = sections(s), shop = shopImgOf(s);
     var head = '<div class="fp-head"><div class="fp-brand"><img src="icons/icon-192.png?v=' + E(APP_VERSION) + '" alt=""><b>مائی سٹی شائنز</b><span>مکمل پروفائل</span></div>' +
-      '<div class="fp-who">' + (more.selfie ? '<span class="fp-sf"><img src="' + E(more.selfie) + '" alt=""></span>' : '') +
+      '<div class="fp-who">' + (more.selfie ? '<span class="fp-sf"><img src="' + E(more.selfie) + '" alt=""></span>' : (slotImg(s, 1) ? '<span class="fp-sf"><img data-fpimg="' + E(slotImg(s, 1).id) + '" data-ts="' + E(slotImg(s, 1).ts) + '" alt=""></span>' : '')) +
       '<div class="fp-nm">' + E(titleOf(s)) + '<small>' + E(subOf(s)) + '</small></div>' +
       (shop ? '<span class="fp-shop"><img data-fpimg="' + E(shop.id) + '" data-ts="' + E(shop.ts) + '" alt=""></span>' : '') + '</div></div>';
     var body = secs.map(function(o){
@@ -17778,8 +17780,25 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     var foot = '<div class="fp-foot">My City Shines — مائی سٹی شائنز • ' + new Date().toLocaleDateString('en-GB') + '<br><small>پلے سٹور پر «My City Shines» لکھ کر سرچ کریں</small></div>';
     return head + body + foot;
   }
-  function shopImgOf(s){
-    var p = s.prof || {}; return (p.imgs || []).find(function(x){ return String(x.id).split('_').pop() === '0'; }) || null;
+  function slotImg(s, n){
+    var p = s.prof || {}; return (p.imgs || []).find(function(x){ return String(x.id).split('_').pop() === String(n); }) || null;
+  }
+  function shopImgOf(s){ return slotImg(s, 0); }
+  /* گول تصویر: کارڈ والی DP، نہ ہو تو ممبرشپ کی «سیلفی» (خانہ 1) */
+  async function imgData(ref){
+    if(!ref) return '';
+    var d = await pfImg(ref.id, ref.ts);
+    if(!d){ try{ delete pfImgCache[ref.id + '@' + ref.ts]; }catch(e){} d = await pfImg(ref.id, ref.ts); }
+    return d || '';
+  }
+  async function ownerPhoto(s){
+    var more = (s.rec && s.rec.more) || {};
+    if(more.selfie) return more.selfie;
+    return await imgData(slotImg(s, 1));
+  }
+  async function ensureProf(s){
+    if(s.prof || !s.rk) return;
+    for(var i = 0; i < 2 && !s.prof; i++){ try{ s.prof = await pfGet(s.rk); }catch(e){} }
   }
   function paint(){
     var box = document.getElementById('fpPage'); if(!box || !S) return;
@@ -17833,7 +17852,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     try{ await lcFonts(); }catch(e){}
     var secs = sections(s), rec = s.rec || {}, more = rec.more || {};
     var W = 1240, H = 1754, M = 60, FOOT = 80, LH = 54;
-    var selfie = await loadImg(more.selfie), shopRef = shopImgOf(s), shop = shopRef ? await loadImg(await pfImg(shopRef.id, shopRef.ts)) : null;
+    await ensureProf(s); var selfie = await loadImg(await ownerPhoto(s)), shop = await loadImg(await imgData(shopImgOf(s)));
     var logo = await loadImg('icons/icon-192.png?v=' + APP_VERSION);
     var pages = [], c, x, y;
     function newPage(first){
@@ -17949,7 +17968,8 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
   /* =====================================================================
      بزنس پروموشن کارڈ — دکان کی تصویر، مالک کی تصویر، خدمات، پتہ، فون، واٹس ایپ، اوقات + MCS برانڈنگ
      ===================================================================== */
-  async function buildPromo(s){
+  async function buildPromo(s, o, im){
+    o = Object.assign({}, PDEF, o || {}); im = im || {};
     try{ await lcFonts(); }catch(e){}
     var rec = s.rec || {}, d = (s.prof && s.prof.data) || {}, more = rec.more || {}, isDoc = s.kind === 'doctor';
     var cm = {}; try{ cm = ubCatMeta(isDoc ? 'doctor' : rec.category) || {}; }catch(e){}
@@ -17959,21 +17979,22 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     var about = d.about || [own.rest, more.services].filter(Boolean).join(' ');
     var items = (d.items || []).slice(0, 14), sub = isDoc ? [rec.specialty, rec.hospital].filter(Boolean).join(' • ') : (blank(rec.type) ? '' : rec.type);
     var hours = [d.hours, d.off ? 'چھٹی: ' + d.off : ''].filter(Boolean).join(' • ');
-    var selfie = await loadImg(more.selfie), shopRef = shopImgOf(s), shop = shopRef ? await loadImg(await pfImg(shopRef.id, shopRef.ts)) : null;
+    var selfie = im.selfie, shop = im.shop;
+    var DISP = o.font === 'sans' ? SANS : (o.font === 'reg' ? FR : FK), BODY = o.font === 'sans' ? SANS : FR;
     var logo = await loadImg('icons/icon-192.png?v=' + APP_VERSION);
     var W = 1080, cx0 = 44, cw = W - 88, inner = cw - 80;
     function render(x, dry){
       x.direction = 'rtl'; x.textBaseline = 'alphabetic';
       var y = 0, H = dry ? 0 : x.canvas.height;
-      if(!dry){ var bg = x.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0d3b66'); bg.addColorStop(1, '#081c36'); x.fillStyle = bg; x.fillRect(0, 0, W, H); }
-      x.textAlign = 'center'; x.fillStyle = '#f4d58d'; x.font = '64px ' + FK; var tw = x.measureText('مائی سٹی شائنز').width; x.fillText('مائی سٹی شائنز', W / 2 - 50, 112);
+      if(!dry){ var bg = x.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, o.bg1); bg.addColorStop(1, o.bg2); x.fillStyle = bg; x.fillRect(0, 0, W, H); }
+      x.textAlign = 'center'; x.fillStyle = o.title; x.font = '64px ' + DISP; var tw = x.measureText('مائی سٹی شائنز').width; x.fillText('مائی سٹی شائنز', W / 2 - 50, 112);
       if(logo){ x.save(); x.beginPath(); x.arc(W / 2 + tw / 2 + 10, 90, 48, 0, 7); x.fillStyle = '#fff'; x.fill(); x.clip(); x.drawImage(logo, W / 2 + tw / 2 - 38, 42, 96, 96); x.restore(); }
       var top = 160, bannerH = 400, cardRows = [];
       var cardStartY = top;
       /* کارڈ کا بدن: بعد میں بنے گا، پہلے اونچائی کا حساب (dry) */
       var by = top + bannerH;
       /* بینر */
-      var bannerPath = function(){ x.beginPath(); x.moveTo(cx0 + 40, top); x.lineTo(cx0 + cw - 40, top); x.quadraticCurveTo(cx0 + cw, top, cx0 + cw, top + 40); x.lineTo(cx0 + cw, by); x.lineTo(cx0, by); x.lineTo(cx0, top + 40); x.quadraticCurveTo(cx0, top, cx0 + 40, top); x.closePath(); };
+      var bannerPath = function(){ x.beginPath(); var R0 = o.br; x.moveTo(cx0 + R0, top); x.lineTo(cx0 + cw - R0, top); x.quadraticCurveTo(cx0 + cw, top, cx0 + cw, top + R0); x.lineTo(cx0 + cw, by); x.lineTo(cx0, by); x.lineTo(cx0, top + R0); x.quadraticCurveTo(cx0, top, cx0 + R0, top); x.closePath(); };
       var cardBodyTopDry = by;
       /* --- کارڈ کی سفید پلیٹ: اونچائی کا پتہ آخر میں؛ dry میں صرف y چلتا ہے --- */
       var yy = by + 120;   /* سیلفی کے نیچے */
@@ -17981,12 +18002,12 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       var nameW = nameRight - (cx0 + 40);
       /* نام */
       var nameY = by + 78;
-      x.font = '70px ' + FK; var nsz = lcFit(x, name, '{s}px ' + FK, 70, nameW, 34);
+      x.font = '70px ' + DISP; var nsz = lcFit(x, name, '{s}px ' + DISP, 70, nameW, 34);
       var subLine = [own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • ');
       var subY = nameY + 58;
       yy = Math.max(subY + 40, by + 120) + 10;
       var aboutLines = [];
-      if(about){ x.font = '34px ' + FR; aboutLines = lcWrap(x, about, inner - 20).slice(0, 5); }
+      if(about){ x.font = '34px ' + BODY; aboutLines = lcWrap(x, about, inner - 20).slice(0, 5); }
       var pos = {};
       if(aboutLines.length){ pos.aboutY = yy; yy += aboutLines.length * 56 + 34; }
       var cols = 2, chipH = 70, rowsN = Math.ceil(items.length / cols);
@@ -17994,35 +18015,35 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       pos.contactY = yy;
       var contactRows = [];
       if(num) contactRows.push('call'); if(wa2 && wa2 !== num) contactRows.push('wa2'); contactRows.push('wa');
-      if(loc){ x.font = '34px ' + FR; pos.locLines = lcWrap(x, '📍 ' + loc, inner - 10).slice(0, 3); } else pos.locLines = [];
+      if(loc){ x.font = '34px ' + BODY; pos.locLines = lcWrap(x, '📍 ' + loc, inner - 10).slice(0, 3); } else pos.locLines = [];
       yy += 10 + 96 + (wa2 && wa2 !== num ? 96 : 0) + (pos.locLines.length ? pos.locLines.length * 54 + 24 : 0) + (hours ? 70 : 0) + 20;
       var cardBottom = yy;
       var footTop = cardBottom + 30, footH = 330, total = footTop + footH + 40;
       if(dry) return total;
       /* ---- اب اصل ڈرائنگ ---- */
-      x.save(); x.shadowColor = 'rgba(0,0,0,.4)'; x.shadowBlur = 24; x.shadowOffsetY = 8; x.fillStyle = '#fffdf3'; rr(x, cx0, top, cw, cardBottom - top, 40); x.fill(); x.restore();
+      x.save(); x.shadowColor = 'rgba(0,0,0,.4)'; x.shadowBlur = 24; x.shadowOffsetY = 8; x.fillStyle = o.cardBg; rr(x, cx0, top, cw, cardBottom - top, o.br); x.fill(); x.restore();
       x.save(); bannerPath(); x.clip();
-      if(shop){ var sr = Math.max(cw / shop.width, bannerH / shop.height); x.drawImage(shop, cx0 + cw / 2 - shop.width * sr / 2, top + bannerH / 2 - shop.height * sr / 2, shop.width * sr, shop.height * sr); }
+      if(shop){ if(o.fit === 'contain'){ x.fillStyle = o.bg2; x.fillRect(cx0, top, cw, bannerH); } var sr = (o.fit === 'contain' ? Math.min : Math.max)(cw / shop.width, bannerH / shop.height); x.drawImage(shop, cx0 + cw / 2 - shop.width * sr / 2, top + bannerH / 2 - shop.height * sr / 2, shop.width * sr, shop.height * sr); }
       else { var g2 = x.createLinearGradient(cx0, top, cx0 + cw, by); g2.addColorStop(0, '#0f766e'); g2.addColorStop(1, '#0d3b66'); x.fillStyle = g2; x.fillRect(cx0, top, cw, bannerH); x.textAlign = 'center'; x.font = '190px ' + EMOJI; x.fillText(cm.emoji || '🏪', cx0 + cw / 2, top + 280); }
       x.restore();
-      x.strokeStyle = '#d4a017'; x.lineWidth = 5; rr(x, cx0, top, cw, cardBottom - top, 40); x.stroke();
-      if(selfie || true){
+      if(o.bw > 0){ x.strokeStyle = o.bc; x.lineWidth = o.bw; rr(x, cx0, top, cw, cardBottom - top, o.br); x.stroke(); }
+      if(true){
         var sx = cx0 + cw - 40 - 95, sy = by;
         x.save(); x.beginPath(); x.arc(sx, sy, 105, 0, 7); x.fillStyle = '#fff'; x.fill(); x.restore();
-        if(selfie){ x.save(); x.beginPath(); x.arc(sx, sy, 95, 0, 7); x.clip(); var q = Math.max(190 / selfie.width, 190 / selfie.height); x.drawImage(selfie, sx - selfie.width * q / 2, sy - selfie.height * q / 2, selfie.width * q, selfie.height * q); x.restore(); x.strokeStyle = '#f59e0b'; x.lineWidth = 7; x.beginPath(); x.arc(sx, sy, 95, 0, 7); x.stroke(); }
-        else { x.textAlign = 'center'; x.font = '90px ' + EMOJI; x.fillText(cm.emoji || '🏪', sx, sy + 30); x.strokeStyle = '#f59e0b'; x.lineWidth = 7; x.beginPath(); x.arc(sx, sy, 95, 0, 7); x.stroke(); }
+        if(selfie){ x.save(); x.beginPath(); x.arc(sx, sy, 95, 0, 7); x.clip(); var q = Math.max(190 / selfie.width, 190 / selfie.height); x.drawImage(selfie, sx - selfie.width * q / 2, sy - selfie.height * q / 2, selfie.width * q, selfie.height * q); x.restore(); x.strokeStyle = o.bc; x.lineWidth = 7; x.beginPath(); x.arc(sx, sy, 95, 0, 7); x.stroke(); }
+        else { x.textAlign = 'center'; x.font = '90px ' + EMOJI; x.fillText(cm.emoji || '🏪', sx, sy + 30); x.strokeStyle = o.bc; x.lineWidth = 7; x.beginPath(); x.arc(sx, sy, 95, 0, 7); x.stroke(); }
       }
-      x.textAlign = 'right'; x.direction = 'rtl'; x.fillStyle = '#0b2a44'; x.font = nsz + 'px ' + FK; x.fillText(name, nameRight, nameY);
-      if(subLine){ x.fillStyle = '#92400e'; lcFit(x, subLine, '{s}px ' + FR, 34, nameW, 20); x.fillText(subLine, nameRight, subY); }
-      if(sub){ x.fillStyle = '#475569'; lcFit(x, sub, '{s}px ' + FR, 30, nameW, 18); x.fillText(sub, nameRight, subY + 46); }
-      if(aboutLines.length){ x.fillStyle = '#334155'; x.font = '34px ' + FR; aboutLines.forEach(function(l, i){ x.fillText(l, tx, pos.aboutY + 40 + i * 56); }); }
+      x.textAlign = 'right'; x.direction = 'rtl'; x.fillStyle = o.nameC; x.font = nsz + 'px ' + DISP; x.fillText(name, nameRight, nameY);
+      if(subLine){ x.fillStyle = o.subC; lcFit(x, subLine, '{s}px ' + BODY, 34, nameW, 20); x.fillText(subLine, nameRight, subY); }
+      if(sub){ x.fillStyle = o.txC; lcFit(x, sub, '{s}px ' + BODY, 30, nameW, 18); x.fillText(sub, nameRight, subY + 46); }
+      if(aboutLines.length){ x.fillStyle = o.txC; x.font = '34px ' + BODY; aboutLines.forEach(function(l, i){ x.fillText(l, tx, pos.aboutY + 40 + i * 56); }); }
       if(items.length){
-        var iy = pos.itemsY; x.fillStyle = '#0d3b66'; rr(x, cx0 + 40, iy, inner, 56, 18); x.fill(); x.fillStyle = '#f4d58d'; x.font = '36px ' + FK; x.textAlign = 'right'; x.fillText('🏷️ ہماری خدمات / چیزیں', tx - 20, iy + 42); iy += 72;
+        var iy = pos.itemsY; x.fillStyle = o.accent; rr(x, cx0 + 40, iy, inner, 56, 18); x.fill(); x.fillStyle = o.title; x.font = '36px ' + DISP; x.textAlign = 'right'; x.fillText('🏷️ ہماری خدمات / چیزیں', tx - 20, iy + 42); iy += 72;
         var cwid = (inner - 16) / 2;
         items.forEach(function(it, i){
           var col = i % 2, row = Math.floor(i / 2), px = cx0 + 40 + (col === 0 ? cwid + 16 : 0), py = iy + row * (chipH + 14);
           x.fillStyle = '#fff'; rr(x, px, py, cwid, chipH, 16); x.fill(); x.strokeStyle = '#f4c45a'; x.lineWidth = 2.5; rr(x, px, py, cwid, chipH, 16); x.stroke();
-          x.textAlign = 'right'; x.direction = 'rtl'; x.fillStyle = '#1f2937'; var pw2 = it.p ? 190 : 0; lcFit(x, it.n, '{s}px ' + FR, 32, cwid - 36 - pw2, 18); x.fillText(it.n, px + cwid - 18, py + 46);
+          x.textAlign = 'right'; x.direction = 'rtl'; x.fillStyle = o.txC; var pw2 = it.p ? 190 : 0; lcFit(x, it.n, '{s}px ' + BODY, 32, cwid - 36 - pw2, 18); x.fillText(it.n, px + cwid - 18, py + 46);
           if(it.p){ x.direction = 'ltr'; x.textAlign = 'left'; x.fillStyle = '#15803d'; x.font = 'bold 28px ' + NUM; x.fillText('Rs ' + it.p, px + 18, py + 45); x.direction = 'rtl'; }
         });
       }
@@ -18035,8 +18056,8 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       pill('💬 واٹس ایپ / کال', num || '—', '#15803d', '#2fd16b', cy); cy += 96;
       if(wa2 && wa2 !== num){ pill('📞 دوسرا نمبر', wa2, '#1d4ed8', '#3b82f6', cy); cy += 96; }
       x.textAlign = 'right'; x.direction = 'rtl';
-      if(pos.locLines.length){ x.fillStyle = '#0b2a44'; x.font = '34px ' + FR; pos.locLines.forEach(function(l, i){ x.fillText(l, tx, cy + 40 + i * 54); }); cy += pos.locLines.length * 54 + 24; }
-      if(hours){ x.fillStyle = '#92400e'; lcFit(x, '🕘 ' + hours, '{s}px ' + FR, 34, inner, 20); x.fillText('🕘 ' + hours, tx, cy + 44); }
+      if(pos.locLines.length){ x.fillStyle = o.nameC; x.font = '34px ' + BODY; pos.locLines.forEach(function(l, i){ x.fillText(l, tx, cy + 40 + i * 54); }); cy += pos.locLines.length * 54 + 24; }
+      if(hours){ x.fillStyle = o.subC; lcFit(x, '🕘 ' + hours, '{s}px ' + BODY, 34, inner, 20); x.fillText('🕘 ' + hours, tx, cy + 44); }
       /* برانڈنگ */
       var fg = x.createLinearGradient(0, footTop, 0, footTop + footH); fg.addColorStop(0, '#f7dd9c'); fg.addColorStop(1, '#c99a34'); x.fillStyle = fg; rr(x, cx0 - 8, footTop, cw + 16, footH, 32); x.fill();
       x.textAlign = 'center'; x.fillStyle = '#3a2600';
@@ -18059,6 +18080,32 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     cap.push('', '📲 مائی سٹی شائنز ایپ — اپنا کاروبار بھی پروموٹ کریں:', MCS_PLAY_URL);
     return {canvas: c, caption: cap.join('\n')};
   }
+  /* ---------- پروموشن کارڈ: اپنی مرضی سے بنانا (رنگ، فونٹ، بارڈر، کونے، تصویریں) — شیئر سے پہلے فوری پیش منظر ---------- */
+  var SANS = 'Tahoma,"Segoe UI",Arial,sans-serif';
+  var PDEF = {font: 'kash', bg1: '#0d3b66', bg2: '#081c36', title: '#f4d58d', cardBg: '#fffdf3', bc: '#d4a017', bw: 5, br: 40, nameC: '#0b2a44', subC: '#92400e', txC: '#334155', accent: '#0d3b66', fit: 'cover'};
+  var PTHEMES = [
+    ['🔵 نیلا', {bg1: '#0d3b66', bg2: '#081c36', title: '#f4d58d', cardBg: '#fffdf3', bc: '#d4a017', nameC: '#0b2a44', subC: '#92400e', txC: '#334155', accent: '#0d3b66'}],
+    ['🟢 سبز', {bg1: '#14532d', bg2: '#052e16', title: '#fde68a', cardBg: '#f7fff7', bc: '#16a34a', nameC: '#14532d', subC: '#854d0e', txC: '#1f2937', accent: '#166534'}],
+    ['🟡 سنہری', {bg1: '#92400e', bg2: '#451a03', title: '#fef3c7', cardBg: '#fffbeb', bc: '#d97706', nameC: '#451a03', subC: '#92400e', txC: '#44403c', accent: '#92400e'}],
+    ['⚫ سیاہ', {bg1: '#27272a', bg2: '#09090b', title: '#fbbf24', cardBg: '#18181b', bc: '#fbbf24', nameC: '#fef3c7', subC: '#fbbf24', txC: '#e4e4e7', accent: '#3f3f46'}],
+    ['🌸 گلابی', {bg1: '#9d174d', bg2: '#500724', title: '#fbcfe8', cardBg: '#fff1f2', bc: '#db2777', nameC: '#831843', subC: '#9d174d', txC: '#4c0519', accent: '#9d174d'}],
+    ['🟣 جامنی', {bg1: '#5b21b6', bg2: '#2e1065', title: '#e9d5ff', cardBg: '#faf5ff', bc: '#9333ea', nameC: '#3b0764', subC: '#6b21a8', txC: '#3f3f46', accent: '#6b21a8'}]
+  ];
+  var PCOLORS = [['bg1', 'پس منظر (اوپر)'], ['bg2', 'پس منظر (نیچے)'], ['title', 'اوپر کا عنوان'], ['cardBg', 'کارڈ کا رنگ'], ['bc', 'بارڈر / فریم'], ['nameC', 'نام کا رنگ'], ['subC', 'ذیلی لکھائی'], ['txC', 'باقی لکھائی'], ['accent', 'خدمات کی پٹی']];
+  function pKey(s){ return 'mcsPromo_' + (s.rk || (s.rec && s.rec.id) || 'x'); }
+  function pLoad(s){ try{ return JSON.parse(localStorage.getItem(pKey(s)) || 'null') || {}; }catch(e){ return {}; } }
+  function pSave(){
+    if(!PROMO) return; var p = PROMO, o = {o: p.o, shop: p.custom.shop || '', owner: p.custom.owner || ''};
+    try{ localStorage.setItem(pKey(p.s), JSON.stringify(o)); }catch(e){ try{ o.shop = o.owner = ''; localStorage.setItem(pKey(p.s), JSON.stringify(o)); }catch(_){} }
+  }
+  function canEdit(s){ try{ return !!(isAdminSignedIn || (s.rec && pfIsOwner(s.rec))); }catch(e){ return false; } }
+  function resizeFile(file, max){
+    return new Promise(function(res, rej){
+      var r = new FileReader(); r.onerror = rej;
+      r.onload = function(){ var im = new Image(); im.onerror = rej; im.onload = function(){ var k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', 0.85)); }; im.src = r.result; };
+      r.readAsDataURL(file);
+    });
+  }
   function ensurePromoModal(){
     var m = document.getElementById('fpPromoModal'); if(m) return m;
     m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'fpPromoModal';
@@ -18066,22 +18113,60 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       '<div class="ag-hd" style="margin:0 0 8px">📣 بزنس پروفائل شیئر کارڈ</div>' +
       '<div id="fpPromoHolder" class="fp-promo-holder"><div class="cp-hint" style="text-align:center">⏳ کارڈ بن رہا ہے…</div></div>' +
       '<div class="fp-bar"><button type="button" class="gold" onclick="fpPromoShare()">📤 شیئر کریں</button><button type="button" onclick="fpPromoDownload()">⬇️ تصویر محفوظ کریں</button><button type="button" onclick="fpPromoWa()">💬 واٹس ایپ پر متن</button></div>' +
-      '<div class="cp-hint" style="text-align:center">کارڈ پر دکان کی تصویر، آپ کی تصویر، خدمات، پتہ، فون، واٹس ایپ، اوقات اور مائی سٹی شائنز کی برانڈنگ ہے۔ تصویریں «✏️ تفصیل سنواریں» سے بدلیں۔</div></div>';
+      '<div id="fpPromoEd"></div>' +
+      '<div class="cp-hint" style="text-align:center">کارڈ پر دکان کی تصویر، آپ کی تصویر، خدمات، پتہ، فون، واٹس ایپ، اوقات اور مائی سٹی شائنز کی برانڈنگ ہے۔</div></div>';
     document.body.appendChild(m); return m;
   }
+  function edHtml(p){
+    var o = p.o;
+    var th = PTHEMES.map(function(t, i){ return '<button type="button" onclick="fpPromoTheme(' + i + ')">' + t[0] + '</button>'; }).join('');
+    var cols = PCOLORS.map(function(c){ return '<label class="fp-col"><span>' + c[1] + '</span><input type="color" value="' + o[c[0]] + '" oninput="fpPromoSet(\'' + c[0] + '\',this.value)"></label>'; }).join('');
+    return '<details class="fp-ed" open><summary>🎨 اپنی مرضی سے بنائیں — تبدیلی فوراً اوپر نظر آتی ہے</summary>' +
+      '<div class="fp-ed-row"><label class="fp-up">📷 دکان / کام کی تصویر بدلیں<input type="file" accept="image/*" onchange="fpPromoPick(this,\'shop\')"></label><button type="button" onclick="fpPromoPickReset(\'shop\')">♻️ اصل</button></div>' +
+      '<div class="fp-ed-row"><label class="fp-up">🤳 مالک کی گول تصویر بدلیں<input type="file" accept="image/*" onchange="fpPromoPick(this,\'owner\')"></label><button type="button" onclick="fpPromoPickReset(\'owner\')">♻️ اصل</button></div>' +
+      '<div class="fp-ed-row"><span>🖼️ تصویر کا انداز</span><select onchange="fpPromoSet(\'fit\',this.value)"><option value="cover"' + (o.fit === 'cover' ? ' selected' : '') + '>پورا بھریں</option><option value="contain"' + (o.fit === 'contain' ? ' selected' : '') + '>پوری تصویر دکھائیں</option></select></div>' +
+      '<div class="fp-ed-row"><span>🔤 فونٹ</span><select onchange="fpPromoSet(\'font\',this.value)"><option value="kash"' + (o.font === 'kash' ? ' selected' : '') + '>کشیدہ نستعلیق</option><option value="reg"' + (o.font === 'reg' ? ' selected' : '') + '>سادہ نستعلیق</option><option value="sans"' + (o.font === 'sans' ? ' selected' : '') + '>صاف (نسخ)</option></select></div>' +
+      '<div class="fp-themes">' + th + '</div><div class="fp-cols">' + cols + '</div>' +
+      '<div class="fp-ed-row"><span>▭ بارڈر کی موٹائی</span><input type="range" min="0" max="18" value="' + o.bw + '" oninput="fpPromoSet(\'bw\',+this.value)"></div>' +
+      '<div class="fp-ed-row"><span>◜ کونوں کی گولائی</span><input type="range" min="0" max="80" value="' + o.br + '" oninput="fpPromoSet(\'br\',+this.value)"></div>' +
+      '<button type="button" class="fp-reset" onclick="fpPromoReset()">♻️ سب پہلے جیسا کریں</button></details>';
+  }
+  var pTimer = null;
+  async function pRender(){
+    var p = PROMO; if(!p) return; var h = document.getElementById('fpPromoHolder');
+    var r = await buildPromo(p.s, p.o, p.im); if(PROMO !== p) return;
+    p.canvas = r.canvas; p.caption = r.caption; p.blob = null; r.canvas.style.width = '100%'; r.canvas.style.borderRadius = '14px';
+    h.innerHTML = ''; h.appendChild(r.canvas); r.canvas.toBlob(function(b){ if(PROMO === p) p.blob = b; }, 'image/png');
+  }
+  function pSoon(){ clearTimeout(pTimer); pTimer = setTimeout(function(){ pRender(); pSave(); }, 120); }
+  window.fpPromoSet = function(k, v){ if(!PROMO) return; PROMO.o[k] = v; pSoon(); };
+  window.fpPromoTheme = function(i){ if(!PROMO) return; Object.assign(PROMO.o, PTHEMES[i][1]); document.getElementById('fpPromoEd').innerHTML = edHtml(PROMO); pSoon(); };
+  window.fpPromoReset = function(){ if(!PROMO) return; PROMO.o = Object.assign({}, PDEF); document.getElementById('fpPromoEd').innerHTML = edHtml(PROMO); pSoon(); };
+  window.fpPromoPick = async function(inp, which){
+    var f = inp.files && inp.files[0]; inp.value = ''; if(!f || !PROMO) return;
+    try{ var d = await resizeFile(f, which === 'shop' ? 1100 : 600); PROMO.custom[which] = d; PROMO.im[which === 'shop' ? 'shop' : 'selfie'] = await loadImg(d); pSoon(); }
+    catch(e){ showToast('⚠️ تصویر نہیں لگی — دوبارہ کوشش کریں'); }
+  };
+  window.fpPromoPickReset = async function(which){
+    if(!PROMO) return; var p = PROMO; p.custom[which] = '';
+    p.im[which === 'shop' ? 'shop' : 'selfie'] = which === 'shop' ? await loadImg(await imgData(shopImgOf(p.s))) : await loadImg(await ownerPhoto(p.s)); pSoon();
+  };
   window.fpPromoOpen = async function(){
     if(!S || !S.rec){ showToast('پہلے کاروبار کا اندراج درکار ہے'); return; }
-    ensurePromoModal(); var h = document.getElementById('fpPromoHolder'); h.innerHTML = '<div class="cp-hint" style="text-align:center">⏳ کارڈ بن رہا ہے…</div>'; openModal('fpPromoModal');
-    var mine = S, p = {s: mine, canvas: null, blob: null, caption: ''}; PROMO = p;
+    ensurePromoModal(); var h = document.getElementById('fpPromoHolder'); h.innerHTML = '<div class="cp-hint" style="text-align:center">⏳ کارڈ بن رہا ہے…</div>'; document.getElementById('fpPromoEd').innerHTML = ''; openModal('fpPromoModal');
+    var mine = S, sv = pLoad(mine), p = {s: mine, canvas: null, blob: null, caption: '', o: Object.assign({}, PDEF, sv.o || {}), custom: {shop: sv.shop || '', owner: sv.owner || ''}, im: {}}; PROMO = p;
     try{
-      var r = await buildPromo(mine); if(PROMO !== p) return; p.canvas = r.canvas; p.caption = r.caption;
-      r.canvas.style.width = '100%'; r.canvas.style.borderRadius = '14px'; h.innerHTML = ''; h.appendChild(r.canvas);
-      r.canvas.toBlob(function(b){ if(PROMO === p) p.blob = b; }, 'image/png');
+      await ensureProf(mine);
+      p.im.shop = await loadImg(p.custom.shop || await imgData(shopImgOf(mine)));
+      p.im.selfie = await loadImg(p.custom.owner || await ownerPhoto(mine));
+      if(PROMO !== p) return;
+      await pRender();
+      if(canEdit(mine)) document.getElementById('fpPromoEd').innerHTML = edHtml(p);
     }catch(e){ h.innerHTML = '<div class="cp-hint" style="text-align:center">⚠️ کارڈ نہیں بن سکا — دوبارہ کوشش کریں</div>'; }
   };
   window.fpPromoShare = async function(){
     if(!PROMO || !PROMO.blob){ showToast('کارڈ تیار ہو رہا ہے — ایک سیکنڈ بعد دوبارہ دبائیں'); return; }
-    await shareFile(PROMO.blob, 'MCS-Business-' + (PROMO.s.rk || 'card') + '.png', 'image/png', PROMO.caption);
+    pSave(); await shareFile(PROMO.blob, 'MCS-Business-' + (PROMO.s.rk || 'card') + '.png', 'image/png', PROMO.caption);
   };
   window.fpPromoDownload = function(){ if(!PROMO || !PROMO.blob) return showToast('کارڈ تیار ہو رہا ہے'); downloadBlob(PROMO.blob, 'MCS-Business-' + (PROMO.s.rk || 'card') + '.png'); showToast('✅ تصویر فون میں محفوظ ہو گئی', 3000); };
   window.fpPromoWa = function(){ if(!PROMO) return; window.open('https://wa.me/?text=' + encodeURIComponent(PROMO.caption), '_blank'); };
@@ -18106,6 +18191,11 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     '.fp-r i{font-style:normal;font-weight:800;color:#0d3b66;flex:0 0 38%;max-width:170px}.fp-r span{flex:1;word-break:break-word}.fp-r span.ltr{text-align:right;font-family:Arial,sans-serif;font-weight:700}.fp-r b{color:#15803d;margin-right:auto;font-family:Arial,sans-serif}',
     '.fp-p{margin:0;padding:10px;font-size:15px;line-height:1.9}',
     '.fp-foot{text-align:center;padding:12px;font-size:13px;color:#0d3b66;border-top:3px solid #c99a34;margin-top:10px}.fp-foot small{color:#64748b}',
+    '.fp-ed{border:1.5px solid #cbd5e1;border-radius:14px;padding:8px 10px;margin:8px 0;background:#f8fafc;color:#111827}.fp-ed summary{font-weight:900;color:#0d3b66;cursor:pointer;padding:4px 0}',
+    '.fp-ed-row{display:flex;gap:8px;align-items:center;margin:8px 0;font-size:14px}.fp-ed-row>span{flex:0 0 42%}.fp-ed-row select,.fp-ed-row input[type=range]{flex:1;min-width:0}.fp-ed-row button,.fp-up{flex:1;border:1.5px solid #0d3b66;background:#fff;color:#0d3b66;border-radius:10px;padding:8px;font:inherit;font-weight:800;text-align:center;cursor:pointer}.fp-up input{display:none}',
+    '.fp-themes{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.fp-themes button{flex:1 1 30%;border:1.5px solid #94a3b8;background:#fff;border-radius:10px;padding:7px 4px;font:inherit;font-weight:800;cursor:pointer}',
+    '.fp-cols{display:grid;grid-template-columns:1fr 1fr;gap:6px}.fp-col{display:flex;align-items:center;justify-content:space-between;gap:6px;border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:5px 8px;font-size:13px}.fp-col input{width:38px;height:30px;border:0;padding:0;background:none}',
+    '.fp-reset{width:100%;margin-top:8px;border:1.5px solid #b91c1c;background:#fff;color:#b91c1c;border-radius:10px;padding:8px;font:inherit;font-weight:800}',
     '.fp-promo-holder{border-radius:14px;overflow:hidden;margin-bottom:8px;background:#081c36;min-height:80px}',
     '@media print{@page{size:A4;margin:10mm}',
     'body.fp-printing > *:not(#fpModal){display:none!important}',
