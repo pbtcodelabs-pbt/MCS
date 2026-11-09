@@ -4201,11 +4201,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO277";
+const APP_VERSION = "MCS0911MO279";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS0911MO277": "🗂️ کیٹگری والے صفحے پر ہی رجسٹرڈ / ایجنٹ ٹیب — 🔍 تلاش میں بھی دو ٹیب — 🗂️ فہرست میں دو ٹیب: «رجسٹرڈ بزنس / پروفیشن» اور «ایم سی ایس ایجنٹس» — 🪪 کارڈ پر MCS بیج کے عین نیچے چھوٹا رجسٹرڈ ٹیگ، کارڈ کی اونچائی کم",
+  "MCS0911MO279": "📸 مکمل پروفائل میں مالک کی DP، سیلفی اور دکان کی تصویر — 🔗 مکمل پروفائل میں ریفرل — کس کے کوڈ سے، کس ایجنٹ نے رجسٹر کیا — 🗂️ کیٹگری والے صفحے پر ہی رجسٹرڈ / ایجنٹ ٹیب — 🔍 تلاش میں بھی دو ٹیب — 🗂️ فہرست میں دو ٹیب: «رجسٹرڈ بزنس / پروفیشن» اور «ایم سی ایس ایجنٹس» — 🪪 کارڈ پر MCS بیج کے عین نیچے چھوٹا رجسٹرڈ ٹیگ، کارڈ کی اونچائی کم",
   "MCS0911MO274": "🎨 بزنس کارڈ اپنی مرضی سے — تصویر، رنگ، فونٹ، بارڈر، کونے، فوری پیش منظر — 📣 بزنس کارڈ پر دکان کی تصویر اور مالک کی گول تصویر — 🔓 ایک بار پورٹل میں داخل ہوں تو لاگ اِن صفحہ بار بار نہیں آئے گا — 📄 مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر، اور 📣 بزنس پروفائل شیئر کارڈ (دکان کی تصویر، خدمات، فون، واٹس ایپ، اوقات)",
   "MCS0911MO268": "🔒 ہوم ہمیشہ 100٪ — زوم ➖ ➕ صرف فارم بھرتے وقت",
   "MCS0911MO267": "🪪 رجسٹرڈ کاروبار کا کارڈ چھوٹا اور صاف؛ ایجنٹ کے کارڈ پر سنہری MCS نشان؛ ڈویلپر کو کارڈ پر ریفرل والا ایجنٹ",
@@ -4440,7 +4440,7 @@ function goScreen(name, fromHistory){ setTimeout(()=>{ try{ d2NavMark(); }catch(
     if(name==='home'){ navStack.length=0; navStack.push('home'); }
     else { navStack.push(name); try{ history.pushState({s:name},''); }catch(e){} }
   }
-  if((name==='doctor-list' || name==='service-list') && currentScreen!==name){ try{ listFilter = 'all'; }catch(e){} }   /* MCS0911MO277: نئی فہرست کھلے تو ٹیب «سب» */
+  if((name==='doctor-list' || name==='service-list') && currentScreen!==name){ try{ listFilter = 'all'; }catch(e){} }   /* MCS0911MO279: نئی فہرست کھلے تو ٹیب «سب» */
   if(name==='business-categories' || name==='specialist-categories'){ try{ catTab.business = 'all'; catTab.professional = 'all'; catTabRender('business'); catTabRender('professional'); }catch(e){} }
   currentScreen = name;
   window.scrollTo(0,0);
@@ -5272,7 +5272,7 @@ try{
 
 /* ===== MCS0511TH137 (مالک کا حکم): تلاش کا پورا صفحہ ===== */
 const srF = {group:'', cat:'', city:'', area:''};
-/* MCS0911MO277: تلاش میں بھی دو ٹیب — رجسٹرڈ (ایجنٹ نہیں) / ایم سی ایس ایجنٹس */
+/* MCS0911MO279: تلاش میں بھی دو ٹیب — رجسٹرڈ (ایجنٹ نہیں) / ایم سی ایس ایجنٹس */
 let srTab = 'all';
 function srSetTab(v){ srTab = (srTab===v) ? 'all' : v; srShown = 40; srRender(); }
 function srTabPass(it){
@@ -8072,7 +8072,7 @@ function sortRecords(items){
   return out;
 }
 function syncSortBars(){ document.querySelectorAll('.sort-bar button').forEach(b=>b.classList.toggle('on', b.dataset.s===listSort)); try{ syncFilterBars(); }catch(e){} }
-/* MCS0911MO277 (مالک کا حکم): دو ٹیب — «رجسٹرڈ بزنس / پروفیشن» (صرف رجسٹرڈ، ایجنٹ نہیں) اور «ایم سی ایس ایجنٹس» (جو رجسٹرڈ بھی ہیں اور ایجنٹ بھی)۔ دوبارہ دبائیں تو سب واپس */
+/* MCS0911MO279 (مالک کا حکم): دو ٹیب — «رجسٹرڈ بزنس / پروفیشن» (صرف رجسٹرڈ، ایجنٹ نہیں) اور «ایم سی ایس ایجنٹس» (جو رجسٹرڈ بھی ہیں اور ایجنٹ بھی)۔ دوبارہ دبائیں تو سب واپس */
 let listFilter = 'all';
 function listFilterPass(kind, rec){
   if(listFilter==='reg') return !!pfActive(rec) && !agIsRec(kind, rec);
@@ -8086,7 +8086,7 @@ function setListFilter(v){
   if(currentScreen==='doctor-list') renderDoctorList('list');
   if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
 }
-/* MCS0911MO277b (مالک کا حکم): کیٹگری چننے والے صفحے پر ہی دو ٹیب — دبائیں تو تمام کیٹگریز میں سے رجسٹرڈ / ایجنٹ کارڈ ایک ساتھ سامنے */
+/* MCS0911MO279b (مالک کا حکم): کیٹگری چننے والے صفحے پر ہی دو ٹیب — دبائیں تو تمام کیٹگریز میں سے رجسٹرڈ / ایجنٹ کارڈ ایک ساتھ سامنے */
 const catTab = {business:'all', professional:'all'};
 function catTabPass(tab, kind, rec){
   if(tab==='reg') return !!pfActive(rec) && !agIsRec(kind, rec);
@@ -15052,7 +15052,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO277" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO279" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -15198,7 +15198,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   const ls = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k, v){ try{ v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); }catch(e){} } };
   window.uaMe = function(){ try{ const a = JSON.parse(ls.get('mcsAuth') || 'null'); return a && a.tok ? a : null; }catch(e){ return null; } };
   function staff(){ try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } }
-  /* MCS0911MO277 (مالک کا حکم): ایک بار پورٹل / ممبرشپ میں داخل ہو گئے (ڈویلپر، کو-ڈویلپر، ایجنٹ، کاروبار والا) تو لاگ اِن صفحہ بار بار نہ آئے */
+  /* MCS0911MO279 (مالک کا حکم): ایک بار پورٹل / ممبرشپ میں داخل ہو گئے (ڈویلپر، کو-ڈویلپر، ایجنٹ، کاروبار والا) تو لاگ اِن صفحہ بار بار نہ آئے */
   function portalIn(){ try{ return ptRole() !== 'user'; }catch(e){ return false; } }
   window.uaOk = function(){ return !!uaMe() || staff() || agentOn() || portalIn(); };
   const ERR = {
@@ -17708,7 +17708,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
 </style>
 <script id="mcsProfilePage">
 /* =========================================================================
-   MCS0911MO277 (مالک کا حکم): مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر
+   MCS0911MO279 (مالک کا حکم): مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر
    + بزنس پروموشن کارڈ (دکان کی تصویر، مالک کی تصویر، خدمات، پتہ، فون، واٹس ایپ، اوقات، MCS برانڈنگ)
    الگ اسکرپٹ بلاک — کوئی غلطی ہو تو باقی ایپ پر اثر نہیں پڑتا۔
    ========================================================================= */
@@ -17760,6 +17760,13 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     function sec(icon, title){ var o = {icon: icon, title: title, rows: []}; out.push(o); return o; }
     function R(o, k, v, ltr){ if(!blank(v)) o.rows.push({k: k, v: String(v), ltr: !!ltr}); }
 
+    /* MCS0911MO279 (مالک کا حکم): تصاویر — مالک کی DP (کارڈ والی)، کاروبار کی سیلفی، دکان کی تصویر */
+    var phs = sec('📸', 'تصاویر'); phs.photos = [];
+    if(more.selfie) phs.photos.push({k: 'مالک کی تصویر (DP)', src: more.selfie});
+    var sf1 = slotImg(s, 1); if(sf1) phs.photos.push({k: 'کاروبار والے کی سیلفی', ref: sf1});
+    var sp0 = slotImg(s, 0); if(sp0) phs.photos.push({k: 'دکان کی تصویر', ref: sp0});
+    if(!phs.photos.length) out.pop();
+
     var a1 = sec('👤', 'ذاتی معلومات');
     R(a1, 'پورا نام', (a && a.name) || own.owner || (isDoc ? (rec.nameUr || rec.name) : ''));
     R(a1, 'والد / شوہر کا نام', a && a.father);
@@ -17781,7 +17788,36 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       if(pl){ R(b, 'ممبرشپ', pl.pend ? 'منظوری کا انتظار' : (pl.live ? '⭐ رجسٹرڈ — فعال' + (pl.left != null && pl.left > 0 ? ' (' + pl.left + ' دن باقی)' : '') : 'سادہ اندراج')); }
       R(b, 'اندراج کی حالت', rec.approved === false ? 'منظوری کا انتظار' : 'منظور شدہ');
       R(b, 'اندراج کی تاریخ', fdate(rec.createdAt || rec.at));
-      if(d.ref && d.ref !== 'PBT') R(b, 'ریفرل کوڈ', d.ref, true);
+    }
+
+    /* MCS0911MO279 (مالک کا حکم): مکمل پروفائل میں «کس کے ریفرل سے آیا / کس نے رجسٹر کیا» — صرف ڈویلپر / کو-ڈویلپر کو (چپ کی طرح) */
+    var staff = false; try{ staff = !!(isAdminSignedIn || (typeof codevOn === 'function' && codevOn())); }catch(e){}
+    if(s.rec && staff){
+      var rf = sec('🔗', isDoc ? 'ریفرل — پروفیشن کس نے رجسٹر کیا' : 'ریفرل — بزنس کس نے رجسٹر کیا');
+      var L = (typeof agList !== 'undefined' && agList) || [];
+      var code = String(more.ref || '').trim(), pcode = String(d.ref || '').trim(), uc = code.toUpperCase();
+      if(pcode && (!code || uc === 'PBT-D' || uc === 'PBT-C')){ code = pcode; uc = code.toUpperCase(); }
+      var byCode = function(c){ return L.find(function(x){ return x && c && (x.code === c || x.bizRk === c); }) || null; };
+      var ph0 = function(p){ var x = l10(p); return x ? '0' + x : ''; };
+      if(uc === 'PBT-D'){ R(rf, 'کس کے ریفرل سے', '👨‍💻 ڈویلپر نے خود رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'PBT-D', true); }
+      else if(uc === 'PBT-C' || more.cdBy){ R(rf, 'کس کے ریفرل سے', '👥 کو-ڈویلپر نے رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'PBT-C', true); R(rf, 'کو-ڈویلپر (نام / موبائل)', more.cdBy, true); }
+      else if(!code || uc === 'PBT'){ R(rf, 'کس کے ریفرل سے', '🏢 خود آیا — کسی ایجنٹ کے ریفرل کے بغیر'); R(rf, 'ریفرل کوڈ', 'PBT', true); }
+      else {
+        var ra = byCode(code);
+        R(rf, 'کس کے ریفرل سے', '🤝 ایم سی ایس ایجنٹ کے ریفرل سے');
+        R(rf, 'ریفرل کوڈ', (ra && ra.code) || code, true);
+        if(ra){
+          R(rf, 'ریفرل دینے والے ایجنٹ کا نام', ra.name);
+          R(rf, 'ایجنٹ کا موبائل', ph0(ra.phone), true);
+          R(rf, 'ایجنٹ کا شہر', ra.city);
+          R(rf, 'ایجنٹ کی حالت', ra.status === 'approved' ? (ra.off ? '⛔ غیر فعال' : '✅ فعال ایجنٹ') : '⏳ ابھی منظور نہیں');
+        } else R(rf, 'ایجنٹ', 'کوڈ کسی ایجنٹ سے نہیں ملا — ریفرل کوڈ درست کریں');
+      }
+      if(!blank(more.fedBy) && String(more.fedBy) !== code){
+        var fa = byCode(String(more.fedBy));
+        R(rf, 'درج / فیڈ کرنے والا', fa ? fa.name + ' (' + fa.code + ')' : more.fedBy, true);
+      }
+      if(!rf.rows.length) out.pop();
     }
 
     var c = sec('📞', 'رابطہ');
@@ -17833,7 +17869,8 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       (shop ? '<span class="fp-shop"><img data-fpimg="' + E(shop.id) + '" data-ts="' + E(shop.ts) + '" alt=""></span>' : '') + '</div></div>';
     var body = secs.map(function(o){
       var inner = '';
-      if(o.text) inner = '<p class="fp-p">' + E(o.text).replace(/\n/g, '<br>') + '</p>';
+      if(o.photos) inner = '<div class="fp-ph">' + o.photos.map(function(p){ return '<figure>' + (p.src ? '<img src="' + E(p.src) + '" alt="">' : '<img data-fpimg="' + E(p.ref.id) + '" data-ts="' + E(p.ref.ts) + '" alt="">') + '<figcaption>' + E(p.k) + '</figcaption></figure>'; }).join('') + '</div>';
+      else if(o.text) inner = '<p class="fp-p">' + E(o.text).replace(/\n/g, '<br>') + '</p>';
       else if(o.items) inner = o.items.map(function(x){ return '<div class="fp-r"><span>' + E(x.n) + '</span>' + (x.p ? '<b dir="ltr">Rs ' + E(x.p) + '</b>' : '') + '</div>'; }).join('');
       else inner = o.rows.map(function(r){ return '<div class="fp-r"><i>' + E(r.k) + '</i><span' + (r.ltr ? ' dir="ltr" class="ltr"' : '') + '>' + E(r.v) + '</span></div>'; }).join('');
       return '<section class="fp-sec"><h4>' + o.icon + ' ' + E(o.title) + '</h4>' + inner + '</section>';
@@ -17915,6 +17952,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     var W = 1240, H = 1754, M = 60, FOOT = 80, LH = 54;
     await ensureProf(s); var selfie = await loadImg(await ownerPhoto(s)), shop = await loadImg(await imgData(shopImgOf(s)));
     var logo = await loadImg('icons/icon-192.png?v=' + APP_VERSION);
+    for(var pi = 0; pi < secs.length; pi++){ if(secs[pi].photos){ for(var pq = 0; pq < secs[pi].photos.length; pq++){ var pp = secs[pi].photos[pq]; try{ pp.img = await loadImg(pp.src || await imgData(pp.ref)); }catch(e){ pp.img = null; } } } }
     var pages = [], c, x, y;
     function newPage(first){
       c = document.createElement('canvas'); c.width = W; c.height = H; x = c.getContext('2d'); x.direction = 'rtl'; x.textBaseline = 'alphabetic';
@@ -17940,7 +17978,22 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       x.textAlign = 'right'; x.direction = 'rtl'; x.fillStyle = '#f4d58d'; x.font = '38px ' + FK; x.fillText(o.icon + ' ' + o.title, W - M - 24, y + 44); y += 76;
       var alt = false;
       function rowBox(h){ x.fillStyle = alt ? '#f1f6fb' : '#fff'; alt = !alt; x.fillRect(M, y, W - 2 * M, h); x.strokeStyle = '#dbe5ef'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(M, y + h); x.lineTo(W - M, y + h); x.stroke(); }
-      if(o.text){
+      if(o.photos){
+        var pl = o.photos.filter(function(p){ return p.img; });
+        if(pl.length){
+          var cwid = Math.min(360, Math.floor((W - 2 * M - (pl.length - 1) * 24) / pl.length)), chh = 300, gap = 24, tot = pl.length * cwid + (pl.length - 1) * gap;
+          if(y + chh + 70 > H - FOOT) y = newPage(false);
+          var sx = (W + tot) / 2 - cwid;   /* دائیں سے بائیں */
+          pl.forEach(function(p){
+            x.save(); rr(x, sx, y, cwid, chh, 18); x.clip();
+            var sc2 = Math.max(cwid / p.img.width, chh / p.img.height); x.drawImage(p.img, sx + cwid / 2 - p.img.width * sc2 / 2, y + chh / 2 - p.img.height * sc2 / 2, p.img.width * sc2, p.img.height * sc2);
+            x.restore(); x.strokeStyle = '#f4d58d'; x.lineWidth = 4; rr(x, sx, y, cwid, chh, 18); x.stroke();
+            x.textAlign = 'center'; x.direction = 'rtl'; x.fillStyle = '#0d3b66'; x.font = '28px ' + FK; x.fillText(p.k, sx + cwid / 2, y + chh + 38);
+            sx -= cwid + gap;
+          });
+          y += chh + 62;
+        }
+      } else if(o.text){
         x.font = '33px ' + FR; var L = lcWrap(x, o.text.replace(/\n/g, ' \n '), W - 2 * M - 48), lines = [];
         o.text.split('\n').forEach(function(p){ lcWrap(x, p, W - 2 * M - 48).forEach(function(q){ lines.push(q); }); });
         var i = 0; while(i < lines.length){
@@ -17997,6 +18050,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
   function plainText(s){
     var L = ['🌟 *' + titleOf(s) + '*', subOf(s), ''];
     sections(s).forEach(function(o){
+      if(o.photos) return;
       L.push('*' + o.icon + ' ' + o.title + '*');
       if(o.text) L.push(o.text); else if(o.items) o.items.forEach(function(i){ L.push('• ' + i.n + (i.p ? ' — Rs ' + i.p : '')); }); else o.rows.forEach(function(r){ L.push(r.k + ': ' + r.v); });
       L.push('');
@@ -18244,6 +18298,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     '.fp-head{background:linear-gradient(180deg,#0d3b66,#081c36);color:#fff;padding:12px 14px 16px}',
     '.fp-brand{display:flex;align-items:center;gap:8px;color:#f4d58d;font-size:18px;margin-bottom:10px}.fp-brand img{width:34px;height:34px;border-radius:50%;background:#fff}.fp-brand span{margin-right:auto;font-size:13px;color:#fde68a}',
     '.fp-who{display:flex;align-items:center;gap:12px}',
+    '.fp-ph{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:10px 0 4px}.fp-ph figure{margin:0;width:31%;min-width:96px;max-width:200px;text-align:center}.fp-ph img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:2px solid #f4d58d;background:#e2e8f0;display:block}.fp-ph img:not([src]){visibility:hidden}.fp-ph figcaption{font-size:12px;color:#0d3b66;font-weight:700;margin-top:4px;line-height:1.5}',
     '.fp-sf{width:74px;height:74px;border-radius:50%;border:3px solid #f59e0b;overflow:hidden;background:#fff;flex:none}.fp-sf img,.fp-shop img{width:100%;height:100%;object-fit:cover;display:block}',
     '.fp-shop{width:112px;height:76px;border-radius:12px;border:2px solid #f4d58d;overflow:hidden;flex:none;margin-right:auto;background:#0b2a44}',
     '.fp-nm{font-size:24px;line-height:1.5;flex:1;min-width:0}.fp-nm small{display:block;font-size:14px;color:#fde68a}',
@@ -18272,7 +18327,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
 
 </script>
 <style id="mcsCardTabs275">
-/* ===== MCS0911MO277 (مالک کا حکم): دو ٹیب + کارڈ — MCS ایجنٹ بیج سب سے اوپر بائیں، اس کے عین نیچے چھوٹا «رجسٹرڈ بزنس» ٹیگ؛ کارڈ کی اونچائی کم ===== */
+/* ===== MCS0911MO279 (مالک کا حکم): دو ٹیب + کارڈ — MCS ایجنٹ بیج سب سے اوپر بائیں، اس کے عین نیچے چھوٹا «رجسٹرڈ بزنس» ٹیگ؛ کارڈ کی اونچائی کم ===== */
 .flt-bar{display:flex;gap:8px;margin:0 0 10px;}
 .flt-bar button{flex:1 1 0;min-width:0;background:#fff;border:1.5px solid #0f766e;color:#0f766e;border-radius:14px;padding:7px 6px;font:inherit;font-size:13.5px;font-weight:800;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 0 rgba(15,118,110,.25);}
 .flt-bar button[data-f="reg"].on{background:linear-gradient(180deg,#16a34a,#14532d);border-color:#14532d;color:#fff;}
