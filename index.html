@@ -2701,6 +2701,8 @@ body.cdOn{padding-top:30px}
 .mpx-ban .mpx-tx{order:1;align-items:center!important;text-align:center!important}
 .mpx-ban .mpx-rt{order:2;display:flex;flex-direction:column;align-items:center;gap:6px;flex:none}
 .mpx-ban .mpx-ph{width:76px;height:76px}
+.mpx-ban .mpx-rt{position:relative}.mpx-dp{position:absolute;top:-8px;left:-8px;width:38px;height:38px;border-radius:50%;object-fit:cover;border:2.5px solid #fff;box-shadow:0 0 0 2px #16a34a,0 3px 8px rgba(0,0,0,.25);z-index:2;background:#fff}
+@media (min-width:700px){.mpx-dp{width:46px;height:46px}}
 .mpx-ban .mpx-tx>b{font-size:19px}
 #mpBar .mpx-ban .mpx-val b{font:800 13px Inter,Arial!important;max-width:none!important;overflow:visible!important;white-space:nowrap!important;line-height:1.4!important}
 #mpBar .mpx-ban .mpx-val i{white-space:nowrap}
@@ -4177,10 +4179,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO264";
+const APP_VERSION = "MCS0911MO265";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO265": "👤 اپنے پورٹل کی گول تصویر (DP) اب آپ کے کاروبار / پروفیشن کے ہر کارڈ پر — ہوم، فہرست، پوری تفصیل اور شیئر تصویر",
   "MCS0911MO264": "🤝 «Earn with MCS» دبائیں تو سیدھا MCS Agent Registration Form — سب خانے، سیلفی + شناختی کارڈ، درخواست بھیجیں، منظوری کا انتظار",
   "MCS0911MO263": "🔤 پوری ایپ میں ایک ہی انداز: انگریزی Segoe UI، اردو صرف جمیل نوری نستعلیق؛ رنگ (تھیم) اور فونٹ کے اختیارات ختم — صرف مونگیا تھیم",
   "MCS0911MO262": "🤝 بزنس میں نئی کیٹگری «MCS Agent» — جن کا اپنا کاروبار نہیں وہ بھی اسی سے ممبرشپ بنا کر ایجنٹ بن سکتے ہیں",
@@ -4586,7 +4589,7 @@ function pfHtml(c){
   const showFull = live || owner || adm;
   const shopImg = showFull ? (p.imgs||[]).find(x=>String(x.id).split('_').pop() === '0') : null;   /* MCS0711SA194: دکان کی بڑی تصویر خوبصورت فریم میں */
   const gal = shopImg ? `<div class="pf-shop"><img data-pfimg="${escapeAttr(shopImg.id)}" data-ts="${shopImg.ts}" alt=""></div>` : '';
-  const sfThumb = showFull && more.selfie ? more.selfie : '';
+  const sfThumb = more.selfie || '';   /* MCS0911MO265 (#170): مالک کی گول DP ہمیشہ */
   const num = normalizePkNumber(r.whatsapp||'');
   const phones = [num, more.wa2].concat(d.phones||[]).filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i);
   const prow = ph=>{ const dd = String(ph).replace(/[^0-9]/g,''); return `<div class="pf-row"><span>${escapeHtml(ph)}</span><a class="c" href="tel:${dd}">📞 کال</a><a href="https://wa.me/92${dd.replace(/^0/,'')}" target="_blank" rel="noopener">💬 واٹس ایپ</a></div>`; };
@@ -5138,7 +5141,7 @@ function mpRender(){
   /* MCS0511TH156 (ہیلپ ڈیسک #77، محمد عمران کا ڈیزائن، مالک کی منظوری ⚡): اوقاتِ نماز کے فوراً نیچے «My Memberships (میری ممبرشپس)» —
      ہر کارڈ: تصویر (ممبرشپ کی پہلی تصویر، ورنہ نشان)، نام، قسم، مقام، Active / Expired، Valid till؛ دبائیں تو تفصیل (pfOpen)؛ ایک سے زیادہ ہوں تو «View All» */
   const box = document.getElementById('mpBar'); if(!box) return;
-  const list = mpList();
+  const list = mpList(); try{ if(list.length) sfCardSyncSoon(); }catch(e){}
   if(!list.length){ box.innerHTML = `<div class="mpx mpx-empty"><div class="mpx-hd"><span class="mpx-hi">👤</span><b>My Business <span>(میرا کاروبار)</span></b><button type="button" class="mpx-add" onclick="mpWant = true; d2AddOpen()">➕ Add New</button></div></div>`; return; } /* MCS0811SU243 (#113): ڈیش والا بڑا ڈبہ ہٹایا — «➕ Add New» اوپر نام کے سامنے */
   let remind = '';
   const fmtD = t => new Date(t).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
@@ -5154,7 +5157,7 @@ function mpRender(){
     const img = pa ? `<img data-mpimg="${escapeAttr(p.rk + '_0')}" data-ts="${escapeAttr(String(pa.ts||''))}" alt="" style="display:none">` : '';
     /* MCS0811SU243 (ہیلپ ڈیسک #131، محمد عمران کا ڈیزائن): افقی بینر — دائیں تصویر + Active، درمیان نام / قسم / پتہ / مدت، بائیں واٹس ایپ + کال */
     return `<div class="mpx-card mpx-ban" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}')">
-        <div class="mpx-rt"><div class="mpx-ph"><span class="mpx-em">${cm.emoji}</span>${img}</div><span class="mpx-st ${st[0]}">${st[1]}</span></div>
+        <div class="mpx-rt">${rec.more && rec.more.selfie ? `<img class="mpx-dp" src="${escapeAttr(rec.more.selfie)}" alt="">` : ''}<div class="mpx-ph"><span class="mpx-em">${cm.emoji}</span>${img}</div><span class="mpx-st ${st[0]}">${st[1]}</span></div>
         <div class="mpx-tx"><small class="mpx-slot">${mpSlotLabel(list, i)}</small><b>${escapeHtml(r.nameUr||r.name||'')}</b>
           <span class="mpx-cat">${escapeHtml(cm.ur||'')}</span>
           <span class="mpx-loc">📍 ${escapeHtml([r.area, r.city].filter(Boolean).join('، ') || '—')}</span>
@@ -7495,7 +7498,7 @@ async function buildShareCanvas(kind, item, opts){
   x.fillStyle = ag; shareRoundRect(x, ax, ay, 90, 90, 24); x.fill();
   x.textAlign = 'center'; x.font = '54px "Segoe UI Emoji","Noto Color Emoji",sans-serif'; x.fillText(m.emoji||'🏷️', ax+45, ay+66);
   /* MCS0711SA194: ممبر کی گول سیلفی — ایموجی کی جگہ */
-  try{ const sfu = (item.more && item.more.selfie && pfActive(item)) ? item.more.selfie : '';
+  try{ const sfu = (item.more && item.more.selfie) ? item.more.selfie : '';   /* MCS0911MO265 (#170) */
     if(sfu){ const si = await new Promise(r=>{ const im = new Image(); im.onload = ()=>r(im); im.onerror = ()=>r(null); im.src = sfu; setTimeout(()=>r(null), 1500); });
       if(si){ x.save(); x.beginPath(); x.arc(ax+45, ay+45, 50, 0, 7); x.fillStyle = '#fff'; x.fill(); x.clip(); x.drawImage(si, ax-5, ay-5, 100, 100); x.restore(); x.strokeStyle = '#f59e0b'; x.lineWidth = 6; x.beginPath(); x.arc(ax+45, ay+45, 50, 0, 7); x.stroke(); } } }catch(e){}
   /* لکھائی — دائیں سے، ہر لائن کارڈ کے اندر سکڑ کر */
@@ -8074,7 +8077,7 @@ function docCardHtml(d, mode){
     const intl = '92' + digits.replace(/^0/,'');
     const sub = [d.specialty, d.hospital].filter(Boolean).map(escapeHtml).join('<span class="dot">•</span>');
     const nameUr = d.nameUr || d.name || '';
-    const sfOnD = pfActive(d) && d.more && d.more.selfie;
+    const sfOnD = d.more && d.more.selfie;   /* MCS0911MO265 (#170) */
     return `
     <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}">${ewRib('doctor', d)}
       <div class="doc-toprow">
@@ -9314,7 +9317,7 @@ function svcCardHtml(s, meta){
     const num = normalizePkNumber(s.whatsapp||'');
     const digits = num.replace(/[^0-9]/g,'');
     const intl = '92' + digits.replace(/^0/,'');
-    const sfOn = pfActive(s) && s.more && s.more.selfie;   /* MCS0711SA194: ایک سال کے رجسٹرڈ ممبر کے کارڈ پر گول سیلفی */
+    const sfOn = s.more && s.more.selfie;   /* MCS0711SA194 + MCS0911MO265 (ہیلپ ڈیسک #170): رجسٹرڈ کاروبار کے مالک کی گول تصویر (پورٹل والی DP) کارڈ پر */
     return `
     <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}">${ewRib('service', s)}
       <div class="doc-toprow">
@@ -11530,7 +11533,7 @@ async function ptSelfieSaved(d){
   if(rl === 'dev'){ try{ const p = ptDevProf(); p.selfie = 1; localStorage.setItem('mcsDevProfile', JSON.stringify(p)); }catch(e){} }
   if(rl === 'codev'){ try{ cdSendSelfie(d); }catch(e){} }
   /* کاروبار / پروفیشن / ایجنٹ / یوزر: چھوٹی گول سیلفی اپنے ریکارڈ میں بھی (سرور پر بھی جائے اور کارڈ پر بھی نظر آئے) */
-  if(rl === 'biz' || rl === 'prof' || rl === 'agent' || rl === 'user'){
+  if(rl === 'biz' || rl === 'prof' || rl === 'agent' || rl === 'user' || rl === 'dev' || rl === 'codev'){   /* MCS0911MO265 (#170): ڈویلپر / کو-ڈویلپر کا اپنا کاروبار ہو تو اس کے کارڈ پر بھی */
     try{ const L = mpListReal(); if(L.length){ const th = await pfSquare(d, 120, .7);
       L.forEach(({p, rec})=>{ try{ rec.more = rec.more || {}; rec.more.selfie = th; pushMoreToFirebase(p.kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); }catch(e){} });
       try{ saveStore(); }catch(e){} } }catch(e){}
@@ -11538,6 +11541,29 @@ async function ptSelfieSaved(d){
   try{ showToast(ok ? '✅ سیلفی محفوظ ہو گئی' : '⚠️ سیلفی محفوظ نہیں ہو سکی — فون میں جگہ خالی کر کے دوبارہ لگائیں', ok ? 2500 : 5000); }catch(e){}
   try{ ptOpen(); }catch(e){}
 }
+/* MCS0911MO265 (ہیلپ ڈیسک #170، مالک کا ⚡): اپنے پورٹل کی گول DP اپنے ہر رجسٹرڈ کاروبار / پروفیشن کے کارڈ پر خود — پہلے صرف سیلفی بدلتے وقت جاتی تھی،
+   اس لیے DP پہلے لگی اور کاروبار بعد میں درج ہوا تو کارڈ خالی رہتا۔ اب ایپ کھلنے پر / «میرا کاروبار» بنتے وقت: جس ریکارڈ میں DP نہ ہو اس میں لگ کر سرور پر (پہلے سے لگی کبھی نہیں بدلتی) */
+const sfSyncTried = {};
+async function sfCardSync(){
+  try{
+    const L = mpListReal(); if(!L.length) return;
+    const M = window.sfMem || {}; let src = '';
+    try{ src = M.mcsSelfie || localStorage.getItem('mcsSelfie') || ''; }catch(e){}
+    if(!src){ try{ src = ptSelfieGet(ptRole()) || ''; }catch(e){} }
+    if(!src) return;
+    let th = '', n = 0;
+    for(const {p, rec} of L){
+      if(!rec || (rec.more && rec.more.selfie) || sfSyncTried[p.rk || rec.id]) continue;
+      sfSyncTried[p.rk || rec.id] = 1;
+      if(!th) th = await pfSquare(src, 120, .7);
+      rec.more = rec.more || {}; rec.more.selfie = th; n++;
+      try{ pushMoreToFirebase(p.kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); }catch(e){}
+    }
+    if(n){ try{ saveStore(); }catch(e){} try{ mpRender(); }catch(e){} }
+  }catch(e){}
+}
+window.addEventListener('load', ()=> setTimeout(sfCardSync, 4000));
+let sfSyncT = 0; function sfCardSyncSoon(){ clearTimeout(sfSyncT); sfSyncT = setTimeout(sfCardSync, 1500); }
 function ptOpen(editProf, prev){
   ptPrev = prev || null;
   const rl = ptPrev ? ptPrev.role : ptRole(), M = PT_META[rl], a = (typeof uaMe === 'function' && uaMe()) || null, me = agMe() || {}, cd = (ptPrev ? {name:'کو-ڈویلپر', phone:''} : codevMe()) || {};
@@ -14817,7 +14843,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO264" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO265" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
