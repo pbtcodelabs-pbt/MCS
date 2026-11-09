@@ -2964,6 +2964,7 @@ body.cdOn{padding-top:30px}
         <button type="button" class="ls-open" onclick="openListShare('doctor')">📤 لسٹ شیئر</button>
       </div>
       <div class="sort-bar" data-for="doctor"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" class="cs-open sm" onclick="openCardStyle()" aria-label="کارڈ کا رنگ اور انداز">🎨</button></div>
+      <div class="flt-bar" data-for="doctor"><button type="button" data-f="reg" onclick="setListFilter('reg')">✅ رجسٹرڈ پروفیشن</button><button type="button" data-f="agent" onclick="setListFilter('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
       <div id="doctorListWrap"></div>
     </div>
     <button class="fab" onclick="openDoctorForm()">➕ نیا ڈاکٹر شامل کریں</button>
@@ -3033,6 +3034,7 @@ body.cdOn{padding-top:30px}
         <input type="text" id="serviceSearchBox" placeholder="نام، قسم یا پتہ لکھیں..." oninput="renderServiceList('list')">
       </div>
       <div class="sort-bar" data-for="service"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" class="cs-open sm" onclick="openCardStyle()" aria-label="کارڈ کا رنگ اور انداز">🎨</button></div>
+      <div class="flt-bar" data-for="service"><button type="button" data-f="reg" onclick="setListFilter('reg')">✅ رجسٹرڈ بزنس</button><button type="button" data-f="agent" onclick="setListFilter('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
       <div id="emgQuick" class="emg-quick" style="display:none;">
         <a href="tel:15"><b>15</b><span>پولیس</span></a>
         <a href="tel:1122"><b>1122</b><span>ریسکیو</span></a>
@@ -4199,10 +4201,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO274";
+const APP_VERSION = "MCS0911MO276";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO276": "🔍 تلاش میں بھی دو ٹیب — 🗂️ فہرست میں دو ٹیب: «رجسٹرڈ بزنس / پروفیشن» اور «ایم سی ایس ایجنٹس» — 🪪 کارڈ پر MCS بیج کے عین نیچے چھوٹا رجسٹرڈ ٹیگ، کارڈ کی اونچائی کم",
   "MCS0911MO274": "🎨 بزنس کارڈ اپنی مرضی سے — تصویر، رنگ، فونٹ، بارڈر، کونے، فوری پیش منظر — 📣 بزنس کارڈ پر دکان کی تصویر اور مالک کی گول تصویر — 🔓 ایک بار پورٹل میں داخل ہوں تو لاگ اِن صفحہ بار بار نہیں آئے گا — 📄 مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر، اور 📣 بزنس پروفائل شیئر کارڈ (دکان کی تصویر، خدمات، فون، واٹس ایپ، اوقات)",
   "MCS0911MO268": "🔒 ہوم ہمیشہ 100٪ — زوم ➖ ➕ صرف فارم بھرتے وقت",
   "MCS0911MO267": "🪪 رجسٹرڈ کاروبار کا کارڈ چھوٹا اور صاف؛ ایجنٹ کے کارڈ پر سنہری MCS نشان؛ ڈویلپر کو کارڈ پر ریفرل والا ایجنٹ",
@@ -4437,6 +4440,7 @@ function goScreen(name, fromHistory){ setTimeout(()=>{ try{ d2NavMark(); }catch(
     if(name==='home'){ navStack.length=0; navStack.push('home'); }
     else { navStack.push(name); try{ history.pushState({s:name},''); }catch(e){} }
   }
+  if((name==='doctor-list' || name==='service-list') && currentScreen!==name){ try{ listFilter = 'all'; }catch(e){} }   /* MCS0911MO276: نئی فہرست کھلے تو ٹیب «سب» */
   currentScreen = name;
   window.scrollTo(0,0);
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -5267,6 +5271,14 @@ try{
 
 /* ===== MCS0511TH137 (مالک کا حکم): تلاش کا پورا صفحہ ===== */
 const srF = {group:'', cat:'', city:'', area:''};
+/* MCS0911MO276: تلاش میں بھی دو ٹیب — رجسٹرڈ (ایجنٹ نہیں) / ایم سی ایس ایجنٹس */
+let srTab = 'all';
+function srSetTab(v){ srTab = (srTab===v) ? 'all' : v; srShown = 40; srRender(); }
+function srTabPass(it){
+  if(srTab==='reg') return !!pfActive(it.rec) && !agIsRec(it.kind, it.rec);
+  if(srTab==='agent') return !!agIsRec(it.kind, it.rec);
+  return true;
+}
 let srShown = 40, srT = 0;
 const SR_KINDS = [['group','🏷️','بزنس / پروفیشنلز'],['cat','🗂️','کیٹیگری'],['city','📍','شہر'],['area','🗺️','علاقہ']];
 function srOpen(){
@@ -5277,12 +5289,14 @@ function srItems(){
   const q = (document.getElementById('srQ').value||'').trim();
   let list = q ? searchAllRecords(q).map(x=>({kind:x.kind, cat: x.kind==='doctor' ? 'doctor' : x.rec.category, rec:x.rec})) : ubAllRecords().filter(it=>it.cat !== 'emergencyNumbers' && it.cat !== 'govOffices');
   list = list.filter(it=>ubPassF(it, ['group','cat','city','area'], srF));
+  if(srTab!=='all') list = list.filter(srTabPass);
   list = list.map((it,i)=>[it,i]).sort((a,b)=>(pfActive(b[0].rec)?1:0)-(pfActive(a[0].rec)?1:0) || a[1]-b[1]).map(x=>x[0]);
   return {q, list};
 }
 function srLabel(k, v){ if(k==='group') return v==='business' ? '🏪 بزنس' : '👔 پروفیشنلز'; if(k==='cat'){ const m = ubCatMeta(v); return m.emoji + ' ' + m.ur; } return v; }
 function srRender(){
   const {q, list} = srItems();
+  document.querySelectorAll('.flt-bar[data-for="search"] button').forEach(b=>b.classList.toggle('on', b.dataset.f===srTab));
   document.getElementById('srClr').style.visibility = q ? 'visible' : 'hidden';
   const any = SR_KINDS.some(([k])=>srF[k]);
   document.getElementById('srChips').innerHTML = SR_KINDS.map(([k, ic, t])=>`<button type="button" class="${srF[k] ? 'on' : ''}" onclick="srPick('${k}')">${srF[k] ? escapeHtml(srLabel(k, srF[k])) + ' ✖' : ic + ' ' + t + ' ▾'}</button>`).join('') + (any ? `<button type="button" class="clr" onclick="srReset()">🔄 سب فلٹر صاف</button>` : '');
@@ -8054,7 +8068,26 @@ function sortRecords(items){
   try{ out = out.map((x,i)=>[x,i]).sort((a,b)=>(pfActive(b[0])?1:0)-(pfActive(a[0])?1:0) || a[1]-b[1]).map(p=>p[0]); }catch(e){}   /* MCS0211MO116 */
   return out;
 }
-function syncSortBars(){ document.querySelectorAll('.sort-bar button').forEach(b=>b.classList.toggle('on', b.dataset.s===listSort)); }
+function syncSortBars(){ document.querySelectorAll('.sort-bar button').forEach(b=>b.classList.toggle('on', b.dataset.s===listSort)); try{ syncFilterBars(); }catch(e){} }
+/* MCS0911MO276 (مالک کا حکم): دو ٹیب — «رجسٹرڈ بزنس / پروفیشن» (صرف رجسٹرڈ، ایجنٹ نہیں) اور «ایم سی ایس ایجنٹس» (جو رجسٹرڈ بھی ہیں اور ایجنٹ بھی)۔ دوبارہ دبائیں تو سب واپس */
+let listFilter = 'all';
+function listFilterPass(kind, rec){
+  if(listFilter==='reg') return !!pfActive(rec) && !agIsRec(kind, rec);
+  if(listFilter==='agent') return !!agIsRec(kind, rec);
+  return true;
+}
+function syncFilterBars(){ document.querySelectorAll('.flt-bar:not([data-for="search"]) button').forEach(b=>b.classList.toggle('on', b.dataset.f===listFilter)); }
+function setListFilter(v){
+  listFilter = (listFilter===v) ? 'all' : v;
+  syncFilterBars();
+  if(currentScreen==='doctor-list') renderDoctorList('list');
+  if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
+}
+function filterEmptyMsg(emoji, dflt){
+  if(listFilter==='reg') return `<div class="empty-state"><span class="e-emoji">✅</span>ابھی کوئی رجسٹرڈ اندراج نہیں</div>`;
+  if(listFilter==='agent') return `<div class="empty-state"><span class="e-emoji">🤝</span>ابھی کوئی ایم سی ایس ایجنٹ نہیں</div>`;
+  return `<div class="empty-state"><span class="e-emoji">${emoji}</span>${dflt}</div>`;
+}
 function setListSort(v){
   listSort = v; try{ localStorage.setItem('mcs_list_sort', v); }catch(e){}
   syncSortBars();
@@ -8088,10 +8121,11 @@ function renderDoctorList(mode){
       });
     }
   }
+  if(mode==='list' && listFilter!=='all') items = items.filter(d=>listFilterPass('doctor', d));
   items = sortRecords(items); syncSortBars();
   if(mode==='list') lsLists.doctor = items.map(lsFromDoctor);
   if(items.length===0){
-    listWrap.innerHTML = `<div class="empty-state"><span class="e-emoji">🩺</span>ابھی کوئی ڈاکٹر شامل نہیں کیا گیا</div>`;
+    listWrap.innerHTML = filterEmptyMsg('🩺','ابھی کوئی ڈاکٹر شامل نہیں کیا گیا');
     return;
   }
   listWrap.innerHTML = items.map(fhDoc).map(d=>docCardHtml(d, mode)).join('');
@@ -9354,10 +9388,11 @@ function renderServiceList(mode){
       idMatches('service', s, q);
     });
   }
+  if(listFilter!=='all') items = items.filter(s=>listFilterPass('service', s));
   items = sortRecords(items); syncSortBars();
   lsLists.service = items.map(lsFromService);
   if(items.length===0){
-    wrap.innerHTML = `<div class="empty-state"><span class="e-emoji">${meta.emoji}</span>ابھی کوئی اندراج شامل نہیں کیا گیا</div>`;
+    wrap.innerHTML = filterEmptyMsg(meta.emoji,'ابھی کوئی اندراج شامل نہیں کیا گیا');
     return;
   }
   wrap.innerHTML = items.map(fhSvc).map(s=>svcCardHtml(s, meta)).join('');
@@ -14992,7 +15027,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO274" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO276" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -15000,6 +15035,7 @@ if('serviceWorker' in navigator){
     <div class="sr-top"><button type="button" class="sr-back" onclick="closeModal('srModal')" aria-label="واپس">→</button>
       <div class="sr-box"><span>🔍</span><input type="search" id="srQ" placeholder="دکان، نام، نمبر، علاقہ — یہاں لکھیں" autocomplete="off" enterkeyhint="search"><button type="button" id="srClr" onclick="srClear()" aria-label="صاف">✖</button></div></div>
     <div class="sr-chips" id="srChips"></div>
+    <div class="flt-bar" data-for="search" style="margin:4px 10px 6px"><button type="button" data-f="reg" onclick="srSetTab('reg')">✅ رجسٹرڈ بزنس</button><button type="button" data-f="agent" onclick="srSetTab('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
     <div class="sr-cnt" id="srCnt"></div>
     <div class="sr-list hl hl-one" id="srList"></div>
   </div>
@@ -15137,7 +15173,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   const ls = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k, v){ try{ v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); }catch(e){} } };
   window.uaMe = function(){ try{ const a = JSON.parse(ls.get('mcsAuth') || 'null'); return a && a.tok ? a : null; }catch(e){ return null; } };
   function staff(){ try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } }
-  /* MCS0911MO274 (مالک کا حکم): ایک بار پورٹل / ممبرشپ میں داخل ہو گئے (ڈویلپر، کو-ڈویلپر، ایجنٹ، کاروبار والا) تو لاگ اِن صفحہ بار بار نہ آئے */
+  /* MCS0911MO276 (مالک کا حکم): ایک بار پورٹل / ممبرشپ میں داخل ہو گئے (ڈویلپر، کو-ڈویلپر، ایجنٹ، کاروبار والا) تو لاگ اِن صفحہ بار بار نہ آئے */
   function portalIn(){ try{ return ptRole() !== 'user'; }catch(e){ return false; } }
   window.uaOk = function(){ return !!uaMe() || staff() || agentOn() || portalIn(); };
   const ERR = {
@@ -17647,7 +17683,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
 </style>
 <script id="mcsProfilePage">
 /* =========================================================================
-   MCS0911MO274 (مالک کا حکم): مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر
+   MCS0911MO276 (مالک کا حکم): مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر
    + بزنس پروموشن کارڈ (دکان کی تصویر، مالک کی تصویر، خدمات، پتہ، فون، واٹس ایپ، اوقات، MCS برانڈنگ)
    الگ اسکرپٹ بلاک — کوئی غلطی ہو تو باقی ایپ پر اثر نہیں پڑتا۔
    ========================================================================= */
@@ -18210,5 +18246,28 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
 })();
 
 </script>
+<style id="mcsCardTabs275">
+/* ===== MCS0911MO276 (مالک کا حکم): دو ٹیب + کارڈ — MCS ایجنٹ بیج سب سے اوپر بائیں، اس کے عین نیچے چھوٹا «رجسٹرڈ بزنس» ٹیگ؛ کارڈ کی اونچائی کم ===== */
+.flt-bar{display:flex;gap:8px;margin:0 0 10px;}
+.flt-bar button{flex:1 1 0;min-width:0;background:#fff;border:1.5px solid #0f766e;color:#0f766e;border-radius:14px;padding:7px 6px;font:inherit;font-size:13.5px;font-weight:800;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 0 rgba(15,118,110,.25);}
+.flt-bar button[data-f="reg"].on{background:linear-gradient(180deg,#16a34a,#14532d);border-color:#14532d;color:#fff;}
+.flt-bar button[data-f="agent"]{border-color:#1e40af;color:#1e40af;box-shadow:0 2px 0 rgba(30,64,175,.25);}
+.flt-bar button[data-f="agent"].on{background:linear-gradient(180deg,#1e40af,#0b2a5b);border-color:#0b2a5b;color:#fcd34d;}
+/* ٹیگ: بیج کے نیچے، چھوٹا، بائیں کونے میں */
+html body .doc-card > .pf-tag{position:absolute !important;left:4px !important;top:4px !important;right:auto !important;bottom:auto !important;order:0 !important;flex:none !important;width:auto !important;min-width:0 !important;max-width:104px !important;margin:0 !important;padding:2px 6px !important;border-width:1.5px !important;border-radius:8px !important;gap:0 !important;line-height:1.2 !important;z-index:4 !important;}
+html body .doc-card > .ag-corner ~ .pf-tag{top:42px !important;}
+html body .doc-card > .pf-tag b{font-size:9.5px !important;white-space:nowrap !important;}
+html body .doc-card > .pf-tag small{font-size:8px !important;font-weight:600 !important;white-space:nowrap !important;line-height:1.2 !important;}
+/* نام / نمبر ٹیگ کے نیچے نہ چھپیں */
+html body .doc-card:has(> .ag-corner) .doc-toprow{padding-left:42px !important;box-sizing:border-box !important;}
+html body .doc-card:has(> .pf-tag) .doc-toprow{padding-left:108px !important;box-sizing:border-box !important;}
+/* کارڈ کی اونچائی کم */
+html body .doc-card{padding:5px 10px 4px !important;gap:3px 8px !important;border-radius:13px !important;margin-bottom:6px !important;}
+html body .doc-card > .st-line{margin-top:0 !important;padding:2px 8px !important;font-size:11px !important;line-height:1.5 !important;}
+html body .doc-card .doc-side a,html body .doc-card .doc-side > button,html body .doc-card .doc-side .doc-mini button{width:27px !important;height:27px !important;min-width:27px !important;flex:0 0 27px !important;}
+html body .doc-card .svc-reg-btn,html body .doc-card .svc-mem-btn{height:30px !important;}
+html body .doc-card .doc-foot{padding-top:2px !important;}
+html body .doc-card .doc-name{line-height:1.25 !important;}
+</style>
 </body>
 </html>
