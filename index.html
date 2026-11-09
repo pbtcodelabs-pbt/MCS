@@ -4164,10 +4164,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO254";
+const APP_VERSION = "MCS0911MO255";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO255": "💬 چیٹ واٹس ایپ جیسی: 📎 کیمرہ / گیلری / فائل، الگ 🎤، ➕ نئی چیٹ، تلاش، ڈویلپر / کو-ڈویلپر ٹیب",
   "MCS0911MO254": "🧭 نیچے کی نئی پٹی (Chats، Portal، Home، Account، Settings) • 💬 چیٹ میں گول تصویریں • 📊 سرور کا استعمال (ڈویلپر)",
   "MCS0911MO253": "💬 چیٹ میں 🎤 آواز کا پیغام، اسکرین شاٹ پیسٹ، ڈویلپر ↔ کو-ڈویلپر کی الگ چیٹ، پیغام Help Desk / Claude کو",
   "MCS0911MO252": "🏪 پورٹل کا کاروبار: پہلے سے درج کاروبار کی تلاش (نام، موبائل، علاقہ، شہر، ضلع، قسم)، ⏳ زیر کام اور ✅ چالو شدہ (سالانہ / ٹرائل، دن باقی)",
@@ -14739,7 +14740,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO254" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO255" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16492,18 +16493,20 @@ async function mcOpen(){
   const w = mcWho();
   if(!w){ showToast('💬 چیٹ کے لیے پہلے لاگ اِن کریں'); try{ uaLogin(); }catch(e){} return; }
   mcTh = null;
-  mcBox(`<div class="mc-hd"><b>💬 My Chats<small>میری چیٹس</small></b><button type="button" onclick="mcClose()">×</button></div><div class="mc-list" id="mcL"><div class="mc-empty">⏳ چیٹس آ رہی ہیں…</div></div>`);
+  mcBox(`${mcListHd()}<div class="mc-list" id="mcL"><div class="mc-empty">⏳ چیٹس آ رہی ہیں…</div></div>`);
   await mcLoadList();
   clearInterval(mcTimer); mcTimer = setInterval(()=>{ if(document.visibilityState === 'visible') (mcTh ? mcLoadThread(true) : mcLoadList()); }, 15000);
 }
-async function mcLoadList(){
-  let r; try{ r = await mcCall({op:'list'}); }catch(e){ r = {ok:false, reason:'net'}; }
+async function mcLoadList(local){
+  let r; if(local && window._mcLastR) r = window._mcLastR; else { try{ r = await mcCall({op:'list'}); }catch(e){ r = {ok:false, reason:'net'}; } if(r && r.ok) window._mcLastR = r; }
   const L = document.getElementById('mcL'); if(!L || mcTh) return;
   if(!r || !r.ok){ L.innerHTML = `<div class="mc-empty">${r && r.reason === 'login' ? '🔐 لاگ اِن دوبارہ کریں' : '⚠️ انٹرنیٹ دیکھیں — چیٹس نہیں آئیں'}</div>`; return; }
   mcList = r.list || []; mcSetBadge(r.nw || 0); Object.assign(mcAvs, r.avs || {}); mcAvUpload();
-  const staff = !!r.staff;
-  const tabs = staff ? `<div class="mc-tabs">${[['all','سب'],['user','👤 صارف'],['agent','🤝 ایجنٹ'],['cd','👥 کو-ڈویلپر'],['biz','🔍 ایجنٹ ↔ کاروبار']].filter(t => t[0] !== 'cd' || mcList.some(x => x.k === 'cd')).map(t=>`<button type="button" class="${mcTab===t[0]?'on':''}" onclick="mcTab='${t[0]}';mcLoadList()">${t[1]} ${(t[0]==='all'?mcList:mcList.filter(x=>x.k===t[0])).filter(x=>x.nw).length ? '🟢' : ''}</button>`).join('')}</div>` : '';
-  const rows = (staff && mcTab !== 'all' ? mcList.filter(x=>x.k === mcTab) : mcList);
+  const staff = !!r.staff; mcStaff = staff;
+  const isCd = (mcWho() || {}).as === 'cd', cdx = mcList.filter(x => x.k === 'cd'), cdAv = cdx[0] && cdx[0].av && mcAvs[cdx[0].av] ? `<img class="mc-tdp" src="${mcAvs[cdx[0].av]}" alt="">` : '';
+  const tabs = staff ? `<div class="mc-tabs">${[['all','سب'],['user','👤 صارف'],['agent','🤝 ایجنٹس'],['cd', isCd ? '👨‍💻 ڈویلپر' : '👥 کو-ڈویلپر'],['biz','🔍 ایجنٹ ↔ کاروبار']].filter(t => t[0] !== 'cd' || cdx.length).map(t=>`<button type="button" class="${mcTab===t[0]?'on':''}" onclick="mcTabGo('${t[0]}')">${t[0] === 'cd' ? cdAv : ''}${t[1]} ${(t[0]==='all'?mcList:mcList.filter(x=>x.k===t[0])).some(x=>x.nw) ? '<i class="mc-tdot"></i>' : ''}</button>`).join('')}</div>` : '';
+  const q = (mcQ || '').trim().toLowerCase();
+  const rows = (staff && mcTab !== 'all' ? mcList.filter(x=>x.k === mcTab) : mcList).filter(x => !q || [x.title, x.sub, x.lt].join(' ').toLowerCase().includes(q));
   L.innerHTML = tabs + (rows.length ? rows.map((x, i)=>{ const ix = mcList.indexOf(x);
       const av0 = x.k === 'pbt' ? 'PBT' : x.k === 'agent' ? '🤝' : x.k === 'biz' ? '🏪' : x.k === 'cd' ? (x.title.indexOf('👨‍💻') === 0 ? '👨‍💻' : '👥') : '👤';
       const av = x.av && mcAvs[x.av] ? `<img src="${mcAvs[x.av]}" alt="">` : av0;
@@ -16511,10 +16514,11 @@ async function mcLoadList(){
     : `<div class="mc-empty">ابھی کوئی چیٹ نہیں۔</div>`)
     + (!staff ? `<div class="mc-empty" style="padding:8px">🔒 آپ کی چیٹ صرف آپ اور PBT Code Labs${mcWho() && mcWho().as === 'agent' ? ' / آپ کے کاروبار والے' : ''} دیکھ سکتے ہیں</div>` : '');
 }
-function mcGo(i){ const x = mcList[i]; if(!x || !x.th) return; mcTh = {th: x.th, title: x.title, sub: x.sub, k: x.k};
+function mcGo(i){ mcGoObj(mcList[i]); }
+function mcGoObj(x){ if(!x || !x.th) return; mcTh = {th: x.th, title: x.title, sub: x.sub, k: x.k};
   mcBox(`<div class="mc-hd"><button type="button" onclick="mcBack()" aria-label="پیچھے">→</button>${x.av && mcAvs[x.av] ? `<img class="mc-hdp" src="${mcAvs[x.av]}" alt="">` : ''}<b>${escapeHtml(x.title||'')}<small>${escapeHtml(x.sub||'')}</small></b><button type="button" onclick="mcClose()">×</button></div><div class="mc-msgs" id="mcM"><div class="mc-empty">⏳</div></div><div id="mcIn"></div>`);
   mcLoadThread(); }
-function mcBack(){ mcTh = null; mcBox(`<div class="mc-hd"><b>💬 My Chats<small>میری چیٹس</small></b><button type="button" onclick="mcClose()">×</button></div><div class="mc-list" id="mcL"><div class="mc-empty">⏳</div></div>`); mcLoadList(); }
+function mcBack(){ mcTh = null; mcBox(`${mcListHd()}<div class="mc-list" id="mcL"><div class="mc-empty">⏳</div></div>`); mcLoadList(); }
 let mcLastN = -1;
 async function mcLoadThread(quiet, send){
   if(!mcTh) return; const th = mcTh.th;
@@ -16526,13 +16530,15 @@ async function mcLoadThread(quiet, send){
   if(!(quiet && r.msgs.length === mcLastN)){
     mcLastN = r.msgs.length;
     mcMsgs = r.msgs; const W = mcWho() || {}, staff = W.as === 'dev' || W.as === 'cd'; Object.assign(mcAvs, r.avs || {});
-    M.innerHTML = r.msgs.length ? r.msgs.map((m, mi)=>`${!m.mine && m.av && mcAvs[m.av] ? `<div class="mc-row2"><img class="mc-dp" src="${mcAvs[m.av]}" alt="">` : ''}<div class="mc-b ${m.mine ? 'me' : ''}${staff ? ' fw' : ''}" ${staff ? `onclick="mcFwdToggle(this, ${mi}, event)"` : ''}>${m.mine ? '' : `<span class="nm">${escapeHtml(m.who === 'agent' && mcTh.k === 'agent' ? '🤝 ' + mcTh.title.replace(/^🤝\s*/, '') : (m.who === 'user' && (mcTh.k === 'biz' || mcTh.k === 'user') ? mcTh.title.replace(/^🤝.*↔\s*/, '') : (m.name || '')))}</span>`}${m.img ? `<img src="${m.img}" alt="" onclick="window.open(this.src)">` : ''}${m.audio ? `<audio controls src="${m.audio}"></audio>` : ''}${m.text ? escapeHtml(m.text) : ''}<span class="t">${mcTime(m.ts)}</span></div>${!m.mine && m.av && mcAvs[m.av] ? '</div>' : ''}`).join('')
+    M.innerHTML = r.msgs.length ? r.msgs.map((m, mi)=>`${!m.mine && m.av && mcAvs[m.av] ? `<div class="mc-row2"><img class="mc-dp" src="${mcAvs[m.av]}" alt="">` : ''}<div class="mc-b ${m.mine ? 'me' : ''}${staff ? ' fw' : ''}" ${staff ? `onclick="mcFwdToggle(this, ${mi}, event)"` : ''}>${m.mine ? '' : `<span class="nm">${escapeHtml(m.who === 'agent' && mcTh.k === 'agent' ? '🤝 ' + mcTh.title.replace(/^🤝\s*/, '') : (m.who === 'user' && (mcTh.k === 'biz' || mcTh.k === 'user') ? mcTh.title.replace(/^🤝.*↔\s*/, '') : (m.name || '')))}</span>`}${m.img ? `<img src="${m.img}" alt="" onclick="window.open(this.src)">` : ''}${m.audio ? `<audio controls src="${m.audio}"></audio>` : ''}${m.file ? `<a class="mc-file" href="${m.file}" download="${escapeAttr(m.fname || 'file')}" onclick="event.stopPropagation()"><i>📄</i><span>${escapeHtml(m.fname || 'فائل')}</span><b>⬇️</b></a>` : ''}${m.text ? escapeHtml(m.text) : ''}<span class="t">${mcTime(m.ts)}</span></div>${!m.mine && m.av && mcAvs[m.av] ? '</div>' : ''}`).join('')
       : `<div class="mc-empty">👋 السلام علیکم! اپنا سوال، مسئلہ یا مشورہ یہاں لکھیں — PBT Code Labs جلد جواب دے گا۔</div>`;
     if(atEnd || !quiet || send) M.scrollTop = M.scrollHeight;
   }
   const I = document.getElementById('mcIn');
   if(I && !I.dataset.on){ I.dataset.on = 1;
-    I.innerHTML = r.w ? `<div class="mc-in"><button type="button" class="img" onclick="document.getElementById('mcFile').click()" aria-label="تصویر">🖼️</button><input type="file" id="mcFile" accept="image/*" hidden onchange="mcImg(this)"><textarea id="mcT" rows="1" placeholder="پیغام لکھیں… (اسکرین شاٹ یہاں پیسٹ کریں)" dir="auto" onpaste="mcPaste(event)" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';mcSndIcon()"></textarea><button type="button" class="snd" id="mcSnd" onclick="mcSendOrMic()" aria-label="بھیجیں / آواز">🎤</button></div><div class="mc-rec" id="mcRec" hidden><button type="button" class="x" onclick="mcRecStop(true)">✖</button><span class="dot"></span><b id="mcRecT">0:00</b><span>آواز ریکارڈ ہو رہی ہے…</span><button type="button" class="ok" onclick="mcRecStop(false)">➤</button></div>`
+    I.innerHTML = r.w ? `<div class="mc-att" id="mcAtt" hidden><button type="button" onclick="mcAttPick('cam')"><i class="c1">📷</i>کیمرہ</button><button type="button" onclick="mcAttPick('gal')"><i class="c2">🖼️</i>گیلری</button><button type="button" onclick="mcAttPick('file')"><i class="c3">📄</i>فائل</button></div>`
+      + `<input type="file" id="mcCam" accept="image/*" capture="environment" hidden onchange="mcImg(this)"><input type="file" id="mcGal" accept="image/*" hidden onchange="mcImg(this)"><input type="file" id="mcDoc" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.zip,.ppt,.pptx,application/*,text/*" hidden onchange="mcDocPick(this)">`
+      + `<div class="mc-in"><button type="button" class="clip" onclick="mcAttToggle()" aria-label="لگائیں"><svg viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2"/></svg></button><textarea id="mcT" rows="1" placeholder="پیغام لکھیں… (اسکرین شاٹ یہاں پیسٹ کریں)" dir="auto" onpaste="mcPaste(event)" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';mcSndIcon()"></textarea><button type="button" class="mic" onclick="mcRecStart()" aria-label="آواز ریکارڈ کریں"><svg viewBox="0 0 24 24"><path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V5.5a3.5 3.5 0 0 0-7 0V11a3.5 3.5 0 0 0 3.5 3.5z"/><path d="M18.5 11a6.5 6.5 0 0 1-13 0M12 17.5V21M8.5 21h7" fill="none"/></svg></button><button type="button" class="snd" id="mcSnd" onclick="mcSend().then(mcSndIcon)" aria-label="بھیجیں"><svg viewBox="0 0 24 24"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.9.9 0 0 0-1.3 1L4 11l9 1-9 1-1.9 6.4a.9.9 0 0 0 1.3 1z"/></svg></button></div><div class="mc-rec" id="mcRec" hidden><button type="button" class="x" onclick="mcRecStop(true)">✖</button><span class="dot"></span><b id="mcRecT">0:00</b><span>آواز ریکارڈ ہو رہی ہے…</span><button type="button" class="ok" onclick="mcRecStop(false)">➤</button></div>`
       : `<div class="mc-ro">👁️ یہ چیٹ صرف دیکھنے کے لیے ہے (ایجنٹ اور اس کے کاروبار والے کے درمیان)</div>`; }
   mcBadgeTick(); return true;
 }
@@ -16867,6 +16873,69 @@ async function mcAvUpload(){
     const img = await pfSquare(sv, 96, .72); if(!img || img.length > 78000) return;
     const r = await mcCall({op:'av', img}); if(r && r.ok){ try{ localStorage.setItem('mcsChatAvSig', sig); }catch(e){} }
   }catch(e){}
+}
+</script>
+
+<style id="mcsChat255">
+/* MCS0911MO255 (ہیلپ ڈیسک #168): واٹس ایپ جیسی چیٹ — 📎 (کیمرہ / گیلری / فائل)، گوگل جیسا الگ مائیک، ٹیب، ➕ نئی چیٹ، تلاش */
+.mc-hd .nw{font-size:22px;font-weight:900}
+.mc-srch{padding:8px 10px 0}.mc-srch input{width:100%;min-height:40px;border:1.5px solid #cbd5e1;border-radius:99px;padding:6px 16px;font:inherit;font-size:14px;background:#fff}
+.mc-tabs button{display:inline-flex;align-items:center;gap:4px}.mc-tdp{width:20px;height:20px;border-radius:50%;object-fit:cover}.mc-tdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e}
+.mc-in{align-items:center}.mc-in .clip,.mc-in .mic{width:42px;height:42px;border-radius:50%;border:none;background:transparent;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;padding:0}
+.mc-in .clip svg{width:24px;height:24px;stroke:#475569;fill:none;stroke-width:2;stroke-linecap:round;transform:rotate(45deg)}
+.mc-in .mic{background:#1a73e8}.mc-in .mic svg{width:22px;height:22px;fill:#fff;stroke:#fff;stroke-width:1.6;stroke-linecap:round}
+.mc-in .snd{display:flex;align-items:center;justify-content:center;padding:0}.mc-in .snd svg{width:20px;height:20px;fill:#fff;margin-left:2px}
+.mc-att{display:flex;gap:18px;justify-content:center;padding:12px;background:#fff;border-top:1px solid #e2e8f0}.mc-att[hidden]{display:none}
+.mc-att button{border:none;background:none;font:inherit;font-size:12.5px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:#334155}
+.mc-att i{font-style:normal;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff}.mc-att .c1{background:#ec4899}.mc-att .c2{background:#8b5cf6}.mc-att .c3{background:#2563eb}
+.mc-file{display:flex;align-items:center;gap:8px;background:rgba(15,118,110,.08);border-radius:10px;padding:8px 10px;text-decoration:none;color:#0f172a;margin:2px 0}.mc-file i{font-style:normal;font-size:24px}.mc-file span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;font-size:13px}
+.mc-nwl .mc-row{cursor:pointer}
+</style>
+<script>
+/* ===== MCS0911MO255 (ہیلپ ڈیسک #168، مالک کا ⚡) =====
+   📎 کلپ → 📷 کیمرہ / 🖼️ گیلری / 📄 فائل (PDF، Word، Excel… ≤ 700KB)؛ 🎤 گوگل جیسا نیلا الگ مائیک بٹن (➤ الگ)؛
+   ٹیب: ڈویلپر کو «👥 کو-ڈویلپر» (گول تصویر)، کو-ڈویلپر کو «👨‍💻 ڈویلپر» — ایک ہی ہو تو ٹیب دبانے پر چیٹ سیدھی کھلے؛
+   🔍 چیٹ کی فہرست میں تلاش (واٹس ایپ کی طرح)؛ عملے کو ➕ نئی چیٹ: صارف (نام / موبائل / ID)، کاروبار (اس کے مالک کا اکاؤنٹ ہو تو) یا ایجنٹ ڈھونڈ کر (`/mcschat op=find`) */
+let mcQ = '', mcStaff = false, mcFind = [];
+function mcListHd(){ const W = mcWho() || {}, staff = W.as === 'dev' || W.as === 'cd';
+  return `<div class="mc-hd"><b>💬 My Chats<small>میری چیٹس</small></b>${staff ? `<button type="button" class="nw" onclick="mcNewOpen()" aria-label="نئی چیٹ" title="نئی چیٹ">➕</button>` : ''}<button type="button" onclick="mcClose()">×</button></div><div class="mc-srch"><input type="search" id="mcQIn" placeholder="🔍 چیٹ تلاش کریں — نام، نمبر…" value="${escapeAttr(mcQ)}" oninput="mcQ=this.value;mcLoadList(1)"></div>`; }
+function mcTabGo(t){ mcTab = t; const cd = mcList.filter(x => x.k === 'cd'); if(t === 'cd' && cd.length === 1){ mcGoObj(cd[0]); return; } mcLoadList(1); }
+function mcAttToggle(){ const a = document.getElementById('mcAtt'); if(a) a.hidden = !a.hidden; }
+function mcAttPick(k){ const a = document.getElementById('mcAtt'); if(a) a.hidden = true; const e = document.getElementById(k === 'cam' ? 'mcCam' : k === 'gal' ? 'mcGal' : 'mcDoc'); if(e) e.click(); }
+function mcDocPick(inp){
+  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return;
+  if(/^image\//.test(f.type)) return mcImg({files:[f], value:''});
+  if(f.size > 690000){ showToast('⚠️ فائل بہت بڑی ہے — 700KB تک کی فائل بھیجیں'); return; }
+  const fr = new FileReader(); fr.onload = async () => { let d = String(fr.result || ''); if(!/^data:[a-z]+\/[a-z0-9.+-]+;base64,/i.test(d)) d = d.replace(/^data:[^;,]*;base64,/, 'data:application/octet-stream;base64,');
+    mcBusy = true; showToast('📎 فائل جا رہی ہے…'); const ok = await mcLoadThread(false, {file: d, fname: f.name}); mcBusy = false; if(!ok) showToast('⚠️ فائل نہیں گئی — انٹرنیٹ دیکھیں'); };
+  fr.readAsDataURL(f);
+}
+function mcSndIcon(){}
+async function mcNewOpen(){
+  mcTh = null;
+  mcBox(`<div class="mc-hd"><button type="button" onclick="mcBack()" aria-label="پیچھے">→</button><b>➕ نئی چیٹ<small>صارف، کاروبار یا ایجنٹ ڈھونڈیں</small></b><button type="button" onclick="mcClose()">×</button></div>
+    <div class="mc-srch"><input type="search" id="mcNQ" placeholder="🔍 نام، موبائل، اکاؤنٹ ID، دکان کا نام، ایجنٹ کوڈ…" oninput="clearTimeout(window._mcNT);window._mcNT=setTimeout(mcNewFind,350)"></div>
+    <div class="mc-tabs">${[['all','سب'],['user','👤 صارف'],['agent','🤝 ایجنٹس']].map(t => `<button type="button" class="${(window._mcNK || 'all') === t[0] ? 'on' : ''}" onclick="window._mcNK='${t[0]}';mcNewFill()">${t[1]}</button>`).join('')}</div>
+    <div class="mc-list mc-nwl" id="mcNL"><div class="mc-empty">⏳</div></div>`);
+  setTimeout(() => { const e = document.getElementById('mcNQ'); if(e) e.focus(); }, 100);
+  mcNewFind();
+}
+async function mcNewFind(){
+  const q = ((document.getElementById('mcNQ') || {}).value || '').trim();
+  /* کاروبار کا نام / نمبر: فون کی فہرست سے اس کا موبائل لے کر اس کے مالک کا اکاؤنٹ */
+  const pn = {}; if(q.length >= 2){ const qq = q.toLowerCase(), qd = q.replace(/\D/g, '');
+    [...(store.services || []), ...(store.doctors || [])].forEach(r => { if(Object.keys(pn).length >= 30 || !r) return; const ph = String(r.whatsapp || r.phone || '').replace(/\D/g, '').slice(-10); if(ph.length !== 10) return;
+      if([r.nameUr, r.name, r.nameEn].join(' ').toLowerCase().includes(qq) || (qd.length >= 4 && ph.includes(qd.slice(-10)))) pn[ph] = '🏪 ' + (r.nameUr || r.name || ''); }); }
+  let r; try{ r = await mcCall({op:'find', text: q, phones: Object.keys(pn).join(','), pn}); }catch(e){ r = null; }
+  if(!r || !r.ok){ const L = document.getElementById('mcNL'); if(L) L.innerHTML = '<div class="mc-empty">⚠️ انٹرنیٹ دیکھیں</div>'; return; }
+  Object.assign(mcAvs, r.avs || {}); mcFind = r.list || []; mcNewFill();
+}
+function mcNewFill(){
+  const L = document.getElementById('mcNL'); if(!L) return; const k = window._mcNK || 'all';
+  const rows = mcFind.filter(x => k === 'all' || x.k === k);
+  L.innerHTML = rows.length ? rows.map(x => { const i = mcFind.indexOf(x), av = x.av && mcAvs[x.av] ? `<img src="${mcAvs[x.av]}" alt="">` : (x.k === 'agent' ? '🤝' : '👤');
+      return `<div class="mc-row" onclick="mcGoObj(mcFind[${i}])"><div class="mc-av">${av}</div><div class="mc-mid"><b>${escapeHtml(x.title || '')}</b><small>${escapeHtml(x.sub || '')}</small></div><div class="mc-tm">💬</div></div>`; }).join('')
+    : '<div class="mc-empty">کوئی نہیں ملا — صرف وہی صارف ملتے ہیں جن کا ایپ میں اکاؤنٹ ہے</div>';
 }
 </script>
 </body>
