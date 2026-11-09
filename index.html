@@ -4164,10 +4164,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO253";
+const APP_VERSION = "MCS0911MO254";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO254": "🧭 نیچے کی نئی پٹی (Chats، Portal، Home، Account، Settings) • 💬 چیٹ میں گول تصویریں • 📊 سرور کا استعمال (ڈویلپر)",
   "MCS0911MO253": "💬 چیٹ میں 🎤 آواز کا پیغام، اسکرین شاٹ پیسٹ، ڈویلپر ↔ کو-ڈویلپر کی الگ چیٹ، پیغام Help Desk / Claude کو",
   "MCS0911MO252": "🏪 پورٹل کا کاروبار: پہلے سے درج کاروبار کی تلاش (نام، موبائل، علاقہ، شہر، ضلع، قسم)، ⏳ زیر کام اور ✅ چالو شدہ (سالانہ / ٹرائل، دن باقی)",
   "MCS0911MO251": "💬 My Chats: PBT Code Labs سے چیٹ؛ ایجنٹ اپنے کاروبار والوں سے؛ نئے پیغام کا نشان",
@@ -11529,7 +11530,7 @@ function ptOpen(editProf, prev){
       day: [['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['📋','انجمن تاجران','لسٹ امپورٹ','ptTajran'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
       biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent']],
       cod: [['👥','کو-ڈویلپرز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','کو-ڈویلپر پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
-      rep: [['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
+      rep: [['📊','سرور کا استعمال','Firebase / Cloudflare — آج کتنا ٪','usOpen'],['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
       more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['🗂️','کیٹگری / امپورٹ','ڈویلپر پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel'],['⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red']]
     };
     body = `<div class="pt-tabs">${tabs.map(t=>`<button type="button" class="pt-tab${t[0]===tab?' on':''}" onclick="ptDevTabGo('${t[0]}')"><i>${t[1]}</i>${t[2]}</button>`).join('')}</div>`
@@ -14720,15 +14721,25 @@ if('serviceWorker' in navigator){
     const db = initializeFirestore(fbApp, { localCache: persistentLocalCache(), experimentalAutoDetectLongPolling: true })   /* MCS0711SA212: کمزور موبائل نیٹ پر تحریریں 0٪ پر نہ اٹکیں */;
     /* MCS2310FR041: لاگ اِن فون میں پکا محفوظ — پہلے IndexedDB، وہ نہ ہو تو localStorage */
     const auth = initializeAuth(fbApp, { persistence: [indexedDBLocalPersistence, browserLocalPersistence] });
+    /* MCS0911MO254 (مالک کا حکم): 📊 Firestore کا استعمال — ہر پڑھائی / لکھائی / حذف یہاں گنا جاتا ہے (کیش سے آیا ڈیٹا نہیں)، ڈویلپر پینل کے میٹر کے لیے */
+    const U = window.MCSUse = window.MCSUse || { r: 0, w: 0, d: 0 };
+    const cR = n => { U.r += Math.max(1, n | 0); }, cW = n => { U.w += (n | 0) || 1; }, cD = n => { U.d += (n | 0) || 1; };
+    const gD = async (...a) => { const x = await getDoc(...a); try{ if(!(x.metadata && x.metadata.fromCache)) cR(1); }catch(e){} return x; };
+    const gDs = async (...a) => { const x = await getDocs(...a); try{ if(!(x.metadata && x.metadata.fromCache)) cR(x.size); }catch(e){} return x; };
+    const oS = (ref, ...rest) => { const i = rest.findIndex(f => typeof f === 'function'); if(i >= 0){ const cb = rest[i]; let first = true; rest[i] = (snap) => { try{ if(!(snap.metadata && snap.metadata.fromCache)){ if(typeof snap.docChanges === 'function'){ const n = snap.docChanges().length; cR(first ? Math.max(1, snap.size) : n); } else cR(1); first = false; } }catch(e){} return cb(snap); }; } return onSnapshot(ref, ...rest); };
+    const sD = (...a) => { cW(1); return setDoc(...a); }, uD = (...a) => { cW(1); return updateDoc(...a); }, aD = (...a) => { cW(1); return addDoc(...a); }, dD = (...a) => { cD(1); return deleteDoc(...a); };
+    const wB = (...a) => { const bt = writeBatch(...a), o = bt.commit.bind(bt); let nw = 0, nd = 0; const S = bt.set.bind(bt), Up = bt.update.bind(bt), De = bt.delete.bind(bt);
+      bt.set = (...x) => { nw++; return S(...x); }; bt.update = (...x) => { nw++; return Up(...x); }; bt.delete = (...x) => { nd++; return De(...x); };
+      bt.commit = () => { if(nw) cW(nw); if(nd) cD(nd); return o(); }; return bt; };
     window.MCSFirebase = {
-      db, auth, collection, addDoc, doc, setDoc, updateDoc, deleteDoc,
-      onSnapshot, query, where, serverTimestamp, getDocs, getDoc, writeBatch,
+      db, auth, collection, addDoc: aD, doc, setDoc: sD, updateDoc: uD, deleteDoc: dD,
+      onSnapshot: oS, query, where, serverTimestamp, getDocs: gDs, getDoc: gD, writeBatch: wB,
       signInWithEmailAndPassword, signOut, onAuthStateChanged
     };
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO253" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO254" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16489,18 +16500,19 @@ async function mcLoadList(){
   let r; try{ r = await mcCall({op:'list'}); }catch(e){ r = {ok:false, reason:'net'}; }
   const L = document.getElementById('mcL'); if(!L || mcTh) return;
   if(!r || !r.ok){ L.innerHTML = `<div class="mc-empty">${r && r.reason === 'login' ? '🔐 لاگ اِن دوبارہ کریں' : '⚠️ انٹرنیٹ دیکھیں — چیٹس نہیں آئیں'}</div>`; return; }
-  mcList = r.list || []; mcSetBadge(r.nw || 0);
+  mcList = r.list || []; mcSetBadge(r.nw || 0); Object.assign(mcAvs, r.avs || {}); mcAvUpload();
   const staff = !!r.staff;
   const tabs = staff ? `<div class="mc-tabs">${[['all','سب'],['user','👤 صارف'],['agent','🤝 ایجنٹ'],['cd','👥 کو-ڈویلپر'],['biz','🔍 ایجنٹ ↔ کاروبار']].filter(t => t[0] !== 'cd' || mcList.some(x => x.k === 'cd')).map(t=>`<button type="button" class="${mcTab===t[0]?'on':''}" onclick="mcTab='${t[0]}';mcLoadList()">${t[1]} ${(t[0]==='all'?mcList:mcList.filter(x=>x.k===t[0])).filter(x=>x.nw).length ? '🟢' : ''}</button>`).join('')}</div>` : '';
   const rows = (staff && mcTab !== 'all' ? mcList.filter(x=>x.k === mcTab) : mcList);
   L.innerHTML = tabs + (rows.length ? rows.map((x, i)=>{ const ix = mcList.indexOf(x);
-      const av = x.k === 'pbt' ? 'PBT' : x.k === 'agent' ? '🤝' : x.k === 'biz' ? '🏪' : x.k === 'cd' ? (x.title.indexOf('👨‍💻') === 0 ? '👨‍💻' : '👥') : '👤';
+      const av0 = x.k === 'pbt' ? 'PBT' : x.k === 'agent' ? '🤝' : x.k === 'biz' ? '🏪' : x.k === 'cd' ? (x.title.indexOf('👨‍💻') === 0 ? '👨‍💻' : '👥') : '👤';
+      const av = x.av && mcAvs[x.av] ? `<img src="${mcAvs[x.av]}" alt="">` : av0;
       return `<div class="mc-row ${x.k === 'pbt' ? 'pbt' : ''} ${x.off ? 'off' : ''}" ${x.off ? '' : `onclick="mcGo(${ix})"`}><div class="mc-av">${av}</div><div class="mc-mid"><b>${escapeHtml(x.title||'')}</b><small>${escapeHtml(x.lt ? (x.mine ? '✓ ' : '') + x.lt : (x.sub||''))}</small></div><div style="text-align:center">${x.last ? `<div class="mc-tm">${mcTime(x.last)}</div>` : ''}${x.nw ? `<div class="mc-nw">${x.nw}</div>` : ''}</div></div>`; }).join('')
     : `<div class="mc-empty">ابھی کوئی چیٹ نہیں۔</div>`)
     + (!staff ? `<div class="mc-empty" style="padding:8px">🔒 آپ کی چیٹ صرف آپ اور PBT Code Labs${mcWho() && mcWho().as === 'agent' ? ' / آپ کے کاروبار والے' : ''} دیکھ سکتے ہیں</div>` : '');
 }
 function mcGo(i){ const x = mcList[i]; if(!x || !x.th) return; mcTh = {th: x.th, title: x.title, sub: x.sub, k: x.k};
-  mcBox(`<div class="mc-hd"><button type="button" onclick="mcBack()" aria-label="پیچھے">→</button><b>${escapeHtml(x.title||'')}<small>${escapeHtml(x.sub||'')}</small></b><button type="button" onclick="mcClose()">×</button></div><div class="mc-msgs" id="mcM"><div class="mc-empty">⏳</div></div><div id="mcIn"></div>`);
+  mcBox(`<div class="mc-hd"><button type="button" onclick="mcBack()" aria-label="پیچھے">→</button>${x.av && mcAvs[x.av] ? `<img class="mc-hdp" src="${mcAvs[x.av]}" alt="">` : ''}<b>${escapeHtml(x.title||'')}<small>${escapeHtml(x.sub||'')}</small></b><button type="button" onclick="mcClose()">×</button></div><div class="mc-msgs" id="mcM"><div class="mc-empty">⏳</div></div><div id="mcIn"></div>`);
   mcLoadThread(); }
 function mcBack(){ mcTh = null; mcBox(`<div class="mc-hd"><b>💬 My Chats<small>میری چیٹس</small></b><button type="button" onclick="mcClose()">×</button></div><div class="mc-list" id="mcL"><div class="mc-empty">⏳</div></div>`); mcLoadList(); }
 let mcLastN = -1;
@@ -16513,8 +16525,8 @@ async function mcLoadThread(quiet, send){
   const atEnd = M.scrollHeight - M.scrollTop - M.clientHeight < 60;
   if(!(quiet && r.msgs.length === mcLastN)){
     mcLastN = r.msgs.length;
-    mcMsgs = r.msgs; const W = mcWho() || {}, staff = W.as === 'dev' || W.as === 'cd';
-    M.innerHTML = r.msgs.length ? r.msgs.map((m, mi)=>`<div class="mc-b ${m.mine ? 'me' : ''}${staff ? ' fw' : ''}" ${staff ? `onclick="mcFwdToggle(this, ${mi}, event)"` : ''}>${m.mine ? '' : `<span class="nm">${escapeHtml(m.who === 'agent' && mcTh.k === 'agent' ? '🤝 ' + mcTh.title.replace(/^🤝\s*/, '') : (m.who === 'user' && (mcTh.k === 'biz' || mcTh.k === 'user') ? mcTh.title.replace(/^🤝.*↔\s*/, '') : (m.name || '')))}</span>`}${m.img ? `<img src="${m.img}" alt="" onclick="window.open(this.src)">` : ''}${m.audio ? `<audio controls src="${m.audio}"></audio>` : ''}${m.text ? escapeHtml(m.text) : ''}<span class="t">${mcTime(m.ts)}</span></div>`).join('')
+    mcMsgs = r.msgs; const W = mcWho() || {}, staff = W.as === 'dev' || W.as === 'cd'; Object.assign(mcAvs, r.avs || {});
+    M.innerHTML = r.msgs.length ? r.msgs.map((m, mi)=>`${!m.mine && m.av && mcAvs[m.av] ? `<div class="mc-row2"><img class="mc-dp" src="${mcAvs[m.av]}" alt="">` : ''}<div class="mc-b ${m.mine ? 'me' : ''}${staff ? ' fw' : ''}" ${staff ? `onclick="mcFwdToggle(this, ${mi}, event)"` : ''}>${m.mine ? '' : `<span class="nm">${escapeHtml(m.who === 'agent' && mcTh.k === 'agent' ? '🤝 ' + mcTh.title.replace(/^🤝\s*/, '') : (m.who === 'user' && (mcTh.k === 'biz' || mcTh.k === 'user') ? mcTh.title.replace(/^🤝.*↔\s*/, '') : (m.name || '')))}</span>`}${m.img ? `<img src="${m.img}" alt="" onclick="window.open(this.src)">` : ''}${m.audio ? `<audio controls src="${m.audio}"></audio>` : ''}${m.text ? escapeHtml(m.text) : ''}<span class="t">${mcTime(m.ts)}</span></div>${!m.mine && m.av && mcAvs[m.av] ? '</div>' : ''}`).join('')
       : `<div class="mc-empty">👋 السلام علیکم! اپنا سوال، مسئلہ یا مشورہ یہاں لکھیں — PBT Code Labs جلد جواب دے گا۔</div>`;
     if(atEnd || !quiet || send) M.scrollTop = M.scrollHeight;
   }
@@ -16745,6 +16757,117 @@ function mcFwdHD(i){ const t = mcFwdText(i);
 async function mcFwdClaude(i){ const t = '⚡ فوری: سٹی شائنز (MCS) کی چیٹ سے مسئلہ — ابھی حل کر کے لائیو کریں\n' + mcFwdText(i);
   try{ await navigator.clipboard.writeText(t); showToast('📋 کاپی ہو گیا — Claude کی چیٹ میں پیسٹ کر کے بھیج دیں'); }catch(e){ prompt('کاپی کریں', t); }
   setTimeout(() => window.open(MC_CLAUDE, '_blank'), 700); }
+</script>
+
+<style id="mcsUse254">
+.us-row{margin:8px 0}.us-row .t{display:flex;justify-content:space-between;font-size:13.5px;gap:8px}.us-row .t b{font:800 14px Arial,sans-serif;direction:ltr}
+.us-bar{height:14px;border-radius:99px;background:#e2e8f0;overflow:hidden;margin-top:4px}.us-bar i{display:block;height:100%;border-radius:99px;background:#16a34a}
+.us-bar i.o{background:#f59e0b}.us-bar i.r{background:#dc2626}
+.us-days{display:flex;align-items:flex-end;gap:3px;height:80px;margin:8px 0 2px;direction:ltr}.us-days div{flex:1;background:#93c5fd;border-radius:3px 3px 0 0;min-height:2px;position:relative}.us-days div.td{background:#2563eb}
+.us-ok{padding:10px;border-radius:12px;font-size:14px;font-weight:800;text-align:center;margin:6px 0}
+.us-ok.g{background:#dcfce7;color:#166534}.us-ok.o{background:#fef3c7;color:#92400e}.us-ok.r{background:#fee2e2;color:#991b1b}
+</style>
+<script>
+/* ===== MCS0911MO254 (مالک کا حکم): 📊 سرور کا استعمال =====
+   ہر فون اپنی Firestore پڑھائی / لکھائی / حذف (`window.MCSUse`) ہر 3 منٹ اور ایپ پیچھے جانے پر سرور (aio-pos-verify `/mcsuse`) کو بھیجتا ہے — روزانہ جمع؛
+   سرور اپنی درخواستیں خود گنتا ہے۔ ڈویلپر پینل «📊 سرور کا استعمال» (`usOpen`): آج / اس مہینے، مفت حد کا ٪، 30 دن کی پٹیاں، آج کتنے فون۔
+   ⚠️ یہ ایپ کے اندر سے لگایا گیا اندازہ ہے (پرانے ورژن والے فون شامل نہیں) — اصل بل Firebase کنسول کے Usage میں */
+const US_LIM = { fs_r: 50000, fs_w: 20000, fs_d: 20000, req: 100000 };
+async function usFlush(){
+  try{ const U = window.MCSUse; if(!U || !(U.r || U.w || U.d)) return; const x = {r: U.r, w: U.w, d: U.d}; U.r = U.w = U.d = 0;
+    let dev = ''; try{ dev = agDev(); }catch(e){}
+    const ok = await fetch(AG_API + '/mcsuse', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({op:'add', r: x.r, w: x.w, d: x.d, dev}), keepalive: true}).then(r => r.ok).catch(() => false);
+    if(!ok){ U.r += x.r; U.w += x.w; U.d += x.d; } }catch(e){}
+}
+setInterval(usFlush, 180000);
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') usFlush(); });
+window.addEventListener('pagehide', usFlush);
+function usFmt(n){ return Math.round(n || 0).toLocaleString('en-US'); }
+function usRow(lb, n, lim){ const p = Math.min(100, Math.round((n || 0) * 100 / lim)); return `<div class="us-row"><div class="t"><span>${lb}</span><b>${usFmt(n)} / ${usFmt(lim)} · ${p}%</b></div><div class="us-bar"><i class="${p >= 80 ? 'r' : p >= 50 ? 'o' : ''}" style="width:${Math.max(p, 1)}%"></i></div></div>`; }
+async function usOpen(){
+  try{ closeModal('portalModal'); }catch(e){}
+  agModal('<div class="ag-st">⏳ سرور کا استعمال آ رہا ہے…</div>');
+  await usFlush();
+  let j = null; try{ j = await (await fetch(AG_API + '/mcsuse', {method:'POST', headers: await vfAdminHdr(), body: JSON.stringify({op:'get'})})).json(); }catch(e){}
+  if(!j || !j.ok){ agModal(`<div class="ag-hd">📊 سرور کا استعمال</div><div class="ag-st">⚠️ ${j && j.error === 'admin_only' ? 'ایڈمن لاگ اِن دوبارہ کریں' : 'انٹرنیٹ دیکھیں — معلومات نہیں آئیں'}</div><button type="button" class="btn block secondary" onclick="closeModal('agModal')">بند کریں</button>`); return; }
+  const D = j.days || {}, t = D[j.today] || {}, mon = j.today.slice(0, 7), M = {};
+  Object.keys(D).filter(d => d.slice(0, 7) === mon).forEach(d => { for(const k in D[d]) M[k] = (M[k] || 0) + (D[d][k] || 0); });
+  const worst = Math.max(...['fs_r', 'fs_w', 'fs_d', 'req'].map(k => (t[k] || 0) / US_LIM[k])) * 100;
+  const st = worst >= 80 ? ['r', '🔴 آج حد کے قریب — اگر روز ایسا ہو تو پیکج (Blaze) سوچیں'] : worst >= 50 ? ['o', '🟠 آج آدھی سے زیادہ مفت حد استعمال ہو چکی — نظر رکھیں'] : ['g', '🟢 سب ٹھیک — مفت حد کے اندر، ابھی پیکج کی ضرورت نہیں'];
+  const last = []; for(let i = 29; i >= 0; i--){ const d = new Date(Date.parse(j.today) - i * 864e5).toISOString().slice(0, 10); last.push([d, (D[d] || {}).fs_r || 0]); }
+  const mx = Math.max(1, ...last.map(x => x[1]));
+  agModal(`<div class="ag-hd">📊 سرور کا استعمال <small>آج ${j.today} (پاکستانی وقت) · مفت حد روزانہ</small></div>
+    <div class="us-ok ${st[0]}">${st[1]}</div>
+    <div class="pt-sec">🔥 Firebase (Firestore) — آج</div>
+    ${usRow('📖 پڑھائی (reads)', t.fs_r, US_LIM.fs_r)}${usRow('✏️ لکھائی (writes)', t.fs_w, US_LIM.fs_w)}${usRow('🗑️ حذف (deletes)', t.fs_d, US_LIM.fs_d)}
+    <div class="pt-sec">☁️ Cloudflare سرور (چیٹ، ممبرشپ، ایجنٹ) — آج</div>
+    ${usRow('📨 درخواستیں', t.req, US_LIM.req)}
+    <div class="cp-hint">📱 آج ایپ کھولنے والے فون: <b>${usFmt(t.dev)}</b> · 💾 Cloudflare ڈیٹا: <b>${(j.dbBytes / 1048576).toFixed(1)} MB</b> / 5,120 MB</div>
+    <div class="pt-sec">📅 اس مہینے (${mon}) کا جوڑ</div>
+    <div class="cp-hint" style="line-height:2">📖 ${usFmt(M.fs_r)} · ✏️ ${usFmt(M.fs_w)} · 🗑️ ${usFmt(M.fs_d)} · 📨 ${usFmt(M.req)}<br>روزانہ اوسط پڑھائی: <b>${usFmt((M.fs_r || 0) / Math.max(1, parseInt(j.today.slice(8), 10)))}</b></div>
+    <div class="pt-sec">📈 پچھلے 30 دن کی پڑھائی</div>
+    <div class="us-days">${last.map(x => `<div class="${x[0] === j.today ? 'td' : ''}" style="height:${Math.round(x[1] * 100 / mx)}%" title="${x[0]}: ${usFmt(x[1])}"></div>`).join('')}</div>
+    <div class="cp-hint">⚠️ یہ ایپ کے اندر سے گنا ہوا اندازہ ہے (آج سے شروع؛ پرانے ورژن والے فون شامل نہیں)۔ اصل حساب Firebase کنسول ← Usage میں — مفت (Spark) حد: روزانہ 50,000 پڑھائی، 20,000 لکھائی، 20,000 حذف۔</div>
+    <button type="button" class="btn block" onclick="window.open('https://console.firebase.google.com/project/my-city-shines/firestore/usage','_blank')">🔥 Firebase کنسول میں اصل استعمال</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="usOpen()">🔄 تازہ کریں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agModal')">بند کریں</button>`);
+}
+</script>
+
+<style id="mcsNav254">
+/* ===== MCS0911MO254 (ہیلپ ڈیسک #166، محمد عمران کا ڈیزائن، مالک کا ⚡): نیچے کی پٹی — پانچ برابر گول کارڈ بٹن ایک قطار میں،
+   بائیں سے: 💬 My Chats، 💼 My Portal، 🏠 Home (بھورا سنہری، بڑا)، 👤 My Account، ⚙️ Settings؛ اوپر آئیکن، نیچے صرف انگریزی نام؛
+   پیچھے / آگے / Aa پٹی سے ہٹے (فون کا «پیچھے» ویسا؛ متن کا سائز Settings میں) */
+body.d2 .bnav{display:flex !important;align-items:stretch !important;justify-content:space-between !important;gap:5px !important;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px)) !important;background:linear-gradient(180deg,#0f5b57,#0a4744) !important;border-radius:22px 22px 0 0 !important;direction:ltr !important}
+body.d2 .bnav::before{display:none !important;content:none !important}
+body.d2 .bnav #bnBack, body.d2 .bnav #bnFwd, body.d2 .bnav .bn-zoom, body.d2 .bnav .bn-home, body.d2 .bnav .d2n-add, body.d2 .bnav #d2nFav, body.d2 .bnav #d2nExp{display:none !important}
+body.d2 .bnav .bn-admin{display:none !important}
+body.d2 .bnav .d2n{flex:1 1 0 !important;min-width:0 !important;margin:0 !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;gap:3px !important;padding:8px 1px !important;border-radius:16px !important;background:rgba(255,255,255,.07) !important;border:1.5px solid rgba(153,246,228,.28) !important;color:#fff !important;box-shadow:none !important;height:auto !important;min-height:62px !important}
+body.d2 .bnav .d2n span{display:none !important}
+body.d2 .bnav .d2n b{display:block !important;font:700 11.5px/1.15 system-ui,Arial,sans-serif !important;letter-spacing:-.2px !important;color:#fff !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;max-width:100% !important}
+body.d2 .bnav .d2n svg{width:26px !important;height:26px !important;stroke:#fff !important;fill:none !important;stroke-width:1.9 !important;stroke-linecap:round !important;stroke-linejoin:round !important}
+body.d2 .bnav .d2n.d2n-add{display:none !important}
+body.d2 .bnav .d2n b{direction:ltr !important;text-overflow:clip !important}
+body.d2 .bnav .d2n.on{background:rgba(255,255,255,.18) !important;border-color:#99f6e4 !important;box-shadow:0 0 0 2px rgba(153,246,228,.25) inset !important}
+body.d2 .bnav #d2nChat{order:1 !important}
+body.d2 .bnav #d2nPortal{order:2 !important}
+body.d2 .bnav #d2nHome{order:3 !important;flex:1.12 1 0 !important;background:linear-gradient(180deg,#b7783f,#8a5427) !important;border:2px solid #f6c983 !important;box-shadow:0 0 14px rgba(246,201,131,.45) !important;margin-top:-6px !important}
+body.d2 .bnav #d2nHome b{font-size:14.5px !important}
+body.d2 .bnav #d2nHome svg{width:30px !important;height:30px !important}
+body.d2 .bnav #d2nHome.on{border-color:#ffe2b0 !important;box-shadow:0 0 18px rgba(255,214,150,.7) !important}
+body.d2 .bnav #d2nAcc{order:4 !important}
+body.d2 .bnav #d2nSet{order:5 !important}
+body.d2 .bnav .mcBadge{top:3px !important;right:6px !important}
+@media (max-width:380px){ body.d2 .bnav .d2n b{font-size:10px !important;letter-spacing:-.3px !important} body.d2 .bnav #d2nHome b{font-size:13px !important} body.d2 .bnav{gap:4px !important;padding-left:5px !important;padding-right:5px !important} }
+@media (min-width:700px){ body.d2 .bnav{max-width:640px;margin:0 auto;left:0;right:0} body.d2 .bnav .d2n b{font-size:13.5px !important} }
+/* چیٹ کی گول تصویریں */
+.mc-av{overflow:hidden}.mc-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.mc-row2{display:flex;align-items:flex-end;gap:6px;align-self:flex-start;max-width:88%}.mc-row2 .mc-b{max-width:100%}
+.mc-dp{width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.mc-hdp{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #fff;flex:none}
+</style>
+<script>
+/* MCS0911MO254: نئے آئیکن (💬 چیٹ کے نقطے، 💼 بریف کیس) + چیٹ کی گول تصویریں — اپنی پورٹل والی سیلفی (ڈویلپر / کو-ڈویلپر / ایجنٹ) چھوٹی کر کے سرور پر (`/mcschat op=av`)؛
+   عام صارف کی کوئی تصویر نہیں جاتی، اور اسے عملے کی تصویر بھی نہیں آتی (سرور خود روکتا ہے) */
+let mcAvs = {};
+(function(){
+  const set = (id, svg) => { const b = document.getElementById(id); if(!b) return; const o = b.querySelector('svg'); if(o) o.outerHTML = svg; };
+  set('d2nChat', '<svg viewBox="0 0 24 24"><path d="M12 3.5c4.7 0 8.5 3.2 8.5 7.2s-3.8 7.2-8.5 7.2c-1 0-2-.1-2.9-.4L4.5 19.8l1.2-3.6C4.3 14.9 3.5 13 3.5 10.7c0-4 3.8-7.2 8.5-7.2z"/><circle cx="8.3" cy="10.8" r=".6" fill="#fff"/><circle cx="12" cy="10.8" r=".6" fill="#fff"/><circle cx="15.7" cy="10.8" r=".6" fill="#fff"/></svg>');
+  set('d2nPortal', '<svg viewBox="0 0 24 24"><rect x="3" y="7.5" width="18" height="12.5" rx="2.5"/><path d="M8.5 7.5V5.8a1.8 1.8 0 0 1 1.8-1.8h3.4a1.8 1.8 0 0 1 1.8 1.8v1.7"/><path d="M3 12.5h18"/><rect x="10.5" y="11" width="3" height="3" rx=".6"/></svg>');
+  set('d2nSet', '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8l1.6 2.3 2.7-.7.7 2.7 2.6 1-.7 2.7 1.8 2.1-1.8 2.1.7 2.7-2.6 1-.7 2.7-2.7-.7L12 21.2l-1.6-2.3-2.7.7-.7-2.7-2.6-1 .7-2.7L3.3 11l1.8-2.1-.7-2.7 2.6-1 .7-2.7 2.7.7z"/></svg>');
+})();
+function mcMark(){ try{ const ch = document.getElementById('mcModal'), cm = ch && ch.classList.contains('active'); const p = document.getElementById('d2nChat'); if(p) p.classList.toggle('on', !!cm); }catch(e){} }
+setInterval(mcMark, 800);
+async function mcAvUpload(){
+  try{ const W = mcWho(); if(!W || W.as === 'user') return;
+    const rl = W.as === 'dev' ? 'dev' : W.as === 'cd' ? 'codev' : 'agent';
+    let sv = ''; try{ sv = ptSelfieGet(rl); }catch(e){} if(!sv) return;
+    const sig = rl + ':' + sv.length + ':' + sv.slice(-40); let old = ''; try{ old = localStorage.getItem('mcsChatAvSig') || ''; }catch(e){}
+    if(old === sig) return;
+    const img = await pfSquare(sv, 96, .72); if(!img || img.length > 78000) return;
+    const r = await mcCall({op:'av', img}); if(r && r.ok){ try{ localStorage.setItem('mcsChatAvSig', sig); }catch(e){} }
+  }catch(e){}
+}
 </script>
 </body>
 </html>
