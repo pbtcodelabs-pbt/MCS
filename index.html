@@ -4164,10 +4164,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO252";
+const APP_VERSION = "MCS0911MO253";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO253": "💬 چیٹ میں 🎤 آواز کا پیغام، اسکرین شاٹ پیسٹ، ڈویلپر ↔ کو-ڈویلپر کی الگ چیٹ، پیغام Help Desk / Claude کو",
   "MCS0911MO252": "🏪 پورٹل کا کاروبار: پہلے سے درج کاروبار کی تلاش (نام، موبائل، علاقہ، شہر، ضلع، قسم)، ⏳ زیر کام اور ✅ چالو شدہ (سالانہ / ٹرائل، دن باقی)",
   "MCS0911MO251": "💬 My Chats: PBT Code Labs سے چیٹ؛ ایجنٹ اپنے کاروبار والوں سے؛ نئے پیغام کا نشان",
   "MCS0911MO250": "🧭 نیچے کی پٹی نئی: 🏪 My Portal (کاروبار کا انتظام)، ہوم، 👤 My Account (ذاتی معلومات)، ⚙️ Settings (ترتیبات)",
@@ -14727,7 +14728,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO252" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO253" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16490,10 +16491,10 @@ async function mcLoadList(){
   if(!r || !r.ok){ L.innerHTML = `<div class="mc-empty">${r && r.reason === 'login' ? '🔐 لاگ اِن دوبارہ کریں' : '⚠️ انٹرنیٹ دیکھیں — چیٹس نہیں آئیں'}</div>`; return; }
   mcList = r.list || []; mcSetBadge(r.nw || 0);
   const staff = !!r.staff;
-  const tabs = staff ? `<div class="mc-tabs">${[['all','سب'],['user','👤 صارف'],['agent','🤝 ایجنٹ'],['biz','🔍 ایجنٹ ↔ کاروبار']].map(t=>`<button type="button" class="${mcTab===t[0]?'on':''}" onclick="mcTab='${t[0]}';mcLoadList()">${t[1]} ${(t[0]==='all'?mcList:mcList.filter(x=>x.k===t[0])).filter(x=>x.nw).length ? '🟢' : ''}</button>`).join('')}</div>` : '';
+  const tabs = staff ? `<div class="mc-tabs">${[['all','سب'],['user','👤 صارف'],['agent','🤝 ایجنٹ'],['cd','👥 کو-ڈویلپر'],['biz','🔍 ایجنٹ ↔ کاروبار']].filter(t => t[0] !== 'cd' || mcList.some(x => x.k === 'cd')).map(t=>`<button type="button" class="${mcTab===t[0]?'on':''}" onclick="mcTab='${t[0]}';mcLoadList()">${t[1]} ${(t[0]==='all'?mcList:mcList.filter(x=>x.k===t[0])).filter(x=>x.nw).length ? '🟢' : ''}</button>`).join('')}</div>` : '';
   const rows = (staff && mcTab !== 'all' ? mcList.filter(x=>x.k === mcTab) : mcList);
   L.innerHTML = tabs + (rows.length ? rows.map((x, i)=>{ const ix = mcList.indexOf(x);
-      const av = x.k === 'pbt' ? 'PBT' : x.k === 'agent' ? '🤝' : x.k === 'biz' ? '🏪' : '👤';
+      const av = x.k === 'pbt' ? 'PBT' : x.k === 'agent' ? '🤝' : x.k === 'biz' ? '🏪' : x.k === 'cd' ? (x.title.indexOf('👨‍💻') === 0 ? '👨‍💻' : '👥') : '👤';
       return `<div class="mc-row ${x.k === 'pbt' ? 'pbt' : ''} ${x.off ? 'off' : ''}" ${x.off ? '' : `onclick="mcGo(${ix})"`}><div class="mc-av">${av}</div><div class="mc-mid"><b>${escapeHtml(x.title||'')}</b><small>${escapeHtml(x.lt ? (x.mine ? '✓ ' : '') + x.lt : (x.sub||''))}</small></div><div style="text-align:center">${x.last ? `<div class="mc-tm">${mcTime(x.last)}</div>` : ''}${x.nw ? `<div class="mc-nw">${x.nw}</div>` : ''}</div></div>`; }).join('')
     : `<div class="mc-empty">ابھی کوئی چیٹ نہیں۔</div>`)
     + (!staff ? `<div class="mc-empty" style="padding:8px">🔒 آپ کی چیٹ صرف آپ اور PBT Code Labs${mcWho() && mcWho().as === 'agent' ? ' / آپ کے کاروبار والے' : ''} دیکھ سکتے ہیں</div>` : '');
@@ -16512,13 +16513,14 @@ async function mcLoadThread(quiet, send){
   const atEnd = M.scrollHeight - M.scrollTop - M.clientHeight < 60;
   if(!(quiet && r.msgs.length === mcLastN)){
     mcLastN = r.msgs.length;
-    M.innerHTML = r.msgs.length ? r.msgs.map(m=>`<div class="mc-b ${m.mine ? 'me' : ''}">${m.mine ? '' : `<span class="nm">${escapeHtml(m.who === 'dev' ? 'PBT Code Labs' : (m.who === 'agent' ? '🤝 ' + (mcTh.k === 'agent' ? mcTh.title.replace(/^🤝\s*/, '') : 'MCS ایجنٹ') : (mcTh.k === 'biz' || mcTh.k === 'user' ? mcTh.title.replace(/^🤝.*↔\s*/, '') : 'صارف')))}</span>`}${m.img ? `<img src="${m.img}" alt="" onclick="window.open(this.src)">` : ''}${m.audio ? `<audio controls src="${m.audio}"></audio>` : ''}${m.text ? escapeHtml(m.text) : ''}<span class="t">${mcTime(m.ts)}</span></div>`).join('')
+    mcMsgs = r.msgs; const W = mcWho() || {}, staff = W.as === 'dev' || W.as === 'cd';
+    M.innerHTML = r.msgs.length ? r.msgs.map((m, mi)=>`<div class="mc-b ${m.mine ? 'me' : ''}${staff ? ' fw' : ''}" ${staff ? `onclick="mcFwdToggle(this, ${mi}, event)"` : ''}>${m.mine ? '' : `<span class="nm">${escapeHtml(m.who === 'agent' && mcTh.k === 'agent' ? '🤝 ' + mcTh.title.replace(/^🤝\s*/, '') : (m.who === 'user' && (mcTh.k === 'biz' || mcTh.k === 'user') ? mcTh.title.replace(/^🤝.*↔\s*/, '') : (m.name || '')))}</span>`}${m.img ? `<img src="${m.img}" alt="" onclick="window.open(this.src)">` : ''}${m.audio ? `<audio controls src="${m.audio}"></audio>` : ''}${m.text ? escapeHtml(m.text) : ''}<span class="t">${mcTime(m.ts)}</span></div>`).join('')
       : `<div class="mc-empty">👋 السلام علیکم! اپنا سوال، مسئلہ یا مشورہ یہاں لکھیں — PBT Code Labs جلد جواب دے گا۔</div>`;
     if(atEnd || !quiet || send) M.scrollTop = M.scrollHeight;
   }
   const I = document.getElementById('mcIn');
   if(I && !I.dataset.on){ I.dataset.on = 1;
-    I.innerHTML = r.w ? `<div class="mc-in"><button type="button" class="img" onclick="document.getElementById('mcFile').click()" aria-label="تصویر">🖼️</button><input type="file" id="mcFile" accept="image/*" hidden onchange="mcImg(this)"><textarea id="mcT" rows="1" placeholder="پیغام لکھیں…" dir="auto" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea><button type="button" class="snd" onclick="mcSend()" aria-label="بھیجیں">➤</button></div>`
+    I.innerHTML = r.w ? `<div class="mc-in"><button type="button" class="img" onclick="document.getElementById('mcFile').click()" aria-label="تصویر">🖼️</button><input type="file" id="mcFile" accept="image/*" hidden onchange="mcImg(this)"><textarea id="mcT" rows="1" placeholder="پیغام لکھیں… (اسکرین شاٹ یہاں پیسٹ کریں)" dir="auto" onpaste="mcPaste(event)" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';mcSndIcon()"></textarea><button type="button" class="snd" id="mcSnd" onclick="mcSendOrMic()" aria-label="بھیجیں / آواز">🎤</button></div><div class="mc-rec" id="mcRec" hidden><button type="button" class="x" onclick="mcRecStop(true)">✖</button><span class="dot"></span><b id="mcRecT">0:00</b><span>آواز ریکارڈ ہو رہی ہے…</span><button type="button" class="ok" onclick="mcRecStop(false)">➤</button></div>`
       : `<div class="mc-ro">👁️ یہ چیٹ صرف دیکھنے کے لیے ہے (ایجنٹ اور اس کے کاروبار والے کے درمیان)</div>`; }
   mcBadgeTick(); return true;
 }
@@ -16677,6 +16679,72 @@ async function bzLiveOpen(){
     ${bzCardsHtml(L, 'live')}
     <button type="button" class="btn block secondary" style="margin-top:8px" onclick="bzHubOpen()">← واپس</button>`);
 }
+</script>
+
+<style id="mcsChat253">
+/* MCS0911MO253: آواز، اسکرین شاٹ پیسٹ، Help Desk / Claude کو آگے بھیجنا */
+.mc-rec{display:flex;align-items:center;gap:10px;padding:10px;background:#fef2f2;border-top:1px solid #fecaca}
+.mc-rec[hidden]{display:none}
+.mc-rec b{font:800 16px Arial,sans-serif;color:#b91c1c;direction:ltr}.mc-rec span{flex:1;font-size:13px;color:#7f1d1d}
+.mc-rec .dot{flex:none;width:12px;height:12px;border-radius:50%;background:#dc2626;animation:mcBlink 1s infinite}
+.mc-rec button{width:42px;height:42px;border-radius:50%;border:none;font-size:18px;cursor:pointer}.mc-rec .x{background:#fff;color:#b91c1c}.mc-rec .ok{background:#0f766e;color:#fff}
+@keyframes mcBlink{50%{opacity:.25}}
+.mc-b.fw{cursor:pointer}
+.mc-fw{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.mc-fw button{border:none;border-radius:99px;padding:5px 10px;font:inherit;font-size:12px;font-weight:800;cursor:pointer;background:#fef3c7;color:#92400e}.mc-fw button.c{background:#ede9fe;color:#5b21b6}
+.mc-b audio{width:230px;max-width:100%;height:40px}
+</style>
+<script>
+/* ===== MCS0911MO253 (مالک کا حکم) =====
+   🎤 آواز کا پیغام (واٹس ایپ کی طرح — دبائیں، بولیں، ➤؛ زیادہ سے زیادہ 60 سیکنڈ)، 🖼️ تصویر / کیمرہ، 📋 اسکرین شاٹ لکھنے کے خانے میں پیسٹ۔
+   عملہ (ڈویلپر / کو-ڈویلپر): کسی بھی پیغام کو دبائیں → «🛠️ Help Desk میں درج کریں» (فارم پیغام سے بھرا)، ڈویلپر کو «🤖 Claude کو بھیجیں» (لائن کاپی + Claude کی چیٹ)۔
+   👥 ڈویلپر ↔ کو-ڈویلپر کی الگ چیٹ — صرف یہی دو دیکھتے ہیں (سرور CD-<نمبر>)۔ */
+let mcMsgs = [], mcRec = null;
+const MC_CLAUDE = 'https://claude.ai/code/session_01RNzHHzEYnZigJB5pMdM5Te';
+function mcSndIcon(){ const b = document.getElementById('mcSnd'), t = document.getElementById('mcT'); if(b && t) b.textContent = t.value.trim() ? '➤' : '🎤'; }
+function mcSendOrMic(){ const t = document.getElementById('mcT'); if(t && t.value.trim()) return mcSend().then(mcSndIcon); mcRecStart(); }
+async function mcRecStart(){
+  if(mcRec) return;
+  if(!navigator.mediaDevices || !window.MediaRecorder){ showToast('⚠️ اس فون / براؤزر میں آواز ریکارڈ نہیں ہو سکتی'); return; }
+  let st; try{ st = await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ showToast('🎤 مائیک کی اجازت دیں (فون کی سیٹنگ ← ایپس ← My City Shines ← اجازتیں)'); return; }
+  const mt = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4', 'audio/webm'].find(t => { try{ return MediaRecorder.isTypeSupported(t); }catch(e){ return false; } }) || '';
+  const mr = new MediaRecorder(st, mt ? {mimeType: mt, audioBitsPerSecond: 32000} : {audioBitsPerSecond: 32000}), ch = [];
+  mcRec = {mr, st, ch, t0: Date.now(), cancel: false};
+  mr.ondataavailable = e => { if(e.data && e.data.size) ch.push(e.data); };
+  mr.onstop = () => { const R = mcRec; mcRec = null; try{ st.getTracks().forEach(t => t.stop()); }catch(e){} clearInterval(R && R.tick);
+    const box = document.getElementById('mcRec'); if(box) box.hidden = true;
+    if(!R || R.cancel || !ch.length) return;
+    const blob = new Blob(ch, {type: (mr.mimeType || mt || 'audio/webm')});
+    const fr = new FileReader(); fr.onload = async () => { let d = String(fr.result || '');
+      d = d.replace(/^data:([^;,]+)(;[^,]*)?;base64,/, (all, ty, rest) => 'data:' + ty + ((/codecs=[a-z0-9.]+/i.exec(rest || '') || [''])[0] ? ';' + /codecs=[a-z0-9.]+/i.exec(rest)[0].toLowerCase() : '') + ';base64,');
+      if(d.length > 890000){ showToast('⚠️ آواز بہت لمبی ہے — 60 سیکنڈ سے کم بولیں'); return; }
+      mcBusy = true; const ok = await mcLoadThread(false, {audio: d}); mcBusy = false; if(!ok) showToast('⚠️ آواز نہیں گئی — انٹرنیٹ دیکھیں'); };
+    fr.readAsDataURL(blob); };
+  mr.start(250);
+  const box = document.getElementById('mcRec'); if(box) box.hidden = false;
+  mcRec.tick = setInterval(() => { if(!mcRec) return; const s = Math.floor((Date.now() - mcRec.t0) / 1000); const e = document.getElementById('mcRecT'); if(e) e.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); if(s >= 60) mcRecStop(false); }, 250);
+}
+function mcRecStop(cancel){ if(!mcRec) return; mcRec.cancel = !!cancel; try{ mcRec.mr.stop(); }catch(e){} }
+async function mcPaste(ev){
+  try{ const it = [...((ev.clipboardData || {}).items || [])].find(i => i.type && i.type.indexOf('image/') === 0); if(!it) return;
+    ev.preventDefault(); const f = it.getAsFile(); if(!f) return;
+    const img = await adCompress(f, 1280, 0.75); if(img.length > 690000){ showToast('⚠️ تصویر بہت بڑی ہے'); return; }
+    mcBusy = true; const ok = await mcLoadThread(false, {img}); mcBusy = false; if(!ok) showToast('⚠️ تصویر نہیں گئی'); }catch(e){ mcBusy = false; }
+}
+function mcFwdToggle(el, i, ev){
+  if(ev && (ev.target.tagName === 'AUDIO' || ev.target.tagName === 'IMG' || ev.target.closest('.mc-fw'))) return;
+  const old = el.querySelector('.mc-fw'); if(old){ old.remove(); return; }
+  document.querySelectorAll('.mc-fw').forEach(x => x.remove());
+  const W = mcWho() || {}, d = document.createElement('div'); d.className = 'mc-fw';
+  d.innerHTML = `<button type="button" onclick="mcFwdHD(${i})">🛠️ Help Desk میں درج کریں</button>${W.as === 'dev' ? `<button type="button" class="c" onclick="mcFwdClaude(${i})">🤖 Claude کو بھیجیں</button>` : ''}`;
+  el.appendChild(d);
+}
+function mcFwdText(i){ const m = mcMsgs[i] || {}, T = mcTh || {}; return '💬 (MCS چیٹ — ' + (T.title || '') + (T.sub ? ' · ' + T.sub : '') + ')\n' + (m.text || (m.img ? '🖼️ تصویر — چیٹ میں دیکھیں' : m.audio ? '🎤 آواز کا پیغام — چیٹ میں سنیں' : '')); }
+function mcFwdHD(i){ const t = mcFwdText(i);
+  try{ if(window.PBTHelp && window.PBTHelp.open){ window.PBTHelp.open({app:'MCS', ver: APP_VERSION, text: t, type:'bug'}); return; } }catch(e){}
+  try{ navigator.clipboard.writeText(t); }catch(e){} if(typeof openHelpDesk === 'function') openHelpDesk(); showToast('📋 پیغام کاپی — Help Desk میں پیسٹ کریں'); }
+async function mcFwdClaude(i){ const t = '⚡ فوری: سٹی شائنز (MCS) کی چیٹ سے مسئلہ — ابھی حل کر کے لائیو کریں\n' + mcFwdText(i);
+  try{ await navigator.clipboard.writeText(t); showToast('📋 کاپی ہو گیا — Claude کی چیٹ میں پیسٹ کر کے بھیج دیں'); }catch(e){ prompt('کاپی کریں', t); }
+  setTimeout(() => window.open(MC_CLAUDE, '_blank'), 700); }
 </script>
 </body>
 </html>
