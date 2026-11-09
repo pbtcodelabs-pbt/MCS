@@ -4164,10 +4164,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO251";
+const APP_VERSION = "MCS0911MO252";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO252": "🏪 پورٹل کا کاروبار: پہلے سے درج کاروبار کی تلاش (نام، موبائل، علاقہ، شہر، ضلع، قسم)، ⏳ زیر کام اور ✅ چالو شدہ (سالانہ / ٹرائل، دن باقی)",
   "MCS0911MO251": "💬 My Chats: PBT Code Labs سے چیٹ؛ ایجنٹ اپنے کاروبار والوں سے؛ نئے پیغام کا نشان",
   "MCS0911MO250": "🧭 نیچے کی پٹی نئی: 🏪 My Portal (کاروبار کا انتظام)، ہوم، 👤 My Account (ذاتی معلومات)، ⚙️ Settings (ترتیبات)",
   "MCS0811SU249": "📢 اشتہار سے ہر جگہ قیمت (روپے) ہٹائی — ہوم کا کارڈ اور اشتہار کا فارم بھی (پلے اسٹور کا اصول)",
@@ -14726,7 +14727,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO251" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO252" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16540,6 +16541,142 @@ async function mcBadgeTick(force){
 }
 document.addEventListener('visibilitychange', ()=>mcBadgeTick());
 setTimeout(()=>mcBadgeTick(true), 6000); setInterval(()=>mcBadgeTick(), 100e3);
+</script>
+
+<style id="mcsBzFind252">
+/* MCS0911MO252 (مالک کا حکم): پورٹل «🏪 کاروبار» — پہلے سے درج کاروبار کی تلاش (فلٹر)، کارڈ، ممبرشپ مکمل؛ ⏳ نامکمل / زیر کام؛ ✅ چالو شدہ کاروبار */
+.bzf-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+.bzf-grid input,.bzf-grid select{width:100%;min-height:40px;border:1.5px solid #cbd5e1;border-radius:10px;padding:6px 10px;font:inherit;font-size:14px;background:#fff}
+.bzf-grid .w2{grid-column:1/-1}
+.bzf-cnt{font-size:12.5px;color:#475569;margin:4px 2px}
+.bzc{border:2px solid #e2e8f0;border-radius:16px;padding:10px 12px;margin:8px 0;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.bzc.basic{border-color:#fecaca}.bzc.reg{border-color:#fde68a}.bzc.live{border-color:#bbf7d0}
+.bzc .h{display:flex;gap:10px;align-items:center}.bzc .ic{width:46px;height:46px;border-radius:12px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:24px;flex:none;overflow:hidden}.bzc .ic img{width:100%;height:100%;object-fit:cover}
+.bzc .h b{display:block;font-size:16px}.bzc .h small{display:block;color:#475569;font-size:12.5px;line-height:1.7}
+.bzc .r{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.bzc .r button,.bzc .r a{flex:1 1 auto;border:0;border-radius:10px;padding:8px 9px;font:inherit;font-weight:800;font-size:13px;cursor:pointer;background:#f1f5f9;color:#0f172a;text-align:center;text-decoration:none}
+.bzc .r .p{background:#1d4ed8;color:#fff}.bzc .r .g{background:#16a34a;color:#fff}.bzc .r .x{background:#fee2e2;color:#991b1b;flex:0 0 auto}
+.bz-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}.bz-sum div{background:#f1f5f9;border-radius:12px;padding:8px 4px;text-align:center;font-size:12px}.bz-sum b{display:block;font-size:20px}
+.bz-sum .g{background:#dcfce7;color:#166534}.bz-sum .o{background:#fef3c7;color:#92400e}
+.bz-big.f{background:linear-gradient(180deg,#8b5cf6,#6d28d9)}.bz-big.w{background:linear-gradient(180deg,#fb923c,#c2410c)}.bz-big.l{background:linear-gradient(180deg,#10b981,#047857)}
+.bz-big .nb{float:left;background:#fff;color:#0f172a;border-radius:99px;padding:0 10px;font-size:14px}
+</style>
+<script>
+/* ===== MCS0911MO252 (مالک کا حکم) =====
+   ڈویلپر / کو-ڈویلپر / ایجنٹ کے پورٹل کا «🏪 کاروبار»:
+   🔍 پہلے سے درج کاروبار تلاش کریں (نام، موبائل، علاقہ، شہر، ضلع، قسم، حالت) → کارڈ → «⭐ ممبرشپ مکمل کریں» (رجسٹریشن باقی ہو تو پہلے رجسٹریشن)
+   ⏳ نامکمل / زیر کام: جس پر کام شروع کیا (`mcsBzWork` — اسی فون پر) + اپنے ریفرل والے جو ابھی چالو نہیں؛ «✖ ہٹائیں» سے فہرست سے باہر
+   ✅ چالو شدہ کاروبار: اپنے ریفرل والے (ڈویلپر کو سب) — سالانہ / ٹرائل، کتنے دن باقی */
+const BZ_WORK_K = 'mcsBzWork';
+function bzWorkGet(){ try{ return JSON.parse(localStorage.getItem(BZ_WORK_K) || '[]') || []; }catch(e){ return []; } }
+function bzWorkSet(a){ try{ localStorage.setItem(BZ_WORK_K, JSON.stringify(a.slice(0, 300))); }catch(e){} }
+function bzWorkAdd(x){ const a = bzWorkGet().filter(w => !(w.kind === x.kind && String(w.id) === String(x.rec.id))); a.unshift({kind: x.kind, id: x.rec.id, at: Date.now()}); bzWorkSet(a); }
+function bzWorkDel(kind, id){ bzWorkSet(bzWorkGet().filter(w => !(w.kind === kind && String(w.id) === String(id)))); }
+function bzInfo(x){ try{ return apInfo(x); }catch(e){ return {mode:'none', left:null}; } }
+function bzMine(x){ const ref = bzRef(), r = (x.rec.more && x.rec.more.ref) || ''; if(bzRole() === 'dev') return true; return !!ref && agNormCode(r) === agNormCode(ref); }
+function bzIsLive(x){ const i = bzInfo(x); return (i.mode === 'paid' || i.mode === 'free') && i.left > 0; }
+function bzSets(){
+  const all = (window._bzAll = bzAll()); all.forEach(x => { x.st = bzStage(x); });
+  const W = bzWorkGet(), key = x => x.kind + ':' + x.rec.id, wk = new Set(W.map(w => w.kind + ':' + w.id));
+  const work = all.filter(x => (wk.has(key(x)) || (bzRole() !== 'dev' && bzMine(x))) && !(bzInfo(x).mode === 'paid' && bzInfo(x).left > 0));
+  work.sort((a, b) => { const t = x => (W.find(w => w.kind + ':' + w.id === key(x)) || {}).at || 0; return t(b) - t(a); });
+  const live = all.filter(x => bzIsLive(x) && (bzRole() === 'dev' ? true : bzMine(x)));
+  live.sort((a, b) => (bzInfo(a).left || 0) - (bzInfo(b).left || 0));
+  return {all, work, live};
+}
+async function bzHubOpen(){
+  const r = bzRole(); if(!r){ showToast('یہ حصہ ڈویلپر / کو-ڈویلپر / ایجنٹ کے لیے ہے'); return; }
+  agModal('<div class="ag-st">⏳ کاروبار آ رہے ہیں…</div>');
+  try{ await pfLoadList(); }catch(e){}
+  const S = bzSets(), ref = bzRef(), paid = S.live.filter(x => bzInfo(x).mode === 'paid').length, free = S.live.length - paid;
+  agModal(`<div class="ag-hd">🏪 کاروبار <small>${r === 'dev' ? 'ڈویلپر' : r === 'codev' ? 'کو-ڈویلپر' : 'ایجنٹ'} — تلاش، ممبرشپ مکمل، زیر کام، چالو شدہ</small></div>
+    ${ref ? `<div class="bz-ref">🤝 جو کاروبار آپ یہاں سے مکمل کریں گے اس میں آپ کا ریفرل کوڈ <b dir="ltr">${escapeHtml(ref)}</b> خود لگ جائے گا</div>` : ''}
+    <button type="button" class="bz-big f" onclick="bzFindOpen()">🔍 پہلے سے درج کاروبار تلاش کریں<small>نام، موبائل، علاقہ، شہر، ضلع، قسم — کارڈ سے سیدھا ممبرشپ مکمل کریں</small></button>
+    <button type="button" class="bz-big w" onclick="bzWorkOpen()"><span class="nb">${S.work.length}</span>⏳ نامکمل / زیر کام کاروبار<small>جن پر کام شروع کیا یا ممبرشپ ابھی باقی — یہیں سے جاری رکھیں</small></button>
+    <button type="button" class="bz-big l" onclick="bzLiveOpen()"><span class="nb">${S.live.length}</span>✅ چالو شدہ کاروبار<small>سالانہ ${paid} · ٹرائل ${free} — کتنے دن باقی</small></button>
+    <button type="button" class="bz-big n" onclick="bzNew()">➕ نیا کاروبار / پروفیشن بنائیں<small>جو ابھی ایپ میں بالکل نہیں</small></button>
+    ${r !== 'agent' ? `<button type="button" class="bz-big a" onclick="bzListOpen('ag')">🤝 ایجنٹ بنائیں<small>پہلے سے درج کاروبار میں سے چن کر — صرف شناختی کارڈ لکھیں</small></button>` : ''}
+    <button type="button" class="btn block secondary" style="margin-top:10px" onclick="closeModal('agModal')">بند کریں</button>`);
+}
+let bzF = {name:'', ph:'', area:'', city:'', dist:'', cat:'', st:'todo'}, bzCards = [];
+function bzOpts(vals, cur, first){ return `<option value="">${first}</option>` + [...new Set(vals.filter(v => v && !(typeof isBlankVal === 'function' && isBlankVal(v))))].sort((a, b) => String(a).localeCompare(String(b), 'ur')).map(v => `<option ${v === cur ? 'selected' : ''} value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join(''); }
+function bzCatName(x){ try{ return ubCatMeta(x.kind === 'doctor' ? 'doctor' : x.rec.category).ur || ''; }catch(e){ return ''; } }
+async function bzFindOpen(){
+  agModal('<div class="ag-st">⏳ کاروبار آ رہے ہیں…</div>');
+  try{ await pfLoadList(); }catch(e){}
+  const S = bzSets(), A = S.all;
+  const cats = [...new Set(A.map(bzCatName).filter(Boolean))];
+  agModal(`<div class="ag-hd">🔍 پہلے سے درج کاروبار <small>فلٹر لگائیں — کارڈ پر «⭐ ممبرشپ مکمل کریں»</small></div>
+    <div class="bzf-grid">
+      <input class="w2" type="search" placeholder="🏪 دکان / کاروبار یا مالک کا نام" value="${escapeAttr(bzF.name)}" oninput="bzF.name=this.value;bzFindFill()">
+      <input type="tel" inputmode="numeric" placeholder="📱 موبائل نمبر" value="${escapeAttr(bzF.ph)}" oninput="bzF.ph=this.value;bzFindFill()">
+      <input type="search" placeholder="📍 علاقہ / محلہ" value="${escapeAttr(bzF.area)}" oninput="bzF.area=this.value;bzFindFill()">
+      <select onchange="bzF.city=this.value;bzFindFill()">${bzOpts(A.map(x => x.rec.city), bzF.city, '🏙️ سب شہر')}</select>
+      <select onchange="bzF.dist=this.value;bzFindFill()">${bzOpts(A.map(x => x.rec.district), bzF.dist, '🗺️ سب ضلعے')}</select>
+      <select onchange="bzF.cat=this.value;bzFindFill()">${bzOpts(cats, bzF.cat, '🏷️ سب قسمیں')}</select>
+      <select onchange="bzF.st=this.value;bzFindFill()">${[['todo','⭐ جن کی ممبرشپ باقی'],['basic','📝 رجسٹریشن باقی'],['reg','⭐ رجسٹرڈ — ممبرشپ باقی'],['live','✅ فعال'],['all','سب']].map(o => `<option value="${o[0]}" ${bzF.st === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
+    </div>
+    <button type="button" class="btn block secondary" style="margin:2px 0 4px;padding:6px" onclick="bzF={name:'',ph:'',area:'',city:'',dist:'',cat:'',st:'todo'};bzFindOpen()">🔄 سب فلٹر صاف</button>
+    <div id="bzFList"></div>
+    <button type="button" class="btn block secondary" style="margin-top:8px" onclick="bzHubOpen()">← واپس</button>`);
+  bzFindFill();
+}
+function bzNorm(s){ return String(s || '').toLowerCase().replace(/[\s\-]/g, ''); }
+function bzDigits(s){ return String(s || '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g, ''); }
+function bzFindFill(){
+  const box = document.getElementById('bzFList'); if(!box) return;
+  let L = window._bzAll || [];
+  const n = bzNorm(bzF.name), ph = bzDigits(bzF.ph).replace(/^0/, '').replace(/^92/, ''), ar = bzNorm(bzF.area);
+  L = L.filter(x => {
+    const r = x.rec;
+    if(bzF.st === 'todo' && x.st === 'live') return false;
+    if(['basic', 'reg', 'live'].includes(bzF.st) && x.st !== bzF.st) return false;
+    if(n && !bzNorm([r.nameUr, r.name, r.nameEn, bzOwner(x)].join(' ')).includes(n)) return false;
+    if(ph && !bzDigits([r.whatsapp, r.phone, r.more && r.more.wa2].join(' ')).includes(ph)) return false;
+    if(ar && !bzNorm([r.area, r.address].join(' ')).includes(ar)) return false;
+    if(bzF.city && r.city !== bzF.city) return false;
+    if(bzF.dist && r.district !== bzF.dist) return false;
+    if(bzF.cat && bzCatName(x) !== bzF.cat) return false;
+    return true; });
+  const total = L.length; L = L.slice(0, 40);
+  box.innerHTML = `<div class="bzf-cnt">${total} کاروبار ملے${total > 40 ? ' — پہلے 40 (فلٹر لگا کر کم کریں)' : ''}</div>` + bzCardsHtml(L, 'find');
+}
+function bzCardsHtml(L, from){
+  bzCards = L; const E = escapeHtml, stL = {basic:'📝 رجسٹریشن باقی', reg:'⭐ ممبرشپ باقی', live:'✅ فعال'};
+  if(!L.length) return '<div class="cp-hint" style="text-align:center">کچھ نہیں ملا</div>';
+  return L.map((x, i) => { const r = x.rec, ph = String(r.whatsapp || r.phone || ''), own = bzOwner(x), inf = bzInfo(x), cat = bzCatName(x);
+    const img = '';
+    const days = inf.left != null ? (inf.left > 0 ? `${inf.mode === 'free' ? '🎁 ٹرائل' : '✅ سالانہ'} — ${inf.left} دن باقی` : '⛔ مدت ختم') : (inf.mode === 'pend' ? '⏳ منظوری کا انتظار' : '');
+    const live = x.st === 'live' && inf.mode === 'paid' && inf.left > 0;
+    return `<div class="bzc ${x.st}"><div class="h"><div class="ic">${img ? `<img src="${escapeAttr(img)}" alt="">` : (x.kind === 'doctor' ? '👔' : '🏪')}</div><div style="min-width:0;flex:1"><b>${E(r.nameUr || r.name || '')}</b>
+      <small>${E(cat)}${own ? ' · 👤 ' + E(own) : ''}${ph ? ' · 📱 <bdi dir="ltr">' + E(ph) + '</bdi>' : ''}</small>
+      <small>📍 ${E([r.area, r.city, r.district].filter(v => v && !(typeof isBlankVal === 'function' && isBlankVal(v))).join('، ') || '—')}</small>
+      <span class="bz-bd ${x.st}">${stL[x.st]}</span>${days ? ` <span class="bz-bd ${inf.left > 15 ? 'live' : 'reg'}">${days}</span>` : ''}${r.more && r.more.ref ? ` <span class="bz-bd" style="background:#ecfeff;color:#155e75">🤝 <bdi dir="ltr">${E(r.more.ref)}</bdi></span>` : ''}</div></div>
+      <div class="r">${live ? '' : `<button type="button" class="p" onclick="bzGo(${i})">⭐ ${x.st === 'basic' ? 'رجسٹریشن + ممبرشپ مکمل کریں' : 'ممبرشپ مکمل کریں'}</button>`}
+        ${bzRole() === 'dev' && x.st !== 'basic' ? `<button type="button" class="g" onclick="bzWorkAdd(bzCards[${i}]);bzRows=bzCards;bzDo(${i},'year')">⭐ ${x.st === 'live' ? 'ایک سال اور' : 'ایک سال دیں'}</button>` : ''}
+        <button type="button" onclick="bzRows=bzCards;bzDo(${i},'inv')">📨 لاگ اِن میسج</button>
+        ${ph ? `<a href="tel:0${bzDigits(ph).slice(-10)}">📞</a>` : ''}
+        ${from === 'work' ? `<button type="button" class="x" onclick="bzWorkDel('${x.kind}', ${JSON.stringify(String(r.id)).replace(/"/g, '&quot;')});bzWorkOpen()" title="فہرست سے ہٹائیں">✖ ہٹائیں</button>` : ''}</div></div>`; }).join('');
+}
+/* ⭐ ممبرشپ مکمل کریں: زیر کام فہرست میں ڈالیں؛ رجسٹریشن باقی ہو تو رجسٹریشن فارم، ورنہ ڈویلپر = ایک سال، باقی = ڈویلپر کو درخواست */
+function bzGo(i){ const x = bzCards[i]; if(!x) return; bzWorkAdd(x); bzRows = bzCards;
+  if(x.st === 'basic') return bzDo(i, 'reg');
+  return bzDo(i, bzRole() === 'dev' ? 'year' : 'yreq'); }
+async function bzWorkOpen(){
+  agModal('<div class="ag-st">⏳</div>'); try{ await pfLoadList(); }catch(e){}
+  const S = bzSets();
+  agModal(`<div class="ag-hd">⏳ نامکمل / زیر کام کاروبار <small>جن پر کام شروع کیا (اسی فون پر) یا آپ کے ریفرل والے جن کی سالانہ ممبرشپ ابھی باقی</small></div>
+    <div id="bzWList">${bzCardsHtml(S.work, 'work')}</div>
+    <div class="cp-hint">«✖ ہٹائیں» صرف اس فہرست سے ہٹاتا ہے — کاروبار ایپ میں ویسا ہی رہتا ہے۔</div>
+    <button type="button" class="btn block secondary" style="margin-top:8px" onclick="bzHubOpen()">← واپس</button>`);
+}
+async function bzLiveOpen(){
+  agModal('<div class="ag-st">⏳</div>'); try{ await pfLoadList(); }catch(e){}
+  const S = bzSets(), L = S.live, paid = L.filter(x => bzInfo(x).mode === 'paid'), free = L.filter(x => bzInfo(x).mode === 'free'), soon = L.filter(x => (bzInfo(x).left || 0) <= 15);
+  agModal(`<div class="ag-hd">✅ چالو شدہ کاروبار <small>${bzRole() === 'dev' ? 'سب کاروبار' : 'میرے ریفرل والے کاروبار'}</small></div>
+    <div class="bz-sum"><div class="g"><b>${paid.length}</b>⭐ سالانہ ممبرشپ</div><div class="o"><b>${free.length}</b>🎁 ٹرائل پر</div><div><b>${soon.length}</b>⏰ 15 دن سے کم</div></div>
+    ${bzCardsHtml(L, 'live')}
+    <button type="button" class="btn block secondary" style="margin-top:8px" onclick="bzHubOpen()">← واپس</button>`);
+}
 </script>
 </body>
 </html>
