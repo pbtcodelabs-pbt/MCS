@@ -3302,6 +3302,7 @@ body.cdOn{padding-top:30px}
       <div class="field"><label>✉️ ای میل</label><input type="email" id="svcEmail" maxlength="80" dir="ltr" placeholder="Email — name@gmail.com"></div>
       <div class="field"><label>🗺️ گوگل میپ لوکیشن</label><input type="text" id="svcMap" maxlength="300" dir="ltr" placeholder="Google Map link — یا نیچے 📍 دبائیں"></div>
       <button type="button" class="fm-geo" onclick="svcMapHere()">📍 میری موجودہ جگہ لگائیں <small>(دکان پر کھڑے ہو کر)</small></button>
+      <button type="button" class="fm-geo" id="svcMapChat" style="display:none;background:#e0f2fe;color:#075985" onclick="mcLocPasteForm()">💬 چیٹ میں آئی لوکیشن یہاں لگائیں <small id="svcMapChatSub"></small></button>
     </details>
     <!-- MCS0311TU125: ⭐ ممبرشپ — اسی ریکارڈ کا دوسرا حصہ (الگ انٹری نہیں)؛ بھرنے کے دن سے 7 دن مفت، پھر سبسکرپشن -->
     <details class="fm-more fm-pf" id="svcPfBox">
@@ -4164,10 +4165,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO256";
+const APP_VERSION = "MCS0911MO257";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO257": "📍 چیٹ میں لوکیشن بھیجیں / منگوائیں • 💬 چیٹ کی فہرست واٹس ایپ جیسی — بائیں گول تصویر",
   "MCS0911MO256": "💬 چیٹ کا لکھنے کا خانہ بالکل واٹس ایپ جیسا: 🖼️ گیلری، 📎، 📷، نیلا 🎤 (دبائے رکھ کر آواز) جو لکھتے ہی ➤",
   "MCS0911MO255": "💬 چیٹ واٹس ایپ جیسی: 📎 کیمرہ / گیلری / فائل، الگ 🎤، ➕ نئی چیٹ، تلاش، ڈویلپر / کو-ڈویلپر ٹیب",
   "MCS0911MO254": "🧭 نیچے کی نئی پٹی (Chats، Portal، Home، Account، Settings) • 💬 چیٹ میں گول تصویریں • 📊 سرور کا استعمال (ڈویلپر)",
@@ -14741,7 +14743,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO256" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO257" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16510,8 +16512,8 @@ async function mcLoadList(local){
   const rows = (staff && mcTab !== 'all' ? mcList.filter(x=>x.k === mcTab) : mcList).filter(x => !q || [x.title, x.sub, x.lt].join(' ').toLowerCase().includes(q));
   L.innerHTML = tabs + (rows.length ? rows.map((x, i)=>{ const ix = mcList.indexOf(x);
       const av0 = x.k === 'pbt' ? 'PBT' : x.k === 'agent' ? '🤝' : x.k === 'biz' ? '🏪' : x.k === 'cd' ? (x.title.indexOf('👨‍💻') === 0 ? '👨‍💻' : '👥') : '👤';
-      const av = x.av && mcAvs[x.av] ? `<img src="${mcAvs[x.av]}" alt="">` : av0;
-      return `<div class="mc-row ${x.k === 'pbt' ? 'pbt' : ''} ${x.off ? 'off' : ''}" ${x.off ? '' : `onclick="mcGo(${ix})"`}><div class="mc-av">${av}</div><div class="mc-mid"><b>${escapeHtml(x.title||'')}</b><small>${escapeHtml(x.lt ? (x.mine ? '✓ ' : '') + x.lt : (x.sub||''))}</small></div><div style="text-align:center">${x.last ? `<div class="mc-tm">${mcTime(x.last)}</div>` : ''}${x.nw ? `<div class="mc-nw">${x.nw}</div>` : ''}</div></div>`; }).join('')
+      const av = x.av && mcAvs[x.av] ? `<img src="${mcAvs[x.av]}" alt="">` : mcInitAv(x, av0);
+      return `<div class="mc-row wa ${x.k === 'pbt' ? 'pbt' : ''} ${x.off ? 'off' : ''} ${x.nw ? 'unread' : ''}" ${x.off ? '' : `onclick="mcGo(${ix})"`}><div class="mc-av">${av}</div><div class="mc-mid"><div class="l1"><b dir="auto">${escapeHtml(String(x.title||'').replace(/^🤝\s*/, ''))}</b>${x.last ? `<span class="mc-tm">${mcTime(x.last)}</span>` : ''}</div><div class="l2"><small dir="auto">${x.lt && x.mine ? '<i class="tk">✓✓</i>' : ''}${escapeHtml(x.lt || (x.sub||''))}</small>${x.nw ? `<span class="mc-nw">${x.nw}</span>` : ''}</div></div></div>`; }).join('')
     : `<div class="mc-empty">ابھی کوئی چیٹ نہیں۔</div>`)
     + (!staff ? `<div class="mc-empty" style="padding:8px">🔒 آپ کی چیٹ صرف آپ اور PBT Code Labs${mcWho() && mcWho().as === 'agent' ? ' / آپ کے کاروبار والے' : ''} دیکھ سکتے ہیں</div>` : '');
 }
@@ -16531,7 +16533,7 @@ async function mcLoadThread(quiet, send){
   if(!(quiet && r.msgs.length === mcLastN)){
     mcLastN = r.msgs.length;
     mcMsgs = r.msgs; const W = mcWho() || {}, staff = W.as === 'dev' || W.as === 'cd'; Object.assign(mcAvs, r.avs || {});
-    M.innerHTML = r.msgs.length ? r.msgs.map((m, mi)=>`${!m.mine && m.av && mcAvs[m.av] ? `<div class="mc-row2"><img class="mc-dp" src="${mcAvs[m.av]}" alt="">` : ''}<div class="mc-b ${m.mine ? 'me' : ''}${staff ? ' fw' : ''}" ${staff ? `onclick="mcFwdToggle(this, ${mi}, event)"` : ''}>${m.mine ? '' : `<span class="nm">${escapeHtml(m.who === 'agent' && mcTh.k === 'agent' ? '🤝 ' + mcTh.title.replace(/^🤝\s*/, '') : (m.who === 'user' && (mcTh.k === 'biz' || mcTh.k === 'user') ? mcTh.title.replace(/^🤝.*↔\s*/, '') : (m.name || '')))}</span>`}${m.img ? `<img src="${m.img}" alt="" onclick="window.open(this.src)">` : ''}${m.audio ? `<audio controls src="${m.audio}"></audio>` : ''}${m.file ? `<a class="mc-file" href="${m.file}" download="${escapeAttr(m.fname || 'file')}" onclick="event.stopPropagation()"><i>📄</i><span>${escapeHtml(m.fname || 'فائل')}</span><b>⬇️</b></a>` : ''}${m.text ? escapeHtml(m.text) : ''}<span class="t">${mcTime(m.ts)}</span></div>${!m.mine && m.av && mcAvs[m.av] ? '</div>' : ''}`).join('')
+    M.innerHTML = r.msgs.length ? r.msgs.map((m, mi)=>`${!m.mine && m.av && mcAvs[m.av] ? `<div class="mc-row2"><img class="mc-dp" src="${mcAvs[m.av]}" alt="">` : ''}<div class="mc-b ${m.mine ? 'me' : ''}${staff ? ' fw' : ''}" ${staff ? `onclick="mcFwdToggle(this, ${mi}, event)"` : ''}>${m.mine ? '' : `<span class="nm">${escapeHtml(m.who === 'agent' && mcTh.k === 'agent' ? '🤝 ' + mcTh.title.replace(/^🤝\s*/, '') : (m.who === 'user' && (mcTh.k === 'biz' || mcTh.k === 'user') ? mcTh.title.replace(/^🤝.*↔\s*/, '') : (m.name || '')))}</span>`}${m.img ? `<img src="${m.img}" alt="" onclick="window.open(this.src)">` : ''}${m.audio ? `<audio controls src="${m.audio}"></audio>` : ''}${m.file ? `<a class="mc-file" href="${m.file}" download="${escapeAttr(m.fname || 'file')}" onclick="event.stopPropagation()"><i>📄</i><span>${escapeHtml(m.fname || 'فائل')}</span><b>⬇️</b></a>` : ''}${m.text ? mcTextHtml(m.text) : ''}<span class="t">${mcTime(m.ts)}</span></div>${!m.mine && m.av && mcAvs[m.av] ? '</div>' : ''}`).join('')
       : `<div class="mc-empty">👋 السلام علیکم! اپنا سوال، مسئلہ یا مشورہ یہاں لکھیں — PBT Code Labs جلد جواب دے گا۔</div>`;
     if(atEnd || !quiet || send) M.scrollTop = M.scrollHeight;
   }
@@ -16539,7 +16541,7 @@ async function mcLoadThread(quiet, send){
   if(I && !I.dataset.on){ I.dataset.on = 1;
     I.innerHTML = r.w ? `<div class="mc-att" id="mcAtt" hidden><button type="button" onclick="mcAttPick('cam')"><i class="c1">📷</i>کیمرہ</button><button type="button" onclick="mcAttPick('gal')"><i class="c2">🖼️</i>گیلری</button><button type="button" onclick="mcAttPick('file')"><i class="c3">📄</i>فائل</button></div>`
       + `<input type="file" id="mcCam" accept="image/*" capture="environment" hidden onchange="mcImg(this)"><input type="file" id="mcGal" accept="image/*" hidden onchange="mcImg(this)"><input type="file" id="mcDoc" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.zip,.ppt,.pptx,application/*,text/*" hidden onchange="mcDocPick(this)">`
-      + `<div class="mc-wa" id="mcWa"><div class="mc-pill"><button type="button" class="pi gal" onclick="mcAttPick('gal')" aria-label="گیلری"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg></button><textarea id="mcT" rows="1" placeholder="Message" dir="auto" onpaste="mcPaste(event)" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';mcSndIcon()"></textarea><button type="button" class="pi clip" onclick="mcAttToggle()" aria-label="لگائیں"><svg viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2"/></svg></button><button type="button" class="pi cam" id="mcCamBtn" onclick="mcAttPick('cam')" aria-label="کیمرہ"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.3" r="3.6"/></svg></button></div><button type="button" class="mc-act" id="mcAct" aria-label="آواز / بھیجیں"><svg class="i-mic" viewBox="0 0 24 24"><path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V5.5a3.5 3.5 0 0 0-7 0V11a3.5 3.5 0 0 0 3.5 3.5z" fill="#fff"/><path d="M18.5 11a6.5 6.5 0 0 1-13 0M12 17.5V21" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><svg class="i-snd" viewBox="0 0 24 24"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.9.9 0 0 0-1.3 1L4 11l9 1-9 1-1.9 6.4a.9.9 0 0 0 1.3 1z" fill="#fff"/></svg></button></div>`
+      + `<div class="mc-wa" id="mcWa"><div class="mc-pill"><button type="button" class="pi loc" onclick="mcLocOpen()" aria-label="لوکیشن"><svg viewBox="0 0 24 24"><path d="M12 21.5s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z"/><circle cx="12" cy="9.5" r="2.6"/></svg></button><textarea id="mcT" rows="1" placeholder="Message" dir="auto" onpaste="mcPaste(event)" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';mcSndIcon()"></textarea><button type="button" class="pi clip" onclick="mcAttToggle()" aria-label="لگائیں"><svg viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2"/></svg></button><button type="button" class="pi cam" id="mcCamBtn" onclick="mcAttPick('cam')" aria-label="کیمرہ"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.3" r="3.6"/></svg></button></div><button type="button" class="mc-act" id="mcAct" aria-label="آواز / بھیجیں"><svg class="i-mic" viewBox="0 0 24 24"><path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V5.5a3.5 3.5 0 0 0-7 0V11a3.5 3.5 0 0 0 3.5 3.5z" fill="#fff"/><path d="M18.5 11a6.5 6.5 0 0 1-13 0M12 17.5V21" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><svg class="i-snd" viewBox="0 0 24 24"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.9.9 0 0 0-1.3 1L4 11l9 1-9 1-1.9 6.4a.9.9 0 0 0 1.3 1z" fill="#fff"/></svg></button></div>`
       + `<div class="mc-rec" id="mcRec" hidden><span class="dot"></span><b id="mcRecT">0:00</b><span class="sl">‹ منسوخ کرنے کے لیے بائیں سرکائیں</span><button type="button" class="x" onclick="mcRecStop(true)" aria-label="منسوخ">🗑️</button></div>`
       : `<div class="mc-ro">👁️ یہ چیٹ صرف دیکھنے کے لیے ہے (ایجنٹ اور اس کے کاروبار والے کے درمیان)</div>`; }
   mcBadgeTick(); return true;
@@ -16990,6 +16992,83 @@ function mcSndIcon(){ const t = document.getElementById('mcT'), a = document.get
   };
   document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up);
 })();
+</script>
+
+<style id="mcsChat257">
+.mc-pill .loc svg{stroke:#e53935}
+.mc-loc{display:block;border-radius:12px;overflow:hidden;background:#e8f5e9;border:1px solid #c8e6c9;margin:2px 0;min-width:210px}
+.mc-loc .mp{height:90px;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,#c8e6c9,#a5d6a7)}
+.mc-loc .ll{font:12px Arial,sans-serif;color:#33691e;direction:ltr;text-align:center;padding:4px}
+.mc-loc .bt{display:flex;gap:4px;padding:6px}.mc-loc .bt a,.mc-loc .bt button{flex:1;border:none;border-radius:8px;padding:7px 4px;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;background:#fff;color:#1b5e20}
+.mc-locsh{position:absolute;left:6px;right:62px;bottom:62px;background:#fff;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.2);padding:8px;z-index:3;display:flex;flex-direction:column;gap:6px}
+.mc-locsh button{border:none;border-radius:12px;padding:12px;font:inherit;font-size:15px;font-weight:800;cursor:pointer;background:#f1f5f9;text-align:right}
+.mc-locsh button.p{background:#e53935;color:#fff}
+</style>
+<script>
+/* ===== MCS0911MO257 (ہیلپ ڈیسک #171، مالک کا حکم): 📍 لوکیشن — واٹس ایپ پٹی میں 🖼️ کی جگہ (گیلری 📎 میں ویسی)؛
+   «📍 اپنی موجودہ لوکیشن بھیجیں» (GPS → https://maps.google.com/?q=lat,lng — یہی شکل کاروبار کے فارم `svcMap` کی)؛ عملے کو «🙏 لوکیشن منگوائیں» (تیار پیغام)؛
+   آئی لوکیشن کارڈ: 🗺️ نقشے میں کھولیں، 📋 لنک کاپی (`mcsLastLoc` میں بھی)؛ کاروبار کے فارم میں «💬 چیٹ میں آئی لوکیشن یہاں لگائیں» (`mcLocPasteForm`) */
+const MC_LOC_RX = /https:\/\/maps\.google\.com\/\?q=(-?\d{1,3}\.\d+),(-?\d{1,3}\.\d+)/;
+function mcTextHtml(t){
+  const m = MC_LOC_RX.exec(t || ''); if(!m) return escapeHtml(t);
+  const url = m[0], rest = String(t).replace(url, '').replace(/📍\s*(میری|میرے کاروبار کی)?\s*لوکیشن[:：]?/, '').trim();
+  return `<span class="mc-loc"><span class="mp">📍</span><span class="ll">${m[1]}, ${m[2]}</span><span class="bt"><a href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🗺️ نقشہ</a><button type="button" onclick="event.stopPropagation();mcLocCopy('${url}')">📋 کاپی</button></span></span>${rest ? escapeHtml(rest) : ''}`;
+}
+function mcLocCopy(url){ try{ localStorage.setItem('mcsLastLoc', JSON.stringify({url, at: Date.now(), from: (mcTh && mcTh.title) || ''})); }catch(e){}
+  try{ navigator.clipboard.writeText(url).then(() => showToast('📋 لوکیشن کاپی — کاروبار کے فارم میں «🗺️ گوگل میپ لوکیشن» میں پیسٹ کریں'), () => prompt('کاپی کریں', url)); }catch(e){ prompt('کاپی کریں', url); } }
+function mcLocOpen(){
+  const old = document.getElementById('mcLocSh'); if(old){ old.remove(); return; }
+  const W = mcWho() || {}, staff = W.as === 'dev' || W.as === 'cd', I = document.getElementById('mcIn'); if(!I) return;
+  const d = document.createElement('div'); d.className = 'mc-locsh'; d.id = 'mcLocSh';
+  d.innerHTML = `<button type="button" class="p" onclick="mcLocSend()">📍 اپنی موجودہ لوکیشن بھیجیں</button>${staff ? `<button type="button" onclick="mcLocAsk()">🙏 لوکیشن منگوائیں — کاروبار پر کھڑے ہو کر بھیجیں</button>` : ''}<button type="button" onclick="document.getElementById('mcLocSh').remove()">✖ بند کریں</button>`;
+  I.appendChild(d);
+}
+function mcLocSend(){
+  const sh = document.getElementById('mcLocSh'); if(sh) sh.remove();
+  if(!navigator.geolocation){ showToast('⚠️ اس فون میں لوکیشن کی سہولت نہیں'); return; }
+  showToast('📍 لوکیشن معلوم ہو رہی ہے…');
+  navigator.geolocation.getCurrentPosition(async p => {
+    const url = 'https://maps.google.com/?q=' + p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6);
+    mcBusy = true; const ok = await mcLoadThread(false, {text: '📍 میری لوکیشن\n' + url}); mcBusy = false; if(!ok) showToast('⚠️ لوکیشن نہیں گئی — انٹرنیٹ دیکھیں');
+  }, () => showToast('⚠️ لوکیشن نہیں ملی — فون کی لوکیشن (GPS) آن کریں اور اجازت دیں', 4000), {enableHighAccuracy: true, timeout: 15000});
+}
+async function mcLocAsk(){ const sh = document.getElementById('mcLocSh'); if(sh) sh.remove();
+  mcBusy = true; await mcLoadThread(false, {text: '📍 براہ کرم اپنے کاروبار / دکان کی لوکیشن بھیجیں — دکان پر کھڑے ہو کر نیچے 📍 بٹن دبائیں اور «اپنی موجودہ لوکیشن بھیجیں»۔ شکریہ'}); mcBusy = false; }
+function mcLocPasteForm(){ let L = null; try{ L = JSON.parse(localStorage.getItem('mcsLastLoc') || 'null'); }catch(e){}
+  const f = document.getElementById('svcMap'); if(!L || !f) return; f.value = L.url; f.dispatchEvent(new Event('input', {bubbles: true})); showToast('✅ چیٹ والی لوکیشن لگ گئی' + (L.from ? ' (' + L.from + ')' : '')); }
+setInterval(() => { try{ const b = document.getElementById('svcMapChat'); if(!b) return; const L = JSON.parse(localStorage.getItem('mcsLastLoc') || 'null'); const ok = L && Date.now() - L.at < 7 * 864e5;
+  b.style.display = ok ? '' : 'none'; if(ok){ const s2 = document.getElementById('svcMapChatSub'); if(s2) s2.textContent = '(' + (L.from || '') + ')'; } }catch(e){} }, 1500);
+</script>
+
+<style id="mcsChatList257">
+/* MCS0911MO257 (مالک کا حکم، واٹس ایپ کی تصویر): چیٹ کی فہرست واٹس ایپ جیسی — بائیں بڑی گول تصویر (DP)، اوپر نام + دائیں وقت، نیچے آخری پیغام (✓✓) + سبز گنتی؛ سفید صاف قطاریں */
+#mcModal .mc-list{background:#fff;padding:4px 0}
+#mcModal .mc-srch input{background:#f0f2f5;border:none;min-height:44px;font-size:15px}
+.mc-row.wa{direction:ltr;border:none;border-radius:0;margin:0;padding:10px 14px;gap:14px;background:#fff;align-items:center}
+.mc-row.wa:active{background:#f5f6f6}
+.mc-row.wa .mc-av{width:56px;height:56px;font-size:26px;flex:none;background:#dfe5e7}
+.mc-row.wa .mc-av img{width:56px;height:56px}
+.mc-row.wa .mc-mid{border-bottom:1px solid #eef0f1;padding-bottom:10px;min-width:0;flex:1}
+.mc-row.wa .l1,.mc-row.wa .l2{display:flex;align-items:center;gap:8px}
+.mc-row.wa .l1 b{flex:1;min-width:0;font-size:16.5px;color:#111b21;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.mc-row.wa .l2 small{flex:1;min-width:0;font-size:14px;color:#667781;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;margin-top:3px}
+.mc-row.wa .mc-tm{font-size:12px;color:#667781;flex:none}
+.mc-row.wa.unread .mc-tm{color:#25d366;font-weight:700}
+.mc-row.wa .mc-nw{background:#25d366;flex:none}
+.mc-row.wa .tk{font-style:normal;color:#53bdeb;margin-right:4px;font-size:12px;letter-spacing:-2px}
+.mc-ini{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 24px system-ui,Arial,sans-serif}
+.mc-row.wa.pbt .mc-av{background:#fff;border:1px solid #e2e8f0}
+.mc-row.wa.pbt .mc-av img{object-fit:contain;padding:4px;box-sizing:border-box}
+</style>
+<script>
+/* DP نہ ہو تو واٹس ایپ کی طرح نام کا پہلا حرف رنگین گول دائرے میں؛ PBT Code Labs = ایپ کا لوگو */
+function mcInitAv(x, fb){
+  if(x.k === 'pbt') return '<img src="icons/icon-192.png" alt="">';
+  const t = String(x.title || '').replace(/^[^\p{L}\p{N}]+/u, '').trim(); if(!t) return fb;
+  const cols = ['#e91e63','#9c27b0','#3f51b5','#03a9f4','#009688','#8bc34a','#ff9800','#795548','#607d8b','#f44336'];
+  let h = 0; for(const c of t) h = (h * 31 + c.charCodeAt(0)) | 0;
+  return `<span class="mc-ini" style="background:${cols[Math.abs(h) % cols.length]}">${escapeHtml(t[0].toUpperCase())}</span>`;
+}
 </script>
 </body>
 </html>
