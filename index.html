@@ -4164,10 +4164,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO255";
+const APP_VERSION = "MCS0911MO256";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO256": "💬 چیٹ کا لکھنے کا خانہ بالکل واٹس ایپ جیسا: 🖼️ گیلری، 📎، 📷، نیلا 🎤 (دبائے رکھ کر آواز) جو لکھتے ہی ➤",
   "MCS0911MO255": "💬 چیٹ واٹس ایپ جیسی: 📎 کیمرہ / گیلری / فائل، الگ 🎤، ➕ نئی چیٹ، تلاش، ڈویلپر / کو-ڈویلپر ٹیب",
   "MCS0911MO254": "🧭 نیچے کی نئی پٹی (Chats، Portal، Home، Account، Settings) • 💬 چیٹ میں گول تصویریں • 📊 سرور کا استعمال (ڈویلپر)",
   "MCS0911MO253": "💬 چیٹ میں 🎤 آواز کا پیغام، اسکرین شاٹ پیسٹ، ڈویلپر ↔ کو-ڈویلپر کی الگ چیٹ، پیغام Help Desk / Claude کو",
@@ -14740,7 +14741,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO255" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO256" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -16538,7 +16539,8 @@ async function mcLoadThread(quiet, send){
   if(I && !I.dataset.on){ I.dataset.on = 1;
     I.innerHTML = r.w ? `<div class="mc-att" id="mcAtt" hidden><button type="button" onclick="mcAttPick('cam')"><i class="c1">📷</i>کیمرہ</button><button type="button" onclick="mcAttPick('gal')"><i class="c2">🖼️</i>گیلری</button><button type="button" onclick="mcAttPick('file')"><i class="c3">📄</i>فائل</button></div>`
       + `<input type="file" id="mcCam" accept="image/*" capture="environment" hidden onchange="mcImg(this)"><input type="file" id="mcGal" accept="image/*" hidden onchange="mcImg(this)"><input type="file" id="mcDoc" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.zip,.ppt,.pptx,application/*,text/*" hidden onchange="mcDocPick(this)">`
-      + `<div class="mc-in"><button type="button" class="clip" onclick="mcAttToggle()" aria-label="لگائیں"><svg viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2"/></svg></button><textarea id="mcT" rows="1" placeholder="پیغام لکھیں… (اسکرین شاٹ یہاں پیسٹ کریں)" dir="auto" onpaste="mcPaste(event)" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';mcSndIcon()"></textarea><button type="button" class="mic" onclick="mcRecStart()" aria-label="آواز ریکارڈ کریں"><svg viewBox="0 0 24 24"><path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V5.5a3.5 3.5 0 0 0-7 0V11a3.5 3.5 0 0 0 3.5 3.5z"/><path d="M18.5 11a6.5 6.5 0 0 1-13 0M12 17.5V21M8.5 21h7" fill="none"/></svg></button><button type="button" class="snd" id="mcSnd" onclick="mcSend().then(mcSndIcon)" aria-label="بھیجیں"><svg viewBox="0 0 24 24"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.9.9 0 0 0-1.3 1L4 11l9 1-9 1-1.9 6.4a.9.9 0 0 0 1.3 1z"/></svg></button></div><div class="mc-rec" id="mcRec" hidden><button type="button" class="x" onclick="mcRecStop(true)">✖</button><span class="dot"></span><b id="mcRecT">0:00</b><span>آواز ریکارڈ ہو رہی ہے…</span><button type="button" class="ok" onclick="mcRecStop(false)">➤</button></div>`
+      + `<div class="mc-wa" id="mcWa"><div class="mc-pill"><button type="button" class="pi gal" onclick="mcAttPick('gal')" aria-label="گیلری"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg></button><textarea id="mcT" rows="1" placeholder="Message" dir="auto" onpaste="mcPaste(event)" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';mcSndIcon()"></textarea><button type="button" class="pi clip" onclick="mcAttToggle()" aria-label="لگائیں"><svg viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2"/></svg></button><button type="button" class="pi cam" id="mcCamBtn" onclick="mcAttPick('cam')" aria-label="کیمرہ"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.3" r="3.6"/></svg></button></div><button type="button" class="mc-act" id="mcAct" aria-label="آواز / بھیجیں"><svg class="i-mic" viewBox="0 0 24 24"><path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V5.5a3.5 3.5 0 0 0-7 0V11a3.5 3.5 0 0 0 3.5 3.5z" fill="#fff"/><path d="M18.5 11a6.5 6.5 0 0 1-13 0M12 17.5V21" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><svg class="i-snd" viewBox="0 0 24 24"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a.9.9 0 0 0-1.3 1L4 11l9 1-9 1-1.9 6.4a.9.9 0 0 0 1.3 1z" fill="#fff"/></svg></button></div>`
+      + `<div class="mc-rec" id="mcRec" hidden><span class="dot"></span><b id="mcRecT">0:00</b><span class="sl">‹ منسوخ کرنے کے لیے بائیں سرکائیں</span><button type="button" class="x" onclick="mcRecStop(true)" aria-label="منسوخ">🗑️</button></div>`
       : `<div class="mc-ro">👁️ یہ چیٹ صرف دیکھنے کے لیے ہے (ایجنٹ اور اس کے کاروبار والے کے درمیان)</div>`; }
   mcBadgeTick(); return true;
 }
@@ -16721,7 +16723,7 @@ const MC_CLAUDE = 'https://claude.ai/code/session_01RNzHHzEYnZigJB5pMdM5Te';
 function mcSndIcon(){ const b = document.getElementById('mcSnd'), t = document.getElementById('mcT'); if(b && t) b.textContent = t.value.trim() ? '➤' : '🎤'; }
 function mcSendOrMic(){ const t = document.getElementById('mcT'); if(t && t.value.trim()) return mcSend().then(mcSndIcon); mcRecStart(); }
 async function mcRecStart(){
-  if(mcRec) return;
+  if(mcRec) return; window._mcRecPend = '';
   if(!navigator.mediaDevices || !window.MediaRecorder){ showToast('⚠️ اس فون / براؤزر میں آواز ریکارڈ نہیں ہو سکتی'); return; }
   let st; try{ st = await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ showToast('🎤 مائیک کی اجازت دیں (فون کی سیٹنگ ← ایپس ← My City Shines ← اجازتیں)'); return; }
   const mt = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4', 'audio/webm'].find(t => { try{ return MediaRecorder.isTypeSupported(t); }catch(e){ return false; } }) || '';
@@ -16738,6 +16740,7 @@ async function mcRecStart(){
       mcBusy = true; const ok = await mcLoadThread(false, {audio: d}); mcBusy = false; if(!ok) showToast('⚠️ آواز نہیں گئی — انٹرنیٹ دیکھیں'); };
     fr.readAsDataURL(blob); };
   mr.start(250);
+  if(window._mcRecPend){ const pd = window._mcRecPend; window._mcRecPend = ''; setTimeout(() => mcRecStop(pd === 'cancel'), 50); }
   const box = document.getElementById('mcRec'); if(box) box.hidden = false;
   mcRec.tick = setInterval(() => { if(!mcRec) return; const s = Math.floor((Date.now() - mcRec.t0) / 1000); const e = document.getElementById('mcRecT'); if(e) e.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); if(s >= 60) mcRecStop(false); }, 250);
 }
@@ -16937,6 +16940,56 @@ function mcNewFill(){
       return `<div class="mc-row" onclick="mcGoObj(mcFind[${i}])"><div class="mc-av">${av}</div><div class="mc-mid"><b>${escapeHtml(x.title || '')}</b><small>${escapeHtml(x.sub || '')}</small></div><div class="mc-tm">💬</div></div>`; }).join('')
     : '<div class="mc-empty">کوئی نہیں ملا — صرف وہی صارف ملتے ہیں جن کا ایپ میں اکاؤنٹ ہے</div>';
 }
+</script>
+
+<style id="mcsChat256">
+/* MCS0911MO256 (مالک کا حکم، واٹس ایپ کی تصویر): نیچے کا خانہ بالکل واٹس ایپ جیسا — سفید گول پٹی (🖼️ گیلری | Message | 📎 | 📷) + باہر نیلا گول 🎤 جو لکھتے ہی ➤ */
+.mc-wa{display:flex;align-items:flex-end;gap:6px;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));background:transparent;direction:ltr}
+.mc-pill{flex:1;min-width:0;display:flex;align-items:flex-end;background:#fff;border-radius:26px;box-shadow:0 1px 2px rgba(0,0,0,.18);padding:2px 4px;min-height:50px}
+.mc-pill textarea{flex:1;min-width:0;border:none;outline:none;resize:none;background:transparent;font:inherit;font-size:17px;line-height:1.45;padding:12px 4px;max-height:120px;color:#111b21}
+.mc-pill textarea::placeholder{color:#8696a0;font-family:system-ui,Arial,sans-serif}
+.mc-pill .pi{flex:none;width:42px;height:46px;border:none;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.mc-pill .pi svg{width:24px;height:24px;fill:none;stroke:#54656f;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.mc-pill .clip svg{transform:rotate(45deg)}
+.mc-pill.typing .cam{display:none}
+.mc-act{flex:none;width:50px;height:50px;border-radius:50%;border:none;background:#1a73e8;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.25);touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .15s}
+.mc-act svg{width:24px;height:24px}.mc-act .i-snd{display:none;margin-left:3px}
+.mc-act.send .i-mic{display:none}.mc-act.send .i-snd{display:block}
+.mc-act.rec{transform:scale(1.35);background:#e53935}
+.mc-rec{direction:ltr}.mc-rec .sl{flex:1;text-align:center;font-size:13px;color:#667781}
+#mcIn{position:relative}#mcIn .mc-rec{position:absolute;left:6px;right:62px;bottom:calc(6px + env(safe-area-inset-bottom,0px));height:50px;border-radius:26px;background:#fff;border:none;box-shadow:0 1px 2px rgba(0,0,0,.18);padding:0 6px 0 14px;z-index:2}
+#mcIn .mc-rec .x{width:40px;height:40px;background:none;font-size:20px}
+#mcIn .mc-in{display:none}
+</style>
+<script>
+/* واٹس ایپ جیسا رویہ: خالی خانہ = 🎤 (دبائے رکھیں = ریکارڈ، چھوڑیں = بھیجیں، بائیں سرکائیں = منسوخ؛ صرف چھوا تو ہدایت)؛ کچھ لکھا = ➤ بھیجیں؛ لکھتے وقت 📷 چھپ جاتا ہے */
+function mcSndIcon(){ const t = document.getElementById('mcT'), a = document.getElementById('mcAct'), p = t && t.closest('.mc-pill'); const on = !!(t && t.value.trim()); if(a) a.classList.toggle('send', on); if(p) p.classList.toggle('typing', on); }
+(function(){
+  let st = null;
+  const isSend = () => { const a = document.getElementById('mcAct'); return a && a.classList.contains('send'); };
+  document.addEventListener('pointerdown', e => {
+    const a = e.target.closest && e.target.closest('#mcAct'); if(!a) return;
+    e.preventDefault();
+    if(isSend()){ mcSend().then(mcSndIcon); return; }
+    st = {x: e.clientX, t: Date.now(), started: false, id: e.pointerId};
+    try{ a.setPointerCapture(e.pointerId); }catch(_){}
+    st.timer = setTimeout(() => { if(!st) return; st.started = true; a.classList.add('rec'); mcRecStart(); }, 250);
+  });
+  document.addEventListener('pointermove', e => {
+    if(!st || !st.started) return; const dx = e.clientX - st.x;
+    const sl = document.querySelector('#mcRec .sl'); if(sl) sl.style.opacity = String(Math.max(.2, 1 + dx / 160));
+    if(dx < -110){ const a = document.getElementById('mcAct'); if(a) a.classList.remove('rec'); clearTimeout(st.timer); st = null; mcRecStop(true); showToast('🗑️ آواز منسوخ'); }
+  });
+  const up = e => {
+    if(!st) return; const s0 = st; st = null; clearTimeout(s0.timer);
+    const a = document.getElementById('mcAct'); if(a) a.classList.remove('rec');
+    if(!s0.started){ showToast('🎤 آواز ریکارڈ کرنے کے لیے بٹن دبائے رکھیں، چھوڑیں تو بھیج دی جائے گی'); return; }
+    if(!mcRec){ window._mcRecPend = Date.now() - s0.t < 900 ? 'cancel' : 'send'; if(window._mcRecPend === 'cancel') showToast('🎤 بہت چھوٹی — دبائے رکھ کر بولیں'); return; }
+    if(Date.now() - s0.t < 900){ mcRecStop(true); showToast('🎤 بہت چھوٹی — دبائے رکھ کر بولیں'); return; }
+    mcRecStop(false);
+  };
+  document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up);
+})();
 </script>
 </body>
 </html>
