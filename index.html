@@ -2949,6 +2949,7 @@ body.cdOn{padding-top:30px}
         <!-- بیوٹی پارلر فی الحال چھپا دیا گیا ہے — ضرورت پر یہ display:none ہٹا دیں، ڈیٹا/کوڈ محفوظ ہے -->
         <div class="cat-item" onclick="openServiceCategory('restaurant')"><span class="cat-count" id="catCount_restaurant">0</span><div class="emoji">🍽️</div><span>ہوٹل / ریسٹورنٹ</span></div>
         <div class="cat-item" onclick="openServiceCategory('otherShop')"><span class="cat-count" id="catCount_otherShop">0</span><div class="emoji">🏬</div><span>دیگر / جنرل سٹور</span></div>
+        <div class="cat-item" onclick="openServiceCategory('mcsAgent')"><span class="cat-count" id="catCount_mcsAgent">0</span><div class="emoji">🤝</div><span>MCS Agent</span></div>
         <span id="customCatTilesBusiness" style="display:contents;"></span>
       </div>
     </div>
@@ -4165,10 +4166,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO261";
+const APP_VERSION = "MCS0911MO262";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO262": "🤝 بزنس میں نئی کیٹگری «MCS Agent» — جن کا اپنا کاروبار نہیں وہ بھی اسی سے ممبرشپ بنا کر ایجنٹ بن سکتے ہیں",
   "MCS0911MO261": "🗑️ چیٹ / پیغام ہٹانا فون پر پکا: انگلی سے سرکائیں یا دبائے رکھیں • 🎤 آواز: اوپر سرکائیں تو ریکارڈنگ لاک، بہتر آواز؛ آواز کی رفتار − / +؛ چیٹ / پیغام بائیں دائیں سرکا کر ہٹائیں (سرخ پس منظر) • 📞 My Chats: ہر چیٹ کے اوپر اسی بندے کو کال / واٹس ایپ؛ اس کے نیچے الگ «📒 فون بک» (کوئی بھی نمبر چن کر کال / واٹس ایپ) اور «واٹس ایپ کھولیں» بٹن",
   "MCS0911MO257": "📍 چیٹ میں لوکیشن بھیجیں / منگوائیں • 💬 چیٹ کی فہرست واٹس ایپ جیسی — بائیں گول تصویر",
   "MCS0911MO256": "💬 چیٹ کا لکھنے کا خانہ بالکل واٹس ایپ جیسا: 🖼️ گیلری، 📎، 📷، نیلا 🎤 (دبائے رکھ کر آواز) جو لکھتے ہی ➤",
@@ -4266,7 +4268,8 @@ const CATEGORY_META = {
   autoParts:         {group:'business', emoji:'🚗', ur:'آٹو پارٹس',             nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً گاڑی / موٹر سائیکل)', listTitle:'آٹو پارٹس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
   beautyParlor:      {group:'business', emoji:'💇', ur:'بیوٹی پارلر / سیلون',   nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً مردانہ / زنانہ)', listTitle:'بیوٹی پارلرز کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
   restaurant:        {group:'business', emoji:'🍽️', ur:'ہوٹل / ریسٹورنٹ',     nameLabel:'دکان کا نام', typeLabel:'زمرہ (مثلاً فاسٹ فوڈ / دیسی کھانا)', listTitle:'ہوٹلز / ریسٹورنٹس کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
-  otherShop:         {group:'business', emoji:'🏬', ur:'دیگر / جنرل سٹور',      nameLabel:'دکان کا نام', typeLabel:'یہ دکان کس چیز کی ہے؟ (مثلاً گھڑیوں کی دکان، کٹلری، نائیوں کا سامان)', listTitle:'دیگر دکانوں کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'}
+  otherShop:         {group:'business', emoji:'🏬', ur:'دیگر / جنرل سٹور',      nameLabel:'دکان کا نام', typeLabel:'یہ دکان کس چیز کی ہے؟ (مثلاً گھڑیوں کی دکان، کٹلری، نائیوں کا سامان)', listTitle:'دیگر دکانوں کی فہرست', addBtn:'نئی دکان شامل کریں', addOptLabel:'نیا زمرہ'},
+  mcsAgent:          {group:'business', emoji:'🤝', ur:'MCS Agent (ایجنٹ)', nameLabel:'ایجنٹ کا نام', typeLabel:'کام کا علاقہ (مثلاً شہر / بازار)', listTitle:'MCS Agents کی فہرست', addBtn:'نیا MCS Agent شامل کریں', addOptLabel:'نیا علاقہ'},   /* MCS0911MO262 (مالک کا حکم): صرف ایجنٹ (اپنا کاروبار نہیں) — ریفرل کوڈ AG-001 */
 };
 const CATEGORY_KEYS = Object.keys(CATEGORY_META);
 const BUILT_IN_CATEGORY_KEYS = Object.keys(CATEGORY_META);
@@ -6843,7 +6846,7 @@ const MCS_PLAY_URL = 'https://play.google.com/store/apps/details?id=com.pbtcodel
    "request admin" message below. ---------- */
 const CATEGORY_CODE_MAP = { emergencyNumbers:'EMG', govOffices:'GOV', medicalStore:'MED', homeopathic:'HOM', testingLab:'LAB', plumberElectrician:'PLE',
   tuitionTeacher:'TUT', groceryStore:'GRO', clothesShop:'CLO', mobileElectronics:'MOB', hardwareStore:'HRD',
-  bakery:'BKY', jewelryShop:'JWL', furnitureShop:'FUR', autoParts:'ATP', beautyParlor:'BTY', restaurant:'RES', otherShop:'OTH' };
+  bakery:'BKY', jewelryShop:'JWL', furnitureShop:'FUR', autoParts:'ATP', beautyParlor:'BTY', restaurant:'RES', otherShop:'OTH', mcsAgent:'AGT' };
 function categoryCode(kind, category){
   if(kind==='doctor') return 'DR';
   return CATEGORY_CODE_MAP[category] || (category||'CAT').replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase() || 'CAT';
@@ -14744,7 +14747,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO257" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO262" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
