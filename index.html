@@ -3162,6 +3162,19 @@ body.cdOn{padding-top:30px}
 .ag-f label{display:block;font-weight:700;font-size:13px;margin:8px 0 3px}.ag-f label small{font-weight:600;opacity:.7}
 .ag-f input,.ag-f select,.ag-f textarea{width:100%;box-sizing:border-box;padding:9px 10px;border:1.5px solid #cbd5e1;border-radius:10px;font:inherit;font-size:15px;background:#fff}
 .ag-pics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+/* MCS0911MO264: MCS Agent Registration Form */
+.agx .agx-l{display:block;margin:9px 0 3px;font-weight:700;font-size:13.5px}
+.agx .agx-l span{font-weight:400;opacity:.75}.agx .agx-l i{color:#dc2626;font-style:normal}.agx .agx-l small{font-weight:400;opacity:.6;font-size:11px}
+.agx input{width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:15px;background:#fff}
+.agx input:focus{border-color:#0d9488;outline:none;box-shadow:0 0 0 3px rgba(13,148,136,.15)}
+.agx input.agx-bad{border-color:#dc2626;background:#fef2f2}
+.agx .ag-pic span b{font-size:11.5px;line-height:1.35}
+.agx-done{text-align:center;padding:10px 4px 14px}.agx-done b{display:block;font-size:22px;color:#047857;margin:4px 0 6px}
+.agx-done p{margin:6px 0;line-height:1.9;font-size:14px}.agx-tick{font-size:52px;line-height:1}
+.agx-st{display:inline-block;margin:6px auto;padding:4px 14px;border-radius:999px;font-size:13px;font-weight:700}
+.ag-box > #agBody > .agx-st, #agBody .agx-st{display:table;margin:6px auto}
+.agx-st.pend{background:#fef3c7;color:#92400e}.agx-st.ok{background:#d1fae5;color:#065f46}.agx-st.no{background:#fee2e2;color:#991b1b}
+@media (min-width:700px){#agBody .agx{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}#agBody .agx > *:not(.agx-f){grid-column:1/-1}#agBody .agx .ag-pics{max-width:420px;margin-inline:auto}}
 .ag-pic{position:relative;display:flex!important;align-items:center;justify-content:center;aspect-ratio:1;border:2px dashed #94a3b8;border-radius:12px;background:#f8fafc center/cover no-repeat;cursor:pointer;margin:0!important;text-align:center}
 .ag-pic input{display:none}.ag-pic span{font-size:22px;line-height:1.3}.ag-pic b{display:block;font-size:11px;font-weight:700}
 .ag-pic.has{border:2px solid #16a34a}
@@ -4164,10 +4177,11 @@ body.cdOn{padding-top:30px}
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO263";
+const APP_VERSION = "MCS0911MO264";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS0911MO264": "🤝 «Earn with MCS» دبائیں تو سیدھا MCS Agent Registration Form — سب خانے، سیلفی + شناختی کارڈ، درخواست بھیجیں، منظوری کا انتظار",
   "MCS0911MO263": "🔤 پوری ایپ میں ایک ہی انداز: انگریزی Segoe UI، اردو صرف جمیل نوری نستعلیق؛ رنگ (تھیم) اور فونٹ کے اختیارات ختم — صرف مونگیا تھیم",
   "MCS0911MO262": "🤝 بزنس میں نئی کیٹگری «MCS Agent» — جن کا اپنا کاروبار نہیں وہ بھی اسی سے ممبرشپ بنا کر ایجنٹ بن سکتے ہیں",
   "MCS0911MO261": "🗑️ چیٹ / پیغام ہٹانا فون پر پکا: انگلی سے سرکائیں یا دبائے رکھیں • 🎤 آواز: اوپر سرکائیں تو ریکارڈنگ لاک، بہتر آواز؛ آواز کی رفتار − / +؛ چیٹ / پیغام بائیں دائیں سرکا کر ہٹائیں (سرخ پس منظر) • 📞 My Chats: ہر چیٹ کے اوپر اسی بندے کو کال / واٹس ایپ؛ اس کے نیچے الگ «📒 فون بک» (کوئی بھی نمبر چن کر کال / واٹس ایپ) اور «واٹس ایپ کھولیں» بٹن",
@@ -11436,7 +11450,7 @@ function agStatusView(r){
   const E = s => escapeHtml(s||'');
   if(r.status === 'approved'){
     try{ const m0 = agMe(); if(m0 && r.code && m0.code !== r.code){ m0.code = r.code; localStorage.setItem('mcsAgent', JSON.stringify(m0)); } }catch(e){}   /* MCS0611FR170: پورٹل میں ریفرل کوڈ ایک دبانے سے */
-    agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><div class="ag-ok">✅ مبارک ہو ${E(r.name)}! آپ MCS ایجنٹ ہیں</div>
+    agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><span class="agx-st ok">✅ Approved — منظور</span><div class="ag-ok">✅ مبارک ہو ${E(r.name)}! آپ MCS ایجنٹ ہیں</div>
       <div class="ag-codeL">آپ کا ریفرل کوڈ</div><div class="ag-code" dir="ltr" style="font-size:24px" onclick="agCopy('${escapeAttr(r.code)}')">${E(r.code)} <small>📋</small></div>
       ${r.pin ? `<div class="ag-codeL">🔑 ایجنٹ پورٹل کا PIN — ڈویلپر کے دیے پورٹل میں موبائل نمبر کے ساتھ</div><div class="ag-code" dir="ltr" onclick="agCopy('${escapeAttr(r.pin)}')">${E(r.pin)} <small>📋</small></div>` : ''}
       ${r.docs === true ? (agDocsMark(false), '') : ''}${r.docs === false && agDocsDone() ? '<div class="cp-hint" style="text-align:center">✅ شناختی کارڈ اور سیلفی جمع ہو چکی ہیں</div>' : ''}${r.docs === false && !agDocsDone() ? `<div class="ag-docs">📷 <b>ایک کام باقی:</b> اپنا شناختی کارڈ نمبر، کارڈ کی دونوں طرف کی تصویر اور سیلفی لگائیں<button type="button" class="btn block" onclick="agDocsForm()">📷 ابھی لگائیں</button></div>` : ''}
@@ -11447,10 +11461,10 @@ function agStatusView(r){
     return;
   }
   if(r.status === 'rejected'){
-    agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><div class="ag-no">❌ آپ کی درخواست منظور نہیں ہوئی</div>${r.note ? `<div class="cp-hint">${E(r.note)}</div>` : ''}<button type="button" class="btn block" onclick="agForm()">📝 دوبارہ درخواست دیں</button>`);
+    agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><span class="agx-st no">❌ Rejected — رد</span><div class="ag-no">❌ آپ کی درخواست منظور نہیں ہوئی</div>${r.note ? `<div class="cp-hint">${E(r.note)}</div>` : ''}<button type="button" class="btn block" onclick="agEarnRetry()">📝 دوبارہ درخواست دیں</button>`);
     return;
   }
-  agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><div class="ag-wait">⏳ آپ کی درخواست ڈویلپر کی منظوری کے لیے پہنچ گئی ہے</div><div class="cp-hint">ریفرل کوڈ ابھی نہیں ملا — منظوری کے بعد ڈویلپر آپ کو تیار میسج بھیجیں گے، اسے لاگ اِن صفحے پر پیسٹ کریں، تب آپ ایجنٹ بن کر کاروبار درج کر سکیں گے۔</div><button type="button" class="btn block secondary" onclick="agForm()">✏️ درخواست میں تبدیلی</button>`);
+  agModal(`<div class="ag-hd">🤝 MCS ایجنٹ</div><span class="agx-st pend">⏳ Pending Approval — زیرِ غور</span><div class="ag-wait">⏳ آپ کی درخواست ڈویلپر کی منظوری کے لیے پہنچ گئی ہے</div><div class="cp-hint">ریفرل کوڈ ابھی نہیں ملا — منظوری کے بعد ڈویلپر آپ کو تیار میسج بھیجیں گے، اسے لاگ اِن صفحے پر پیسٹ کریں، تب آپ ایجنٹ بن کر کاروبار درج کر سکیں گے۔</div><button type="button" class="btn block secondary" onclick="agForm()">✏️ درخواست میں تبدیلی</button>`);
 }
 /* ===== MCS0611FR170 (مالک کا حکم): پانچ الگ پورٹل — ڈویلپر / کو-ڈویلپر / کاروبار / پروفیشن / عام یوزر =====
    فون اپنی حیثیت یاد رکھتا ہے: ایڈمن لاگ اِن، کو-ڈویلپر لاگ اِن، ممبرشپ (کاروبار / پروفیشن) اور یوزر اکاؤنٹ؛ اوپر کی پٹی دبائیں تو اپنا پورٹل کھلے */
@@ -11665,12 +11679,69 @@ function ewRib(kind, rec){
     return '<button type="button" class="ew-rb" aria-label="Earn with MCS" onclick="event.stopPropagation();agEarnOpen()"><span>Earn with MCS</span></button>';
   }catch(e){} return '';
 }
+/* MCS0911MO264 (ہیلپ ڈیسک #172، کو-ڈویلپر کی تجویز، مالک کی ⚡ منظوری): «Earn with MCS» سیدھا «MCS Agent Registration Form» — بٹن کا ڈیزائن ویسا، صرف کام بدلا۔
+   سب خانے لازمی؛ ایک وقت میں ایک ہی زیرِ غور درخواست (سرور `pending`)؛ منظوری صرف مالک (ڈویلپر پینل ← 🤝 ایجنٹ)، منظوری پر ریفرل کوڈ (کاروبار نہ ہو تو AG-001) + پورٹل PIN۔
+   ⚠️ پلے اسٹور: کمیشن / رقم / پورٹل کا لنک یہاں نہیں۔ شناختی کارڈ / تصویریں صرف ایڈمن دیکھتا ہے */
 function agEarnOpen(){
-  const a = agMe(), isAg = !!(a && a.phone && (a.pin || a.code));
-  agModal(`<div class="ag-hd">💰 Earn with MCS <small>MCS کے ساتھ جڑیں</small></div>
-    <div class="cp-hint" style="line-height:2">🤝 MCS ایجنٹ بن کر آپ اپنے علاقے کے دکانداروں اور ماہرین کے کاروبار ایپ پر درج کروا سکتے ہیں۔<br>ایجنٹ بننے کا طریقہ کار اور شرائط ڈویلپر خود آپ کو سمجھائیں گے۔ نیچے بٹن دبائیں، ڈویلپر آپ سے رابطہ کریں گے۔</div>
-    ${isAg ? `<button type="button" class="btn block" style="margin-bottom:6px" onclick="closeModal('agModal');ptOpen()">🤝 میرا ایجنٹ پورٹل کھولیں</button>` : ''}
-    <button type="button" class="btn block ag-send" onclick="agEarnAsk()">💬 ڈویلپر سے رابطہ کریں — میں ایجنٹ بننا چاہتا ہوں</button>`);
+  const a = agMe();
+  if(a && a.phone){ agOpen(); return; }   /* پہلے سے درخواست / ایجنٹ — حالت (Pending / Approved / Rejected) */
+  agFullForm();
+}
+function agFullForm(){
+  const u = (typeof uaMe === 'function' && uaMe() && uaMe().user) || {}, mine = (()=>{ try{ return mpListReal(); }catch(e){ return []; } })(), r0 = (mine[0] && mine[0].rec) || {};
+  const ph = String(u.mobile || u.phone || '').replace(/\D/g,''), ph0 = ph ? '0' + ph.replace(/^0/,'').replace(/^92/,'').slice(-10) : '';
+  const city = r0.city && !isBlankVal(r0.city) ? r0.city : '';
+  const cities = [...new Set((store.services||[]).map(r=>r.city).filter(c=>c && !isBlankVal(c)))].slice(0, 400).map(c=>`<option value="${escapeAttr(c)}">`).join('');
+  const F = (id, ic, en, ur, attrs, val) => `<div class="agx-f"><label class="agx-l" for="${id}">${ic} ${en} <span>${ur}</span> <i>*</i></label><input id="${id}" ${attrs||''} value="${escapeAttr(val||'')}"></div>`;
+  agModal(`<div class="ag-hd">🤝 MCS Agent Registration Form <small>MCS ایجنٹ رجسٹریشن فارم — سب خانے لازمی</small></div>
+    <div class="ag-f agx">
+      ${F('agxName','👤','Full Name','پورا نام','maxlength="80" autocomplete="name"', u.name)}
+      ${F('agxFather','👨','Father Name','والد کا نام','maxlength="80"')}
+      ${F('agxPhone','📱','Mobile / WhatsApp','موبائل / واٹس ایپ','inputmode="tel" dir="ltr" maxlength="16" placeholder="03001234567"', ph0)}
+      ${F('agxEmail','✉️','Email Address','ای میل','type="email" dir="ltr" maxlength="80" placeholder="name@gmail.com"', u.email)}
+      ${F('agxCnic','🪪','CNIC Number','شناختی کارڈ نمبر','inputmode="numeric" dir="ltr" maxlength="15" placeholder="00000-0000000-0" oninput="agCnicFmt(this)"')}
+      ${F('agxAddr','🏠','Complete Address','مکمل پتہ','maxlength="200"')}
+      ${F('agxCity','🏙️','City / District','شہر / ضلع','maxlength="60" list="agxCityList"', city)}<datalist id="agxCityList">${cities}</datalist>
+      <div class="agx-w"><label class="agx-l">📷 Photos <span>تصویریں</span> <i>*</i> <small>دبائیں — کیمرہ / گیلری</small></label>
+      <div class="ag-pics">
+        <div class="ag-pic" id="agP_selfie" onclick="agSelfieAsk()"><span>🤳<b>Selfie<br>سیلفی</b></span></div>
+        <label class="ag-pic" id="agP_front"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'front')"><span>🪪<b>CNIC Front<br>کارڈ سامنے</b></span></label>
+        <label class="ag-pic" id="agP_back"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'back')"><span>🪪<b>CNIC Back<br>کارڈ پیچھے</b></span></label>
+      </div></div>
+      <div class="ag-err" id="agErr"></div>
+      <button type="button" class="btn block ag-send" id="agSendBtn" onclick="agFullSend()">📨 Add Request for MCS Agent <small style="display:block;font-size:12px">ایجنٹ کی درخواست بھیجیں</small></button>
+      <div class="cp-hint" style="text-align:center">🔒 آپ کا شناختی کارڈ اور تصویریں صرف MCS انتظامیہ دیکھتی ہے۔ منظوری کے بعد آپ کو ریفرل کوڈ اور ایجنٹ ID ملے گی۔</div>
+      <button type="button" class="link-btn ag-have" onclick="agPinLogin()">🔑 میں پہلے سے ایجنٹ ہوں — موبائل اور PIN لکھیں</button>
+    </div>`);
+  ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); });
+}
+function agEarnRetry(){ try{ if(mpList().length && !codevOn()){ agForm(); return; } }catch(e){} agFullForm(); }
+async function agFullSend(){
+  if(codevBlock()) return;
+  const v = id => (document.getElementById(id).value||'').trim(), err = (t, id) => { document.getElementById('agErr').textContent = t; if(id){ const el = document.getElementById(id); if(el){ el.classList.add('agx-bad'); el.focus(); } } return false; };
+  document.querySelectorAll('.agx .agx-bad').forEach(x=>x.classList.remove('agx-bad'));
+  const phone = v('agxPhone').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g,''), cnic = v('agxCnic').replace(/\D/g,'');
+  if(v('agxName').length < 3) return err('⚠️ Full Name — پورا نام لکھیں', 'agxName');
+  if(v('agxFather').length < 3) return err('⚠️ Father Name — والد کا نام لکھیں', 'agxFather');
+  if(!/^(0?3\d{9}|923\d{9})$/.test(phone)) return err('⚠️ Mobile — درست موبائل نمبر لکھیں (03001234567)', 'agxPhone');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('agxEmail'))) return err('⚠️ Email — درست ای میل لکھیں', 'agxEmail');
+  if(cnic.length !== 13) return err('⚠️ CNIC — شناختی کارڈ کے پورے 13 ہندسے لکھیں', 'agxCnic');
+  if(v('agxAddr').length < 5) return err('⚠️ Address — مکمل پتہ لکھیں', 'agxAddr');
+  if(v('agxCity').length < 2) return err('⚠️ City / District — شہر لکھیں', 'agxCity');
+  for(const [k, t] of [['selfie','Selfie — سیلفی'],['front','CNIC Front — کارڈ سامنے'],['back','CNIC Back — کارڈ پیچھے']]) if(!agImgs[k]) return err('⚠️ ' + t + ' والی تصویر لگائیں');
+  err(''); const btn = document.getElementById('agSendBtn'), lbl = btn.innerHTML; btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہے…';
+  try{
+    const r = await (await fetch(AG_API + '/agapply', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({full: 1, name: v('agxName'), father: v('agxFather'), cnic, phone, wa: phone, email: v('agxEmail'), city: v('agxCity'), address: v('agxAddr'), exp: '', biz: '', bizRk: '', dev: agDev(), img: agImgs})})).json();
+    if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + ({pending:'آپ کی ایک درخواست پہلے سے منظوری کے انتظار میں ہے — نئی درخواست نہیں جا سکتی', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کے نام ہے', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'سب خانے بھریں'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
+    const p92 = '92' + phone.replace(/^0/,'').replace(/^92/,'').slice(-10);
+    localStorage.setItem('mcsAgent', JSON.stringify({phone: p92, name: v('agxName'), at: Date.now()}));
+    ['front','back','selfie'].forEach(k=> delete agImgs[k]);
+    agModal(`<div class="agx-done"><div class="agx-tick">✅</div><b dir="ltr">Request Submitted!</b>
+      <p dir="ltr">Your request has been received successfully. Please wait for further approval.</p>
+      <p>آپ کی درخواست موصول ہو گئی ہے۔ براہِ کرم مزید منظوری کے لیے انتظار کریں۔</p>
+      <span class="agx-st pend">⏳ Pending Approval — زیرِ غور</span></div>
+      <button type="button" class="btn block" onclick="closeModal('agModal')">👍 ٹھیک ہے</button>`);
+  }catch(e){ btn.disabled = false; btn.innerHTML = lbl; err('📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
 }
 function agEarnAsk(){
   const w = (typeof vlWho === 'function') ? vlWho() : {};
@@ -12325,7 +12396,7 @@ function agAdminRender(){
         ${a.code ? `<div class="ag-ccode" dir="ltr" onclick="agCopy('${escapeAttr(a.code)}')" title="کاپی">${E(a.code)} 📋</div>` : ''}
         <b>${E(a.name)}</b> <small>ولد ${E(a.father)}</small><br>
         🪪 <bdi dir="ltr">${E(a.cnic)}</bdi> · 📱 <a href="tel:${E(ph)}" dir="ltr">${E(ph)}</a> <a href="https://wa.me/${E(a.wa||a.phone)}" target="_blank" rel="noopener">💬</a><br>
-        🏙️ ${E(a.city)} — ${E(a.address)}<br>🏪 ${E(a.biz)}${a.exp ? '<br>📝 ' + E(a.exp) : ''}
+        🏙️ ${E(a.city)} — ${E(a.address)}<br>${a.noBiz ? '🤝 <b>صرف ایجنٹ</b> (اپنا کاروبار نہیں — Earn with MCS فارم) — کوڈ AG' : '🏪 ' + E(a.biz)}${a.email ? '<br>✉️ <bdi dir="ltr">' + E(a.email) + '</bdi>' : ''}${a.exp ? '<br>📝 ' + E(a.exp) : ''}
         <div class="ag-meta">درخواست: ${new Date(a.at).toLocaleDateString('en-GB')}${a.okAt ? ' · منظور: ' + new Date(a.okAt).toLocaleDateString('en-GB') : ''}${a.code ? ` · <a href="#" onclick="event.preventDefault();agRefShow('${escapeAttr(a.code)}')">🏪 ${refs.length} کاروبار اس کوڈ سے</a>` : ''}</div>
         <div class="ag-imgs" id="agI_${E(a.id)}"><button type="button" onclick="agLoadImgs('${escapeAttr(a.id)}')">🖼️ شناختی کارڈ اور سیلفی دیکھیں</button></div>
         <div class="ag-btns">
@@ -14746,7 +14817,7 @@ if('serviceWorker' in navigator){
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
 </script>
-<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO263" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
+<script src="https://pbtcodelabs-pbt.github.io/help/widget.js" data-app="MCS" data-ver="MCS0911MO264" defer></script> <!-- 🆘 MCS0211MO116: PBT Help Desk -->
 
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
@@ -15082,7 +15153,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function uaDrop(){ ls.set('mcsAuth', null); uaSync(); uaLogin('دوبارہ لاگ اِن کریں'); }
   /* Guest روک: ہر «کام» سے پہلے */
   window.uaGuard = function(next, msg){ if(uaOk()) return true; uaPending = next || null; uaLogin(msg || 'یہ کام کرنے کے لیے پہلے Sign In یا Sign Up کریں — Guest صرف دیکھ سکتا ہے'); return false; };
-  const GUARD = ['mpStartNew', 'd2AddOpen', 'pickAddCategory', 'openServiceForm', 'openDoctorForm', 'agOpen', 'pfEditOpen', 'pfClaimMine', 'pfClaimPlain', 'svcRegClaim', 'mpSubscribe', 'adRequestOpen', 'toggleAddStrip', 'mpNewMore', 'saveService', 'saveDoctor', 'pfSave', 'agPinLogin'];
+  const GUARD = ['mpStartNew', 'd2AddOpen', 'pickAddCategory', 'openServiceForm', 'openDoctorForm', 'agOpen', 'agEarnOpen', 'pfEditOpen', 'pfClaimMine', 'pfClaimPlain', 'svcRegClaim', 'mpSubscribe', 'adRequestOpen', 'toggleAddStrip', 'mpNewMore', 'saveService', 'saveDoctor', 'pfSave', 'agPinLogin'];
   function wrapAll(){
     GUARD.forEach(n => { const f = window[n]; if(typeof f !== 'function' || f.__ua) return;
       const g = function(...a){ if(!uaOk()){ const self = this; uaGuard(() => g.apply(self, a)); return; } return f.apply(this, a); };
