@@ -4201,10 +4201,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS0911MO279";
+const APP_VERSION = "MCS1011TU280";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1011TU280": "🤝 فارم میں ریفرل کوڈ اب فہرست (ڈراپ ڈاؤن) سے چنا جاتا ہے — انگلش A سے Z، اردو الف سے ی، نام اور کوڈ دونوں محفوظ — ✏️ پرانے کاروبار کا ریفرل کوڈ ایڈمن بدل سکتا ہے — ⏳ ہوم پر باریک پٹی: «محترم ڈویلپر! اتنے بزنس منظوری کے منتظر ہیں»",
   "MCS0911MO279": "📸 مکمل پروفائل میں مالک کی DP، سیلفی اور دکان کی تصویر — 🔗 مکمل پروفائل میں ریفرل — کس کے کوڈ سے، کس ایجنٹ نے رجسٹر کیا — 🗂️ کیٹگری والے صفحے پر ہی رجسٹرڈ / ایجنٹ ٹیب — 🔍 تلاش میں بھی دو ٹیب — 🗂️ فہرست میں دو ٹیب: «رجسٹرڈ بزنس / پروفیشن» اور «ایم سی ایس ایجنٹس» — 🪪 کارڈ پر MCS بیج کے عین نیچے چھوٹا رجسٹرڈ ٹیگ، کارڈ کی اونچائی کم",
   "MCS0911MO274": "🎨 بزنس کارڈ اپنی مرضی سے — تصویر، رنگ، فونٹ، بارڈر، کونے، فوری پیش منظر — 📣 بزنس کارڈ پر دکان کی تصویر اور مالک کی گول تصویر — 🔓 ایک بار پورٹل میں داخل ہوں تو لاگ اِن صفحہ بار بار نہیں آئے گا — 📄 مکمل پروفائل (الف تا ی) — ایک صفحہ، پرنٹ اور شیئر، اور 📣 بزنس پروفائل شیئر کارڈ (دکان کی تصویر، خدمات، فون، واٹس ایپ، اوقات)",
   "MCS0911MO268": "🔒 ہوم ہمیشہ 100٪ — زوم ➖ ➕ صرف فارم بھرتے وقت",
@@ -4712,6 +4713,7 @@ function pfFieldsRead(pre){
   const items = Array.from(document.querySelectorAll('#' + pre + 'Items .pf-irow')).map(r=>{ const i = r.querySelectorAll('input'); return {n:i[0].value.trim(), p:i[1].value.trim()}; }).filter(x=>x.n);
   const data = {about:v('About'), hours:v('Hours'), off:v('Off'), items};
   if(pre === 'pfE' && v('Ref')) data.ref = /^pbt/i.test(v('Ref')) ? v('Ref').toUpperCase().replace(/\s+/g,'') : (agNormCode(v('Ref')) || v('Ref'));   /* MCS0511TH158: PBT-D ڈویلپر / PBT-C کو-ڈویلپر */
+  if(pre === 'pfE' && data.ref){ try{ const n1 = rpkNameOf(data.ref); if(n1) data.refName = n1; }catch(e){} }   /* MCS1011TU280 */
   const S = pfEd[pre] || {imgs:[], del:{}};
   const imgs = {}; S.imgs.forEach((x,i)=>{ if(x && x.changed) imgs[i] = x.src; }); Object.keys(S.del||{}).forEach(i=>{ if(!S.imgs[i]) imgs[i] = null; });
   const filled = !!(data.about || data.hours || data.off || items.length || Object.keys(imgs).length);
@@ -4871,6 +4873,7 @@ async function pfSubmit(kind, rec, pre){
   if(!data.ref) data.ref = (oldRef && oldRef !== 'PBT' ? oldRef : '') || (rec.more && rec.more.ref) || 'PBT';
   const r = await fetch(PF_API + '/psave', {method:'POST', headers, body: JSON.stringify({rec: rk, key: auth.key || '', data, imgs})});
   const j = await r.json(); if(!j.ok) throw new Error(j.error || 'net');
+  try{ rpkSyncRec(rec, kind, data.ref); }catch(e){}   /* MCS1011TU280: پروفائل میں ریفرل بدلا تو ریکارڈ میں بھی */
   if(!/^PBT/.test(data.ref) && data.ref !== oldRef){ try{ fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: data.ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(kind==='doctor' ? 'doctor' : rec.category)||{}).ur||'', city: rec.city||''})}).then(x=>x.json()).then(x=>{ if(x && x.ok === false && x.reason === 'bad_code') showToast('⚠️ ریفرل کوڈ «' + data.ref + '» نہیں ملا — درست کوڈ لکھیں یا خالی چھوڑیں', 5000); }).catch(()=>{}); }catch(e){} }
   if(pfAct[rk]) pfAct[rk].ts = j.ts; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
   try{ const S = pfEd[pre]; if(S && S.thumbChanged){ rec.more = rec.more || {}; if(S.thumb) rec.more.selfie = S.thumb; else delete rec.more.selfie; S.thumbChanged = false; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); } }catch(e){}   /* MCS0711SA194 */
@@ -8909,6 +8912,7 @@ function svcMoreRead(){
   Object.entries(SVC_MORE).forEach(([k, id])=>{ const el = document.getElementById(id); const v = el ? el.value.trim() : ''; if(v) m[k] = v; });
   if(m.wa2) m.wa2 = normalizePkNumber(m.wa2);
   if(m.ref) m.ref = agNormCode(m.ref);
+  if(m.ref){ try{ const e0 = document.getElementById('svcRef'); if(e0 && e0.tagName === 'SELECT'){ m.refSel = 1; const n0 = rpkNameOf(m.ref); if(n0) m.refName = n0; } }catch(e){} }   /* MCS1011TU280: ریفرل فہرست سے — نام اور کوڈ دونوں */
   try{ const S = pfEd.svcPf; if(S && S.thumb) m.selfie = S.thumb; }catch(e){}   /* MCS0711SA194: کارڈ کی گول سیلفی (چھوٹی) */
   return m;
 }
@@ -9010,7 +9014,7 @@ function refChipHtml(rec){
     if(c === 'PBT-D') lb = '👨‍💻 ڈویلپر خود لایا (PBT-D)';
     else if(c === 'PBT-C') lb = '👥 کو-ڈویلپر لایا (PBT-C)';
     else if(c === 'PBT') lb = '🏢 خود آیا (PBT)';
-    else { const a = (agList||[]).find(x=>x && (x.code === c || x.bizRk === c)); lb = '🤝 ریفرل: ' + (a ? escapeHtml(a.name) + ' ' : '') + '<bdi dir="ltr">' + escapeHtml(a && a.code || c) + '</bdi>'; }
+    else { const a = (agList||[]).find(x=>x && (x.code === c || x.bizRk === c)); lb = '🤝 ریفرل: ' + (a ? escapeHtml(a.name) + ' ' : (rec.more.refName ? escapeHtml(rec.more.refName) + ' ' : '')) + '<bdi dir="ltr">' + escapeHtml(a && a.code || c) + '</bdi>'; }
     return `<button type="button" class="ref-chip" onclick="event.stopPropagation();refInfoOpen('${escapeAttr(c)}')">${lb}</button>`;
   }catch(e){ return ''; }
 }
@@ -9023,7 +9027,7 @@ async function refInfoOpen(c){
   agModal(`<div class="ag-hd">🤝 ریفرل والا ایجنٹ</div>
     ${a ? `<div class="ref-ag"><b>${E(a.name)}</b><span dir="ltr">${E(code)}</span><small dir="ltr">📱 0${E(String(a.phone||'').slice(-10))}</small>${a.status !== 'approved' ? '<em>⏳ ابھی منظور نہیں</em>' : (a.off ? '<em>⛔ غیر فعال</em>' : '<em class="ok">✅ فعال ایجنٹ</em>')}</div>` : `<div class="ag-need">⚠️ «${E(c)}» کسی ایجنٹ کا کوڈ نہیں ملا — کاروبار کی تفصیل میں ریفرل کوڈ درست کریں</div>`}
     <div class="ag-codeL">🏪 اس کوڈ سے جڑے کاروبار (${recs.length})</div>
-    <div class="ref-list">${recs.slice(0, 60).map(r=>`<div>${E(r.nameUr || r.name || '')} <small>${pfActive(r) ? '✅ ممبرشپ فعال' : r.stage === 'registered' ? '📝 رجسٹرڈ' : '—'}</small></div>`).join('') || '<div>—</div>'}</div>
+    <div class="ref-list">${recs.slice(0, 60).map(r=>`<div>${E(r.nameUr || r.name || '')} <small>${pfActive(r) ? '✅ ممبرشپ فعال' : r.stage === 'registered' ? '📝 رجسٹرڈ' : '—'}</small>${isAdminSignedIn ? ` <button type="button" class="rpk-eb" onclick="rpkEditOpen('${escapeAttr(r.id || r.fsId)}')">✏️ ریفرل بدلیں</button>` : ''}</div>`).join('') || '<div>—</div>'}</div>
     <div class="cp-hint" style="margin-top:8px">📊 ہر فعال ممبرشپ اسی ایجنٹ کے کھاتے میں جاتی ہے۔ اس کا پورا حساب «MCS Agent» ایپ ← ڈویلپر لاگ اِن ← 👥 Agents ← <b>${a ? E(a.name) : E(code)}</b> میں۔</div>`);
 }
 function agMarkRecords(){
@@ -16142,7 +16146,7 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
       const m = r.more || {}; let raw = String(m.ref || '').trim(), pr = '';
       try{ const rk = pfKeyOf(r, kind); pr = (rk && PR[rk]) ? String(PR[rk]).trim() : ''; }catch(e){}
       const pu = up(pr);
-      if(pr && (!raw || pu === 'PBT-D' || pu === 'PBT-C')) raw = pr;      /* پروفائل میں ڈویلپر / کو-ڈویلپر کا صاف کوڈ ہو تو وہی */
+      if(pr && !m.refSel && (!raw || pu === 'PBT-D' || pu === 'PBT-C')) raw = pr;      /* پروفائل میں ڈویلپر / کو-ڈویلپر کا صاف کوڈ ہو تو وہی */
       const u = up(raw);
       if(!raw && !m.cdBy && !m.fedBy){ skipped++; return; }                /* کوئی ریفرل کوڈ نہیں — گنتی میں نہیں */
       const isPend = pend || r.approved === false;
@@ -17796,7 +17800,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       var rf = sec('🔗', isDoc ? 'ریفرل — پروفیشن کس نے رجسٹر کیا' : 'ریفرل — بزنس کس نے رجسٹر کیا');
       var L = (typeof agList !== 'undefined' && agList) || [];
       var code = String(more.ref || '').trim(), pcode = String(d.ref || '').trim(), uc = code.toUpperCase();
-      if(pcode && (!code || uc === 'PBT-D' || uc === 'PBT-C')){ code = pcode; uc = code.toUpperCase(); }
+      if(pcode && !more.refSel && (!code || uc === 'PBT-D' || uc === 'PBT-C')){ code = pcode; uc = code.toUpperCase(); }
       var byCode = function(c){ return L.find(function(x){ return x && c && (x.code === c || x.bizRk === c); }) || null; };
       var ph0 = function(p){ var x = l10(p); return x ? '0' + x : ''; };
       if(uc === 'PBT-D'){ R(rf, 'کس کے ریفرل سے', '👨‍💻 ڈویلپر نے خود رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'PBT-D', true); }
@@ -17811,7 +17815,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
           R(rf, 'ایجنٹ کا موبائل', ph0(ra.phone), true);
           R(rf, 'ایجنٹ کا شہر', ra.city);
           R(rf, 'ایجنٹ کی حالت', ra.status === 'approved' ? (ra.off ? '⛔ غیر فعال' : '✅ فعال ایجنٹ') : '⏳ ابھی منظور نہیں');
-        } else R(rf, 'ایجنٹ', 'کوڈ کسی ایجنٹ سے نہیں ملا — ریفرل کوڈ درست کریں');
+        } else if(more.refName){ R(rf, 'ریفرل دینے والے ایجنٹ کا نام', more.refName); } else R(rf, 'ایجنٹ', 'کوڈ کسی ایجنٹ سے نہیں ملا — ریفرل کوڈ درست کریں');
       }
       if(!blank(more.fedBy) && String(more.fedBy) !== code){
         var fa = byCode(String(more.fedBy));
@@ -18326,6 +18330,139 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
 })();
 
 </script>
+<script id="mcsRefPick280">
+/* ===== MCS1011TU280 (مالک کا حکم) =====
+   ۱) فارم میں ریفرل کوڈ — ہاتھ سے لکھنا بند؛ ڈراپ ڈاؤن میں سب رجسٹرڈ ایجنٹ (انگلش A–Z پھر اردو الف–ی)، نام + کوڈ دونوں محفوظ
+   ۲) پرانے کاروبار کا ریفرل کوڈ ایڈمن بدل سکتا ہے (فارم میں ایڈٹ، یا ریفرل چپ ← ✏️ ریفرل بدلیں)
+   ۳) ہوم پر ایک باریک پٹی: «محترم ڈویلپر! اتنے بزنس منظوری کے منتظر ہیں» — دبانے پر سیدھا انہی پر */
+var RPK_LS = 'mcsAgPick';
+function rpkSelVal(){ return Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value'); }
+function rpkPriv(){ try{ if(isAdminSignedIn) return true; if(typeof codevOn === 'function' && codevOn()) return true; const a = agMe(); return !!(a && a.code); }catch(e){ return false; } }
+function rpkPeople(){
+  let src = [];
+  try{ if((agList || []).length){ src = agList.filter(a=>a && a.code && a.status === 'approved' && !a.off).map(a=>({c:a.code, n:String(a.name||'').trim()})); try{ localStorage.setItem(RPK_LS, JSON.stringify(src)); }catch(e){} } }catch(e){}
+  if(!src.length){ try{ src = JSON.parse(localStorage.getItem(RPK_LS) || '[]') || []; }catch(e){ src = []; } }
+  try{ const me = agMe(); if(me && me.code && !src.some(x=>x.c === me.code)) src.push({c:me.code, n:String(me.name||'').trim()}); }catch(e){}
+  return src;
+}
+function rpkNameOf(code){
+  code = String(code||'').trim(); if(!code) return '';
+  if(code === 'PBT-D') return 'ڈویلپر'; if(code === 'PBT-C') return 'کو-ڈویلپر'; if(code === 'PBT') return '';
+  const p = rpkPeople().find(x=>x.c === code); return p ? p.n : '';
+}
+function rpkSorted(){
+  const P = rpkPeople(), isUr = s => /[\u0600-\u06FF]/.test(s || '');
+  const en = P.filter(x=>!isUr(x.n)).sort((a,b)=>(a.n||a.c).localeCompare(b.n||b.c, 'en', {sensitivity:'base'}));
+  const ur = P.filter(x=>isUr(x.n)).sort((a,b)=>a.n.localeCompare(b.n, 'ur'));
+  return {en, ur};
+}
+function rpkAddOpt(sel, v){ const o = document.createElement('option'); o.value = v; o.textContent = '⚠️ ' + v + ' — فہرست میں نہیں (پرانا / غلط) — صحیح ایجنٹ چنیں'; o.style.color = '#b91c1c'; sel.appendChild(o); }
+function rpkSetVal(sel, v){ v = String(v == null ? '' : v).trim(); if(v && !Array.from(sel.options).some(o=>o.value === v)) rpkAddOpt(sel, v); rpkSelVal().set.call(sel, v); }
+function rpkFill(sel){
+  const keep = rpkSelVal().get.call(sel), adm = !!isAdminSignedIn; let cd = false; try{ cd = codevOn(); }catch(e){}
+  const opt = p => `<option value="${escapeAttr(p.c)}" data-n="${escapeAttr(p.n)}">${escapeHtml(p.n || '—')} — ${escapeHtml(p.c)}</option>`;
+  const S = rpkSorted();
+  let h = '<option value="">— فہرست سے ایجنٹ چنیں —</option><option value="PBT">🏢 خود آیا — کوئی ایجنٹ نہیں (PBT)</option>';
+  if(adm) h += '<option value="PBT-D">👨‍💻 ڈویلپر — PBT-D</option>';
+  if(adm || cd) h += '<option value="PBT-C">👥 کو-ڈویلپر — PBT-C</option>';
+  if(S.en.length) h += '<optgroup label="English (A – Z)">' + S.en.map(opt).join('') + '</optgroup>';
+  if(S.ur.length) h += '<optgroup label="اردو (الف – ی)">' + S.ur.map(opt).join('') + '</optgroup>';
+  sel.innerHTML = h; rpkSetVal(sel, keep);
+}
+function rpkPrep(id){
+  if(!rpkPriv()) return null;
+  let el = document.getElementById(id); if(!el) return null;
+  if(el.tagName !== 'SELECT'){
+    const old = el.value || '', sel = document.createElement('select');
+    sel.id = id; sel.className = 'rpk-sel'; sel.setAttribute('dir', 'rtl');
+    el.parentNode.replaceChild(sel, el);
+    const D = rpkSelVal();
+    Object.defineProperty(sel, 'value', {configurable:true, get(){ return D.get.call(sel); }, set(v){ rpkSetVal(sel, v); }});
+    sel.addEventListener('change', ()=>{ const ok = document.getElementById(id + 'Ok'); if(ok){ const c = sel.value, n = rpkNameOf(c); ok.textContent = c ? '✅ ' + (n ? n + ' — ' : '') + c : ''; ok.style.color = '#047857'; } });
+    const fld = sel.closest('.field'); if(fld){ fld.querySelectorAll('.ref-paste').forEach(b=>{ b.style.display = 'none'; }); }
+    rpkFill(sel); rpkSetVal(sel, old); el = sel;
+  } else rpkFill(el);
+  if(isAdminSignedIn && !(agList || []).length && !window._rpkLoading){ window._rpkLoading = 1; Promise.resolve(agKnownLoad()).catch(()=>{}).then(()=>{ window._rpkLoading = 0; rpkFillAll(); }); }
+  return el;
+}
+function rpkFillAll(){ ['svcRef', 'pfERef', 'rpkSel'].forEach(id=>{ const e = document.getElementById(id); if(e && e.tagName === 'SELECT') rpkFill(e); }); }
+(function(){
+  ['openServiceForm', 'pfEditOpen'].forEach(fn=>{
+    const o = window[fn]; if(typeof o !== 'function' || o._rpk) return;
+    const w = function(){ if(fn === 'openServiceForm') rpkPrep('svcRef'); const r = o.apply(this, arguments); if(fn === 'pfEditOpen'){ setTimeout(()=>rpkPrep('pfERef'), 350); setTimeout(()=>rpkPrep('pfERef'), 1500); } return r; };
+    w._rpk = 1; window[fn] = w;
+  });
+})();
+/* پروفائل میں ریفرل بدلا تو ریکارڈ (more) میں بھی — نام + کوڈ */
+function rpkSyncRec(rec, kind, code){
+  if(!isAdminSignedIn || !rec || !code) return;
+  rec.more = rec.more || {};
+  if(rec.more.ref === code && rec.more.refSel) return;
+  rec.more.ref = code; const n = rpkNameOf(code); if(n) rec.more.refName = n; else delete rec.more.refName; rec.more.refSel = 1;
+  saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more);
+}
+/* ✏️ پرانے کاروبار / پروفیشن کا ریفرل کوڈ بدلیں (ایڈمن) */
+function rpkFind(id){ return (store.services || []).find(x=>x && (x.id === id || x.fsId === id)) || (store.doctors || []).find(x=>x && (x.id === id || x.fsId === id)); }
+async function rpkEditOpen(id){
+  if(!isAdminSignedIn){ showToast('ریفرل صرف ایڈمن بدل سکتا ہے'); return; }
+  const rec = rpkFind(id); if(!rec) return;
+  if(!(agList || []).length){ try{ await agKnownLoad(); }catch(e){} }
+  const cur = String((rec.more && rec.more.ref) || '').trim(), curN = (rec.more && rec.more.refName) || rpkNameOf(cur), E = escapeHtml;
+  agModal(`<div class="ag-hd">✏️ ریفرل بدلیں <small>${E(rec.nameUr || rec.name || '')}</small></div>
+    <div class="cp-hint">موجودہ ریفرل: <b>${cur ? E((curN ? curN + ' — ' : '') + cur) : 'کوئی نہیں'}</b></div>
+    <label style="font-weight:800;font-size:13px">🤝 صحیح ایجنٹ فہرست سے چنیں</label>
+    <select id="rpkSel" class="rpk-sel" dir="rtl"></select>
+    <button type="button" class="btn block" style="margin-top:10px" onclick="rpkEditSave('${escapeAttr(rec.id || rec.fsId)}')">💾 محفوظ کریں</button>`);
+  const sel = document.getElementById('rpkSel'); rpkFill(sel); if(cur) rpkSetVal(sel, cur);
+}
+function rpkEditSave(id){
+  const rec = rpkFind(id), sel = document.getElementById('rpkSel'); if(!rec || !sel) return;
+  const code = sel.value; if(!code){ showToast('پہلے فہرست سے ایجنٹ چنیں'); return; }
+  const isDoc = (store.doctors || []).indexOf(rec) >= 0;
+  rec.more = rec.more || {}; rec.more.ref = code; const n = rpkNameOf(code); if(n) rec.more.refName = n; else delete rec.more.refName; rec.more.refSel = 1;
+  try{ saveStore(); }catch(e){}
+  pushMoreToFirebase(isDoc ? 'doctors' : 'services', rec.fsId || rec.id, rec.more);
+  try{ const rk = pfKeyOf(rec, isDoc ? 'doctor' : 'service'); if(rk && window._pbPR) delete window._pbPR[rk]; }catch(e){}
+  closeModal('agModal'); showToast('✅ ریفرل بدل گیا — ' + (n ? n + ' ' : '') + code, 4000);
+  try{ agKnownRefresh(); }catch(e){}
+}
+/* ⏳ ہوم کی باریک پٹی */
+function pdItems(){
+  const svc = (pendingApprovals || []).filter(d=>d._col === 'services'), doc = (pendingApprovals || []).filter(d=>d._col === 'doctors');
+  let ag = []; try{ ag = (agList || []).filter(a=>a.status === 'pending'); }catch(e){}
+  let pf = []; try{ pf = pfPendList().filter(x=>x.rec); }catch(e){}
+  return {svc, doc, ag, pf};
+}
+function pendingHomeListRender(){
+  const box = document.getElementById('pendingHomeList'); if(!box) return;
+  if(!isAdminSignedIn){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  const P = pdItems(), biz = P.svc.length + P.doc.length, other = P.ag.length + P.pf.length;
+  if(!biz && !other){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.style.display = 'flex';
+  const txt = biz ? `محترم ڈویلپر! <b>${biz}</b> بزنس آپ کی منظوری کے منتظر ہیں` + (other ? ` <small>• ${other} ایجنٹ / ممبرشپ بھی</small>` : '') : `محترم ڈویلپر! <b>${other}</b> ایجنٹ / ممبرشپ درخواستیں منتظر ہیں`;
+  box.innerHTML = `<button type="button" class="pd-thin" onclick="pdThinGo()"><span>⏳ ${txt}</span><span class="pd-go">دیکھیں ›</span></button>`;
+}
+function pdThinGo(){
+  const P = pdItems(), biz = P.svc.length + P.doc.length, other = P.ag.length + P.pf.length;
+  if(biz === 1 && !other){ openPendingInForm((P.svc[0] || P.doc[0]).fsId); return; }
+  const E = escapeHtml, nm = d => d.nameUr || d.name || '(بلا نام)';
+  const row = (d, ic) => `<div class="pt-card"><b>${E(nm(d))}</b> <small>${ic} · ${E([d.area, d.city].filter(Boolean).join('، '))}</small><div class="r"><button type="button" class="p" onclick="closeModal('agModal');openPendingInForm('${escapeAttr(d.fsId)}')">👁️ کھولیں — دیکھیں / ایڈٹ / منظور</button></div></div>`;
+  let h = `<div class="ag-hd">⏳ منظوری کے منتظر <small>کل ${biz + other}</small></div>`;
+  h += P.svc.map(d=>row(d, '🏪 کاروبار')).join('') + P.doc.map(d=>row(d, '👔 پروفیشن')).join('');
+  h += P.ag.map(a=>`<div class="pt-card"><b>${E(a.name || '')}</b> <small>🤝 ایجنٹ بننے کی درخواست${a.city ? ' · ' + E(a.city) : ''}</small><div class="r"><button type="button" class="p" onclick="closeModal('agModal');agTab='pending';agAdminOpen()">👁️ کھولیں</button></div></div>`).join('');
+  h += P.pf.map(x=>`<div class="pt-card"><b>${E(x.rec.nameUr || x.rec.name || '')}</b> <small>⏳ ممبرشپ کی منظوری</small><div class="r"><button type="button" class="p" onclick="closeModal('agModal');pfOpen('${x.kind}','${escapeAttr(x.rec.id)}')">👁️ کھولیں</button></div></div>`).join('');
+  agModal(h);
+}
+try{ updatePendingHomeIndicator(); }catch(e){}
+</script>
+<style id="mcsRefPick280css">
+.rpk-sel{width:100%;box-sizing:border-box;padding:10px 8px;border:1.5px solid #0f766e;border-radius:12px;background:#fff;color:#0f172a;font:inherit;font-size:14px;font-weight:700;margin-top:2px}
+.rpk-eb{border:1.5px solid #b45309;background:#fffbeb;color:#b45309;border-radius:999px;padding:1px 10px;font:800 11.5px/1.6 inherit;font-family:inherit;cursor:pointer;margin-right:6px}
+#pendingHomeList .pd-thin{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;box-sizing:border-box;background:linear-gradient(90deg,#7c2d12,#b45309);color:#fff;border:0;border-radius:10px;padding:6px 12px;font-family:inherit;font-size:12.5px;font-weight:800;line-height:1.4;text-align:right;cursor:pointer;box-shadow:0 2px 6px rgba(124,45,18,.3)}
+#pendingHomeList .pd-thin b{background:#fff;color:#7c2d12;border-radius:99px;padding:0 8px;margin:0 3px}
+#pendingHomeList .pd-thin small{font-weight:700;opacity:.9}
+#pendingHomeList .pd-go{flex:none;background:rgba(255,255,255,.22);border-radius:99px;padding:1px 10px;font-size:11.5px}
+</style>
 <style id="mcsCardTabs275">
 /* ===== MCS0911MO279 (مالک کا حکم): دو ٹیب + کارڈ — MCS ایجنٹ بیج سب سے اوپر بائیں، اس کے عین نیچے چھوٹا «رجسٹرڈ بزنس» ٹیگ؛ کارڈ کی اونچائی کم ===== */
 .flt-bar{display:flex;gap:8px;margin:0 0 10px;}
