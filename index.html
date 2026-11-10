@@ -4201,10 +4201,12 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU285";
+const APP_VERSION = "MCS1011TU287";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1011TU287": "📈 شیئر کے متن اور پوسٹر میں ترغیب: اب تک اتنے کاروبار اور اتنے پیشہ ور شامل ہو چکے ہیں — دو کیپسول، تعداد روز بروز بڑھتی ہوئی؛ دکاندار کو بھیجے جانے والے پیغام میں بھی",
+  "MCS1011TU286": "🪪 تینوں طرح کے کارڈ (رجسٹرڈ / MCS ایجنٹ / ٹرائل) ایک جیسے — ایک ہی لمبائی چوڑائی، چوڑائی کم — 📊 پراگریس بار کے اوپر صرف ۲۵٪ ۵۰٪ ۷۵٪ — MCS بیج اور رجسٹرڈ ٹیگ بھی ہر کارڈ پر نظر آتے ہیں",
   "MCS1011TU285": "✅ «رجسٹرڈ بزنس» میں ایم سی ایس ایجنٹ بھی شامل (وہ بھی رجسٹرڈ بزنس ہیں) — «ایم سی ایس ایجنٹس» میں صرف ایجنٹ؛ دونوں بٹنوں کی تعداد بھی اسی حساب سے",
   "MCS1011TU284": "📶 مراحل کی پٹی تلاش / فہرست کی قطاروں میں بھی ہر کاروبار پر پکی — جب تک MCS ایجنٹ کا سنہری ربن نہ ملے؛ ربن ملتے ہی پٹی غائب",
   "MCS1011TU283": "📶 کارڈ پر دو کی جگہ ایک ہی پراگرس پٹی — بنیادی ۲۵٪، رجسٹریشن ۵۰٪، ممبرشپ ۷۵٪، ایم سی ایس ایجنٹ بنتے ہی پٹی ختم — اور یہ ہر کارڈ پر پکی نظر آتی ہے",
@@ -7195,6 +7197,7 @@ function ownerCaptionText(kind, item){
   if(item.whatsapp) lines.push('📞 ' + waPhoneDisplay(item.whatsapp));
   lines.push('🆔 ' + shortRecordId(kind, item),
     '', 'یہ پورے شہر کے دکانداروں، کاروباری اور پیشہ ور لوگوں کی ڈائریکٹری ہے — سب کے لیے آسانی اور کام کی چیز۔',
+    ...(mcsJoinLines().length ? ['', ...mcsJoinLines()] : []),
     '', '✅ اپنی تفصیل چیک کر لیں — کوئی غلطی ہو یا تبدیلی چاہیں تو ہمیں بتا دیں۔',
     '📲 ایپ پلے اسٹور سے ڈاؤن لوڈ کر کے دیکھیں:', MCS_PLAY_URL,
     '⭐ اچھی لگے اور رجسٹریشن مکمل کرنا چاہیں تو ایپ میں اپنے کارڈ پر «📝 رجسٹریشن مکمل کریں» سے درخواست دے دیں۔',
@@ -7241,7 +7244,7 @@ function shareCaptionText(kind, item){
     `👤 ${item.nameUr||item.name||''}${catLabel?' — '+catLabel:''}`];
   if(item.city||item.area) lines.push('📍 ' + [item.area,item.city].filter(Boolean).join('، '));
   if(item.whatsapp) lines.push('📞 ' + waPhoneDisplay(item.whatsapp));
-  lines.push('', MCS_SHARE_MSG);
+  lines.push('', appPromoCaptionText());
   return lines.join('\n');
 }
 /* MCS2310FR041: پوسٹر پر "GET IT ON Google Play" کا بٹن اور سرچ کی لائن — cx درمیان، y بٹن کا اوپر */
@@ -7855,7 +7858,8 @@ function buildAppPromoCanvas(customText, opts){
       // user's text: size slider = biggest size wanted, always shrinks to stay inside the box
       ctx.fillStyle = txtColor;
       (function(){
-        const boxTop = cardTop+45, boxH = 350, maxW = W-190;
+        const _jc = mcsJoinCounts(), _hasJ = (_jc.biz + _jc.pro) > 0;
+        const boxTop = cardTop+45, boxH = _hasJ ? 250 : 350, maxW = W-190;
         const paras = promoBody.split(/\n+/);
         let fs = po.size, lines = [], lh = 0;
         while(fs >= 12){
@@ -7873,9 +7877,30 @@ function buildAppPromoCanvas(customText, opts){
         ctx.restore();
       })();
 
+      // MCS1011TU287: دو کیپسول — اتنے کاروبار، اتنے پیشہ ور + ترغیب کی سطر
+      {
+        const jc = mcsJoinCounts();
+        if(jc.biz + jc.pro > 0){
+          const caps = [];
+          if(jc.biz) caps.push({n:jc.biz, t:'کاروبار', c1:'#22c55e', c2:'#15803d'});
+          if(jc.pro) caps.push({n:jc.pro, t:'پیشہ ور', c1:'#38bdf8', c2:'#0369a1'});
+          const cw = 300, ch = 66, gap = 24, cy = cardTop+310;
+          const totalW = caps.length*cw + (caps.length-1)*gap;
+          caps.forEach((cp, i)=>{
+            const cx0 = W/2 - totalW/2 + i*(cw+gap);
+            const cg = ctx.createLinearGradient(0,cy,0,cy+ch); cg.addColorStop(0,cp.c1); cg.addColorStop(1,cp.c2);
+            ctx.save(); ctx.shadowColor='rgba(0,0,0,.4)'; ctx.shadowBlur=10; ctx.shadowOffsetY=4; ctx.fillStyle = cg; shareRoundRect(ctx, cx0, cy, cw, ch, ch/2); ctx.fill(); ctx.restore();
+            ctx.save(); ctx.strokeStyle='rgba(255,255,255,.7)'; ctx.lineWidth=2.5; shareRoundRect(ctx, cx0, cy, cw, ch, ch/2); ctx.stroke(); ctx.restore();
+            ctx.save(); ctx.fillStyle='#fff'; ctx.direction='ltr'; ctx.textAlign='center'; ctx.font='800 38px Arial, sans-serif'; ctx.fillText(String(cp.n), cx0+cw*0.30, cy+ch/2+13); ctx.restore();
+            ctx.save(); ctx.fillStyle='#fff'; ctx.direction='rtl'; ctx.textAlign='center'; ctx.font=`800 30px "${FF}", sans-serif`; ctx.fillText(cp.t, cx0+cw*0.68, cy+ch/2+11); ctx.restore();
+          });
+          ctx.save(); ctx.direction='rtl'; ctx.textAlign='center'; ctx.fillStyle = txtColor; ctx.font = `700 25px "${FF}", sans-serif`;
+          ctx.fillText('شامل ہو چکے ہیں — تعداد روز بروز بڑھ رہی ہے، آپ بھی جلدی انٹری کریں!', W/2, cy+ch+34); ctx.restore();
+        }
+      }
       // MCS0511TH163 (مالک کا حکم): پوسٹر پر ذاتی نمبر / ڈویلپر کا نام / Gmail نہیں — مسئلہ / مشورہ صرف ایپ کے Help Desk سے
       {
-        const pillW = 560, pillH = 74, pillY = cardTop+430, pillX = W/2 - pillW/2;
+        const pillW = 560, pillH = 74, pillY = cardTop+440, pillX = W/2 - pillW/2;
         const pg = ctx.createLinearGradient(0,pillY,0,pillY+pillH); pg.addColorStop(0,'#fde047'); pg.addColorStop(1,'#f59e0b');
         ctx.save(); ctx.shadowColor='rgba(120,70,0,.45)'; ctx.shadowBlur=12; ctx.shadowOffsetY=5; ctx.fillStyle = pg; shareRoundRect(ctx, pillX, pillY, pillW, pillH, pillH/2); ctx.fill(); ctx.restore();
         ctx.save(); ctx.fillStyle = '#1c1200'; ctx.beginPath(); ctx.arc(pillX+48, pillY+pillH/2, 24, 0, Math.PI*2); ctx.fill();
@@ -7921,7 +7946,33 @@ function buildAppPromoCanvas(customText, opts){
 const DEFAULT_PROMO_TEXT = 'یہ آپ کی اپنی ایپ ہے — اپنے علاقے کے دکاندار، بزنس اور ہنرمند خود فیڈ کریں۔ آپ کی ضرورتیں سہولت سے پوری ہوں گی اور گرد و نواح کے لوگوں کو بھی آسانی ہوگی۔ بالکل فری، بالکل لائیو!';
 /* MCS0511TH163 (مالک کا حکم): ایپ / کارڈ شیئر کا ایک ہی پیغام — ڈویلپر کا نام / ذاتی نمبر / Gmail کبھی نہیں (رابطہ صرف Help Desk) */
 const MCS_SHARE_MSG = "🌟 My City Shines — مائی سٹی شائنز\nآپ کے شہر کی ڈیجیٹل بزنس ڈائریکٹری!\n\nاب اپنے شہر اور علاقے کے دکانداروں، کاروباری افراد، سروس پرووائیڈرز اور ہنرمندوں کو ایک ہی پلیٹ فارم پر تلاش کریں۔\n\n🏪 اپنا کاروبار یا پیشہ رجسٹر کریں اور پورے پاکستان سے نئے صارفین اور آرڈرز حاصل کرنے کے مواقع پیدا کریں۔\n\n🤝 اپنے شہر کو ڈیجیٹل بنائیں!\nآپ جتنے کاروبار، دکانوں اور ہنرمندوں کے ریکارڈ شامل کریں گے، اتنا ہی آپ اور آپ کے علاقے کے لوگوں کو فائدہ ہوگا۔\n\nاہم خصوصیات:\n✅ مکمل مفت ایپ\n✅ لائیو اپڈیٹس اور ڈیجیٹل بزنس ڈائریکٹری\n✅ کاروبار، دکانوں اور خدمات کی تلاش\n✅ آسان رابطہ اور معلومات تک رسائی\n✅ اپنے کاروبار اور پیشے کی تشہیر\n✅ پورے پاکستان میں صارفین تک رسائی کے مواقع\n\n📲 ابھی ایپ انسٹال کریں:\nhttps://play.google.com/store/apps/details?id=com.pbtcodelabs.mycityshines\n\n🔍 یا Google Play Store پر My City Shines سرچ کریں۔\n\n🌟 آئیے! مل کر اپنے شہروں کو روشن، ڈیجیٹل اور کاروباری مواقع سے بھرپور بنائیں۔\n\nMy City Shines — آپ کا شہر، آپ کا کاروبار، آپ کا ڈیجیٹل پلیٹ فارم!";
-function appPromoCaptionText(){ return MCS_SHARE_MSG; }
+/* MCS1011TU287 (مالک کا حکم): ترغیب — «اب تک اتنے کاروبار اور اتنے پیشہ ور شامل ہو چکے ہیں، تعداد روز بڑھ رہی ہے، آپ بھی جلدی انٹری کریں» — شیئر متن، کارڈ بھیجنے والے پیغام اور پوسٹر (کیپسول) تینوں میں */
+function mcsJoinCounts(){
+  let biz = 0, pro = 0;
+  try{
+    const grpOf = k => (CATEGORY_META[k] && CATEGORY_META[k].group) || 'professional';
+    (store.services || []).forEach(r=>{
+      if(!r || r.approved === false || r.category === 'emergencyNumbers' || r.category === 'govOffices') return;
+      if(grpOf(r.category) === 'business') biz++; else pro++;
+    });
+    (store.doctors || []).forEach(r=>{ if(r && r.approved !== false) pro++; });
+  }catch(e){}
+  return {biz, pro};
+}
+function mcsJoinLines(){
+  const c = mcsJoinCounts(); if(c.biz + c.pro < 1) return [];
+  const parts = [];
+  if(c.biz) parts.push(`🏪 *${c.biz}* کاروبار`);
+  if(c.pro) parts.push(`🧑‍🔧 *${c.pro}* پیشہ ور`);
+  return ['📈 اب تک ' + parts.join('  |  ') + ' مائی سٹی شائنز میں اپنا ریکارڈ درج کروا چکے ہیں — اور یہ تعداد روز بروز بڑھتی جا رہی ہے!',
+    '⏳ دیر نہ کریں — آپ بھی جلدی اپنی انٹری مکمل کریں اور اپنے شہر کے ساتھ شامل ہو جائیں۔'];
+}
+function appPromoCaptionText(){
+  const j = mcsJoinLines(); if(!j.length) return MCS_SHARE_MSG;
+  const mark = '\n\nاہم خصوصیات:';
+  const i = MCS_SHARE_MSG.indexOf(mark);
+  return i < 0 ? MCS_SHARE_MSG : MCS_SHARE_MSG.slice(0, i) + '\n\n' + j.join('\n') + MCS_SHARE_MSG.slice(i);
+}
 /* نیا فونٹ شامل کرنا ہو تو صرف یہاں ایک لائن بڑھا دیں (name = @font-face والا نام) */
 const PROMO_FONTS = [
   { name:'Jameel Noori Nastaleeq Kasheeda', label:'جمیل نوری نستعلیق (کشیدہ)' },
@@ -13425,7 +13476,8 @@ function fitCardText(){
     el.style.removeProperty('white-space'); el.style.removeProperty('overflow');
     if(el.clientWidth < 5) return;
     /* MCS11OCTSU0913AM: زوم بڑا ہو تو متن چھوٹا نہیں کرنا — اگلی لائن میں چلا جائے، کٹے نہیں */
-    if(getZoom() > 1.02){ el.style.setProperty('white-space','normal','important'); el.style.setProperty('overflow','visible','important'); return; }
+    const inCard = !!el.closest('.doc-card');   /* MCS1011TU286: کارڈ کے اندر ایک ہی سطر — کٹے تو «…»، اگلی لائن میں نہیں؛ تاکہ تینوں کارڈ ایک سائز رہیں */
+    if(getZoom() > 1.02 && !inCard){ el.style.setProperty('white-space','normal','important'); el.style.setProperty('overflow','visible','important'); return; }
     let fs = parseFloat(getComputedStyle(el).fontSize) || 12;
     let n = 0;
     /* MCS01OCTTH0845AM: فونٹ کم از کم 9px تک چھوٹا ہو — اس سے باریک پڑھا نہیں جاتا */
@@ -13433,7 +13485,7 @@ function fitCardText(){
       fs -= 0.5; el.style.fontSize = fs + 'px'; n++;
     }
     /* پھر بھی جگہ نہ بنے تو متن کٹے نہیں، اگلی لائن میں چلا جائے */
-    if(el.scrollWidth > el.clientWidth + 1){
+    if(el.scrollWidth > el.clientWidth + 1 && !inCard){
       el.style.setProperty('white-space','normal','important');
       el.style.setProperty('overflow','visible','important');
     }
@@ -16489,7 +16541,8 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
     else { n = 1; next = 'اگلا: 📝 رجسٹریشن'; }
     if(n >= 5) return '';   /* MCS0911MO267: سب مکمل — پٹی کی جگہ نہیں */
     const pct = n === 1 ? 25 : (n >= 4 ? 75 : 50), sn = n === 1 ? 1 : (n >= 4 ? 3 : 2);   /* MCS1011TU283: بنیادی ۲۵٪ ← رجسٹریشن ۵۰٪ ← ممبرشپ ۷۵٪ ← ایجنٹ ۱۰۰٪ (پٹی غائب) */
-    return `<div class="fp-card"><div class="fp-ct"><span>📊 مرحلہ ${sn} / 4 — <b>${pct}٪</b></span><span>${next}</span></div><div class="fp-tr"><i style="width:${pct}%"></i></div></div>`;
+    /* MCS1011TU286 (مالک کا حکم): پٹی کے اوپر صرف ۲۵٪ ۵۰٪ ۷۵٪ — جہاں تک پہنچا وہ روشن؛ «مرحلہ / اگلا» کی لکھائی ختم */
+    return `<div class="fp-card" data-pct="${pct}"><div class="fp-ct">${[25,50,75].map(v=>`<span class="${pct >= v ? 'on' : ''}">${v}٪</span>`).join('')}<span></span></div><div class="fp-tr"><i style="width:${pct}%"></i></div></div>`;
   };
   function wrapStage(name, kindOf){
     const f = window[name]; if(typeof f !== 'function') return;
@@ -18558,6 +18611,50 @@ html body .doc-card .doc-side a,html body .doc-card .doc-side > button,html body
 html body .doc-card .svc-reg-btn,html body .doc-card .svc-mem-btn{height:30px !important;}
 html body .doc-card .doc-foot{padding-top:2px !important;}
 html body .doc-card .doc-name{line-height:1.25 !important;}
+</style>
+<style id="mcsCardUnify286">
+/* ===== MCS1011TU286 (مالک کا حکم): تینوں طرح کے کارڈ (رجسٹرڈ / MCS ایجنٹ / ٹرائل) ایک جیسے — ایک ہی لمبائی، چوڑائی، اونچائی؛ چوڑائی کم؛
+   ایجنٹ بیج، رجسٹرڈ / ٹرائل ٹیگ اور پراگریس بار سب نظر آئیں؛ پٹی کے اوپر صرف ۲۵٪ ۵۰٪ ۷۵٪ ===== */
+html body .doc-card{--lc:104px;display:grid !important;grid-template-columns:minmax(0,1fr) auto !important;grid-template-rows:20px 56px 16px 28px 19px minmax(0,1fr) !important;align-items:center !important;align-content:stretch !important;gap:2px 6px !important;width:88% !important;max-width:330px !important;height:182px !important;min-height:182px !important;max-height:182px !important;margin:0 auto 7px !important;padding:6px 9px 4px !important;box-sizing:border-box !important;overflow:hidden !important;position:relative !important;border-radius:13px !important}
+/* بائیں کالم: MCS ایجنٹ بیج اور اس کے نیچے رجسٹرڈ / ٹرائل ٹیگ */
+html body .doc-card > .ag-corner{left:6px !important;top:6px !important;width:36px !important;height:36px !important}
+html body .doc-card > .pf-tag{position:absolute !important;left:6px !important;top:6px !important;max-width:96px !important;min-width:0 !important;width:auto !important;margin:0 !important;padding:2px 5px !important;z-index:4 !important}
+html body .doc-card > .ag-corner ~ .pf-tag{top:46px !important}
+html body .doc-card > .ew-rb ~ .pf-tag{top:40px !important}
+html body .doc-card > .st-line b{font-size:11px !important}
+html body .doc-card > .pf-tag b{font-size:9.5px !important;white-space:nowrap !important}
+html body .doc-card > .pf-tag small{font-size:8px !important;white-space:nowrap !important;line-height:1.2 !important}
+/* پہلی قطار: پراگریس بار */
+html body .doc-card > .fp-card{grid-row:1 !important;grid-column:1 / -1 !important;order:0 !important;margin:0 0 0 var(--lc) !important;align-self:end !important;color:#fff !important;font-size:10px !important;line-height:1.1 !important}
+html body .doc-card:not(:has(> .ag-corner)):not(:has(> .pf-tag)) > .fp-card,html body .doc-card:not(:has(> .ag-corner)):not(:has(> .pf-tag)) > .doc-toprow{margin-left:0 !important}
+html body .doc-card > .fp-card .fp-ct{display:flex !important;direction:rtl;gap:0 !important;justify-content:flex-start !important}
+html body .doc-card > .fp-card .fp-ct span{flex:0 0 25%;text-align:end;font-weight:800;color:rgba(255,255,255,.55);text-shadow:0 1px 1px rgba(0,0,0,.35);font-family:Arial,sans-serif !important;padding-inline-end:0}
+html body .doc-card > .fp-card .fp-ct span.on{color:#fde68a}
+html body .doc-card > .fp-card .fp-tr{height:6px !important;margin-top:2px !important;background:rgba(255,255,255,.35) !important;position:relative;overflow:hidden}
+html body .doc-card > .fp-card .fp-tr::after{content:"";position:absolute;inset:0;background:linear-gradient(to left,transparent calc(25% - 1px),rgba(0,0,0,.35) calc(25% - 1px),rgba(0,0,0,.35) 25%,transparent 25%,transparent calc(50% - 1px),rgba(0,0,0,.35) calc(50% - 1px),rgba(0,0,0,.35) 50%,transparent 50%,transparent calc(75% - 1px),rgba(0,0,0,.35) calc(75% - 1px),rgba(0,0,0,.35) 75%,transparent 75%)}
+/* دوسری قطار: نام / مالک / نمبر */
+html body .doc-card:has(> .ag-corner) > .doc-toprow,html body .doc-card:has(> .pf-tag) > .doc-toprow,html body .doc-card:has(> .ag-corner):has(> .pf-tag) > .doc-toprow{padding:0 !important}
+html body .doc-card > .doc-toprow{grid-row:2 !important;grid-column:1 / -1 !important;order:0 !important;margin:0 0 0 var(--lc) !important;padding:0 !important;align-self:center !important;overflow:hidden}
+html body .doc-card .doc-avatar{width:40px !important;height:40px !important;min-width:40px !important;flex:0 0 40px !important}
+html body .doc-card .doc-name{white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-size:calc(14.5px*var(--docCardScale,1)) !important}
+html body .doc-card .doc-body{overflow:hidden !important}
+html body .doc-card .doc-owner,html body .doc-card .doc-sub{display:block !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-size:11.5px !important}
+html body .doc-card .doc-sub::before{content:none !important}
+html body .doc-card .ref-chip{display:none !important}
+/* تیسری قطار: تعارف (ایک سطر) */
+html body .doc-card > .doc-intro{grid-row:3 !important;grid-column:1 / -1 !important;order:0 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-size:11px !important;line-height:16px !important;margin:0 !important;padding:0 !important}
+/* چوتھی قطار: مرحلے کا بٹن (دائیں) + گول بٹن (بائیں) */
+html body .doc-card > .svc-reg-btn,html body .doc-card > .svc-mem-btn,html body .doc-card > .svc-earn-btn,html body .doc-card > .pf-btn{grid-row:4 !important;grid-column:1 !important;order:0 !important;height:26px !important;min-height:0 !important;width:auto !important;max-width:100% !important;margin:0 !important;padding:0 10px !important;font-size:12px !important;line-height:1 !important;justify-self:stretch !important}
+html body .doc-card > .doc-side{grid-row:4 !important;grid-column:2 !important;order:0 !important;justify-self:end !important;position:static !important;margin:0 !important;padding:0 !important;gap:4px !important}
+html body .doc-card > .doc-side a,html body .doc-card > .doc-side > button,html body .doc-card > .doc-side .doc-mini button{width:26px !important;height:26px !important;min-width:26px !important;flex:0 0 26px !important}
+/* پانچویں قطار: اس مہینے کے رابطے */
+html body .doc-card > .st-line{grid-row:5 !important;grid-column:1 / -1 !important;order:0 !important;display:block !important;margin:0 !important;padding:0 8px !important;height:19px !important;line-height:19px !important;font-size:10.5px !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important}
+html body .doc-card > .doc-pending-line{grid-row:5 !important;grid-column:1 / -1 !important;order:0 !important;margin:0 !important;font-size:11px !important;line-height:16px !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important}
+/* چھٹی قطار: پتہ سب سے نیچے */
+html body .doc-card > .doc-foot{grid-row:6 !important;grid-column:1 / -1 !important;order:0 !important;align-self:end !important;margin:0 !important;padding:2px 0 0 !important;min-width:0 !important}
+html body .doc-card .doc-address{white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-size:11px !important;line-height:1.5 !important}
+/* زوم بڑھا ہو تو کارڈ کی اونچائی کھل جائے تاکہ بڑا متن نہ کٹے */
+html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{height:auto !important;max-height:none !important;grid-template-rows:auto auto auto auto auto auto !important;overflow:visible !important}
 </style>
 </body>
 </html>
