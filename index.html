@@ -2381,7 +2381,16 @@ body.cdOn{padding-top:30px}
 .sr-home .sr-hgo{flex:0 0 auto;background:#facc15;color:#111;border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px}
 .modal-overlay.sr-full{padding:0;align-items:stretch;justify-content:stretch}
 .modal-overlay.sr-full .sr-page{width:100%;max-width:820px;margin:0 auto;height:100%;background:#f8fafc;display:flex;flex-direction:column;direction:rtl}
-.sr-top{display:flex;gap:8px;align-items:center;padding:10px;background:linear-gradient(135deg,#0f766e,#0d5c56)}
+.sr-top{display:flex;flex-direction:column;gap:9px;align-items:stretch;padding:10px 10px 11px;background:linear-gradient(135deg,#0f766e,#0d5c56)}
+.sr-row{display:flex;gap:8px;align-items:center}
+.sr-ic{flex:0 0 auto;font-size:20px;line-height:1;transform:none}
+@keyframes srGlow{0%,100%{box-shadow:0 0 0 2px #22c55e,0 0 9px 2px rgba(34,197,94,.55)}50%{box-shadow:0 0 0 2px #4ade80,0 0 18px 6px rgba(74,222,128,.85)}}
+.sr-box{animation:srGlow 2.2s ease-in-out infinite}
+.sr-box:focus-within{box-shadow:0 0 0 3px #22c55e,0 0 22px 7px rgba(74,222,128,.95);animation:none}
+.sr-langs{display:flex;justify-content:center;gap:8px}
+.sr-langs button{flex:1 1 0;max-width:130px;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:6px 8px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+@keyframes srLangGlow{0%,100%{box-shadow:0 0 6px 1px rgba(134,239,172,.6)}50%{box-shadow:0 0 14px 4px rgba(134,239,172,.95)}}
+.sr-langs button.on{background:#fff;color:#0f766e;border-color:#86efac;animation:srLangGlow 1.8s ease-in-out infinite}
 .sr-back{flex:0 0 auto;width:42px;height:42px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:22px;cursor:pointer}
 .sr-box{flex:1;min-width:0;display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:4px 12px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .sr-box span{font-size:20px}
@@ -4209,11 +4218,12 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU294";
+const APP_VERSION = "MCS1011TU295";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1011TU294": "🔐 ممبرشپ کا ایک سال بڑھانے سے پہلے اب ڈویلپر پاس ورڈ — غلطی سے ایک دبانے میں سال نہیں بڑھے گا",
+  "MCS1011TU295": "🔍 تلاش صفحہ صاف — صرف ایک سبز گلو والا سرچ بار؛ نیچے تین ہینڈل English / اردو / Roman، دبانے پر ہلکا گلو اور ہنٹ بدل جاتا ہے۔",
+  "MCS1011TU295": "🔐 ممبرشپ کا ایک سال بڑھانے سے پہلے اب ڈویلپر پاس ورڈ — غلطی سے ایک دبانے میں سال نہیں بڑھے گا",
   "MCS1011TU292": "💬 My Chat اور Chat Settings کی نئی اسکرین — دی گئی تصویروں کے مطابق: ہرا ہیڈر، All Chats / Direct / Groups / Support، تلاش (نام، دکان کا نام، موبائل، ID)، گول DP / دکان کی تصویر، New Chat، چھوٹے سائز؛ Settings میں 8 صفحات اور English/اردو زبان",
   "MCS1011TU291": "⚙️ Settings کی نئی اسکرین — ہرا ہیڈر، لاگ اِن بندے کی اپنی گول تصویر، نام / ID / حالت کا کارڈ، رنگین آئیکن والی فہرست اور سرخ Logout",
   "MCS1011TU290": "📋 ابتدائی (غیر رجسٹرڈ) کاروبار کی پروفائل صرف چار چھوٹی لائنیں — نام، دکان، موبائل، پتہ، اور «رجسٹریشن مکمل کریں» — 📄 مکمل پروفائل کا بٹن کارڈ سے ہٹ گیا، اب اپنے اکاؤنٹ / پورٹل میں",
@@ -4696,7 +4706,7 @@ async function pfAdmin(act){
     if(act === 'del' && !confirm('اس دکان کی ممبرشپ (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
     const _pa = pfAct[c.rk] || {}, _pu = (c.prof && c.prof.until) || _pa.until || 0, _ps = (c.prof && c.prof.since) || _pa.since || 0;
     const until = act === 'year' ? mpYearUntil(_ps, _pu) : 0;
-    if(act === 'year' && !(await yearPwOk((c.rec && (c.rec.nameUr || c.rec.name)) || ''))) return;   /* MCS1011TU294 */
+    if(act === 'year' && !(await yearPwOk((c.rec && (c.rec.nameUr || c.rec.name)) || ''))) return;   /* MCS1011TU295 */
     const r = await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk, act: act === 'year' ? 'until' : act, until})}); const j = await r.json(); if(!j.ok) throw 0;
     if(act === 'year' && pfAct[c.rk]) pfAct[c.rk].until = until; if(act === 'del') delete pfAct[c.rk];
     if((act === 'approve' || act === 'reject') && pfAct[c.rk]){ delete pfAct[c.rk].pend; if(act === 'approve') pfAct[c.rk].until = Date.now() + MP_FREE_DAYS*864e5; }
@@ -5152,7 +5162,7 @@ async function aaGive(){
   const days = 365;   /* MCS0411WE133 (مالک کا حکم): صرف ایک سال کا پیکج */
   const until = days === 365 ? mpYearUntil(aaCur.since, aaCur.until) : Math.max(Date.now(), aaCur.until || 0) + days * 864e5;
   if(!confirm('کیا آپ نے اکاؤنٹ کی تمام تفصیلات مکمل طور پر چیک کر لی ہیں؟ ان میں کوئی غلطی تو نہیں، اور کوئی بات باقی تو نہیں رہ گئی؟\n\n🏪 ' + aaCur.prof + '\n👤 ' + aaCur.name + '\n📱 ' + aaCur.phone + '\n📧 ' + aaCur.mail + '\n📦 1 سال → ' + new Date(until).toLocaleDateString('en-GB') + ' تک\n\nOK = سب مکمل ہے، ممبرشپ جاری کر دیں')) return;
-  if(!(await yearPwOk(aaCur.name || ''))) return;   /* MCS1011TU294 */
+  if(!(await yearPwOk(aaCur.name || ''))) return;   /* MCS1011TU295 */
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ return err('⚠️ پہلے ایڈمن لاگ اِن کریں'); }
   try{
     const j = await (await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: aaCur.rk, act: 'until', until})})).json();
@@ -5308,8 +5318,22 @@ function srTabPass(it){
 }
 let srShown = 40, srT = 0;
 const SR_KINDS = [['group','🏷️','بزنس / پروفیشنلز'],['cat','🗂️','کیٹیگری'],['city','📍','شہر'],['area','🗺️','علاقہ']];
+/* MCS1011TU295: تلاش بار صاف — نیچے تین ہینڈل (English / اردو / Roman)، دبائیں تو وہ ہلکا گلو کرے اور ہنٹ بدل جائے */
+const SR_MODES = {
+  en:{ph:'Type in English — e.g. star', dir:'ltr', lang:'en'},
+  ur:{ph:'اردو میں لکھیں — مثلاً ستار', dir:'rtl', lang:'ur'},
+  ro:{ph:'Roman Urdu — e.g. nas → ناصر ، sat → ستار', dir:'ltr', lang:'en'}
+};
+let srMode = 'ur';
+function srSetMode(m, noFocus){
+  const c = SR_MODES[m]; if(!c) return; srMode = m;
+  const q = document.getElementById('srQ');
+  q.placeholder = c.ph; q.dir = c.dir; q.lang = c.lang;
+  document.querySelectorAll('#srLangs button').forEach(b=>b.classList.toggle('on', b.dataset.m === m));
+  if(!noFocus){ try{ q.focus(); }catch(e){} }
+}
 function srOpen(){
-  srBind(); srShown = 40; openModal('srModal'); srRender();
+  srBind(); srShown = 40; openModal('srModal'); srRender(); srSetMode(srMode, true);
   const q = document.getElementById('srQ'); setTimeout(()=>{ try{ q.focus(); }catch(e){} }, 150);
 }
 function srItems(){
@@ -9515,7 +9539,7 @@ function askAdminPassword(msg, okText){
     ov.classList.add('active'); setTimeout(()=>inp.focus(), 150);
   });
 }
-/* MCS1011TU294 (مالک کا حکم): ممبرشپ کا ایک سال بڑھانا (= کمپنی کے حساب میں ایک فروخت) صرف ڈویلپر پاس ورڈ کے بعد — جلدی میں غلطی سے نہیں */
+/* MCS1011TU295 (مالک کا حکم): ممبرشپ کا ایک سال بڑھانا (= کمپنی کے حساب میں ایک فروخت) صرف ڈویلپر پاس ورڈ کے بعد — جلدی میں غلطی سے نہیں */
 async function yearPwOk(nm){ return askAdminPassword('⭐ ' + (nm ? '«' + nm + '» — ' : '') + 'ایک سال کی ممبرشپ بڑھانے کے لیے ڈویلپر پاس ورڈ لکھیں۔ یہ کمپنی کے حساب میں ایک فروخت درج کرتا ہے۔', '⭐ ہاں، ایک سال بڑھائیں'); }
 function afterRecordDeleted(){
   ['serviceFormModal','doctorFormModal'].forEach(m=>{ const o = document.getElementById(m); if(o && o.classList.contains('active')) closeEntryForm(m); });
@@ -12735,7 +12759,7 @@ function agWaNext(){
   }catch(x){} }, 450);
 }
 async function agWaFinish(rec, o){
-  if(!(await yearPwOk((rec && (rec.nameUr || rec.name)) || ''))) return;   /* MCS1011TU294 */
+  if(!(await yearPwOk((rec && (rec.nameUr || rec.name)) || ''))) return;   /* MCS1011TU295 */
   agModal('<div class="ag-st">⏳ کاروبار + ایک سال + ایجنٹ بن رہا ہے…</div>');
   try{
     const rk = pfKeyOf(rec, 'service'), hdr = await vfAdminHdr();
@@ -15194,8 +15218,11 @@ if('serviceWorker' in navigator){
 <!-- MCS0511TH137: پورا تلاش صفحہ — اوپر تلاش، فلٹر کی پٹی، نیچے ایک لائن کے کیپسول؛ دبائیں تو ممبرشپ -->
 <div class="modal-overlay sr-full" id="srModal">
   <div class="sr-page">
-    <div class="sr-top"><button type="button" class="sr-back" onclick="closeModal('srModal')" aria-label="واپس">→</button>
-      <div class="sr-box"><span>🔍</span><input type="search" id="srQ" placeholder="دکان، نام، نمبر — English / اردو / Roman" autocomplete="off" enterkeyhint="search"><button type="button" id="srClr" onclick="srClear()" aria-label="صاف">✖</button></div><div class="s-hint s-hint-w">English • اردو • Roman Urdu &nbsp;—&nbsp; مثلاً <b>star</b> / <b>ستار</b> / <b>nas</b> (ناصر)</div></div>
+    <div class="sr-top">
+      <div class="sr-row"><button type="button" class="sr-back" onclick="closeModal('srModal')" aria-label="واپس">→</button>
+        <div class="sr-box"><span class="sr-ic">🔍</span><input type="search" id="srQ" placeholder="اردو میں لکھیں — مثلاً ستار" autocomplete="off" enterkeyhint="search" dir="rtl" lang="ur"><button type="button" id="srClr" onclick="srClear()" aria-label="صاف">✖</button></div></div>
+      <div class="sr-langs" id="srLangs" dir="ltr"><button type="button" data-m="en" onclick="srSetMode('en')">English</button><button type="button" data-m="ur" onclick="srSetMode('ur')">اردو</button><button type="button" data-m="ro" onclick="srSetMode('ro')">Roman</button></div>
+    </div>
     <div class="sr-chips" id="srChips"></div>
     <div class="flt-bar" data-for="search" style="margin:4px 10px 6px"><button type="button" data-f="reg" onclick="srSetTab('reg')">✅ رجسٹرڈ بزنس</button><button type="button" data-f="agent" onclick="srSetTab('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
     <div class="sr-cnt" id="srCnt"></div>
