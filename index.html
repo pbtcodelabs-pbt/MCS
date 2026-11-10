@@ -4201,10 +4201,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU284";
+const APP_VERSION = "MCS1011TU285";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1011TU285": "✅ «رجسٹرڈ بزنس» میں ایم سی ایس ایجنٹ بھی شامل (وہ بھی رجسٹرڈ بزنس ہیں) — «ایم سی ایس ایجنٹس» میں صرف ایجنٹ؛ دونوں بٹنوں کی تعداد بھی اسی حساب سے",
   "MCS1011TU284": "📶 مراحل کی پٹی تلاش / فہرست کی قطاروں میں بھی ہر کاروبار پر پکی — جب تک MCS ایجنٹ کا سنہری ربن نہ ملے؛ ربن ملتے ہی پٹی غائب",
   "MCS1011TU283": "📶 کارڈ پر دو کی جگہ ایک ہی پراگرس پٹی — بنیادی ۲۵٪، رجسٹریشن ۵۰٪، ممبرشپ ۷۵٪، ایم سی ایس ایجنٹ بنتے ہی پٹی ختم — اور یہ ہر کارڈ پر پکی نظر آتی ہے",
   "MCS1011TU282": "📶 ہر کارڈ پر باریک پراگرس بار (بنیادی ← رجسٹرڈ ← ممبرشپ ← ایجنٹ) ہمیشہ نظر آئے گی — 🔢 رجسٹرڈ / ایجنٹ بٹنوں پر باریک تعداد (صرف ڈویلپر کو)",
@@ -5283,7 +5284,7 @@ const srF = {group:'', cat:'', city:'', area:''};
 let srTab = 'all';
 function srSetTab(v){ srTab = (srTab===v) ? 'all' : v; srShown = 40; srRender(); }
 function srTabPass(it){
-  if(srTab==='reg') return !!pfActive(it.rec) && !agIsRec(it.kind, it.rec);
+  if(srTab==='reg') return !!pfActive(it.rec) || !!agIsRec(it.kind, it.rec);   /* MCS1011TU285: ایجنٹ بھی رجسٹرڈ بزنس ہیں */
   if(srTab==='agent') return !!agIsRec(it.kind, it.rec);
   return true;
 }
@@ -8082,7 +8083,7 @@ function syncSortBars(){ document.querySelectorAll('.sort-bar button').forEach(b
 /* MCS0911MO279 (مالک کا حکم): دو ٹیب — «رجسٹرڈ بزنس / پروفیشن» (صرف رجسٹرڈ، ایجنٹ نہیں) اور «ایم سی ایس ایجنٹس» (جو رجسٹرڈ بھی ہیں اور ایجنٹ بھی)۔ دوبارہ دبائیں تو سب واپس */
 let listFilter = 'all';
 function listFilterPass(kind, rec){
-  if(listFilter==='reg') return !!pfActive(rec) && !agIsRec(kind, rec);
+  if(listFilter==='reg') return !!pfActive(rec) || !!agIsRec(kind, rec);
   if(listFilter==='agent') return !!agIsRec(kind, rec);
   return true;
 }
@@ -8096,7 +8097,7 @@ function setListFilter(v){
 /* MCS0911MO279b (مالک کا حکم): کیٹگری چننے والے صفحے پر ہی دو ٹیب — دبائیں تو تمام کیٹگریز میں سے رجسٹرڈ / ایجنٹ کارڈ ایک ساتھ سامنے */
 const catTab = {business:'all', professional:'all'};
 function catTabPass(tab, kind, rec){
-  if(tab==='reg') return !!pfActive(rec) && !agIsRec(kind, rec);
+  if(tab==='reg') return !!pfActive(rec) || !!agIsRec(kind, rec);
   if(tab==='agent') return !!agIsRec(kind, rec);
   return true;
 }
@@ -18504,7 +18505,7 @@ function pgCounts(forKey){
   else if(forKey === 'cat-professional') items = D.map(r=>['doctor', r]).concat(S.filter(x=>grpOf(x.category) !== 'business').map(r=>['service', r]));
   else items = D.map(r=>['doctor', r]).concat(S.map(r=>['service', r]));
   let reg = 0, ag = 0;
-  items.forEach(([k, r])=>{ let a = false; try{ a = !!agIsRec(k, r); }catch(e){} if(a) ag++; else { try{ if(pfActive(r)) reg++; }catch(e){} } });
+  items.forEach(([k, r])=>{ let a = false; try{ a = !!agIsRec(k, r); }catch(e){} if(a){ ag++; reg++; } else { try{ if(pfActive(r)) reg++; }catch(e){} } });
   return {reg, agent: ag};
 }
 var pgBusy = false;
