@@ -4201,10 +4201,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU291";
+const APP_VERSION = "MCS1011TU292";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1011TU292": "💬 My Chat اور Chat Settings کی نئی اسکرین — دی گئی تصویروں کے مطابق: ہرا ہیڈر، All Chats / Direct / Groups / Support، تلاش (نام، دکان کا نام، موبائل، ID)، گول DP / دکان کی تصویر، New Chat، چھوٹے سائز؛ Settings میں 8 صفحات اور English/اردو زبان",
   "MCS1011TU291": "⚙️ Settings کی نئی اسکرین — ہرا ہیڈر، لاگ اِن بندے کی اپنی گول تصویر، نام / ID / حالت کا کارڈ، رنگین آئیکن والی فہرست اور سرخ Logout",
   "MCS1011TU290": "📋 ابتدائی (غیر رجسٹرڈ) کاروبار کی پروفائل صرف چار چھوٹی لائنیں — نام، دکان، موبائل، پتہ، اور «رجسٹریشن مکمل کریں» — 📄 مکمل پروفائل کا بٹن کارڈ سے ہٹ گیا، اب اپنے اکاؤنٹ / پورٹل میں",
   "MCS1011TU289": "🤝 ممبرشپ فارم میں ریفرل کوڈ اب فہرست سے چنا جاتا ہے — نام اور کوڈ دونوں الگ ڈبوں میں خود لکھے آتے ہیں اور ڈویلپر کو جانے والے پیغام میں نام بھی جاتا ہے",
@@ -19091,5 +19092,376 @@ window.mxFp = function(i){ try{ var x = mpListReal()[i]; if(x) fpOpen(x.p.kind, 
 .fpm-r{display:flex;gap:8px;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid #e2efec;font-size:13.5px}
 .fpm-r:last-child{border-bottom:none}.fpm-r span{color:#475569;flex:none}.fpm-r b{color:#0b2a4a;text-align:left;overflow-wrap:anywhere}
 </style>
+<style id="mcsChat292">
+/* MCS1011TU292: My Chat + Chat Settings — دی گئی تصویروں کے مطابق (ہرا ہیڈر، گولیاں، چپس، فہرست، نیچے پٹی) — چھوٹے / معیاری سائز */
+#mcModal .mc-box{--h1:#01615f;--h2:#027d6b;--h3:#0a8d66;--ac:#0b6b57;--ac2:#075346;--soft:#c7f1e7;--me:#dcfce7}
+#mcModal .mc-box.mc-th-blue{--h1:#0b3f8a;--h2:#1559d8;--h3:#2f7cf0;--ac:#1559d8;--ac2:#0b3f8a;--soft:#d6e6ff;--me:#dbeafe}
+#mcModal .mc-box.mc-th-purple{--h1:#4a1580;--h2:#6a2bb8;--h3:#8a3fd0;--ac:#6a2bb8;--ac2:#4a1580;--soft:#e9dcfb;--me:#ede9fe}
+#mcModal .mc-box.mc-th-orange{--h1:#b34700;--h2:#d9640a;--h3:#f08a1c;--ac:#d9640a;--ac2:#a84a00;--soft:#ffe6cc;--me:#ffedd5}
+#mcModal .mc-box.mc-bb-sq .mc-b{border-radius:4px}
+#mcModal .mc-box.mc-noph .mc-b img:not(.on){filter:blur(16px)}
+#mcModal .mc-box.mc-hp .mc2-pv{filter:blur(5px)}
+#mcModal .mc-box.mc-notk .tk{display:none}
+#mcModal .mc-b.me{background:var(--me)}
+#mcModal .mc-hd{background:linear-gradient(100deg,var(--h1),var(--h2) 55%,var(--h3));padding:8px 10px;gap:8px}
+#mcModal .mc-hd b{font-size:15px}#mcModal .mc-hd small{font-size:11px}
+#mcModal .mc-hd button{min-width:34px;height:34px;font-size:16px}
+#mcModal .mc-b{font-size:14px}
+.mc2-hdav{width:36px;height:36px;border-radius:50%;overflow:hidden;flex:none;display:grid;place-items:center;background:#ccfbf1;border:2px solid rgba(255,255,255,.7);position:relative}
+.mc2-hdav img{width:100%;height:100%;object-fit:cover}.mc2-hdav .mc-ini{width:100%;height:100%;display:grid;place-items:center;color:#fff;font:700 15px Arial,sans-serif}
+.mc2{flex:1;min-height:0;display:flex;flex-direction:column;position:relative;background:linear-gradient(180deg,var(--soft) 0%,#e6faf4 30%,#eefaf6 100%);direction:ltr;text-align:left;color:#0e1a3a;
+  font-family:MCSPop,'Jameel Noori Nastaleeq Regular','Segoe UI',Roboto,Arial,sans-serif;font-size:13px}
+.mc2 *{box-sizing:border-box}.mc2 button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mc2 b,.mc2 small,.mc2 span,.mc2 div{unicode-bidi:plaintext}
+.mc2 .mst-hd{height:calc(64px + env(safe-area-inset-top,0px));background:linear-gradient(100deg,var(--h1) 0%,var(--h2) 55%,var(--h3) 100%);flex:none}
+.mc2 .mst-lg{width:40px;height:38px}.mc2 .mst-ht b{font-size:17px}.mc2 .mst-ht small{font-size:11px}
+.mc2 .mst-hd .mst-sk{right:112px;bottom:10px;width:72px;height:46px}
+.mc2 .mst-bk{width:30px;height:34px}.mc2 .mst-bk svg{width:22px;height:22px}
+.mc2-ha{position:absolute;right:8px;top:calc(10px + env(safe-area-inset-top,0px));display:flex;gap:6px;align-items:center;z-index:3}
+.mc2-bl{position:relative;width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);display:grid;place-items:center;padding:0}
+.mc2-bl svg{width:19px;height:19px;fill:#fff}
+.mc2-bl i{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:8px;background:#ef2a2a;color:#fff;font:700 10px/16px Arial,sans-serif;font-style:normal;text-align:center;padding:0 3px;box-shadow:0 0 0 1.5px #0a7a63}
+.mc2-gb{height:36px;border-radius:11px;border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.14);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;font-size:9.5px;font-weight:700;line-height:1}
+.mc2-gb svg{width:16px;height:16px;fill:#fff;margin-bottom:1px}
+.mc2 .mst-tpw{margin-top:-14px;flex:none}
+.mc2 .mst-tp{padding:4px 24px;gap:8px;background:linear-gradient(180deg,var(--ac),var(--ac2))}.mc2 .mst-tp b{font-size:19px}.mc2 .mst-tp svg{width:22px;height:22px}
+.mc2 .mst-sp{margin:6px auto 0;padding:3px 14px;font-size:11.5px;flex:none}
+.mc2-ch{display:flex;gap:6px;padding:9px 10px 0;overflow-x:auto;flex:none;scrollbar-width:none}.mc2-ch::-webkit-scrollbar{display:none}
+.mc2-ch.s2{padding-top:6px}
+.mc2-c{flex:none;display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:13px;background:#fff;border:1.2px solid #cfe9e0;color:var(--ac2);font-size:12px;font-weight:700;white-space:nowrap;box-shadow:0 1px 3px rgba(10,90,80,.08)}
+.mc2-c svg{width:15px;height:15px;fill:currentColor}
+.mc2-c.on{background:linear-gradient(180deg,var(--ac),var(--ac2));color:#fff;border-color:var(--ac2)}
+.mc2-c.sm{padding:4px 10px;font-size:11px;border-radius:11px}
+.mc2-sr{margin:8px 10px 0;display:flex;align-items:center;gap:8px;background:#fff;border:1.2px solid #bfe6da;border-radius:14px;padding:0 12px;height:38px;flex:none}
+.mc2-sr svg{width:17px;height:17px;stroke:var(--ac2);fill:none;stroke-width:2.4;stroke-linecap:round;flex:none}
+.mc2-sr input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:13px;color:#0e1a3a;height:100%}
+.mc2-ls{flex:1;min-height:0;overflow-y:auto;padding:8px 10px 84px;-webkit-overflow-scrolling:touch}
+.mc2-r{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #dcefe8;border-radius:16px;padding:8px 10px;margin-bottom:6px;box-shadow:0 1px 4px rgba(10,90,80,.07);cursor:pointer}
+.mc2-r.off{opacity:.6}
+.mc2-av{width:42px;height:42px;border-radius:50%;flex:none;overflow:hidden;display:grid;place-items:center;background:#ccfbf1;font-size:20px;border:1.5px solid #d4ebe4;position:relative}
+.mc2-av img{width:100%;height:100%;object-fit:cover;display:block}
+.mc2-av .mc-ini{width:100%;height:100%;display:grid;place-items:center;color:#fff;font:700 17px Arial,sans-serif}
+.mc2-em{font-size:20px}
+.mc2-m{flex:1;min-width:0}
+.mc2-l1{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.mc2-l1 b{font-size:14px;font-weight:700;color:#0e1a3a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc2-tm{font:11px Arial,sans-serif;color:#64748b;flex:none;direction:ltr}
+.mc2-l2{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:2px}
+.mc2-pv{font-size:12px;color:#334155;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.mc2-pv .tk{color:#2563eb;font-style:normal;font-size:11px;margin-right:3px}
+.mc2-nw{background:#16a34a;color:#fff;border-radius:10px;min-width:20px;height:20px;font:700 11px/20px Arial,sans-serif;text-align:center;padding:0 5px;flex:none}
+.mc2-cv{width:16px;height:16px;fill:none;stroke:#0e1a3a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.mc2-h{margin:10px 4px 6px;font-size:12px;font-weight:700;color:var(--ac2)}
+.mc2-e{text-align:center;color:#475569;padding:26px 12px;font-size:12.5px;line-height:1.7}
+.mc2-fab{position:absolute;right:12px;bottom:74px;width:60px;height:60px;border-radius:50%;border:0;color:#fff;background:linear-gradient(180deg,var(--h3),var(--ac2));box-shadow:0 4px 12px rgba(5,70,58,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:9.5px;font-weight:700;z-index:5;line-height:1.05;padding:0}
+.mc2-fab svg{width:24px;height:24px;fill:#fff}
+.mc2-nv{flex:none;display:flex;margin:0 8px calc(8px + env(safe-area-inset-bottom,0px));background:#fff;border-radius:20px;box-shadow:0 2px 10px rgba(10,90,80,.18);border:1px solid #d5ebe4;padding:4px}
+.mc2-nv button{flex:1;border:0;background:transparent;border-radius:15px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;color:var(--ac2);font-size:10.5px;font-weight:700}
+.mc2-nv button svg{width:22px;height:22px;fill:currentColor}
+.mc2-nv button.on{background:linear-gradient(180deg,var(--ac),var(--ac2));color:#fff}
+.mc2-bd{flex:1;min-height:0;overflow-y:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch}
+.mc2 .mst-ls{margin:0 10px;background:transparent;box-shadow:none;overflow:visible;display:flex;flex-direction:column;gap:5px}
+.mc2 .mst-r{border:1px solid #d5ebe4;border-radius:14px;min-height:46px;padding:5px 10px;gap:10px;box-shadow:0 1px 3px rgba(10,90,80,.07)}
+.mc2 .mst-r:first-child{border-top:1px solid #d5ebe4}
+.mc2 .mst-i{width:36px;height:36px;border-radius:11px}.mc2 .mst-i svg{width:20px;height:20px}.mc2 .mst-i span{font-size:14px}
+.mc2 .mst-t b{font-size:14px}.mc2 .mst-t small{font-size:11.5px}
+.mc2-ac{display:flex;align-items:center;gap:10px;margin:10px 10px 8px;padding:9px 10px;background:#fff;border-radius:18px;border:1px solid #d5ebe4;box-shadow:0 2px 8px rgba(10,90,80,.1)}
+.mc2-aci{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;flex:none}.mc2-aci svg{width:28px;height:28px;fill:#fff}
+.mc2-ac .mst-t b{font-size:15px}
+.mc2-on{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:12px;color:#fff;font-size:12.5px;font-weight:700;background:linear-gradient(180deg,#1fae4b,#0b7a30)}.mc2-on svg{width:16px;height:16px}
+.mc2-cd{margin:10px 10px 0;padding:6px 12px;background:#fff;border-radius:16px;border:1px solid #d5ebe4}
+.mc2-cd label{display:block;font-size:11.5px;font-weight:700;color:#475569;margin:8px 0 3px}
+.mc2-cd input[type=text]{width:100%;border:1.2px solid #bfe6da;border-radius:11px;padding:8px 10px;font:inherit;font-size:13px;margin-bottom:6px}
+.mc2-tr{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #e3efec}.mc2-tr:first-child{border-top:0}
+.mc2-tr .mst-t{flex:1}.mc2-tr .mst-t b{font-size:13.5px}
+.mc2-sw{position:relative;width:42px;height:24px;flex:none}.mc2-sw input{opacity:0;width:100%;height:100%;position:absolute;margin:0;z-index:2}
+.mc2-sw i{position:absolute;inset:0;border-radius:12px;background:#cbd5e1;transition:.15s}.mc2-sw i:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s}
+.mc2-sw input:checked+i{background:#16a34a}.mc2-sw input:checked+i:after{left:21px}
+.mc2-pr{text-align:center;margin-top:14px}
+.mc2-pb{width:84px;height:84px;border-radius:50%;border:3px solid var(--ac);background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-size:34px;display:inline-grid;place-items:center;overflow:hidden;position:relative;padding:0}
+.mc2-pb img{width:100%;height:100%;object-fit:cover}.mc2-pb i{position:absolute;right:0;bottom:0;background:#fff;color:#000;font-size:13px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal}
+.mc2-qs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.mc2-qs button{border:1.2px solid #bfe6da;background:#f2fbf8;border-radius:12px;padding:4px 10px;font-size:11.5px;font-weight:700;color:var(--ac2)}
+.mc2-sw2{display:flex;gap:8px;flex-wrap:wrap;padding:6px 0 10px}
+.mc2-sw2 button{width:56px;border:2px solid #d5ebe4;border-radius:14px;background:#fff;padding:6px 0 4px;font-size:10.5px;font-weight:700;color:#334155}
+.mc2-sw2 button u{display:block;width:26px;height:26px;border-radius:50%;margin:0 auto 3px;text-decoration:none}.mc2-sw2 button.on{border-color:#16a34a;background:#f0fdf4}
+.mc2-cr{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid #e3efec}.mc2-cr:first-child{border-top:0}.mc2-cr .mc2-av{width:34px;height:34px}
+.mc2-cr b{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc2-cr button{border:1.2px solid #f3b6b6;background:#fde5e5;color:#b3141a;border-radius:10px;padding:4px 10px;font-size:11.5px;font-weight:700}
+.mc2 .mst-bt{font-size:14px;padding:11px 14px}.mc2 .mst-bt.rd{background:linear-gradient(180deg,#ff5a45,#dc2a22)}
+.mc2-sh{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:20;display:flex;align-items:flex-end}
+.mc2-sh>div{width:100%;background:#fff;border-radius:20px 20px 0 0;padding:10px 12px calc(14px + env(safe-area-inset-bottom,0px))}
+.mc2-sh h4{margin:2px 4px 8px;font-size:14px;font-weight:700}
+.mc2-sh .mst-r{border-radius:12px;margin-bottom:5px}
+.mc2-note{margin:8px 14px 0;font-size:11px;color:#475569;text-align:center;line-height:1.6}
+html.mcs-dark .mc2{background:linear-gradient(180deg,#0a2326,#0a1b1e);color:#e4f0ee}
+html.mcs-dark .mc2-r,html.mcs-dark .mc2-ac,html.mcs-dark .mc2-cd,html.mcs-dark .mc2-nv,html.mcs-dark .mc2-c,html.mcs-dark .mc2-sr,html.mcs-dark .mc2-sh>div,html.mcs-dark .mc2 .mst-r{background:#11292d;border-color:#21403f}
+html.mcs-dark .mc2-l1 b,html.mcs-dark .mc2-pv,html.mcs-dark .mc2 .mst-t b,html.mcs-dark .mc2-sr input{color:#e4f0ee}html.mcs-dark .mc2-c{color:#bfeadf}html.mcs-dark .mc2-c.on{color:#fff}
+@media (max-width:360px){.mc2 .mst-hd .mst-sk{display:none}.mc2 .mst-tp b{font-size:17px}}
+</style>
+<script>
+/* ===== MCS1011TU292 (مالک کا حکم): My Chat اور Chat Settings — دی گئی تصویروں کے مطابق =====
+   فہرست: ہرا ہیڈر + گھنٹی + Settings، «My Chat» گولی، All Chats / Direct / Groups / Support، تلاش، گول تصویر والی قطاریں، New Chat، نیچے پٹی
+   تلاش: نام، دکان کا نام، موبائل نمبر، کاروبار کی ID — جو بھی لکھیں اس کاروبار کی چیٹ / کارڈ مل جائے
+   تصویر: DP یا دکان کی تصویر (نہ ہو تو نام کا پہلا حرف)۔ زبان: پہلے سے English، اردو کا بٹن Language میں
+   ⚠️ Earnings / Withdrawals نہیں لگائے (پلے اسٹور کی وجہ سے پچھلے Settings کی طرح) */
+(function(){
+const D = {lang:'en',theme:'green',bubble:'round',autoPhoto:1,autoFile:0,ticks:1,hidePrev:0,showDp:1,nMsg:1,nGrp:1,nSnd:1,nVib:1,grpAdd:'all',name:'',status:'Available',photo:''};
+const P = () => { try{ return Object.assign({}, D, JSON.parse(localStorage.getItem('mcsChatPrefs') || '{}')); }catch(e){ return Object.assign({}, D); } };
+const mc2SV = o => { const p = Object.assign(P(), o); try{ localStorage.setItem('mcsChatPrefs', JSON.stringify(p)); }catch(e){ showToast('⚠️ Storage full'); } return p; };
+const CL = () => { try{ return JSON.parse(localStorage.getItem('mcsChatClr') || '{}') || {}; }catch(e){ return {}; } };
+const T = {
+  myChat:['My Chat','میری چیٹ'], sub:['Messages, Support & Conversations','پیغامات، سپورٹ اور گفتگو'],
+  all:['All Chats','تمام چیٹس'], direct:['Direct','ڈائریکٹ'], groups:['Groups','گروپس'], support:['Support','سپورٹ'],
+  search:['Search chats, names or messages...','چیٹ، نام یا پیغام تلاش کریں...'], newChat:['New Chat','نئی چیٹ'], settings:['Settings','سیٹنگ'],
+  home:['Home','ہوم'], subs:['Subscriptions','ممبرشپ'], earn:['Earn','کمائیں'], noChat:['No chats found.<br>Search by name, shop name or mobile number.','کوئی چیٹ نہیں ملی۔<br>نام، دکان کا نام یا موبائل نمبر سے تلاش کریں۔'],
+  noGroup:['No group chats yet.','ابھی کوئی گروپ چیٹ نہیں۔'], biz:['Businesses','کاروبار'], priv:['Your chat is visible only to you and PBT Code Labs support.','آپ کی چیٹ صرف آپ اور PBT Code Labs سپورٹ دیکھ سکتے ہیں۔'],
+  setT:['My Chat Settings','چیٹ سیٹنگ'], setS:['Manage Your Chat Experience','اپنی چیٹ کا انتظام کریں'], acct:['Chat Account','چیٹ اکاؤنٹ'], acctS:['Your chat profile and preferences','آپ کی چیٹ پروفائل اور ترجیحات'], active:['Active','فعال'],
+  pro:['Chat Profile','چیٹ پروفائل'], proS:['Set your name, photo and status','نام، تصویر اور اسٹیٹس لگائیں'], not:['Chat Notifications','چیٹ اطلاعات'], notS:['Manage message, group and sound alerts','پیغام، گروپ اور آواز کے الرٹ'],
+  pv:['Privacy & Security','پرائیویسی اور سیکیورٹی'], pvS:['Control your chat privacy and safety','اپنی چیٹ کی پرائیویسی اور حفاظت'], grp:['Group Settings','گروپ سیٹنگ'], grpS:['Manage your groups and permissions','گروپس اور اجازتیں'],
+  med:['Media & Storage','میڈیا اور اسٹوریج'], medS:['Manage media download and storage usage','میڈیا ڈاؤن لوڈ اور اسٹوریج'], th:['Chat Theme','چیٹ تھیم'], thS:['Choose chat colors and message style','رنگ اور پیغام کا انداز'],
+  lang:['Language','زبان'], langS:['English / اردو','English / اردو'], clr:['Clear Chat History','چیٹ ہسٹری صاف کریں'], clrS:['Delete individual or all chat messages','ایک یا تمام چیٹس کے پیغام ہٹائیں'],
+  abt:['About My Chat','My Chat کے بارے میں'], abtS:['Chat app version, features and policies','ورژن، خصوصیات اور پالیسیاں'], save:['Save','محفوظ کریں'], saved:['✅ Saved','✅ محفوظ ہو گیا'],
+  name:['Name','نام'], status:['Status','اسٹیٹس'], clearAll:['Clear All Chats','تمام چیٹس صاف کریں'], clear:['Clear','صاف'], sure:['Clear this chat from your phone?','کیا یہ چیٹ اپنے فون سے صاف کریں؟'], sureAll:['Clear ALL chats from your phone?','کیا تمام چیٹس اپنے فون سے صاف کریں؟']
+};
+const t = k => { const v = T[k]; return v ? (P().lang === 'ur' ? v[1] : v[0]) : k; };
+const E = s => mstEsc(s);
+const IC = {
+  chat:'<svg viewBox="0 0 24 24"><path d="M12 3.5c4.7 0 8.5 3.2 8.5 7.2s-3.8 7.2-8.5 7.2c-1 0-2-.1-2.9-.4L4.5 19.8l1.2-3.6C4.3 14.9 3.5 13 3.5 10.7c0-4 3.8-7.2 8.5-7.2z"/><circle cx="8.3" cy="10.8" r="1" fill="#fff"/><circle cx="12" cy="10.8" r="1" fill="#fff"/><circle cx="15.7" cy="10.8" r="1" fill="#fff"/></svg>',
+  chatP:'<svg viewBox="0 0 24 24"><path d="M12 3.5c4.7 0 8.5 3.2 8.5 7.2s-3.8 7.2-8.5 7.2c-1 0-2-.1-2.9-.4L4.5 19.8l1.2-3.6C4.3 14.9 3.5 13 3.5 10.7c0-4 3.8-7.2 8.5-7.2z"/><path d="M12 7.8v5.8M9.1 10.7h5.8" stroke="#0b5e4d" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  person:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.3"/><path d="M3.8 21c0-4.4 3.6-7.4 8.2-7.4s8.2 3 8.2 7.4z"/></svg>',
+  users:'<svg viewBox="0 0 24 24"><circle cx="8" cy="8.5" r="3.2"/><circle cx="16.5" cy="9" r="2.8"/><path d="M1.8 19c0-3.3 2.8-5.6 6.2-5.6s6.2 2.3 6.2 5.6zM14.5 14c3.4-.4 7.7 1 7.7 5h-5.6c0-2-.8-3.7-2.1-5z"/></svg>',
+  head:'<svg viewBox="0 0 24 24"><path d="M4 13v-1.5a8 8 0 0 1 16 0V13" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/><rect x="3" y="12" width="4.2" height="6.4" rx="1.6"/><rect x="16.8" y="12" width="4.2" height="6.4" rx="1.6"/><path d="M19 18.4c0 1.8-1.6 2.6-4 2.6h-1.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>',
+  lock:'<svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10.5" rx="2.4"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="#fff" stroke-width="2.2"/><circle cx="12" cy="15.6" r="1.5" fill="#1d9a2b"/></svg>',
+  dl:'<svg viewBox="0 0 24 24"><path d="M12 3.5v10.2M7.6 9.6l4.4 4.4 4.4-4.4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 15.5v2.4a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2.4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  brush:'<svg viewBox="0 0 24 24"><path d="M20.4 3.6a1.5 1.5 0 0 0-2.1 0L9.6 12.3l2.1 2.1 8.7-8.7a1.5 1.5 0 0 0 0-2.1zM8.4 13.5c-2.2.2-3.4 1.6-3.4 3.4 0 1-.6 1.7-1.3 2.2 2.8.8 7.3.4 7.3-3.2z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24"><path d="M5.5 7h13l-1 13a1.8 1.8 0 0 1-1.8 1.6H8.3A1.8 1.8 0 0 1 6.5 20zM9 3.6h6l.8 1.9H8.2zM3.6 5.8h16.8v1.3H3.6z"/><path d="M10 10.5v7M14 10.5v7" stroke="#dc2a22" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><rect x="10.7" y="10.2" width="2.6" height="7.2" rx="1.1" fill="#475569"/><circle cx="12" cy="7.1" r="1.6" fill="#475569"/></svg>',
+  home:'<svg viewBox="0 0 24 24"><path d="M12 3.2L2.8 11h2.6v8.2h5v-5.4h3.2v5.4h5V11h2.6z"/></svg>',
+  subs:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.3"/><circle cx="5.2" cy="9.6" r="2.4"/><circle cx="18.8" cy="9.6" r="2.4"/><path d="M6.2 19c0-3.2 2.6-5.2 5.8-5.2s5.8 2 5.8 5.2zM0.8 18.2c0-2.4 1.7-3.9 4.1-3.9.8 0 1.5.2 2 .5-1.3 1-2 2.1-2.3 3.4zM23.2 18.2c0-2.4-1.7-3.9-4.1-3.9-.8 0-1.5.2-2 .5 1.3 1 2 2.1 2.3 3.4z"/></svg>',
+  earn:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="6.5" rx="7.5" ry="3"/><path d="M4.5 9.5c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v3c0 1.7-3.4 3-7.5 3s-7.5-1.3-7.5-3zM4.5 15.5c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v3c0 1.7-3.4 3-7.5 3s-7.5-1.3-7.5-3z"/></svg>',
+  srch:'<svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20.5 20.5"/></svg>',
+  chk:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#fff"/><path d="M6.6 12.4l3.7 3.7 7.1-7.4" fill="none" stroke="#0e8a37" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+window.__mc2P = P;
+/* ---------- کاروبار کی تلاش ---------- */
+function ph10(r){ return String(r && (r.whatsapp || r.phone) || '').replace(/\D/g, '').slice(-10); }
+function owner(r){ try{ return splitOwnerIntro(r.intro).owner || ''; }catch(e){ return ''; } }
+function normDigits(q){ let d = String(q || '').replace(/\D/g, ''); if(d.indexOf('92') === 0 && d.length >= 12) d = d.slice(2); return d.replace(/^0+/, ''); }
+function bizFind(q){
+  const ql = String(q || '').toLowerCase().trim(), d = normDigits(q); if(ql.length < 2) return [];
+  const all = [].concat((store.services || []).map(r => [r, 'svc']), (store.doctors || []).map(r => [r, 'doctor'])), out = [];
+  for(const a of all){ if(out.length >= 15) break; const r = a[0]; if(!r) continue;
+    const shop = [r.nameUr, r.name, r.nameEn].filter(Boolean).join(' '), ow = owner(r), ph = ph10(r);
+    const hit = (shop + ' ' + ow).toLowerCase().includes(ql) || (d.length >= 3 && ph.includes(d)) || String(r.id || '') === q.trim() || (r.fsId && String(r.fsId) === q.trim());
+    if(hit) out.push({r, k: a[1], shop: r.nameUr || r.name || r.nameEn || '', owner: ow, ph}); }
+  return out;
+}
+const rcCache = {};
+function recFor(x){
+  if(!x || x.k === 'pbt' || x.k === 'cd' || x.k === 'agent') return null;
+  const key = (x.th || '') + '|' + (x.title || ''); if(key in rcCache) return rcCache[key]; let rec = null;
+  try{ const txt = (x.title || '') + ' ' + (x.sub || ''), ms = Array.from(txt.matchAll(/(?:\+?92|0)?(3\d{9})/g)).map(m => m[1]);
+    const all = [].concat(store.services || [], store.doctors || []);
+    if(ms.length) rec = all.find(r => r && ms.includes(ph10(r))) || null;
+    if(!rec){ const nm = String(x.title || '').replace(/^[^\p{L}\p{N}]+/u, '').replace(/^.*↔\s*/, '').trim().toLowerCase();
+      if(nm.length > 2) rec = all.find(r => r && ([r.nameUr, r.name, r.nameEn].filter(Boolean).some(s => String(s).trim().toLowerCase() === nm) || owner(r).trim().toLowerCase() === nm)) || null; }
+  }catch(e){}
+  rcCache[key] = rec; return rec;
+}
+function recAv(rec){
+  if(!rec) return ''; const sf = rec.more && rec.more.selfie; if(sf) return `<img src="${escapeAttr(sf)}" alt="">`;
+  try{ const rk = pfKeyOf(rec), pa = rk && pfAct[rk]; if(pa) return `<span class="mc2-em">🏪</span><img data-mc2rk="${escapeAttr(rk)}" data-ts="${escapeAttr(String(pa.ts || ''))}" alt="" style="display:none">`; }catch(e){}
+  return '';
+}
+function avOf(x){
+  if(x.av && mcAvs[x.av]) return `<img src="${mcAvs[x.av]}" alt="">`;
+  if(x.k === 'pbt') return '<img src="icons/icon-192.png" alt="">';
+  const a = recAv(recFor(x)); if(a) return a;
+  try{ return mcInitAv(x, x.k === 'agent' ? '🤝' : '👤'); }catch(e){ return '👤'; }
+}
+function lazy(root){ try{ root.querySelectorAll('img[data-mc2rk]').forEach(async im => { const s = await pfImg(im.dataset.mc2rk + '_0', im.dataset.ts); if(s){ im.src = s; im.style.display = ''; const p = im.previousElementSibling; if(p && p.classList.contains('mc2-em')) p.style.display = 'none'; } }); }catch(e){} }
+/* ---------- ڈھانچہ ---------- */
+function unreadN(){ return (mcList || []).reduce((a, x) => a + (x.nw || 0), 0); }
+function hd(back, bell, gear){
+  const n = unreadN();
+  return `<div class="mst-hd"><button type="button" class="mst-bk" aria-label="Back" onclick="${back}">${MST_IC.back}</button><img class="mst-lg" src="${MST_LOGO}" alt=""><div class="mst-ht"><b>My City Shines</b><small>میرا روشن شہر</small></div><img class="mst-sk" src="${MST_SKY}" alt="">`
+    + `<div class="mc2-ha">${bell ? `<button type="button" class="mc2-bl" id="mc2Bl" aria-label="Notifications" onclick="mc2Bell()">${MST_IC.bell}<i ${n ? '' : 'hidden'}>${n > 99 ? '99+' : n}</i></button>` : ''}${gear ? `<button type="button" class="mc2-gb" onclick="mc2Set()">${MST_IC.gear}${t('settings')}</button>` : ''}</div>`
+    + `<svg class="mst-wv" viewBox="0 0 430 20" preserveAspectRatio="none"><path d="M0 10C70 24 130 2 215 9S360 22 430 6V20H0z" fill="#c9f2e8"/></svg></div>`;
+}
+function nav(on){
+  const b = (k, ic, lb, fn) => `<button type="button" class="${on === k ? 'on' : ''}" onclick="${fn}">${ic}<span>${t(lb)}</span></button>`;
+  return `<div class="mc2-nv">${b('home', IC.home, 'home', "mc2Nav('home')")}${b('subs', IC.subs, 'subs', "mc2Nav('subs')")}${b('earn', IC.earn, 'earn', "mc2Nav('earn')")}${b('chat', IC.chat, 'myChat', 'mc2Show()')}</div>`;
+}
+window.mc2Nav = function(k){
+  try{ mcClose(); }catch(e){}
+  setTimeout(() => { try{
+    if(k === 'home') goHome();
+    else if(k === 'earn') agEarnOpen();
+    else if(k === 'subs'){ const L = mpListReal(); if(L.length && L[0].p.rk) mpSubscribe(L[0].p.rk); else showToast('⭐ Membership: add your business first'); }
+  }catch(e){ showToast('⚠️ ' + (e.message || '')); } }, 160);
+};
+function pill(title, sub, svg){ return `<div class="mst-tpw"><div class="mst-tp">${svg}<b>${title}</b></div></div><div class="mst-sp">${sub}</div>`; }
+function shell(){
+  const q = E(mcQ || '');
+  return `<div class="mc2">${hd('mcClose()', 1, 1)}${pill(t('myChat'), t('sub'), IC.chat)}<div class="mc2-ch" id="mc2Ch"></div><div class="mc2-ch s2" id="mc2Ch2" hidden></div>`
+    + `<div class="mc2-sr">${IC.srch}<input type="search" id="mcQIn" placeholder="${E(t('search'))}" value="${q}" autocomplete="off" oninput="mc2Q(this.value)"></div>`
+    + `<div class="mc2-ls" id="mcL"><div class="mc2-e">⏳</div></div>`
+    + `<button type="button" class="mc2-fab" onclick="mc2New()">${IC.chatP}<span>${t('newChat')}</span></button>${nav('chat')}</div>`;
+}
+window.mc2Show = function(){ mcTh = null; mcBox(shell()); apply(); if(window._mcLastR) mcLoadList(true); mcLoadList(); };
+window.mc2Q = function(v){ mcQ = v; clearTimeout(window._mc2T); window._mc2T = setTimeout(render, 140); };
+window.mc2F = function(f){ window._mc2F = f; render(); };
+window.mc2Role = function(r){ mcTab = r; try{ if(r === 'cd'){ const cd = mcList.filter(x => x.k === 'cd'); if(cd.length === 1){ mcGoObj(cd[0]); return; } } }catch(e){} render(); };
+window.mc2Bell = function(){ const x = (mcList || []).find(y => y.nw && y.th && !y.off); if(x) mcGoObj(x); else showToast(P().lang === 'ur' ? '🔔 کوئی نیا پیغام نہیں' : '🔔 No new messages'); };
+function row(x, i){
+  const c = CL(), cleared = x.th && c[x.th] && (x.last || 0) <= c[x.th], pv = cleared ? '' : (x.lt || x.sub || '');
+  return `<div class="mc2-r ${x.off ? 'off' : ''}" ${x.off ? '' : `onclick="mcGoObj(mcList[${i}])"`}><div class="mc2-av">${avOf(x)}</div><div class="mc2-m"><div class="mc2-l1"><b dir="auto">${E(String(x.title || '').replace(/^🤝\s*/, ''))}</b>${x.last && !cleared ? `<span class="mc2-tm">${mcTime(x.last)}</span>` : ''}</div>`
+    + `<div class="mc2-l2"><span class="mc2-pv" dir="auto">${!cleared && x.lt && x.mine ? '<i class="tk">✓✓</i>' : ''}${E(pv)}</span>${x.nw && !cleared ? `<span class="mc2-nw">${x.nw}</span>` : ''}</div></div>${MST_IC.chev.replace('class="mst-ch"', 'class="mc2-cv"')}</div>`;
+}
+function rowMatch(x, ql, d, bz){
+  if([x.title, x.sub, x.lt].join(' ').toLowerCase().includes(ql)) return true;
+  const dg = String((x.title || '') + (x.sub || '')).replace(/\D/g, '');
+  if(d.length >= 3 && dg.includes(d)) return true;
+  if(bz.some(b => b.ph && dg.includes(b.ph))) return true;
+  const rec = recFor(x); if(rec){ if([rec.nameUr, rec.name, rec.nameEn, owner(rec)].join(' ').toLowerCase().includes(ql)) return true; if(d.length >= 3 && ph10(rec).includes(d)) return true; if(String(rec.id || '') === ql) return true; }
+  return false;
+}
+function render(){
+  const L = document.getElementById('mcL'); if(!L || mcTh) return;
+  const staff = !!mcStaff, f = window._mc2F || 'all', q = (mcQ || '').trim(), ql = q.toLowerCase(), d = normDigits(q);
+  const chip = (k, lb, ic) => `<button type="button" class="mc2-c ${f === k ? 'on' : ''}" onclick="mc2F('${k}')">${ic}${t(lb)}</button>`;
+  const CH = document.getElementById('mc2Ch'); if(CH) CH.innerHTML = chip('all', 'all', IC.chat) + chip('direct', 'direct', IC.person) + chip('groups', 'groups', IC.users) + chip('support', 'support', IC.head);
+  const C2 = document.getElementById('mc2Ch2');
+  if(C2){ if(staff){ const isCd = (mcWho() || {}).as === 'cd', cdx = mcList.filter(x => x.k === 'cd');
+      const rs = [['all', 'All'], ['user', 'Users'], ['agent', 'Agents'], ['cd', isCd ? 'Developer' : 'Co-Dev'], ['biz', 'Agent ↔ Business']].filter(r => r[0] !== 'cd' || cdx.length);
+      C2.hidden = false; C2.innerHTML = rs.map(r => `<button type="button" class="mc2-c sm ${mcTab === r[0] ? 'on' : ''}" onclick="mc2Role('${r[0]}')">${r[1]}</button>`).join(''); } else C2.hidden = true; }
+  let rows = mcList.slice();
+  if(f === 'direct') rows = rows.filter(x => x.k !== 'pbt' && x.k !== 'group'); else if(f === 'groups') rows = rows.filter(x => x.k === 'group'); else if(f === 'support') rows = rows.filter(x => x.k === 'pbt');
+  if(staff && mcTab !== 'all') rows = rows.filter(x => x.k === mcTab);
+  let bz = []; if(q){ bz = bizFind(q); rows = rows.filter(x => rowMatch(x, ql, d, bz)); }
+  window._mc2Bz = bz;
+  let h = rows.map(x => row(x, mcList.indexOf(x))).join('');
+  if(bz.length) h += `<div class="mc2-h">${t('biz')}</div>` + bz.map((b, i) => `<div class="mc2-r" onclick="mc2BizGo(${i})"><div class="mc2-av">${recAv(b.r) || '<span class="mc2-em">🏪</span>'}</div><div class="mc2-m"><div class="mc2-l1"><b dir="auto">${E(b.shop)}</b></div><div class="mc2-l2"><span class="mc2-pv" dir="auto">${E([b.owner, b.ph ? '0' + b.ph : ''].filter(Boolean).join(' • '))}</span></div></div>${MST_IC.chev.replace('class="mst-ch"', 'class="mc2-cv"')}</div>`).join('');
+  if(!h) h = `<div class="mc2-e">${f === 'groups' && !q ? t('noGroup') : t('noChat')}</div>`;
+  if(!staff && !q) h += `<div class="mc2-note">🔒 ${t('priv')}</div>`;
+  L.innerHTML = h; lazy(L);
+  const n = unreadN(), bl = document.querySelector('#mc2Bl i'); if(bl){ bl.hidden = !n; bl.textContent = n > 99 ? '99+' : String(n); }
+}
+window.mc2BizGo = async function(i){
+  const b = (window._mc2Bz || [])[i]; if(!b) return;
+  const ex = (mcList || []).find(x => b.ph && String((x.title || '') + (x.sub || '')).replace(/\D/g, '').includes(b.ph));
+  if(ex){ mcGoObj(ex); return; }
+  try{ const r = await mcCall({op:'find', text: b.ph || b.shop, phones: b.ph, pn: {[b.ph]: '🏪 ' + b.shop}});
+    if(r && r.ok && r.list && r.list.length){ Object.assign(mcAvs, r.avs || {}); mcGoObj(r.list[0]); return; } }catch(e){}
+  showToast(P().lang === 'ur' ? '⚠️ اس کاروبار والے کا ایپ میں اکاؤنٹ نہیں' : '⚠️ This business owner has no chat account in the app yet');
+};
+window.mcLoadList = async function(local){
+  let r; if(local && window._mcLastR) r = window._mcLastR; else { try{ r = await mcCall({op:'list'}); }catch(e){ r = {ok:false, reason:'net'}; } if(r && r.ok) window._mcLastR = r; }
+  const L = document.getElementById('mcL'); if(!L || mcTh) return;
+  if(!r || !r.ok){ L.innerHTML = `<div class="mc2-e">${r && r.reason === 'login' ? '🔐 Please log in again' : '⚠️ Check your internet — chats not loaded'}</div>`; return; }
+  mcList = r.list || []; mcSetBadge(r.nw || 0); Object.assign(mcAvs, r.avs || {}); try{ mcAvUpload(); }catch(e){} mcStaff = !!r.staff; render();
+};
+window.mcListHd = function(){ return ''; };
+window.mcOpen = async function(){
+  const w = mcWho(); if(!w){ showToast('💬 چیٹ کے لیے پہلے لاگ اِن کریں'); try{ uaLogin(); }catch(e){} return; }
+  mcTh = null; window._mc2F = 'all'; mc2Show();
+  clearInterval(mcTimer); mcTimer = setInterval(() => { if(document.visibilityState === 'visible') (mcTh ? mcLoadThread(true) : mcLoadList()); }, 15000);
+};
+window.mcBack = function(){ mcTh = null; mc2Show(); };
+/* ---------- نئی چیٹ ---------- */
+window.mc2New = function(){
+  const m = document.querySelector('#mcModal .mc2'); if(!m) return; const w = document.createElement('div'); w.className = 'mc2-sh'; w.onclick = e => { if(e.target === w) w.remove(); };
+  const R = (g, ic, ti, su, fn) => `<button type="button" class="mst-r" onclick="this.closest('.mc2-sh').remove();${fn}"><div class="mst-i" style="background:${g}">${ic}</div><div class="mst-t"><b>${ti}</b><small>${su}</small></div></button>`;
+  const ur = P().lang === 'ur';
+  w.innerHTML = `<div><h4>${t('newChat')}</h4>`
+    + (mcStaff ? R('linear-gradient(135deg,#55b6f0,#1f84dc)', IC.person, ur ? 'صارف / کاروبار / ایجنٹ ڈھونڈیں' : 'Find user, business or agent', ur ? 'نام، موبائل، دکان کا نام، ID' : 'Name, mobile, shop name or ID', 'mcNewOpen()') : '')
+    + R('linear-gradient(135deg,#3fc83f,#18951c)', IC.head, 'PBT Code Labs', ur ? 'سپورٹ سے چیٹ' : 'Chat with support', "mc2Sup()")
+    + (window.mcPhoneBook ? R('linear-gradient(135deg,#ffa63d,#ee7a0c)', '<span>📒</span>', ur ? 'فون بک' : 'Phone Book', ur ? 'محفوظ نمبر دیکھیں' : 'Open saved numbers', 'mcPhoneBook()') : '')
+    + (window.mcWaOpen ? R('linear-gradient(135deg,#25d366,#128c7e)', '<span>💬</span>', ur ? 'واٹس ایپ کھولیں' : 'Open WhatsApp', ur ? 'کسی بھی نمبر کو' : 'Message any number', 'mcWaOpen()') : '') + `</div>`;
+  m.appendChild(w);
+};
+window.mc2Sup = function(){ const x = (mcList || []).find(y => y.k === 'pbt'); if(x) mcGoObj(x); else showToast('⚠️ Support chat not available'); };
+/* ---------- Settings ---------- */
+function sub(title, s, inner, back){
+  mcTh = null; mcBox(`<div class="mc2">${hd(back || 'mc2Set()', 1, 0)}<div class="mc2-bd">${pill(title, s, IC.chat)}${inner}</div>${nav('chat')}</div>`); apply();
+}
+const sw = (key, ti, su) => `<div class="mc2-tr"><div class="mst-t"><b>${ti}</b>${su ? `<small>${su}</small>` : ''}</div><label class="mc2-sw"><input type="checkbox" ${P()[key] ? 'checked' : ''} onchange="mc2Tg('${key}',this.checked)"><i></i></label></div>`;
+window.mc2Tg = function(k, v){ mc2SV({[k]: v ? 1 : 0}); apply(); };
+window.mc2Set = function(){
+  mcTh = null; const L = P().lang === 'ur', R = (g, ic, ti, su, fn) => mstRow(g, ic, t(ti), t(su), fn, '', 1);
+  const list = [
+    R('linear-gradient(135deg,#55b6f0,#1f84dc)', MST_IC.user, 'pro', 'proS', 'mc2Pro'), R('linear-gradient(135deg,#9a52de,#6a2bb8)', MST_IC.bell, 'not', 'notS', 'mc2Not'),
+    R('linear-gradient(135deg,#3fc83f,#18951c)', IC.lock, 'pv', 'pvS', 'mc2Pv'), R('linear-gradient(135deg,#3f8cf6,#1559d8)', IC.users, 'grp', 'grpS', 'mc2Grp'),
+    R('linear-gradient(135deg,#9a52de,#6a2bb8)', IC.dl, 'med', 'medS', 'mc2Med'), R('linear-gradient(135deg,#ffa63d,#ee7a0c)', IC.brush, 'th', 'thS', 'mc2Th'),
+    R('linear-gradient(135deg,#3f8cf6,#1559d8)', 'A/ع', 'lang', 'langS', 'mc2Lang'), R('linear-gradient(135deg,#ff5a45,#dc2a22)', IC.trash, 'clr', 'clrS', 'mc2Clr')].join('');
+  mcBox(`<div class="mc2">${hd('mc2Show()', 1, 0)}<div class="mc2-bd">${pill(t('setT'), t('setS'), MST_IC.gear)}`
+    + `<div class="mc2-ac"><div class="mc2-aci">${IC.chat}</div><div class="mst-t"><b>${t('acct')}</b><small>${t('acctS')}</small></div><div class="mc2-on">${IC.chk}${t('active')}</div></div>`
+    + `<div class="mst-ls">${list}</div><div class="mst-ls" style="margin-top:8px">${R('linear-gradient(135deg,#e2e8f0,#cbd5e1)', IC.info, 'abt', 'abtS', 'mc2Abt')}</div>`
+    + `<div class="mst-vr">${typeof APP_VERSION !== 'undefined' ? 'Version ' + APP_VERSION : ''}</div></div>${nav('chat')}</div>`); apply();
+};
+window.mc2Pro = function(){
+  const p = P(), w = (function(){ try{ return mstWho(); }catch(e){ return {}; } })(), nm = p.name || w.nm || '', ph = p.photo || w.sv || ''; window._mc2Ph = '';
+  const qs = ['Available', 'Busy', 'At work', 'Away'].map(s => `<button type="button" onclick="document.getElementById('mc2St').value='${s}'">${s}</button>`).join('');
+  sub(t('pro'), t('proS'), `<div class="mc2-pr"><button type="button" class="mc2-pb" onclick="document.getElementById('mc2Pf').click()">${ph ? `<img src="${E(ph)}" alt="">` : E((nm || '?').charAt(0).toUpperCase())}<i>📷</i></button><input type="file" id="mc2Pf" accept="image/*" hidden onchange="mc2PhotoPick(this)"></div>`
+    + `<div class="mc2-cd"><label>${t('name')}</label><input type="text" id="mc2Nm" maxlength="40" value="${E(nm)}"><label>${t('status')}</label><input type="text" id="mc2St" maxlength="60" value="${E(p.status)}"><div class="mc2-qs">${qs}</div></div><button type="button" class="mst-bt" onclick="mc2ProSave()">${t('save')}</button>`);
+};
+window.mc2PhotoPick = function(inp){
+  const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; const fr = new FileReader();
+  fr.onload = async () => { try{ const img = await pfSquare(String(fr.result), 160, .75); if(!img) throw 0; window._mc2Ph = img; const b = document.querySelector('.mc2-pb'); if(b) b.innerHTML = `<img src="${img}" alt=""><i>📷</i>`; }catch(e){ showToast('⚠️ Photo could not be used'); } };
+  fr.readAsDataURL(f);
+};
+window.mc2ProSave = async function(){
+  const nm = (document.getElementById('mc2Nm') || {}).value || '', st = (document.getElementById('mc2St') || {}).value || '';
+  mc2SV({name: nm.trim(), status: st.trim(), photo: window._mc2Ph || P().photo});
+  try{ const W = mcWho(); if(W && W.as !== 'user' && window._mc2Ph){ await mcCall({op:'av', img: window._mc2Ph}); } }catch(e){}
+  showToast(t('saved')); mc2Set();
+};
+window.mc2Not = function(){ sub(t('not'), t('notS'), `<div class="mc2-cd">${sw('nMsg', 'Message alerts', 'New message notifications')}${sw('nGrp', 'Group alerts', 'Notifications from groups')}${sw('nSnd', 'Sound', 'Play a tone for new messages')}${sw('nVib', 'Vibration', 'Vibrate for new messages')}</div><button type="button" class="mst-bt w" onclick="mstNotif()">Phone notification permission</button>`); };
+window.mc2Pv = function(){ sub(t('pv'), t('pvS'), `<div class="mc2-cd">${sw('ticks', 'Show read ticks ✓✓', 'Show delivered ticks in chats')}${sw('hidePrev', 'Hide message preview', 'Blur the last message in the chat list')}${sw('showDp', 'Show my photo', 'Let others see your chat photo')}</div><div class="mc2-note">🔒 ${t('priv')}</div>`); };
+window.mc2Grp = function(){ const g = P().grpAdd, b = (k, lb) => `<button type="button" class="mc2-c ${g === k ? 'on' : ''}" onclick="window.__g('${k}')">${lb}</button>`;
+  window.__g = k => { mc2SV({grpAdd: k}); mc2Grp(); };
+  sub(t('grp'), t('grpS'), `<div class="mc2-cd"><label>Who can add me to groups</label><div class="mc2-qs">${b('all', 'Everyone')}${b('contacts', 'My contacts')}${b('none', 'Nobody')}</div></div><div class="mc2-note">${t('noGroup')}</div>`); };
+window.mc2Med = function(){
+  let kb = 0; try{ for(let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if(/^mcsChat/.test(k)) kb += (localStorage.getItem(k) || '').length; } }catch(e){} kb = Math.round(kb / 1024);
+  sub(t('med'), t('medS'), `<div class="mc2-cd">${sw('autoPhoto', 'Auto-load photos', 'Off = photos stay blurred until you tap them')}${sw('autoFile', 'Auto-download files', 'PDF, Word, Excel')}<div class="mc2-tr"><div class="mst-t"><b>Chat data on this phone</b><small>${kb} KB</small></div></div></div><button type="button" class="mst-bt w" onclick="window._mcLastR=null;showToast('✅ Chat cache cleared');mc2Med()">Clear chat cache</button>`); };
+window.mc2Th = function(){
+  const p = P(), c = [['green', '#0b6b57', 'Green'], ['blue', '#1559d8', 'Blue'], ['purple', '#6a2bb8', 'Purple'], ['orange', '#d9640a', 'Orange']];
+  sub(t('th'), t('thS'), `<div class="mc2-cd"><label>Colour</label><div class="mc2-sw2">${c.map(x => `<button type="button" class="${p.theme === x[0] ? 'on' : ''}" onclick="mc2SV({theme:'${x[0]}'});apply2();mc2Th()"><u style="background:${x[1]}"></u>${x[2]}</button>`).join('')}</div><label>Message style</label><div class="mc2-qs"><button type="button" onclick="mc2SV({bubble:'round'});apply2();mc2Th()" style="${p.bubble !== 'sq' ? 'background:#16a34a;color:#fff' : ''}">Rounded</button><button type="button" onclick="mc2SV({bubble:'sq'});apply2();mc2Th()" style="${p.bubble === 'sq' ? 'background:#16a34a;color:#fff' : ''}">Classic</button></div></div>`); };
+window.apply2 = function(){ apply(); };
+window.mc2SV = mc2SV;
+window.mc2Lang = function(){ const l = P().lang, b = (k, lb) => `<button type="button" class="mst-r" onclick="mc2SV({lang:'${k}'});mc2Set()"><div class="mst-t"><b>${lb}</b></div><span style="font-size:18px">${l === k ? '✅' : ''}</span></button>`;
+  sub(t('lang'), t('langS'), `<div class="mst-ls">${b('en', 'English')}${b('ur', 'اردو')}</div>`); };
+window.mc2Clr = function(){
+  const rows = (mcList || []).filter(x => x.th);
+  sub(t('clr'), t('clrS'), `<div class="mc2-cd">${rows.length ? rows.map((x, i) => `<div class="mc2-cr"><div class="mc2-av">${avOf(x)}</div><b dir="auto">${E(String(x.title || '').replace(/^🤝\s*/, ''))}</b><button type="button" onclick="mc2ClrOne(${i})">${t('clear')}</button></div>`).join('') : '<div class="mc2-e">—</div>'}</div>${rows.length ? `<button type="button" class="mst-bt rd" onclick="mc2ClrAll()">${t('clearAll')}</button>` : ''}`);
+  lazy(document.getElementById('mcModal'));
+};
+function clrMark(x){ const c = CL(); c[x.th] = Math.max(Date.now(), x.last || 0); try{ localStorage.setItem('mcsChatClr', JSON.stringify(c)); }catch(e){} }
+window.mc2ClrOne = function(i){ const x = (mcList || []).filter(y => y.th)[i]; if(!x || !confirm(t('sure'))) return; clrMark(x); showToast(t('saved')); mc2Clr(); };
+window.mc2ClrAll = function(){ if(!confirm(t('sureAll'))) return; (mcList || []).filter(x => x.th).forEach(clrMark); showToast(t('saved')); mc2Clr(); };
+window.mc2Abt = function(){ sub(t('abt'), t('abtS'), `<div class="mc2-cd" style="text-align:center;padding:16px 12px"><img src="${MST_LOGO}" alt="" style="width:70px;height:66px;object-fit:contain"><div style="font-size:17px;font-weight:700;margin-top:4px">My Chat</div><div style="font-size:12px;color:#475569;margin-top:4px">Version ${typeof APP_VERSION !== 'undefined' ? APP_VERSION : ''}</div><p style="font-size:12.5px;line-height:1.7;color:#334155;margin:10px 0 0">Messages, photos, files, voice and location with PBT Code Labs support and your agent. Search by name, shop name or mobile number.</p></div><div class="mc2-note">🔒 ${t('priv')}</div>`); };
+/* ---------- تھیم / ترجیحات کا اطلاق ---------- */
+function apply(m){
+  m = m || document.getElementById('mcModal'); const bx = m && m.querySelector('.mc-box'); if(!bx) return; const p = P();
+  bx.className = 'mc-box mc-th-' + p.theme + (p.bubble === 'sq' ? ' mc-bb-sq' : '') + (p.autoPhoto ? '' : ' mc-noph') + (p.hidePrev ? ' mc-hp' : '') + (p.ticks ? '' : ' mc-notk');
+}
+document.addEventListener('click', e => { const im = e.target; if(im && im.tagName === 'IMG' && im.closest && im.closest('#mcModal .mc-noph .mc-b') && !im.classList.contains('on')){ im.classList.add('on'); e.stopPropagation(); e.preventDefault(); } }, true);
+const ob = window.mcBox; window.mcBox = function(){ const m = ob.apply(this, arguments); try{ apply(m); }catch(e){} return m; };
+/* چیٹ کھلنے پر اوپر DP / دکان کی تصویر */
+const og = window.mcGoObj;
+window.mcGoObj = function(x){
+  const r = og.apply(this, arguments);
+  try{ if(x && x.th){ const h = document.querySelector('#mcModal .mc-hd'); if(h && !h.querySelector('.mc2-hdav')){ const old = h.querySelector('.mc-hdp'); if(old) old.remove(); const s = document.createElement('span'); s.className = 'mc2-hdav'; s.innerHTML = avOf(x); h.insertBefore(s, h.querySelector('b')); lazy(h); } } }catch(e){}
+  return r;
+};
+/* «صاف کی ہوئی چیٹ» — پرانے پیغام فون پر نہیں دکھتے */
+const oc = window.mcCall;
+window.mcCall = async function(body){
+  const r = await oc.apply(this, arguments);
+  try{ const c = CL(); if(r && r.ok && body){ if((body.op === 'thread' || body.op === 'send') && body.thr && c[body.thr] && Array.isArray(r.msgs)) r.msgs = r.msgs.filter(m => (m.ts || 0) > c[body.thr]); } }catch(e){}
+  return r;
+};
+})();
+</script>
 </body>
 </html>
