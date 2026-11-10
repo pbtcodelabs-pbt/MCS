@@ -4218,12 +4218,13 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU295";
+const APP_VERSION = "MCS1011TU296";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1011TU295": "🔍 تلاش صفحہ صاف — صرف ایک سبز گلو والا سرچ بار؛ نیچے تین ہینڈل English / اردو / Roman، دبانے پر ہلکا گلو اور ہنٹ بدل جاتا ہے۔",
-  "MCS1011TU295": "🔐 ممبرشپ کا ایک سال بڑھانے سے پہلے اب ڈویلپر پاس ورڈ — غلطی سے ایک دبانے میں سال نہیں بڑھے گا",
+  "MCS1011TU296": "🪪 تلاش کے نتائج اب باریک کیپسول نہیں — بزنس / پروفیشن فہرست والا پورا وزٹنگ کارڈ، اپنے اصل سائز میں۔",
+  "MCS1011TU296": "🔍 تلاش صفحہ صاف — صرف ایک سبز گلو والا سرچ بار؛ نیچے تین ہینڈل English / اردو / Roman، دبانے پر ہلکا گلو اور ہنٹ بدل جاتا ہے۔",
+  "MCS1011TU296": "🔐 ممبرشپ کا ایک سال بڑھانے سے پہلے اب ڈویلپر پاس ورڈ — غلطی سے ایک دبانے میں سال نہیں بڑھے گا",
   "MCS1011TU292": "💬 My Chat اور Chat Settings کی نئی اسکرین — دی گئی تصویروں کے مطابق: ہرا ہیڈر، All Chats / Direct / Groups / Support، تلاش (نام، دکان کا نام، موبائل، ID)، گول DP / دکان کی تصویر، New Chat، چھوٹے سائز؛ Settings میں 8 صفحات اور English/اردو زبان",
   "MCS1011TU291": "⚙️ Settings کی نئی اسکرین — ہرا ہیڈر، لاگ اِن بندے کی اپنی گول تصویر، نام / ID / حالت کا کارڈ، رنگین آئیکن والی فہرست اور سرخ Logout",
   "MCS1011TU290": "📋 ابتدائی (غیر رجسٹرڈ) کاروبار کی پروفائل صرف چار چھوٹی لائنیں — نام، دکان، موبائل، پتہ، اور «رجسٹریشن مکمل کریں» — 📄 مکمل پروفائل کا بٹن کارڈ سے ہٹ گیا، اب اپنے اکاؤنٹ / پورٹل میں",
@@ -4706,7 +4707,7 @@ async function pfAdmin(act){
     if(act === 'del' && !confirm('اس دکان کی ممبرشپ (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
     const _pa = pfAct[c.rk] || {}, _pu = (c.prof && c.prof.until) || _pa.until || 0, _ps = (c.prof && c.prof.since) || _pa.since || 0;
     const until = act === 'year' ? mpYearUntil(_ps, _pu) : 0;
-    if(act === 'year' && !(await yearPwOk((c.rec && (c.rec.nameUr || c.rec.name)) || ''))) return;   /* MCS1011TU295 */
+    if(act === 'year' && !(await yearPwOk((c.rec && (c.rec.nameUr || c.rec.name)) || ''))) return;   /* MCS1011TU296 */
     const r = await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk, act: act === 'year' ? 'until' : act, until})}); const j = await r.json(); if(!j.ok) throw 0;
     if(act === 'year' && pfAct[c.rk]) pfAct[c.rk].until = until; if(act === 'del') delete pfAct[c.rk];
     if((act === 'approve' || act === 'reject') && pfAct[c.rk]){ delete pfAct[c.rk].pend; if(act === 'approve') pfAct[c.rk].until = Date.now() + MP_FREE_DAYS*864e5; }
@@ -5162,7 +5163,7 @@ async function aaGive(){
   const days = 365;   /* MCS0411WE133 (مالک کا حکم): صرف ایک سال کا پیکج */
   const until = days === 365 ? mpYearUntil(aaCur.since, aaCur.until) : Math.max(Date.now(), aaCur.until || 0) + days * 864e5;
   if(!confirm('کیا آپ نے اکاؤنٹ کی تمام تفصیلات مکمل طور پر چیک کر لی ہیں؟ ان میں کوئی غلطی تو نہیں، اور کوئی بات باقی تو نہیں رہ گئی؟\n\n🏪 ' + aaCur.prof + '\n👤 ' + aaCur.name + '\n📱 ' + aaCur.phone + '\n📧 ' + aaCur.mail + '\n📦 1 سال → ' + new Date(until).toLocaleDateString('en-GB') + ' تک\n\nOK = سب مکمل ہے، ممبرشپ جاری کر دیں')) return;
-  if(!(await yearPwOk(aaCur.name || ''))) return;   /* MCS1011TU295 */
+  if(!(await yearPwOk(aaCur.name || ''))) return;   /* MCS1011TU296 */
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ return err('⚠️ پہلے ایڈمن لاگ اِن کریں'); }
   try{
     const j = await (await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: aaCur.rk, act: 'until', until})})).json();
@@ -5318,7 +5319,7 @@ function srTabPass(it){
 }
 let srShown = 40, srT = 0;
 const SR_KINDS = [['group','🏷️','بزنس / پروفیشنلز'],['cat','🗂️','کیٹیگری'],['city','📍','شہر'],['area','🗺️','علاقہ']];
-/* MCS1011TU295: تلاش بار صاف — نیچے تین ہینڈل (English / اردو / Roman)، دبائیں تو وہ ہلکا گلو کرے اور ہنٹ بدل جائے */
+/* MCS1011TU296: تلاش بار صاف — نیچے تین ہینڈل (English / اردو / Roman)، دبائیں تو وہ ہلکا گلو کرے اور ہنٹ بدل جائے */
 const SR_MODES = {
   en:{ph:'Type in English — e.g. star', dir:'ltr', lang:'en'},
   ur:{ph:'اردو میں لکھیں — مثلاً ستار', dir:'rtl', lang:'ur'},
@@ -5354,7 +5355,7 @@ function srRender(){
   document.getElementById('srCnt').innerHTML = `<b>${list.length}</b> ریکارڈ ملے${q ? ` — «${escapeHtml(q)}»` : ''}`;
   const box = document.getElementById('srList');
   if(!list.length){ box.innerHTML = '<div class="hl-none">🔎 کچھ نہیں ملا — کچھ اور لکھیں یا فلٹر ہٹائیں<br><small>No records found</small></div>'; return; }
-  box.innerHTML = list.slice(0, srShown).map(hlCap).join('') + (list.length > srShown ? `<button type="button" class="hl-more" onclick="srShown+=40;srRender()">▼ مزید دکھائیں (${list.length - srShown} باقی)</button>` : '');
+  box.innerHTML = list.slice(0, srShown).map(it => it.kind==='doctor' ? docCardHtml(fhDoc(it.rec), 'list') : svcCardHtml(fhSvc(it.rec), CATEGORY_META[it.rec.category])).join('')   /* MCS1011TU296: تلاش میں بھی وہی پورا وزٹنگ کارڈ جو بزنس / پروفیشن فہرست میں ہوتا ہے */ + (list.length > srShown ? `<button type="button" class="hl-more" onclick="srShown+=40;srRender()">▼ مزید دکھائیں (${list.length - srShown} باقی)</button>` : '');
 }
 function srClear(){ const q = document.getElementById('srQ'); q.value = ''; srShown = 40; srRender(); q.focus(); }
 function srReset(){ Object.keys(srF).forEach(k=>srF[k]=''); srShown = 40; srRender(); }
@@ -9539,7 +9540,7 @@ function askAdminPassword(msg, okText){
     ov.classList.add('active'); setTimeout(()=>inp.focus(), 150);
   });
 }
-/* MCS1011TU295 (مالک کا حکم): ممبرشپ کا ایک سال بڑھانا (= کمپنی کے حساب میں ایک فروخت) صرف ڈویلپر پاس ورڈ کے بعد — جلدی میں غلطی سے نہیں */
+/* MCS1011TU296 (مالک کا حکم): ممبرشپ کا ایک سال بڑھانا (= کمپنی کے حساب میں ایک فروخت) صرف ڈویلپر پاس ورڈ کے بعد — جلدی میں غلطی سے نہیں */
 async function yearPwOk(nm){ return askAdminPassword('⭐ ' + (nm ? '«' + nm + '» — ' : '') + 'ایک سال کی ممبرشپ بڑھانے کے لیے ڈویلپر پاس ورڈ لکھیں۔ یہ کمپنی کے حساب میں ایک فروخت درج کرتا ہے۔', '⭐ ہاں، ایک سال بڑھائیں'); }
 function afterRecordDeleted(){
   ['serviceFormModal','doctorFormModal'].forEach(m=>{ const o = document.getElementById(m); if(o && o.classList.contains('active')) closeEntryForm(m); });
@@ -12759,7 +12760,7 @@ function agWaNext(){
   }catch(x){} }, 450);
 }
 async function agWaFinish(rec, o){
-  if(!(await yearPwOk((rec && (rec.nameUr || rec.name)) || ''))) return;   /* MCS1011TU295 */
+  if(!(await yearPwOk((rec && (rec.nameUr || rec.name)) || ''))) return;   /* MCS1011TU296 */
   agModal('<div class="ag-st">⏳ کاروبار + ایک سال + ایجنٹ بن رہا ہے…</div>');
   try{
     const rk = pfKeyOf(rec, 'service'), hdr = await vfAdminHdr();
@@ -15226,7 +15227,7 @@ if('serviceWorker' in navigator){
     <div class="sr-chips" id="srChips"></div>
     <div class="flt-bar" data-for="search" style="margin:4px 10px 6px"><button type="button" data-f="reg" onclick="srSetTab('reg')">✅ رجسٹرڈ بزنس</button><button type="button" data-f="agent" onclick="srSetTab('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
     <div class="sr-cnt" id="srCnt"></div>
-    <div class="sr-list hl hl-one" id="srList"></div>
+    <div class="sr-list hl" id="srList"></div>
   </div>
 </div>
 <div class="modal-overlay" id="srPickModal"><div class="modal-box sr-pick"><button class="modal-close" onclick="closeModal('srPickModal')">×</button><div style="clear:both"></div><div id="srPickBody"></div></div></div>
