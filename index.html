@@ -2883,7 +2883,7 @@ body.cdOn{padding-top:30px}
     <section class="bp" id="bizPromo"></section>
     <section class="d2-find" style="display:none"><div class="d2-fh"><span class="d2-fi">🔍</span><b>کاروبار اور خدمات تلاش کریں</b><small>Find Businesses &amp; Services</small></div>
     <form class="home-search" onsubmit="event.preventDefault();homeSearchGo()">
-      <input type="search" id="homeSearchBox" placeholder="دکان، نام، نمبر، علاقہ — کچھ بھی تلاش کریں" autocomplete="off" enterkeyhint="search">
+      <input type="search" id="homeSearchBox" placeholder="دکان، نام، نمبر — English / اردو / Roman" autocomplete="off" enterkeyhint="search">
       <button type="button" class="hs-filter" id="hsFilterBtn" onclick="hfToggle()" aria-label="فلٹر">⚙️<span>فلٹر</span><i id="hsFilterDot"></i></button>
       <button type="submit" aria-label="تلاش">🔍</button>
     </form>
@@ -3005,6 +3005,7 @@ body.cdOn{padding-top:30px}
           <input type="text" id="searchBox" placeholder="نام، دکان، علاقہ، نمبر — کچھ بھی لکھیں..." oninput="onUserSearchInput(this.value)" autocomplete="off">
           <button type="button" class="ub-clear" id="ubClear" onclick="clearUserSearch()" aria-label="صاف کریں">×</button>
         </div>
+        <div class="s-hint">English • اردو • Roman Urdu &nbsp;—&nbsp; مثلاً <b>star</b> / <b>ستار</b> / <b>nas</b> (ناصر)</div>
         <div class="ub-chips">
           <button type="button" class="ub-chip" id="ubChip_province" onclick="ubToggle('province')"></button>
           <button type="button" class="ub-chip" id="ubChip_district" onclick="ubToggle('district')"></button>
@@ -3031,7 +3032,7 @@ body.cdOn{padding-top:30px}
       </div>
       <div class="adm-only adm-catbar"><button type="button" onclick="renameCategory(currentServiceCategory)">✏️ کیٹگری کا نام بدلیں</button><button type="button" onclick="moveCategoryGroup(currentServiceCategory)">⇄ پروفیشنلز / بزنس بدلیں</button><button type="button" onclick="quickAddCategory()">➕ نئی کیٹگری</button></div>
       <div class="field">
-        <input type="text" id="serviceSearchBox" placeholder="نام، قسم یا پتہ لکھیں..." oninput="renderServiceList('list')">
+        <input type="text" id="serviceSearchBox" placeholder="نام، قسم یا پتہ — English / اردو / Roman" oninput="renderServiceList('list')">
       </div>
       <div class="sort-bar" data-for="service"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" class="cs-open sm" onclick="openCardStyle()" aria-label="کارڈ کا رنگ اور انداز">🎨</button></div>
       <div class="flt-bar" data-for="service"><button type="button" data-f="reg" onclick="setListFilter('reg')">✅ رجسٹرڈ بزنس</button><button type="button" data-f="agent" onclick="setListFilter('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
@@ -3283,16 +3284,23 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
         <div class="ph-dup" id="svcPhoneDup"></div>
       </div>
       <div class="field fm-phone"><label>💬 الگ واٹس ایپ <small class="fm-opt">(اگر مختلف ہو)</small></label><input type="text" id="svcWa2" inputmode="tel" maxlength="16" dir="ltr" placeholder="WhatsApp — 03xx-xxxxxxx" autocomplete="off"></div>
-      <div class="field">
+      <div class="field bi-en" id="svcNameEnField">
+        <label id="svcNameEnLabel">🔤 Shop / Business Name <small class="fm-opt">(English)</small></label>
+        <input type="text" id="svcNameEn" dir="ltr" placeholder="e.g. Sattar General Store" autocomplete="off" autocapitalize="words" enterkeyhint="next" oninput="svcNameSuggestUpdate()">
+      </div>
+      <div class="field bi-ur">
         <label id="svcNameUrLabel" class="req">نام</label>
         <input type="text" id="svcNameUr" placeholder="" autocomplete="off" enterkeyhint="next" oninput="svcNameSuggestUpdate()">
       </div>
       <div class="name-suggest" id="svcNameSuggest"></div>
-      <div class="field" id="svcOwnerField">
-        <label class="req">👤 مالک / پروفیشنل کا نام</label>
-        <input type="text" id="svcOwner" placeholder="Owner name — مثلاً علی سلیمان" autocomplete="off" enterkeyhint="next">
+      <div class="field bi-en" id="svcOwnerEnField">
+        <label>👤 Owner Name <small class="fm-opt">(English)</small></label>
+        <input type="text" id="svcOwnerEn" dir="ltr" placeholder="e.g. Abdul Sattar" autocomplete="off" autocapitalize="words" enterkeyhint="next">
       </div>
-      <div class="field mcs-off"><label>Name (English)</label><input type="text" id="svcNameEn" dir="ltr" oninput="svcNameSuggestUpdate()"></div>
+      <div class="field bi-ur" id="svcOwnerField">
+        <label class="req">👤 مالک / پروفیشنل کا نام <small class="fm-opt">(اردو)</small></label>
+        <input type="text" id="svcOwner" placeholder="مثلاً عبدالستار" autocomplete="off" enterkeyhint="next">
+      </div>
       <div class="field">
         <label id="svcTypeLabel" class="req">قسم</label>
         <div class="field-with-add"><select id="svcType"></select><button class="add-circle" onclick="promptAddOption('serviceType','svcType')">+</button></div>
@@ -4201,11 +4209,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU293";
+const APP_VERSION = "MCS1011TU294";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1011TU293": "🔐 ممبرشپ کا ایک سال بڑھانے سے پہلے اب ڈویلپر پاس ورڈ — غلطی سے ایک دبانے میں سال نہیں بڑھے گا",
+  "MCS1011TU294": "🔐 ممبرشپ کا ایک سال بڑھانے سے پہلے اب ڈویلپر پاس ورڈ — غلطی سے ایک دبانے میں سال نہیں بڑھے گا",
   "MCS1011TU292": "💬 My Chat اور Chat Settings کی نئی اسکرین — دی گئی تصویروں کے مطابق: ہرا ہیڈر، All Chats / Direct / Groups / Support، تلاش (نام، دکان کا نام، موبائل، ID)، گول DP / دکان کی تصویر، New Chat، چھوٹے سائز؛ Settings میں 8 صفحات اور English/اردو زبان",
   "MCS1011TU291": "⚙️ Settings کی نئی اسکرین — ہرا ہیڈر، لاگ اِن بندے کی اپنی گول تصویر، نام / ID / حالت کا کارڈ، رنگین آئیکن والی فہرست اور سرخ Logout",
   "MCS1011TU290": "📋 ابتدائی (غیر رجسٹرڈ) کاروبار کی پروفائل صرف چار چھوٹی لائنیں — نام، دکان، موبائل، پتہ، اور «رجسٹریشن مکمل کریں» — 📄 مکمل پروفائل کا بٹن کارڈ سے ہٹ گیا، اب اپنے اکاؤنٹ / پورٹل میں",
@@ -4688,7 +4696,7 @@ async function pfAdmin(act){
     if(act === 'del' && !confirm('اس دکان کی ممبرشپ (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
     const _pa = pfAct[c.rk] || {}, _pu = (c.prof && c.prof.until) || _pa.until || 0, _ps = (c.prof && c.prof.since) || _pa.since || 0;
     const until = act === 'year' ? mpYearUntil(_ps, _pu) : 0;
-    if(act === 'year' && !(await yearPwOk((c.rec && (c.rec.nameUr || c.rec.name)) || ''))) return;   /* MCS1011TU293 */
+    if(act === 'year' && !(await yearPwOk((c.rec && (c.rec.nameUr || c.rec.name)) || ''))) return;   /* MCS1011TU294 */
     const r = await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk, act: act === 'year' ? 'until' : act, until})}); const j = await r.json(); if(!j.ok) throw 0;
     if(act === 'year' && pfAct[c.rk]) pfAct[c.rk].until = until; if(act === 'del') delete pfAct[c.rk];
     if((act === 'approve' || act === 'reject') && pfAct[c.rk]){ delete pfAct[c.rk].pend; if(act === 'approve') pfAct[c.rk].until = Date.now() + MP_FREE_DAYS*864e5; }
@@ -5144,7 +5152,7 @@ async function aaGive(){
   const days = 365;   /* MCS0411WE133 (مالک کا حکم): صرف ایک سال کا پیکج */
   const until = days === 365 ? mpYearUntil(aaCur.since, aaCur.until) : Math.max(Date.now(), aaCur.until || 0) + days * 864e5;
   if(!confirm('کیا آپ نے اکاؤنٹ کی تمام تفصیلات مکمل طور پر چیک کر لی ہیں؟ ان میں کوئی غلطی تو نہیں، اور کوئی بات باقی تو نہیں رہ گئی؟\n\n🏪 ' + aaCur.prof + '\n👤 ' + aaCur.name + '\n📱 ' + aaCur.phone + '\n📧 ' + aaCur.mail + '\n📦 1 سال → ' + new Date(until).toLocaleDateString('en-GB') + ' تک\n\nOK = سب مکمل ہے، ممبرشپ جاری کر دیں')) return;
-  if(!(await yearPwOk(aaCur.name || ''))) return;   /* MCS1011TU293 */
+  if(!(await yearPwOk(aaCur.name || ''))) return;   /* MCS1011TU294 */
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ return err('⚠️ پہلے ایڈمن لاگ اِن کریں'); }
   try{
     const j = await (await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: aaCur.rk, act: 'until', until})})).json();
@@ -5617,18 +5625,71 @@ function ubParseQuery(raw){
   const phone = (only && dg.length>=4) ? ubPhoneKey(dg) : '';
   return {empty:false, tokens:n.split(' ').filter(Boolean), phone};
 }
+/* ===== رومن اردو / انگلش / اردو — تینوں میں تلاش =====
+   ہر لفظ کو "آواز کا ڈھانچہ" (حروفِ صحیح، حروفِ علت کے بغیر) بنا کر ملاتے ہیں:
+   STAR / ستار / Sattar → str ؛ NAS / ناصر / Nasir → ns(r) */
+const UB_UR_MAP = {'ب':'b','پ':'p','ت':'t','ٹ':'t','ط':'t','ث':'s','س':'s','ص':'s','ج':'j','چ':'C','ح':'h','ہ':'h','ۃ':'h','ة':'h','خ':'x','د':'d','ڈ':'d','ذ':'z','ز':'z','ض':'z','ظ':'z','ژ':'z','ر':'r','ڑ':'r','ش':'S','غ':'g','گ':'g','ف':'f','ق':'k','ک':'k','ل':'l','م':'m','ن':'n','ں':'n'};
+const UB_SKEL_CACHE = new Map();
+function ubSkelWord(w){
+  let t = String(w||'').toLowerCase()
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u200c\u200d\u0640]/g,'')
+    .replace(/[كڪ]/g,'ک').replace(/[ھ]/g,'ھ')
+    .replace(/کہ|کھ|خ/g,'x').replace(/چہ|چھ/g,'C')
+    .replace(/sh/g,'S').replace(/ch/g,'C').replace(/kh/g,'x').replace(/gh/g,'g').replace(/([tdbpjrlmn])h/g,'$1');
+  let o = '';
+  for(const c of t){
+    if(UB_UR_MAP[c]) o += UB_UR_MAP[c];
+    else if('SCx'.indexOf(c)>=0) o += c;
+    else if(c==='q' || c==='c') o += 'k';
+    else if(/[bdfghjklmnprstz]/.test(c)) o += c;
+    /* باقی (حروفِ علت a e i o u y w v، ا ع ی و ے، ہندسے، علامات) چھوڑ دیے */
+  }
+  o = o.replace(/(.)\1+/g,'$1');
+  if(o.length>2) o = o.replace(/h$/,'');   /* ستارہ / Sitara */
+  return o;
+}
+function ubSkel(text){
+  return ubNorm(text).split(' ').map(ubSkelWord).filter(Boolean).join(' ');
+}
+function ubHaySkel(hay){
+  let r = UB_SKEL_CACHE.get(hay);
+  if(r) return r;
+  const lat = hay.split(' ').filter(w=>/[a-z]/.test(w)).join(' ');
+  r = {full: ubSkel(hay), latin: lat ? ubSkel(lat) : ''};
+  if(UB_SKEL_CACHE.size > 30000) UB_SKEL_CACHE.clear();
+  UB_SKEL_CACHE.set(hay, r);
+  return r;
+}
+function ubFuzzyTokens(q){
+  if(!q._fz) q._fz = q.tokens.map(t=>{
+    if(/^[0-9]+$/.test(t)) return null;
+    const sk = ubSkelWord(t);
+    if(sk.length < 2) return null;
+    return {sk, latin: /[a-z]/.test(t)};
+  });
+  return q._fz;
+}
+function ubFuzzyHit(q, hay, fz, i){
+  const f = fz[i]; if(!f) return false;
+  const hs = ubHaySkel(hay);
+  const src = f.latin ? hs.full : hs.latin;   /* اردو لفظ لکھا ہو تو صرف انگلش میں لکھے ناموں سے رومن ملاپ */
+  return !!src && src.split(' ').some(w=> f.sk.length===2 ? w.startsWith(f.sk) : w.includes(f.sk));
+}
 function ubMatch(q, fields, whatsapp){
   if(q.empty) return true;
   const wa = ubDigits(whatsapp);
   if(q.phone) return ubPhoneKey(wa).includes(q.phone) || wa.includes(q.phone);
   const hay = ubNorm(fields.filter(Boolean).join(' '));
-  return q.tokens.every(t=>{
+  const fz = ubFuzzyTokens(q);
+  return q.tokens.every((t,i)=>{
     if(hay.includes(t)) return true;
     if(t.length>=3 && hay.replace(/ /g,'').includes(t)) return true;   /* خالی جگہ کے فرق کے بغیر بھی (فتحپور / فتح پور) */
     if(/^[0-9]{5,}$/.test(t)) return ubPhoneKey(wa).includes(ubPhoneKey(t));
-    return false;
+    return ubFuzzyHit(q, hay, fz, i);
   });
 }
+/* دکاندار کا انگلش نام (more.ownerEn) بھی تلاش میں */
+function ubOwnerEn(r){ return (r && r.more && r.more.ownerEn) || ''; }
 
 function renderUserSearch(){
   const wrap = document.getElementById('searchResultsWrap');
@@ -5656,7 +5717,7 @@ function renderUserSearch(){
   const serviceResults = store.services.filter(s=>{
     if(!ubPass({rec:s, cat:s.category}, locKeys)) return false;
     const cm = CATEGORY_META[s.category]||{};
-    return ubMatch(srch, [s.nameUr, s.nameEn, s.type, s.address, s.intro, s.city, s.area, s.district, s.province, cm.ur, cm.listTitle, s.category, shortRecordId('service', s)], s.whatsapp);
+    return ubMatch(srch, [s.nameUr, s.nameEn, ubOwnerEn(s), s.type, s.address, s.intro, s.city, s.area, s.district, s.province, cm.ur, cm.listTitle, s.category, shortRecordId('service', s)], s.whatsapp);
   });
   /* MCS2310FR044: پوری ID (مثلاً MED-12345 یا med12345) لکھیں تو صرف وہی ایک ریکارڈ */
   const idQ = idKey(qRaw);
@@ -5680,7 +5741,9 @@ function renderUserSearch(){
 
   /* MCS2810WE069: جس کے نام میں لکھا لفظ شروع سے ملے وہ سب سے اوپر — پھر نام کے اندر، پھر باقی خانوں والے */
   const qTok = qRaw ? ubNorm(qRaw).split(' ').filter(Boolean) : [];
-  const nameScore = n=>{ const nm = ubNorm(n||''); let sc = 0; qTok.forEach(t=>{ sc += nm.startsWith(t) ? 6 : nm.split(' ').some(w=>w.startsWith(t)) ? 4 : nm.includes(t) ? 2 : 0; }); return sc; };
+  const nameScore = n=>{ const nm = ubNorm(n||''); let sc = 0; qTok.forEach(t=>{ sc += nm.startsWith(t) ? 6 : nm.split(' ').some(w=>w.startsWith(t)) ? 4 : nm.includes(t) ? 2 : 0; });
+    if(!sc && nm){ const sk = ubSkel(nm); qTok.forEach(t=>{ const k = ubSkelWord(t); if(k.length>=2 && sk.split(' ').some(w=>w.startsWith(k))) sc += 1; }); }
+    return sc; };
   if(qTok.length){
     doctorResults.sort((a,b)=> nameScore(b.nameUr||b.name) + nameScore(b.nameEn) - nameScore(a.nameUr||a.name) - nameScore(a.nameEn));
     serviceResults.sort((a,b)=> nameScore(b.nameUr) + nameScore(b.nameEn) - nameScore(a.nameUr) - nameScore(a.nameEn));
@@ -5908,13 +5971,14 @@ function catRecordSearch(raw, business){
   store.services.forEach(x=>{
     if((grpOf(x.category)==='business') !== business) return;
     const cm = CATEGORY_META[x.category]||{};
-    pool.push({kind:'service', rec:x, fields:[x.nameUr, x.nameEn, x.type, x.address, x.intro, x.city, x.area, x.district, cm.ur, cm.listTitle]});
+    pool.push({kind:'service', rec:x, fields:[x.nameUr, x.nameEn, ubOwnerEn(x), x.type, x.address, x.intro, x.city, x.area, x.district, cm.ur, cm.listTitle]});
   });
   if(qs.phone) return {list: pool.filter(o=> ubMatch(qs, o.fields, o.rec.whatsapp)), exact:true};
   /* سب الفاظ ملیں تو وہی؛ ورنہ جتنے زیادہ الفاظ ملیں اتنا اوپر */
   const scored = pool.map(o=>{
     const hay = ubNorm(o.fields.filter(Boolean).join(' ')), flat = hay.replace(/ /g,'');
-    const n = qs.tokens.filter(t=> hay.includes(t) || (t.length>=3 && flat.includes(t))).length;
+    const fz = ubFuzzyTokens(qs);
+    const n = qs.tokens.filter((t,i)=> hay.includes(t) || (t.length>=3 && flat.includes(t)) || ubFuzzyHit(qs, hay, fz, i)).length;
     return {o, n};
   }).filter(x=>x.n>0);
   const all = scored.filter(x=>x.n===qs.tokens.length);
@@ -6001,7 +6065,7 @@ function searchAllRecords(qRaw){
   const srch = ubParseQuery(qRaw);
   if(srch.empty) return [];
   let docs = store.doctors.filter(d=> ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d)], d.whatsapp));
-  let svcs = store.services.filter(x=>{ const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, x.type, x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
+  let svcs = store.services.filter(x=>{ const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, ubOwnerEn(x), x.type, x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
   const idQ = idKey(qRaw);
   if(/^[a-z]{2,4}[0-9]{5}$/.test(idQ)){
     const dh = docs.filter(d=>idKey(shortRecordId('doctor', d))===idQ), sh = svcs.filter(x=>idKey(shortRecordId('service', x))===idQ);
@@ -8209,7 +8273,8 @@ function renderDoctorList(mode){
         (d.area||'').toLowerCase().includes(q) ||
         (d.district||'').toLowerCase().includes(q) ||
         (d.province||'').toLowerCase().includes(q) ||
-        idMatches('doctor', d, q);
+        idMatches('doctor', d, q) ||
+        ubMatch(ubParseQuery(qRaw), [d.nameUr, d.name, d.nameEn, d.dept, d.specialty, d.hospital, d.address, d.city, d.area], d.whatsapp);
       });
     }
   }
@@ -8964,11 +9029,11 @@ function svcOwnerMerge(){
 }
 /* ===================== MCS0311TU119 (ہیلپ ڈیسک #15): مزید تفصیل — خدمات، پوسٹل کوڈ، الگ واٹس ایپ، ای میل، نقشہ =====================
    فائربیس میں الگ خانہ `more` (الگ تحریر — یہ نہ لکھا جا سکے تو بھی اصل ریکارڈ محفوظ رہتا ہے) */
-const SVC_MORE = {services:'svcServices', postal:'svcPostal', wa2:'svcWa2', email:'svcEmail', map:'svcMap', ref:'svcRef'};   /* MCS0411WE131: ref = ایجنٹ کوڈ */
+const SVC_MORE = {ownerEn:'svcOwnerEn', services:'svcServices', postal:'svcPostal', wa2:'svcWa2', email:'svcEmail', map:'svcMap', ref:'svcRef'};   /* MCS0411WE131: ref = ایجنٹ کوڈ */
 function svcMoreFill(m){
   m = m || {};
   Object.entries(SVC_MORE).forEach(([k, id])=>{ const el = document.getElementById(id); if(el) el.value = m[k] || ''; });
-  const box = document.getElementById('svcMoreBox'); if(box) box.open = !!(m && Object.entries(m).some(([k, v])=> k !== 'ref' && v));
+  const box = document.getElementById('svcMoreBox'); if(box) box.open = !!(m && Object.entries(m).some(([k, v])=> k !== 'ref' && k !== 'ownerEn' && v));
 }
 function svcMoreRead(){
   const m = {};
@@ -9174,7 +9239,7 @@ function svcApplyStage(id, pendingRec){
   const q = sel => Array.from(M.querySelectorAll(sel));
   const fieldOf = i => { const e = document.getElementById(i); return e ? (e.closest('.field') || e) : null; };
   const hide = (list, on) => list.forEach(e=>{ if(e) e.classList.toggle('svc-hide', !!on); });
-  const p1 = [...q('.fm-phone'), fieldOf('svcNameUr'), document.getElementById('svcNameSuggest'), document.getElementById('svcOwnerField'), ...q('.fm-col-loc'), ...q('.fm-scan')];
+  const p1 = [...q('.fm-phone'), fieldOf('svcNameEn'), fieldOf('svcNameUr'), document.getElementById('svcNameSuggest'), document.getElementById('svcOwnerEnField'), document.getElementById('svcOwnerField'), ...q('.fm-col-loc'), ...q('.fm-scan')];
   const p2 = [fieldOf('svcType'), ...q('.fm-ref'), document.getElementById('svcMoreBox')];
   hide(p1, st==='reg');
   hide(p2, st==='basic');
@@ -9450,7 +9515,7 @@ function askAdminPassword(msg, okText){
     ov.classList.add('active'); setTimeout(()=>inp.focus(), 150);
   });
 }
-/* MCS1011TU293 (مالک کا حکم): ممبرشپ کا ایک سال بڑھانا (= کمپنی کے حساب میں ایک فروخت) صرف ڈویلپر پاس ورڈ کے بعد — جلدی میں غلطی سے نہیں */
+/* MCS1011TU294 (مالک کا حکم): ممبرشپ کا ایک سال بڑھانا (= کمپنی کے حساب میں ایک فروخت) صرف ڈویلپر پاس ورڈ کے بعد — جلدی میں غلطی سے نہیں */
 async function yearPwOk(nm){ return askAdminPassword('⭐ ' + (nm ? '«' + nm + '» — ' : '') + 'ایک سال کی ممبرشپ بڑھانے کے لیے ڈویلپر پاس ورڈ لکھیں۔ یہ کمپنی کے حساب میں ایک فروخت درج کرتا ہے۔', '⭐ ہاں، ایک سال بڑھائیں'); }
 function afterRecordDeleted(){
   ['serviceFormModal','doctorFormModal'].forEach(m=>{ const o = document.getElementById(m); if(o && o.classList.contains('active')) closeEntryForm(m); });
@@ -9480,7 +9545,8 @@ function renderServiceList(mode){
       (s.area||'').toLowerCase().includes(q) ||
       (s.district||'').toLowerCase().includes(q) ||
       (s.province||'').toLowerCase().includes(q) ||
-      idMatches('service', s, q);
+      idMatches('service', s, q) ||
+      ubMatch(ubParseQuery(qRaw), [s.nameUr, s.nameEn, ubOwnerEn(s), s.type, s.intro, s.address, s.city, s.area], s.whatsapp);
     });
   }
   if(listFilter!=='all') items = items.filter(s=>listFilterPass('service', s));
@@ -12669,7 +12735,7 @@ function agWaNext(){
   }catch(x){} }, 450);
 }
 async function agWaFinish(rec, o){
-  if(!(await yearPwOk((rec && (rec.nameUr || rec.name)) || ''))) return;   /* MCS1011TU293 */
+  if(!(await yearPwOk((rec && (rec.nameUr || rec.name)) || ''))) return;   /* MCS1011TU294 */
   agModal('<div class="ag-st">⏳ کاروبار + ایک سال + ایجنٹ بن رہا ہے…</div>');
   try{
     const rk = pfKeyOf(rec, 'service'), hdr = await vfAdminHdr();
@@ -13100,7 +13166,7 @@ window.addEventListener('load', ()=> setTimeout(openPrivacyFromHash, 300));
 const MCS_FLOW = {
   /* MCS11OCTSU0913AM: پہلے موبائل، پھر نام، پھر زمرہ — مقام والے خانے صرف خالی ہوں تو */
   doctorFormModal: ['docWhatsapp','docNameUr','docDept','docSpecialty','docHospital','docProvince','docDistrict','docCity','docArea'],
-  serviceFormModal: ['svcWhatsapp','svcNameUr','svcOwner','svcType','svcProvince','svcDistrict','svcCity','svcArea']
+  serviceFormModal: ['svcWhatsapp','svcNameEn','svcNameUr','svcOwnerEn','svcOwner','svcType','svcProvince','svcDistrict','svcCity','svcArea']
 };
 const MCS_LOC_IDS = /(Province|District|City)$/;
 const AUTO_SPEEDS = [0, 0.8, 1.2, 1.5, 2, 3];   /* سیکنڈ — 0 = بند */
@@ -15129,7 +15195,7 @@ if('serviceWorker' in navigator){
 <div class="modal-overlay sr-full" id="srModal">
   <div class="sr-page">
     <div class="sr-top"><button type="button" class="sr-back" onclick="closeModal('srModal')" aria-label="واپس">→</button>
-      <div class="sr-box"><span>🔍</span><input type="search" id="srQ" placeholder="دکان، نام، نمبر، علاقہ — یہاں لکھیں" autocomplete="off" enterkeyhint="search"><button type="button" id="srClr" onclick="srClear()" aria-label="صاف">✖</button></div></div>
+      <div class="sr-box"><span>🔍</span><input type="search" id="srQ" placeholder="دکان، نام، نمبر — English / اردو / Roman" autocomplete="off" enterkeyhint="search"><button type="button" id="srClr" onclick="srClear()" aria-label="صاف">✖</button></div><div class="s-hint s-hint-w">English • اردو • Roman Urdu &nbsp;—&nbsp; مثلاً <b>star</b> / <b>ستار</b> / <b>nas</b> (ناصر)</div></div>
     <div class="sr-chips" id="srChips"></div>
     <div class="flt-bar" data-for="search" style="margin:4px 10px 6px"><button type="button" data-f="reg" onclick="srSetTab('reg')">✅ رجسٹرڈ بزنس</button><button type="button" data-f="agent" onclick="srSetTab('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
     <div class="sr-cnt" id="srCnt"></div>
