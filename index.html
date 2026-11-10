@@ -4201,10 +4201,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU292";
+const APP_VERSION = "MCS1011TU293";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1011TU293": "🔐 ممبرشپ کا ایک سال بڑھانے سے پہلے اب ڈویلپر پاس ورڈ — غلطی سے ایک دبانے میں سال نہیں بڑھے گا",
   "MCS1011TU292": "💬 My Chat اور Chat Settings کی نئی اسکرین — دی گئی تصویروں کے مطابق: ہرا ہیڈر، All Chats / Direct / Groups / Support، تلاش (نام، دکان کا نام، موبائل، ID)، گول DP / دکان کی تصویر، New Chat، چھوٹے سائز؛ Settings میں 8 صفحات اور English/اردو زبان",
   "MCS1011TU291": "⚙️ Settings کی نئی اسکرین — ہرا ہیڈر، لاگ اِن بندے کی اپنی گول تصویر، نام / ID / حالت کا کارڈ، رنگین آئیکن والی فہرست اور سرخ Logout",
   "MCS1011TU290": "📋 ابتدائی (غیر رجسٹرڈ) کاروبار کی پروفائل صرف چار چھوٹی لائنیں — نام، دکان، موبائل، پتہ، اور «رجسٹریشن مکمل کریں» — 📄 مکمل پروفائل کا بٹن کارڈ سے ہٹ گیا، اب اپنے اکاؤنٹ / پورٹل میں",
@@ -4687,6 +4688,7 @@ async function pfAdmin(act){
     if(act === 'del' && !confirm('اس دکان کی ممبرشپ (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
     const _pa = pfAct[c.rk] || {}, _pu = (c.prof && c.prof.until) || _pa.until || 0, _ps = (c.prof && c.prof.since) || _pa.since || 0;
     const until = act === 'year' ? mpYearUntil(_ps, _pu) : 0;
+    if(act === 'year' && !(await yearPwOk((c.rec && (c.rec.nameUr || c.rec.name)) || ''))) return;   /* MCS1011TU293 */
     const r = await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: c.rk, act: act === 'year' ? 'until' : act, until})}); const j = await r.json(); if(!j.ok) throw 0;
     if(act === 'year' && pfAct[c.rk]) pfAct[c.rk].until = until; if(act === 'del') delete pfAct[c.rk];
     if((act === 'approve' || act === 'reject') && pfAct[c.rk]){ delete pfAct[c.rk].pend; if(act === 'approve') pfAct[c.rk].until = Date.now() + MP_FREE_DAYS*864e5; }
@@ -5142,6 +5144,7 @@ async function aaGive(){
   const days = 365;   /* MCS0411WE133 (مالک کا حکم): صرف ایک سال کا پیکج */
   const until = days === 365 ? mpYearUntil(aaCur.since, aaCur.until) : Math.max(Date.now(), aaCur.until || 0) + days * 864e5;
   if(!confirm('کیا آپ نے اکاؤنٹ کی تمام تفصیلات مکمل طور پر چیک کر لی ہیں؟ ان میں کوئی غلطی تو نہیں، اور کوئی بات باقی تو نہیں رہ گئی؟\n\n🏪 ' + aaCur.prof + '\n👤 ' + aaCur.name + '\n📱 ' + aaCur.phone + '\n📧 ' + aaCur.mail + '\n📦 1 سال → ' + new Date(until).toLocaleDateString('en-GB') + ' تک\n\nOK = سب مکمل ہے، ممبرشپ جاری کر دیں')) return;
+  if(!(await yearPwOk(aaCur.name || ''))) return;   /* MCS1011TU293 */
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ return err('⚠️ پہلے ایڈمن لاگ اِن کریں'); }
   try{
     const j = await (await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: aaCur.rk, act: 'until', until})})).json();
@@ -9423,7 +9426,7 @@ async function deleteService(id){
   });
 }
 /* MCS0111SU110: حذف سے پہلے ایڈمن کا پاس ورڈ — فائربیس سے جانچ (اسی ایڈمن ای میل پر دوبارہ سائن اِن)، غلط ہو تو کچھ نہیں مٹتا */
-function askAdminPassword(msg){
+function askAdminPassword(msg, okText){
   return new Promise(res=>{
     const FB = window.MCSFirebase, u = FB && FB.auth && FB.auth.currentUser;
     if(!isAdminSignedIn || !u || !u.email){ showToast('پہلے ایڈمن لاگ ان کریں'); res(false); return; }
@@ -9432,21 +9435,23 @@ function askAdminPassword(msg){
     ov.innerHTML = `<div class="modal-box adm-pw"><div class="adm-pw-ic">🔐</div><div class="adm-pw-t">ایڈمن پاس ورڈ لکھیں</div><div class="adm-pw-m">${escapeHtml(msg||'')}</div>
       <div class="adm-pw-row"><input type="password" id="admPwIn" dir="ltr" autocomplete="current-password" placeholder="پاس ورڈ"><button type="button" onclick="const i=document.getElementById('admPwIn');i.type=i.type==='password'?'text':'password'">👁</button></div>
       <div class="adm-pw-err" id="admPwErr"></div>
-      <div class="adm-pw-btns"><button type="button" class="adm-pw-cancel">بند</button><button type="button" class="adm-pw-ok">🗑️ حذف کریں</button></div></div>`;
+      <div class="adm-pw-btns"><button type="button" class="adm-pw-cancel">بند</button><button type="button" class="adm-pw-ok">${escapeHtml(okText||"🗑️ حذف کریں")}</button></div></div>`;
     const done = v=>{ ov.classList.remove('active'); res(v); };
     const inp = ov.querySelector('#admPwIn'), err = ov.querySelector('#admPwErr'), ok = ov.querySelector('.adm-pw-ok');
     const go = async ()=>{
       const pw = inp.value; if(!pw){ err.textContent = 'پاس ورڈ لکھیں'; inp.focus(); return; }
       ok.disabled = true; ok.textContent = '⏳ جانچ…'; err.textContent = '';
       try{ await FB.signInWithEmailAndPassword(FB.auth, u.email, pw); done(true); }
-      catch(e){ ok.disabled = false; ok.textContent = '🗑️ حذف کریں'; const c = (e && e.code) || '';
-        err.textContent = /network/.test(c) ? 'انٹرنیٹ نہیں — دوبارہ کوشش کریں' : /too-many/.test(c) ? 'بہت زیادہ غلط کوشش — تھوڑی دیر بعد' : '❌ پاس ورڈ غلط ہے — ریکارڈ حذف نہیں ہوا'; inp.select(); }
+      catch(e){ ok.disabled = false; ok.textContent = okText || '🗑️ حذف کریں'; const c = (e && e.code) || '';
+        err.textContent = /network/.test(c) ? 'انٹرنیٹ نہیں — دوبارہ کوشش کریں' : /too-many/.test(c) ? 'بہت زیادہ غلط کوشش — تھوڑی دیر بعد' : (okText ? '❌ پاس ورڈ غلط ہے — کچھ نہیں بدلا' : '❌ پاس ورڈ غلط ہے — ریکارڈ حذف نہیں ہوا'); inp.select(); }
     };
     ok.onclick = go; ov.querySelector('.adm-pw-cancel').onclick = ()=>done(false);
     inp.addEventListener('keydown', e=>{ if(e.key==='Enter') go(); });
     ov.classList.add('active'); setTimeout(()=>inp.focus(), 150);
   });
 }
+/* MCS1011TU293 (مالک کا حکم): ممبرشپ کا ایک سال بڑھانا (= کمپنی کے حساب میں ایک فروخت) صرف ڈویلپر پاس ورڈ کے بعد — جلدی میں غلطی سے نہیں */
+async function yearPwOk(nm){ return askAdminPassword('⭐ ' + (nm ? '«' + nm + '» — ' : '') + 'ایک سال کی ممبرشپ بڑھانے کے لیے ڈویلپر پاس ورڈ لکھیں۔ یہ کمپنی کے حساب میں ایک فروخت درج کرتا ہے۔', '⭐ ہاں، ایک سال بڑھائیں'); }
 function afterRecordDeleted(){
   ['serviceFormModal','doctorFormModal'].forEach(m=>{ const o = document.getElementById(m); if(o && o.classList.contains('active')) closeEntryForm(m); });
   try{ if(currentScreen==='favorites'){ renderFavorites(); renderFavSearch(); } }catch(e){}
@@ -12664,6 +12669,7 @@ function agWaNext(){
   }catch(x){} }, 450);
 }
 async function agWaFinish(rec, o){
+  if(!(await yearPwOk((rec && (rec.nameUr || rec.name)) || ''))) return;   /* MCS1011TU293 */
   agModal('<div class="ag-st">⏳ کاروبار + ایک سال + ایجنٹ بن رہا ہے…</div>');
   try{
     const rk = pfKeyOf(rec, 'service'), hdr = await vfAdminHdr();
@@ -16669,6 +16675,7 @@ async function bzGiveYear(x){
   if(!rk){ showToast('⚠️ اس کاروبار کا موبائل نمبر درست نہیں'); return; }
   const cur = pfAct[rk];
   if(!confirm(`⭐ «${nm}» کو ایک سال کی ممبرشپ دیں؟${cur && cur.until > Date.now() ? '\nباقی دن ساتھ جمع ہوں گے۔' : ''}\nریفرل: ${(rec.more && rec.more.ref) || bzRef()}`)) return;
+  if(!(await yearPwOk(nm))) return;
   agModal('<div class="ag-st">⏳ ایک سال کی ممبرشپ جاری ہو رہی ہے…</div>');
   try{
     const hdr = await vfAdminHdr(); let since = cur && cur.since, until = cur && cur.until;
