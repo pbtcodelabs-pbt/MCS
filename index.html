@@ -4201,10 +4201,12 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU282";
+const APP_VERSION = "MCS1011TU284";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1011TU284": "📶 مراحل کی پٹی تلاش / فہرست کی قطاروں میں بھی ہر کاروبار پر پکی — جب تک MCS ایجنٹ کا سنہری ربن نہ ملے؛ ربن ملتے ہی پٹی غائب",
+  "MCS1011TU283": "📶 کارڈ پر دو کی جگہ ایک ہی پراگرس پٹی — بنیادی ۲۵٪، رجسٹریشن ۵۰٪، ممبرشپ ۷۵٪، ایم سی ایس ایجنٹ بنتے ہی پٹی ختم — اور یہ ہر کارڈ پر پکی نظر آتی ہے",
   "MCS1011TU282": "📶 ہر کارڈ پر باریک پراگرس بار (بنیادی ← رجسٹرڈ ← ممبرشپ ← ایجنٹ) ہمیشہ نظر آئے گی — 🔢 رجسٹرڈ / ایجنٹ بٹنوں پر باریک تعداد (صرف ڈویلپر کو)",
   "MCS1011TU281": "🧹 کارڈ پر سے ریفرل کی پیلی پٹی ختم — ریفرل صرف فارم، مکمل پروفائل اور ایڈمن / ایجنٹ کی فہرستوں میں",
   "MCS1011TU280": "🤝 فارم میں ریفرل کوڈ اب فہرست (ڈراپ ڈاؤن) سے چنا جاتا ہے — انگلش A سے Z، اردو الف سے ی، نام اور کوڈ دونوں محفوظ — ✏️ پرانے کاروبار کا ریفرل کوڈ ایڈمن بدل سکتا ہے — ⏳ ہوم پر باریک پٹی: «محترم ڈویلپر! اتنے بزنس منظوری کے منتظر ہیں»",
@@ -16478,14 +16480,15 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
   function sentOf(kind, rec){ try{ const rk = pfKeyOf(rec, kind), t = sentMap()[rk]; return t && Date.now() - t < 45*864e5; }catch(e){ return false; } }
   window.fpCardSteps = function(kind, rec){
     if(!rec) return '';
+    try{ if(typeof agIsRec === 'function' && agIsRec(kind, rec)) return ''; }catch(e){}   /* MCS1011TU283: ایجنٹ بن گیا تو پٹی ختم */
     const isDoc = kind === 'doctor', live = (typeof pfActive === 'function') && pfActive(rec);
     let n, next;
     if(live){ const ag = (typeof agIsRec === 'function') && agIsRec(kind, rec); n = ag ? 5 : 4; next = ag ? '✅ سب مراحل مکمل' : 'اگلا: 💰 Earn with MCS'; }
     else if(rec.stage === 'registered'){ const s = sentOf(kind, rec); n = s ? 3 : 2; next = s ? 'اگلا: ⏳ ڈویلپر کی منظوری' : 'اگلا: ⭐ ممبرشپ — تفصیل ڈویلپر کو'; }
     else { n = 1; next = 'اگلا: 📝 رجسٹریشن'; }
     if(n >= 5) return '';   /* MCS0911MO267: سب مکمل — پٹی کی جگہ نہیں */
-    const pct = n * 20;
-    return `<div class="fp-card"><div class="fp-ct"><span>📊 مرحلہ ${n} / 5 — <b>${pct}٪</b></span><span>${next}</span></div><div class="fp-tr"><i style="width:${pct}%"></i></div></div>`;
+    const pct = n === 1 ? 25 : (n >= 4 ? 75 : 50), sn = n === 1 ? 1 : (n >= 4 ? 3 : 2);   /* MCS1011TU283: بنیادی ۲۵٪ ← رجسٹریشن ۵۰٪ ← ممبرشپ ۷۵٪ ← ایجنٹ ۱۰۰٪ (پٹی غائب) */
+    return `<div class="fp-card"><div class="fp-ct"><span>📊 مرحلہ ${sn} / 4 — <b>${pct}٪</b></span><span>${next}</span></div><div class="fp-tr"><i style="width:${pct}%"></i></div></div>`;
   };
   function wrapStage(name, kindOf){
     const f = window[name]; if(typeof f !== 'function') return;
@@ -18468,25 +18471,27 @@ try{ updatePendingHomeIndicator(); }catch(e){}
 </style>
 <script id="mcsPgBar282">
 /* ===== MCS1011TU282 (مالک کا حکم) =====
-   ۱) ہر کارڈ پر ہمیشہ باریک پراگرس بار — بنیادی ۲۰٪ ← رجسٹرڈ ۵۰٪ ← ممبرشپ فعال ۷۵٪ ← MCS ایجنٹ ۱۰۰٪ (فوراً بنتی ہے، انٹرنیٹ پر منحصر نہیں)
+   ۱) کارڈ پر ایک ہی پٹی (fpCardSteps) ہمیشہ — ۲۵ / ۵۰ / ۷۵٪، ایجنٹ پر غائب
    ۲) «رجسٹرڈ بزنس / ایم سی ایس ایجنٹس» بٹنوں پر باریک گول تعداد — صرف ڈویلپر (ایڈمن) کو */
-function pgStageOf(kind, rec){
-  try{ if(agIsRec(kind, rec)) return 4; }catch(e){}
-  try{ if(pfActive(rec)) return 3; }catch(e){}
-  if(rec && rec.stage === 'registered') return 2;
-  return 1;
-}
-function pgBarHtml(kind, rec){
-  const st = pgStageOf(kind, rec), W = [0, 20, 50, 75, 100][st], T = ['', 'بنیادی اندراج', 'رجسٹرڈ', 'ممبرشپ فعال', 'MCS ایجنٹ'][st];
-  return `<div class="pg-bar pg-s${st}" title="${T}"><span class="pg-t">${T}</span><b><i style="width:${W}%"></i></b></div>`;
-}
 (function(){
-  const wrap = (fn, kind)=>{
-    const o = window[fn]; if(typeof o !== 'function' || o._pg) return;
-    const w = function(rec){ const h = o.apply(this, arguments); try{ return String(h).replace(/<\/div>\s*$/, pgBarHtml(kind, rec) + '</div>'); }catch(e){ return h; } };
-    w._pg = 1; window[fn] = w;
+  const o = window.cardStageBtn; if(typeof o !== 'function' || o._pg) return;
+  const w = function(kind, rec){ let h = o.apply(this, arguments) || ''; try{ if(h.indexOf('fp-card') < 0 && typeof window.fpCardSteps === 'function') h = window.fpCardSteps(kind, rec) + h; }catch(e){} return h; };
+  w._pg = 1; window.cardStageBtn = w;   /* ہر کارڈ پر وہی ایک پٹی ہمیشہ */
+})();
+/* MCS1011TU284: تلاش / فہرست کی قطاروں (userResultCard) میں بھی وہی پٹی — جب تک MCS ایجنٹ کا سنہری ربن نہ ملے */
+(function(){
+  const o = window.userResultCard; if(typeof o !== 'function' || o._pg) return;
+  const w = function(item){
+    let h = o.apply(this, arguments);
+    try{
+      if(!item || !item.id || typeof h !== 'string' || h.indexOf('fp-card') >= 0 || typeof window.fpCardSteps !== 'function') return h;
+      const rec = item.kind === 'doctor' ? (store.doctors || []).find(x=>x.id === item.id) : (store.services || []).find(x=>x.id === item.id);
+      if(!rec || rec.category === 'emergencyNumbers' || rec.category === 'govOffices') return h;
+      const bar = window.fpCardSteps(item.kind, rec); if(!bar) return h;
+      return h.replace(/<\/div>\s*$/, bar + '</div>');
+    }catch(e){ return h; }
   };
-  wrap('docCardHtml', 'doctor'); wrap('svcCardHtml', 'service');
+  w._pg = 1; window.userResultCard = w;
 })();
 /* تعداد — صرف ایڈمن */
 function pgCounts(forKey){
@@ -18525,11 +18530,6 @@ function pgBadges(){
 })();
 </script>
 <style id="mcsPgBar282css">
-.pg-bar{flex:0 0 100%;width:100%;grid-column:1/-1;display:flex;align-items:center;gap:6px;margin-top:3px;order:99;box-sizing:border-box}
-.pg-bar b{flex:1;height:4px;border-radius:99px;background:rgba(127,127,127,.32);overflow:hidden;display:block}
-.pg-bar i{display:block;height:100%;border-radius:99px}
-.pg-bar .pg-t{flex:none;font-size:9px;font-weight:800;line-height:1;opacity:.9;color:inherit}
-.pg-s1 i{background:#f87171}.pg-s2 i{background:#fbbf24}.pg-s3 i{background:#38bdf8}.pg-s4 i{background:linear-gradient(90deg,#fcd34d,#f59e0b)}
 .flt-bar .fb-n{display:inline-block;min-width:15px;height:15px;line-height:15px;padding:0 4px;margin-inline-start:5px;border-radius:99px;background:#0f766e;color:#fff;font-size:9.5px;font-weight:800;text-align:center;vertical-align:middle;box-sizing:border-box}
 .flt-bar button[data-f="reg"].on .fb-n{background:#fff;color:#14532d}
 .flt-bar button[data-f="agent"] .fb-n{background:#1e40af}
