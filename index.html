@@ -4201,10 +4201,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1011TU287";
+const APP_VERSION = "MCS1011TU288";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1011TU288": "🎨 My Account اور My Portal کا نیا ڈیزائن (ہیڈر، پروفائل کارڈ، کاروبار کارڈ، ٹولز) — پیسوں والی کوئی نئی چیز شامل نہیں",
   "MCS1011TU287": "📈 شیئر کے متن اور پوسٹر میں ترغیب: اب تک اتنے کاروبار اور اتنے پیشہ ور شامل ہو چکے ہیں — دو کیپسول، تعداد روز بروز بڑھتی ہوئی؛ دکاندار کو بھیجے جانے والے پیغام میں بھی",
   "MCS1011TU286": "🪪 تینوں طرح کے کارڈ (رجسٹرڈ / MCS ایجنٹ / ٹرائل) ایک جیسے — ایک ہی لمبائی چوڑائی، چوڑائی کم — 📊 پراگریس بار کے اوپر صرف ۲۵٪ ۵۰٪ ۷۵٪ — MCS بیج اور رجسٹرڈ ٹیگ بھی ہر کارڈ پر نظر آتے ہیں",
   "MCS1011TU285": "✅ «رجسٹرڈ بزنس» میں ایم سی ایس ایجنٹ بھی شامل (وہ بھی رجسٹرڈ بزنس ہیں) — «ایم سی ایس ایجنٹس» میں صرف ایجنٹ؛ دونوں بٹنوں کی تعداد بھی اسی حساب سے",
@@ -18656,5 +18657,189 @@ html body .doc-card .doc-address{white-space:nowrap !important;overflow:hidden !
 /* زوم بڑھا ہو تو کارڈ کی اونچائی کھل جائے تاکہ بڑا متن نہ کٹے */
 html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{height:auto !important;max-height:none !important;grid-template-rows:auto auto auto auto auto auto !important;overflow:visible !important}
 </style>
+<style id="mcsAcc288">
+/* ===== MCS1011TU288: My Account / My Portal — نیا ڈیزائن (تصویر کے مطابق) ===== */
+#portalModal.mx,#myPortalModal.mx{align-items:stretch;justify-content:center;padding:0;z-index:1000;background:rgba(0,0,0,.35)}
+.mx .mx-sheet{width:100%;max-width:480px;height:100%;overflow-y:auto;background:linear-gradient(180deg,#d9f0ec 0,#eef8f6 220px,#f6fbfa 100%);direction:rtl;padding:0 0 96px;border-radius:0;animation:none;position:relative}
+.mx .mx-top{position:relative;height:104px;background:linear-gradient(120deg,#0a5a53 0,#0f7f6d 55%,#12907a 100%);border-radius:0 0 46% 46%/0 0 26px 26px;overflow:hidden;color:#fff}
+.mx .mx-top:after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:linear-gradient(90deg,transparent,#facc15 55%,transparent);opacity:.85}
+.mx .mx-sky{position:absolute;right:0;bottom:4px;width:62%;height:80px;opacity:.5}
+.mx .mx-back{direction:ltr;position:absolute;top:14px;left:10px;width:36px;height:36px;border:none;background:rgba(255,255,255,.18);color:#fff;border-radius:50%;font-size:22px;line-height:34px;padding:0;cursor:pointer;z-index:3}
+.mx .mx-brand{position:absolute;top:10px;left:56px;right:62px;display:flex;align-items:center;gap:10px;direction:ltr;z-index:2}
+.mx .mx-brand img{width:50px;height:50px;border-radius:50%;background:#fff;border:2px solid #fff;object-fit:cover;flex:none}
+.mx .mx-brand b{display:block;font:800 17px/1.2 Arial,sans-serif}
+.mx .mx-brand small{display:block;font-size:14px;opacity:.95;margin-top:2px;direction:rtl;text-align:left}
+.mx .mx-bell{position:absolute;top:14px;right:10px;width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(255,255,255,.65);background:rgba(255,255,255,.12);color:#fff;font-size:20px;line-height:38px;padding:0;cursor:pointer;z-index:3}
+.mx .mx-bell i{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:#dc2626;color:#fff;font:800 11px/18px Arial,sans-serif;font-style:normal;padding:0 4px}
+.mx .mx-pill{margin:-14px auto 0;position:relative;z-index:4;width:max-content;max-width:92%;text-align:center}
+.mx .mx-pill h2{margin:0;display:inline-flex;align-items:center;gap:8px;direction:ltr;background:linear-gradient(135deg,#0d6b5f,#12907a);color:#fff;border-radius:30px;padding:5px 22px;font:800 20px/1.3 Arial,sans-serif;box-shadow:0 3px 10px rgba(15,107,95,.35)}
+.mx .mx-pill p{margin:5px auto 0;display:block;width:max-content;max-width:100%;background:rgba(255,255,255,.85);border:1px solid #cfe7e2;border-radius:20px;padding:2px 16px;font:600 13px Arial,sans-serif;color:#25585a;direction:ltr}
+.mx .mx-in{padding:12px 14px 0}
+.mx .mx-card{background:#fff;border-radius:20px;box-shadow:0 3px 14px rgba(15,90,85,.12);padding:12px;margin-bottom:12px;border:1px solid #e3f1ee}
+.mx .mx-prof{display:flex;align-items:center;gap:12px;position:relative;direction:ltr}
+.mx .mx-av{width:84px;height:84px;border-radius:50%;border:3px solid #0f7f6d;background:#e6f4f1;overflow:hidden;flex:none;display:flex;align-items:center;justify-content:center;font-size:38px;cursor:pointer;position:relative}
+.mx .mx-av img{width:100%;height:100%;object-fit:cover}
+.mx .mx-pi{flex:1;min-width:0;direction:ltr;text-align:left;padding-right:46px}
+.mx .mx-pi b{display:block;font:800 19px/1.3 Arial,sans-serif;color:#0b3b6f;overflow-wrap:anywhere}
+.mx .mx-pi .id{margin-top:3px;font:600 13px Arial,sans-serif;color:#475569}
+.mx .mx-pi .id span{background:#dff3ee;color:#0f6b5f;border-radius:10px;padding:2px 9px;font-weight:800;margin-left:4px;display:inline-block}
+.mx .mx-ok{display:inline-flex;align-items:center;gap:6px;margin-top:7px;background:#16a34a;color:#fff;border-radius:18px;padding:4px 14px 4px 6px;font:700 14px Arial,sans-serif}
+.mx .mx-ok i{width:22px;height:22px;border-radius:50%;background:#fff;color:#16a34a;font-style:normal;text-align:center;line-height:22px;font-size:14px}
+.mx .mx-ok.no{background:#f59e0b}.mx .mx-ok.no i{color:#f59e0b}
+.mx .mx-edit{position:absolute;top:0;right:0;width:38px;height:38px;border:1.5px solid #0f7f6d;border-radius:11px;background:#fff;color:#0f6b5f;font-size:17px;padding:0;cursor:pointer}
+.mx .mx-mem{direction:ltr;display:flex;gap:0;align-items:stretch;padding:0;overflow:hidden}
+.mx .mx-mb{width:34%;background:linear-gradient(160deg,#0b6a5e,#0a5a53);color:#fff;text-align:center;padding:12px 6px;font:700 15px/1.3 Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;direction:ltr}
+.mx .mx-mb i{font-style:normal;font-size:38px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+.mx .mx-mr{flex:1;padding:6px 10px;direction:ltr}
+.mx .mx-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #e6efee;font:600 14px Arial,sans-serif;color:#1e293b}
+.mx .mx-row:last-child{border-bottom:none}
+.mx .mx-row em{font-style:normal;font-size:19px;width:26px;text-align:center}
+.mx .mx-row span{flex:1}
+.mx .mx-chip{background:#dff3e3;color:#166534;border-radius:14px;padding:3px 12px;font-weight:800;font-size:13.5px}
+.mx .mx-chip.w{background:#fef3c7;color:#92400e}.mx .mx-chip.r{background:#fee2e2;color:#991b1b}.mx .mx-chip.b{background:#e0f2fe;color:#075985}
+.mx .mx-sec{display:flex;align-items:center;gap:8px;direction:ltr;margin:4px 2px 8px;font:800 17px Arial,sans-serif;color:#0b3b4a}
+.mx .mx-sec:after{content:"";flex:1;height:1.5px;background:linear-gradient(90deg,#0f7f6d,transparent)}
+.mx .mx-sec.pl{background:#e1f1ee;border-right:0;border-radius:0 14px 14px 0;padding:6px 14px;width:max-content;max-width:70%}.mx .mx-sec.pl:after{display:none}
+.mx .mx-list{padding:2px 8px}
+.mx .mx-li{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid #e6efee;direction:ltr;cursor:pointer;width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left;font:700 16px Arial,sans-serif;color:#0f2a3a}
+.mx .mx-li:last-child{border-bottom:none}
+.mx .mx-li i{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:23px;flex:none}
+.mx .mx-li span{flex:1}.mx .mx-li small{display:block;font:600 11.5px Arial,sans-serif;color:#64748b;margin-top:1px;direction:rtl;text-align:left}
+.mx .mx-li:after{content:"›";font-size:26px;color:#334155}
+.mx .c1{background:#dbeafe}.mx .c2{background:#dcfce7}.mx .c3{background:#ede9fe}.mx .c4{background:#fef3c7}.mx .c5{background:#fee2e2}.mx .c6{background:#dbeafe}
+.mx .mx-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;direction:ltr}
+.mx .mx-st{border-radius:18px;padding:10px 12px;display:flex;align-items:center;gap:10px;font:600 14px/1.2 Arial,sans-serif;color:#1e293b}
+.mx .mx-st b{display:block;font:800 30px/1 Arial,sans-serif;color:#0b2a4a}
+.mx .mx-st i{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:22px;color:#fff;flex:none}
+.mx .mx-st.a{background:#d8ecfa}.mx .mx-st.a i{background:#1d5fa8}.mx .mx-st.b{background:#d7f3e0}.mx .mx-st.b i{background:#16a34a}
+.mx .mx-bz{display:flex;align-items:center;gap:10px;direction:ltr;padding:10px;margin-bottom:10px;border-radius:18px;background:#fff;border:1px solid #e3f1ee;box-shadow:0 2px 10px rgba(15,90,85,.1)}
+.mx .mx-bzp{width:96px;height:80px;border-radius:12px;background:linear-gradient(135deg,#cfe9e4,#e9f6f3);overflow:hidden;flex:none;display:flex;align-items:center;justify-content:center;font-size:34px}
+.mx .mx-bzp img{width:100%;height:100%;object-fit:cover}
+.mx .mx-bzi{flex:1;min-width:0;text-align:left}
+.mx .mx-bzi b{display:block;font:800 16px/1.3 Arial,sans-serif;color:#0b2a4a;overflow-wrap:anywhere}
+.mx .mx-bzi small{display:block;font:600 13px Arial,sans-serif;color:#64748b;margin:1px 0 6px;overflow-wrap:anywhere}
+.mx .mx-bzi .ic{display:flex;gap:6px;direction:ltr}
+.mx .mx-bzi .ic button{width:36px;height:34px;border-radius:10px;border:none;background:#e3f2ef;font-size:16px;padding:0;cursor:pointer}
+.mx .mx-bzr{display:flex;flex-direction:column;align-items:flex-end;gap:14px;flex:none;direction:ltr}
+.mx .mx-bzr .s{border-radius:9px;padding:3px 9px;font:800 12.5px Arial,sans-serif;white-space:nowrap}
+.mx .mx-bzr .s.g{background:#15803d;color:#fff}.mx .mx-bzr .s.o{background:#fbbf24;color:#fff}.mx .mx-bzr .s.r{background:#dc2626;color:#fff}.mx .mx-bzr .s.n{background:#94a3b8;color:#fff}
+.mx .mx-bzr u{text-decoration:none;font-size:26px;color:#1e293b;line-height:1}
+.mx .mx-big{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:none;border-radius:30px;padding:12px;margin:2px 0 14px;background:linear-gradient(135deg,#0d7a68,#12907a);color:#fff;font:800 18px Arial,sans-serif;direction:ltr;box-shadow:0 3px 10px rgba(15,107,95,.3);cursor:pointer}
+.mx .mx-big i{width:30px;height:30px;border:2px solid #fff;border-radius:50%;font-style:normal;line-height:26px;text-align:center;font-size:22px}
+.mx .mx-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;direction:ltr}
+.mx .mx-tl{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e3f1ee;border-radius:16px;box-shadow:0 2px 8px rgba(15,90,85,.1);padding:10px;font:800 17px Arial,sans-serif;color:#0b2a4a;cursor:pointer;text-align:left}
+.mx .mx-tl i{font-style:normal;font-size:34px;flex:none}.mx .mx-tl small{display:block;font:600 11.5px Arial,sans-serif;color:#64748b;direction:rtl;text-align:left}
+.mx .mx-note{font-size:12px;color:#64748b;text-align:center;margin:10px 4px 0;line-height:1.8}
+.mx .mx-ver{font:12px Arial,sans-serif;color:#94a3b8;text-align:center;margin-top:8px;direction:ltr}
+.mx .mx-out{width:100%;margin-top:6px;border:1.5px solid #fca5a5;background:#fff;color:#b91c1c;border-radius:16px;padding:11px;font:800 15px Arial,sans-serif;cursor:pointer}
+/* ڈویلپر / کو-ڈویلپر / ایجنٹ کا پورٹل: پرانا مواد وہی، صرف نیا ہیڈر اور رنگ */
+#portalModal .pt-hd.dev,#portalModal .pt-hd.codev,#portalModal .pt-hd.agent,#portalModal .pt-hd.biz,#portalModal .pt-hd.prof,#portalModal .pt-hd.user{background:linear-gradient(120deg,#0a5a53,#0f7f6d 60%,#12907a);border-radius:0 0 26px 26px}
+#portalModal .pt-box{border-radius:0 0 22px 22px}
+#portalModal .pt-t{border-radius:16px;border-color:#e3f1ee;box-shadow:0 2px 8px rgba(15,90,85,.1)}
+#portalModal .pt-card{background:#fff;border-color:#e3f1ee;border-radius:18px;box-shadow:0 2px 10px rgba(15,90,85,.08)}
+#portalModal .pt-sec{color:#0b3b4a;font-size:13px}
+</style>
+<script id="mcsAcc288js">
+/* ===== MCS1011TU288: My Account / My Portal — نیا ڈیزائن (تصویر کے مطابق) =====
+   ⚠️ پلے اسٹور: اس ڈیزائن میں کوئی نئی رقم / قیمت / رینیو / ادائیگی والی چیز شامل نہیں کی گئی۔ */
+(function(){
+  var SKY = '<svg class="mx-sky" viewBox="0 0 300 80" preserveAspectRatio="xMaxYMax meet" aria-hidden="true"><g fill="#fff"><rect x="20" y="40" width="14" height="40"/><rect x="38" y="28" width="12" height="52"/><rect x="54" y="46" width="16" height="34"/><rect x="74" y="34" width="12" height="46"/><path d="M110 80V50q20-26 40 0v30z"/><rect x="108" y="46" width="44" height="4"/><path d="M175 80V30l5-26 5 26v50z"/><rect x="172" y="30" width="16" height="4"/><rect x="200" y="42" width="30" height="38"/><path d="M200 42q15-18 30 0z"/><rect x="236" y="52" width="14" height="28"/><rect x="254" y="38" width="12" height="42"/><rect x="270" y="56" width="22" height="24"/></g></svg>';
+  function esc(s){ try{ return escapeHtml(String(s == null ? '' : s)); }catch(e){ return String(s || ''); } }
+  function top(id, title, sub, ic){
+    return '<div class="mx-top"><button type="button" class="mx-back" onclick="closeModal(\'' + id + '\')" aria-label="پیچھے">‹</button>' + SKY
+      + '<div class="mx-brand"><img src="icons/icon-192.png" alt="" onerror="this.style.visibility=\'hidden\'"><div><b>My City Shines</b><small>مائی سٹی شائنز</small></div></div>'
+      + '<button type="button" class="mx-bell" onclick="mxGo(\'' + id + '\',\'mstNotif\')" aria-label="اطلاعات">🔔</button></div>'
+      + '<div class="mx-pill"><h2><span>' + ic + '</span>' + title + '</h2><p>' + sub + '</p></div>';
+  }
+  function shell(id, html){
+    var m = document.getElementById(id);
+    if(!m){ m = document.createElement('div'); m.id = id; document.body.appendChild(m); }
+    m.className = 'modal-overlay mx';
+    m.innerHTML = '<div class="mx-sheet">' + html + '</div>';
+    openModal(id);
+  }
+  window.mxGo = function(id, fn, a){ try{ closeModal(id); }catch(e){} setTimeout(function(){ try{ var f = window[fn]; if(typeof f === 'function') f(a); else showToast('⚠️ یہ سہولت ابھی دستیاب نہیں'); }catch(e){ showToast('⚠️ ' + (e.message || '')); } }, 160); };
+  function fmtDate(t){ try{ return new Date(t).toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'}); }catch(e){ return ''; } }
+  function row(ic, lb, hdl, fn, cls, sub){ return '<button type="button" class="mx-li" onclick="mxGo(\'' + hdl + '\',\'' + fn + '\')"><i class="' + cls + '">' + ic + '</i><span>' + lb + (sub ? '<small>' + sub + '</small>' : '') + '</span></button>'; }
+  function recOf(x){ var r = x.p.kind === 'doctor' ? fhDoc(x.rec) : fhSvc(x.rec); return r; }
+
+  /* ---------- 👤 My Account (یوزر / کاروبار / پروفیشن) ---------- */
+  window.mxAccOpen = function(rl){
+    try{ ptPrev = null; }catch(e){}
+    var ID = 'portalModal', ua = (typeof uaMe === 'function' && uaMe()) || null, u = (ua && ua.user) || {}, me = agMe() || {}, L = mpListReal();
+    var nm = u.name || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
+    var mob = u.mobile || u.phone || (me.phone ? '0' + String(me.phone).slice(2) : '');
+    var acid = u.id || mob || '';
+    var sv = ''; try{ sv = ptSelfieGet(rl) || ''; }catch(e){}
+    var best = null; L.forEach(function(x){ var lf = mpLeftOf(x.p); if(lf != null && (best == null || lf > best.lf)) best = {lf: lf, p: x.p}; });
+    var active = !!(best && best.lf > 0);
+    var h = top(ID, 'My Account', 'Personal Account &amp; Membership', '👤') + '<div class="mx-in">';
+    h += '<div class="mx-card mx-prof"><div class="mx-av" onclick="ptSelfieAsk()">' + (sv ? '<img src="' + escapeAttr(sv) + '" alt="">' : '👤') + '</div>'
+      + '<div class="mx-pi"><b>' + esc(nm) + '</b>' + (acid ? '<div class="id">Account ID: <span>' + esc(acid) + '</span></div>' : '')
+      + '<div class="mx-ok' + (active ? '' : ' no') + '"><i>' + (active ? '✓' : '•') + '</i>' + (active ? 'Active Member' : 'Member') + '</div></div>'
+      + '<button type="button" class="mx-edit" onclick="ptSelfieAsk()" aria-label="تصویر بدلیں">✏️</button></div>';
+    if(L.length){
+      var st = best ? (best.lf > 0 ? ['Active', ''] : ['Expired', 'r']) : (L.some(function(x){ return x.p.pend; }) ? ['Pending', 'w'] : ['Not started', 'w']);
+      h += '<div class="mx-card mx-mem"><div class="mx-mb"><i>🏅</i>My<br>Membership</div><div class="mx-mr">'
+        + '<div class="mx-row"><em>📋</em><span>Subscription Status</span><b class="mx-chip ' + st[1] + '">' + st[0] + '</b></div>'
+        + (best && best.p.until ? '<div class="mx-row"><em>📅</em><span>Expiry Date</span><b class="mx-chip b">' + fmtDate(best.p.until) + '</b></div><div class="mx-row"><em>⏳</em><span>Days Left</span><b class="mx-chip' + (best.lf > 0 ? '' : ' r') + '">' + Math.max(0, best.lf) + '</b></div>' : '')
+        + '</div></div>';
+    }
+    h += '<div class="mx-sec pl">Account Management</div><div class="mx-card mx-list">'
+      + (ua ? row('👤', 'Personal Information', ID, 'uaAccount', 'c1', 'نام، موبائل، ای میل') : row('🔐', 'Login / Sign Up', ID, 'uaLogin', 'c1', 'اکاؤنٹ بنائیں'))
+      + (ua ? row('🛡️', 'Security &amp; Password', ID, 'uaPwForm', 'c2', 'پاس ورڈ بنائیں / بدلیں') : '')
+      + row('🔔', 'Notifications', ID, 'mstNotif', 'c4', (typeof mstNotifState === 'function' ? mstNotifState() : ''))
+      + row('🔒', 'Privacy &amp; Account', ID, 'mstPrivacy', 'c5', 'پرائیویسی پالیسی')
+      + row('🎧', 'Help &amp; Support', ID, 'ptHelp', 'c6', 'مسئلہ / تجویز')
+      + '</div>';
+    h += '<div class="mx-sec pl">More</div><div class="mx-card mx-list">'
+      + row('🏪', 'My Portal', ID, 'mpoOpen', 'c2', 'کاروبار کا انتظام')
+      + row('🤝', me.code ? 'Referral &amp; Agent' : 'Earn with MCS', ID, 'agOpen', 'c3', me.code ? 'ریفرل کوڈ: ' + esc(me.code) : 'ایجنٹ بنیں')
+      + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
+      + row('⚙️', 'Settings', ID, 'mstOpen', 'c6', 'ترتیبات')
+      + row('🔄', 'Switch Account', ID, 'ptSwitch', 'c3', 'دوسرے اکاؤنٹ سے لاگ اِن')
+      + '</div>';
+    h += '<button type="button" class="mx-out" onclick="mxGo(\'' + ID + '\',\'mcsLogoutAll\')">⎋ Log Out — لاگ آؤٹ</button><div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
+    shell(ID, h);
+  };
+  var _po = window.ptOpen;
+  window.ptOpen = function(editProf, prev){
+    try{ if(!prev){ var rl = ptRole(); if(rl === 'user' || rl === 'biz' || rl === 'prof'){ mxAccOpen(rl); return; } } }catch(e){ console.error(e); }
+    var m = document.getElementById('portalModal'); if(m) m.className = 'modal-overlay';
+    return _po.apply(this, arguments);
+  };
+
+  /* ---------- 🏪 My Portal ---------- */
+  window.mpoOpen = function(){
+    var ID = 'myPortalModal', rl = mpoRole(), L = mpListReal();
+    var appr = L.filter(function(x){ return !x.p.pend; }).length;
+    var h = top(ID, 'My Portal', 'Business &amp; Professional Workspace', '🏪') + '<div class="mx-in">';
+    h += '<div class="mx-stats"><div class="mx-st a"><i>💼</i><div><b>' + String(L.length).padStart(2, '0') + '</b>Total Businesses</div></div>'
+      + '<div class="mx-st b"><i>✓</i><div><b>' + String(appr).padStart(2, '0') + '</b>Approved Businesses</div></div></div>';
+    h += '<div class="mx-sec">🏪 My Business Profiles</div>';
+    if(L.length){
+      h += L.map(function(x, i){
+        var r = recOf(x), left = mpLeftOf(x.p), meta = ubCatMeta(x.p.kind === 'doctor' ? 'doctor' : r.category);
+        var s = x.p.pend ? ['o', '⏳ Pending'] : (left != null && left <= 0) ? ['r', '⛔ Expired'] : ['g', '✓ Approved'];
+        var img = r.more && r.more.selfie ? '<img src="' + escapeAttr(r.more.selfie) + '" alt="">' : meta.emoji;
+        var sub = (x.p.kind === 'doctor' ? '👔 پروفیشن' : '🏪 کاروبار') + (meta.ur ? ' · ' + esc(meta.ur) : '') + (left != null && left > 0 && !x.p.pend ? ' · ' + left + ' دن باقی' : left == null && !x.p.pend ? ' · تفصیل باقی' : '');
+        return '<div class="mx-bz"><div class="mx-bzp" onclick="mpoView(' + i + ')">' + img + '</div><div class="mx-bzi"><b>' + esc(r.nameUr || r.name || '') + '</b><small>' + sub + '</small>'
+          + '<div class="ic"><button type="button" onclick="mpoView(' + i + ')" aria-label="دیکھیں">👁️</button><button type="button" onclick="mpoEdit(' + i + ')" aria-label="تفصیل">✏️</button>' + (x.p.pend ? '' : '<button type="button" onclick="mpoSub(' + i + ')" aria-label="ممبرشپ">⭐</button>') + '</div></div>'
+          + '<div class="mx-bzr"><span class="s ' + s[0] + '">' + s[1] + '</span><u onclick="mpoView(' + i + ')">›</u></div></div>';
+      }).join('');
+    } else {
+      h += '<div class="mx-card" style="text-align:center;font-size:13.5px;color:#475569">ابھی آپ کا کوئی کاروبار / پروفیشن درج نہیں</div>';
+    }
+    h += '<button type="button" class="mx-big" onclick="mxGo(\'' + ID + '\',\'mpNewMore\')"><i>+</i>' + (L.length ? 'Register Another Business' : 'Register Business / Profession') + '</button>';
+    h += '<div class="mx-sec">🧰 Business Tools</div><div class="mx-tools">'
+      + '<div class="mx-tl" onclick="mpoServices()"><i>🛠️</i><div>Services<small>تصویریں، خدمات، پتہ</small></div></div>'
+      + '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'adRequestOpen\')"><i>📣</i><div>Promotions<small>اشتہار کی درخواست</small></div></div>'
+      + (['dev', 'codev', 'agent'].indexOf(rl) >= 0 ? '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'bzHubOpen\')"><i>🏪</i><div>Business Hub<small>نیا · پہلے سے درج</small></div></div>' : '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'agEarnOpen\')"><i>💰</i><div>Earn with MCS<small>ایجنٹ بنیں</small></div></div>')
+      + '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'ptHelp\')"><i>🎧</i><div>Help &amp; Support<small>مسئلہ / تجویز</small></div></div>'
+      + '</div><div class="mx-note">🏪 اپنے کاروبار / پیشے کا انتظام۔ ذاتی معلومات «My Account» میں۔</div><div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
+    shell(ID, h);
+  };
+})();
+</script>
 </body>
 </html>
