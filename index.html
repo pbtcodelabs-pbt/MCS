@@ -3807,7 +3807,8 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
           </select>
         </div>
         <!-- MCS04OCTSU0355PM: محفوظ کرنے کا بٹن نام والے خانے کے ساتھ ہی، تاکہ نیچے تک گھمانا نہ پڑے -->
-        <div class="field" style="margin-bottom:8px;display:flex;gap:8px;align-items:stretch;">
+        <div class="field" style="margin-bottom:8px;"><input type="text" id="newCatEn" dir="ltr" data-noen placeholder="English name (shown big on the tile) — e.g. Home decoration" style="width:100%;box-sizing:border-box;"></div>
+          <div class="field" style="margin-bottom:8px;display:flex;gap:8px;align-items:stretch;">
           <input type="text" id="newCatUr" placeholder="کیٹگری کا نام (اردو) — مثلاً بیکری" style="flex:1;min-width:0;">
           <button type="button" class="btn accent" style="flex:0 0 auto;padding:0 14px;white-space:nowrap;" onclick="addNewCategory()">➕ محفوظ</button>
         </div>
@@ -4309,10 +4310,12 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE320";
+const APP_VERSION = "MCS1111WE322";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE322": "✅ کارڈ پر «Earn with MCS / BE AN AGENT» اب زرد رنگ اور خوشخط انداز میں، گہرے پس منظر پر صاف نظر آتا ہے",
+  "MCS1111WE321": "✅ کیٹاگری ٹائل: انگریزی نام اوپر بڑا اور اردو نام نیچے چھوٹا، لکھائی ٹائل کے اندر فٹ؛ نئی کیٹاگری میں انگریزی نام کا خانہ",
   "MCS1111WE320": "✅ کارڈ پر «رجسٹرڈ بزنس / ٹرائل» ٹیگ کی لکھائی اب کارڈ کے اندر ہی فٹ رہتی ہے، باہر نہیں نکلتی",
   "MCS1111WE319": "⎋ ڈویلپر / ہوم پٹی / سیٹنگز کا ہر لاگ آؤٹ اب پورا لاگ آؤٹ + لاگ اِن صفحہ • 🎞️ اشتہار کے انداز اب فون کی «اینیمیشن بند» سیٹنگ سے رکتے نہیں • 📐 اشتہار کی جگہ پکی 1080×400 (2.7:1) — سائز نہیں بدلتا، ہوم کے بٹن نہیں ہلتے • ✨ اشتہار کے صرف 5 انداز: Slide Left / Slide Right / Fly in from Top / Fly in from Bottom / Fade in-out • 💾 ہر فارم (رجسٹریشن، ممبرشپ، ایجنٹ) کی لکھائی خود محفوظ، دوبارہ لکھنا نہیں پڑتا، فارم بھاگتا نہیں • 📤 Send details to agent اور 📋 Paste basic information • ⎋ لاگ آؤٹ پورا",
   "MCS1111WE319": "📐 Home: nothing is cut off any more — every label, date pill, prayer time and city name now auto-fits its box (as big as possible, shrinks only if needed)",
@@ -9023,6 +9026,7 @@ function deleteCustomCategory(key){
    Rules change again after the one-time /appConfig rule he adds once. */
 function addNewCategory(){
   const ur = document.getElementById('newCatUr').value.trim();
+  const en = ((document.getElementById('newCatEn')||{}).value||'').trim();
   const emoji = document.getElementById('newCatEmoji').value.trim() || '🏷️';
   const nameLabel = document.getElementById('newCatNameLabel').value.trim() || 'نام';
   const typeLabel = document.getElementById('newCatTypeLabel').value.trim() || 'قسم';
@@ -9031,13 +9035,14 @@ function addNewCategory(){
   const FB = window.MCSFirebase;
   if(!FB){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
   const key = 'cat_' + Date.now();
-  const cat = {key, group, emoji, ur, nameLabel, typeLabel,
+  const cat = {key, group, emoji, ur, en, nameLabel, typeLabel,
     listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں', addOptLabel: 'نئی قسم'};
   applyCustomCategories([cat]); // shows on this device immediately, even before the write confirms
   const ref = FB.doc(FB.db,'appConfig','categories');
   FB.updateDoc(ref, {list: FB_arrayOfCategories()})
     .catch(()=> FB.setDoc(ref, {list: FB_arrayOfCategories()}, {merge:true})); // doc doesn't exist yet on first-ever category
   document.getElementById('newCatUr').value = '';
+  { const ne = document.getElementById('newCatEn'); if(ne) ne.value = ''; }
   document.getElementById('newCatEmoji').value = '';
   document.getElementById('newCatNameLabel').value = '';
   document.getElementById('newCatTypeLabel').value = '';
@@ -20010,6 +20015,20 @@ body.d2 .d2-prays .d2-p b,body.d2 .d2-prays .d2-p b .tm{font-size:min(15px,34cqw
 body.d2 .d2-prays .d2-p b em{font-size:min(10.5px,25cqw) !important;font-weight:800 !important;opacity:.9}
 body.d2 .h2 .cc-city b{font-size:20px !important;font-weight:800 !important;-webkit-text-stroke:.5px #0b4f5c}
 </style>
+<style id="mcsEarnTxt322">
+/* MCS1111WE322 (مالک کا حکم): «Earn with MCS / BE AN AGENT» زرد رنگ، خوشخط کیلی گرافی انداز میں، گہرے سبز پس منظر پر صاف نظر آئے */
+html body .fp-card .fp-ct span.fp-ea{color:#ffd84a !important;font-family:'Dancing Script','Segoe Script','Brush Script MT','Snell Roundhand','Lucida Handwriting',cursive !important;font-weight:700 !important;font-style:normal !important;font-size:15px !important;line-height:1.05 !important;letter-spacing:.2px !important;text-align:center !important;direction:ltr !important;white-space:nowrap !important;text-shadow:0 1px 2px rgba(0,0,0,.7),0 0 6px rgba(0,0,0,.35) !important;opacity:1 !important}
+html body .doc-card > .fp-card .fp-ct span.fp-ea{color:#ffd84a !important;font-weight:700 !important;text-shadow:0 1px 1px rgba(0,0,0,.75) !important;opacity:1 !important}
+html body .doc-card .fp-card .fp-ct span:not(.fp-ea){color:rgba(255,255,255,.8);text-shadow:0 1px 1px rgba(0,0,0,.45)}
+html body .doc-card .fp-card .fp-ct span.on:not(.fp-ea){color:#fde68a}
+</style>
+<style id="mcsCatBi321">
+/* MCS1111WE321 (مالک کا حکم): ہر کیٹاگری ٹائل پر انگریزی نام اوپر بڑا + اردو نام نیچے چھوٹا؛ کوئی لکھائی ٹائل سے باہر نہ نکلے */
+html body .cat-grid .cat-item{overflow:hidden !important;min-width:0 !important}
+html body .cat-grid .cat-item > span:not(.cat-count){display:block !important;box-sizing:border-box !important;width:100% !important;max-width:100% !important;padding:0 3px !important;text-align:center !important;direction:ltr !important;white-space:normal !important;overflow:hidden !important;overflow-wrap:normal !important;word-break:normal !important;hyphens:none !important;max-height:none !important;line-height:1.15 !important;font-size:calc(var(--cat-name,13px) * var(--cat-tscale,1) * var(--ck,1)) !important}
+html body .cat-grid .cat-item > .cat-ur{display:block !important;box-sizing:border-box !important;width:100% !important;padding:0 3px !important;margin-top:2px !important;text-align:center !important;direction:rtl !important;white-space:nowrap !important;overflow:hidden !important;font-style:normal !important;font-weight:700 !important;line-height:1.35 !important;color:#35506b !important;font-size:calc(11px * var(--ck,1)) !important}
+html.mcs-dark body .cat-grid .cat-item > .cat-ur{color:#b8cde0 !important}
+</style>
 <style id="mcsPfFit320">
 /* MCS1111WE320 (مالک کا حکم): «رجسٹرڈ بزنس / ٹرائل» ٹیگ کی لکھائی کارڈ سے باہر نہ نکلے — ٹیگ کی چوڑائی ثابت، لکھائی ڈبے کے اندر لپٹے اور ضرورت ہو تو خود چھوٹی ہو */
 html body .doc-card > .pf-tag,html body .ub-row > .pf-tag{display:block !important;box-sizing:border-box !important;left:6px !important;right:auto !important;width:94px !important;min-width:0 !important;max-width:94px !important;max-height:66px !important;overflow:hidden !important;text-align:center !important;padding:3px 4px !important}
@@ -20084,6 +20103,54 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   try{ new MutationObserver(() => later(250)).observe(document.body, {childList:true, subtree:true}); }catch(e){}
 })();
 </script>
+<script id="mcsCatBi321js">
+(function(){
+  var AR = /[\u0600-\u06FF]/;
+  var EXTRA = {'ہوم ڈیکوریشن':'Home decoration','ہول سیل ڈیلر':'Wholesale dealer','ہول سیل':'Wholesale','ڈیکوریشن':'Decoration'};
+  var RM = {'ا':'a','آ':'aa','ب':'b','پ':'p','ت':'t','ٹ':'t','ث':'s','ج':'j','چ':'ch','ح':'h','خ':'kh','د':'d','ڈ':'d','ذ':'z','ر':'r','ڑ':'r','ز':'z','ژ':'zh','س':'s','ش':'sh','ص':'s','ض':'z','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ک':'k','گ':'g','ل':'l','م':'m','ن':'n','ں':'n','و':'o','ہ':'h','ھ':'h','ء':'','ی':'i','ے':'e','ئ':'i','ۃ':'h','ؤ':'o','ۓ':'e','ي':'i','ك':'k'};
+  function roman(u){ return u.split(/\s+/).map(function(w){ var r = ''; for(var i=0;i<w.length;i++){ var c = w[i]; r += (c in RM) ? RM[c] : (/[\u064B-\u065F\u0670\u200c\u200d]/.test(c) ? '' : c); } return r ? r.charAt(0).toUpperCase() + r.slice(1) : ''; }).join(' ').trim(); }
+  var REV = null;
+  function rev(){ if(REV) return REV; REV = {}; try{ var D = window.MCS_EN || {}; Object.keys(D).forEach(function(k){ var v = D[k]; if(v && !(v in REV)) REV[v] = k; }); }catch(e){} return REV; }
+  function keyOf(t){ try{ return catKeyOf(t); }catch(e){ return ''; } }
+  function metaOf(t){ try{ return CATEGORY_META[keyOf(t)] || null; }catch(e){ return null; } }
+  function enOf(ur, m){
+    if(m && m.en) return m.en;
+    if(EXTRA[ur]) return EXTRA[ur];
+    try{ if(window.mcsEn){ var e = window.mcsEn(ur); if(e && !AR.test(e)) return e; } }catch(x){}
+    return roman(ur);
+  }
+  function build(t){
+    var sp = t.querySelector(':scope > span:not(.cat-count)'); if(!sp || sp.classList.contains('cat-ur')) return;
+    var txt = (sp.textContent || '').trim(); if(!txt) return;
+    var m = metaOf(t), ur, en;
+    if(AR.test(txt)){ ur = txt; en = enOf(ur, m); }
+    else { en = (m && m.en) || txt; ur = (m && m.ur) || t.getAttribute('data-cat-ur') || rev()[txt] || ''; }
+    if(!ur){ ur = ''; }
+    t.setAttribute('data-cat-ur', ur);
+    if(sp.textContent !== en) sp.textContent = en;
+    sp.setAttribute('data-noen','');
+    var u = t.querySelector(':scope > .cat-ur');
+    if(ur){
+      if(!u){ u = document.createElement('em'); u.className = 'cat-ur'; u.setAttribute('data-noen',''); sp.insertAdjacentElement('afterend', u); }
+      if(u.textContent !== ur) u.textContent = ur;
+    } else if(u){ u.remove(); }
+  }
+  function fit(t){
+    var sp = t.querySelector(':scope > span:not(.cat-count)'); if(!sp) return;
+    t.style.removeProperty('--ck'); var u = t.querySelector(':scope > .cat-ur'), k = 1, g = 0;
+    function bad(){ return sp.scrollWidth > sp.clientWidth + 1 || (u && u.scrollWidth > u.clientWidth + 1) || t.scrollHeight > t.clientHeight + 1; }
+    while(k > 0.5 && g++ < 16 && bad()){ k -= 0.04; t.style.setProperty('--ck', k.toFixed(2)); }
+  }
+  function run(){ try{ document.querySelectorAll('.cat-grid .cat-item').forEach(function(t){ build(t); }); document.querySelectorAll('.cat-grid .cat-item').forEach(function(t){ if(t.offsetParent !== null) fit(t); }); }catch(e){} }
+  var tm = 0; function later(d){ clearTimeout(tm); tm = setTimeout(run, d || 150); }
+  window.mcsCatBiRun = run;
+  window.addEventListener('resize', function(){ later(150); });
+  window.addEventListener('load', function(){ later(400); setTimeout(run, 1800); });
+  try{ document.fonts && document.fonts.ready.then(function(){ later(100); }); }catch(e){}
+  try{ new MutationObserver(function(){ later(200); }).observe(document.body, {childList:true, subtree:true, characterData:true}); }catch(e){}
+})();
+</script>
+
 
 <script>
 /* ===== MCS1111WE319: (1) لاگ آؤٹ پکا (2) ہر فارم کی لکھائی خود محفوظ (3) «Send details to agent» + «Paste basic information» (4) فارم بھاگنا بند ===== */
