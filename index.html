@@ -4218,10 +4218,12 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE306";
+const APP_VERSION = "MCS1111WE308";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE308": "📍 ضلع / صوبہ کی فہرست ہر فارم اور تلاش میں ایک جیسی: انگریزی A→Z بائیں، اردو نوری نستعلیق کشیدہ دائیں، تنگ چوڑائی",
+  "MCS1111WE307": "📍 سائن اپ کی ضلع فہرست: انگریزی نام A سے Z ترتیب میں (بائیں)، اردو نوری نستعلیق کشیدہ میں (دائیں)، فہرست کی چوڑائی کم",
   "MCS1111WE306": "❓ غیر مختص: کارڈ یا لائن کو کہیں سے بھی ٹچ کریں تو ریکارڈ کی تفصیل کے ساتھ کیٹگری چننے والی ڈراپ ڈاؤن سامنے آ جاتی ہے",
   "MCS1111WE305": "❓ غیر مختص: ہر ریکارڈ کی پوری تفصیل (نام، دکاندار، نمبر، قسم، پتہ) چھوٹے کیپسول میں • 🔁 «کیٹگری تبدیل کریں» بٹن • ڈراپ ڈاؤن میں «➕ نئی کیٹگری» — بنی ہوئی کیٹگری ہمیشہ فہرست میں رہتی ہے",
   "MCS1111WE304": "🧭 نیچے کی پٹی میں 7 بٹن (Help Desk اور Favorites بھی) • 🏠 ہوم پر تین بٹن: ایمرجنسی نمبرز، تلاش، Earn with MCS",
@@ -5547,13 +5549,17 @@ function ubOptions(kind){
   if(kind==='cat'){
     const order = ubCatKeys();
     list.sort((a,b)=>{ const x=order.indexOf(a), y=order.indexOf(b); return (x<0?999:x)-(y<0?999:y); });
+  } else if(kind==='district' || kind==='province'){
+    const EN = x => (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || '';
+    list.sort((a,b)=>{ const ea = EN(a), eb = EN(b); if(ea && eb) return ea.localeCompare(eb, 'en'); if(ea) return -1; if(eb) return 1; return a.localeCompare(b,'ur'); });
   } else list.sort((a,b)=>a.localeCompare(b,'ur'));
   return list.map(v=>({v, n:counts.get(v)}));
 }
 function ubOptLabel(kind, o){
   if(kind==='cat'){ const m = ubCatMeta(o.v); return `<span class="uo-e">${m.emoji}</span><span class="uo-n">${escapeHtml(m.ur)}</span><small>${o.n}</small>`; }
-  return `${escapeHtml(o.v)} <small>${o.n}</small>`;
+  return `${ubEnTag(kind, o.v)}<span class="ub-ur">${escapeHtml(o.v)}</span> <small>${o.n}</small>`;
 }
+function ubEnTag(kind, v){ const en = (kind==='district' || kind==='province') && typeof LOCATION_EN !== 'undefined' ? LOCATION_EN[v] : ''; return en ? `<em class="ub-en">${escapeHtml(en)}</em>` : ''; }
 function ubToggle(kind){
   ubOpen = (ubOpen===kind) ? '' : kind;
   ubRenderBar();
@@ -6540,6 +6546,7 @@ function enhanceCapsuleSelect(selectId){
     closePanel(); }
   function openPanel(){
     panel.innerHTML = '';
+    panel.classList.toggle('csel-narrow', /(District|Province|Country|Dist)$/.test(sel.id));   /* MCS1111WE308 */
     /* MCS1310TU004: لمبی فہرست میں اوپر لکھنے کا خانہ — لکھتے ہی ملتی قسمیں/نام سامنے، Enter پر پہلا چن لیں */
     const canAdd = !!(wrap.parentNode && wrap.parentNode.querySelector('.add-circle:not(.pick-contact)'));
     const many = canAdd || sel.options.length > 5 || BLANK_OK_SELECTS.includes(sel.id) || sel.id==='svcType' || /City$/.test(sel.id);
@@ -6599,7 +6606,7 @@ function enhanceCapsuleSelect(selectId){
     let optList = Array.from(sel.options);
     if(sel._cselDir && !sel.querySelector('optgroup')){
       const blank = optList.filter(o=> !o.value), rest = optList.filter(o=> o.value);
-      rest.sort((a,b)=> sel._cselDir * (a.textContent||'').trim().localeCompare((b.textContent||'').trim(), 'ur'));
+      rest.sort((a,b)=>{ const ea = a.getAttribute('data-en'), eb = b.getAttribute('data-en'); if(ea && eb && panel.classList.contains('csel-narrow')) return sel._cselDir * ea.localeCompare(eb, 'en'); return sel._cselDir * (a.textContent||'').trim().localeCompare((b.textContent||'').trim(), 'ur'); });
       optList = blank.concat(rest);
     }
     optList.forEach(opt=>{
@@ -15555,14 +15562,14 @@ body.d2 #homeAds .ad-ribbon{display:none}
     gBtn('uaGBox', 'continue_with');
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); });
   };
-  const distOpts = cur => { const S = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && S.add(x))); }catch(e){} const L = Array.from(S).sort((a, b) => a.localeCompare(b, 'ur')); if(cur && !S.has(cur)) L.unshift(cur); return '<option value="">ضلع منتخب کریں — Select District</option>' + L.map(x => '<option value="' + esc(x) + '"' + (x === cur ? ' selected' : '') + '>' + esc(x) + '</option>').join(''); };   /* MCS0811SU217: ضلع پکی فہرست سے */
+  const distOpts = cur => { const S = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && S.add(x))); }catch(e){} const EN = x => (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; const L = Array.from(S).sort((a, b) => { const ea = EN(a), eb = EN(b); if(ea && eb) return ea.localeCompare(eb, 'en'); if(ea) return -1; if(eb) return 1; return a.localeCompare(b, 'ur'); }); if(cur && !S.has(cur)) L.unshift(cur); return '<option value="">ضلع منتخب کریں — Select District</option>' + L.map(x => '<option value="' + esc(x) + '"' + (EN(x) ? ' data-en="' + esc(EN(x)) + '"' : '') + (x === cur ? ' selected' : '') + '>' + esc(x) + '</option>').join(''); };   /* MCS1111WE307: انگریزی A→Z + اردو نوری نستعلیق، کیپسول ڈراپ ڈاؤن */
   window.uaSignup = function(pre){
     const g = pre && pre.gtoken;
     show(`${head()}<div class="uaCard">
       <div class="uaHd"><i>${IC.add}</i><h2>${g ? 'Almost done' : 'Sign Up'}</h2></div><div class="uaSub">${g ? 'Google: <b>' + esc(pre.gmail) + '</b> — add your mobile number' : 'Create a new account to join My City Shines'}</div>
       ${field('uaName', 'user', 'Full Name', { rq:1, ac:'name', v: pre && pre.name })}
       ${field('uaMob', 'phone', 'Mobile Number (e.g. 03XXXXXXXXX)', { rq:1, im:'tel', ac:'tel' })}
-      <label class="uaF">${IC.pin}<select id="uaCity" style="flex:1;border:0;background:transparent;font:inherit;color:inherit;min-width:0">${distOpts((pre && pre.city) || (typeof hcGet === 'function' ? hcGet() : ''))}</select><span class="rq">*</span></label>
+      <div class="uaF">${IC.pin}<select id="uaCity" style="flex:1;border:0;background:transparent;font:inherit;color:inherit;min-width:0">${distOpts((pre && pre.city) || (typeof hcGet === 'function' ? hcGet() : ''))}</select><span class="rq">*</span></div>
       ${g ? '' : field('uaEmail', 'mail', 'Email Address (Optional)', { type:'email', ac:'email' })}
       ${field('uaPw2', 'lock', g ? 'Create Password (Optional)' : 'Create Password', { type:'password', rq: !g, ac:'new-password' })}
       <label class="uaChk"><input type="checkbox" id="uaAgree"><span>I agree to the <a href="privacy.html#terms" target="_blank">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank">Privacy Policy</a></span></label>
@@ -15571,6 +15578,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       ${g ? '' : '<div class="uaOr">or</div><div class="uaG" id="uaGBox2"></div>'}
       <div class="uaFoot">Already have an account? &nbsp;<a onclick="uaLogin()" style="text-decoration:underline">LOGIN</a></div></div>`);
     gPend = g ? pre : null;
+    try{ enhanceCapsuleSelect('uaCity'); }catch(e){}   /* MCS1111WE307 */
     if(!g) gBtn('uaGBox2', 'signup_with');
   };
   /* MCS0811SU217: ایک ہی لاگ اِن — موبائل/ای میل + پاس ورڈ/PIN سے رول خود پہچانا جاتا ہے: ڈویلپر ← کو-ڈویلپر ← ایجنٹ ← عام یوزر */
@@ -17442,14 +17450,20 @@ async function bzFindOpen(){
       <input type="tel" inputmode="numeric" placeholder="📱 موبائل نمبر" value="${escapeAttr(bzF.ph)}" oninput="bzF.ph=this.value;bzFindFill()">
       <input type="search" placeholder="📍 علاقہ / محلہ" value="${escapeAttr(bzF.area)}" oninput="bzF.area=this.value;bzFindFill()">
       <select onchange="bzF.city=this.value;bzFindFill()">${bzOpts(A.map(x => x.rec.city), bzF.city, '🏙️ سب شہر')}</select>
-      <select onchange="bzF.dist=this.value;bzFindFill()">${bzOpts(A.map(x => x.rec.district), bzF.dist, '🗺️ سب ضلعے')}</select>
+      <select id="bzDist" onchange="bzF.dist=this.value;bzFindFill()">${bzDistOpts(A.map(x => x.rec.district), bzF.dist, '🗺️ سب ضلعے')}</select>
       <select onchange="bzF.cat=this.value;bzFindFill()">${bzOpts(cats, bzF.cat, '🏷️ سب قسمیں')}</select>
       <select onchange="bzF.st=this.value;bzFindFill()">${[['todo','⭐ جن کی ممبرشپ باقی'],['basic','📝 رجسٹریشن باقی'],['reg','⭐ رجسٹرڈ — ممبرشپ باقی'],['live','✅ فعال'],['all','سب']].map(o => `<option value="${o[0]}" ${bzF.st === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
     </div>
     <button type="button" class="btn block secondary" style="margin:2px 0 4px;padding:6px" onclick="bzF={name:'',ph:'',area:'',city:'',dist:'',cat:'',st:'todo'};bzFindOpen()">🔄 سب فلٹر صاف</button>
     <div id="bzFList"></div>
     <button type="button" class="btn block secondary" style="margin-top:8px" onclick="bzHubOpen()">← واپس</button>`);
+  try{ enhanceCapsuleSelect('bzDist'); }catch(e){}   /* MCS1111WE308 */
   bzFindFill();
+}
+function bzDistOpts(vals, cur, first){
+  const EN = x => (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || '';
+  const L = [...new Set(vals.filter(v => v && !(typeof isBlankVal === 'function' && isBlankVal(v))))].sort((a, b) => { const ea = EN(a), eb = EN(b); if(ea && eb) return ea.localeCompare(eb, 'en'); if(ea) return -1; if(eb) return 1; return String(a).localeCompare(String(b), 'ur'); });
+  return `<option value="">${first}</option>` + L.map(v => `<option ${v === cur ? 'selected' : ''} value="${escapeAttr(v)}"${EN(v) ? ` data-en="${escapeAttr(EN(v))}"` : ''}>${escapeHtml(v)}</option>`).join('');
 }
 function bzNorm(s){ return String(s || '').toLowerCase().replace(/[\s\-]/g, ''); }
 function bzDigits(s){ return String(s || '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g, ''); }
@@ -19798,6 +19812,28 @@ body.d2 .bnav #d2nHome:not(.on){background:rgba(255,255,255,.08) !important;bord
 .un-sum{margin:0 0 8px;padding:8px 10px;border:1px solid #a7f3d0;border-radius:12px;background:#f0fdfa;font-size:15px;line-height:1.9}
 .un-sum b{font-size:18px}
 html body .doc-card[data-unid]{cursor:pointer;outline:2px dashed #0f766e;outline-offset:-3px}
+
+/* MCS1111WE307: سائن اَپ کا ضلع — انگریزی A→Z + اردو نوری نستعلیق (دائیں)، تنگ فہرست */
+#uaOv .uaF .csel-wrap{flex:1;min-width:0;direction:rtl}
+#uaOv .uaF .csel-btn{border:0;background:transparent;box-shadow:none;padding:0 4px;height:38px;border-radius:0}
+#uaOv .uaF .csel-label{justify-content:flex-end;gap:8px}
+#uaOv .uaF .csel-label .csel-ur{font-size:17px;line-height:1.9}
+#uaOv .uaF .csel-label .csel-en{font-size:11.5px}
+#uaOv .uaF .csel-panel{left:auto;right:0;width:min(230px,calc(100vw - 80px));max-height:240px;padding:5px;border-radius:14px;direction:rtl;text-align:right}
+#uaOv .uaF .csel-panel .csel-opt{direction:rtl;padding:0 8px;gap:6px}
+#uaOv .uaF .csel-panel .csel-opt .csel-ur{font-size:18px;line-height:1.8;text-align:right}
+#uaOv .uaF .csel-panel .csel-opt .csel-en{font-size:12px;text-align:left}
+#uaOv .uaF .csel-panel input.csel-q{flex:none;width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:10px;padding:5px 8px;font-size:14px;margin:3px 0;background:#fff}
+
+/* MCS1111WE308: ضلع / صوبہ کی فہرست ہر جگہ ایک جیسی — انگریزی A→Z بائیں، اردو نوری نستعلیق دائیں، تنگ چوڑائی */
+.csel-panel.csel-narrow{left:auto !important;right:0;width:min(240px,100%);max-height:260px;padding:5px;border-radius:14px;direction:rtl;text-align:right}
+.csel-panel.csel-narrow .csel-opt{direction:rtl;padding:0 8px;gap:6px}
+.csel-panel.csel-narrow .csel-opt .csel-ur{font-size:18px;line-height:1.8;text-align:right}
+.csel-panel.csel-narrow .csel-opt .csel-en{font-size:12px;text-align:left}
+.csel-panel.csel-narrow input.csel-q{width:100%;box-sizing:border-box}
+.ub-en{font-style:normal;direction:ltr;unicode-bidi:isolate;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;font-size:11.5px;font-weight:700;color:#475569;margin-inline-end:6px}
+.ub-ur{font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-size:1.1em}
+#bzDist + .csel-btn, .bzf-grid .csel-wrap{min-width:0}
 </style>
 <script>
 /* MCS1111WE304 (#218): Help Desk بٹن (ہیڈ سیٹ) اور Favorites (ستارہ) پٹی میں؛ چنا ہوا بٹن روشن — ہوم، پسندیدہ، چیٹ، پورٹل، اکاؤنٹ، سیٹنگ، ہیلپ ڈیسک */
