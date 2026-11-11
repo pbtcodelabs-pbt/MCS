@@ -4216,10 +4216,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE301";
+const APP_VERSION = "MCS1111WE302";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE302": "❓ غیر مختص: کیٹگری کی فہرست اب دائیں سے بائیں، نوری نستعلیق کشیدہ میں • اسی جگہ «➕ نئی کیٹگری» — بناتے ہی وہ کارڈ اسی میں چلا جاتا ہے",
   "MCS1111WE301": "🧹 انجمن تاجران فتح پور کے ڈبے ایڈمن سے ہٹ گئے • ❓ «غیر مختص» — سب آئٹم ایک ایک لائن میں، کیٹگری چنتے ہی کارڈ وہیں چلا جاتا ہے • 👥 کو-ڈویلپر پورٹل میں اطلاع، ایجنٹ کارکردگی، کالوں کی رپورٹ، اشتہار / آمدنی، وزیٹرز",
   "MCS1111WE300": "✍️ فیصد بار کے آخری ڈبے کی تحریر اب پوری دو سطروں میں: Earn with MCS / BE AN AGENT — کٹتی نہیں",
   "MCS1111WE299": "✍️ کارڈ کی فیصد والی بار کے آخری ڈبے کے اوپر باریک سی تحریر دوبارہ: Earn with MCS · Be an Agent",
@@ -9898,7 +9899,7 @@ function unCatOpts(){
 }
 function unRow(r){
   const E = escapeHtml, nm = r.nameUr || r.name || '', own = String(r.intro || '').replace(/^\s*دکاندار\s*[:：]\s*/, ''), ph = String(r.whatsapp || r.phone || '').replace(/\D/g, '').slice(-10);
-  return `<div class="un-row" id="un_${escapeAttr(r.id)}" title="${escapeAttr((own ? own + ' — ' : '') + (ph ? '0' + ph : ''))}"><b>${E(nm)}<small>${own ? ' • ' + E(own) : ''}${ph ? ' • 0' + ph : ''}</small></b><select onchange="unSet('${escapeAttr(r.id)}', this.value)">${unCatOpts()}</select></div>`;
+  return `<div class="un-row" id="un_${escapeAttr(r.id)}" title="${escapeAttr((own ? own + ' — ' : '') + (ph ? '0' + ph : ''))}"><b>${E(nm)}<small>${own ? ' • ' + E(own) : ''}${ph ? ' • 0' + ph : ''}</small></b><button type="button" class="un-sel" onclick="unPick('${escapeAttr(r.id)}')"><span>— کیٹگری چنیں —</span><i>▾</i></button></div>`;
 }
 function unList(){
   const q = ubNorm(unQ), all = unRecs();
@@ -9909,12 +9910,56 @@ function unList(){
 }
 function unOpen(){
   if(!isAdminSignedIn){ showToast('🔒 پہلے ایڈمن لاگ اِن کریں'); return; }
-  unQ = ''; unLimit = 200; unCatOpts._h = '';
+  unQ = ''; unLimit = 200;
   agModal(`<div class="ag-hd">❓ غیر مختص <small>باقی: <b id="unCnt">0</b> — کیٹگری چنیں، کارڈ وہیں چلا جائے گا</small></div>
-    <input type="search" class="ag-q" placeholder="🔍 نام، دکاندار، نمبر…" oninput="unQ=this.value;unLimit=200;unList()"><div id="unList"></div>
+    <div style="display:flex;gap:6px;align-items:center;margin:4px 0 6px"><input type="search" class="ag-q" style="flex:1;margin:0" placeholder="🔍 نام، دکاندار، نمبر…" oninput="unQ=this.value;unLimit=200;unList()"><button type="button" class="un-new" style="flex:0 0 auto;margin:0" onclick="unPick(null)">➕ نئی کیٹگری</button></div><div id="unList"></div>
     <button type="button" class="btn block secondary" onclick="closeModal('agModal')">بند کریں</button>`);
   unList();
 }
+
+/* MCS1111WE302: کیٹگری چننے کی فہرست — دائیں سے بائیں، نستعلیق (نوری کشیدہ)؛ اور اسی جگہ سے نئی کیٹگری بنانے کا بٹن */
+let unPickId = null, unGrp = 'business';
+function unSheetClose(){ const e = document.getElementById('unSheet'); if(e) e.remove(); }
+function unOptsHtml(q){
+  q = ubNorm(q || '');
+  const keys = Object.keys(CATEGORY_META).filter(k => CATEGORY_META[k] && k !== UNASSIGNED_KEY && (!q || ubNorm(CATEGORY_META[k].ur || k).includes(q)));
+  const byUr = (a, b) => String(CATEGORY_META[a].ur || a).localeCompare(String(CATEGORY_META[b].ur || b), 'ur');
+  const btn = k => `<button type="button" class="un-opt" onclick="unPickSet('${escapeAttr(k)}')"><span>${CATEGORY_META[k].emoji || '🏷️'}</span>${escapeHtml(CATEGORY_META[k].ur || k)}</button>`;
+  const biz = keys.filter(k => CATEGORY_META[k].group === 'business').sort(byUr), oth = keys.filter(k => CATEGORY_META[k].group !== 'business').sort(byUr);
+  return (biz.length ? '<div class="un-gh">🏪 کاروبار</div>' + biz.map(btn).join('') : '') + (oth.length ? '<div class="un-gh">👔 پیشہ ور / دیگر</div>' + oth.map(btn).join('') : '') || '<div class="cp-hint" style="text-align:center">کوئی کیٹگری نہیں ملی — اوپر سے نئی بنائیں</div>';
+}
+function unPick(id){
+  unPickId = id || null; unSheetClose();
+  const d = document.createElement('div'); d.id = 'unSheet'; d.className = 'un-sheet';
+  d.onclick = e => { if(e.target === d) unSheetClose(); };
+  d.innerHTML = `<div class="un-shbox" dir="rtl"><div class="un-shhd"><b>${id ? 'کیٹگری چنیں' : '➕ نئی کیٹگری'}</b><button type="button" onclick="unSheetClose()" aria-label="بند">✖</button></div>
+    ${id ? '<button type="button" class="un-new" onclick="unNewToggle()">➕ نئی کیٹگری بنائیں</button>' : ''}
+    <div id="unNewBox" style="display:${id ? 'none' : 'block'}">
+      <input type="text" id="unNewName" class="un-in" placeholder="نئی کیٹگری کا نام — مثلاً مرغی فروش" autocomplete="off">
+      <div class="un-r2"><input type="text" id="unNewEmo" class="un-in" placeholder="ایموجی" maxlength="4" value="🏷️" style="flex:0 0 78px;text-align:center"><div class="un-seg"><button type="button" id="unGB" class="on" onclick="unGrpSet('business')">🏪 کاروبار</button><button type="button" id="unGP" onclick="unGrpSet('professional')">👔 پروفیشن</button></div></div>
+      <button type="button" class="btn block accent" onclick="unNewMake()">✅ ${id ? 'بنائیں اور اسی میں ڈالیں' : 'کیٹگری بنائیں'}</button>
+    </div>
+    ${id ? '<input type="search" class="un-in" id="unSq" placeholder="🔍 کیٹگری ڈھونڈیں…" oninput="document.getElementById(\'unOpts\').innerHTML=unOptsHtml(this.value)">' : ''}
+    <div id="unOpts">${id ? unOptsHtml('') : ''}</div></div>`;
+  document.body.appendChild(d); unGrp = 'business';
+}
+function unNewToggle(){ const b = document.getElementById('unNewBox'); if(!b) return; b.style.display = b.style.display === 'none' ? 'block' : 'none'; if(b.style.display === 'block'){ try{ document.getElementById('unNewName').focus(); }catch(e){} } }
+function unGrpSet(g){ unGrp = g; const a = document.getElementById('unGB'), b = document.getElementById('unGP'); if(a) a.classList.toggle('on', g === 'business'); if(b) b.classList.toggle('on', g !== 'business'); }
+function unNewMake(){
+  if(!isAdminSignedIn){ showToast('🔒 پہلے ایڈمن لاگ اِن کریں'); return; }
+  const ur = (document.getElementById('unNewName').value || '').trim(), emoji = (document.getElementById('unNewEmo').value || '').trim() || '🏷️';
+  if(!ur){ showToast('کیٹگری کا نام لکھیں'); return; }
+  if(Object.keys(CATEGORY_META).some(k => CATEGORY_META[k] && String(CATEGORY_META[k].ur || '').trim() === ur)){ showToast('⚠️ اس نام کی کیٹگری پہلے سے ہے — فہرست میں سے چنیں'); return; }
+  const FB = window.MCSFirebase; if(!FB){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
+  const biz = unGrp === 'business', key = 'cat_' + Date.now();
+  const cat = {key, group: unGrp, emoji, ur, nameLabel: biz ? 'دکان کا نام' : 'نام', typeLabel: 'قسم', listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں', addOptLabel: 'نئی قسم'};
+  applyCustomCategories([cat]);
+  const ref = FB.doc(FB.db, 'appConfig', 'categories');
+  FB.updateDoc(ref, {list: FB_arrayOfCategories()}).catch(() => FB.setDoc(ref, {list: FB_arrayOfCategories()}, {merge: true}));
+  showToast('✓ نئی کیٹگری «' + ur + '» بن گئی');
+  if(unPickId){ unSet(unPickId, key); } unSheetClose();
+}
+function unPickSet(key){ const id = unPickId; unSheetClose(); if(id) unSet(id, key); }
 function unSet(id, key){
   if(!key) return; if(!isAdminSignedIn){ showToast('🔒 پہلے ایڈمن لاگ اِن کریں'); return; }
   const r = (store.services || []).find(x => x.id === id); if(!r || !CATEGORY_META[key]) return;
@@ -19361,6 +19406,27 @@ html body .doc-card > .fp-card .fp-ct span.fp-ea{font-size:5.6px !important;line
 .un-row b small{font-weight:400;color:#64748b;font-size:11px}
 .un-row select{flex:0 0 44%;max-width:44%;padding:5px 4px;border-radius:8px;border:1px solid #cbd5e1;font:inherit;font-size:12px;background:#fff}
 #unList{max-height:56vh;overflow:auto;margin:6px 0}
+
+/* MCS1111WE302 */
+.un-row b{font-family:var(--docCardFont) !important;font-size:15px !important;line-height:2}
+.un-row b small{font-family:inherit}
+.un-sel{flex:0 0 44%;max-width:44%;display:flex;align-items:center;justify-content:space-between;gap:4px;direction:rtl;padding:3px 8px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;font-family:var(--docCardFont);font-size:14px;line-height:1.9;color:#0f766e;cursor:pointer}
+.un-sel span{flex:1;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.un-sheet{position:fixed;inset:0;z-index:100000;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center}
+.un-shbox{width:100%;max-width:520px;max-height:82vh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;padding:12px 12px 18px;direction:rtl;text-align:right;font-family:var(--docCardFont)}
+.un-shhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.un-shhd b{font-size:20px;line-height:2}
+.un-shhd button{border:0;background:#f1f5f9;border-radius:10px;width:36px;height:36px;font-size:16px}
+.un-new{display:block;width:100%;margin:0 0 8px;padding:8px 10px;border:1.5px dashed #0f766e;border-radius:12px;background:#f0fdfa;color:#0f766e;font-family:var(--docCardFont);font-size:16px;line-height:1.9;text-align:center;cursor:pointer}
+.un-in{display:block;width:100%;box-sizing:border-box;margin:0 0 8px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:12px;font-family:var(--docCardFont);font-size:16px;line-height:1.9;direction:rtl;text-align:right}
+.un-r2{display:flex;gap:6px;align-items:flex-start}
+.un-seg{flex:1;display:flex;gap:4px}
+.un-seg button{flex:1;padding:6px 4px;border:1.5px solid #cbd5e1;border-radius:12px;background:#fff;font-family:var(--docCardFont);font-size:15px;line-height:1.9}
+.un-seg button.on{background:#0f766e;color:#fff;border-color:#0f766e}
+.un-gh{margin:8px 0 2px;color:#64748b;font-size:14px;line-height:2}
+.un-opt{display:flex;align-items:center;gap:8px;width:100%;direction:rtl;text-align:right;padding:2px 6px;border:0;border-bottom:1px solid #eef2f7;background:transparent;font-family:var(--docCardFont);font-size:19px;line-height:2.1;color:#0f172a;cursor:pointer}
+.un-opt span{flex:0 0 auto;font-family:system-ui,sans-serif}
+.un-opt:active{background:#ecfdf5}
 </style>
 <script>
 /* ===== MCS1011TU292 (مالک کا حکم): My Chat اور Chat Settings — دی گئی تصویروں کے مطابق =====
