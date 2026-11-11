@@ -2887,8 +2887,10 @@ body.cdOn{padding-top:30px}
     <!-- MCS2810WE069: ہوم پر گوگل جیسی بڑی تلاش + فوری فلٹر -->
     <!-- MCS0511TH137 (مالک کا حکم): ہوم پر بڑا واضح تلاش کا بٹن → پورا الگ تلاش صفحہ (srOpen) -->
     <!-- MCS0811SU243 (ہیلپ ڈیسک #113، #117): Earn with MCS اور تلاش ایک ہی قطار میں آدھے آدھے -->
-    <div class="hm-row2"><button type="button" class="hm-earn" onclick="agEarnOpen()"><span class="hm-i">💰</span><span class="hm-t"><b>Earn with MCS</b><small>ایجنٹ بنیں — کمائیں</small></span></button>
-    <button type="button" class="sr-home hm-srch" onclick="srOpen()"><span class="sr-hi">🔍</span><span class="sr-ht"><b>تلاش کریں</b><small>Search • دکان، نام، نمبر</small></span></button></div>
+    <!-- MCS1111WE304 (ہیلپ ڈیسک #220، کو-ڈویلپر کا ڈیزائن، مالک کا ⚡): تین برابر بٹن — بائیں سے ایمرجنسی نمبرز (سرخ)، تلاش (سبز)، Earn with MCS (نیلا)؛ اوپر انگریزی، نیچے اردو -->
+    <div class="hm-row2 hm3" dir="ltr"><button type="button" class="hm-emg" onclick="openServiceCategory('emergencyNumbers')"><span class="hm-i">🚨</span><span class="hm-t"><b>Emergency Numbers</b><small>ایمرجنسی نمبرز</small></span></button>
+    <button type="button" class="sr-home hm-srch" onclick="srOpen()"><span class="sr-hi">🔍</span><span class="sr-ht"><b>Searches</b><small>تلاش کریں</small></span></button>
+    <button type="button" class="hm-earn" onclick="agEarnOpen()"><span class="hm-i">💰</span><span class="hm-t"><b>Earn with MCS</b><small>ایم سی ایس کے ساتھ کمائیں</small></span></button></div>
     <section class="bp" id="bizPromo"></section>
     <section class="d2-find" style="display:none"><div class="d2-fh"><span class="d2-fi">🔍</span><b>کاروبار اور خدمات تلاش کریں</b><small>Find Businesses &amp; Services</small></div>
     <form class="home-search" onsubmit="event.preventDefault();homeSearchGo()">
@@ -4216,10 +4218,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE303";
+const APP_VERSION = "MCS1111WE304";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE304": "🧭 نیچے کی پٹی میں 7 بٹن (Help Desk اور Favorites بھی) • 🏠 ہوم پر تین بٹن: ایمرجنسی نمبرز، تلاش، Earn with MCS",
   "MCS1111WE303": "💬 My Chats: اپنا کاروبار / پروفیشن درج کرنے والا (اکاؤنٹ کے بغیر بھی) اب سیدھا چیٹ میں — لاگ اِن صفحہ نہیں آتا",
   "MCS1111WE302": "❓ غیر مختص: کیٹگری کی فہرست اب دائیں سے بائیں، نوری نستعلیق کشیدہ میں • اسی جگہ «➕ نئی کیٹگری» — بناتے ہی وہ کارڈ اسی میں چلا جاتا ہے",
   "MCS1111WE301": "🧹 انجمن تاجران فتح پور کے ڈبے ایڈمن سے ہٹ گئے • ❓ «غیر مختص» — سب آئٹم ایک ایک لائن میں، کیٹگری چنتے ہی کارڈ وہیں چلا جاتا ہے • 👥 کو-ڈویلپر پورٹل میں اطلاع، ایجنٹ کارکردگی، کالوں کی رپورٹ، اشتہار / آمدنی، وزیٹرز",
@@ -19695,6 +19698,75 @@ window.mcCall = async function(body){
   try{ const c = CL(); if(r && r.ok && body){ if((body.op === 'thread' || body.op === 'send') && body.thr && c[body.thr] && Array.isArray(r.msgs)) r.msgs = r.msgs.filter(m => (m.ts || 0) > c[body.thr]); } }catch(e){}
   return r;
 };
+})();
+</script>
+<style id="mcsHome304">
+/* MCS1111WE304 (#220): تین بٹن ایک قطار — برابر چوڑائی / اونچائی، سفید کنارہ، گول سفید آئیکن، چمکدار گریڈینٹ؛ انگریزی اوپر، اردو (نستعلیق) نیچے — دونوں ہمیشہ پوری */
+.hm3{gap:7px!important;margin:0 8px 12px!important;align-items:stretch}
+.hm3>button{flex:1 1 0!important;min-width:0!important;flex-direction:row!important;align-items:center!important;gap:7px!important;padding:9px 8px!important;border:2px solid rgba(255,255,255,.9)!important;border-radius:16px!important;text-align:center!important;position:relative;overflow:hidden;width:auto!important;margin:0!important}
+.hm3>button::after{content:"";position:absolute;left:0;right:0;top:0;height:48%;background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0));pointer-events:none}
+.hm3 .hm-emg{background:linear-gradient(180deg,#ef4444,#b91c1c)!important;box-shadow:0 8px 18px rgba(185,28,28,.32)!important}
+.hm3 .hm-srch{background:linear-gradient(180deg,#16a34a,#0f6b3a)!important;box-shadow:0 8px 18px rgba(15,107,58,.32)!important}
+.hm3 .hm-earn{background:linear-gradient(180deg,#2f5fd8,#1e3a8a)!important;box-shadow:0 8px 18px rgba(30,58,138,.32)!important}
+.hm3 .hm-i,.hm3 .sr-hi{width:38px!important;height:38px!important;font-size:20px!important;flex:0 0 auto!important;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+.hm3 .hm-t,.hm3 .sr-ht{flex:1!important;min-width:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important}
+.hm3 b{font:800 14px/1.15 'MCSEn','Segoe UI',Selawik,Arial,sans-serif!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;direction:ltr}
+.hm3 small{font-size:13px!important;line-height:1.7!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;opacity:1!important;direction:rtl}
+@media (max-width:560px){
+  .hm3>button{flex-direction:column!important;gap:3px!important;padding:8px 4px 6px!important}
+  .hm3 .hm-i,.hm3 .sr-hi{width:34px!important;height:34px!important;font-size:18px!important}
+  .hm3 b{font-size:12px!important}
+  .hm3 small{font-size:11.5px!important;line-height:1.75!important}
+}
+@media (max-width:370px){ .hm3{gap:5px!important;margin:0 6px 12px!important} .hm3 b{font-size:11px!important;letter-spacing:-.2px} .hm3 small{font-size:10.5px!important} }
+</style>
+<style id="mcsNav304">
+/* MCS1111WE304 (ہیلپ ڈیسک #218، کو-ڈویلپر کا ڈیزائن، مالک کا ⚡): نیچے کی پٹی سات بٹن — My Chat، My Portal، Help Desk، Home، Favorites، My Account، Settings؛
+   سب ایک قطار میں، کوئی نام نہیں کٹتا (تنگ فون پر نام دو لائن، چھوٹے)؛ چنا ہوا بٹن بھورا سنہری (Home کی طرح) */
+body.d2 .bnav{gap:4px !important;padding-left:5px !important;padding-right:5px !important}
+body.d2 .bnav #d2nFav{display:flex !important;order:5 !important}
+body.d2 .bnav #d2nHelp{order:3 !important}
+body.d2 .bnav #d2nHome{order:4 !important;flex:1.08 1 0 !important}
+body.d2 .bnav #d2nAcc{order:6 !important}
+body.d2 .bnav #d2nSet{order:7 !important}
+body.d2 .bnav .d2n{padding:7px 1px !important}
+body.d2 .bnav .d2n b{font-size:11px !important;white-space:normal !important;overflow:visible !important;text-overflow:clip !important;text-align:center !important;line-height:1.08 !important;letter-spacing:-.3px !important;max-width:100% !important}
+body.d2 .bnav .d2n svg{width:23px !important;height:23px !important}
+body.d2 .bnav #d2nHome svg{width:27px !important;height:27px !important}
+body.d2 .bnav #d2nHome b{font-size:13px !important}
+body.d2 .bnav .d2n.on:not(#d2nHome){background:linear-gradient(180deg,#b7783f,#8a5427) !important;border-color:#f6c983 !important;box-shadow:0 0 12px rgba(246,201,131,.5) !important}
+body.d2 .bnav #d2nHome:not(.on){background:rgba(255,255,255,.08) !important;border:1.5px solid rgba(153,246,228,.45) !important;box-shadow:none !important;margin-top:0 !important}
+@media (max-width:400px){ body.d2 .bnav{gap:3px !important;padding-left:3px !important;padding-right:3px !important} body.d2 .bnav .d2n b{font-size:9.6px !important;letter-spacing:-.35px !important} body.d2 .bnav #d2nHome b{font-size:11.5px !important} body.d2 .bnav .d2n svg{width:21px !important;height:21px !important} }
+@media (min-width:700px){ body.d2 .bnav{max-width:760px} body.d2 .bnav .d2n b{font-size:13px !important;white-space:nowrap !important} }
+</style>
+<script>
+/* MCS1111WE304 (#218): Help Desk بٹن (ہیڈ سیٹ) اور Favorites (ستارہ) پٹی میں؛ چنا ہوا بٹن روشن — ہوم، پسندیدہ، چیٹ، پورٹل، اکاؤنٹ، سیٹنگ، ہیلپ ڈیسک */
+(function(){
+  const nav = document.getElementById('bnav'); if(!nav) return;
+  if(!document.getElementById('d2nHelp')){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'd2n'; b.id = 'd2nHelp'; b.setAttribute('aria-label', 'ہیلپ ڈیسک');
+    b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M4.5 14v-2.5a7.5 7.5 0 0 1 15 0V14"/><rect x="3" y="13" width="4" height="6" rx="1.6"/><rect x="17" y="13" width="4" height="6" rx="1.6"/><path d="M19 19c0 1.6-1.6 2.5-4 2.5h-2"/></svg><b>Help Desk</b><span>ہیلپ ڈیسک</span>';
+    b.onclick = function(){ navPress(mcsNavHD); };
+    nav.appendChild(b);
+  }
+  const fav = document.getElementById('d2nFav'); if(fav){ const o = fav.querySelector('svg'); if(o) o.outerHTML = '<svg viewBox="0 0 24 24"><path d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.6l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></svg>'; }
+  window.mcsNavHD = function(){ try{ if(window.PBTHelp && PBTHelp.open){ PBTHelp.open({app:'MCS', ver: typeof APP_VERSION !== 'undefined' ? APP_VERSION : ''}); return; } }catch(e){} try{ window.open('https://pbtcodelabs-pbt.github.io/help/?app=MCS#/app/MCS', '_blank'); }catch(e){} };
+  const isOn = id => { const m = document.getElementById(id); return !!(m && (m.classList.contains('active') || m.classList.contains('show') || m.classList.contains('on'))); };
+  function mark(){
+    try{
+      let on = '';
+      const hf = [...document.querySelectorAll('iframe[src*="/help/"]')].some(f => f.offsetParent !== null || f.getClientRects().length);
+      if(isOn('mcModal')) on = 'd2nChat';
+      else if(hf) on = 'd2nHelp';
+      else if(document.querySelector('.modal-overlay.active')) on = window._mcsNavLast || '';
+      if(!on){ const a = document.querySelector('.screen.active'), id = a ? a.id : ''; on = {'screen-home':'d2nHome','screen-favorites':'d2nFav'}[id] || ''; }
+      nav.querySelectorAll('.d2n').forEach(b => b.classList.toggle('on', b.id === on));
+    }catch(e){}
+  }
+  const tag = (id, k) => { const b = document.getElementById(id); if(b) b.addEventListener('click', () => { window._mcsNavLast = k; setTimeout(mark, 120); setTimeout(mark, 600); }, true); };
+  ['d2nAcc','d2nPortal','d2nHome','d2nFav','d2nChat','d2nSet','d2nHelp'].forEach(id => tag(id, id));
+  window.d2NavMark = mark; window.mcMark = mark;
+  setInterval(mark, 800); mark();
 })();
 </script>
 </body>
