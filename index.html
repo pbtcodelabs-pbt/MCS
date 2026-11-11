@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE322";
+const APP_VERSION = "MCS1111WE323";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE323": "✅ کیٹاگری ٹائل: اردو نام اب بڑا اور صاف (باریک نہیں ہوتا)، انگریزی نام الگ سائز میں ٹائل کے اندر فٹ",
   "MCS1111WE322": "✅ کارڈ پر «Earn with MCS / BE AN AGENT» اب زرد رنگ اور خوشخط انداز میں، گہرے پس منظر پر صاف نظر آتا ہے",
   "MCS1111WE321": "✅ کیٹاگری ٹائل: انگریزی نام اوپر بڑا اور اردو نام نیچے چھوٹا، لکھائی ٹائل کے اندر فٹ؛ نئی کیٹاگری میں انگریزی نام کا خانہ",
   "MCS1111WE320": "✅ کارڈ پر «رجسٹرڈ بزنس / ٹرائل» ٹیگ کی لکھائی اب کارڈ کے اندر ہی فٹ رہتی ہے، باہر نہیں نکلتی",
@@ -20023,11 +20024,11 @@ html body .doc-card .fp-card .fp-ct span:not(.fp-ea){color:rgba(255,255,255,.8);
 html body .doc-card .fp-card .fp-ct span.on:not(.fp-ea){color:#fde68a}
 </style>
 <style id="mcsCatBi321">
-/* MCS1111WE321 (مالک کا حکم): ہر کیٹاگری ٹائل پر انگریزی نام اوپر بڑا + اردو نام نیچے چھوٹا؛ کوئی لکھائی ٹائل سے باہر نہ نکلے */
-html body .cat-grid .cat-item{overflow:hidden !important;min-width:0 !important}
-html body .cat-grid .cat-item > span:not(.cat-count){display:block !important;box-sizing:border-box !important;width:100% !important;max-width:100% !important;padding:0 3px !important;text-align:center !important;direction:ltr !important;white-space:normal !important;overflow:hidden !important;overflow-wrap:normal !important;word-break:normal !important;hyphens:none !important;max-height:none !important;line-height:1.15 !important;font-size:calc(var(--cat-name,13px) * var(--cat-tscale,1) * var(--ck,1)) !important}
-html body .cat-grid .cat-item > .cat-ur{display:block !important;box-sizing:border-box !important;width:100% !important;padding:0 3px !important;margin-top:2px !important;text-align:center !important;direction:rtl !important;white-space:nowrap !important;overflow:hidden !important;font-style:normal !important;font-weight:700 !important;line-height:1.35 !important;color:#35506b !important;font-size:calc(11px * var(--ck,1)) !important}
-html.mcs-dark body .cat-grid .cat-item > .cat-ur{color:#b8cde0 !important}
+/* MCS1111WE323: ہر ٹائل پر انگریزی نام اوپر (حد کے اندر) + اردو نام نیچے صاف اور بڑا؛ دونوں کا سائز الگ الگ فٹ ہوتا ہے، اردو کو باریک نہیں کرتا */
+html body .cat-grid .cat-item{overflow:hidden !important;min-width:0 !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important}
+html body .cat-grid .cat-item > span:not(.cat-count){display:block !important;box-sizing:border-box !important;width:100% !important;max-width:100% !important;padding:0 3px !important;text-align:center !important;direction:ltr !important;white-space:normal !important;overflow:hidden !important;overflow-wrap:normal !important;word-break:normal !important;hyphens:none !important;max-height:none !important;line-height:1.12 !important;font-size:var(--cen,16px) !important}
+html body .cat-grid .cat-item > .cat-ur{display:block !important;box-sizing:border-box !important;width:100% !important;padding:0 3px !important;margin-top:1px !important;text-align:center !important;direction:rtl !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-style:normal !important;font-weight:700 !important;line-height:1.7 !important;color:#16324d !important;text-shadow:0 1px 0 rgba(255,255,255,.75) !important;font-size:var(--cur,15px) !important}
+html.mcs-dark body .cat-grid .cat-item > .cat-ur{color:#c9dcef !important;text-shadow:none !important}
 </style>
 <style id="mcsPfFit320">
 /* MCS1111WE320 (مالک کا حکم): «رجسٹرڈ بزنس / ٹرائل» ٹیگ کی لکھائی کارڈ سے باہر نہ نکلے — ٹیگ کی چوڑائی ثابت، لکھائی ڈبے کے اندر لپٹے اور ضرورت ہو تو خود چھوٹی ہو */
@@ -20137,9 +20138,16 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   }
   function fit(t){
     var sp = t.querySelector(':scope > span:not(.cat-count)'); if(!sp) return;
-    t.style.removeProperty('--ck'); var u = t.querySelector(':scope > .cat-ur'), k = 1, g = 0;
-    function bad(){ return sp.scrollWidth > sp.clientWidth + 1 || (u && u.scrollWidth > u.clientWidth + 1) || t.scrollHeight > t.clientHeight + 1; }
-    while(k > 0.5 && g++ < 16 && bad()){ k -= 0.04; t.style.setProperty('--ck', k.toFixed(2)); }
+    var u = t.querySelector(':scope > .cat-ur'), c = t.querySelector(':scope > .cat-count');
+    var en = 16, ur = 15;
+    function set(){ t.style.setProperty('--cen', en + 'px'); t.style.setProperty('--cur', ur + 'px'); }
+    function wide(){ return sp.scrollWidth > sp.clientWidth + 1; }
+    function high(){ if(t.scrollHeight > t.clientHeight + 1) return true; if(c){ var lim = c.getBoundingClientRect().top - 1, last = (u || sp).getBoundingClientRect().bottom; if(last > lim) return true; } return false; }
+    set();
+    var g = 0;
+    while(en > 9 && g++ < 40 && (wide() || high())){ en -= 0.5; set(); }
+    g = 0; while(u && ur > 12 && g++ < 20 && u.scrollWidth > u.clientWidth + 1){ ur -= 0.5; set(); }
+    g = 0; while(en > 8 && g++ < 20 && (wide() || high())){ en -= 0.5; set(); if(u && ur > 12 && high()){ ur -= 0.5; set(); } }
   }
   function run(){ try{ document.querySelectorAll('.cat-grid .cat-item').forEach(function(t){ build(t); }); document.querySelectorAll('.cat-grid .cat-item').forEach(function(t){ if(t.offsetParent !== null) fit(t); }); }catch(e){} }
   var tm = 0; function later(d){ clearTimeout(tm); tm = setTimeout(run, d || 150); }
