@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE324";
+const APP_VERSION = "MCS1111WE325";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE325": "🟩 Category cards are always square and the same size — text fits inside (never cut, card never stretches) • choose 1 / 2 / 3 / 4 cards per row",
   "MCS1111WE324": "✅ کیٹگری: نئی کیٹگری بناتے وقت اردو، انگلش اور ایموجی دو الگ پاپ اپ (انگلش، اردو) بغیر ایموجی، حروف کی حد — دونوں نام محفوظ؛ سب ٹائلز پر انگلش چھوٹی اور اردو بڑی، ایک سائز، کچھ کٹتا نہیں",
   "MCS1111WE323": "✅ کیٹاگری ٹائل: اردو نام اب بڑا اور صاف (باریک نہیں ہوتا)، انگریزی نام الگ سائز میں ٹائل کے اندر فٹ",
   "MCS1111WE322": "✅ کارڈ پر «Earn with MCS / BE AN AGENT» اب زرد رنگ اور خوشخط انداز میں، گہرے پس منظر پر صاف نظر آتا ہے",
@@ -5961,11 +5962,11 @@ function ubBackToCats(){
 function catColsGet(){
   let n = 3;
   try{ n = parseInt(localStorage.getItem('mcsCatCols'),10); }catch(e){}
-  return [2,3,4].includes(n) ? n : 3;
+  return [1,2,3,4].includes(n) ? n : 3;
 }
 function catColsPickerHtml(){
   const n = catColsGet();
-  return `<div class="cols-pick"><span>ایک قطار میں کارڈ:</span>${[2,3,4].map(c=>`<button type="button" data-c="${c}" class="${c===n?'on':''}" onclick="setCatCols(${c})">${String(c)}</button>`).join('')}</div>`;
+  return `<div class="cols-pick"><span>Cards per row:</span>${[1,2,3,4].map(c=>`<button type="button" data-c="${c}" class="${c===n?'on':''}" onclick="setCatCols(${c})">${String(c)}</button>`).join('')}</div>`;
 }
 /* MCS1310TU005: ایموجی دکھائیں/ہٹائیں اور نام کا سائز — اس فون میں یاد رہتا ہے */
 function catStyleGet(){
@@ -6076,7 +6077,7 @@ function catToolsHtml(){
   return `<div class="cat-tools">
     <div class="cat-search"><span class="cs-ico">🔍</span><input type="search" placeholder="کیٹگری یا دکان تلاش کریں…" oninput="const r=this.closest('.cat-tools').querySelector('.cat-recs');if(r)r.dataset.max=30;clearTimeout(this._t);this._t=setTimeout(()=>catFilter(this),180)" autocomplete="off"><button type="button" class="cs-x" onclick="const i=this.previousElementSibling;i.value='';catFilter(i);i.focus()" aria-label="صاف کریں">×</button></div>
     <div class="cat-bar">
-      <span class="cb-grp cols-pick" title="ایک قطار میں کارڈ">▦${[2,3,4].map(c=>`<button type="button" data-c="${c}" class="${c===n?'on':''}" onclick="setCatCols(${c})">${c}</button>`).join('')}</span>
+      <span class="cb-grp cols-pick" title="ایک قطار میں کارڈ">▦${[1,2,3,4].map(c=>`<button type="button" data-c="${c}" class="${c===n?'on':''}" onclick="setCatCols(${c})">${c}</button>`).join('')}</span>
       <span class="cb-grp cat-style-pick" title="ایموجی"><button type="button" data-e="on" onclick="setCatStyle('e', catStyleGet().e==='on'?'off':'on')">😀</button></span>
       <span class="cb-grp cat-style-pick" title="نام کا سائز"><button type="button" data-t="m" onclick="setCatStyle('t','m')" style="font:800 11px Arial,sans-serif">A</button><button type="button" data-t="l" onclick="setCatStyle('t','l')" style="font:800 14px Arial,sans-serif">A</button><button type="button" data-t="xl" onclick="setCatStyle('t','xl')" style="font:800 17px Arial,sans-serif">A</button></span>
       <span class="cb-grp cat-sort-pick" title="ترتیب"><button type="button" data-o="orig" onclick="setCatSort('orig')">اصل</button><button type="button" data-o="az" onclick="setCatSort('az')">ا↓</button><button type="button" data-o="za" onclick="setCatSort('za')">ی↑</button><button type="button" data-o="custom" class="cb-drag" onclick="toggleCatDrag(this)" title="اپنی مرضی کی ترتیب — کارڈ کھینچ کر">✋</button></span>
@@ -20404,6 +20405,41 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   install(); window.addEventListener('load', function(){ setTimeout(install, 1800); });   /* ایجنٹ-فیڈ والا ریپر 1.5s پر لگتا ہے؛ ہم اس کے اوپر */
 })();
 
+</script>
+<style id="mcsCatSq325">
+/* MCS1111WE325 (مالک کا حکم): کیٹگری کارڈ ہمیشہ چوکور اور ایک ہی سائز — لمبوترا نہیں؛ لکھائی کٹتی نہیں بلکہ کارڈ کے اندر خود چھوٹی ہو کر سماتی ہے؛ ایک قطار میں 1 / 2 / 3 / 4 کارڈ */
+html body .cat-grid{grid-auto-rows:auto !important;align-items:stretch !important}
+html body .cat-grid .cat-item{aspect-ratio:1 / 1 !important;height:auto !important;min-height:0 !important;max-height:none !important;overflow:hidden !important;padding:8px 5px 26px !important;justify-content:center !important;gap:2px !important}
+html body .cat-grid .cat-item > span:not(.cat-count),html body .cat-grid .cat-item > .cat-ur{overflow-wrap:normal !important;word-break:normal !important;line-height:1.2 !important}
+html[data-cat-cols="1"] body .cat-grid{grid-template-columns:minmax(0,210px) !important;justify-content:center !important}
+html[data-cat-cols="4"] body .cat-grid .cat-item{padding:4px 3px 22px !important}
+html[data-cat-cols="4"] body .cat-grid .cat-item .cat-count{transform:scale(.8);transform-origin:bottom center}
+@media (min-width:700px){ html body .cat-grid{grid-template-columns:repeat(var(--catN,3),minmax(0,190px)) !important;justify-content:center !important}
+  html[data-cat-cols="1"] body .cat-grid{--catN:1} html[data-cat-cols="2"] body .cat-grid{--catN:2} html[data-cat-cols="3"] body .cat-grid{--catN:3} html[data-cat-cols="4"] body .cat-grid{--catN:4} }
+html[data-cat-cols="1"] body .cat-grid .cat-item .c-emoji,html[data-cat-cols="1"] body .cat-grid .cat-item .cat-emoji{font-size:44px !important}
+</style>
+<script id="mcsCatSq325js">
+/* MCS1111WE325: ہر کیٹگری کارڈ کی لکھائی ناپ کر چوکور ڈبے میں فِٹ (پہلے کارڈ لمبا ہو جاتا تھا) */
+(function(){
+  function fitTile(t){
+    const kids = Array.from(t.children).filter(x => !x.classList.contains('cat-count') && getComputedStyle(x).position !== 'absolute' && getComputedStyle(x).display !== 'none');
+    const txt = kids.filter(x => x.textContent.trim());
+    if(!txt.length || !(t.clientHeight > 0)) return;
+    txt.forEach(x => x.style.removeProperty('font-size'));
+    const cs = getComputedStyle(t), avH = t.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0), avW = t.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
+    const gap = parseFloat(cs.rowGap) || 0;
+    const over = () => kids.reduce((a, x) => a + x.getBoundingClientRect().height, 0) + gap * (kids.length - 1) > avH + 0.5 || txt.some(x => x.scrollWidth > Math.min(x.clientWidth, avW) + 1);
+    let g = 0;
+    while(over() && g++ < 40){ txt.forEach(x => { const f = parseFloat(getComputedStyle(x).fontSize) || 12, em = x.classList.contains('emoji'), mn = em ? 14 : 7; if(f > mn) x.style.setProperty('font-size', Math.max(mn, f - (em ? 1.5 : 0.5)) + 'px', 'important'); }); }
+  }
+  let q = 0;
+  function all(){ cancelAnimationFrame(q); q = requestAnimationFrame(() => document.querySelectorAll('.cat-grid .cat-item').forEach(fitTile)); }
+  new MutationObserver(m => { if(m.some(r => r.target.closest && (r.target.closest('.cat-grid') || (r.target.querySelector && r.target.querySelector('.cat-grid'))))) all(); }).observe(document.documentElement, {childList:true, subtree:true});
+  new MutationObserver(all).observe(document.documentElement, {attributes:true, attributeFilter:['data-cat-cols']});
+  new MutationObserver(m => { if(m.some(r => r.target.classList && r.target.classList.contains('screen'))) setTimeout(all, 30); }).observe(document.body || document.documentElement, {attributes:true, attributeFilter:['class'], subtree:true});
+  addEventListener('resize', all); document.addEventListener('click', () => setTimeout(all, 80), true);
+  if(document.readyState !== 'loading') all(); else document.addEventListener('DOMContentLoaded', all);
+})();
 </script>
 </body>
 </html>
