@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE329";
+const APP_VERSION = "MCS1111WE330";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE330": "🏪 Membership requests now show as a strip on the developer home — open to Approve / Ask more details / Keep pending / Not now",
   "MCS1111WE329": "🔤 Developer code is now DEV, Co-Developer code is CODEV • Category list A→Z in English with Urdu beside it • Agent list: DEV / CODEV / PBT on top, then AG-001, AG-002… in order",
   "MCS1111WE325": "🟩 Category cards are always square and the same size — text fits inside (never cut, card never stretches) • choose 1 / 2 / 3 / 4 cards per row",
   "MCS1111WE324": "✅ کیٹگری: نئی کیٹگری بناتے وقت اردو، انگلش اور ایموجی دو الگ پاپ اپ (انگلش، اردو) بغیر ایموجی، حروف کی حد — دونوں نام محفوظ؛ سب ٹائلز پر انگلش چھوٹی اور اردو بڑی، ایک سائز، کچھ کٹتا نہیں",
@@ -5208,6 +5209,7 @@ function mpSendDetails(rk){
   const r = x.rec, cat = ubCatMeta(x.p.kind==='doctor' ? 'doctor' : r.category).ur, pn = (r.nameUr||r.name||'') + (cat ? ' (' + cat + ')' : '');
   mcsReview([['🏪 کاروبار', pn], ['👤 نام', n], ['📱 موبائل', ph], ['💬 واٹس ایپ', wa], ['✉️ Gmail', m], ['🤝 ایجنٹ ریفرل', rf + (rpkNameOf(rf) ? ' — ' + rpkNameOf(rf) : '')]], ()=>{
     const text = '🔑 Account sign-in request — My City Shines\nUID: ' + agDev() + '\nProfile ID: ' + rk + '\nProfile: ' + pn + '\nName: ' + n + '\nMobile no.: ' + ph + (wa && wa !== ph ? '\nWhatsApp: ' + wa : '') + '\nGmail: ' + m + (rf ? '\nAgent referral: ' + rf + (rpkNameOf(rf) ? ' (' + rpkNameOf(rf) + ')' : '') : '') + '\nPackage: 1 year';
+    try{ mrqSend(rk, {name: n, mobile: ph, wa, gmail: m, prof: pn, cat, city: r.city || '', area: r.area || '', ref: rf, refName: rpkNameOf(rf) || '', uid: agDev(), kind: x.p.kind || '', text: ''}); }catch(e){}   /* MCS1111WE330: ڈویلپر کے ہوم کی پٹی میں */
     closeModal('agModal'); try{ if(window.fpMarkSent) fpMarkSent(rk); }catch(e){}   /* MCS0811SU245: کارڈ پر «⏳ منظوری کا انتظار» */
     try{ if(window.PBTHelp){ window.PBTHelp.open({ app: 'MCS', ver: APP_VERSION, phone: ph, name: n, text, type: 'ask' }); return; } }catch(e){}
     if(typeof openHelpDesk === 'function') openHelpDesk();
@@ -17068,6 +17070,7 @@ function bzYearReq(x){
   const pn = (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), ph = rec.whatsapp || rec.phone || '', who = bzRole() === 'codev' ? '👥 کو-ڈویلپر' : '🤝 ایجنٹ';
   const text = '🔑 Account sign-in request — My City Shines\nUID: ' + agDev() + '\nProfile ID: ' + rk + '\nProfile: ' + pn + '\nName: ' + (bzOwner(x) || rec.nameUr || '') + '\nMobile no.: ' + ph + '\nAgent referral: ' + ((rec.more && rec.more.ref) || bzRef()) + '\nPackage: 1 year\nSent by: ' + who;
   bzSetRef(kind, rec);
+  try{ if(rk) mrqSend(rk, {name: bzOwner(x) || rec.nameUr || '', mobile: ph, prof: pn, cat, city: rec.city || '', area: rec.area || '', ref: (rec.more && rec.more.ref) || bzRef(), uid: agDev(), kind, text: 'Sent by: ' + who}); }catch(e){}   /* MCS1111WE330 */
   closeModal('agModal');
   try{ if(window.PBTHelp){ window.PBTHelp.open({app:'MCS', ver: APP_VERSION, phone: ph, name: bzOwner(x), text, type:'ask'}); return; } }catch(e){}
   if(typeof openHelpDesk === 'function') openHelpDesk();
@@ -20467,5 +20470,137 @@ html body select.rpk-sel[dir=ltr], html body select.rpk-sel[dir=ltr] option, htm
   if(document.readyState !== 'loading') all(); else document.addEventListener('DOMContentLoaded', all);
 })();
 </script>
+
+<script>
+/* ===== MCS1111WE330 (مالک کا حکم): ممبرشپ / رجسٹریشن کی درخواستیں — ڈویلپر کے ہوم پر خود پٹی + پورا منظوری صفحہ ===== */
+let MRQ = [], _mrqAt = 0, _mrqBusy = false;
+function mrqSend(rk, data){ try{ fetch(PF_API + '/preq', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({op:'add', rec: rk, data})}).catch(()=>{}); }catch(e){} }
+async function mrqLoad(force){
+  if(typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn || _mrqBusy) return;
+  if(!force && Date.now() - _mrqAt < 80000) return;
+  _mrqBusy = true;
+  try{ const hdr = await vfAdminHdr(); const j = await (await fetch(PF_API + '/preq', {method:'POST', headers: hdr, body: JSON.stringify({op:'list'})})).json(); if(j && j.ok){ MRQ = j.list || []; _mrqAt = Date.now(); try{ pendingHomeListRender(); }catch(e){} } }catch(e){}
+  _mrqBusy = false;
+}
+const mrqOpenList = () => MRQ.filter(x => x.st === 'new' || x.st === 'pend' || x.st === 'info');
+(function(){
+  const _old = window.pendingHomeListRender;
+  window.pendingHomeListRender = function(){
+    try{ _old && _old(); }catch(e){}
+    const box = document.getElementById('pendingHomeList'); if(!box) return;
+    let s = document.getElementById('mrqStrip');
+    const L = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? mrqOpenList() : [];
+    if(!L.length){ if(s) s.remove(); return; }
+    const nw = L.filter(x => x.st === 'new').length;
+    if(!s){ s = document.createElement('button'); s.type = 'button'; s.id = 'mrqStrip'; s.className = 'mrq-strip'; s.onclick = () => mrqOpen(); }
+    s.innerHTML = `<span class="mrq-ic">🏪</span><span class="mrq-t"><b>${L.length} membership request${L.length > 1 ? 's' : ''} waiting for your approval</b><small>${nw ? nw + ' new • ' : ''}${L.slice(0, 3).map(x => escapeHtml((x.data && (x.data.prof || x.data.name)) || x.rec)).join(' • ')}</small></span><span class="mrq-go">Open ›</span>`;
+    box.style.display = 'flex'; if(box.firstChild !== s) box.insertBefore(s, box.firstChild);
+  };
+})();
+function mrqAgo(t){ const m = Math.round((Date.now() - t) / 60000); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago'; }
+function mrqOpen(){
+  const E = escapeHtml, L = mrqOpenList(), done = MRQ.filter(x => x.st === 'done' || x.st === 'rej');
+  const tag = st => st === 'new' ? '<i class="mrq-tg n">🆕 New</i>' : st === 'pend' ? '<i class="mrq-tg p">⏸️ Pending</i>' : st === 'info' ? '<i class="mrq-tg i">❓ Details asked</i>' : st === 'done' ? '<i class="mrq-tg d">✅ Approved</i>' : '<i class="mrq-tg r">❌ Not approved</i>';
+  const row = (k, v) => v ? `<div class="mrq-r"><span>${k}</span><b dir="auto">${v}</b></div>` : '';
+  const card = (x, i) => { const d = x.data || {}, ph = String(d.mobile || '').replace(/\D/g, '').slice(-10), mem = !x.has ? '⚠️ Not on server yet' : x.pend ? '⏳ Waiting (shopkeeper made it)' : (x.until > Date.now() ? '✅ Active till ' + new Date(x.until).toLocaleDateString('en-GB') : '⛔ Expired / not active');
+    return `<div class="mrq-c" data-st="${x.st}">
+      <div class="mrq-h"><b dir="auto">🏪 ${E(d.prof || x.rec)}</b>${tag(x.st)}</div>
+      <div class="mrq-sm">📩 ${mrqAgo(x.ts)} · <bdi dir="ltr">${E(x.sid || x.rec)}</bdi></div>
+      ${row('👤 Name', E(d.name))}${row('📱 Mobile', ph ? `<a href="tel:0${ph}">0${ph}</a>` : '')}${row('💬 WhatsApp', E(d.wa && d.wa !== d.mobile ? d.wa : ''))}${row('✉️ Gmail', E(d.gmail))}
+      ${row('🏷️ Category', E(d.cat))}${row('📍 Place', E([d.area, d.city].filter(Boolean).join(', ')))}${row('🤝 Brought by', E(d.ref ? refN(d.ref) + (d.refName ? ' — ' + d.refName : '') : 'PBT (came by self)'))}${row('⭐ Membership now', mem)}
+      ${d.text ? `<div class="mrq-tx" dir="auto">📝 ${E(d.text)}</div>` : ''}${x.note ? `<div class="mrq-nt" dir="auto">💬 Your last message: ${E(x.note)}</div>` : ''}
+      ${x.st === 'done' || x.st === 'rej' ? '' : `<div class="mrq-b">
+        <button type="button" class="ok" onclick="mrqApprove(${i})">✅ Approve — 1 year</button>
+        <button type="button" class="in" onclick="mrqInfo(${i})">❓ Ask more details</button>
+        <button type="button" class="pd" onclick="mrqSet(${i}, 'pend')">⏸️ Keep pending</button>
+        <button type="button" class="no" onclick="mrqReject(${i})">❌ Not now</button>
+        <button type="button" class="vw" onclick="mrqView(${i})">👁️ View business</button>
+        ${ph ? `<a class="wa" target="_blank" rel="noopener" href="https://wa.me/92${ph}">💬 WhatsApp</a>` : ''}</div>`}
+    </div>`; };
+  window._mrqShown = L.concat(done);
+  agModal(`<div class="ag-hd">🏪 Membership requests <small>(${L.length} waiting)</small></div>
+    <button type="button" class="btn block secondary" style="margin:0 0 8px" onclick="mrqLoad(true).then(mrqOpen)">🔄 Refresh</button>
+    ${L.length ? L.map((x, i) => card(x, i)).join('') : '<div class="cp-hint" style="text-align:center">✅ No request is waiting right now</div>'}
+    ${done.length ? `<details class="mrq-old"><summary>Done in last 3 days (${done.length})</summary>${done.map((x, j) => card(x, L.length + j)).join('')}</details>` : ''}
+    ${(() => { let pf = []; try{ pf = pfPendList(); }catch(e){} return pf.length ? `<div class="ag-hd" style="margin-top:10px">⏳ Shopkeeper-made, waiting (${pf.length})</div>` + pf.map(x => x.rec ? `<button type="button" class="mp-more" onclick="closeModal('agModal');pfOpen('${x.kind}','${escapeAttr(x.rec.id)}')">🏪 ${E(x.rec.nameUr || x.rec.name || '')} — open, then ✅ approve</button>` : `<div class="cp-hint" dir="ltr">${E(x.rk)}</div>`).join('') : ''; })()}`);
+}
+async function mrqSet(i, st, note){
+  const x = (window._mrqShown || [])[i]; if(!x) return false;
+  try{ const hdr = await vfAdminHdr(); const j = await (await fetch(PF_API + '/preq', {method:'POST', headers: hdr, body: JSON.stringify({op:'set', rec: x.rec, st, note: note || ''})})).json(); if(!j || !j.ok) throw 0;
+    x.st = st; x.note = note || ''; x.upd = Date.now(); showToast(st === 'pend' ? '⏸️ Kept pending' : st === 'info' ? '❓ Message saved — shopkeeper will see it in the app' : st === 'rej' ? '❌ Marked not approved' : '✅ Done'); try{ pendingHomeListRender(); }catch(e){} mrqOpen(); return true; }
+  catch(e){ showToast('⚠️ Could not save — check internet / developer login'); return false; }
+}
+async function mrqInfo(i){
+  const x = (window._mrqShown || [])[i]; if(!x) return; const d = x.data || {};
+  const msg = prompt('What more details do you need? (the shopkeeper sees this message in the app)', 'السلام علیکم! «' + (d.prof || '') + '» کی ممبرشپ کے لیے براہِ کرم دکان کی تصویر اور پورا پتہ بھیج دیں۔'); if(!msg || !msg.trim()) return;
+  if(!(await mrqSet(i, 'info', msg.trim()))) return;
+  const ph = String(d.mobile || '').replace(/\D/g, '').slice(-10); if(ph.length === 10 && confirm('Also send this message on WhatsApp to 0' + ph + '?')) window.open('https://wa.me/92' + ph + '?text=' + encodeURIComponent(msg.trim() + '\n\n— My City Shines'), '_blank');
+}
+async function mrqReject(i){ const msg = prompt('Reason (the shopkeeper sees it in the app):', 'ابھی منظور نہیں — تفصیل نامکمل ہے۔'); if(msg === null) return; mrqSet(i, 'rej', msg.trim()); }
+function mrqView(i){
+  const x = (window._mrqShown || [])[i]; if(!x) return; let f = null;
+  try{ const s1 = store.services.find(r => pfKeyOf(r, 'service') === x.rec); if(s1) f = ['service', s1]; else { const d1 = store.doctors.find(r => pfKeyOf(r, 'doctor') === x.rec); if(d1) f = ['doctor', d1]; } }catch(e){}
+  if(!f) return showToast('This business card is not on this phone yet — search it by mobile number');
+  closeModal('agModal'); pfOpen(f[0], f[1].id);
+}
+async function mrqApprove(i){
+  const x = (window._mrqShown || [])[i]; if(!x) return; const d = x.data || {};
+  if(!x.has) return alert('⚠️ This membership is not on the server yet.\nAsk the shopkeeper to open «⭐ Membership» in the app first (or use 🏪 Business hub → ⭐ give 1 year).');
+  const until = mpYearUntil(x.since, x.until);
+  if(!confirm('Approve 1-year membership?\n\n🏪 ' + (d.prof || '') + '\n👤 ' + (d.name || '') + '\n📱 ' + (d.mobile || '') + '\n✉️ ' + (d.gmail || '') + '\n📅 till ' + new Date(until).toLocaleDateString('en-GB'))) return;
+  if(!(await yearPwOk(d.name || d.prof || ''))) return;
+  let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ return showToast('Developer login needed'); }
+  try{
+    if(x.pend){ await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: x.rec, act: 'approve'})}); }
+    const j = await (await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: x.rec, act: 'until', until})})).json(); if(!j || !j.ok) throw 0;
+    if(pfAct[x.rec]){ pfAct[x.rec].until = until; delete pfAct[x.rec].pend; } try{ localStorage.setItem('mcsPfList', JSON.stringify(pfAct)); }catch(e){}
+    x.until = until; x.pend = 0; await mrqSet(i, 'done', 'منظور — ایک سال کی ممبرشپ فعال');
+    try{ hlRenderSoon(); }catch(e){}
+    setTimeout(() => { try{ memDoneShow({name: d.name || '', prof: d.prof || '', phone: d.mobile || '', until}); }catch(e){} }, 400);
+  }catch(e){ showToast('⚠️ Could not approve — check internet / developer login'); }
+}
+/* دکاندار کے فون پر: ڈویلپر کا جواب (مزید تفصیل / منظور نہیں) */
+async function mrqMine(){
+  try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return; if(Date.now() - (+localStorage.getItem('mcsRqChk') || 0) < 30 * 60000) return; localStorage.setItem('mcsRqChk', Date.now()); }catch(e){ return; }
+  let L = []; try{ L = (typeof mpListReal === 'function' ? mpListReal() : mpList()).slice(0, 5); }catch(e){}
+  for(const it of L){ const rk = it && it.p && it.p.rk; if(!rk) continue;
+    try{ const j = await (await fetch(PF_API + '/preq', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({op:'mine', rec: rk})})).json();
+      if(!j || !j.ok || !j.note || (j.st !== 'info' && j.st !== 'rej' && j.st !== 'done')) continue;
+      const k = 'mcsRqSeen_' + rk; if(localStorage.getItem(k) === String(j.upd)) continue; localStorage.setItem(k, String(j.upd));
+      const nm = (it.rec && (it.rec.nameUr || it.rec.name)) || '';
+      agModal(`<div class="ag-hd">💬 Message from My City Shines</div><div class="cp-hint" style="font-size:15px">🏪 <b>${escapeHtml(nm)}</b></div><div class="mrq-tx" dir="auto" style="font-size:16px">${escapeHtml(j.note)}</div>`
+        + (j.st === 'info' ? `<button type="button" class="btn block" style="margin-top:10px" onclick="closeModal('agModal');mpSubscribe('${escapeAttr(rk)}')">📨 Send the details again</button>` : ''));
+      break;
+    }catch(e){}
+  }
+}
+setInterval(() => { try{ if(document.visibilityState === 'visible'){ mrqLoad(); mrqMine(); } }catch(e){} }, 20000);
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ mrqLoad(); mrqMine(); } });
+setTimeout(() => { mrqLoad(true); mrqMine(); }, 4000);
+</script>
+<style>
+#pendingHomeList .mrq-strip{display:flex;align-items:center;gap:10px;width:100%;text-align:left;direction:ltr;background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:14px;padding:9px 12px;cursor:pointer;box-shadow:0 3px 10px rgba(245,158,11,.25);animation:mrqPulse 2.2s ease-in-out infinite}
+@keyframes mrqPulse{0%,100%{box-shadow:0 3px 10px rgba(245,158,11,.25)}50%{box-shadow:0 3px 18px rgba(245,158,11,.6)}}
+#pendingHomeList .mrq-ic{font-size:24px;flex:0 0 auto}
+#pendingHomeList .mrq-t{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+#pendingHomeList .mrq-t b{font-size:14.5px;color:#7c2d12;line-height:1.3}
+#pendingHomeList .mrq-t small{font-size:12px;color:#92400e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pendingHomeList .mrq-go{flex:0 0 auto;background:#b45309;color:#fff;border-radius:999px;padding:5px 12px;font-weight:800;font-size:13px}
+.mrq-c{border:1.5px solid #e2e8f0;border-radius:14px;padding:10px 12px;margin:0 0 10px;background:#fff;direction:ltr;text-align:left}
+.mrq-c[data-st=new]{border-color:#f59e0b;background:#fffbeb}
+.mrq-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mrq-h b{font-size:16px;color:#0b2a44}
+.mrq-tg{font-style:normal;font-size:11.5px;font-weight:800;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.mrq-tg.n{background:#f59e0b;color:#fff}.mrq-tg.p{background:#e2e8f0;color:#334155}.mrq-tg.i{background:#dbeafe;color:#1e40af}.mrq-tg.d{background:#dcfce7;color:#166534}.mrq-tg.r{background:#fee2e2;color:#991b1b}
+.mrq-sm{font-size:12px;color:#64748b;margin:2px 0 6px}
+.mrq-r{display:flex;gap:8px;font-size:13.5px;padding:3px 0;border-bottom:1px dashed #f1f5f9}
+.mrq-r span{flex:0 0 132px;color:#475569}.mrq-r b{flex:1;min-width:0;color:#0f172a;word-break:break-word}
+.mrq-tx,.mrq-nt{margin-top:6px;padding:8px 10px;border-radius:10px;background:#f8fafc;font-size:14px;line-height:1.9}
+.mrq-nt{background:#eff6ff;color:#1e3a8a}
+.mrq-b{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.mrq-b button,.mrq-b a{border:0;border-radius:10px;padding:9px 6px;font-weight:800;font-size:13.5px;cursor:pointer;text-align:center;text-decoration:none}
+.mrq-b .ok{background:#059669;color:#fff;grid-column:1/-1;font-size:15px}.mrq-b .in{background:#2563eb;color:#fff}.mrq-b .pd{background:#e2e8f0;color:#334155}.mrq-b .no{background:#fee2e2;color:#991b1b}.mrq-b .vw{background:#f1f5f9;color:#0f172a}.mrq-b .wa{background:#22c55e;color:#fff}
+.mrq-old summary{cursor:pointer;font-weight:800;color:#475569;margin:6px 0}
+</style>
 </body>
 </html>
