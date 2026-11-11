@@ -4309,10 +4309,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE319";
+const APP_VERSION = "MCS1111WE320";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE320": "✅ کارڈ پر «رجسٹرڈ بزنس / ٹرائل» ٹیگ کی لکھائی اب کارڈ کے اندر ہی فٹ رہتی ہے، باہر نہیں نکلتی",
   "MCS1111WE319": "⎋ ڈویلپر / ہوم پٹی / سیٹنگز کا ہر لاگ آؤٹ اب پورا لاگ آؤٹ + لاگ اِن صفحہ • 🎞️ اشتہار کے انداز اب فون کی «اینیمیشن بند» سیٹنگ سے رکتے نہیں • 📐 اشتہار کی جگہ پکی 1080×400 (2.7:1) — سائز نہیں بدلتا، ہوم کے بٹن نہیں ہلتے • ✨ اشتہار کے صرف 5 انداز: Slide Left / Slide Right / Fly in from Top / Fly in from Bottom / Fade in-out • 💾 ہر فارم (رجسٹریشن، ممبرشپ، ایجنٹ) کی لکھائی خود محفوظ، دوبارہ لکھنا نہیں پڑتا، فارم بھاگتا نہیں • 📤 Send details to agent اور 📋 Paste basic information • ⎋ لاگ آؤٹ پورا",
   "MCS1111WE319": "📐 Home: nothing is cut off any more — every label, date pill, prayer time and city name now auto-fits its box (as big as possible, shrinks only if needed)",
   "MCS1111WE316": "✨ Home: duplicate thin captions removed from all buttons (one clear label each) • bigger, bolder text on tiles, buttons, prayer times (larger digits) and the city name",
@@ -20009,6 +20010,13 @@ body.d2 .d2-prays .d2-p b,body.d2 .d2-prays .d2-p b .tm{font-size:min(15px,34cqw
 body.d2 .d2-prays .d2-p b em{font-size:min(10.5px,25cqw) !important;font-weight:800 !important;opacity:.9}
 body.d2 .h2 .cc-city b{font-size:20px !important;font-weight:800 !important;-webkit-text-stroke:.5px #0b4f5c}
 </style>
+<style id="mcsPfFit320">
+/* MCS1111WE320 (مالک کا حکم): «رجسٹرڈ بزنس / ٹرائل» ٹیگ کی لکھائی کارڈ سے باہر نہ نکلے — ٹیگ کی چوڑائی ثابت، لکھائی ڈبے کے اندر لپٹے اور ضرورت ہو تو خود چھوٹی ہو */
+html body .doc-card > .pf-tag,html body .ub-row > .pf-tag{display:block !important;box-sizing:border-box !important;left:6px !important;right:auto !important;width:94px !important;min-width:0 !important;max-width:94px !important;max-height:66px !important;overflow:hidden !important;text-align:center !important;padding:3px 4px !important}
+html body .doc-card > .pf-tag b,html body .ub-row > .pf-tag b{display:block !important;white-space:normal !important;overflow-wrap:anywhere !important;word-break:normal !important;font-size:calc(9.5px*var(--pfk,1)) !important;line-height:1.2 !important}
+html body .doc-card > .pf-tag small,html body .ub-row > .pf-tag small{display:block !important;white-space:normal !important;overflow-wrap:anywhere !important;word-break:normal !important;font-size:calc(8px*var(--pfk,1)) !important;line-height:1.2 !important}
+html body .doc-card > .pf-tag small span,html body .ub-row > .pf-tag small span{display:block !important;white-space:normal !important;overflow-wrap:anywhere !important}
+</style>
 <style id="mcsFit317">
 /* MCS1111WE319: لفظ بیچ سے نہ ٹوٹے — صرف پورے لفظ کے بعد لائن بدلے؛ سائز اسکرپٹ ناپ کر فِٹ کرتی ہے */
 body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:normal !important}
@@ -20061,6 +20069,22 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   setInterval(run, 3000);
 })();
 </script>
+<script id="mcsPfFit320js">
+(function(){
+  function fitTag(t){
+    t.style.removeProperty('--pfk'); let k = 1, g = 0;
+    while(k > 0.55 && g++ < 12 && (t.scrollHeight > t.clientHeight + 1 || t.scrollWidth > t.clientWidth + 1)){ k -= 0.05; t.style.setProperty('--pfk', k.toFixed(2)); }
+  }
+  let tm = 0;
+  function run(){ try{ document.querySelectorAll('.doc-card > .pf-tag,.ub-row > .pf-tag').forEach(fitTag); }catch(e){} }
+  const later = d => { clearTimeout(tm); tm = setTimeout(run, d || 200); };
+  window.addEventListener('resize', () => later(150));
+  window.addEventListener('load', () => { later(300); setTimeout(run, 1500); });
+  try{ document.fonts && document.fonts.ready.then(() => later(100)); }catch(e){}
+  try{ new MutationObserver(() => later(250)).observe(document.body, {childList:true, subtree:true}); }catch(e){}
+})();
+</script>
+
 <script>
 /* ===== MCS1111WE319: (1) لاگ آؤٹ پکا (2) ہر فارم کی لکھائی خود محفوظ (3) «Send details to agent» + «Paste basic information» (4) فارم بھاگنا بند ===== */
 (function(){
