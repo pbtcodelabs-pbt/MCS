@@ -2260,24 +2260,6 @@ html.mcs-dark .adv-c{background:#0c2a22;border-color:#14532d;}html.mcs-dark .adv
 /* اشتہار آنے کے انداز */
 #homeAds .ad-card{transform-origin:center;backface-visibility:hidden;}
 #homeAds{perspective:900px;}
-@keyframes adSlideIn{from{transform:translateX(-105%);opacity:.2}to{transform:none;opacity:1}}
-@keyframes adSlideBack{from{transform:translateX(105%);opacity:.2}to{transform:none;opacity:1}}
-@keyframes adZoomIn{from{transform:scale(.55);opacity:0}to{transform:none;opacity:1}}
-@keyframes adZoomOut{from{transform:scale(1.35);opacity:0}to{transform:none;opacity:1}}
-@keyframes adFlip{from{transform:rotateY(90deg);opacity:.3}to{transform:none;opacity:1}}
-@keyframes adFlipX{from{transform:rotateX(-90deg);opacity:.3}to{transform:none;opacity:1}}
-@keyframes adSpin{from{transform:rotate(-20deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
-@keyframes adBounce{0%{transform:translateY(-60px);opacity:0}60%{transform:translateY(8px);opacity:1}80%{transform:translateY(-4px)}100%{transform:none}}
-@keyframes adFade{from{opacity:0}to{opacity:1}}
-#homeAds .fx-slide{animation:adSlideIn .55s cubic-bezier(.2,.8,.2,1);}
-#homeAds .fx-slide.fx-back{animation-name:adSlideBack;}
-#homeAds .fx-zoomin{animation:adZoomIn .55s cubic-bezier(.2,.8,.2,1);}
-#homeAds .fx-zoomout{animation:adZoomOut .55s ease-out;}
-#homeAds .fx-flip{animation:adFlip .6s ease-out;}
-#homeAds .fx-flipx{animation:adFlipX .6s ease-out;}
-#homeAds .fx-spin{animation:adSpin .6s cubic-bezier(.2,.8,.2,1);}
-#homeAds .fx-bounce{animation:adBounce .7s ease-out;}
-#homeAds .fx-fade{animation:adFade .7s ease;}
 @media (prefers-reduced-motion: reduce){#homeAds .ad-card{animation:none !important;}}
 #homeAds .ad-dots i{cursor:pointer;}
 .ad-cfg-row{display:flex;align-items:center;gap:8px;margin:6px 0;}
@@ -2823,6 +2805,15 @@ body.cdOn{padding-top:30px}
 .mpx-ban .mpx-val i{font-style:normal;background:#16a34a;color:#fff;border-radius:999px;padding:0 8px;font:800 12px Inter,Arial}
 .mpx-ban .mpx-st{font-size:12px;padding:3px 10px}
 @media (min-width:700px){.mpx-ban .mpx-ph{width:96px;height:96px}.mpx-ban .mpx-tx>b{font-size:22px}}
+</style>
+<style id="mcsAdSlot">
+/* MCS1111WE318: اشتہار کی جگہ 1080 × 400 px (2.7:1) */
+html body #homeAds,html body #screen-home #homeAds{contain:layout paint;aspect-ratio:1080 / 400 !important;height:auto !important;min-height:0 !important;max-height:none !important;flex:0 0 auto !important;overflow:hidden !important;border-radius:16px;margin:4px 6px 8px !important;}
+html body #homeAds .ad-card{flex:1 1 0 !important;min-height:0 !important;height:100% !important;overflow:hidden !important;padding:8px 10px 14px !important;box-shadow:none !important;}
+html body #homeAds .ad-tx b{font-size:17px !important;line-height:1.35 !important;}
+html body #homeAds .ad-tx span{font-size:12px !important;line-height:1.45 !important;}
+html body #homeAds .ad-ic{width:38px !important;height:38px !important;font-size:21px !important;}
+html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !important;font-size:12.5px !important;padding:0 10px !important;}
 </style>
 </head>
 <body class="d2">
@@ -3571,6 +3562,7 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
         <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:6px"><button type="button" class="btn secondary" onclick="adPasteFromClip()">📋 کاپی شدہ لگائیں</button><button type="button" class="btn accent" onclick="adParsePaste()">✨ خانے بھر دیں</button></div>
       </details>
       <div id="adCardStatus" class="cp-hint"></div>
+      <div class="cp-hint" style="text-align:center">📐 Ad section size: <b dir="ltr">1080 × 400 px</b> (2.7:1)</div>
       <img id="adCardPrev" class="ad-vcprev" alt="" hidden>
       <div class="field"><label>دکان کا نام / عنوان</label><input type="text" id="adTitle" placeholder="مثلاً: مدینہ ہارڈویئر"></div>
       <div class="field"><label>ایک لائن (آفر / تعارف)</label><input type="text" id="adLine" placeholder="مثلاً: ہر قسم کا ہارڈویئر مناسب ریٹ پر"></div>
@@ -4317,11 +4309,12 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE317";
+const APP_VERSION = "MCS1111WE318";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1111WE317": "📐 Home: nothing is cut off any more — every label, date pill, prayer time and city name now auto-fits its box (as big as possible, shrinks only if needed)",
+  "MCS1111WE318": "📐 اشتہار کی جگہ پکی 1080×400 (2.7:1) — سائز نہیں بدلتا، ہوم کے بٹن نہیں ہلتے • ✨ اشتہار کے صرف 5 انداز: Slide Left / Slide Right / Fly in from Top / Fly in from Bottom / Fade in-out • 💾 ہر فارم (رجسٹریشن، ممبرشپ، ایجنٹ) کی لکھائی خود محفوظ، دوبارہ لکھنا نہیں پڑتا، فارم بھاگتا نہیں • 📤 Send details to agent اور 📋 Paste basic information • ⎋ لاگ آؤٹ پورا",
+  "MCS1111WE318": "📐 Home: nothing is cut off any more — every label, date pill, prayer time and city name now auto-fits its box (as big as possible, shrinks only if needed)",
   "MCS1111WE316": "✨ Home: duplicate thin captions removed from all buttons (one clear label each) • bigger, bolder text on tiles, buttons, prayer times (larger digits) and the city name",
   "MCS1111WE315": "🧭 Bottom bar: duplicate Help Desk button removed (it stays on Home) • all buttons now equal size, Home slightly bigger",
   "MCS1111WE314": "🧹 Home: the duplicate Emergency tile removed — only one Emergency button remains",
@@ -6304,7 +6297,7 @@ function userResultCard(item){
         const _live0 = pfActive(_r);
         /* ① بنیادی ڈیٹا ہو چکا (نئے یا پرانے کارڈ) → صرف «رجسٹریشن مکمل کریں» */
         const _fps = (window.fpCardSteps ? fpCardSteps('service', _r) : '');   /* MCS0811SU245: کارڈ پر مراحل کی پٹی */
-        if((_r.stage==='basic' || !_r.stage) && !_live0) return _fps + `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();svcRegClick('${_eid}')">📝 رجسٹریشن مکمل کریں</button>`;
+        if((_r.stage==='basic' || !_r.stage) && !_live0) return _fps + `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();svcRegClick('${_eid}')">📝 رجسٹریشن مکمل کریں</button>` + (window.mcsSendBtn ? mcsSendBtn(_r) : '');
         const _mine = !isAdminSignedIn && (svcMyBasic().includes(_r.id) || pfIsOwner(_r));
         const _live = pfActive(_r);
         /* ② رجسٹریشن مکمل → صرف «ممبرشپ مکمل کریں» */
@@ -14497,26 +14490,9 @@ function appVh(){ try{ document.documentElement.style.setProperty('--app-vh', wi
 appVh(); window.addEventListener('resize', ()=>{ if(!mcsTyping()) appVh(); });
 /* MCS3010FR084: ہوم ایک اسکرین میں — ناپ کر اشتہار کی اونچائی (فون کے کنارے/نیچے کی پٹی کچھ بھی ہو) */
 function fitHome(){
-  try{
-    if(currentScreen !== 'home' || mcsTyping()) return;
-    if(document.body.classList.contains('d2')){ const a2 = document.getElementById('homeAds'); if(a2){ a2.classList.remove('slim','tight','fitted'); a2.style.height = ''; } return; }
-    const ads = document.getElementById('homeAds'), apps = document.getElementById('ourApps');
-    const nav = document.getElementById('bnav'); if(!ads || !apps) return;
-    const limit = (nav && nav.getBoundingClientRect().height ? nav.getBoundingClientRect().top : window.innerHeight) - 6;
-    ads.classList.add('fitted');
-    const cur = ads.getBoundingClientRect().height;
-    /* MCS3110SA101: صفحہ تھوڑا اسکرول ہو تو بھی اوپر سے ناپیں — پہلے اسکرول جتنا اشتہار بڑا ہو کر ہیڈر اوپر کٹ جاتا تھا */
-    const sy = window.scrollY || (document.scrollingElement||document.documentElement).scrollTop || 0;
-    const want = Math.round(cur + (limit - (apps.getBoundingClientRect().bottom + sy)));
-    /* MCS3110SA106: اشتہار زیادہ سے زیادہ 116px؛ بچی جگہ اوپر نیچے برابر خالی (مالک کی ہدایت) */
-    const cs = getComputedStyle(ads), mt0 = parseFloat(cs.marginTop)||0, mb0 = parseFloat(cs.marginBottom)||0;
-    const total = want + mt0 + mb0 - 8;
-    /* MCS0211MO113: اشتہار پتلا (ایپس والی پٹی جتنا) — نیچے کی جگہ نتائج کی فہرست کے لیے */
-    const h = 64, half = 0; void total; ads.classList.add('slim');
-    ads.style.setProperty('margin-top', (half + 2) + 'px', 'important'); ads.style.setProperty('margin-bottom', (half + 6) + 'px', 'important');
-    ads.style.height = h + 'px';
-    ads.classList.toggle('tight', h < 90);
-  }catch(e){}
+  /* MCS1111WE318: اشتہار کا سائز پکا 1080×400 (2.7:1) — CSS طے کرتا ہے؛ اب اونچائی بدلتی نہیں، ہوم کے بٹن اپنی جگہ رہتے ہیں */
+  try{ const ads = document.getElementById('homeAds'); if(!ads) return;
+    ads.classList.remove('slim','tight','fitted'); ads.style.removeProperty('height'); ads.style.removeProperty('margin-top'); ads.style.removeProperty('margin-bottom'); }catch(e){}
 }
 let fitT = 0; function fitHomeSoon(){ if(mcsTyping()) return; clearTimeout(fitT); fitT = setTimeout(()=>requestAnimationFrame(fitHome), 60); }
 window.addEventListener('resize', fitHomeSoon);
@@ -14699,46 +14675,29 @@ try{ document.getElementById('adRecCats').addEventListener('click', e=>{ const b
 /* MCS3010FR094: اشتہار — انگلی سے کھسکائیں، ایڈمن کا وقت (آدھے سیکنڈ تک) اور آنے کے انداز (appConfig/ads.cfg) */
 /* MCS3010FR095: اشتہار آنے کے 24 انداز — ہر ایک کا چھوٹا چلتا نمونہ؛ CSS خود بنتا ہے */
 const AD_FX_DEF = [
-  ['slide','➡️ کھسک کر','from{transform:translateX(-105%);opacity:.2}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
-  ['slideup','⬆️ نیچے سے','from{transform:translateY(110%);opacity:0}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
-  ['slidedown','⬇️ اوپر سے','from{transform:translateY(-110%);opacity:0}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
-  ['zoomin','🔍 چھوٹے سے بڑا','from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
-  ['zoomout','🔎 بڑے سے چھوٹا','from{transform:scale(1.6);opacity:0}to{transform:none;opacity:1}',.6,'ease-out'],
-  ['pop','💥 اچھل کر بڑا','0%{transform:scale(.2);opacity:0}60%{transform:scale(1.12);opacity:1}80%{transform:scale(.95)}100%{transform:none}',.6,'ease-out'],
-  ['spinzoom','🌀 گھوم کر بڑا','from{transform:rotate(-360deg) scale(0);opacity:0}to{transform:none;opacity:1}',.8,'cubic-bezier(.2,.8,.2,1)'],
-  ['spin','💫 ہلکا گھوم کر','from{transform:rotate(-25deg) scale(.6);opacity:0}to{transform:none;opacity:1}',.6,'cubic-bezier(.2,.8,.2,1)'],
-  ['newspaper','📰 اخبار کی طرح','from{transform:rotate(720deg) scale(0);opacity:0}to{transform:none;opacity:1}',.9,'ease-out'],
-  ['cloudin','☁️ بادل سے نکل کر','from{filter:blur(18px);transform:scale(1.35);opacity:0}to{filter:none;transform:none;opacity:1}',.9,'ease-out'],
-  ['cloudup','🌥️ دھند سے اوپر','from{filter:blur(12px);transform:translateY(40%) scale(.85);opacity:0}to{filter:none;transform:none;opacity:1}',.9,'ease-out'],
-  ['blurzoom','🌫️ دھندلا سے صاف','from{filter:blur(10px);transform:scale(.7);opacity:0}to{filter:none;transform:none;opacity:1}',.7,'ease-out'],
-  ['flip','🔄 پلٹ کر','from{transform:rotateY(90deg);opacity:.3}to{transform:none;opacity:1}',.6,'ease-out'],
-  ['flipx','🔃 اوپر سے پلٹ کر','from{transform:rotateX(-90deg);opacity:.3}to{transform:none;opacity:1}',.6,'ease-out'],
-  ['door','🚪 دروازے کی طرح','from{transform-origin:right center;transform:perspective(600px) rotateY(-100deg);opacity:0}to{transform-origin:right center;transform:none;opacity:1}',.75,'ease-out'],
-  ['swing','🔔 لٹک کر','0%{transform-origin:top center;transform:rotateX(-90deg)}50%{transform:rotateX(20deg)}75%{transform:rotateX(-8deg)}100%{transform-origin:top center;transform:none}',.8,'ease-out'],
-  ['roll','🎳 لڑھک کر','from{transform:translateX(-110%) rotate(-120deg);opacity:0}to{transform:none;opacity:1}',.75,'ease-out'],
-  ['speed','⚡ بجلی کی طرح','0%{transform:translateX(100%) skewX(-30deg);opacity:0}60%{transform:skewX(15deg);opacity:1}80%{transform:skewX(-5deg)}100%{transform:none}',.6,'ease-out'],
-  ['bounce','🏀 اچھل کر','0%{transform:translateY(-60px);opacity:0}60%{transform:translateY(8px);opacity:1}80%{transform:translateY(-4px)}100%{transform:none}',.7,'ease-out'],
-  ['jelly','🍮 جیلی کی طرح','0%{transform:scale(.6,.6);opacity:0}30%{transform:scale(1.15,.85);opacity:1}50%{transform:scale(.9,1.1)}70%{transform:scale(1.05,.95)}100%{transform:none}',.8,'ease-out'],
-  ['circle','⭕ گول دائرے سے','from{clip-path:circle(0% at 50% 50%)}to{clip-path:circle(75% at 50% 50%)}',.8,'ease-out'],
-  ['wipe','🧽 پونچھ کر','from{clip-path:inset(0 0 0 100%)}to{clip-path:inset(0 0 0 0)}',.7,'ease-out'],
-  ['blinds','🪟 پردہ کھل کر','from{clip-path:inset(0 50% 0 50%)}to{clip-path:inset(0 0 0 0)}',.7,'ease-out'],
-  ['fade','🌙 دھیرے سے','from{opacity:0}to{opacity:1}',.8,'ease']
+  ['slideleft','⬅️ Slide Left','from{transform:translateX(105%);opacity:.2}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
+  ['slideright','➡️ Slide Right','from{transform:translateX(-105%);opacity:.2}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
+  ['flytop','⬇️ Fly in from Top','from{transform:translateY(-110%);opacity:0}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
+  ['flybottom','⬆️ Fly in from Bottom','from{transform:translateY(110%);opacity:0}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
+  ['fade','🌙 Fade in / Fade out','from{opacity:0}to{opacity:1}',.8,'ease']
 ];
-const AD_FX = [['auto','🎲 خودکار (ہر بار نیا)']].concat(AD_FX_DEF.map(x=>[x[0], x[1]])).concat([['none','⏸️ بغیر انداز']]);
+const AD_FX = [['auto','🎲 Auto (random of these 5)']].concat(AD_FX_DEF.map(x=>[x[0], x[1]]));   /* MCS1111WE318: صرف یہی پانچ انداز */
+function adFxOk(k){ return AD_FX.some(x=>x[0]===k); }
 (function(){
   const css = AD_FX_DEF.map(([k,,kf,d,e])=>`@keyframes adk_${k}{${kf}} #homeAds .fx-${k}{animation:adk_${k} var(--fxd, ${d}s) ${e};} .fxp.fxp-${k} i{animation:adk_${k} calc(var(--fxd, ${d}s) + 1s) ${e} infinite;}`).join('\n')
-    + `\n#homeAds .fx-slide.fx-back{animation-name:adSlideBack;}`;
+    + `\n#homeAds .fx-slideleft.fx-back{animation-name:adk_slideright;} #homeAds .fx-slideright.fx-back{animation-name:adk_slideleft;}`;
   const el = document.createElement('style'); el.id = 'adFxCss'; el.textContent = css; document.head.appendChild(el);
 })();
 let adCfg = {paidMs:15000, promoMs:6000, effect:'auto', fxMs:700};
 try{ adCfg = Object.assign(adCfg, JSON.parse(localStorage.getItem('mcsAdCfg')||'{}')); }catch(e){}
+if(!adFxOk(adCfg.effect)) adCfg.effect = 'auto';
 let adCfgDraft = null, adAnim = '', adDir = 1;
 function adSec(ms){ return (ms/1000).toLocaleString('en-US', {maximumFractionDigits:1}) + ' سیکنڈ'; }
 function adCfgRender(){
   const d = adCfgDraft || adCfg;
   const a = document.getElementById('adCfgPaid'), b = document.getElementById('adCfgPromo'); if(a) a.textContent = adSec(d.paidMs); if(b) b.textContent = adSec(d.promoMs);
   const fxe = document.getElementById('adCfgFx'); if(fxe) fxe.textContent = adSec(d.fxMs||700);
-  const f = document.getElementById('adFxPick'); if(f) f.style.setProperty('--fxd', ((d.fxMs||700)/1000) + 's'); if(f) f.innerHTML = AD_FX.map(([k,t])=>`<button type="button" class="${d.effect===k?'on':''}" data-fx="${k}"><span class="fxp fxp-${k}"><i>AD</i></span><span class="fxt">${t}</span></button>`).join('');
+  const f = document.getElementById('adFxPick'); if(f) f.style.setProperty('--fxd', ((d.fxMs||700)/1000) + 's'); if(f) f.innerHTML = AD_FX.map(([k,t])=>`<button type="button" class="${(adFxOk(d.effect)?d.effect:'auto')===k?'on':''}" data-fx="${k}"><span class="fxp fxp-${k}"><i>AD</i></span><span class="fxt">${t}</span></button>`).join('');
 }
 function adCfgStep(k, delta){ adCfgDraft = adCfgDraft || Object.assign({}, adCfg); if(k === 'fxMs'){ adCfgDraft.fxMs = Math.max(200, Math.min(4000, (adCfgDraft.fxMs||700) + delta)); adCfgRender(); adGo(1); return; } adCfgDraft[k] = Math.max(1000, Math.min(120000, (adCfgDraft[k]||5000) + delta)); adCfgRender(); }
 function adCfgSave(){
@@ -14747,8 +14706,10 @@ function adCfgSave(){
   const FB = window.MCSFirebase; if(FB) FB.setDoc(FB.doc(FB.db,'appConfig','ads'), {cfg: c}, {merge:true}).then(()=>showToast('✓ وقت اور انداز محفوظ — سب کے فون پر')).catch(e=>alert('محفوظ نہیں ہوا: ' + (e.code||e.message)));
   adCfgRender(); adGo(1);
 }
-function adPickFx(){ const e = (adCfgDraft||adCfg).effect || 'auto'; if(e !== 'auto') return e; const list = AD_FX.map(x=>x[0]).filter(k=>!['auto','none'].includes(k)); return list[Math.floor(Math.random()*list.length)]; }
-function adGo(dir){ adDir = dir; adAnim = adPickFx(); const n = adSlides().length || 1; adIdx = (adIdx + dir + n) % n; adShownAt = Date.now(); adRender(); }
+function adPickFx(){ let e = (adCfgDraft||adCfg).effect || 'auto'; if(!adFxOk(e)) e = 'auto'; if(e !== 'auto') return e; const list = AD_FX.map(x=>x[0]).filter(k=>k!=='auto'); return list[Math.floor(Math.random()*list.length)]; }
+function adGo(dir){ adDir = dir; adAnim = adPickFx(); const n = adSlides().length || 1; adIdx = (adIdx + dir + n) % n; adShownAt = Date.now();
+  if(adAnim === 'fade'){ const c = document.querySelector('#homeAds .ad-card'); if(c){ c.style.transition = 'opacity .3s'; c.style.opacity = '0'; setTimeout(adRender, 300); return; } }   /* Fade out ← Fade in */
+  adRender(); }
 try{
   document.getElementById('adFxPick').addEventListener('click', e=>{ const b = e.target.closest('button[data-fx]'); if(!b) return; adCfgDraft = adCfgDraft || Object.assign({}, adCfg); adCfgDraft.effect = b.dataset.fx; adCfgRender(); adGo(1); });
   /* انگلی سے کھسکائیں */
@@ -14855,7 +14816,7 @@ function cardStageBtn(kind, rec){
       const basic = isDoc ? rec.stage !== 'registered' : (rec.stage === 'basic' || !rec.stage);
       if(basic){
         if(isDoc && !(isAdminSignedIn || mine || agentOwn)) return '';
-        return `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();${isDoc ? `docRegOpen('${eid}')` : `svcRegClick('${eid}')`}">📝 رجسٹریشن مکمل کریں</button>`;
+        return `<button type="button" class="svc-reg-btn" onclick="event.stopPropagation();${isDoc ? `docRegOpen('${eid}')` : `svcRegClick('${eid}')`}">📝 رجسٹریشن مکمل کریں</button>` + (window.mcsSendBtn ? mcsSendBtn(rec, isDoc) : '');
       }
       if(rec.stage === 'registered'){
         if(mine) return `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${eid}','${kind}')">⭐ ممبرشپ مکمل کریں</button>`;
@@ -20049,11 +20010,11 @@ body.d2 .d2-prays .d2-p b em{font-size:min(10.5px,25cqw) !important;font-weight:
 body.d2 .h2 .cc-city b{font-size:20px !important;font-weight:800 !important;-webkit-text-stroke:.5px #0b4f5c}
 </style>
 <style id="mcsFit317">
-/* MCS1111WE317: لفظ بیچ سے نہ ٹوٹے — صرف پورے لفظ کے بعد لائن بدلے؛ سائز اسکرپٹ ناپ کر فِٹ کرتی ہے */
+/* MCS1111WE318: لفظ بیچ سے نہ ٹوٹے — صرف پورے لفظ کے بعد لائن بدلے؛ سائز اسکرپٹ ناپ کر فِٹ کرتی ہے */
 body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:normal !important}
 </style>
 <script id="mcsFit317js">
-/* MCS1111WE317 (مالک کا حکم): کوئی چیز کٹے نہیں — ہر لکھائی اپنے ڈبے میں ناپ کر فِٹ (جتنی بڑی ہو سکے، تنگ ہو تو خود چھوٹی) */
+/* MCS1111WE318 (مالک کا حکم): کوئی چیز کٹے نہیں — ہر لکھائی اپنے ڈبے میں ناپ کر فِٹ (جتنی بڑی ہو سکے، تنگ ہو تو خود چھوٹی) */
 (function(){
   const T = [
     ['.h2-d > div', null, 8],
@@ -20099,6 +20060,227 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   try{ new MutationObserver(() => later(250)).observe(document.body, {childList:true, subtree:true, characterData:true}); }catch(e){}
   setInterval(run, 3000);
 })();
+</script>
+<script>
+/* ===== MCS1111WE318: (1) لاگ آؤٹ پکا (2) ہر فارم کی لکھائی خود محفوظ (3) «Send details to agent» + «Paste basic information» (4) فارم بھاگنا بند ===== */
+(function(){
+  'use strict';
+  var LS = { get:function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set:function(k,v){ try{ v==null ? localStorage.removeItem(k) : localStorage.setItem(k,v); }catch(e){} } };
+  var $ = function(id){ return document.getElementById(id); };
+  var digits = function(s){ return String(s||'').replace(/\D/g,''); };
+
+  /* ---------- (1) لاگ آؤٹ: ایک بار دبائیں تو پورا لاگ آؤٹ، پھر ابتدائی لاگ اِن صفحہ ---------- */
+  var OUT = 'mcsLoggedOut';
+  function agentIn(){ try{ var m = agMe(); return !!(m && m.phone && (m.pin || m.code)); }catch(e){ return false; } }
+  var _ptRole = window.ptRole;
+  if(typeof _ptRole === 'function'){
+    window.ptRole = function(){
+      try{
+        if(LS.get(OUT) === '1'){
+          if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){ LS.set(OUT, null); return _ptRole(); }
+          if(typeof codevOn === 'function' && codevOn()){ LS.set(OUT, null); return 'codev'; }
+          if(agentIn()){ LS.set(OUT, null); return 'agent'; }
+          if(typeof uaMe === 'function' && uaMe()){ LS.set(OUT, null); return _ptRole(); }
+          return 'user';
+        }
+      }catch(e){}
+      return _ptRole();
+    };
+  }
+  var _logout = window.mcsLogoutAll;
+  if(typeof _logout === 'function'){
+    window.mcsLogoutAll = async function(skip){
+      try{ if(skip !== true && !confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return; }catch(e){}
+      LS.set(OUT, '1');
+      try{ closeModal('portalModal'); }catch(e){}
+      try{ if(typeof ADMIN_LAST_KEY !== 'undefined') LS.set(ADMIN_LAST_KEY, null); if(typeof ADMIN_EMAIL_KEY !== 'undefined') LS.set(ADMIN_EMAIL_KEY, null); }catch(e){}
+      LS.set('mcsCodev', null); LS.set('mcsAgent', null); LS.set('mcsAuth', null); LS.set('mcsAuthTmp', null); LS.set('mcsGuest', null);
+      try{ adminRestoring = false; isAdminSignedIn = false; }catch(e){}
+      try{ var FB = window.MCSFirebase; if(FB && FB.signOut) await Promise.race([FB.signOut(FB.auth), new Promise(function(r){ setTimeout(r, 2500); })]); }catch(e){}
+      try{ isAdminSignedIn = false; adminRestoring = false; if(typeof updateAdminBadge === 'function') updateAdminBadge(); }catch(e){}
+      try{ ['agModal','portalModal','recViewModal'].forEach(function(id){ var m=$(id); if(m) m.classList.remove('active'); }); }catch(e){}
+      return _logout(true);   /* سرور لاگ آؤٹ + صفحے تازہ + لاگ اِن صفحہ */
+    };
+  }
+
+  /* ---------- (2) ہر فارم کی لکھائی خود محفوظ (رجسٹریشن، ممبرشپ، ایجنٹ فارم سمیت) ---------- */
+  var DK = 'mcsDraftV2', CK = 'mcsCnicByPhone';
+  function dAll(){ try{ return JSON.parse(LS.get(DK) || '{}') || {}; }catch(e){ return {}; } }
+  function dPut(all){ var ks = Object.keys(all); if(ks.length > 60){ ks.sort(function(a,b){ return (all[a].t||0) - (all[b].t||0); }); ks.slice(0, ks.length - 60).forEach(function(k){ delete all[k]; }); } LS.set(DK, JSON.stringify(all)); }
+  function ctxKey(mid){
+    try{
+      if(mid === 'serviceFormModal'){ var who = editingServiceId || (pendingFormCtx && pendingFormCtx.fsId) || ('new:' + (currentServiceCategory||'')); return 'svc:' + who + ':' + (svcStage||'full'); }
+      if(mid === 'doctorFormModal'){ var w2 = editingDoctorId || (pendingFormCtx && pendingFormCtx.fsId) || 'new'; return 'doc:' + w2; }
+      if(mid === 'agModal'){ var h = document.querySelector('#agModal .ag-hd'); if(!h) return ''; if(!document.querySelector('#agBody input, #agBody textarea, #agBody select')) return ''; return 'ag:' + (h.textContent||'').replace(/\s+/g,' ').trim().slice(0, 80); }
+    }catch(e){}
+    return '';
+  }
+  function fieldsOf(mid){
+    var root = mid === 'agModal' ? $('agBody') : $(mid); if(!root) return [];
+    return Array.prototype.slice.call(root.querySelectorAll('input, textarea, select')).filter(function(el){
+      var t = (el.type||'').toLowerCase(); return el.id && t !== 'password' && t !== 'file' && t !== 'button' && t !== 'submit' && t !== 'hidden';
+    });
+  }
+  var lastSaved = {};
+  function badge(mid, on){
+    var root = mid === 'agModal' ? $('agBody') : $(mid); if(!root) return;
+    var b = root.querySelector('.mcsDraftBadge');
+    if(!b){ b = document.createElement('div'); b.className = 'mcsDraftBadge'; b.style.cssText = 'position:sticky;top:0;z-index:5;margin:0 0 6px;padding:3px 10px;border-radius:10px;background:#ecfdf5;color:#047857;font:700 12px/1.6 Arial,sans-serif;text-align:center;direction:rtl;display:none'; var host = root.querySelector('.fm-body') || root; host.insertBefore(b, host.firstChild); }
+    if(on){ var d = new Date(); b.textContent = '✓ لکھا ہوا خود محفوظ — ' + ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2) + ' (بند کر کے دوبارہ کھولیں تو واپس آ جائے گا)'; b.style.display = 'block'; } else b.style.display = 'none';
+  }
+  function save(mid){
+    var key = ctxKey(mid); if(!key) return;
+    var v = {}, any = false;
+    fieldsOf(mid).forEach(function(el){
+      var t = (el.type||'').toLowerCase(), val = (t === 'checkbox' || t === 'radio') ? (el.checked ? '1' : '') : (el.value||'');
+      if(t === 'checkbox' || t === 'radio'){ v[el.id] = val; return; }
+      if(val && !(/Whatsapp$|Phone$/.test(el.id) && digits(val).length <= 2)){ v[el.id] = val; any = true; }
+    });
+    var all = dAll();
+    if(any){ all[key] = { v: v, t: Date.now() }; dPut(all); lastSaved[mid] = key; badge(mid, true); } else if(all[key]){ delete all[key]; dPut(all); }
+    /* شناختی کارڈ فون نمبر کے ساتھ — دوبارہ نہ پوچھا جائے */
+    try{ var cn = digits((v.svcCnic || v.drCnic || '')), ph = digits(v.svcWhatsapp || (document.getElementById('svcWhatsapp')||{}).value || '').slice(-10);
+      if(cn.length === 13 && ph.length === 10){ var m = JSON.parse(LS.get(CK) || '{}'); m[ph] = cn; LS.set(CK, JSON.stringify(m)); } }catch(e){}
+  }
+  function setVal(el, val){
+    var t = (el.type||'').toLowerCase();
+    if(t === 'checkbox' || t === 'radio'){ el.checked = !!val; return; }
+    if(el.tagName === 'SELECT'){ if(!Array.prototype.some.call(el.options, function(o){ return o.value === val; })) return; el.value = val; try{ resyncCapsuleSelect(el.id); }catch(e){} return; }
+    el.value = val;
+  }
+  function restore(mid, onlyEmpty){
+    var key = ctxKey(mid); if(!key) return;
+    var rec = dAll()[key], restored = false;
+    fieldsOf(mid).forEach(function(el){
+      var t = (el.type||'').toLowerCase(), val = rec && rec.v ? rec.v[el.id] : undefined;
+      if(val === undefined || val === '') return;
+      if(t === 'checkbox' || t === 'radio'){ if(onlyEmpty) return; setVal(el, val); return; }
+      if(onlyEmpty && el.value) return;
+      if(el.value === val) return;
+      setVal(el, val); restored = true;
+    });
+    /* محفوظ شناختی کارڈ فون نمبر سے */
+    try{ var ci = $('svcCnic'); if(ci && !ci.value){ var ph = digits(($('svcWhatsapp')||{}).value).slice(-10), m = JSON.parse(LS.get(CK) || '{}'); if(ph.length === 10 && m[ph]){ ci.value = m[ph]; restored = true; } } }catch(e){}
+    if(restored){ try{ if(typeof livePhoneDupCheck === 'function' && $('svcWhatsapp')) livePhoneDupCheck('svc'); }catch(e){}
+      try{ showToast('📝 پچھلی بار کا لکھا ہوا واپس آ گیا', 2500); }catch(e){} badge(mid, true); }
+  }
+  function clearKey(key){ if(!key) return; var all = dAll(); if(all[key]){ delete all[key]; dPut(all); } }
+  ['serviceFormModal','doctorFormModal','agModal'].forEach(function(mid){
+    var t = 0, h = function(){ clearTimeout(t); t = setTimeout(function(){ save(mid); }, 200); };
+    document.addEventListener('input', function(e){ var m = $(mid); if(m && m.contains(e.target)) h(); }, true);
+    document.addEventListener('change', function(e){ var m = $(mid); if(m && m.contains(e.target)) h(); }, true);
+    document.addEventListener('cselpick', function(e){ var m = $(mid); if(m && m.contains(e.target)) h(); }, true);
+  });
+  function flush(){ ['serviceFormModal','doctorFormModal','agModal'].forEach(function(mid){ var m = $(mid); if(m && m.classList.contains('active')) save(mid); }); }
+  window.addEventListener('pagehide', flush); document.addEventListener('visibilitychange', function(){ if(document.hidden) flush(); });
+  /* فارم کھلتے ہی واپس بھرنا */
+  function wrapOpen(name, mid){
+    var o = window[name]; if(typeof o !== 'function' || o._d318) return;
+    var w = function(){ var r = o.apply(this, arguments); setTimeout(function(){ restore(mid, false); }, 180); setTimeout(function(){ restore(mid, true); }, 700); return r; };
+    w._d318 = 1; window[name] = w;
+  }
+  function wrapAgModal(){
+    var o = window.agModal; if(typeof o !== 'function' || o._d318) return;
+    var w = function(){ var r = o.apply(this, arguments); setTimeout(function(){ restore('agModal', false); }, 90); return r; };
+    w._d318 = 1; window.agModal = w;
+  }
+  /* محفوظ دبانے پر کامیاب (فارم بند / اگلا صفحہ) تو ڈرافٹ صاف؛ ناکام (غلطی) تو لکھا ہوا باقی */
+  document.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('button'); if(!b) return;
+    var mid = ['serviceFormModal','doctorFormModal','agModal'].filter(function(id){ var m = $(id); return m && m.contains(b); })[0]; if(!mid) return;
+    if(b.classList.contains('modal-close') || b.classList.contains('secondary')) return;
+    var key = ctxKey(mid); if(!key) return;
+    var head = (document.querySelector('#agModal .ag-hd')||{}).textContent;
+    save(mid);
+    setTimeout(function(){
+      var m = $(mid), closed = !m || !m.classList.contains('active');
+      var moved = mid === 'agModal' && !closed && ((document.querySelector('#agModal .ag-hd')||{}).textContent !== head || !ctxKey('agModal') || ctxKey('agModal') !== key);
+      if(closed || moved){ var rl = (b.textContent||''); if(!/بند|cancel|Close/i.test(rl) || mid !== 'agModal') clearKey(key); }
+    }, 1100);
+  }, true);
+  var _ner = window.nextEntryReady;
+  if(typeof _ner === 'function') window.nextEntryReady = function(pre){ var k = ctxKey(pre === 'doc' ? 'doctorFormModal' : 'serviceFormModal'); var r = _ner.apply(this, arguments); clearKey(k); return r; };
+
+  /* ---------- (4) فارم بھاگنا: لکھتے وقت اسکرول خود اوپر نہ جائے ---------- */
+  (function(){
+    var lastTop = {}, lastUser = {};
+    function bodyOf(el){ return el && el.closest && el.closest('.fm-body, #agBody, .ag-box'); }
+    ['touchstart','wheel','pointerdown','keydown'].forEach(function(ev){ document.addEventListener(ev, function(e){ var b = bodyOf(e.target); if(b){ lastUser.t = Date.now(); } }, {passive:true, capture:true}); });
+    document.addEventListener('scroll', function(e){
+      var el = e.target; if(!el || !el.classList || !(el.classList.contains('fm-body') || el.classList.contains('ag-box') || el.id === 'agBody')) return;
+      var id = el.className + el.id;
+      if(el.scrollTop > 40){ lastTop[id] = el.scrollTop; return; }
+      var ae = document.activeElement;
+      if(lastTop[id] > 120 && el.scrollTop < 5 && ae && el.contains(ae) && (Date.now() - (lastUser.t||0)) > 600){ el.scrollTop = lastTop[id]; try{ ae.scrollIntoView({block:'center'}); }catch(x){} }
+    }, true);
+  })();
+
+  /* ---------- (3) «Send details to agent» اور «Paste basic information» ---------- */
+  function recById(id){ return (store.services||[]).find(function(x){ return x.id === id; }) || (store.doctors||[]).find(function(x){ return x.id === id; }); }
+  window.mcsSendBtn = function(rec, isDoc){
+    try{
+      if(!rec || isDoc || isAdminSignedIn) return '';
+      var mine = svcMyBasic().indexOf(rec.id) >= 0 || (typeof pfIsOwner === 'function' && pfIsOwner(rec));
+      if(!mine || !(rec.stage === 'basic' || !rec.stage) || pfActive(rec)) return '';
+      return '<button type="button" class="svc-reg-btn" style="background:#0f766e;border-color:#0f766e;color:#fff;margin-top:6px" onclick="event.stopPropagation();mcsSendToAgent(\'' + escapeAttr(rec.id) + '\')">📤 Send details to agent</button>';
+    }catch(e){ return ''; }
+  };
+  window.mcsRegMessage = function(rec){
+    var u = null; try{ u = (uaMe() || {}).user || null; }catch(e){}
+    var sid = (rec.more && rec.more.sid) || (u && (u.sid || u.id)) || '';
+    var lines = ['MCS-REG', 'ID: ' + sid, 'Name: ' + ((u && u.name) || rec.owner || rec.nameUr || ''), 'Mobile: ' + (rec.whatsapp || (u && u.mobile) || ''), 'Shop: ' + (rec.nameUr || rec.nameEn || ''), 'Address: ' + [rec.address, rec.area, rec.city].filter(Boolean).join('، ')];
+    return lines.join('\n') + '\n\nMy City Shines — رجسٹریشن مکمل کرنے کے لیے یہ پورا پیغام ایپ میں «Paste basic information» میں پیسٹ کریں۔';
+  };
+  window.mcsSendToAgent = function(id){
+    var rec = recById(id); if(!rec) return; var txt = mcsRegMessage(rec);
+    try{ navigator.clipboard && navigator.clipboard.writeText(txt); }catch(e){}
+    if(navigator.share){ navigator.share({ text: txt }).catch(function(){}); return; }
+    window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+    try{ showToast('📋 پیغام کاپی بھی ہو گیا', 2500); }catch(e){}
+  };
+  function parseBasic(t){
+    var out = {}, map = { id:'id', 'account id':'id', name:'name', owner:'name', mobile:'mobile', phone:'mobile', whatsapp:'mobile', shop:'shop', business:'shop', address:'address' };
+    String(t||'').split(/\r?\n/).forEach(function(l){ var m = l.match(/^\s*([A-Za-z ]{2,14})\s*[:：]\s*(.+)$/); if(m){ var k = map[m[1].trim().toLowerCase()]; if(k && !out[k]) out[k] = m[2].trim(); } });
+    if(!out.id){ var mi = String(t).match(/\bMCS-?\d{1,8}\b/i); if(mi) out.id = mi[0].toUpperCase(); }
+    if(!out.mobile){ var mm = digits(String(t)).match(/03\d{9}/); if(mm) out.mobile = mm[0]; }
+    return out;
+  }
+  window.mcsPasteBasic = function(){
+    var ov = $('mcsPasteOv'); if(ov) ov.remove();
+    ov = document.createElement('div'); ov.id = 'mcsPasteOv'; ov.style.cssText = 'position:fixed;inset:0;z-index:2147482000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:14px';
+    ov.innerHTML = '<div style="background:#fff;color:#111;border-radius:16px;padding:14px;width:100%;max-width:380px;direction:rtl"><div style="font-weight:800;margin-bottom:6px">📋 Paste basic information</div><div style="font-size:12.5px;opacity:.75;margin-bottom:6px">کاروبار کے مالک سے آیا ہوا پیغام یہاں پیسٹ کریں — نام، موبائل اور ID خود لگ جائیں گے۔</div><textarea id="mcsPasteTx" rows="7" style="width:100%;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:10px;padding:8px;direction:ltr"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button type="button" id="mcsPasteOk" class="btn" style="flex:1">✅ Apply</button><button type="button" id="mcsPasteNo" class="btn secondary" style="flex:1">بند</button></div></div>';
+    document.body.appendChild(ov);
+    $('mcsPasteNo').onclick = function(){ ov.remove(); };
+    $('mcsPasteOk').onclick = function(){
+      var d = parseBasic($('mcsPasteTx').value);
+      if(!d.mobile && !d.id && !d.name){ try{ showToast('⚠️ پیغام سمجھ نہیں آیا — پورا پیغام پیسٹ کریں'); }catch(e){} return; }
+      var set = function(i, v){ var e = $(i); if(e && v){ e.value = v; e.dispatchEvent(new Event('input', {bubbles:true})); } };
+      set('svcWhatsapp', d.mobile ? '0' + digits(d.mobile).slice(-10) : ''); set('svcNameUr', d.shop || ''); set('svcOwner', d.name || ''); set('svcAddress', d.address || '');
+      try{ var rec = editingServiceId ? recById(editingServiceId) : null;
+        if(rec && d.id){ rec.more = rec.more || {}; rec.more.sid = d.id; saveStore(); try{ if(rec.fsId) pushMoreToFirebase('services', rec.fsId, rec.more); }catch(e){} }
+        if(rec && d.mobile && digits(rec.whatsapp).slice(-10) !== digits(d.mobile).slice(-10)) showToast('⚠️ پیغام کا موبائل اس کارڈ کے موبائل سے نہیں ملتا — کارڈ دوبارہ دیکھیں', 5000);
+        else showToast('✅ بنیادی معلومات لگ گئیں' + (d.id ? ' — ID: ' + d.id : ''), 3500); }catch(e){}
+      ov.remove(); try{ save('serviceFormModal'); }catch(e){}
+    };
+  };
+  function addPasteBtn(){
+    try{
+      var bar = $('svcStageBar'); if(!bar || !(svcStage === 'basic' || svcStage === 'reg')) return;
+      if(bar.querySelector('.mcsPasteBtn')) return;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn secondary mcsPasteBtn'; b.style.cssText = 'margin-top:6px;width:100%'; b.textContent = '📋 Paste basic information'; b.onclick = window.mcsPasteBasic;
+      bar.appendChild(b); bar.classList.remove('svc-hide');
+    }catch(e){}
+  }
+  function wrapOpenSvc(){
+    var o = window.openServiceForm; if(typeof o !== 'function' || o._p318) return;
+    var w = function(){ var r = o.apply(this, arguments); setTimeout(addPasteBtn, 120); return r; };
+    w._p318 = 1; window.openServiceForm = w;
+  }
+
+  function install(){ wrapOpen('openServiceForm','serviceFormModal'); wrapOpen('openDoctorForm','doctorFormModal'); wrapAgModal(); wrapOpenSvc(); }
+  install(); window.addEventListener('load', function(){ setTimeout(install, 1800); });   /* ایجنٹ-فیڈ والا ریپر 1.5s پر لگتا ہے؛ ہم اس کے اوپر */
+})();
+
 </script>
 </body>
 </html>
