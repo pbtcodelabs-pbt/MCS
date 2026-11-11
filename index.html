@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE330";
+const APP_VERSION = "MCS1111WE331";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE331": "🛡️ My Chats now has a pinned «Approvals» row for the developer — membership, new business, agent requests; tap to open the real page, it clears itself when done",
   "MCS1111WE330": "🏪 Membership requests now show as a strip on the developer home — open to Approve / Ask more details / Keep pending / Not now",
   "MCS1111WE329": "🔤 Developer code is now DEV, Co-Developer code is CODEV • Category list A→Z in English with Urdu beside it • Agent list: DEV / CODEV / PBT on top, then AG-001, AG-002… in order",
   "MCS1111WE325": "🟩 Category cards are always square and the same size — text fits inside (never cut, card never stretches) • choose 1 / 2 / 3 / 4 cards per row",
@@ -20601,6 +20602,52 @@ setTimeout(() => { mrqLoad(true); mrqMine(); }, 4000);
 .mrq-b button,.mrq-b a{border:0;border-radius:10px;padding:9px 6px;font-weight:800;font-size:13.5px;cursor:pointer;text-align:center;text-decoration:none}
 .mrq-b .ok{background:#059669;color:#fff;grid-column:1/-1;font-size:15px}.mrq-b .in{background:#2563eb;color:#fff}.mrq-b .pd{background:#e2e8f0;color:#334155}.mrq-b .no{background:#fee2e2;color:#991b1b}.mrq-b .vw{background:#f1f5f9;color:#0f172a}.mrq-b .wa{background:#22c55e;color:#fff}
 .mrq-old summary{cursor:pointer;font-weight:800;color:#475569;margin:6px 0}
+</style>
+
+<script>
+/* ===== MCS1111WE331 (مالک کا حکم): My Chats میں «🛡️ Approvals» — سب سے اوپر پِن قطار، اصل درخواستوں سے گنتی (الگ پیغام نہیں)؛ اصل صفحے پر منظور / رد ہوتے ہی چیٹ سے خود غائب ===== */
+function apprItems(){
+  if(typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn) return [];
+  const out = [], E = escapeHtml;
+  try{ mrqOpenList().forEach(x => { const d = x.data || {}; out.push({ic:'🏪', kind:'Membership request', t: d.prof || d.name || x.rec, sub: [d.name, d.mobile].filter(Boolean).join(' · '), ts: x.ts, nw: x.st === 'new', go: () => mrqOpen()}); }); }catch(e){}
+  try{ (pendingApprovals || []).forEach(d => out.push({ic: d._col === 'doctors' ? '👔' : '🏪', kind: d._col === 'doctors' ? 'New profession entry' : 'New business entry', t: d.nameUr || d.name || '(no name)', sub: [d.area, d.city].filter(Boolean).join(', '), ts: d.createdAt || d.ts || 0, nw: true, go: () => openPendingInForm(d.fsId)})); }catch(e){}
+  try{ (agList || []).filter(a => a.status === 'pending').forEach(a => out.push({ic:'🤝', kind:'Agent application', t: a.name || '', sub: [a.city, a.phone].filter(Boolean).join(' · '), ts: a.ts || 0, nw: true, go: () => { agTab = 'pending'; agAdminOpen(); }})); }catch(e){}
+  try{ pfPendList().filter(x => x.rec).forEach(x => out.push({ic:'⏳', kind:'Shopkeeper-made membership', t: x.rec.nameUr || x.rec.name || '', sub: [x.rec.area, x.rec.city].filter(Boolean).join(', '), ts: 0, nw: true, go: () => pfOpen(x.kind, x.rec.id)})); }catch(e){}
+  window._apprL = out; return out;
+}
+(function(){
+  const _ll = window.mcLoadList;
+  window.mcLoadList = async function(local){
+    const r = await _ll.apply(this, arguments);
+    try{ const L = document.getElementById('mcL'), A = apprItems(); if(L && !mcTh && A.length && !L.querySelector('.mc-appr')){
+      const n = A.length, kinds = {}; A.forEach(a => kinds[a.ic] = (kinds[a.ic] || 0) + 1);
+      const row = document.createElement('div'); row.className = 'mc-row wa unread mc-appr'; row.onclick = () => mcApprOpen();
+      row.innerHTML = `<div class="mc-av"><span class="mc-appr-av">🛡️</span></div><div class="mc-mid"><div class="l1"><b>Approvals <small>— منظوری کے معاملات</small></b><span class="mc-tm">📌</span></div><div class="l2"><small dir="auto">${Object.entries(kinds).map(([k, v]) => k + ' ' + v).join('   ')} waiting for you</small><span class="mc-nw">${n}</span></div></div>`;
+      const tabs = L.querySelector('.mc-tabs'); if(tabs) tabs.after(row); else L.prepend(row); } }catch(e){}
+    return r;
+  };
+  const _sb = window.mcSetBadge;
+  window.mcSetBadge = function(n){ let a = 0; try{ a = apprItems().length; }catch(e){} return _sb.call(this, (n || 0) + a); };
+})();
+function mcApprOpen(){
+  const A = apprItems(), E = escapeHtml;
+  mcTh = null;
+  mcBox(`<div class="mc-hd"><button type="button" onclick="mcBack()" aria-label="Back">→</button><span class="mc-appr-av" style="width:40px;height:40px;font-size:22px">🛡️</span><b>Approvals<small>${A.length} waiting — tap one to open its page</small></b></div>
+    <div class="mc-list">${A.length ? A.map((a, i) => `<div class="mc-row wa ${a.nw ? 'unread' : ''}" onclick="mcApprGo(${i})"><div class="mc-av"><span class="mc-appr-av s">${a.ic}</span></div><div class="mc-mid"><div class="l1"><b dir="auto">${E(a.t)}</b><span class="mc-tm">${a.ts ? E(mrqAgo(a.ts)) : ''}</span></div><div class="l2"><small dir="auto">${E(a.kind)}${a.sub ? ' · ' + E(a.sub) : ''}</small><span class="mc-nw" style="background:#f59e0b">›</span></div></div></div>`).join('') : '<div class="mc-empty">✅ Nothing is waiting for approval</div>'}</div>`);
+}
+function mcApprGo(i){ const a = (window._apprL || [])[i]; if(!a) return; mcClose(); setTimeout(() => { try{ a.go(); }catch(e){ showToast('Could not open'); } }, 150); }
+/* نئی درخواست آئے تو ڈویلپر کو ہلکا پاپ اپ + چیٹ کا سرخ نشان */
+let _apprLast = -1;
+setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn) return; const n = apprItems().length;
+  if(_apprLast >= 0 && n > _apprLast) showToast('🛡️ New approval request — see My Chats › Approvals', 5000);
+  _apprLast = n; const b = document.getElementById('mcBadge'); if(b){ const cur = +(b.dataset.chatN || 0); b.hidden = !(cur + n); b.textContent = (cur + n) > 99 ? '99+' : String(cur + n || ''); } }catch(e){} }, 15000);
+(function(){ const _sb2 = window.mcSetBadge; window.mcSetBadge = function(n){ const b = document.getElementById('mcBadge'); if(b) b.dataset.chatN = n || 0; return _sb2.call(this, n); }; })();
+</script>
+<style>
+.mc-appr{background:#fffbeb !important;border-left:4px solid #f59e0b}
+.mc-appr-av{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff;font-size:26px}
+.mc-appr-av.s{background:#fef3c7;font-size:24px}
+.mc-appr .l1 b small{font-weight:600;color:#92400e}
 </style>
 </body>
 </html>
