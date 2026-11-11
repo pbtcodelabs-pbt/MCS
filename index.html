@@ -3807,9 +3807,9 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
           </select>
         </div>
         <!-- MCS04OCTSU0355PM: محفوظ کرنے کا بٹن نام والے خانے کے ساتھ ہی، تاکہ نیچے تک گھمانا نہ پڑے -->
-        <div class="field" style="margin-bottom:8px;"><input type="text" id="newCatEn" dir="ltr" data-noen placeholder="English name (shown big on the tile) — e.g. Home decoration" style="width:100%;box-sizing:border-box;"></div>
+        <div class="field" style="margin-bottom:8px;"><input type="text" id="newCatEn" dir="ltr" maxlength="22" data-noen placeholder="English name (max 22 letters) — e.g. Home decoration" style="width:100%;box-sizing:border-box;"></div>
           <div class="field" style="margin-bottom:8px;display:flex;gap:8px;align-items:stretch;">
-          <input type="text" id="newCatUr" placeholder="کیٹگری کا نام (اردو) — مثلاً بیکری" style="flex:1;min-width:0;">
+          <input type="text" id="newCatUr" maxlength="16" placeholder="کیٹگری کا نام (اردو، زیادہ سے زیادہ 16 حروف) — مثلاً بیکری" style="flex:1;min-width:0;">
           <button type="button" class="btn accent" style="flex:0 0 auto;padding:0 14px;white-space:nowrap;" onclick="addNewCategory()">➕ محفوظ</button>
         </div>
         <div class="field" style="margin-bottom:4px;">
@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE323";
+const APP_VERSION = "MCS1111WE324";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE324": "✅ کیٹگری: نئی کیٹگری بناتے وقت اردو، انگلش اور ایموجی دو الگ پاپ اپ (انگلش، اردو) بغیر ایموجی، حروف کی حد — دونوں نام محفوظ؛ سب ٹائلز پر انگلش چھوٹی اور اردو بڑی، ایک سائز، کچھ کٹتا نہیں",
   "MCS1111WE323": "✅ کیٹاگری ٹائل: اردو نام اب بڑا اور صاف (باریک نہیں ہوتا)، انگریزی نام الگ سائز میں ٹائل کے اندر فٹ",
   "MCS1111WE322": "✅ کارڈ پر «Earn with MCS / BE AN AGENT» اب زرد رنگ اور خوشخط انداز میں، گہرے پس منظر پر صاف نظر آتا ہے",
   "MCS1111WE321": "✅ کیٹاگری ٹائل: انگریزی نام اوپر بڑا اور اردو نام نیچے چھوٹا، لکھائی ٹائل کے اندر فٹ؛ نئی کیٹاگری میں انگریزی نام کا خانہ",
@@ -8868,7 +8869,7 @@ function renderAdminCategoryList(){
       const c = CATEGORY_META[k];
       const count = store.services.filter(s=>s.category===k).length;
       return `<div style="display:flex;align-items:center;justify-content:space-between;background:#f6f7f9;border-radius:10px;padding:8px 10px;margin-bottom:6px;">
-        <span>${c.emoji||'🏷️'} ${escapeHtml(c.ur)}${count?` <small style="color:var(--muted);">(${count} اندراجات)</small>`:''}</span>
+        <span>${c.emoji||'🏷️'} ${escapeHtml(c.ur)}${c.en?` <small dir="ltr" style="color:var(--muted);">${escapeHtml(c.en)}</small>`:''}${count?` <small style="color:var(--muted);">(${count} اندراجات)</small>`:''}</span>
         <span>
           <button class="btn secondary" style="padding:4px 10px;font-size:12px;" onclick="editCustomCategory('${escapeAttr(k)}')">✏️ ایڈٹ</button>
           <button class="btn secondary" style="padding:4px 10px;font-size:12px;" onclick="moveCategoryGroup('${escapeAttr(k)}')">⇄ ${(c.group||'professional')==='business'?'پروفیشنلز میں':'بزنس میں'}</button>
@@ -8888,6 +8889,7 @@ function applyCatOverrides(){
     const c = CATEGORY_META[k], o = ov[k]; if(!c || !o) return;
     if(o.ur){ c.ur = o.ur; c.listTitle = o.ur + ' کی فہرست'; c.addBtn = 'نیا ' + o.ur + ' شامل کریں'; }
     if(o.emoji) c.emoji = o.emoji;
+    if(o.en) c.en = o.en;
     if(o.group){ c.group = o.group; catTileToGroup(k, o.group); }
     catTileEls(k).forEach(el=>{
       const sp = el.querySelector(':scope > span:not(.cat-count)'); if(sp && o.ur) sp.textContent = o.ur;
@@ -8931,17 +8933,16 @@ function refreshCatHeader(){
 function renameCategory(key){
   if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ اِن کریں'); return; }
   const c = CATEGORY_META[key]; if(!c) return;
-  const newUr = prompt('کیٹگری کا نیا نام:', c.ur); if(newUr===null) return;
-  const newEmoji = prompt('ایموجی (خالی چھوڑیں تو وہی رہے گی):', c.emoji||'🏷️'); if(newEmoji===null) return;
-  const ur = newUr.trim() || c.ur, emoji = newEmoji.trim() || c.emoji || '🏷️';
+  const nm = askCatNames(c); if(!nm) return;
+  const ur = nm.ur, en = nm.en, emoji = nm.emoji;
   const FB = window.MCSFirebase;
   if(!BUILT_IN_CATEGORY_KEYS.includes(key)){
-    Object.assign(c, {ur, emoji, listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں'});
+    Object.assign(c, {ur, en, emoji, listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں'});
     store.customCategories = FB_arrayOfCategories(); saveStore(); renderCustomCategoryTiles();
     if(FB) FB.setDoc(FB.doc(FB.db,'appConfig','categories'), {list: FB_arrayOfCategories()}, {merge:true}).catch(e=>alert('سرور پر محفوظ نہیں ہوا: '+(e.code||e.message)));
   } else {
     store.catOverrides = store.catOverrides || {};
-    store.catOverrides[key] = {...(store.catOverrides[key]||{}), ur, emoji};
+    store.catOverrides[key] = {...(store.catOverrides[key]||{}), ur, en, emoji};
     saveStore(); applyCatOverrides();
     if(FB) FB.setDoc(FB.doc(FB.db,'appConfig','categories'), {overrides: store.catOverrides}, {merge:true}).catch(e=>alert('سرور پر محفوظ نہیں ہوا: '+(e.code||e.message)));
   }
@@ -8963,17 +8964,36 @@ function catLabels(key){
   }
   return out;
 }
+/* MCS1111WE324: کیٹگری کے نام کے تین الگ پاپ اپ — اردو (صرف اردو عبارت)، انگلش (صرف انگلش عبارت)، ایموجی؛ دونوں نام محفوظ ہوتے ہیں */
+const CAT_MAX_EN = 22, CAT_MAX_UR = 16;   /* ٹائل کے ڈبے میں سمانے کی حد: انگلش 22 حروف، اردو 16 حروف */
+function askCatNames(cur){
+  cur = cur || {};
+  function ask(msg, def, max){
+    let v = def || '';
+    for(;;){
+      const r = prompt(msg + ' (زیادہ سے زیادہ ' + max + ' حروف)', v); if(r===null) return null;
+      const t = r.replace(/\s+/g,' ').trim();
+      if(t.length <= max) return t;
+      alert('نام لمبا ہے: ' + t.length + ' حروف۔ ٹائل میں سمانے کے لیے ' + max + ' سے زیادہ نہیں ہو سکتے۔');
+      v = t.slice(0, max);
+    }
+  }
+  const en = ask('انگلش میں کیٹگری کا نام لکھیں — Category name in English', cur.en || '', CAT_MAX_EN); if(en===null) return null;
+  const ur = ask('اردو میں کیٹگری کا نام لکھیں', cur.ur || '', CAT_MAX_UR); if(ur===null) return null;
+  if(!ur){ showToast('اردو نام لکھنا ضروری ہے'); return null; }
+  return {ur, en: en || (window.mcsCatEnOf ? (window.mcsCatEnOf(ur) || '') : ''), emoji: cur.emoji || '🏷️'};
+}
 function quickAddCategory(group){
   if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ اِن کریں'); return; }
   const FB = window.MCSFirebase;
   if(!FB){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
   const base = CATEGORY_META[currentServiceCategory] || {};
   group = group || base.group || 'business';
-  const ur = (prompt('نئی کیٹگری کا نام (مثلاً الیکٹرانکس شاپ):', '')||'').trim(); if(!ur) return;
-  const emoji = (prompt('ایموجی (خالی چھوڑ دیں تو 🏷️):', '')||'').trim() || '🏷️';
+  const nm = askCatNames({}); if(!nm) return;
+  const ur = nm.ur, en = nm.en, emoji = nm.emoji;
   if(CATEGORY_KEYS.some(k=>CATEGORY_META[k] && CATEGORY_META[k].ur===ur)){ alert('اس نام کی کیٹگری پہلے سے موجود ہے'); return; }
   const key = 'cat_' + Date.now();
-  const cat = {key, group, emoji, ur, nameLabel: group==='business' ? 'دکان کا نام' : 'نام', typeLabel: group==='business' ? 'زمرہ / قسم' : 'شعبہ / قسم',
+  const cat = {key, group, emoji, ur, en, nameLabel: group==='business' ? 'دکان کا نام' : 'نام', typeLabel: group==='business' ? 'زمرہ / قسم' : 'شعبہ / قسم',
     listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں', addOptLabel: 'نئی قسم'};
   applyCustomCategories([cat]);
   renderCustomCategoryTiles();
@@ -8985,13 +9005,9 @@ function quickAddCategory(group){
 function editCustomCategory(key){
   const c = CATEGORY_META[key];
   if(!c) return;
-  const newUr = prompt('کیٹگری کا نام:', c.ur);
-  if(newUr===null) return;
-  const newEmoji = prompt('ایموجی:', c.emoji||'🏷️');
-  if(newEmoji===null) return;
-  const ur = newUr.trim() || c.ur;
-  const emoji = newEmoji.trim() || c.emoji || '🏷️';
-  Object.assign(c, {ur, emoji, listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں'});
+  const nm = askCatNames(c); if(!nm) return;
+  const ur = nm.ur, en = nm.en, emoji = nm.emoji;
+  Object.assign(c, {ur, en, emoji, listTitle: ur + ' کی فہرست', addBtn: 'نیا ' + ur + ' شامل کریں'});
   store.customCategories = FB_arrayOfCategories();
   saveStore();
   renderCustomCategoryTiles();
@@ -9033,6 +9049,7 @@ function addNewCategory(){
   const typeLabel = document.getElementById('newCatTypeLabel').value.trim() || 'قسم';
   const group = document.getElementById('newCatGroup').value || 'professional';
   if(!ur){ showToast('کیٹگری کا نام لکھیں'); return; }
+  if(ur.length > CAT_MAX_UR || en.length > CAT_MAX_EN){ showToast('نام لمبا ہے — اردو ' + CAT_MAX_UR + ' اور انگلش ' + CAT_MAX_EN + ' حروف تک'); return; }
   const FB = window.MCSFirebase;
   if(!FB){ showToast('انٹرنیٹ کنکشن درکار ہے'); return; }
   const key = 'cat_' + Date.now();
@@ -9075,7 +9092,7 @@ function categoryOptionsHtml(selected){
     ? (a,b)=>(CATEGORY_META[a].ur||'').localeCompare(CATEGORY_META[b].ur||'','ur')
     : (a,b)=>(catKeyTime(b)-catKeyTime(a)) || (idx(b)-idx(a));
   grp.professional.sort(sorter); grp.business.sort(sorter);
-  const opt = k=>`<option value="${escapeAttr(k)}"${k===selected?' selected':''}>${escapeHtml((CATEGORY_META[k].emoji||'🏷️')+' '+CATEGORY_META[k].ur)}</option>`;
+  const opt = k=>`<option value="${escapeAttr(k)}"${k===selected?' selected':''}>${escapeHtml((CATEGORY_META[k].emoji||'🏷️')+' '+CATEGORY_META[k].ur+(CATEGORY_META[k].en?' · '+CATEGORY_META[k].en:''))}</option>`;
   /* MCS2310FR053: ڈاکٹرز الگ فہرست ہیں، کیٹگری نہیں — پھر بھی یہاں نظر آئیں تاکہ ریکارڈ ڈاکٹرز میں منتقل ہو سکے */
   const docOpt = `<option value="__doctor__">🩺 ڈاکٹرز</option>`;
   const proOpts = grp.professional.map(k=>({k, ur:CATEGORY_META[k].ur||'', html:opt(k)}));
@@ -20025,9 +20042,11 @@ html body .doc-card .fp-card .fp-ct span.on:not(.fp-ea){color:#fde68a}
 </style>
 <style id="mcsCatBi321">
 /* MCS1111WE323: ہر ٹائل پر انگریزی نام اوپر (حد کے اندر) + اردو نام نیچے صاف اور بڑا؛ دونوں کا سائز الگ الگ فٹ ہوتا ہے، اردو کو باریک نہیں کرتا */
-html body .cat-grid .cat-item{overflow:hidden !important;min-width:0 !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important}
-html body .cat-grid .cat-item > span:not(.cat-count){display:block !important;box-sizing:border-box !important;width:100% !important;max-width:100% !important;padding:0 3px !important;text-align:center !important;direction:ltr !important;white-space:normal !important;overflow:hidden !important;overflow-wrap:normal !important;word-break:normal !important;hyphens:none !important;max-height:none !important;line-height:1.12 !important;font-size:var(--cen,16px) !important}
-html body .cat-grid .cat-item > .cat-ur{display:block !important;box-sizing:border-box !important;width:100% !important;padding:0 3px !important;margin-top:1px !important;text-align:center !important;direction:rtl !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-style:normal !important;font-weight:700 !important;line-height:1.7 !important;color:#16324d !important;text-shadow:0 1px 0 rgba(255,255,255,.75) !important;font-size:var(--cur,15px) !important}
+/* MCS1111WE324: سب ٹائلز پر ایک ہی سائز — انگلش چھوٹی (11px)، اردو بڑی (17px)؛ کچھ کٹتا نہیں، لمبا نام اگلی لائن میں آتا ہے اور ٹائل خود اونچا ہو جاتا ہے */
+html body .cat-grid{grid-auto-rows:minmax(118px,auto) !important}
+html body .cat-grid .cat-item{height:auto !important;min-height:118px !important;box-sizing:border-box !important;padding:8px 4px 38px !important;overflow:visible !important;min-width:0 !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important}
+html body .cat-grid .cat-item > span:not(.cat-count){display:block !important;box-sizing:border-box !important;width:100% !important;max-width:100% !important;padding:0 2px !important;text-align:center !important;direction:ltr !important;white-space:normal !important;overflow:visible !important;overflow-wrap:anywhere !important;word-break:normal !important;hyphens:none !important;max-height:none !important;line-height:1.2 !important;font-size:11px !important;font-weight:700 !important;letter-spacing:0 !important}
+html body .cat-grid .cat-item > .cat-ur{display:block !important;box-sizing:border-box !important;width:100% !important;max-width:100% !important;padding:0 2px !important;margin-top:2px !important;text-align:center !important;direction:rtl !important;white-space:normal !important;overflow:visible !important;overflow-wrap:break-word !important;text-overflow:clip !important;font-style:normal !important;font-weight:700 !important;line-height:1.7 !important;color:#16324d !important;text-shadow:0 1px 0 rgba(255,255,255,.75) !important;font-size:17px !important}
 html.mcs-dark body .cat-grid .cat-item > .cat-ur{color:#c9dcef !important;text-shadow:none !important}
 </style>
 <style id="mcsPfFit320">
@@ -20107,7 +20126,8 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
 <script id="mcsCatBi321js">
 (function(){
   var AR = /[\u0600-\u06FF]/;
-  var EXTRA = {'ہوم ڈیکوریشن':'Home decoration','ہول سیل ڈیلر':'Wholesale dealer','ہول سیل':'Wholesale','ڈیکوریشن':'Decoration'};
+  var EXTRA = {'ہوم ڈیکوریشن':'Home decoration','ہول سیل ڈیلر':'Wholesale dealer','ہول سیل':'Wholesale','ڈیکوریشن':'Decoration','پراپرٹی ڈیلر':'Property dealer','موبائل شاپس':'Mobile shops','جوتوں کی دکان':'Shoe shop','سبزی فروٹ':'Vegetable & fruit','سیل اینڈ سپلائی':'Sale & supply','ٹرانسپورٹ':'Transport','خراد':'Lathe workshop','غیر مختص':'Unassigned'};
+  var WORDS = {'ڈیلر':'Dealer','پراپرٹی':'Property','موبائل':'Mobile','شاپس':'Shops','شاپ':'Shop','دکان':'Shop','دکانیں':'Shops','جوتوں':'Shoe','سبزی':'Vegetable','فروٹ':'Fruit','سیل':'Sale','اینڈ':'&','سپلائی':'Supply','ٹرانسپورٹ':'Transport','لیب':'Lab','سٹور':'Store','رینٹ':'Rent','گاڑی':'Car','گاڑیاں':'Cars','رکشہ':'Rickshaw','ٹنٹ':'Tint','سروسز':'Services','ڈیکور':'Decor','ڈیکوریشن':'Decoration','خراد':'Lathe','کریانہ':'Grocery','کپڑوں':'Clothes','کپڑے':'Clothes','فرنیچر':'Furniture','بیکری':'Bakery','ہوٹل':'Hotel','ریسٹورنٹ':'Restaurant','میڈیکل':'Medical','ہارڈویئر':'Hardware','جنرل':'General','دیگر':'Other','و':'&','اور':'&','ایجنٹ':'Agent','الیکٹرانکس':'Electronics','الیکٹریشن':'Electrician','پلمبر':'Plumber','ٹیوشن':'Tuition','استاد':'Teacher','سرکاری':'Government','دفاتر':'Offices','ایمرجنسی':'Emergency','نمبرز':'Numbers','ڈاکٹرز':'Doctors','آٹو':'Auto','پارٹس':'Parts','جیولری':'Jewellery','ہومیوپیتھک':'Homeopathic','ہوم':'Home','ٹیسٹنگ':'Testing','ہول':'Whole','کی':'','کا':'','کے':'','/':'/','-':'-','&':'&'};
   var RM = {'ا':'a','آ':'aa','ب':'b','پ':'p','ت':'t','ٹ':'t','ث':'s','ج':'j','چ':'ch','ح':'h','خ':'kh','د':'d','ڈ':'d','ذ':'z','ر':'r','ڑ':'r','ز':'z','ژ':'zh','س':'s','ش':'sh','ص':'s','ض':'z','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ک':'k','گ':'g','ل':'l','م':'m','ن':'n','ں':'n','و':'o','ہ':'h','ھ':'h','ء':'','ی':'i','ے':'e','ئ':'i','ۃ':'h','ؤ':'o','ۓ':'e','ي':'i','ك':'k'};
   function roman(u){ return u.split(/\s+/).map(function(w){ var r = ''; for(var i=0;i<w.length;i++){ var c = w[i]; r += (c in RM) ? RM[c] : (/[\u064B-\u065F\u0670\u200c\u200d]/.test(c) ? '' : c); } return r ? r.charAt(0).toUpperCase() + r.slice(1) : ''; }).join(' ').trim(); }
   var REV = null;
@@ -20118,8 +20138,10 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
     if(m && m.en) return m.en;
     if(EXTRA[ur]) return EXTRA[ur];
     try{ if(window.mcsEn){ var e = window.mcsEn(ur); if(e && !AR.test(e)) return e; } }catch(x){}
-    return roman(ur);
+    var out = ur.split(/\s+/).map(function(w){ var k = w.replace(/[\u064B-\u065F\u0670\u200c\u200d]/g,''); if(k in WORDS) return WORDS[k]; return roman(w); }).filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+    return out || roman(ur);
   }
+  window.mcsCatEnOf = function(ur){ try{ return enOf(String(ur||'').trim(), null); }catch(e){ return ''; } };
   function build(t){
     var sp = t.querySelector(':scope > span:not(.cat-count)'); if(!sp || sp.classList.contains('cat-ur')) return;
     var txt = (sp.textContent || '').trim(); if(!txt) return;
@@ -20136,19 +20158,7 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
       if(u.textContent !== ur) u.textContent = ur;
     } else if(u){ u.remove(); }
   }
-  function fit(t){
-    var sp = t.querySelector(':scope > span:not(.cat-count)'); if(!sp) return;
-    var u = t.querySelector(':scope > .cat-ur'), c = t.querySelector(':scope > .cat-count');
-    var en = 16, ur = 15;
-    function set(){ t.style.setProperty('--cen', en + 'px'); t.style.setProperty('--cur', ur + 'px'); }
-    function wide(){ return sp.scrollWidth > sp.clientWidth + 1; }
-    function high(){ if(t.scrollHeight > t.clientHeight + 1) return true; if(c){ var lim = c.getBoundingClientRect().top - 1, last = (u || sp).getBoundingClientRect().bottom; if(last > lim) return true; } return false; }
-    set();
-    var g = 0;
-    while(en > 9 && g++ < 40 && (wide() || high())){ en -= 0.5; set(); }
-    g = 0; while(u && ur > 12 && g++ < 20 && u.scrollWidth > u.clientWidth + 1){ ur -= 0.5; set(); }
-    g = 0; while(en > 8 && g++ < 20 && (wide() || high())){ en -= 0.5; set(); if(u && ur > 12 && high()){ ur -= 0.5; set(); } }
-  }
+  function fit(t){ t.style.removeProperty('--cen'); t.style.removeProperty('--cur'); }   /* MCS1111WE324: سائز ثابت، فٹ کرنے کے لیے چھوٹا نہیں کرتے */
   function run(){ try{ document.querySelectorAll('.cat-grid .cat-item').forEach(function(t){ build(t); }); document.querySelectorAll('.cat-grid .cat-item').forEach(function(t){ if(t.offsetParent !== null) fit(t); }); }catch(e){} }
   var tm = 0; function later(d){ clearTimeout(tm); tm = setTimeout(run, d || 150); }
   window.mcsCatBiRun = run;
