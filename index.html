@@ -4218,10 +4218,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE308";
+const APP_VERSION = "MCS1111WE309";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE309": "❓ غیر مختص: ہر ریکارڈ کا پورا اصلی کارڈ (نام، دکاندار، قسم، نمبر، پتہ، تعارف) اور نیچے «کیٹگری تبدیل کریں / نئی کیٹگری» — کسی اور فارم پر جانا نہیں پڑتا",
   "MCS1111WE308": "📍 ضلع / صوبہ کی فہرست ہر فارم اور تلاش میں ایک جیسی: انگریزی A→Z بائیں، اردو نوری نستعلیق کشیدہ دائیں، تنگ چوڑائی",
   "MCS1111WE307": "📍 سائن اپ کی ضلع فہرست: انگریزی نام A سے Z ترتیب میں (بائیں)، اردو نوری نستعلیق کشیدہ میں (دائیں)، فہرست کی چوڑائی کم",
   "MCS1111WE306": "❓ غیر مختص: کارڈ یا لائن کو کہیں سے بھی ٹچ کریں تو ریکارڈ کی تفصیل کے ساتھ کیٹگری چننے والی ڈراپ ڈاؤن سامنے آ جاتی ہے",
@@ -9900,7 +9901,7 @@ function fillTajCats(){
 const UNASSIGNED_KEY = 'cat_unassigned';
 
 /* ===== MCS1111WE301 (مالک کا حکم): «❓ غیر مختص» — سب آئٹم ایک ایک لائن میں، ہر ایک کے ساتھ کیٹگری چننے کا خانہ؛ چنتے ہی کارڈ اسی کیٹگری میں چلا جائے ===== */
-let unQ = '', unLimit = 200;
+let unQ = '', unLimit = 25;
 function unRecs(){ return (store.services || []).filter(x => x.category === UNASSIGNED_KEY); }
 function unCatOpts(){
   if(unCatOpts._h) return unCatOpts._h;
@@ -9911,33 +9912,23 @@ function unCatOpts(){
   return unCatOpts._h = '<option value="">— کیٹگری چنیں —</option>' + (biz.length ? '<optgroup label="کاروبار">' + biz.map(opt).join('') + '</optgroup>' : '') + (oth.length ? '<optgroup label="پیشہ ور / دیگر">' + oth.map(opt).join('') + '</optgroup>' : '');
 }
 function unRow(r){
-  const E = escapeHtml, nm = r.nameUr || r.name || '', ph = String(r.whatsapp || r.phone || '').replace(/\D/g, '').slice(-10);
-  const on = (typeof splitOwnerIntro === 'function') ? splitOwnerIntro(r.intro) : {owner:'', rest:String(r.intro || '')};
-  const place = [r.area, r.city, r.district].filter(Boolean).join('، ');
-  const cap = (ic, t, cls) => t ? `<span class="un-cap ${cls || ''}"><i>${ic}</i>${E(String(t))}</span>` : '';
-  const caps = [
-    cap('🔤', r.nameEn && r.nameEn !== nm ? r.nameEn : '', 'en'),
-    cap('👤', on.owner, 'ow'),
-    cap('📞', ph ? '0' + ph : '', 'ph'),
-    cap('🏷️', r.type, 'ty'),
-    cap('📍', r.address, 'ad'),
-    cap('🗺️', place, 'pl'),
-    cap('📝', on.rest, 'nt')
-  ].join('');
-  return `<div class="un-row" id="un_${escapeAttr(r.id)}" onclick="unPick('${escapeAttr(r.id)}')"><b class="un-nm">${E(nm)}</b>${caps}<button type="button" class="un-chg" onclick="event.stopPropagation();unPick('${escapeAttr(r.id)}')">🔁 کیٹگری تبدیل کریں</button></div>`;
+  const id = escapeAttr(r.id);
+  let card = '';
+  try{ card = svcCardHtml(r, CATEGORY_META[UNASSIGNED_KEY] || {emoji:'❓'}); }catch(e){ card = `<div class="cp-hint">${escapeHtml(r.nameUr || r.name || '')}</div>`; }
+  return `<div class="un-row un-full" id="un_${id}">${card}<button type="button" class="un-chg un-bigbtn" onclick="unPick('${id}')">🔁 کیٹگری تبدیل کریں / نئی کیٹگری</button></div>`;
 }
 function unList(){
   const q = ubNorm(unQ), all = unRecs();
   const hit = q ? all.filter(r => ubNorm([r.nameUr, r.name, r.nameEn, r.intro, r.whatsapp, r.type, r.address, r.area, r.city].filter(Boolean).join(' ')).includes(q)) : all;
   const box = document.getElementById('unList'), cnt = document.getElementById('unCnt'); if(!box) return;
   cnt.textContent = all.length;
-  box.innerHTML = hit.length ? hit.slice(0, unLimit).map(unRow).join('') + (hit.length > unLimit ? `<button type="button" class="btn block secondary" onclick="unLimit+=200;unList()">▼ مزید (${hit.length - unLimit} باقی)</button>` : '') : `<div class="cp-hint" style="text-align:center">${all.length ? '🔎 کچھ نہیں ملا' : '🎉 کوئی غیر مختص نہیں بچا'}</div>`;
+  box.innerHTML = hit.length ? hit.slice(0, unLimit).map(unRow).join('') + (hit.length > unLimit ? `<button type="button" class="btn block secondary" onclick="unLimit+=25;unList()">▼ مزید (${hit.length - unLimit} باقی)</button>` : '') : `<div class="cp-hint" style="text-align:center">${all.length ? '🔎 کچھ نہیں ملا' : '🎉 کوئی غیر مختص نہیں بچا'}</div>`;
 }
 function unOpen(){
   if(!isAdminSignedIn){ showToast('🔒 پہلے ایڈمن لاگ اِن کریں'); return; }
-  unQ = ''; unLimit = 200;
+  unQ = ''; unLimit = 25;
   agModal(`<div class="ag-hd">❓ غیر مختص <small>باقی: <b id="unCnt">0</b> — کیٹگری چنیں، کارڈ وہیں چلا جائے گا</small></div>
-    <div style="display:flex;gap:6px;align-items:center;margin:4px 0 6px"><input type="search" class="ag-q" style="flex:1;margin:0" placeholder="🔍 نام، دکاندار، نمبر…" oninput="unQ=this.value;unLimit=200;unList()"><button type="button" class="un-new" style="flex:0 0 auto;margin:0" onclick="unPick(null)">➕ نئی کیٹگری</button></div><div id="unList"></div>
+    <input type="search" class="ag-q" style="width:100%;margin:4px 0 6px;box-sizing:border-box" placeholder="🔍 نام، دکاندار، نمبر، پتہ…" oninput="unQ=this.value;unLimit=25;unList()"><button type="button" class="un-new" onclick="unPick(null)">➕ نئی کیٹگری بنائیں</button><div id="unList"></div>
     <button type="button" class="btn block secondary" onclick="closeModal('agModal')">بند کریں</button>`);
   unList();
 }
@@ -19834,6 +19825,11 @@ html body .doc-card[data-unid]{cursor:pointer;outline:2px dashed #0f766e;outline
 .ub-en{font-style:normal;direction:ltr;unicode-bidi:isolate;font-family:MCSDigits,'Segoe UI',Roboto,Arial,sans-serif;font-size:11.5px;font-weight:700;color:#475569;margin-inline-end:6px}
 .ub-ur{font-family:MCSDigits,'Jameel Noori Nastaleeq Regular',serif;font-size:1.1em}
 #bzDist + .csel-btn, .bzf-grid .csel-wrap{min-width:0}
+
+/* MCS1111WE309: غیر مختص میں اصلی کارڈ پورا — تفصیل سمیت */
+.un-row.un-full{display:block;padding:0 0 12px;border:0}
+.un-row.un-full .doc-card{margin-bottom:6px}
+.un-bigbtn{display:block;width:100%;margin:0 0 4px !important;padding:8px 10px;font-size:17px;border-radius:14px}
 </style>
 <script>
 /* MCS1111WE304 (#218): Help Desk بٹن (ہیڈ سیٹ) اور Favorites (ستارہ) پٹی میں؛ چنا ہوا بٹن روشن — ہوم، پسندیدہ، چیٹ، پورٹل، اکاؤنٹ، سیٹنگ، ہیلپ ڈیسک */
