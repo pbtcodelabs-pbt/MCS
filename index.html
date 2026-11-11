@@ -2837,7 +2837,7 @@ body.cdOn{padding-top:30px}
   <!-- MCS0311TU126 (ہیلپ ڈیسک #35، مالک: ڈیزائن 2 جیسی نیچے کی پٹی) — پرانے بٹن DOM میں ہیں مگر body.d2 میں چھپے -->
   <button type="button" class="d2n on" id="d2nHome" onclick="navPress(goHome)" aria-label="ہوم"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><b>Home</b><span>ہوم</span></button>
   <button type="button" class="d2n" id="d2nExp" onclick="navPress(srOpen)" aria-label="تلاش"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><b>Explore</b><span>تلاش</span></button>
-  <button type="button" class="d2n d2n-add" onclick="d2AddOpen()" aria-label="ممبرشپ بنائیں"><i>＋</i><b>Membership</b><span>ممبرشپ بنائیں</span></button>
+  <button type="button" class="d2n d2n-add" id="d2nAddNew" onclick="d2AddOpen()" aria-label="نیا کاروبار / پروفیشنل شامل کریں"><i>＋</i><b>Add New</b><span>نیا شامل کریں</span></button>
   <button type="button" class="d2n" id="d2nFav" onclick="navPress(()=>goScreen('favorites'))" aria-label="پسندیدہ"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><b>Favorites</b><span>پسندیدہ</span></button>
   <!-- MCS0911MO250 (ہیلپ ڈیسک #114، مالک کا حکم): نیچے کی پٹی — My Portal (کاروبار کا انتظام)، Home، My Account (ذاتی)، Settings؛ 💬 My Chats بعد میں -->
   <button type="button" class="d2n" id="d2nPortal" onclick="navPress(mpoOpen)" aria-label="میرا پورٹل"><svg viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9h16v2a2.5 2.5 0 0 1-5 0 2.5 2.5 0 0 1-5 0 2.5 2.5 0 0 1-5 0z"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/></svg><b>My Portal</b><span>میرا پورٹل</span></button>
@@ -2974,9 +2974,6 @@ body.cdOn{padding-top:30px}
       <div class="qt" style="--c:#C8412F;--bg:#fde8ea;--ic:#dc2626" onclick="openServiceCategory('emergencyNumbers')">
         <span class="qt-n" id="homeCount_emg">0</span><span class="qt-ic">🚨</span><span class="qt-t"><b>ہنگامی نمبرز</b><small>Emergency</small></span>
       </div>
-      <div class="qt" style="--c:#B27A06;--bg:#fdf3dc;--ic:#d97706" onclick="goScreen('favorites')">
-        <span class="qt-n" id="homeCount_fav">0</span><span class="qt-ic">⭐</span><span class="qt-t"><b>پسندیدہ</b><small>Favorites</small></span>
-      </div>
       <div class="qt" style="--c:#5A47C2;--bg:#efeafd;--ic:#7c3aed" onclick="openDevChat()">
         <span class="qt-ic">🎧</span><span class="qt-t"><b>مدد / رہنمائی</b><small>Help Desk</small></span>
       </div>
@@ -2990,7 +2987,7 @@ body.cdOn{padding-top:30px}
     <!-- MCS0511TH137 (مالک کا حکم): ہوم پر بڑا واضح تلاش کا بٹن → پورا الگ تلاش صفحہ (srOpen) -->
     <!-- MCS0811SU243 (ہیلپ ڈیسک #113، #117): Earn with MCS اور تلاش ایک ہی قطار میں آدھے آدھے -->
     <!-- MCS1111WE304 (ہیلپ ڈیسک #220، کو-ڈویلپر کا ڈیزائن، مالک کا ⚡): تین برابر بٹن — بائیں سے ایمرجنسی نمبرز (سرخ)، تلاش (سبز)، Earn with MCS (نیلا)؛ اوپر انگریزی، نیچے اردو -->
-    <div class="hm-row2 hm3" dir="ltr"><button type="button" class="hm-emg" onclick="openServiceCategory('emergencyNumbers')"><span class="hm-i">🚨</span><span class="hm-t"><b>Emergency Numbers</b><small>ایمرجنسی نمبرز</small></span></button>
+    <div class="hm-row2 hm3" dir="ltr"><button type="button" class="hm-fav" onclick="goScreen('favorites')"><span class="hm-i">⭐</span><span class="hm-t"><b>Favorites <span class="hm-cnt" id="homeCount_fav">0</span></b><small>پسندیدہ</small></span></button>
     <button type="button" class="sr-home hm-srch" onclick="srOpen()"><span class="sr-hi">🔍</span><span class="sr-ht"><b>Searches</b><small>تلاش کریں</small></span></button>
     <button type="button" class="hm-earn" onclick="agEarnOpen()"><span class="hm-i">💰</span><span class="hm-t"><b>Earn with MCS</b><small>ایم سی ایس کے ساتھ کمائیں</small></span></button></div>
     <section class="bp" id="bizPromo"></section>
@@ -4320,10 +4317,12 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE312";
+const APP_VERSION = "MCS1111WE314";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE314": "🧹 Home: the duplicate Emergency tile removed — only one Emergency button remains",
+  "MCS1111WE313": "🔁 Home: Favorites and Emergency Numbers swapped places • ＋ Add New button in the bottom bar (replaces Favorites) — opens Business / Professional entry",
   "MCS1111WE312": "🆔 New ID system: Account MCS-001, subscription MCS-001-01, agent AG-001 • Sign up with only name, mobile and PIN (no Gmail), Remember me, your card is created automatically",
   "MCS1111WE311": "📝 Form boxes now all the same size — title strip and entry box same width and height",
   "MCS1111WE310": "🌐 The whole app is now in English (Segoe UI font) — form fields show English with a small Urdu caption; you can still type in Urdu or English, records stay as they are",
@@ -20012,6 +20011,15 @@ html body .fm-body .field>input:not([type=checkbox]):not([type=radio]):not([type
 html body .fm-body .field-with-add{display:flex!important;gap:6px!important;align-items:center!important;width:100%!important}
 html body .fm-body .field-with-add>input,html body .fm-body .field-with-add>select{flex:1 1 auto!important;min-width:0!important}
 html body .fm-body .field>textarea{width:100%!important;box-sizing:border-box!important;min-height:84px!important;font-size:15px!important;padding:8px 12px!important;border-radius:10px!important}
+</style>
+<style id="mcsHomeSwap313">
+/* MCS1111WE313 (مالک کا حکم): ہوم پر Favorites اور Emergency Numbers کی جگہ آپس میں بدلی؛ نیچے کی پٹی میں Favorites کی جگہ ＋ (نیا بزنس / پروفیشنل) */
+.hm3 .hm-fav{background:linear-gradient(180deg,#f59e0b,#b45309)!important;box-shadow:0 8px 18px rgba(180,83,9,.32)!important}
+.hm3 .hm-fav .hm-cnt{display:inline-block;min-width:18px;padding:0 5px;border-radius:999px;background:#fff;color:#0b2a44;font:800 11px/17px Arial,sans-serif;text-align:center;vertical-align:middle}
+body.d2 .bnav #d2nFav{display:none !important}
+body.d2 .bnav #d2nAddNew{display:flex !important;order:5 !important}
+body.d2 .bnav #d2nAddNew i{display:block !important;width:28px;height:26px;border-radius:9px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;font:900 22px/26px Arial,sans-serif;text-align:center;font-style:normal}
+body.d2 .bnav #d2nAddNew svg{display:none !important}
 </style>
 </body>
 </html>
