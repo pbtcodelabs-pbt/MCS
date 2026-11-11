@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE325";
+const APP_VERSION = "MCS1111WE329";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE329": "🔤 Developer code is now DEV, Co-Developer code is CODEV • Category list A→Z in English with Urdu beside it • Agent list: DEV / CODEV / PBT on top, then AG-001, AG-002… in order",
   "MCS1111WE325": "🟩 Category cards are always square and the same size — text fits inside (never cut, card never stretches) • choose 1 / 2 / 3 / 4 cards per row",
   "MCS1111WE324": "✅ کیٹگری: نئی کیٹگری بناتے وقت اردو، انگلش اور ایموجی دو الگ پاپ اپ (انگلش، اردو) بغیر ایموجی، حروف کی حد — دونوں نام محفوظ؛ سب ٹائلز پر انگلش چھوٹی اور اردو بڑی، ایک سائز، کچھ کٹتا نہیں",
   "MCS1111WE323": "✅ کیٹاگری ٹائل: اردو نام اب بڑا اور صاف (باریک نہیں ہوتا)، انگریزی نام الگ سائز میں ٹائل کے اندر فٹ",
@@ -4854,7 +4855,7 @@ function pfFieldsFill(pre, prof, rec){
   pfEd[pre] = {imgs: Array.from({length:PF_MAX_IMGS}, ()=>null), del:{}, slot:0, thumb:(rec && rec.more && rec.more.selfie) || '', thumbChanged:false};
   (prof && prof.imgs || []).forEach(x=>{ const slot = +String(x.id).split('_').pop(); if(slot >= 0 && slot < PF_MAX_IMGS) pfEd[pre].imgs[slot] = {id:x.id, ts:x.ts, src:'', changed:false}; });
   const set = (id, v)=>{ const e = document.getElementById(pre + id); if(e) e.value = v || ''; };
-  set('About', d.about); set('Hours', d.hours); set('Off', d.off); set('Ref', d.ref && d.ref !== 'PBT' ? d.ref : '');
+  set('About', d.about); set('Hours', d.hours); set('Off', d.off); set('Ref', d.ref && d.ref !== 'PBT' ? refN(d.ref) : '');
   if(pre === 'pfE'){ const rf = document.getElementById('pfERef'); if(rf){ const fld = rf.closest('.field'); if(fld) fld.style.display = (isAdminSignedIn || !(d.ref && d.ref !== 'PBT')) ? '' : 'none'; } }
   const box = document.getElementById(pre + 'Items'); box.innerHTML = '';
   (d.items && d.items.length ? d.items : [{},{}]).forEach(x=>pfAddItem(pre, x));
@@ -4865,7 +4866,7 @@ function pfFieldsRead(pre){
   const v = id=>((document.getElementById(pre + id)||{}).value||'').trim();
   const items = Array.from(document.querySelectorAll('#' + pre + 'Items .pf-irow')).map(r=>{ const i = r.querySelectorAll('input'); return {n:i[0].value.trim(), p:i[1].value.trim()}; }).filter(x=>x.n);
   const data = {about:v('About'), hours:v('Hours'), off:v('Off'), items};
-  if(pre === 'pfE' && v('Ref')) data.ref = /^pbt/i.test(v('Ref')) ? v('Ref').toUpperCase().replace(/\s+/g,'') : (agNormCode(v('Ref')) || v('Ref'));   /* MCS0511TH158: PBT-D ڈویلپر / PBT-C کو-ڈویلپر */
+  if(pre === 'pfE' && v('Ref')) data.ref = OWN_REF_RX.test(v('Ref').replace(/\s+/g,'')) ? refN(v('Ref')) : (agNormCode(v('Ref')) || v('Ref'));   /* MCS0511TH158: DEV ڈویلپر / CODEV کو-ڈویلپر */
   if(pre === 'pfE' && data.ref){ try{ const n1 = rpkNameOf(data.ref); if(n1) data.refName = n1; }catch(e){} }   /* MCS1011TU280 */
   const S = pfEd[pre] || {imgs:[], del:{}};
   const imgs = {}; S.imgs.forEach((x,i)=>{ if(x && x.changed) imgs[i] = x.src; }); Object.keys(S.del||{}).forEach(i=>{ if(!S.imgs[i]) imgs[i] = null; });
@@ -5027,7 +5028,7 @@ async function pfSubmit(kind, rec, pre){
   const r = await fetch(PF_API + '/psave', {method:'POST', headers, body: JSON.stringify({rec: rk, key: auth.key || '', data, imgs})});
   const j = await r.json(); if(!j.ok) throw new Error(j.error || 'net');
   try{ rpkSyncRec(rec, kind, data.ref); }catch(e){}   /* MCS1011TU280: پروفائل میں ریفرل بدلا تو ریکارڈ میں بھی */
-  if(!/^PBT/.test(data.ref) && data.ref !== oldRef){ try{ fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: data.ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(kind==='doctor' ? 'doctor' : rec.category)||{}).ur||'', city: rec.city||''})}).then(x=>x.json()).then(x=>{ if(x && x.ok === false && x.reason === 'bad_code') showToast('⚠️ ریفرل کوڈ «' + data.ref + '» نہیں ملا — درست کوڈ لکھیں یا خالی چھوڑیں', 5000); }).catch(()=>{}); }catch(e){} }
+  if(!OWN_REF_RX.test(data.ref) && data.ref !== oldRef){ try{ fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: data.ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(kind==='doctor' ? 'doctor' : rec.category)||{}).ur||'', city: rec.city||''})}).then(x=>x.json()).then(x=>{ if(x && x.ok === false && x.reason === 'bad_code') showToast('⚠️ ریفرل کوڈ «' + data.ref + '» نہیں ملا — درست کوڈ لکھیں یا خالی چھوڑیں', 5000); }).catch(()=>{}); }catch(e){} }
   if(pfAct[rk]) pfAct[rk].ts = j.ts; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
   try{ const S = pfEd[pre]; if(S && S.thumbChanged){ rec.more = rec.more || {}; if(S.thumb) rec.more.selfie = S.thumb; else delete rec.more.selfie; S.thumbChanged = false; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); } }catch(e){}   /* MCS0711SA194 */
   return {ok:true};
@@ -7079,7 +7080,7 @@ function saveDoctor(approve){
     data.approved = !!isAdminSignedIn; // MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور؛ باقی سب ایڈمن کی منظوری کے بعد
     store.doctors.push(data);
     syncDoctorCreateToFirebase(data);
-    if(codevOn()){ const _c = codevMe() || {}; data.more = {ref:'PBT-C', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}; setTimeout(()=>pushMoreToFirebase('doctors', data.fsId || data.id, data.more), 2500); setTimeout(()=>showToast('👥 ڈویلپر کی منظوری کے لیے بھیج دیا ✓', 4000), 600); } else if(pbStampRef(data)){ setTimeout(()=>{ try{ pushMoreToFirebase('doctors', data.fsId || data.id, data.more); }catch(e){} }, 2500); }
+    if(codevOn()){ const _c = codevMe() || {}; data.more = {ref:'CODEV', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}; setTimeout(()=>pushMoreToFirebase('doctors', data.fsId || data.id, data.more), 2500); setTimeout(()=>showToast('👥 ڈویلپر کی منظوری کے لیے بھیج دیا ✓', 4000), 600); } else if(pbStampRef(data)){ setTimeout(()=>{ try{ pushMoreToFirebase('doctors', data.fsId || data.id, data.more); }catch(e){} }, 2500); }
     try{ mpAfterSave('doctor', data); }catch(e){}
   }
   saveStore();
@@ -9083,22 +9084,23 @@ let editingServiceId = null;
 /* MCS410SU002: کیٹگری کی فہرست — پروفیشنلز اور بزنس الگ گروپ میں */
 /* MCS1310TU007: کیٹگری کی فہرست کی ترتیب — نئی اوپر یا الف سے ی؛ موجودہ کیٹگری کا گروپ پہلے */
 let catPickSort = 'az';   /* MCS2310FR053: پہلے سے ا سے ی — ترتیب سے ڈھونڈنا آسان */
-try{ catPickSort = localStorage.getItem('mcsCatPickSort2') || 'az'; }catch(e){}
+try{ catPickSort = localStorage.getItem('mcsCatPickSort3') || 'az'; }catch(e){}   /* MCS1111WE329: نیا پہلے سے A→Z */
 function catKeyTime(k){ const m = String(k).match(/^cat_(\d+)/); return m ? +m[1] : 0; }
+const catEn = k => String((CATEGORY_META[k] && CATEGORY_META[k].en) || (window.mcsEn ? window.mcsEn((CATEGORY_META[k]||{}).ur || '') : '') || '').trim();   /* MCS1111WE329: کیٹگری انگلش A→Z، سامنے اردو */
 function categoryOptionsHtml(selected){
   const grp = {professional:[], business:[]};
   CATEGORY_KEYS.forEach(k=>{ const m = CATEGORY_META[k]; if(!m) return; (grp[m.group==='business'?'business':'professional']).push(k); });
   const idx = k=>CATEGORY_KEYS.indexOf(k);
   const sorter = catPickSort==='az'
-    ? (a,b)=>(CATEGORY_META[a].ur||'').localeCompare(CATEGORY_META[b].ur||'','ur')
+    ? (a,b)=>(catEn(a)||'~').localeCompare(catEn(b)||'~','en',{sensitivity:'base'}) || (CATEGORY_META[a].ur||'').localeCompare(CATEGORY_META[b].ur||'','ur')
     : (a,b)=>(catKeyTime(b)-catKeyTime(a)) || (idx(b)-idx(a));
   grp.professional.sort(sorter); grp.business.sort(sorter);
-  const opt = k=>`<option value="${escapeAttr(k)}"${k===selected?' selected':''}>${escapeHtml((CATEGORY_META[k].emoji||'🏷️')+' '+CATEGORY_META[k].ur+(CATEGORY_META[k].en?' · '+CATEGORY_META[k].en:''))}</option>`;
+  const opt = k=>`<option value="${escapeAttr(k)}"${k===selected?' selected':''}${catEn(k)?` data-en="${escapeAttr((CATEGORY_META[k].emoji||'🏷️')+' '+catEn(k))}"`:''}>${escapeHtml((catEn(k)?'':(CATEGORY_META[k].emoji||'🏷️')+' ')+CATEGORY_META[k].ur)}</option>`;
   /* MCS2310FR053: ڈاکٹرز الگ فہرست ہیں، کیٹگری نہیں — پھر بھی یہاں نظر آئیں تاکہ ریکارڈ ڈاکٹرز میں منتقل ہو سکے */
-  const docOpt = `<option value="__doctor__">🩺 ڈاکٹرز</option>`;
-  const proOpts = grp.professional.map(k=>({k, ur:CATEGORY_META[k].ur||'', html:opt(k)}));
-  proOpts.push({k:'__doctor__', ur:'ڈاکٹرز', html:docOpt});
-  if(catPickSort==='az') proOpts.sort((a,b)=> a.ur.localeCompare(b.ur,'ur')); else proOpts.unshift(proOpts.pop());
+  const docOpt = `<option value="__doctor__" data-en="🩺 Doctors">ڈاکٹرز</option>`;
+  const proOpts = grp.professional.map(k=>({k, ur:CATEGORY_META[k].ur||'', en:catEn(k), html:opt(k)}));
+  proOpts.push({k:'__doctor__', ur:'ڈاکٹرز', en:'Doctors', html:docOpt});
+  if(catPickSort==='az') proOpts.sort((a,b)=> (a.en||'~').localeCompare(b.en||'~','en',{sensitivity:'base'}) || a.ur.localeCompare(b.ur,'ur')); else proOpts.unshift(proOpts.pop());
   const pro = `<optgroup label="پروفیشنلز">${proOpts.map(o=>o.html).join('')}</optgroup>`;
   const biz = `<optgroup label="بزنس / کاروبار">${grp.business.map(opt).join('')}</optgroup>`;
   const selBiz = selected && CATEGORY_META[selected] && CATEGORY_META[selected].group==='business';
@@ -9111,7 +9113,7 @@ let catPickGrp = '';
 function catPickTop(){
   const d = document.createElement('div'); d.className = 'csel-sort';
   d.innerHTML = `<div class="csel-grp"><button type="button" data-g="business" class="${catPickGrp==='business'?'on':''}">💼 بزنس</button><button type="button" data-g="professional" class="${catPickGrp==='professional'?'on':''}">👔 پروفیشنل</button><button type="button" data-g="add" class="csel-add">➕ نئی</button></div>`
-    + `<span>ترتیب:</span><button type="button" data-s="new" class="${catPickSort==='new'?'on':''}">🆕 نئی اوپر</button><button type="button" data-s="az" class="${catPickSort==='az'?'on':''}">ا سے ی</button>`;
+    + `<span>ترتیب:</span><button type="button" data-s="new" class="${catPickSort==='new'?'on':''}">🆕 نئی اوپر</button><button type="button" data-s="az" class="${catPickSort==='az'?'on':''}">A→Z</button>`;
   d.addEventListener('click', e=>{
     e.stopPropagation();
     const b = e.target.closest('button'); if(!b) return;
@@ -9124,7 +9126,7 @@ function catPickTop(){
       return;
     }
     if(b.dataset.g){ catPickGrp = b.dataset.g; }
-    else { catPickSort = b.dataset.s; try{ localStorage.setItem('mcsCatPickSort2', catPickSort); }catch(x){} }
+    else { catPickSort = b.dataset.s; try{ localStorage.setItem('mcsCatPickSort3', catPickSort); }catch(x){} }
     const sel = document.getElementById('svcCategory'); const v = sel.value;
     sel.innerHTML = categoryOptionsHtml(v); sel.value = v; resyncCapsuleSelect('svcCategory');
     if(sel._cselOpen) sel._cselOpen();
@@ -9328,17 +9330,17 @@ function refChipHtml(rec){
   return '';   /* MCS1011TU281 (مالک کا حکم): عام ہوم / کارڈ پر ریفرل کی پیلی پٹی نہیں — ریفرل صرف فارم، پروفائل اور ایڈمن کی فہرستوں میں */
   try{
     if(!(isAdminSignedIn || codevOn())) return '';
-    const c = String((rec && rec.more && rec.more.ref) || '').trim(); if(!c) return '';
+    const c = refN((rec && rec.more && rec.more.ref) || ''); if(!c) return '';
     let lb = '';
-    if(c === 'PBT-D') lb = '👨‍💻 ڈویلپر خود لایا (PBT-D)';
-    else if(c === 'PBT-C') lb = '👥 کو-ڈویلپر لایا (PBT-C)';
+    if(c === 'DEV') lb = '👨‍💻 ڈویلپر خود لایا (DEV)';
+    else if(c === 'CODEV') lb = '👥 کو-ڈویلپر لایا (CODEV)';
     else if(c === 'PBT') lb = '🏢 خود آیا (PBT)';
     else { const a = (agList||[]).find(x=>x && (x.code === c || x.bizRk === c)); lb = '🤝 ریفرل: ' + (a ? escapeHtml(a.name) + ' ' : (rec.more.refName ? escapeHtml(rec.more.refName) + ' ' : '')) + '<bdi dir="ltr">' + escapeHtml(a && a.code || c) + '</bdi>'; }
     return `<button type="button" class="ref-chip" onclick="event.stopPropagation();refInfoOpen('${escapeAttr(c)}')">${lb}</button>`;
   }catch(e){ return ''; }
 }
 async function refInfoOpen(c){
-  if(/^PBT/.test(c)){ showToast(c === 'PBT-D' ? '👨‍💻 یہ کاروبار ڈویلپر خود لایا — حصہ ڈویلپر کا' : c === 'PBT-C' ? '👥 یہ کاروبار کو-ڈویلپر لایا' : '🏢 کسی ایجنٹ کا ریفرل نہیں — خود آیا', 4500); return; }
+  c = refN(c); if(OWN_REF_RX.test(c)){ showToast(c === 'DEV' ? '👨‍💻 یہ کاروبار ڈویلپر خود لایا — حصہ ڈویلپر کا' : c === 'CODEV' ? '👥 یہ کاروبار کو-ڈویلپر لایا' : '🏢 کسی ایجنٹ کا ریفرل نہیں — خود آیا', 4500); return; }
   if(!(agList||[]).length && isAdminSignedIn){ try{ await agKnownLoad(); }catch(e){} }
   const a = (agList||[]).find(x=>x && (x.code === c || x.bizRk === c)), code = a && a.code || c;
   const recs = (store.services||[]).concat(store.doctors||[]).filter(x=>x && x.more && (x.more.ref === code || x.more.ref === c));
@@ -9650,7 +9652,7 @@ function saveService(approve){
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
     data.approved = !!isAdminSignedIn;   /* MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور */
-    if(codevOn()){ const _c = codevMe() || {}; data.more = Object.assign({}, data.more || {}, {ref:'PBT-C', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}); setTimeout(()=>showToast('👥 ڈویلپر کی منظوری کے لیے بھیج دیا ✓', 4000), 600); } else { pbStampRef(data); }
+    if(codevOn()){ const _c = codevMe() || {}; data.more = Object.assign({}, data.more || {}, {ref:'CODEV', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}); setTimeout(()=>showToast('👥 ڈویلپر کی منظوری کے لیے بھیج دیا ✓', 4000), 600); } else { pbStampRef(data); }
     store.services.push(data);
     if(data.stage==='basic') svcMyBasicAdd(data.id);
     syncServiceCreateToFirebase(data);
@@ -11072,7 +11074,7 @@ function addStripItems(group){
   CATEGORY_KEYS.forEach(k=>{
     const m = CATEGORY_META[k];
     if(!m || m.group!==group || k==='beautyParlor') return;
-    items.push({k, e:m.emoji||'', u:m.ur});
+    items.push({k, e:m.emoji||'', u:m.ur, en: String(m.en || (window.mcsEn ? window.mcsEn(m.ur || '') : '') || '').trim()});
   });
   return items;
 }
@@ -11107,15 +11109,18 @@ function d2AddOpen(){
   ov.classList.add('on');
 }
 function d2AddClose(){ const ov = document.getElementById('d2AddOv'); if(ov) ov.classList.remove('on'); }
-function d2AddPick(g){
+function d2AddPick(g){   /* MCS1111WE329 (مالک کا حکم): قسم کی فہرست انگلش A→Z، ہر قطار میں بائیں انگلش، سامنے دائیں اردو */
   d2AddGroup = g;
   document.querySelectorAll('#d2AddOv .two button').forEach(b => b.classList.toggle('on', b.dataset.g === g));
-  const items = addStripItems(g);
-  document.getElementById('d2AddCat').innerHTML = `<select id="d2AddSel" onchange="document.getElementById('d2AddGo').disabled = !this.value">
-      <option value="">— ${g === 'professional' ? 'پیشہ چنیں' : 'کاروبار کی قسم چنیں'} —</option>${items.map(i => `<option value="${i.k}">${i.e} ${escapeHtml(i.u)}</option>`).join('')}</select>
-    <button type="button" class="go" id="d2AddGo" disabled onclick="d2AddGoForm()">آگے — فارم کھولیں ←</button>`;
-  setTimeout(() => { try{ const s = document.getElementById('d2AddSel'); s.focus(); if(s.showPicker) s.showPicker(); }catch(e){} }, 120);
+  const items = addStripItems(g).map(i => i.k === '__doctor' ? Object.assign({en: 'Doctors'}, i) : i).sort((a, b) => (a.en || '~').localeCompare(b.en || '~', 'en', {sensitivity: 'base'}) || a.u.localeCompare(b.u, 'ur'));
+  document.getElementById('d2AddCat').innerHTML = `<select id="d2AddSel" style="display:none"><option value=""></option>${items.map(i => `<option value="${i.k}"></option>`).join('')}</select>
+    <input type="search" class="d2q" id="d2AddQ" data-noen="1" dir="ltr" placeholder="🔍 Search — ${g === 'professional' ? 'profession' : 'business type'}" oninput="d2AddFilter(this.value)">
+    <div class="d2lst" id="d2AddList" data-noen="1">${items.map(i => `<button type="button" class="d2row" data-k="${escapeAttr(i.k)}" data-s="${escapeAttr(((i.en || '') + ' ' + i.u).toLowerCase())}" onclick="d2AddRow(this)"><span class="e">${i.e || '🏷️'}</span><b>${escapeHtml(i.en || i.u)}</b><i>${i.en ? escapeHtml(i.u) : ''}</i></button>`).join('')}</div>
+    <button type="button" class="go" id="d2AddGo" disabled onclick="d2AddGoForm()">Next — open form →</button>`;
 }
+function d2AddFilter(q){ q = String(q || '').trim().toLowerCase(); document.querySelectorAll('#d2AddList .d2row').forEach(r => { r.style.display = !q || r.dataset.s.indexOf(q) >= 0 ? '' : 'none'; }); }
+function d2AddRow(el){ document.querySelectorAll('#d2AddList .d2row').forEach(r => r.classList.toggle('on', r === el)); const s = document.getElementById('d2AddSel'); if(s) s.value = el.dataset.k; const g = document.getElementById('d2AddGo'); if(g) g.disabled = false; }
+
 function d2AddGoForm(){
   const k = (document.getElementById('d2AddSel') || {}).value; if(!k) return;
   d2AddClose();
@@ -11876,7 +11881,7 @@ function updatePendingHomeIndicator(){
   }
   pendingHomeListRender();
 }
-function psIsCd(d){ try{ const m = d && d.more || {}; return String(m.ref || '').toUpperCase() === 'PBT-C' || !!m.cdBy || !!(d && d.cdBy); }catch(e){ return false; } }
+function psIsCd(d){ try{ const m = d && d.more || {}; return refN(m.ref) === 'CODEV' || !!m.cdBy || !!(d && d.cdBy); }catch(e){ return false; } }
 function psIsCdAg(a){ return !!(a && (a.cd || a.cdBy || a.by || a.proposedBy || a.cphone || a.proposer)); }
 function psStrip(ic, title, list, cdList, name, go, all){
   if(!list.length) return '';
@@ -11964,17 +11969,20 @@ function setFormMode(mid){
 const AG_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
 /* MCS0511TH134: ریفرل نمبر = ایجنٹ کی اپنی کاروبار ID (p3001234567_xxxx) — یا ایجنٹ کا موبائل نمبر بھی لکھا جا سکتا ہے (سرور خود ایجنٹ ڈھونڈ لیتا ہے)؛ پرانا MCS-AG-0001 بھی چلتا ہے */
 
-/* MCS0811SU232 (مالک کا حکم): نئے اندراج پر ریفرل کوڈ خود لگے — ڈویلپر PBT-D، ایجنٹ اپنا کوڈ، کو-ڈویلپر PBT-C، باقی سب PBT (کمپنی) */
+/* MCS0811SU232 (مالک کا حکم): نئے اندراج پر ریفرل کوڈ خود لگے — ڈویلپر DEV، ایجنٹ اپنا کوڈ، کو-ڈویلپر CODEV، باقی سب PBT (کمپنی) */
 function pbDefaultRef(){
-  try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'PBT-D'; }catch(e){}
+  try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'DEV'; }catch(e){}
   try{ const a = agMe(); if(a && a.code) return a.code; }catch(e){}
   return 'PBT';
 }
 function pbStampRef(data){ try{ if(codevOn()) return false; if(data.more && data.more.ref) return false; data.more = Object.assign({}, data.more || {}, {ref: pbDefaultRef()}); return true; }catch(e){ return false; } }
+/* MCS1111WE329 (مالک کا حکم): ڈویلپر = DEV، کو-ڈویلپر = CODEV (پرانا DEV / CODEV بھی مانا جاتا ہے) */
+function refN(v){ const c = String(v || '').trim().toUpperCase().replace(/\s+/g, ''); return c === 'PBT-D' ? 'DEV' : c === 'PBT-C' ? 'CODEV' : c; }
+const OWN_REF_RX = /^(PBT|PBT-[DC]|DEV|CODEV)$/i;
 function agNormCode(v){ const t = String(v||'').trim().replace(/\s+/g,''); const m2 = /^([A-Za-z]{2})[-.]?0*(\d{1,5})$/.exec(t); if(m2) return m2[1].toUpperCase() + '-' + m2[2].padStart(3,'0');   /* MCS0511TH142: ms1 / MS 001 → MS-001 */
   { const c13 = t.replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g,''); if(c13.length === 13) return c13.slice(0,5) + '-' + c13.slice(5,12) + '-' + c13.slice(12); }   /* MCS0511TH144: ایجنٹ کا شناختی کارڈ نمبر بھی */ if(/^p\d{10}_[a-z0-9]{2,12}$/i.test(t)) return t.toLowerCase(); const d = t.replace(/\D/g,''); if(d.length >= 10) return '0' + d.slice(-10); if(/^MCS-?AG/i.test(t) && d) return 'MCS-AG-' + String(parseInt(d,10)).padStart(4,'0'); return t; }
 function agRefPost(rec){
-  try{ const ref = rec && rec.more && rec.more.ref; if(!ref || /^PBT(-[DC])?$/i.test(ref)) return; const rk = pfKeyOf(rec, 'service'); if(!rk) return;
+  try{ const ref = rec && rec.more && rec.more.ref; if(!ref || OWN_REF_RX.test(String(ref).replace(/\s+/g,''))) return; const rk = pfKeyOf(rec, 'service'); if(!rk) return;
     fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(rec.category)||{}).ur||'', city: rec.city||''})}).then(r=>r.json()).then(j=>{ if(j && j.ok === false && j.reason === 'bad_code') showToast('⚠️ ایجنٹ کا ریفرل کوڈ «' + ref + '» درست نہیں — دوبارہ دیکھیں', 5000);
       if(j && j.ok && j.code && j.code !== ref && rec.more){ rec.more.ref = j.code; try{ saveStore(); if(rec.fsId) pushMoreToFirebase('services', rec.fsId, rec.more); }catch(e){} }   /* MCS0511TH142: موبائل لکھا ہو تو بھی ریکارڈ میں اصل کوڈ */
     }).catch(()=>{});
@@ -12462,17 +12470,17 @@ async function devAgentsOpen(){
     <button type="button" class="btn block ag-send" style="margin:4px 0 8px" onclick="agPickOpen()">➕ نیا ایجنٹ بنائیں (کاروبار چن کر)</button>
     <input type="search" class="ag-q" placeholder="🔍 نام، نمبر، کوڈ، شہر…" oninput="dgFilter(this.value)"><div id="dgList">${dgRows()}</div>`);
 }
-/* میرے رجسٹرڈ بزنس — ڈویلپر نے خود لائے (PBT-D)، ممبرشپ / دن */
+/* میرے رجسٹرڈ بزنس — ڈویلپر نے خود لائے (DEV)، ممبرشپ / دن */
 async function devBizOpen(){
   agModal('<div class="ag-st">⏳ لوڈ ہو رہا ہے…</div>'); try{ await pfLoadList(); }catch(e){}
-  const rows = apRecs('PBT-D').map(x=>({...x, info: apInfo(x)})); rows.sort((a,b)=>{ const k = x => x.info.left == null ? 9e9 : x.info.left; return k(a) - k(b); }); apRows = rows;
+  const rows = apRecs('DEV').map(x=>({...x, info: apInfo(x)})); rows.sort((a,b)=>{ const k = x => x.info.left == null ? 9e9 : x.info.left; return k(a) - k(b); }); apRows = rows;
   const cnt = f => rows.filter(f).length, E = escapeHtml;
-  agModal(`<div class="ag-hd">🏪 میرے رجسٹرڈ بزنس <small>ڈویلپر نے خود درج کیے (PBT-D)</small></div>
+  agModal(`<div class="ag-hd">🏪 میرے رجسٹرڈ بزنس <small>ڈویلپر نے خود درج کیے (DEV)</small></div>
     <div class="ap-st"><div><b>${rows.length}</b>کل</div><div><b>${cnt(x=>x.info.mode==='paid' && x.info.left>0)}</b>سالانہ فعال</div><div><b>${cnt(x=>x.info.mode==='free' && x.info.left>0)}</b>مفت موڈ</div><div><b>${cnt(x=>(x.info.mode==='paid'||x.info.mode==='free') && x.info.left<=0)}</b>ختم</div></div>
     ${rows.length ? rows.map((x,i)=>{ const r = x.rec, st = apStatus(x.info), ph = String(r.whatsapp||r.phone||'').replace(/\D/g,'').slice(-10);
       return `<div class="pt-card"><b>${E(r.nameUr||r.name||'')}</b> <small>${x.kind==='doctor' ? '👔 پروفیشن' : '🏪 کاروبار'} · ${E([r.area, r.city].filter(Boolean).join('، '))}</small><div><span class="ap-bd ${st[0]}">${st[1]}</span></div>
         <div class="r"><button type="button" class="p" onclick="closeModal('agModal');pfOpen('${x.kind}','${escapeAttr(r.id)}')">👁️ دیکھیں</button>${ph ? `<a href="tel:0${ph}" class="p" style="text-decoration:none;padding:6px 12px;border-radius:10px">📞 کال</a><button type="button" onclick="apRenewMsg(${i})">💬 ممبرشپ پیغام</button>` : ''}</div></div>`; }).join('')
-      : '<div class="cp-hint" style="text-align:center">ابھی کوئی نہیں۔ فارم میں «👨‍💻 ڈویلپر نے خود لایا — PBT-D» دبا کر درج کریں تو یہاں آئیں گے۔</div>'}`);
+      : '<div class="cp-hint" style="text-align:center">ابھی کوئی نہیں۔ فارم میں «👨‍💻 ڈویلپر نے خود لایا — DEV» دبا کر درج کریں تو یہاں آئیں گے۔</div>'}`);
 }
 /* ➕ ایجنٹ بنائیں: پہلے سب کاروبار کھلیں، ایک چنیں، پھر صرف شناختی کارڈ */
 let agPkQ = '';
@@ -12573,15 +12581,15 @@ function vlRender(){
 function agCopy(c){ const ok = ()=>showToast('📋 ' + c + ' کاپی ہو گیا'); try{ navigator.clipboard.writeText(c).then(ok, ()=>{ prompt('کاپی کریں', c); }); }catch(e){ prompt('کاپی کریں', c); } }
 /* MCS0511TH135: «ایجنٹ کا ریفرل نمبر» خانے میں 📋 پیسٹ — ہاتھ سے لکھنے کی غلطی نہیں */
 async function refPaste(){ const i = document.getElementById('svcRef'); try{ const t = (await navigator.clipboard.readText() || '').trim(); if(t){ i.value = agNormCode(t); showToast('📥 پیسٹ ہو گیا'); refResolve(); return; } }catch(e){} i.focus(); showToast('خانے میں انگلی رکھ کر «Paste» دبائیں'); }
-/* MCS0511TH164 (ہیلپ ڈیسک #105، مالک کا حکم): ڈویلپر / کو-ڈویلپر اپنا ریفرل کوڈ ایک دبانے سے — PBT-D / PBT-C (لکھنا / کاپی پیسٹ نہیں) */
+/* MCS0511TH164 (ہیلپ ڈیسک #105، مالک کا حکم): ڈویلپر / کو-ڈویلپر اپنا ریفرل کوڈ ایک دبانے سے — DEV / CODEV (لکھنا / کاپی پیسٹ نہیں) */
 function refSelfFill(){
   document.querySelectorAll('.ref-self').forEach(box=>{
     const b = [];
-    if(isAdminSignedIn) b.push('<button type="button" data-c="PBT-D">👨‍💻 ڈویلپر نے خود لایا — PBT-D</button>');
-    if(typeof codevOn === 'function' && codevOn()) b.push('<button type="button" class="cd" data-c="PBT-C">👥 کو-ڈویلپر نے خود لایا — PBT-C</button>');
+    if(isAdminSignedIn) b.push('<button type="button" data-c="DEV">👨‍💻 ڈویلپر نے خود لایا — DEV</button>');
+    if(typeof codevOn === 'function' && codevOn()) b.push('<button type="button" class="cd" data-c="CODEV">👥 کو-ڈویلپر نے خود لایا — CODEV</button>');
     box.innerHTML = b.join('');
     box.onclick = e=>{ const x = e.target.closest('[data-c]'); if(!x) return; const i = document.getElementById(box.dataset.for); if(!i) return; i.value = x.dataset.c; i.dispatchEvent(new Event('input', {bubbles:true}));
-      const ok = document.getElementById(box.dataset.for + 'Ok'); if(ok){ ok.textContent = '✅ ' + (x.dataset.c === 'PBT-D' ? 'ڈویلپر' : 'کو-ڈویلپر') + ' کا اپنا کوڈ (' + x.dataset.c + ') لگ گیا'; ok.style.color = '#047857'; }
+      const ok = document.getElementById(box.dataset.for + 'Ok'); if(ok){ ok.textContent = '✅ ' + (x.dataset.c === 'DEV' ? 'ڈویلپر' : 'کو-ڈویلپر') + ' کا اپنا کوڈ (' + x.dataset.c + ') لگ گیا'; ok.style.color = '#047857'; }
       showToast('✅ ' + x.dataset.c + ' لگ گیا'); };
   });
 }
@@ -12589,9 +12597,10 @@ window.addEventListener('load', ()=> setTimeout(()=>{ ['openServiceForm','pfEdit
 function refCopy(){ const v = (document.getElementById('svcRef').value || '').trim(); if(v) agCopy(v); else showToast('خانہ خالی ہے'); }
 /* MCS0511TH142 (مالک کا حکم): موبائل یا چھوٹا لکھا کوڈ (ms1) لکھیں تو خانے میں ایجنٹ کا اصل ریفرل کوڈ (MS-001) آ جائے + نام */
 async function refResolve(){
-  const i = document.getElementById('svcRef'), ok = document.getElementById('svcRefOk'); if(!i) return; const v = agNormCode(i.value); i.value = v; if(ok) ok.textContent = '';
+  const i = document.getElementById('svcRef'), ok = document.getElementById('svcRefOk'); if(!i) return; if(OWN_REF_RX.test(String(i.value).replace(/\s+/g,''))){ i.value = refN(i.value); if(ok){ ok.textContent = '✅ ' + i.value + ' — ہمارا اپنا (ایجنٹ نہیں)'; ok.style.color = '#047857'; } return; }
+  const v = agNormCode(i.value); i.value = v; if(ok) ok.textContent = '';
   if(!v) return;
-  if(/^PBT(-[DC])?$/i.test(v)){ i.value = v.toUpperCase(); if(ok){ ok.textContent = '✅ ' + i.value + ' — ہمارا اپنا (ایجنٹ نہیں)'; ok.style.color = '#047857'; } return; }   /* #105 */
+  if(OWN_REF_RX.test(v)){ i.value = refN(v); if(ok){ ok.textContent = '✅ ' + i.value + ' — ہمارا اپنا (ایجنٹ نہیں)'; ok.style.color = '#047857'; } return; }   /* #105 */
   try{ const j = await (await fetch(AG_API + '/agfind', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: v})})).json();
     if(j && j.ok){ i.value = j.code; if(ok){ ok.textContent = '✅ ایجنٹ: ' + j.name + ' (' + j.code + ')'; ok.style.color = '#047857'; } }
     else if(ok){ ok.textContent = '⚠️ یہ ریفرل کوڈ کسی ایجنٹ کا نہیں — دوبارہ دیکھیں'; ok.style.color = '#b91c1c'; }
@@ -15874,8 +15883,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
   /* MCS0811SU217: دعوتی میسج — ایپ کا لنک، ضلع، فیڈ کرنے والے کا ریفرل کوڈ؛ پاس ورڈ نہیں (نیا بندہ ایپ میں خود بنائے گا) */
   function fedRef(){
     try{
-      if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return { code:'PBT-D', who:'ڈویلپر', ag:'' };
-      if(typeof codevOn === 'function' && codevOn()) return { code:'PBT-C', who:'کو-ڈویلپر', ag:'' };
+      if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return { code:'DEV', who:'ڈویلپر', ag:'' };
+      if(typeof codevOn === 'function' && codevOn()) return { code:'CODEV', who:'کو-ڈویلپر', ag:'' };
       const a = agMe(); if(a && (a.code || a.phone)){ const c = a.code || agRefNo(a.phone); return { code:c, who:'ایجنٹ', ag:c }; }
       const me = (uaMe() || {}).user || {}; let own = ''; try{ const L = mpListReal(); own = (L[0] && L[0].p && L[0].p.rk) || ''; }catch(e){}
       return { code: own || agRefNo(me.mobile) || me.id || '', who:'', ag:'', own:1 };
@@ -15929,7 +15938,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     if(!f){ f = { id: c.id, fsId: c.fsId, kind: c.kind, ts: Date.now() }; fedAll().push(f); }
     Object.assign(f, { ownerName: n, mobile: m, gmail: mail, nm, city, agent, ref: R.code, who: R.who, dist: rec.district || '', by: me.id || '' }); saveStore();
     /* MCS0611FR172: ایجنٹ نے فیڈ کیا تو اس کا ریفرل کوڈ اس کاروبار کے ریکارڈ میں خود لگ جائے (خالی ہو تو) */
-    try{ if(R.code){ const col = c.kind === 'doctor' ? 'doctors' : 'services'; rec.more = rec.more || {}; const key = R.own ? 'fedBy' : 'ref'; if(!rec.more[key]){ rec.more[key] = R.code; saveStore(); pushMoreToFirebase(col, rec.fsId || rec.id, rec.more); } } }catch(e){}   /* MCS0811SU217: ڈویلپر PBT-D / کو-ڈویلپر PBT-C / ایجنٹ کا کوڈ / عام یوزر کا اپنا کوڈ */
+    try{ if(R.code){ const col = c.kind === 'doctor' ? 'doctors' : 'services'; rec.more = rec.more || {}; const key = R.own ? 'fedBy' : 'ref'; if(!rec.more[key]){ rec.more[key] = R.code; saveStore(); pushMoreToFirebase(col, rec.fsId || rec.id, rec.more); } } }catch(e){}   /* MCS0811SU217: ڈویلپر DEV / کو-ڈویلپر CODEV / ایجنٹ کا کوڈ / عام یوزر کا اپنا کوڈ */
     if(fedApproved(rec)) return fedShow(fedAll().indexOf(f));
     agModal(`<div class="ag-hd">⏳ منظوری کے لیے بھیج دیا گیا</div><div class="ag-wait">«${escapeHtml(nm)}» ڈویلپر کی منظوری کا انتظار کر رہا ہے۔<br>منظور ہوتے ہی <b>📨 میرے درج کیے ہوئے</b> میں تیار میسج بن جائے گا اور آپ کو اطلاع بھی ملے گی۔</div>
       <button type="button" class="btn block" onclick="fedListOpen()">📨 میرے درج کیے ہوئے</button>`);
@@ -16462,7 +16471,7 @@ function prepTajranList(LIST, title){
    MCS0811SU232 (مالک کا حکم)
    1) سیلفی پکی محفوظ: IndexedDB (بڑی جگہ) + localStorage — ڈویلپر / کو-ڈویلپر / ایجنٹ / بزنس / یوزر سب کے لیے
    2) 🏆 کارکردگی رپورٹ: پورے صفحے پر پراگریس بارز — ریفرل کوڈ سے فیڈ ہوئے کاروبار / پروفیشن کے حساب سے اوپر سے نیچے
-      ایجنٹ (اپنا کوڈ) • کو-ڈویلپر (PBT-C + اپنا نمبر) • ڈویلپر (PBT-D) • کمپنی (PBT — جس پر کوئی کوڈ نہ لگا ہو)
+      ایجنٹ (اپنا کوڈ) • کو-ڈویلپر (CODEV + اپنا نمبر) • ڈویلپر (DEV) • کمپنی (PBT — جس پر کوئی کوڈ نہ لگا ہو)
    ⚠️ پلے اسٹور: کہیں رقم / کمیشن نہیں — صرف کاروبار کی گنتی
    ===================================================================== */
 (function(){
@@ -16542,11 +16551,11 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
   const E = s => (typeof escapeHtml === 'function' ? escapeHtml(s == null ? '' : String(s)) : String(s == null ? '' : s));
   const ph10 = v => String(v || '').replace(/\D/g, '').slice(-10);
   const ph0 = v => { const d = ph10(v); return d.length === 10 ? '0' + d : ''; };
-  const up = v => String(v || '').trim().toUpperCase().replace(/\s+/g, '');
+  const up = v => refN(v);
   const nf = n => { try{ return typeof urduDigits === 'function' ? urduDigits(String(n)) : String(n); }catch(e){ return String(n); } };
 
   /* کس ریفرل کوڈ سے کتنے کاروبار / پروفیشن (store.services + store.doctors) */
-  /* رجسٹرڈ ممبرشپ والے کاروبار کا ریفرل پروفائل (سرور) میں بھی لکھا جاتا ہے — وہاں سے پڑھیں (ڈویلپر نے فارم میں PBT-D لکھا ہو تو وہی چلے) */
+  /* رجسٹرڈ ممبرشپ والے کاروبار کا ریفرل پروفائل (سرور) میں بھی لکھا جاتا ہے — وہاں سے پڑھیں (ڈویلپر نے فارم میں DEV لکھا ہو تو وہی چلے) */
   async function pbProfRefs(){
     const cache = window._pbPR = window._pbPR || {}, now = Date.now(), keys = [];
     const consider = (arr, kind) => (arr || []).forEach(r=>{ if(!r || r.source === 'import') return; let rk = ''; try{ rk = pfKeyOf(r, kind); }catch(e){} if(!rk || !pfAct[rk]) return; const c = cache[rk]; if(c && now - c.t < 300000) return; if(keys.indexOf(rk) < 0) keys.push(rk); });
@@ -16567,12 +16576,12 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
       const m = r.more || {}; let raw = String(m.ref || '').trim(), pr = '';
       try{ const rk = pfKeyOf(r, kind); pr = (rk && PR[rk]) ? String(PR[rk]).trim() : ''; }catch(e){}
       const pu = up(pr);
-      if(pr && !m.refSel && (!raw || pu === 'PBT-D' || pu === 'PBT-C')) raw = pr;      /* پروفائل میں ڈویلپر / کو-ڈویلپر کا صاف کوڈ ہو تو وہی */
+      if(pr && !m.refSel && (!raw || pu === 'DEV' || pu === 'CODEV')) raw = pr;      /* پروفائل میں ڈویلپر / کو-ڈویلپر کا صاف کوڈ ہو تو وہی */
       const u = up(raw);
       if(!raw && !m.cdBy && !m.fedBy){ skipped++; return; }                /* کوئی ریفرل کوڈ نہیں — گنتی میں نہیں */
       const isPend = pend || r.approved === false;
-      if(u === 'PBT-D'){ add('PBT-D', r, isPend); return; }
-      if(u === 'PBT-C' || m.cdBy){ add('PBT-C:' + ph10(m.cdBy), r, isPend); return; }
+      if(u === 'DEV'){ add('DEV', r, isPend); return; }
+      if(u === 'CODEV' || m.cdBy){ add('CODEV:' + ph10(m.cdBy), r, isPend); return; }
       if(!raw || u === 'PBT'){ add('PBT', r, isPend); return; }
       add('A:' + agNormCode(raw), r, isPend);
     });
@@ -16598,17 +16607,17 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
     });
     /* کو-ڈویلپر: فہرست (ایڈمن) + ریکارڈ سے ملنے والے */
     const seen = {};
-    cd.forEach(c=>{ const p = ph10(c.phone), k = grab(T, 'PBT-C:' + p); seen[p] = 1; rows.push({type: 'c', img: c.selfie || '', name: c.name || 'کو-ڈویلپر', city: c.city || '', code: 'PBT-C', phone: ph0(c.phone), n: k.n, act: k.act, pend: k.pend, last: k.last}); });
-    Object.keys(T).filter(k=>k.indexOf('PBT-C:') === 0).forEach(k=>{
+    cd.forEach(c=>{ const p = ph10(c.phone), k = grab(T, 'CODEV:' + p); seen[p] = 1; rows.push({type: 'c', img: c.selfie || '', name: c.name || 'کو-ڈویلپر', city: c.city || '', code: 'CODEV', phone: ph0(c.phone), n: k.n, act: k.act, pend: k.pend, last: k.last}); });
+    Object.keys(T).filter(k=>k.indexOf('CODEV:') === 0).forEach(k=>{
       const p = k.slice(6); if(p && seen[p]) return; const t = T[k];
       let nm = ''; try{ const rec = [].concat(store.services || [], store.doctors || []).find(r=> r && r.more && r.more.cdBy && ph10(r.more.cdBy) === p); nm = rec ? String(rec.more.cdBy).replace(/[\d\s+\-]+$/g, '').trim() : ''; }catch(e){}
-      rows.push({type: 'c', name: nm || 'کو-ڈویلپر — نام درج نہیں', city: '', code: 'PBT-C', phone: p ? '0' + p : '', n: t.n, act: t.act, pend: t.pend, last: t.last});
+      rows.push({type: 'c', name: nm || 'کو-ڈویلپر — نام درج نہیں', city: '', code: 'CODEV', phone: p ? '0' + p : '', n: t.n, act: t.act, pend: t.pend, last: t.last});
     });
     /* ڈویلپر */
-    const dp = (typeof ptDevProf === 'function' ? ptDevProf() : {}) || {}, dk = grab(T, 'PBT-D');
+    const dp = (typeof ptDevProf === 'function' ? ptDevProf() : {}) || {}, dk = grab(T, 'DEV');
     const devName = (!dp.name || /pbt\s*codelabs/i.test(dp.name)) ? 'عبدالحفیظ' : dp.name;   /* ڈویلپر کا اپنا نام، کمپنی کا نام نہیں */
     let devImg = ''; try{ devImg = ptSelfieGet('dev'); }catch(e){}
-    rows.push({type: 'd', img: devImg, name: devName, city: dp.city || '', code: 'PBT-D', phone: dp.phone || '', n: dk.n, act: dk.act, pend: dk.pend, last: dk.last});
+    rows.push({type: 'd', img: devImg, name: devName, city: dp.city || '', code: 'DEV', phone: dp.phone || '', n: dk.n, act: dk.act, pend: dk.pend, last: dk.last});
     /* کمپنی */
     const ck = grab(T, 'PBT');
     rows.push({type: 'k', name: 'پی بی ٹی کمپنی', city: '', code: 'PBT', phone: '', n: ck.n, act: ck.act, pend: ck.pend, last: ck.last});
@@ -16938,7 +16947,7 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
 </style>
 <script>
 function bzRole(){ try{ if(isAdminSignedIn) return 'dev'; if(typeof codevOn === 'function' && codevOn()) return 'codev'; const a = agMe(); if(a && (a.code || a.pin)) return 'agent'; }catch(e){} return ''; }
-function bzRef(){ try{ const r = bzRole(); if(r === 'dev') return 'PBT-D'; if(r === 'codev') return 'PBT-C'; return (agMe() || {}).code || ''; }catch(e){ return ''; } }
+function bzRef(){ try{ const r = bzRole(); if(r === 'dev') return 'DEV'; if(r === 'codev') return 'CODEV'; return (agMe() || {}).code || ''; }catch(e){ return ''; } }
 function bzHubOpen(){
   const r = bzRole(); if(!r){ showToast('یہ حصہ ڈویلپر / کو-ڈویلپر / ایجنٹ کے لیے ہے'); return; }
   const ref = bzRef();
@@ -18420,12 +18429,12 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     if(s.rec && staff){
       var rf = sec('🔗', isDoc ? 'ریفرل — پروفیشن کس نے رجسٹر کیا' : 'ریفرل — بزنس کس نے رجسٹر کیا');
       var L = (typeof agList !== 'undefined' && agList) || [];
-      var code = String(more.ref || '').trim(), pcode = String(d.ref || '').trim(), uc = code.toUpperCase();
-      if(pcode && !more.refSel && (!code || uc === 'PBT-D' || uc === 'PBT-C')){ code = pcode; uc = code.toUpperCase(); }
+      var code = refN(more.ref), pcode = refN(d.ref), uc = code.toUpperCase();
+      if(pcode && !more.refSel && (!code || uc === 'DEV' || uc === 'CODEV')){ code = pcode; uc = code.toUpperCase(); }
       var byCode = function(c){ return L.find(function(x){ return x && c && (x.code === c || x.bizRk === c); }) || null; };
       var ph0 = function(p){ var x = l10(p); return x ? '0' + x : ''; };
-      if(uc === 'PBT-D'){ R(rf, 'کس کے ریفرل سے', '👨‍💻 ڈویلپر نے خود رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'PBT-D', true); }
-      else if(uc === 'PBT-C' || more.cdBy){ R(rf, 'کس کے ریفرل سے', '👥 کو-ڈویلپر نے رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'PBT-C', true); R(rf, 'کو-ڈویلپر (نام / موبائل)', more.cdBy, true); }
+      if(uc === 'DEV'){ R(rf, 'کس کے ریفرل سے', '👨‍💻 ڈویلپر نے خود رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'DEV', true); }
+      else if(uc === 'CODEV' || more.cdBy){ R(rf, 'کس کے ریفرل سے', '👥 کو-ڈویلپر نے رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'CODEV', true); R(rf, 'کو-ڈویلپر (نام / موبائل)', more.cdBy, true); }
       else if(!code || uc === 'PBT'){ R(rf, 'کس کے ریفرل سے', '🏢 خود آیا — کسی ایجنٹ کے ریفرل کے بغیر'); R(rf, 'ریفرل کوڈ', 'PBT', true); }
       else {
         var ra = byCode(code);
@@ -18967,8 +18976,8 @@ function rpkPeople(){
   return src;
 }
 function rpkNameOf(code){
-  code = String(code||'').trim(); if(!code) return '';
-  if(code === 'PBT-D') return 'ڈویلپر'; if(code === 'PBT-C') return 'کو-ڈویلپر'; if(code === 'PBT') return '';
+  code = refN(code); if(!code) return '';
+  if(code === 'DEV') return 'ڈویلپر'; if(code === 'CODEV') return 'کو-ڈویلپر'; if(code === 'PBT') return '';
   const p = rpkPeople().find(x=>x.c === code); return p ? p.n : '';
 }
 function rpkSorted(){
@@ -18978,17 +18987,20 @@ function rpkSorted(){
   return {en, ur};
 }
 function rpkAddOpt(sel, v){ const o = document.createElement('option'); o.value = v; o.textContent = '⚠️ ' + v + ' — فہرست میں نہیں (پرانا / غلط) — صحیح ایجنٹ چنیں'; o.style.color = '#b91c1c'; sel.appendChild(o); }
-function rpkSetVal(sel, v){ v = String(v == null ? '' : v).trim(); if(v && !Array.from(sel.options).some(o=>o.value === v)) rpkAddOpt(sel, v); rpkSelVal().set.call(sel, v); }
-function rpkFill(sel){
+function rpkSetVal(sel, v){ v = refN(v == null ? '' : v); if(v && /^AG-/i.test(v)) v = v.toUpperCase(); if(v && !Array.from(sel.options).some(o=>o.value === v)) rpkAddOpt(sel, v); rpkSelVal().set.call(sel, v); }
+function rpkFill(sel){   /* MCS1111WE329 (مالک کا حکم): اوپر DEV / CODEV / PBT، پھر ایجنٹ AG-001، AG-002… کوڈ کی ترتیب سے، انگلش، برابر */
   const keep = rpkSelVal().get.call(sel), adm = !!isAdminSignedIn; let cd = false; try{ cd = codevOn(); }catch(e){}
-  const opt = p => `<option value="${escapeAttr(p.c)}" data-n="${escapeAttr(p.n)}">${escapeHtml(p.n || '—')} — ${escapeHtml(p.c)}</option>`;
-  const S = rpkSorted();
-  let h = '<option value="">— فہرست سے ایجنٹ چنیں —</option><option value="PBT">🏢 خود آیا — کوئی ایجنٹ نہیں (PBT)</option>';
-  if(adm) h += '<option value="PBT-D">👨‍💻 ڈویلپر — PBT-D</option>';
-  if(adm || cd) h += '<option value="PBT-C">👥 کو-ڈویلپر — PBT-C</option>';
-  if(S.en.length) h += '<optgroup label="English (A – Z)">' + S.en.map(opt).join('') + '</optgroup>';
-  if(S.ur.length) h += '<optgroup label="اردو (الف – ی)">' + S.ur.map(opt).join('') + '</optgroup>';
-  sel.innerHTML = h; rpkSetVal(sel, keep);
+  const pad = c => (String(c) + '\u00A0'.repeat(8)).slice(0, 8);
+  const S = rpkSorted(), all = [].concat(S.en || [], S.ur || []).filter(p => p && p.c);
+  const num = c => { const m = /(\d+)\s*$/.exec(String(c)); return m ? +m[1] : 1e9; };
+  all.sort((x, y) => { const ax = /^AG-/i.test(x.c) ? 0 : 1, ay = /^AG-/i.test(y.c) ? 0 : 1; return (ax - ay) || String(x.c).replace(/\d+$/, '').localeCompare(String(y.c).replace(/\d+$/, ''), 'en') || (num(x.c) - num(y.c)); });
+  const opt = p => `<option value="${escapeAttr(p.c)}" data-n="${escapeAttr(p.n)}" data-noen="1">${escapeHtml(pad(p.c))} · ${escapeHtml(p.n || '—')}</option>`;
+  let h = '<option value="">— Choose who brought it —</option><optgroup label="Developer / Co-Developer / Company">';
+  if(adm) h += `<option value="DEV">${pad('DEV')} · Developer</option>`;
+  if(adm || cd) h += `<option value="CODEV">${pad('CODEV')} · Co-Developer</option>`;
+  h += `<option value="PBT">${pad('PBT')} · Company (came by self)</option></optgroup>`;
+  if(all.length) h += '<optgroup label="Agents">' + all.map(opt).join('') + '</optgroup>';
+  sel.innerHTML = h; sel.setAttribute('dir', 'ltr'); sel.style.fontVariantNumeric = 'tabular-nums'; rpkSetVal(sel, keep);
 }
 function rpkPrep(id){
   if(!rpkPriv()) return null;
@@ -19032,7 +19044,7 @@ async function rpkEditOpen(id){
   agModal(`<div class="ag-hd">✏️ ریفرل بدلیں <small>${E(rec.nameUr || rec.name || '')}</small></div>
     <div class="cp-hint">موجودہ ریفرل: <b>${cur ? E((curN ? curN + ' — ' : '') + cur) : 'کوئی نہیں'}</b></div>
     <label style="font-weight:800;font-size:13px">🤝 صحیح ایجنٹ فہرست سے چنیں</label>
-    <select id="rpkSel" class="rpk-sel" dir="rtl"></select>
+    <select id="rpkSel" class="rpk-sel" dir="ltr"></select>
     <button type="button" class="btn block" style="margin-top:10px" onclick="rpkEditSave('${escapeAttr(rec.id || rec.fsId)}')">💾 محفوظ کریں</button>`);
   const sel = document.getElementById('rpkSel'); rpkFill(sel); if(cur) rpkSetVal(sel, cur);
 }
@@ -20417,6 +20429,20 @@ html[data-cat-cols="4"] body .cat-grid .cat-item .cat-count{transform:scale(.8);
 @media (min-width:700px){ html body .cat-grid{grid-template-columns:repeat(var(--catN,3),minmax(0,190px)) !important;justify-content:center !important}
   html[data-cat-cols="1"] body .cat-grid{--catN:1} html[data-cat-cols="2"] body .cat-grid{--catN:2} html[data-cat-cols="3"] body .cat-grid{--catN:3} html[data-cat-cols="4"] body .cat-grid{--catN:4} }
 html[data-cat-cols="1"] body .cat-grid .cat-item .c-emoji,html[data-cat-cols="1"] body .cat-grid .cat-item .cat-emoji{font-size:44px !important}
+
+/* MCS1111WE329: ریفرل فہرست — کوڈ برابر کالم میں (ایک چوڑائی والا فونٹ) */
+html body select.rpk-sel[dir=ltr], html body select.rpk-sel[dir=ltr] option, html body select.rpk-sel[dir=ltr] optgroup{font-family:'Roboto Mono','Consolas','Courier New',monospace !important;font-size:14px;text-align:left}
+
+/* MCS1111WE329: نئی انٹری کی قسم — صاف فہرست (بائیں انگلش A→Z، دائیں اردو) */
+#d2AddCat .d2q{width:100%;box-sizing:border-box;height:40px;border:1.5px solid #cbd5e1;border-radius:12px;padding:0 12px;font-size:15px;margin:2px 0 8px;direction:ltr;text-align:left}
+#d2AddCat .d2lst{max-height:min(46vh,360px);overflow:auto;border:1.5px solid #e2e8f0;border-radius:14px;background:#fff;-webkit-overflow-scrolling:touch}
+#d2AddCat .d2row{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;padding:4px 12px;border:0;border-bottom:1px solid #f1f5f9;background:#fff;direction:ltr;text-align:left;cursor:pointer}
+#d2AddCat .d2row:last-child{border-bottom:0}
+#d2AddCat .d2row .e{flex:0 0 26px;font-size:20px;text-align:center}
+#d2AddCat .d2row b{flex:1 1 auto;min-width:0;font:700 15px/1.25 'Segoe UI',Selawik,Arial,sans-serif;color:#0b2a44;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#d2AddCat .d2row i{flex:0 1 auto;font-style:normal;direction:rtl;font-size:17px;line-height:1.9;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
+#d2AddCat .d2row.on{background:#ecfdf5;box-shadow:inset 4px 0 0 #059669}
+#d2AddCat .d2row:hover{background:#f8fafc}
 </style>
 <script id="mcsCatSq325js">
 /* MCS1111WE325: ہر کیٹگری کارڈ کی لکھائی ناپ کر چوکور ڈبے میں فِٹ (پہلے کارڈ لمبا ہو جاتا تھا) */
