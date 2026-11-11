@@ -4218,10 +4218,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE305";
+const APP_VERSION = "MCS1111WE306";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE306": "❓ غیر مختص: کارڈ یا لائن کو کہیں سے بھی ٹچ کریں تو ریکارڈ کی تفصیل کے ساتھ کیٹگری چننے والی ڈراپ ڈاؤن سامنے آ جاتی ہے",
   "MCS1111WE305": "❓ غیر مختص: ہر ریکارڈ کی پوری تفصیل (نام، دکاندار، نمبر، قسم، پتہ) چھوٹے کیپسول میں • 🔁 «کیٹگری تبدیل کریں» بٹن • ڈراپ ڈاؤن میں «➕ نئی کیٹگری» — بنی ہوئی کیٹگری ہمیشہ فہرست میں رہتی ہے",
   "MCS1111WE304": "🧭 نیچے کی پٹی میں 7 بٹن (Help Desk اور Favorites بھی) • 🏠 ہوم پر تین بٹن: ایمرجنسی نمبرز، تلاش، Earn with MCS",
   "MCS1111WE303": "💬 My Chats: اپنا کاروبار / پروفیشن درج کرنے والا (اکاؤنٹ کے بغیر بھی) اب سیدھا چیٹ میں — لاگ اِن صفحہ نہیں آتا",
@@ -9604,7 +9605,7 @@ function svcCardHtml(s, meta){
     const intl = '92' + digits.replace(/^0/,'');
     const sfOn = s.more && s.more.selfie;   /* MCS0711SA194 + MCS0911MO265 (ہیلپ ڈیسک #170): رجسٹرڈ کاروبار کے مالک کی گول تصویر (پورٹل والی DP) کارڈ پر */
     return `
-    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}">${ewRib('service', s)}${agBadgeHtml('service', s)}
+    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}"${(isAdminSignedIn && s.category === UNASSIGNED_KEY) ? ` data-unid="${escapeAttr(s.id)}"` : ''}>${ewRib('service', s)}${agBadgeHtml('service', s)}
       <div class="doc-toprow">
       <div class="doc-avatar${sfOn ? ' sf' : ''}">${sfOn ? `<img src="${escapeAttr(s.more.selfie)}" alt="">` : `<span style="font-size:20px;">${meta.emoji}</span>`}</div>
       <div class="doc-body">
@@ -9916,7 +9917,7 @@ function unRow(r){
     cap('🗺️', place, 'pl'),
     cap('📝', on.rest, 'nt')
   ].join('');
-  return `<div class="un-row" id="un_${escapeAttr(r.id)}"><b class="un-nm">${E(nm)}</b>${caps}<button type="button" class="un-chg" onclick="unPick('${escapeAttr(r.id)}')">🔁 کیٹگری تبدیل کریں</button></div>`;
+  return `<div class="un-row" id="un_${escapeAttr(r.id)}" onclick="unPick('${escapeAttr(r.id)}')"><b class="un-nm">${E(nm)}</b>${caps}<button type="button" class="un-chg" onclick="event.stopPropagation();unPick('${escapeAttr(r.id)}')">🔁 کیٹگری تبدیل کریں</button></div>`;
 }
 function unList(){
   const q = ubNorm(unQ), all = unRecs();
@@ -9936,6 +9937,11 @@ function unOpen(){
 
 /* MCS1111WE302: کیٹگری چننے کی فہرست — دائیں سے بائیں، نستعلیق (نوری کشیدہ)؛ اور اسی جگہ سے نئی کیٹگری بنانے کا بٹن */
 let unPickId = null, unGrp = 'business';
+document.addEventListener('click', function(e){
+  const c = e.target.closest && e.target.closest('.doc-card[data-unid]');
+  if(!c || e.target.closest('a,button,input,select,textarea,label')) return;
+  if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) unPick(c.getAttribute('data-unid'));
+});
 function unSheetClose(){ const e = document.getElementById('unSheet'); if(e) e.remove(); }
 function unOptsHtml(q){
   q = ubNorm(q || '');
@@ -9944,6 +9950,12 @@ function unOptsHtml(q){
   const btn = k => `<button type="button" class="un-opt" onclick="unPickSet('${escapeAttr(k)}')"><span>${CATEGORY_META[k].emoji || '🏷️'}</span>${escapeHtml(CATEGORY_META[k].ur || k)}</button>`;
   const biz = keys.filter(k => CATEGORY_META[k].group === 'business').sort(byUr), oth = keys.filter(k => CATEGORY_META[k].group !== 'business').sort(byUr);
   return (biz.length ? '<div class="un-gh">🏪 کاروبار</div>' + biz.map(btn).join('') : '') + (oth.length ? '<div class="un-gh">👔 پیشہ ور / دیگر</div>' + oth.map(btn).join('') : '') || '<div class="cp-hint" style="text-align:center">کوئی کیٹگری نہیں ملی — اوپر سے نئی بنائیں</div>';
+}
+function unSumHtml(id){
+  const r = (store.services || []).find(x => x.id === id); if(!r) return '';
+  const E = escapeHtml, on = splitOwnerIntro(r.intro), ph = String(r.whatsapp || r.phone || '').replace(/\D/g, '').slice(-10);
+  const line = [on.owner ? '👤 ' + on.owner : '', ph ? '📞 0' + ph : '', r.type ? '🏷️ ' + r.type : '', [r.address, r.area, r.city].filter(Boolean).length ? '📍 ' + [r.address, r.area, r.city].filter(Boolean).join('، ') : '', on.rest ? '📝 ' + on.rest : ''].filter(Boolean);
+  return `<div class="un-sum"><b>${E(r.nameUr || r.name || '')}</b>${r.nameEn ? `<div dir="ltr" style="font-size:13px;color:#64748b">${E(r.nameEn)}</div>` : ''}${line.map(t => `<div>${E(t)}</div>`).join('')}</div>`;
 }
 function unSelHtml(){
   const keys = Object.keys(CATEGORY_META).filter(k => CATEGORY_META[k] && k !== UNASSIGNED_KEY);
@@ -9964,6 +9976,7 @@ function unPick(id){
   const d = document.createElement('div'); d.id = 'unSheet'; d.className = 'un-sheet';
   d.onclick = e => { if(e.target === d) unSheetClose(); };
   d.innerHTML = `<div class="un-shbox" dir="rtl"><div class="un-shhd"><b>${id ? '🔁 کیٹگری تبدیل کریں' : '➕ نئی کیٹگری'}</b><button type="button" onclick="unSheetClose()" aria-label="بند">✖</button></div>
+    ${id ? unSumHtml(id) : ''}
     ${id ? `<select id="unSel" class="un-in un-dd" onchange="unSelChange(this)">${unSelHtml()}</select>` : ''}
     <div id="unNewBox" style="display:${id ? 'none' : 'block'}">
       <input type="text" id="unNewName" class="un-in" placeholder="نئی کیٹگری کا نام — مثلاً مرغی فروش" autocomplete="off">
@@ -19778,6 +19791,13 @@ body.d2 .bnav #d2nHome:not(.on){background:rgba(255,255,255,.08) !important;bord
 .un-chg{margin-inline-start:auto;flex:0 0 auto;padding:3px 12px;border:1.5px solid #0f766e;border-radius:999px;background:#0f766e;color:#fff;font-family:var(--docCardFont);font-size:14px;line-height:1.9;cursor:pointer}
 .un-chg:active{background:#115e59}
 .un-dd{appearance:auto;background:#fff;color:#0f172a;font-size:18px}
+
+/* MCS1111WE306 */
+.un-row{cursor:pointer}
+.un-row:active{background:#f0fdfa}
+.un-sum{margin:0 0 8px;padding:8px 10px;border:1px solid #a7f3d0;border-radius:12px;background:#f0fdfa;font-size:15px;line-height:1.9}
+.un-sum b{font-size:18px}
+html body .doc-card[data-unid]{cursor:pointer;outline:2px dashed #0f766e;outline-offset:-3px}
 </style>
 <script>
 /* MCS1111WE304 (#218): Help Desk بٹن (ہیڈ سیٹ) اور Favorites (ستارہ) پٹی میں؛ چنا ہوا بٹن روشن — ہوم، پسندیدہ، چیٹ، پورٹل، اکاؤنٹ، سیٹنگ، ہیلپ ڈیسک */
