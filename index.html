@@ -4318,10 +4318,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE310";
+const APP_VERSION = "MCS1111WE311";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE311": "📝 Form boxes now all the same size — title strip and entry box same width and height",
   "MCS1111WE310": "🌐 The whole app is now in English (Segoe UI font) — form fields show English with a small Urdu caption; you can still type in Urdu or English, records stay as they are",
   "MCS1111WE309": "❓ غیر مختص: ہر ریکارڈ کا پورا اصلی کارڈ (نام، دکاندار، قسم، نمبر، پتہ، تعارف) اور نیچے «کیٹگری تبدیل کریں / نئی کیٹگری» — کسی اور فارم پر جانا نہیں پڑتا",
   "MCS1111WE308": "📍 ضلع / صوبہ کی فہرست ہر فارم اور تلاش میں ایک جیسی: انگریزی A→Z بائیں، اردو نوری نستعلیق کشیدہ دائیں، تنگ چوڑائی",
@@ -19962,5 +19963,19 @@ html body .doc-card[data-unid]{cursor:pointer;outline:2px dashed #0f766e;outline
   setInterval(mark, 800); mark();
 })();
 </script>
+<style id="mcsFormEq">
+/* MCS1111WE311 (مالک کا حکم): فارم کے سب ڈبے ایک جیسے — عنوان کی پٹی اور لکھنے کا خانہ ایک ہی چوڑائی، سب خانے ایک ہی اونچائی */
+html body .fm-body .field{width:100%;box-sizing:border-box}
+html body .fm-body .field>label{margin-bottom:4px!important}
+@media (max-width:599px){html body .fm-body .fm-cols{grid-template-columns:1fr!important}}
+html body .fm-body .field>label{flex:none!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;display:flex!important;flex-wrap:wrap;align-items:center;gap:2px 8px;min-height:32px!important;height:auto!important;padding:5px 10px!important;margin:0 0 4px!important;font-size:13.5px!important;line-height:1.3!important;-webkit-line-clamp:unset!important;overflow:visible!important;border-radius:10px!important}
+html body .fm-body .field>label .ur-cap{display:inline!important;margin:0 0 0 6px!important}
+html body .fm-body .field>label .ur-cap::before{display:inline!important;font-size:12px!important;margin:0!important}
+html body .fm-body .field>label small.fm-opt{font-size:11px!important}
+html body .fm-body .field>input:not([type=checkbox]):not([type=radio]):not([type=file]),html body .fm-body .field>select,html body .fm-body .field-with-add>input,html body .fm-body .field-with-add>select,html body .fm-body .field .csel-btn{width:100%!important;max-width:100%!important;box-sizing:border-box!important;height:42px!important;min-height:42px!important;font-size:15px!important;padding:0 12px!important;border-radius:10px!important}
+html body .fm-body .field-with-add{display:flex!important;gap:6px!important;align-items:center!important;width:100%!important}
+html body .fm-body .field-with-add>input,html body .fm-body .field-with-add>select{flex:1 1 auto!important;min-width:0!important}
+html body .fm-body .field>textarea{width:100%!important;box-sizing:border-box!important;min-height:84px!important;font-size:15px!important;padding:8px 12px!important;border-radius:10px!important}
+</style>
 </body>
 </html>
