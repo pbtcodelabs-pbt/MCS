@@ -4317,10 +4317,12 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE315";
+const APP_VERSION = "MCS1111WE317";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE317": "📐 Home: nothing is cut off any more — every label, date pill, prayer time and city name now auto-fits its box (as big as possible, shrinks only if needed)",
+  "MCS1111WE316": "✨ Home: duplicate thin captions removed from all buttons (one clear label each) • bigger, bolder text on tiles, buttons, prayer times (larger digits) and the city name",
   "MCS1111WE315": "🧭 Bottom bar: duplicate Help Desk button removed (it stays on Home) • all buttons now equal size, Home slightly bigger",
   "MCS1111WE314": "🧹 Home: the duplicate Emergency tile removed — only one Emergency button remains",
   "MCS1111WE313": "🔁 Home: Favorites and Emergency Numbers swapped places • ＋ Add New button in the bottom bar (replaces Favorites) — opens Business / Professional entry",
@@ -20028,5 +20030,75 @@ body.d2 .bnav #d2nHelp{display:none !important}
 body.d2 .bnav .d2n:not(#d2nHome){flex:1 1 0 !important;min-width:0 !important;width:0 !important}
 body.d2 .bnav #d2nHome{flex:1.2 1 0 !important;min-width:0 !important;width:0 !important}
 </style>
+<style id="mcsText316">
+/* MCS1111WE316 (مالک کا حکم): ہوم پر دہرا باریک کیپشن ختم (ہر بٹن پر ایک ہی واضح لکھائی)؛ ٹائل / بٹن / نماز کی پٹی / شہر کا نام ذرا بڑا اور گاڑھا */
+body.d2 .qt .qt-t small{display:none !important}
+body.d2 .qt .qt-t b{font-size:min(13.5px,17.5cqw) !important;font-weight:800 !important;line-height:1.3 !important;letter-spacing:-.15px}
+body.d2 .qt{justify-content:center}
+body .hm3 small{display:none !important}
+body .hm3>button{min-height:86px !important;justify-content:center !important}
+body .hm3 .hm-t,body .hm3 .sr-ht{justify-content:center !important}
+body .hm3 b{font-size:14.5px !important;font-weight:800 !important;line-height:1.25 !important}
+@media (max-width:370px){ body .hm3 b{font-size:12.5px !important} }
+body.d2 .d2-prays .d2-pt small{display:none !important}
+body.d2 .d2-prays .d2-pt b{font-size:13.5px !important;font-weight:800 !important}
+body.d2 .d2-prays .d2-p small{font:800 min(12px,19cqw) Arial,sans-serif !important}
+body.d2 .d2-prays .d2-p small i{font-size:min(13.5px,21cqw) !important;font-weight:800}
+body.d2 .d2-prays .d2-p b,body.d2 .d2-prays .d2-p b .tm{font-size:min(15px,34cqw) !important;font-weight:800 !important}
+body.d2 .d2-prays .d2-p b em{font-size:min(10.5px,25cqw) !important;font-weight:800 !important;opacity:.9}
+body.d2 .h2 .cc-city b{font-size:20px !important;font-weight:800 !important;-webkit-text-stroke:.5px #0b4f5c}
+</style>
+<style id="mcsFit317">
+/* MCS1111WE317: لفظ بیچ سے نہ ٹوٹے — صرف پورے لفظ کے بعد لائن بدلے؛ سائز اسکرپٹ ناپ کر فِٹ کرتی ہے */
+body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:normal !important}
+</style>
+<script id="mcsFit317js">
+/* MCS1111WE317 (مالک کا حکم): کوئی چیز کٹے نہیں — ہر لکھائی اپنے ڈبے میں ناپ کر فِٹ (جتنی بڑی ہو سکے، تنگ ہو تو خود چھوٹی) */
+(function(){
+  const T = [
+    ['.h2-d > div', null, 8],
+    ['.qt .qt-t b', '.qt', 8],
+    ['.hm3 b', '.hm-t, .sr-ht', 8],
+    ['.d2-pt b', '.d2-pt', 8],
+    ['.d2-p small', '.d2-p', 7],
+    ['.d2-p small i', '.d2-p', 7],
+    ['.d2-p b', '.d2-p', 7],
+    ['.d2-p b em', '.d2-p', 6],
+    ['.h2 .cc-city b', '#h2CitySlot', 9]
+  ];
+  const avail = (c, self) => { const cs = getComputedStyle(c); return c.clientWidth - (self ? 0 : (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0)); };
+  const need = el => { const w0 = el.style.width, m0 = el.style.maxWidth; el.style.width = 'min-content'; el.style.maxWidth = 'none'; const w = el.getBoundingClientRect().width; el.style.width = w0; el.style.maxWidth = m0; return w; };
+  function fit(el, c, min){
+    el.style.removeProperty('font-size');
+    if(el.matches('.cc-city b')){   /* شہر کا کیپسول: پورا کیپسول (آئیکن، حاشیہ سمیت) کالم میں سمائے */
+      const pill = el.closest('.cc-city'); if(!pill || !(c.clientWidth > 0)) return;
+      const need2 = () => { const w0 = pill.style.width, m0 = pill.style.maxWidth; pill.style.width = 'max-content'; pill.style.maxWidth = 'none'; const w = pill.getBoundingClientRect().width; pill.style.width = w0; pill.style.maxWidth = m0; return w; };
+      let f2 = parseFloat(getComputedStyle(el).fontSize) || 17, g2 = 0;
+      while(f2 > min && need2() > c.clientWidth - 1 && g2++ < 40){ f2 -= 0.5; el.style.setProperty('font-size', f2 + 'px', 'important'); }
+      return;
+    }
+    const self = (c === el); const a = avail(c, self); if(!(a > 0)) return;
+    let f = parseFloat(getComputedStyle(el).fontSize) || 12, g = 0;
+    while(f > min && need(el) > a + 0.5 && g++ < 40){ f -= 0.5; el.style.setProperty('font-size', f + 'px', 'important'); }
+  }
+  let busy = false;
+  function run(){
+    if(busy) return; busy = true;
+    try{
+      T.forEach(([sel, csel, min]) => document.querySelectorAll(sel).forEach(el => {
+        if(!el.offsetParent && el.getClientRects().length === 0) return;
+        const c = csel ? el.closest(csel) : el; if(c) fit(el, c, min);
+      }));
+    }catch(e){}
+    busy = false;
+  }
+  let tm = 0; const later = d => { clearTimeout(tm); tm = setTimeout(run, d || 200); };
+  window.addEventListener('resize', () => later(150));
+  window.addEventListener('load', () => { later(300); setTimeout(run, 1500); setTimeout(run, 4000); });
+  try{ document.fonts && document.fonts.ready.then(() => later(100)); }catch(e){}
+  try{ new MutationObserver(() => later(250)).observe(document.body, {childList:true, subtree:true, characterData:true}); }catch(e){}
+  setInterval(run, 3000);
+})();
+</script>
 </body>
 </html>
