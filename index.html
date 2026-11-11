@@ -4216,10 +4216,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE302";
+const APP_VERSION = "MCS1111WE303";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE303": "💬 My Chats: اپنا کاروبار / پروفیشن درج کرنے والا (اکاؤنٹ کے بغیر بھی) اب سیدھا چیٹ میں — لاگ اِن صفحہ نہیں آتا",
   "MCS1111WE302": "❓ غیر مختص: کیٹگری کی فہرست اب دائیں سے بائیں، نوری نستعلیق کشیدہ میں • اسی جگہ «➕ نئی کیٹگری» — بناتے ہی وہ کارڈ اسی میں چلا جاتا ہے",
   "MCS1111WE301": "🧹 انجمن تاجران فتح پور کے ڈبے ایڈمن سے ہٹ گئے • ❓ «غیر مختص» — سب آئٹم ایک ایک لائن میں، کیٹگری چنتے ہی کارڈ وہیں چلا جاتا ہے • 👥 کو-ڈویلپر پورٹل میں اطلاع، ایجنٹ کارکردگی، کالوں کی رپورٹ، اشتہار / آمدنی، وزیٹرز",
   "MCS1111WE300": "✍️ فیصد بار کے آخری ڈبے کی تحریر اب پوری دو سطروں میں: Earn with MCS / BE AN AGENT — کٹتی نہیں",
@@ -17235,6 +17236,9 @@ function mcWho(){
     const cd = codevMe(); if(cd && cd.phone && cd.pin) return {as:'cd', phone: cd.phone, pin: cd.pin};
     const ag = agMe(); if(ag && ag.phone && ag.pin) return {as:'agent', phone: ag.phone, pin: ag.pin};
     const ua = (typeof uaMe === 'function' && uaMe()) || null; if(ua && ua.tok) return {as:'user', tok: ua.tok};
+    /* MCS1111WE303 (ہیلپ ڈیسک #217): اکاؤنٹ نہ ہو مگر اس فون پر اپنا کاروبار / پروفیشن (مالک کی چابی) ہو تو چیٹ اسی سے — لاگ اِن صفحہ نہیں */
+    const bz = (typeof mpListReal === 'function' ? mpListReal() : []).find(x => x.p && x.p.rk && x.p.key);
+    if(bz) return {as:'biz', rec: bz.p.rk, key: bz.p.key, bn: String((bz.rec && (bz.rec.nameUr || bz.rec.nameEn || bz.rec.name)) || '').slice(0, 60)};
   }catch(e){}
   return null;
 }
