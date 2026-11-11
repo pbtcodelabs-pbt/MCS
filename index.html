@@ -4218,10 +4218,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE304";
+const APP_VERSION = "MCS1111WE305";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE305": "❓ غیر مختص: ہر ریکارڈ کی پوری تفصیل (نام، دکاندار، نمبر، قسم، پتہ) چھوٹے کیپسول میں • 🔁 «کیٹگری تبدیل کریں» بٹن • ڈراپ ڈاؤن میں «➕ نئی کیٹگری» — بنی ہوئی کیٹگری ہمیشہ فہرست میں رہتی ہے",
   "MCS1111WE304": "🧭 نیچے کی پٹی میں 7 بٹن (Help Desk اور Favorites بھی) • 🏠 ہوم پر تین بٹن: ایمرجنسی نمبرز، تلاش، Earn with MCS",
   "MCS1111WE303": "💬 My Chats: اپنا کاروبار / پروفیشن درج کرنے والا (اکاؤنٹ کے بغیر بھی) اب سیدھا چیٹ میں — لاگ اِن صفحہ نہیں آتا",
   "MCS1111WE302": "❓ غیر مختص: کیٹگری کی فہرست اب دائیں سے بائیں، نوری نستعلیق کشیدہ میں • اسی جگہ «➕ نئی کیٹگری» — بناتے ہی وہ کارڈ اسی میں چلا جاتا ہے",
@@ -9902,12 +9903,24 @@ function unCatOpts(){
   return unCatOpts._h = '<option value="">— کیٹگری چنیں —</option>' + (biz.length ? '<optgroup label="کاروبار">' + biz.map(opt).join('') + '</optgroup>' : '') + (oth.length ? '<optgroup label="پیشہ ور / دیگر">' + oth.map(opt).join('') + '</optgroup>' : '');
 }
 function unRow(r){
-  const E = escapeHtml, nm = r.nameUr || r.name || '', own = String(r.intro || '').replace(/^\s*دکاندار\s*[:：]\s*/, ''), ph = String(r.whatsapp || r.phone || '').replace(/\D/g, '').slice(-10);
-  return `<div class="un-row" id="un_${escapeAttr(r.id)}" title="${escapeAttr((own ? own + ' — ' : '') + (ph ? '0' + ph : ''))}"><b>${E(nm)}<small>${own ? ' • ' + E(own) : ''}${ph ? ' • 0' + ph : ''}</small></b><button type="button" class="un-sel" onclick="unPick('${escapeAttr(r.id)}')"><span>— کیٹگری چنیں —</span><i>▾</i></button></div>`;
+  const E = escapeHtml, nm = r.nameUr || r.name || '', ph = String(r.whatsapp || r.phone || '').replace(/\D/g, '').slice(-10);
+  const on = (typeof splitOwnerIntro === 'function') ? splitOwnerIntro(r.intro) : {owner:'', rest:String(r.intro || '')};
+  const place = [r.area, r.city, r.district].filter(Boolean).join('، ');
+  const cap = (ic, t, cls) => t ? `<span class="un-cap ${cls || ''}"><i>${ic}</i>${E(String(t))}</span>` : '';
+  const caps = [
+    cap('🔤', r.nameEn && r.nameEn !== nm ? r.nameEn : '', 'en'),
+    cap('👤', on.owner, 'ow'),
+    cap('📞', ph ? '0' + ph : '', 'ph'),
+    cap('🏷️', r.type, 'ty'),
+    cap('📍', r.address, 'ad'),
+    cap('🗺️', place, 'pl'),
+    cap('📝', on.rest, 'nt')
+  ].join('');
+  return `<div class="un-row" id="un_${escapeAttr(r.id)}"><b class="un-nm">${E(nm)}</b>${caps}<button type="button" class="un-chg" onclick="unPick('${escapeAttr(r.id)}')">🔁 کیٹگری تبدیل کریں</button></div>`;
 }
 function unList(){
   const q = ubNorm(unQ), all = unRecs();
-  const hit = q ? all.filter(r => ubNorm([r.nameUr, r.name, r.nameEn, r.intro, r.whatsapp].filter(Boolean).join(' ')).includes(q)) : all;
+  const hit = q ? all.filter(r => ubNorm([r.nameUr, r.name, r.nameEn, r.intro, r.whatsapp, r.type, r.address, r.area, r.city].filter(Boolean).join(' ')).includes(q)) : all;
   const box = document.getElementById('unList'), cnt = document.getElementById('unCnt'); if(!box) return;
   cnt.textContent = all.length;
   box.innerHTML = hit.length ? hit.slice(0, unLimit).map(unRow).join('') + (hit.length > unLimit ? `<button type="button" class="btn block secondary" onclick="unLimit+=200;unList()">▼ مزید (${hit.length - unLimit} باقی)</button>` : '') : `<div class="cp-hint" style="text-align:center">${all.length ? '🔎 کچھ نہیں ملا' : '🎉 کوئی غیر مختص نہیں بچا'}</div>`;
@@ -9932,19 +9945,31 @@ function unOptsHtml(q){
   const biz = keys.filter(k => CATEGORY_META[k].group === 'business').sort(byUr), oth = keys.filter(k => CATEGORY_META[k].group !== 'business').sort(byUr);
   return (biz.length ? '<div class="un-gh">🏪 کاروبار</div>' + biz.map(btn).join('') : '') + (oth.length ? '<div class="un-gh">👔 پیشہ ور / دیگر</div>' + oth.map(btn).join('') : '') || '<div class="cp-hint" style="text-align:center">کوئی کیٹگری نہیں ملی — اوپر سے نئی بنائیں</div>';
 }
+function unSelHtml(){
+  const keys = Object.keys(CATEGORY_META).filter(k => CATEGORY_META[k] && k !== UNASSIGNED_KEY);
+  const byUr = (x, y) => String(CATEGORY_META[x].ur || x).localeCompare(String(CATEGORY_META[y].ur || y), 'ur');
+  const opt = k => `<option value="${escapeAttr(k)}">${CATEGORY_META[k].emoji || '🏷️'} ${escapeHtml(CATEGORY_META[k].ur || k)}</option>`;
+  const biz = keys.filter(k => CATEGORY_META[k].group === 'business').sort(byUr), oth = keys.filter(k => CATEGORY_META[k].group !== 'business').sort(byUr);
+  return '<option value="">— کیٹگری چنیں —</option><option value="__new">➕ نئی کیٹگری بنائیں…</option>'
+    + (biz.length ? '<optgroup label="🏪 کاروبار">' + biz.map(opt).join('') + '</optgroup>' : '')
+    + (oth.length ? '<optgroup label="👔 پیشہ ور / دیگر">' + oth.map(opt).join('') + '</optgroup>' : '');
+}
+function unSelChange(el){
+  const v = el.value; if(!v) return;
+  if(v === '__new'){ const b = document.getElementById('unNewBox'); if(b){ b.style.display = 'block'; try{ document.getElementById('unNewName').focus(); }catch(e){} } el.value = ''; return; }
+  unPickSet(v);
+}
 function unPick(id){
   unPickId = id || null; unSheetClose();
   const d = document.createElement('div'); d.id = 'unSheet'; d.className = 'un-sheet';
   d.onclick = e => { if(e.target === d) unSheetClose(); };
-  d.innerHTML = `<div class="un-shbox" dir="rtl"><div class="un-shhd"><b>${id ? 'کیٹگری چنیں' : '➕ نئی کیٹگری'}</b><button type="button" onclick="unSheetClose()" aria-label="بند">✖</button></div>
-    ${id ? '<button type="button" class="un-new" onclick="unNewToggle()">➕ نئی کیٹگری بنائیں</button>' : ''}
+  d.innerHTML = `<div class="un-shbox" dir="rtl"><div class="un-shhd"><b>${id ? '🔁 کیٹگری تبدیل کریں' : '➕ نئی کیٹگری'}</b><button type="button" onclick="unSheetClose()" aria-label="بند">✖</button></div>
+    ${id ? `<select id="unSel" class="un-in un-dd" onchange="unSelChange(this)">${unSelHtml()}</select>` : ''}
     <div id="unNewBox" style="display:${id ? 'none' : 'block'}">
       <input type="text" id="unNewName" class="un-in" placeholder="نئی کیٹگری کا نام — مثلاً مرغی فروش" autocomplete="off">
       <div class="un-r2"><input type="text" id="unNewEmo" class="un-in" placeholder="ایموجی" maxlength="4" value="🏷️" style="flex:0 0 78px;text-align:center"><div class="un-seg"><button type="button" id="unGB" class="on" onclick="unGrpSet('business')">🏪 کاروبار</button><button type="button" id="unGP" onclick="unGrpSet('professional')">👔 پروفیشن</button></div></div>
       <button type="button" class="btn block accent" onclick="unNewMake()">✅ ${id ? 'بنائیں اور اسی میں ڈالیں' : 'کیٹگری بنائیں'}</button>
-    </div>
-    ${id ? '<input type="search" class="un-in" id="unSq" placeholder="🔍 کیٹگری ڈھونڈیں…" oninput="document.getElementById(\'unOpts\').innerHTML=unOptsHtml(this.value)">' : ''}
-    <div id="unOpts">${id ? unOptsHtml('') : ''}</div></div>`;
+    </div></div>`;
   document.body.appendChild(d); unGrp = 'business';
 }
 function unNewToggle(){ const b = document.getElementById('unNewBox'); if(!b) return; b.style.display = b.style.display === 'none' ? 'block' : 'none'; if(b.style.display === 'block'){ try{ document.getElementById('unNewName').focus(); }catch(e){} } }
@@ -19738,6 +19763,21 @@ body.d2 .bnav .d2n.on:not(#d2nHome){background:linear-gradient(180deg,#b7783f,#8
 body.d2 .bnav #d2nHome:not(.on){background:rgba(255,255,255,.08) !important;border:1.5px solid rgba(153,246,228,.45) !important;box-shadow:none !important;margin-top:0 !important}
 @media (max-width:400px){ body.d2 .bnav{gap:3px !important;padding-left:3px !important;padding-right:3px !important} body.d2 .bnav .d2n b{font-size:9.6px !important;letter-spacing:-.35px !important} body.d2 .bnav #d2nHome b{font-size:11.5px !important} body.d2 .bnav .d2n svg{width:21px !important;height:21px !important} }
 @media (min-width:700px){ body.d2 .bnav{max-width:760px} body.d2 .bnav .d2n b{font-size:13px !important;white-space:nowrap !important} }
+
+/* MCS1111WE305: غیر مختص — پوری تفصیل چھوٹے کیپسول میں + «کیٹگری تبدیل کریں» بٹن + ڈراپ ڈاؤن */
+.un-row{display:flex;flex-wrap:wrap;gap:4px 5px;align-items:center;padding:7px 4px;border-bottom:1px solid #e5e7eb;direction:rtl}
+.un-row .un-nm{flex:0 0 100%;min-width:0;overflow:visible;white-space:normal;text-overflow:clip;font-size:16px !important;line-height:1.9}
+.un-cap{display:inline-flex;align-items:center;gap:3px;max-width:100%;padding:1px 8px;border-radius:999px;background:#f1f5f9;border:1px solid #e2e8f0;color:#334155;font-family:var(--docCardFont);font-size:13px;line-height:1.8;white-space:normal;word-break:break-word}
+.un-cap i{font-style:normal;font-size:12px}
+.un-cap.ow{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.un-cap.ph{background:#eff6ff;border-color:#bfdbfe;color:#1e40af;direction:ltr}
+.un-cap.ty{background:#fef3c7;border-color:#fde68a;color:#92400e}
+.un-cap.ad,.un-cap.pl{background:#faf5ff;border-color:#e9d5ff;color:#6b21a8}
+.un-cap.nt{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+.un-cap.en{direction:ltr;font-family:system-ui,sans-serif;font-size:12px}
+.un-chg{margin-inline-start:auto;flex:0 0 auto;padding:3px 12px;border:1.5px solid #0f766e;border-radius:999px;background:#0f766e;color:#fff;font-family:var(--docCardFont);font-size:14px;line-height:1.9;cursor:pointer}
+.un-chg:active{background:#115e59}
+.un-dd{appearance:auto;background:#fff;color:#0f172a;font-size:18px}
 </style>
 <script>
 /* MCS1111WE304 (#218): Help Desk بٹن (ہیڈ سیٹ) اور Favorites (ستارہ) پٹی میں؛ چنا ہوا بٹن روشن — ہوم، پسندیدہ، چیٹ، پورٹل، اکاؤنٹ، سیٹنگ، ہیلپ ڈیسک */
