@@ -3773,8 +3773,6 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
       <div class="backup-card" id="adminImportBox" style="display:none;">
         <div class="backup-card-title">📥 نئی لسٹ شامل کریں</div>
         <div class="cp-hint" style="margin-bottom:10px;line-height:1.9;">① نیچے والا بٹن دبائیں ← ② فوراً نیچے خلاصہ آئے گا (کتنے نئے کارڈ، کتنے چھوڑے) ← ③ «📥 … امپورٹ کریں» دبائیں ← اوپر پراگرس بار چلے گی، مکمل ہونے پر ✓ لکھا آئے گا۔</div>
-        <button class="btn block" style="margin-top:4px;background:#0f766e;color:#fff;font-weight:800;font-size:16px;" onclick="prepTajranAll()">📥 انجمن تاجران فتح پور — سب بلاک (1 سے 7) کے نئے کارڈ</button>
-        <button class="btn block" style="margin-top:8px;background:#1d4ed8;color:#fff;font-weight:800;font-size:16px;" onclick="prepB1ShopNames()">🏪 بلاک 1 — پرانے کارڈوں پر دکان کا اصل نام لگائیں</button>
         <div id="importPreview" style="margin-top:10px;"></div>
         <details style="margin-top:12px;border:1px dashed #94a3b8;border-radius:12px;padding:8px 10px;"><summary style="font-weight:800;cursor:pointer;">➕ کوئی اور نئی لسٹ (PDF / Excel / چسپاں کریں)</summary>
         <select id="nlCat" class="ag-big" onfocus="nlFillCats()" onchange="nlReparse()" style="width:100%;margin-bottom:8px;"><option value="">— کیٹگری چنیں —</option></select>
@@ -4218,10 +4216,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE300";
+const APP_VERSION = "MCS1111WE301";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1111WE301": "🧹 انجمن تاجران فتح پور کے ڈبے ایڈمن سے ہٹ گئے • ❓ «غیر مختص» — سب آئٹم ایک ایک لائن میں، کیٹگری چنتے ہی کارڈ وہیں چلا جاتا ہے • 👥 کو-ڈویلپر پورٹل میں اطلاع، ایجنٹ کارکردگی، کالوں کی رپورٹ، اشتہار / آمدنی، وزیٹرز",
   "MCS1111WE300": "✍️ فیصد بار کے آخری ڈبے کی تحریر اب پوری دو سطروں میں: Earn with MCS / BE AN AGENT — کٹتی نہیں",
   "MCS1111WE299": "✍️ کارڈ کی فیصد والی بار کے آخری ڈبے کے اوپر باریک سی تحریر دوبارہ: Earn with MCS · Be an Agent",
   "MCS1011TU298": "🔎 رومن تلاش درست (Akram پر اکرم ہی، کرم / کریم نہیں؛ نام والے پہلے) • 🪪 تلاش میں پورا کارڈ • کارڈ سے زرد پٹی ہٹی • «رجسٹریشن مکمل کریں» بٹن سنہری • فیصد کی بار زرد • 🔧 اپڈیٹ کے پیغام میں اب صرف تازہ کام",
@@ -9885,6 +9884,47 @@ function fillTajCats(){
 }
 /* MCS0711SA193: انجمن تاجران — ہر کارڈ دکان کے نام سے خود اپنی کیٹگری میں؛ جو سمجھ نہ آئے وہ «غیر مختص» میں */
 const UNASSIGNED_KEY = 'cat_unassigned';
+
+/* ===== MCS1111WE301 (مالک کا حکم): «❓ غیر مختص» — سب آئٹم ایک ایک لائن میں، ہر ایک کے ساتھ کیٹگری چننے کا خانہ؛ چنتے ہی کارڈ اسی کیٹگری میں چلا جائے ===== */
+let unQ = '', unLimit = 200;
+function unRecs(){ return (store.services || []).filter(x => x.category === UNASSIGNED_KEY); }
+function unCatOpts(){
+  if(unCatOpts._h) return unCatOpts._h;
+  const keys = Object.keys(CATEGORY_META).filter(k => CATEGORY_META[k] && k !== UNASSIGNED_KEY);
+  const byUr = (a, b) => String(CATEGORY_META[a].ur || a).localeCompare(String(CATEGORY_META[b].ur || b), 'ur');
+  const opt = k => `<option value="${escapeAttr(k)}">${CATEGORY_META[k].emoji || ''} ${escapeHtml(CATEGORY_META[k].ur || k)}</option>`;
+  const biz = keys.filter(k => CATEGORY_META[k].group === 'business').sort(byUr), oth = keys.filter(k => CATEGORY_META[k].group !== 'business').sort(byUr);
+  return unCatOpts._h = '<option value="">— کیٹگری چنیں —</option>' + (biz.length ? '<optgroup label="کاروبار">' + biz.map(opt).join('') + '</optgroup>' : '') + (oth.length ? '<optgroup label="پیشہ ور / دیگر">' + oth.map(opt).join('') + '</optgroup>' : '');
+}
+function unRow(r){
+  const E = escapeHtml, nm = r.nameUr || r.name || '', own = String(r.intro || '').replace(/^\s*دکاندار\s*[:：]\s*/, ''), ph = String(r.whatsapp || r.phone || '').replace(/\D/g, '').slice(-10);
+  return `<div class="un-row" id="un_${escapeAttr(r.id)}" title="${escapeAttr((own ? own + ' — ' : '') + (ph ? '0' + ph : ''))}"><b>${E(nm)}<small>${own ? ' • ' + E(own) : ''}${ph ? ' • 0' + ph : ''}</small></b><select onchange="unSet('${escapeAttr(r.id)}', this.value)">${unCatOpts()}</select></div>`;
+}
+function unList(){
+  const q = ubNorm(unQ), all = unRecs();
+  const hit = q ? all.filter(r => ubNorm([r.nameUr, r.name, r.nameEn, r.intro, r.whatsapp].filter(Boolean).join(' ')).includes(q)) : all;
+  const box = document.getElementById('unList'), cnt = document.getElementById('unCnt'); if(!box) return;
+  cnt.textContent = all.length;
+  box.innerHTML = hit.length ? hit.slice(0, unLimit).map(unRow).join('') + (hit.length > unLimit ? `<button type="button" class="btn block secondary" onclick="unLimit+=200;unList()">▼ مزید (${hit.length - unLimit} باقی)</button>` : '') : `<div class="cp-hint" style="text-align:center">${all.length ? '🔎 کچھ نہیں ملا' : '🎉 کوئی غیر مختص نہیں بچا'}</div>`;
+}
+function unOpen(){
+  if(!isAdminSignedIn){ showToast('🔒 پہلے ایڈمن لاگ اِن کریں'); return; }
+  unQ = ''; unLimit = 200; unCatOpts._h = '';
+  agModal(`<div class="ag-hd">❓ غیر مختص <small>باقی: <b id="unCnt">0</b> — کیٹگری چنیں، کارڈ وہیں چلا جائے گا</small></div>
+    <input type="search" class="ag-q" placeholder="🔍 نام، دکاندار، نمبر…" oninput="unQ=this.value;unLimit=200;unList()"><div id="unList"></div>
+    <button type="button" class="btn block secondary" onclick="closeModal('agModal')">بند کریں</button>`);
+  unList();
+}
+function unSet(id, key){
+  if(!key) return; if(!isAdminSignedIn){ showToast('🔒 پہلے ایڈمن لاگ اِن کریں'); return; }
+  const r = (store.services || []).find(x => x.id === id); if(!r || !CATEGORY_META[key]) return;
+  r.category = key; saveStore();
+  try{ syncServiceUpdateToFirebase(r); }catch(e){}
+  try{ updateCategoryCounts(); }catch(e){}
+  const row = document.getElementById('un_' + id); if(row) row.remove();
+  const c = document.getElementById('unCnt'); if(c) c.textContent = unRecs().length;
+  showToast('✓ «' + (r.nameUr || r.name || '') + '» ← ' + (CATEGORY_META[key].emoji || '') + ' ' + (CATEGORY_META[key].ur || key));
+}
 async function ensureUnassignedCat(){
   if(CATEGORY_META[UNASSIGNED_KEY]) return;
   const FB = window.MCSFirebase;
@@ -11854,7 +11894,7 @@ function ptOpen(editProf, prev){
     const pend = (typeof pendingApprovals !== 'undefined' && pendingApprovals.length) || '', pfn = ((document.getElementById('pfPendN')||{}).textContent || '').replace(/\D/g,'');
     const tab = ptDevTab, tabs = [['day','📥','روزانہ'],['biz','🏪','بزنس / ایجنٹ'],['cod','👥','کو-ڈویلپر'],['rep','📣','رپورٹ'],['more','🧰','مزید']];
     const G = {
-      day: [['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['📋','انجمن تاجران','لسٹ امپورٹ','ptTajran'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
+      day: [['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['❓','غیر مختص','کیٹگری بدلیں','unOpen'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
       biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent']],
       cod: [['👥','کو-ڈویلپرز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','کو-ڈویلپر پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
       rep: [['📊','سرور کا استعمال','Firebase / Cloudflare — آج کتنا ٪','usOpen'],['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
@@ -11865,7 +11905,7 @@ function ptOpen(editProf, prev){
       + (tab === 'cod' ? `<div class="cp-hint">👥 ہر کو-ڈویلپر کی آخری لاگ اِن «کو-ڈویلپرز» میں اور اس کی تجاویز / مسائل Help Desk میں «کو-ڈویلپر» کے نام سے آتے ہیں۔</div>` : '')
       + (tab === 'more' ? `<details class="pt-card pt-f" ${(p.name && !editProf) ? '' : 'open'}><summary>🪪 میرا پروفائل ${p.name ? '' : '<small style="color:#dc2626">— پہلی بار بھر دیں</small>'}</summary><input id="ptN" placeholder="نام" value="${escapeAttr(p.name||'')}"><input id="ptP" dir="ltr" inputmode="tel" placeholder="موبائل نمبر" value="${escapeAttr(p.phone||'')}"><input id="ptC" placeholder="شہر" value="${escapeAttr(p.city||'')}"><div class="r"><button type="button" class="p" onclick="ptDevSave()">✅ محفوظ</button></div></details>` : '');
   } else if(rl === 'codev'){ nm = cd.name || 'کو-ڈویلپر'; sub = cd.phone ? '0' + String(cd.phone).slice(2) : '';
-    body = `<div class="cp-hint" style="margin:0 0 8px">👥 آپ نیا بزنس، پروفیشن یا ایجنٹ بھیج سکتے ہیں — ڈویلپر کی منظوری کے بعد ہی لائیو ہوگا۔ باقی چیزیں صرف جانچ کے لیے (محفوظ نہیں ہوتیں)۔ مسئلہ یا تجویز Help Desk سے۔</div><div class="pt-grid">${ptT('🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen')}${ptT('🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
+    body = `<div class="cp-hint" style="margin:0 0 8px">👥 آپ نیا بزنس، پروفیشن یا ایجنٹ بھیج سکتے ہیں — ڈویلپر کی منظوری کے بعد ہی لائیو ہوگا۔ باقی چیزیں صرف جانچ کے لیے (محفوظ نہیں ہوتیں)۔ مسئلہ یا تجویز Help Desk سے۔</div><div class="pt-grid">${ptT('🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen')}${ptT('🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen')}${ptT('📩','اطلاع','دکانداروں کو','ntOpen')}${ptT('📈','ایجنٹ کارکردگی','سست / ایکٹو','agPerfOpen')}${ptT('🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen')}${ptT('📊','کالوں کی رپورٹ','','stOpenAdmin')}${ptT('📢','اشتہار اور آمدنی','','adOpenAdmin')}${ptT('👀','وزیٹرز','کون کتنی بار','vlOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
   } else if(rl === 'agent'){ nm = me.name || 'ایجنٹ'; sub = me.phone ? '0' + String(me.phone).slice(2) : ''; { const am = (ptPrev && ptPrev.a) ? {name: ptPrev.a.name, phone: ptPrev.a.phone, code: ptPrev.a.code} : me; nm = am.name || 'ایجنٹ'; sub = am.phone ? '0' + String(am.phone).slice(2) : ''; body = apBody(am, !!ptPrev); }
   } else {
     const L = mpListReal(); nm = (a && a.user && a.user.name) || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
@@ -19314,6 +19354,13 @@ html body .doc-card > .fp-card .fp-tr i{background:linear-gradient(90deg,#fde047
 
 /* MCS1111WE299: آخری ڈبے (75٪ کے بعد) کے اوپر باریک چھوٹی تحریر */
 html body .doc-card > .fp-card .fp-ct span.fp-ea{font-size:5.6px !important;line-height:5.6px !important;height:11.5px;font-weight:400 !important;text-align:center !important;white-space:nowrap;overflow:visible !important;color:rgba(255,255,255,.92) !important;direction:ltr;letter-spacing:0;text-shadow:none !important;align-self:flex-end;font-family:Arial,sans-serif !important}
+
+/* MCS1111WE301 */
+.un-row{display:flex;gap:6px;align-items:center;padding:6px 4px;border-bottom:1px solid #e5e7eb;direction:rtl}
+.un-row b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.un-row b small{font-weight:400;color:#64748b;font-size:11px}
+.un-row select{flex:0 0 44%;max-width:44%;padding:5px 4px;border-radius:8px;border:1px solid #cbd5e1;font:inherit;font-size:12px;background:#fff}
+#unList{max-height:56vh;overflow:auto;margin:6px 0}
 </style>
 <script>
 /* ===== MCS1011TU292 (مالک کا حکم): My Chat اور Chat Settings — دی گئی تصویروں کے مطابق =====
