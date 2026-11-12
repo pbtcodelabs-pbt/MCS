@@ -4310,11 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH334";
+const APP_VERSION = "MCS1211TH336";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1211TH334": "🔑 After approval the developer gets an activation code (e.g. K7QM-4XT9) — the shopkeeper types it on the login page and enters as a registered business with 1-year membership; your own ID + code stay locked on the login page",
+  "MCS1211TH336": "🔑 After approval the developer gets an activation code (e.g. K7QM-4XT9) — the shopkeeper types it on the login page and enters as a registered business with 1-year membership; your own ID + code stay locked on the login page",
   "MCS1211TH333": "🔑 Sign up: name, mobile, district, 6-digit PIN — your Account ID + 4-digit registration code appear at once; agents fetch your record with that code, developer approves 1 year, you paste the ready message on the login page",
   "MCS1211TH332": "🔠 Home screen text is now about 20% bigger and easier to read — bottom bar, colours and design unchanged",
   "MCS1111WE331": "🛡️ My Chats now has a pinned «Approvals» row for the developer — membership, new business, agent requests; tap to open the real page, it clears itself when done",
@@ -5626,9 +5626,27 @@ let ubOpen = '';
 const UB_LABELS = {province:'صوبہ', district:'ضلع', city:'شہر', area:'علاقہ', cat:'کیٹگری'};
 const UB_PALETTE = [['#0f766e','#e3f4f1'],['#c2740a','#fff1dc'],['#1d4ed8','#e6eeff'],['#be185d','#ffe6ef'],
   ['#6d28d9','#f0e8ff'],['#15803d','#e4f6e0'],['#c2410c','#ffeadb'],['#0369a1','#e0f1fb']];
+/* MCS1211TH336 (مالک کا حکم): ایک ہی موبائل نمبر کے دو کارڈ — جس پر ایم سی ایس نمبر لگ چکا وہی اصل؛ بغیر ایم سی ایس والا پرانا کارڈ
+   صرف ڈویلپر کو لال کراس کے ساتھ نظر آئے (حذف کا بٹن)، باقی سب (یوزر، ایجنٹ، کو-ڈویلپر) سے چھپا رہے */
+let _dupC = { t: 0, n: -1, m: null };
+function dupMap(){
+  const n = (store.services || []).length + (store.doctors || []).length, now = Date.now();
+  if(_dupC.m && _dupC.n === n && now - _dupC.t < 1500) return _dupC.m;
+  const has = {}, old = new Set(), all = [];
+  const add = (k, r) => { if(!r) return; const d = String(r.whatsapp || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10); if(d.length < 10) return; const m = /^MCS-/i.test(String(shortRecordId(k, r) || '')); all.push([d, r, m]); if(m) has[d] = 1; };
+  (store.services || []).forEach(r => add('service', r)); (store.doctors || []).forEach(r => add('doctor', r));
+  all.forEach(a => { if(has[a[0]] && !a[2]) old.add(a[1]); });
+  _dupC = { t: now, n, m: old }; return old;
+}
+function dupOld(r){ try{ return !!r && dupMap().has(r); }catch(e){ return false; } }
+function dupVis(r){ try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || !dupOld(r); }catch(e){ return true; } }
+function dupBadge(kind, r){
+  if(!(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || !dupOld(r)) return '';
+  return `<div class="dupOldBar"><span class="dupX">✖</span><span>پرانا کارڈ — اسی موبائل پر ایم سی ایس والا نیا کارڈ موجود ہے</span><button type="button" onclick="event.stopPropagation();${kind==='doctor'?'deleteDoctor':'deleteService'}('${escapeAttr(r.id)}')">🗑️ ڈیلیٹ کریں</button></div>`;
+}
 function ubAllRecords(){
-  return store.doctors.map(d=>({kind:'doctor', cat:'doctor', rec:d}))
-    .concat(store.services.map(s=>({kind:'service', cat:s.category, rec:s})));
+  return store.doctors.filter(dupVis).map(d=>({kind:'doctor', cat:'doctor', rec:d}))
+    .concat(store.services.filter(dupVis).map(s=>({kind:'service', cat:s.category, rec:s})));
 }
 function ubCatMeta(cat){
   if(cat==='doctor') return {emoji:'🩺', ur:'ڈاکٹرز', tag:'ڈاکٹر'};
@@ -5871,10 +5889,12 @@ function renderUserSearch(){
   const srch = ubParseQuery(qRaw);
   const locKeys = ['group','province','district','city','area','cat'];
   const doctorResults = store.doctors.filter(d=>{
+    if(!dupVis(d)) return false;
     if(!ubPass({rec:d, cat:'doctor'}, locKeys)) return false;
     return ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d)], d.whatsapp);
   });
   const serviceResults = store.services.filter(s=>{
+    if(!dupVis(s)) return false;
     if(!ubPass({rec:s, cat:s.category}, locKeys)) return false;
     const cm = CATEGORY_META[s.category]||{};
     return ubMatch(srch, [s.nameUr, s.nameEn, ubOwnerEn(s), s.type, s.address, s.intro, s.city, s.area, s.district, s.province, cm.ur, cm.listTitle, s.category, shortRecordId('service', s)], s.whatsapp);
@@ -6224,8 +6244,8 @@ function favRecords(){
 function searchAllRecords(qRaw){
   const srch = ubParseQuery(qRaw);
   if(srch.empty) return [];
-  let docs = store.doctors.filter(d=> ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d)], d.whatsapp));
-  let svcs = store.services.filter(x=>{ const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, ubOwnerEn(x), x.type, x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
+  let docs = store.doctors.filter(d=> dupVis(d) && ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d)], d.whatsapp));
+  let svcs = store.services.filter(x=>{ if(!dupVis(x)) return false; const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, ubOwnerEn(x), x.type, x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
   const idQ = idKey(qRaw);
   if(/^[a-z]{2,4}[0-9]{5}$/.test(idQ)){
     const dh = docs.filter(d=>idKey(shortRecordId('doctor', d))===idQ), sh = svcs.filter(x=>idKey(shortRecordId('service', x))===idQ);
@@ -8410,8 +8430,8 @@ function catTabRender(grp){
   document.querySelectorAll('.flt-bar[data-for="cat-' + grp + '"] button').forEach(b=>b.classList.toggle('on', b.dataset.f===tab));
   if(tab==='all'){ res.style.display = 'none'; res.innerHTML = ''; if(grid) grid.style.display = ''; return; }
   const grpOf = k => (CATEGORY_META[k] && CATEGORY_META[k].group) || 'professional';
-  const docs = grp==='business' ? [] : store.doctors.filter(d=>catTabPass(tab, 'doctor', d));
-  const svcs = store.services.filter(x=>(grpOf(x.category)==='business') === (grp==='business') && catTabPass(tab, 'service', x));
+  const docs = grp==='business' ? [] : store.doctors.filter(d=>dupVis(d) && catTabPass(tab, 'doctor', d));
+  const svcs = store.services.filter(x=>dupVis(x) && (grpOf(x.category)==='business') === (grp==='business') && catTabPass(tab, 'service', x));
   const items = sortRecords(docs.concat(svcs));
   let h = `<div class="cr-h">${tab==='reg' ? '✅' : '🤝'} ${items.length} ${tab==='reg' ? 'رجسٹرڈ' : 'ایم سی ایس ایجنٹ'} — تمام کیٹگریز میں سے</div>`;
   if(!items.length) h += tab==='reg' ? '<div class="empty-state"><span class="e-emoji">✅</span>ابھی کوئی رجسٹرڈ اندراج نہیں</div>' : '<div class="empty-state"><span class="e-emoji">🤝</span>ابھی کوئی ایم سی ایس ایجنٹ نہیں</div>';
@@ -8432,7 +8452,7 @@ function setListSort(v){
 function newBadge(x){ const t = recTime(x); return (t && Date.now()-t < 48*3600*1000) ? '<span class="new-badge">🆕 نیا</span>' : ''; }
 function renderDoctorList(mode){
   const listWrap = mode==='list' ? document.getElementById('doctorListWrap') : document.getElementById('searchResultsWrap');
-  let items = store.doctors;
+  let items = store.doctors.filter(dupVis);
   if(mode==='search'){
     const qRaw = (document.getElementById('searchBox').value||'').trim();
     const q = qRaw.toLowerCase();
@@ -8474,7 +8494,7 @@ function docCardHtml(d, mode){
     const nameUr = d.nameUr || d.name || '';
     const sfOnD = d.more && d.more.selfie;   /* MCS0911MO265 (#170) */
     return `
-    <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}">${ewRib('doctor', d)}${agBadgeHtml('doctor', d)}
+    <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}${dupOld(d) && isAdminSignedIn ? ' dupOld' : ''}">${dupBadge('doctor', d)}${ewRib('doctor', d)}${agBadgeHtml('doctor', d)}
       <div class="doc-toprow">
       <div class="doc-avatar${sfOnD ? ' sf' : ''}">${sfOnD ? `<img src="${escapeAttr(d.more.selfie)}" alt="">` : ''}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
       <div class="doc-body">
@@ -8844,15 +8864,15 @@ function renderCustomCategoryTiles(){
 function updateCategoryCounts(){
   try{ mpRender(); hlRenderSoon(); }catch(e){}   /* MCS0211MO113 */
   const dc = document.getElementById('catCount_doctor');
-  if(dc) dc.textContent = String(store.doctors.length);
+  if(dc) dc.textContent = String(store.doctors.filter(dupVis).length);
   CATEGORY_KEYS.forEach(k=>{
     const el = document.getElementById('catCount_'+k);
-    if(el) el.textContent = String(store.services.filter(s=>s.category===k).length);
+    if(el) el.textContent = String(store.services.filter(s=>s.category===k && dupVis(s)).length);
   });
   /* ہوم اسکرین کے بڑے کارڈوں کی کل تعداد: پروفیشنلز = ڈاکٹرز + پروفیشنل گروپ کی سروسز،
      بزنس = کاروبار گروپ کی سروسز، یوزر سرچ = سب کا میزان */
-  let pro = store.doctors.length, biz = 0;
-  store.services.forEach(sv=>{
+  let pro = store.doctors.filter(dupVis).length, biz = 0;
+  store.services.filter(dupVis).forEach(sv=>{
     const g = (CATEGORY_META[sv.category] && CATEGORY_META[sv.category].group) || 'professional';
     if(g==='business') biz++; else pro++;
   });
@@ -8860,7 +8880,7 @@ function updateCategoryCounts(){
   setH('homeCount_professional', pro);
   setH('homeCount_business', biz);
   setH('homeCount_total', pro + biz);
-  setH('homeCount_emg', store.services.filter(x=>x.category==='emergencyNumbers').length);
+  setH('homeCount_emg', store.services.filter(x=>x.category==='emergencyNumbers' && dupVis(x)).length);
   setH('homeCount_total', pro+biz);
   try{ ccApplyCity(); hfRender(); }catch(e){}
 }
@@ -9728,7 +9748,7 @@ function deleteFromForm(mid){
 function renderServiceList(mode){
   const wrap = document.getElementById('serviceListWrap');
   const meta = CATEGORY_META[currentServiceCategory];
-  let items = store.services.filter(x=>x.category===currentServiceCategory);
+  let items = store.services.filter(x=>x.category===currentServiceCategory && dupVis(x));
   const qRaw = (document.getElementById('serviceSearchBox').value||'').trim();
   const q = qRaw.toLowerCase();
   const qDigits = qRaw.replace(/[^0-9]/g,'');
@@ -9764,7 +9784,7 @@ function svcCardHtml(s, meta){
     const intl = '92' + digits.replace(/^0/,'');
     const sfOn = s.more && s.more.selfie;   /* MCS0711SA194 + MCS0911MO265 (ہیلپ ڈیسک #170): رجسٹرڈ کاروبار کے مالک کی گول تصویر (پورٹل والی DP) کارڈ پر */
     return `
-    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}"${(isAdminSignedIn && s.category === UNASSIGNED_KEY) ? ` data-unid="${escapeAttr(s.id)}"` : ''}>${ewRib('service', s)}${agBadgeHtml('service', s)}
+    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}${dupOld(s) && isAdminSignedIn ? ' dupOld' : ''}"${(isAdminSignedIn && s.category === UNASSIGNED_KEY) ? ` data-unid="${escapeAttr(s.id)}"` : ''}>${dupBadge('service', s)}${ewRib('service', s)}${agBadgeHtml('service', s)}
       <div class="doc-toprow">
       <div class="doc-avatar${sfOn ? ' sf' : ''}">${sfOn ? `<img src="${escapeAttr(s.more.selfie)}" alt="">` : `<span style="font-size:20px;">${meta.emoji}</span>`}</div>
       <div class="doc-body">
@@ -15577,6 +15597,11 @@ body.d2 #homeAds .ad-ribbon{display:none}
 #uaOv .uaHd h2{margin:0;font-size:26px;font-weight:800;color:#0b2f8f}
 #uaOv .uaSub{text-align:center;color:#5b6b8c;font-size:13.5px;margin:4px 0 12px}
 #uaOv .uaPkBox{text-align:center;border:2px dashed #16a34a;border-radius:16px;background:#f0fdf4;padding:12px;margin:8px 0}#uaOv .uaPkBox .l{font-size:13px;font-weight:800;color:#166534}#uaOv .uaPkBox .v{font:900 30px Arial,sans-serif;color:#0f1f45;letter-spacing:2px}#uaOv .uaPkBox .v.pk{font-size:40px;letter-spacing:10px;color:#b45309}
+
+.doc-card.dupOld{position:relative;outline:2px solid #dc2626;outline-offset:-2px;background-image:linear-gradient(to top right,transparent calc(50% - 1.5px),rgba(220,38,38,.55) 50%,transparent calc(50% + 1.5px)),linear-gradient(to bottom right,transparent calc(50% - 1.5px),rgba(220,38,38,.55) 50%,transparent calc(50% + 1.5px))}
+.dupOldBar{display:flex;align-items:center;gap:8px;background:#fee2e2;border:1px solid #dc2626;color:#991b1b;border-radius:10px;padding:6px 8px;margin:0 0 6px;font:800 12.5px/1.6 inherit;direction:rtl;position:relative;z-index:2}.dupOldBar .dupX{color:#dc2626;font-size:20px;line-height:1}.dupOldBar span:nth-child(2){flex:1}.dupOldBar button{flex:none;border:0;background:#dc2626;color:#fff;border-radius:8px;padding:6px 10px;font-weight:900;font-size:12.5px;cursor:pointer}
+#uaOv .uaPkTiny{display:flex;align-items:center;gap:6px;justify-content:flex-start;margin:14px 0 0;font:700 11px Arial,sans-serif;color:#94a3b8;opacity:.85}#uaOv .uaPkTiny button{border:0;background:transparent;color:#94a3b8;font-size:14px;padding:0 4px;cursor:pointer}
+#uaOv .uaAgBox{margin-top:16px;padding-top:10px;border-top:1px dashed #cbd5e1}#uaOv .uaAgBox .agl{font:700 12px/1.6 inherit;color:#64748b;text-align:center;direction:rtl;margin-bottom:4px}#uaOv .uaAgBox input{-webkit-text-security:disc;text-security:disc}
 #uaOv .uaPkMini .lk{float:left;font-size:14px;opacity:.8}#uaOv .uaPkMini{position:relative;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:7px 10px;margin:0 0 8px;text-align:center;font:800 15px Arial,sans-serif;color:#14532d;cursor:pointer}#uaOv .uaPkMini small{display:block;font:700 11.5px inherit;color:#166534;direction:rtl;margin-top:2px}
 #uaOv .uaF{display:flex;align-items:center;height:50px;border:1.5px solid #d5deee;border-radius:14px;background:#fff;margin-bottom:10px;padding:0 12px}
 #uaOv .uaF:focus-within{border-color:#1546c0;box-shadow:0 0 0 4px rgba(21,70,192,.12)}
@@ -15678,7 +15703,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   window.uaLogin = function(msg){
     show(`${head()}<div class="uaCard uaLg">
       <div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>
-      ${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}${pkLoginBox()}
+      ${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}
       ${field('uaId', 'user', 'Mobile No. / Account ID (MCS-001)', { ac:'username' })}
       ${field('uaPw', 'lock', 'PIN / Password', { type:'password', ac:'current-password' })}
       
@@ -15687,8 +15712,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       <button class="uaBtn bB" onclick="uaDoLogin()">${IC.login}LOGIN</button>
       <button class="uaBtn bO" onclick="uaExit()">${IC.exit}EXIT</button>
       <button class="uaBtn bG" onclick="uaSignup()">${IC.add}CREATE NEW ACCOUNT</button>
-      <div class="uaOr" style="margin-top:6px">🔑 ایجنٹ سے ملا کوڈ</div>
-      <div id="uaRegBox">${invBox()}</div></div>`);
+      <div id="uaRegBox" class="uaAgBox">${invBox()}</div>${pkLoginBox()}</div>`);
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); });
   };
   /* MCS1211TH333 (مالک کا حکم): سائن اپ میں ضلع لازمی — انگریزی A→Z، ساتھ اردو */
@@ -15780,7 +15804,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     window._uaPkMsg = msg;
   };
   window.uaPkCopy = function(){ const t = window._uaPkMsg || ''; try{ navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){ prompt('کاپی کریں', t); } };
-  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.pk) return ''; return `<div class="uaPkMini" dir="ltr" onclick="uaPkCopyMini()"><span class="lk">🔒</span>🆔 <b>${esc(o.sid)}</b> &nbsp; 🔑 <b>${esc(o.pk)}</b><small>${esc(o.name || '')} — آپ کی پکی ID اور کوڈ (تبدیل نہیں ہو سکتے) — رجسٹریشن کے لیے اپنے ایجنٹ کو بھیجیں • دبائیں تو کاپی</small></div>`; }catch(e){ return ''; } }
+  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.pk) return ''; return `<div class="uaPkTiny" dir="ltr"><span onclick="uaPkCopyMini()">🔒 ${esc(o.sid)} • ${esc(o.pk)}</span><button type="button" onclick="uaPkCopyMini()" title="Copy">⧉</button></div>`; }catch(e){ return ''; } }   /* MCS1211TH336: لاگ اِن صفحے پر چھوٹی سی ID+کوڈ نیچے بائیں، ساتھ باریک کاپی بٹن */
   window.uaPkCopyMini = function(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); const t = 'My City Shines — Account ID: ' + o.sid + ' • رجسٹریشن کوڈ: ' + o.pk; navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){} };
   window.uaAutoCard = function(u){
     if(!u || !u.mobile || typeof store === 'undefined') return;
@@ -16028,20 +16052,20 @@ body.d2 #homeAds .ad-ribbon{display:none}
   };
 
   /* ---- نیا بندہ: میسج پیسٹ ---- */
-  const invBox = () => `<div class="uaMsg" style="background:#fff7e6;border-color:#f6c26b;color:#7c2d12;font-weight:800;line-height:1.9;text-align:center">🔑 <b>ایجنٹ سے ملنے والا کوڈ یہاں لکھیں / پیسٹ کریں</b><br><small style="font-weight:700">Enter the code you got from your agent (e.g. K7QM-4XT9)</small></div>
-    <input id="uaInvTx" type="text" dir="ltr" maxlength="400" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX" onpaste="setTimeout(function(){uaInvGo(1)},120)" onkeydown="if(event.key==='Enter')uaInvGo()" style="width:100%;box-sizing:border-box;height:52px;border:2px solid #f6c26b;border-radius:14px;padding:0 12px;font:900 22px Arial,sans-serif;letter-spacing:3px;text-align:center;text-transform:uppercase;margin-bottom:8px;background:#fff;color:#0f1f45">
-    <div class="uaErr" id="uaInvErr"></div>
-    <div class="uaTwo"><button class="uaBtn bO" onclick="uaInvPaste()">📋 پیسٹ</button><button class="uaBtn bB" onclick="uaInvGo()">${IC.login}داخل ہوں</button></div>`;
+  const invBox = () => `<div class="agl">🔑 ایجنٹ کی طرف سے ملنے والا کوڈ</div>
+    <div style="display:flex;gap:6px;direction:ltr;align-items:center"><input id="uaInvTx" type="text" dir="ltr" maxlength="400" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX" onpaste="setTimeout(function(){uaInvGo(1)},120)" onkeydown="if(event.key==='Enter')uaInvGo()" style="flex:1;min-width:0;box-sizing:border-box;height:38px;border:1.5px solid #cbd5e1;border-radius:10px;padding:0 10px;font:800 15px Arial,sans-serif;letter-spacing:2px;text-align:center;text-transform:uppercase;background:#fff;color:#0f1f45"><button type="button" class="uaBtn bO" style="flex:none;width:auto;height:38px;margin:0;padding:0 10px;font-size:13px" onclick="uaInvPaste()">📋</button><button type="button" class="uaBtn bB" style="flex:none;width:auto;height:38px;margin:0;padding:0 12px;font-size:13px" onclick="uaInvGo()">OK</button></div>
+    <div class="uaErr" id="uaInvErr" style="margin:4px 0 0"></div>`;   /* MCS1211TH336: باریک خانہ؛ قبول ہوتے ہی کوڈ مٹ جاتا ہے، لکھتے وقت چھپا رہتا ہے */
   window.uaRegToggle = function(cb){ const b = $('uaRegBox'); if(!b) return; b.style.display = cb.checked ? 'block' : 'none'; if(cb.checked){ setTimeout(() => { try{ b.scrollIntoView({ behavior:'smooth', block:'center' }); const t = $('uaInvTx'); if(t) t.focus(); }catch(e){} }, 60); } };
   window.uaInvAsk = function(){
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.login}</i><h2 style="font-size:22px">رجسٹریشن کا میسج پیسٹ کریں</h2></div><div class="uaSub">اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں</div>${invBox()}
       <button class="uaBtn bO" onclick="${uaMe() ? 'uaAccount()' : 'uaLogin()'}">← واپس</button></div>`);
   };
-  /* MCS1211TH334 (مالک کا حکم): ایجنٹ سے ملا ایکٹیویشن کوڈ → سرور (actuse) اسی موبائل کا اکاؤنٹ + لاگ اِن، پھر کاروبار جڑتا ہے (fedApplyPending — ایک سال کی ممبرشپ پہلے سے) */
+  /* MCS1211TH336 (مالک کا حکم): ایجنٹ سے ملا ایکٹیویشن کوڈ → سرور (actuse) اسی موبائل کا اکاؤنٹ + لاگ اِن، پھر کاروبار جڑتا ہے (fedApplyPending — ایک سال کی ممبرشپ پہلے سے) */
   window.uaActGo = async function(c){
     const e = $('uaInvErr'); if(e) e.textContent = '⏳ کوڈ جانچ رہا ہوں…';
     busy(1); let r = null; try{ r = await api({ op:'actuse', code: c }); }catch(_){} busy(0);
     if(!r){ if(e) e.textContent = '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'; return; }
+    try{ if(r.ok){ const tx = $('uaInvTx'); if(tx) tx.value = ''; } }catch(_){}
     if(!r.ok){ if(e) e.textContent = r.reason === 'wait' ? '⛔ کئی بار غلط کوڈ — 15 منٹ بعد کوشش کریں' : '❌ یہ کوڈ درست نہیں — ایجنٹ سے دوبارہ پوچھیں'; return; }
     const a = r.act || {}, m = mob11(a.mobile || (r.user && r.user.mobile) || '');
     if(a.recId && m.length === 11) ls.set('mcsInvite', JSON.stringify({ n: a.name || (r.user && r.user.name) || '', m, k: a.kind === 'doctor' ? 'd' : 's', i: a.recId, b: a.prof || '' }));
@@ -20748,12 +20772,12 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     if(!role()){ if(b) b.style.display = 'none'; return; }
     if(!b){
       b = document.createElement('div'); b.id = 'pkRegBox'; b.setAttribute('data-noen', '');
-      b.style.cssText = 'margin:6px 0 10px;padding:10px;border:2px solid #16a34a;border-radius:14px;background:#f0fdf4;direction:rtl';
-      b.innerHTML = `<div style="font-weight:900;color:#14532d;font-size:14px;line-height:1.8">🔑 جس بندے نے خود سائن اَپ کیا ہے — اس کی <b>Account ID</b> اور <b>چار ہندسوں کا پاس کوڈ</b> یہاں لکھیں؛ اس کا ریکارڈ خود بھر جائے گا</div>
+      b.style.cssText = 'margin:4px 0 8px;padding:6px 8px;border:1px solid #86efac;border-radius:10px;background:#f0fdf4;direction:rtl';
+      b.innerHTML = `<div style="font-weight:800;color:#14532d;font-size:12.5px;line-height:1.6">🔑 یوزر کی <b>ID</b> اور <b>چار ہندسوں کا کوڈ</b> لکھیں</div>
         <div style="display:flex;gap:6px;margin-top:6px;direction:ltr">
-          <input id="pkRegId" type="text" placeholder="MCS-008 / 03XXXXXXXXX" autocomplete="off" style="flex:1.4;min-width:0;height:42px;border:1.5px solid #86efac;border-radius:10px;padding:0 10px;font:700 15px Arial,sans-serif">
-          <input id="pkRegCode" type="text" inputmode="numeric" maxlength="4" placeholder="Code" autocomplete="off" style="flex:.8;min-width:0;height:42px;border:1.5px solid #86efac;border-radius:10px;padding:0 8px;font:900 18px Arial,sans-serif;letter-spacing:4px;text-align:center">
-          <button type="button" onclick="pkRegFetch()" style="flex:none;height:42px;border:0;border-radius:10px;background:#16a34a;color:#fff;font-weight:900;padding:0 12px;cursor:pointer">🔍 لائیں</button></div>
+          <input id="pkRegId" type="text" placeholder="MCS-008 / 03XXXXXXXXX" autocomplete="off" style="flex:1.4;min-width:0;height:36px;border:1px solid #86efac;border-radius:8px;padding:0 8px;font:700 14px Arial,sans-serif">
+          <input id="pkRegCode" type="text" inputmode="numeric" maxlength="4" placeholder="Code" autocomplete="off" style="flex:.8;min-width:0;height:36px;border:1px solid #86efac;border-radius:8px;padding:0 6px;font:900 16px Arial,sans-serif;letter-spacing:4px;text-align:center">
+          <button type="button" onclick="pkRegFetch()" style="flex:none;height:36px;border:0;border-radius:8px;background:#16a34a;color:#fff;font-weight:900;font-size:13px;padding:0 10px;cursor:pointer">🔍 لائیں</button></div>
         <div id="pkRegMsg" style="margin-top:6px;font-weight:800;font-size:13px;line-height:1.8"></div>`;
       body.insertBefore(b, body.firstChild);
       $('pkRegCode').addEventListener('keydown', e => { if(e.key === 'Enter') pkRegFetch(); });
@@ -20797,7 +20821,17 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     m.innerHTML = `<span style="color:#047857">✅ ${esc(u.name)} (${esc(u.sid)}) — نام، موبائل، ضلع لگ گئے؛ باقی فارم (کاروبار کا نام، قسم، پتہ، شناختی کارڈ…) مکمل کر کے محفوظ کریں</span>`;
   };
   const _osf = window.openServiceForm;
-  window.openServiceForm = openServiceForm = function(){ const r = _osf.apply(this, arguments); try{ box(); }catch(e){} return r; };
+  /* MCS1211TH336: خود فارم بھرنے والے کے لیے ڈبہ نہیں — لاگ اِن کی معلومات (نام، موبائل، ضلع) خود بخود آ جاتی ہیں */
+  function ownFill(){
+    try{
+      if(role()) return; const a = typeof uaMe === 'function' && uaMe(); if(!a || !a.user) return;
+      const u = a.user; if(!u.mobile) return;
+      const rec = editingServiceId ? (store.services || []).find(x => x && x.id === editingServiceId) : null;
+      if(rec && rec.whatsapp && d10(rec.whatsapp) !== d10(u.mobile)) return;
+      setTimeout(() => { try{ fill({ name: u.name, mobile: u.mobile, district: u.district || '' }); }catch(e){} }, 250);
+    }catch(e){}
+  }
+  window.openServiceForm = openServiceForm = function(){ const r = _osf.apply(this, arguments); try{ box(); }catch(e){} try{ ownFill(); }catch(e){} return r; };
   // محفوظ ہونے کے بعد: منظوری کے لیے ڈویلپر کو
   const _ss = window.saveService;
   window.saveService = saveService = function(){
@@ -20848,7 +20882,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     }catch(e){}
     return r;
   };
-  /* MCS1211TH334 (مالک کا حکم): منظوری کے بعد ایکٹیویشن کوڈ XXXX-XXXX (سرور actmake، صرف ڈویلپر) — دکاندار لاگ اِن صفحے پر لکھے تو لاگ اِن + رجسٹرڈ + ایک سال */
+  /* MCS1211TH336 (مالک کا حکم): منظوری کے بعد ایکٹیویشن کوڈ XXXX-XXXX (سرور actmake، صرف ڈویلپر) — دکاندار لاگ اِن صفحے پر لکھے تو لاگ اِن + رجسٹرڈ + ایک سال */
   async function actMake(p, o){
     try{
       const hdr = await vfAdminHdr();
