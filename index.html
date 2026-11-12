@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH382";
+const APP_VERSION = "MCS1211TH383";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH383": "✂️ Approval pop-ups shortened — one short English line, no long Urdu sentences",
   "MCS1211TH382": "✅ Agents / co-developer: registration goes to the developer for approval by itself (with login ID) — no Help Desk message • Developer's own registrations: «checked everything?» + password → 1 year",
   "MCS1211TH381": "✅ Registration goes to the developer for approval by itself — no code, no message • Developer: full summary + «checked everything?» + password → 1 year • Shopkeeper gets a welcome",
   "MCS1211TH380": "⭐ Membership sheet shows only Google Play • «Send registration-complete confirmation» is a separate button in My Portal • Welcome message when the developer activates your business",
@@ -22355,7 +22356,7 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     try{ const m = JSON.parse(localStorage.getItem('mcsMemSent') || '{}'); m[rk] = Date.now(); localStorage.setItem('mcsMemSent', JSON.stringify(m)); }catch(e){}
     try{ if(window.fpMarkSent) fpMarkSent(rk); }catch(e){}
     if(!quiet) agModal(`<div style="text-align:center;font-size:50px">✅</div><div class="ag-hd" style="text-align:center">رجسٹریشن مکمل <small>Registration complete</small></div>
-      <div class="mem-pk"><div class="n">🏪 ${E(rec.nameUr || rec.name || '')}</div><small style="font-size:14px;margin-top:6px">آپ کا ریکارڈ منظوری کے لیے ڈویلپر کے پاس پہنچ گیا ہے۔ منظور ہوتے ہی ایپ کھولنے پر آپ کو خوش آمدید کا پیغام ملے گا — آپ کو کچھ نہیں لکھنا۔</small></div>
+      <div class="mem-pk"><div class="n">🏪 ${E(rec.nameUr || rec.name || '')}</div><small style="font-size:14px;margin-top:6px">Sent to developer for approval</small></div>
       <button type="button" class="mem-play" onclick="closeModal('agModal')">ٹھیک ہے</button>`);
   };
   /* MCS1211TH382 (مالک کا حکم): کسی اور کی رجسٹریشن — ایجنٹ / کو-ڈویلپر: خود «منظوری کے لیے ڈویلپر کو» (کوئی لمبا پیغام / Help Desk نہیں)؛ ڈویلپر: وہی «سب چیک کر لیا؟» + پاس ورڈ */
@@ -22368,7 +22369,7 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     try{ if(typeof bzSetRef === 'function') bzSetRef(kind, rec); }catch(e){}
     try{ if(rk) mrqSend(rk, {by: who, fsId: rec.fsId || rec.id, col: kind === 'doctor' ? 'doctors' : 'services', name: (typeof bzOwner === 'function' ? bzOwner(x) : '') || rec.nameUr || '', mobile: rec.whatsapp || '', prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', district: rec.district || '', ref, refName: (typeof rpkNameOf === 'function' && ref) ? (rpkNameOf(ref) || '') : '', sid: (rec.more && rec.more.sid) || '', uid: (typeof agDev === 'function' ? agDev() : ''), kind, text: ''}); }catch(e){}
     agModal(`<div style="text-align:center;font-size:50px">✅</div><div class="ag-hd" style="text-align:center">منظوری کے لیے ڈویلپر کو پہنچ گیا <small>Sent to developer for approval</small></div>
-      <div class="mem-pk"><div class="n">🏪 ${E(rec.nameUr || rec.name || '')}</div>${sidOf(rec) ? `<div class="p" style="font-size:20px" dir="ltr">🆔 ${E(sidOf(rec))}</div><small>یہی اس کاروباری کی لاگ اِن ID ہے</small>` : ''}<small style="margin-top:6px">ڈویلپر جانچ کر منظور کریں گے — منظور ہوتے ہی کاروبار ایک سال کے لیے چالو۔ کسی کو کچھ لکھنا نہیں۔</small></div>
+      <div class="mem-pk"><div class="n">🏪 ${E(rec.nameUr || rec.name || '')}</div>${sidOf(rec) ? `<div class="p" style="font-size:20px" dir="ltr">🆔 ${E(sidOf(rec))}</div><small>Login ID</small>` : ''}</div>
       <button type="button" class="mem-play" onclick="closeModal('agModal')">ٹھیک ہے</button>`);
   };
   window.devReview = function(x, go){
@@ -22376,7 +22377,7 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     const row = (k, v) => v ? `<div class="mrq-r"><span>${k}</span><b dir="auto">${E(v)}</b></div>` : '', ref = (rec.more && rec.more.ref) || '';
     agModal(`<div class="ag-hd">✅ منظوری — ایک سال <small>Approve 1-year registration</small></div>
       <div class="mem-pk" style="text-align:right">${row('🏪 کاروبار', (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''))}${row('👤 نام', (typeof bzOwner === 'function' ? bzOwner(x) : '') || '')}${row('📱 موبائل', rec.whatsapp || '')}${row('📍 جگہ', [rec.area, rec.city, rec.district].filter(Boolean).join('، '))}${row('🤝 لانے والا', ref ? refN(ref) : 'PBT')}${row('🆔 لاگ اِن ID', sidOf(rec))}</div>
-      <div class="cp-hint" style="font-weight:800;color:#b45309;text-align:center">⚠️ کیا آپ نے فارم کی ہر چیز چیک کر لی ہے؟ کوئی غلطی یا کمی تو نہیں؟<br>یہ کاروبار ایک سال کے لیے رجسٹر ہونے جا رہا ہے۔</div>
+      <div class="cp-hint" style="font-weight:800;color:#b45309;text-align:center" dir="ltr">⚠️ Developer, have you checked everything in the form? Nothing missing, no mistake?</div>
       <button type="button" class="mem-play" id="devGo382">✅ ہاں، سب چیک کر لیا — پاس ورڈ دے کر منظور کریں</button>
       <button type="button" class="mem-alt" onclick="closeModal('agModal')">ابھی نہیں</button>`);
     document.getElementById('devGo382').onclick = () => { closeModal('agModal'); setTimeout(go, 150); };
@@ -22447,7 +22448,7 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     const row = (k, v) => v ? `<div class="mrq-r"><span>${k}</span><b dir="auto">${E(v)}</b></div>` : '';
     agModal(`<div class="ag-hd">✅ منظوری — ایک سال <small>Approve 1-year registration</small></div>
       <div class="mem-pk" style="text-align:right">${row('🏪 کاروبار', d.prof)}${row('👤 نام', d.name)}${row('📱 موبائل', ph ? '0' + ph : '')}${row('📍 جگہ', [d.area, d.city, d.district].filter(Boolean).join('، '))}${row('🤝 لانے والا', d.ref ? refN(d.ref) + (d.refName ? ' — ' + d.refName : '') : 'PBT')}${row('🆔 ID', x.sid ? mcsSidFmt(x.sid) : '')}</div>
-      <div class="cp-hint" style="font-weight:800;color:#b45309;text-align:center">⚠️ کیا آپ نے فارم کی ہر چیز چیک کر لی ہے؟ کوئی غلطی یا کمی تو نہیں؟<br>یہ کاروبار ایک سال کے لیے رجسٹر ہونے جا رہا ہے۔</div>
+      <div class="cp-hint" style="font-weight:800;color:#b45309;text-align:center" dir="ltr">⚠️ Developer, have you checked everything in the form? Nothing missing, no mistake?</div>
       <button type="button" class="btn block secondary" onclick="mrqView(${i})">👁️ پورا فارم دیکھیں</button>
       <button type="button" class="mem-play" style="margin-top:8px" id="mrqGo381">✅ ہاں، سب چیک کر لیا — پاس ورڈ دے کر منظور کریں</button>
       <button type="button" class="mem-alt" onclick="closeModal('agModal')">ابھی نہیں</button>`);
