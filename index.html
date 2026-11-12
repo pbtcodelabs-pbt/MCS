@@ -4311,10 +4311,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH354";
+const APP_VERSION = "MCS1211TH355";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH355": "🤝 Referral code list is now a small clean list — DEV Developer, CODEV Co-Developer, PBT Company, AG001 agent name — one tap to choose",
   "MCS1211TH354": "🗑️ Deleting a business card also ends its membership and its MCS ID",
   "MCS1211TH353": "🆔 MCS IDs fixed on the server in your order (Habib Shahbaz MCS00101, Ghousia Naan Shop MCS00201, Punjab Setting MCS00301; Habib Shahbaz agent AG001) • old «MCS ID» button removed, IDs shown clearly",
   "MCS1211TH352": "🆔 MCS ID is given at sign-up — the new person appears in the registration ID list straight away • agent codes without dash (AG001, AG002)",
@@ -21491,5 +21492,51 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
   };
 })();
 </script>
+<!-- MCS1211TH355 (مالک کا حکم): ریفرل کوڈ کی فہرست صاف — فون کی بنی بنائی فہرست نہیں؛ چھوٹا ڈبہ، ہر لائن: کوڈ · نام (DEV Developer، CODEV Co-Developer، PBT Company، AG001 نام)، ایک ٹچ = چنا گیا -->
+<style id="mcsRpk355">
+.rpk-sel.rpk-hide{display:none!important}
+.rpk-btn{width:100%;min-height:44px;display:flex;align-items:center;gap:10px;border:2px solid #c9971c;border-radius:14px;background:#fff;color:#0b2545;font:inherit;font-weight:800;font-size:15px;padding:4px 12px;cursor:pointer;direction:ltr;text-align:left}
+.rpk-btn b{font:800 15px Arial,sans-serif;letter-spacing:.3px;min-width:62px}
+.rpk-btn span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rpk-btn i{font-style:normal;color:#b45309}
+#rpkPop{position:fixed;inset:0;z-index:2147483200;background:rgba(11,37,69,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+#rpkPop .box{width:100%;max-width:300px;max-height:70vh;overflow:auto;background:#fff;border:3px solid #c9971c;border-radius:20px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#rpkPop .r{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:12px;background:transparent;padding:10px 12px;font:inherit;font-size:15px;color:#0b2545;cursor:pointer;direction:ltr;text-align:left}
+#rpkPop .r+.r{border-top:1px solid #eef2f7}
+#rpkPop .r b{font:800 15px Arial,sans-serif;min-width:62px;color:#0b2545}
+#rpkPop .r span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rpkPop .r.on{background:#dcfce7}#rpkPop .r.on b{color:#15803d}
+#rpkPop .r:active{background:#e0f2fe}
+</style>
+<script id="mcsRpk355js">
+(function(){
+  'use strict';
+  const LBL = { DEV: 'Developer', CODEV: 'Co-Developer', PBT: 'Company' };
+  const show = c => String(c || '').replace(/^AG-(\d+)$/, 'AG$1');
+  function items(sel){ return Array.from(sel.options).filter(o => o.value).map(o => {
+    const c = o.value, n = LBL[c] || o.getAttribute('data-n') || String(o.textContent || '').split('·').slice(1).join('·').trim();
+    return { c, n }; }); }
+  function label(sel){ const v = sel.value; if(!v) return '<i>Choose referral code</i>'; const it = items(sel).find(x => x.c === v);
+    return '<b>' + esc(show(v)) + '</b><span dir="auto">' + esc((it && it.n) || LBL[v] || '') + '</span>'; }
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function open(sel, btn){
+    let p = document.getElementById('rpkPop'); if(p) p.remove();
+    p = document.createElement('div'); p.id = 'rpkPop'; p.setAttribute('data-noen', '');
+    p.innerHTML = '<div class="box">' + items(sel).map(x => `<button type="button" class="r${x.c === sel.value ? ' on' : ''}" data-c="${esc(x.c)}"><b>${esc(show(x.c))}</b><span dir="auto">${esc(x.n)}</span></button>`).join('') + '</div>';
+    p.addEventListener('click', e => { const r = e.target.closest('.r'); if(r){ sel.value = r.dataset.c; try{ sel.dispatchEvent(new Event('change', { bubbles: true })); sel.dispatchEvent(new Event('input', { bubbles: true })); }catch(_){} btn.innerHTML = label(sel); } p.remove(); });
+    document.body.appendChild(p);
+  }
+  function wire(){
+    document.querySelectorAll('select.rpk-sel').forEach(sel => {
+      let btn = sel.nextElementSibling && sel.nextElementSibling.classList.contains('rpk-btn') ? sel.nextElementSibling : null;
+      if(!btn){ btn = document.createElement('button'); btn.type = 'button'; btn.className = 'rpk-btn'; btn.setAttribute('data-noen', ''); sel.insertAdjacentElement('afterend', btn); btn.addEventListener('click', () => open(sel, btn)); sel.classList.add('rpk-hide'); }
+      const h = label(sel); if(btn.innerHTML !== h) btn.innerHTML = h;
+    });
+  }
+  setInterval(wire, 700);
+  if(document.readyState !== 'loading') wire(); else document.addEventListener('DOMContentLoaded', wire);
+})();
+</script>
+
 </body>
 </html>
