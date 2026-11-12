@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH350";
+const APP_VERSION = "MCS1211TH351";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH351": "🆔 MCS ID only for registered businesses (MCS00101…); ID list shows DEV, CODEV, agents and registered businesses only • empty referral = PBT (Company) • red box: ➕ Earn with MCS opens the agent form • deeper colours",
   "MCS1211TH350": "🧹 Cleaner forms — the percentage / steps strip removed, box colours a little deeper, rounder corners",
   "MCS1211TH349": "🎨 Forms in coloured boxes with gold rounded corners — 🔵 basic info, 🟢 registration (sent to developer for approval), 🔴 agent referral; each box has Edit / View / Save, View marks empty required boxes in red and tapping opens that box; what you type is kept as a draft",
   "MCS1211TH348": "🆔 IDs shown without dashes everywhere (MCS001, membership MCS00101) • Co-Developer CNIC (CODEV) saved on the server — no agent code on it",
@@ -7214,7 +7215,7 @@ function legacyRecordId(kind, item){
 function shortRecordId(kind, item){
   /* MCS1111WE312 (مالک کا حکم): سسٹم ID — سبسکرپشن ہو تو MCS-001-01، ورنہ MCS-001؛ پرانے فیڈ کارڈ پرانی قسم وار ID پر جب تک «Replace» نہ دبے */
   try{ const rk = pfKeyOf(item, kind), p = rk && typeof pfAct !== 'undefined' && pfAct && pfAct[rk]; if(p && p.subid) return String(p.subid).replace(/[\s-]/g,''); if(p && p.sid) return String(p.sid).replace(/[\s-]/g,''); }catch(e){}   /* MCS1211TH348: MCS00101 — کہیں ڈیش نہیں */
-  if(item && item.more && item.more.sid) return String(item.more.sid).replace(/[\s-]/g,'');
+  /* MCS1211TH351: کارڈ پر لکھی پرانی more.sid نہیں — ID صرف سرور (رجسٹرڈ کاروبار) سے */
   return '';
 }
 
@@ -9278,6 +9279,7 @@ function svcMoreRead(){
   Object.entries(SVC_MORE).forEach(([k, id])=>{ const el = document.getElementById(id); const v = el ? el.value.trim() : ''; if(v) m[k] = v; });
   if(m.wa2) m.wa2 = normalizePkNumber(m.wa2);
   if(m.ref) m.ref = agNormCode(m.ref);
+  if(!m.ref) m.ref = 'PBT';   /* MCS1211TH351 (مالک کا حکم): ریفرل خالی = PBT (کمپنی) — حصہ ڈویلپر / کو-ڈویلپر آدھا آدھا */
   if(m.ref){ try{ const e0 = document.getElementById('svcRef'); if(e0 && e0.tagName === 'SELECT'){ m.refSel = 1; const n0 = rpkNameOf(m.ref); if(n0) m.refName = n0; } }catch(e){} }   /* MCS1011TU280: ریفرل فہرست سے — نام اور کوڈ دونوں */
   try{ const S = pfEd.svcPf; if(S && S.thumb) m.selfie = S.thumb; }catch(e){}   /* MCS0711SA194: کارڈ کی گول سیلفی (چھوٹی) */
   return m;
@@ -13151,7 +13153,7 @@ function agAdminRender(){
   const L = agList.filter(a=> a.status === agTab && (!q || [a.name, a.father, a.cnic, a.phone, '0'+String(a.phone||'').slice(2), a.code, a.city, a.biz].join(' ').toLowerCase().replace(/[\s-]/g,'').includes(q)));
   const E = s => escapeHtml(s||'');
   agModal(`<div class="ag-hd">🤝 ایجنٹ اور ریفرل کوڈ</div>
-    ${isAdminSignedIn ? `<button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveDev()">🪪 ڈویلپر کا شناختی کارڈ ${agGuardGet().dev ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'} <small>(اس پر ایجنٹ کوڈ نہیں بنے گا)</small></button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveCd()">🪪 کو-ڈویلپر کا شناختی کارڈ (CODEV) ${agGuardGet().cdOwn ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'}</button>` : ''}
+    ${isAdminSignedIn ? `<button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveDev()">🪪 ڈویلپر کا شناختی کارڈ ${agGuardGet().dev ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'} <small>(اس پر ایجنٹ کوڈ نہیں بنے گا)</small></button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="sidResetOpen()">🆔 MCS IDs — صرف رجسٹرڈ کاروبار</button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveCd()">🪪 کو-ڈویلپر کا شناختی کارڈ (CODEV) ${agGuardGet().cdOwn ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'}</button>` : ''}
     <button type="button" class="btn block ag-send" style="margin:4px 0 6px" onclick="agWaOpen()">📋 واٹس ایپ فارم سے نیا ایجنٹ <small>(کاروبار + ایک سال + ایجنٹ ایک ساتھ)</small></button>
     <button type="button" class="btn block secondary" style="margin:0 0 8px" onclick="agCreateOpen()">➕ خود ایجنٹ بنائیں (کاروبار پہلے سے جڑا ہو)</button>
     <div class="ag-tabs">${[['pending','⏳ نئی درخواستیں'],['approved','✅ ایجنٹ / کوڈ'],['rejected','❌ رد']].map(([k,t])=>`<button type="button" class="${agTab===k?'on':''}" onclick="agTab='${k}';agAdminRender()">${t} <b>${n(k)}</b></button>`).join('')}</div>
@@ -19135,9 +19137,9 @@ function rpkFill(sel){   /* MCS1111WE329 (مالک کا حکم): اوپر DEV / 
   all.sort((x, y) => { const ax = /^AG-/i.test(x.c) ? 0 : 1, ay = /^AG-/i.test(y.c) ? 0 : 1; return (ax - ay) || String(x.c).replace(/\d+$/, '').localeCompare(String(y.c).replace(/\d+$/, ''), 'en') || (num(x.c) - num(y.c)); });
   const opt = p => `<option value="${escapeAttr(p.c)}" data-n="${escapeAttr(p.n)}" data-noen="1">${escapeHtml(pad(p.c))} · ${escapeHtml(p.n || '—')}</option>`;
   let h = '<option value="">— Choose who brought it —</option><optgroup label="Developer / Co-Developer / Company">';
-  if(adm) h += `<option value="DEV">${pad('DEV')} · Developer</option>`;
-  if(adm || cd) h += `<option value="CODEV">${pad('CODEV')} · Co-Developer</option>`;
-  h += `<option value="PBT">${pad('PBT')} · Company (came by self)</option></optgroup>`;
+  h += `<option value="DEV">${pad('DEV')} · Developer</option>`;   /* MCS1211TH351 (مالک کا حکم): 1 DEV، 2 CODEV، 3 PBT — سب کو، پھر ایجنٹ AG-001… */
+  h += `<option value="CODEV">${pad('CODEV')} · Co-Developer</option>`;
+  h += `<option value="PBT">${pad('PBT')} · Company — Piary Bhai Traders</option></optgroup>`;
   if(all.length) h += '<optgroup label="Agents">' + all.map(opt).join('') + '</optgroup>';
   sel.innerHTML = h; sel.setAttribute('dir', 'ltr'); sel.style.fontVariantNumeric = 'tabular-nums'; rpkSetVal(sel, keep);
 }
@@ -20846,21 +20848,16 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   /* MCS1211TH344 (مالک کا حکم): 4 ہندسوں کے کوڈ کی جگہ «ID کی ڈراپ ڈاؤن فہرست» — ID چھوتے ہی نام، موبائل، ضلع فارم میں آ جاتے ہیں */
   /* MCS1211TH345 (مالک کا حکم): ID کی فہرست میں ہر ID کے ساتھ اسی بندے کا نام (جس نے سائن اپ کیا) + موبائل + ضلع؛ چنتے ہی نام، موبائل، ضلع فارم میں خود لگ جاتے ہیں */
   const pickF = (o, keys) => { for(const k of keys){ const v = o && o[k]; if(v != null && String(v).trim()) return String(v).trim(); } return ''; };
-  function entries(){
-    const map = {};
-    const add = (sid, name, mobile, district, done) => {
-      sid = mcsSidFmt(sid); if(!/^MCS\d+$/.test(sid) || !mobile) return;
-      const o = map[sid] || { sid }; if(name && !o.name) o.name = name; if(mobile && !o.mobile) o.mobile = mobile; if(district && !o.district) o.district = district; if(done) o.done = true; map[sid] = o;
-    };
-    try{ JSON.parse(localStorage.getItem('mcsRegList') || '[]').forEach(x => { if(!x) return;
-      add(pickF(x, ['sid', 'id', 'uid', 'accountId', 'account']), pickF(x, ['name', 'nameUr', 'n', 'fullName', 'fullname', 'userName', 'username']), pickF(x, ['mobile', 'phone', 'm', 'mob', 'whatsapp']), pickF(x, ['district', 'dist', 'd', 'city']), false); }); }catch(e){}
-    let recs = []; try{ recs = [].concat(store.services || [], store.doctors || [], (typeof pendingApprovals !== 'undefined' ? pendingApprovals : [])); }catch(e){}
-    try{ recs.forEach(r => { if(r && r.more && r.more.sid) add(r.more.sid, r.nameUr || r.name, r.whatsapp, r.district, !!(r.stage && r.stage !== 'basic')); }); }catch(e){}
-    const L = Object.keys(map).map(k => map[k]).sort((x, y) => parseInt(x.sid.slice(3), 10) - parseInt(y.sid.slice(3), 10));
-    /* نام / ضلع سرور کی فہرست میں خالی ہو تو اسی موبائل کے فون میں موجود کارڈ سے */
-    L.forEach(o => { if(o.name && o.district) return; const k = d10(o.mobile);
-      const r = recs.find(z => z && d10(z.whatsapp) === k && (z.nameUr || z.name)); if(!r) return;
-      if(!o.name) o.name = r.nameUr || r.name; if(!o.district && r.district) o.district = r.district; });
+  function entries(){   /* MCS1211TH351 (مالک کا حکم): صرف سرور کی فہرست — DEV، CODEV، ایجنٹ (AG-…)، رجسٹرڈ کاروبار (MCS00101…)؛ عام سائن اپ نہیں */
+    const L = [], seen = {};
+    let recs = []; try{ recs = [].concat(store.services || [], store.doctors || []); }catch(e){}
+    try{ JSON.parse(localStorage.getItem('mcsRegList') || '[]').forEach(x => { if(!x || !x.sid) return;
+      const raw = String(x.sid).trim(); let sid;
+      if(/^(DEV|CODEV)$/i.test(raw)) sid = raw.toUpperCase(); else if(/^AG-?\d+$/i.test(raw)) sid = raw.toUpperCase().replace(/^AG-?/, 'AG-'); else if(/^MCS[\s-]*\d+$/i.test(raw)) sid = String(x.subid || raw).replace(/[\s-]/g, '').toUpperCase(); else return;
+      const key = sid + '|' + d10(x.mobile); if(seen[key]) return; seen[key] = 1;
+      const o = { sid, key, name: pickF(x, ['name']), mobile: pickF(x, ['mobile']), district: pickF(x, ['district']), kind: x.kind || '' };
+      if(!o.name || !o.district){ const k = d10(o.mobile), r = k && recs.find(z => z && d10(z.whatsapp) === k && (z.nameUr || z.name)); if(r){ if(!o.name) o.name = r.nameUr || r.name; if(!o.district && r.district) o.district = r.district; } }
+      L.push(o); }); }catch(e){}
     return L;
   }
   function pkCss(){
@@ -20883,7 +20880,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   const pkLabel = x => x ? `<span class="pk-id">${esc(x.sid)}</span><span class="pk-nm" dir="auto">${esc(x.name || '— نام نہیں ملا —')}</span>` : '';
   function syncBtn(){
     const sel = $('pkRegSel'), b = $('pkRegBtn'); if(!sel || !b) return;
-    const u = sel.value ? (window._pkEntries || []).find(x => x.sid === sel.value) : null;
+    const u = sel.value ? (window._pkEntries || []).find(x => x.key === sel.value) : null;
     b.innerHTML = (u ? pkLabel(u) : `<span class="pk-ph">— ID چنیں (${(window._pkEntries || []).length}) —</span>`) + '<span class="ar">▾</span>';
   }
   function drawList(){
@@ -20892,7 +20889,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     const qv = (($('pkRegQ') || {}).value || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).toLowerCase().replace(/\s+/g, '');
     const hit = x => !qv || (x.sid + (x.name || '') + (x.district || '') + '0' + d10(x.mobile) + d10(x.mobile)).toLowerCase().replace(/\s+/g, '').includes(qv);
     const F = L.filter(hit);
-    box.innerHTML = F.length ? F.map(x => `<button type="button" class="pk-row${x.sid === cur ? ' on' : ''}" onclick="pkRegChoose('${x.sid}')">${pkLabel(x)}<span class="pk-sub">📱 0${esc(d10(x.mobile))}${x.district ? ' &nbsp;•&nbsp; 📍 ' + esc(x.district) : ''}${x.done ? ' &nbsp;✅' : ''}</span></button>`).join('')
+    box.innerHTML = F.length ? F.map(x => `<button type="button" class="pk-row${x.key === cur ? ' on' : ''}" onclick="pkRegChoose('${x.key}')">${pkLabel(x)}<span class="pk-sub">📱 0${esc(d10(x.mobile))}${x.district ? ' &nbsp;•&nbsp; 📍 ' + esc(x.district) : ''}${x.done ? ' &nbsp;✅' : ''}</span></button>`).join('')
       : `<div class="pk-none">${L.length ? 'کوئی نہیں ملا' : 'فہرست خالی ہے — 🔄 دبا کر تازہ کریں (انٹرنیٹ چاہیے)'}</div>`;
   }
   function showPicked(c, noteHtml){
@@ -20904,8 +20901,8 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   function fillSel(){
     const sel = $('pkRegSel'); if(!sel) return;
     const cur = sel.value, L = entries(); window._pkEntries = L;
-    sel.innerHTML = '<option value="">— ID چنیں (' + L.length + ') —</option>' + L.map(x => `<option value="${x.sid}">${x.sid} — ${esc(x.name || '')} — 0${d10(x.mobile)}${x.done ? ' ✅' : ''}</option>`).join('');
-    if(cur && L.some(x => x.sid === cur)) sel.value = cur;
+    sel.innerHTML = '<option value="">— ID چنیں (' + L.length + ') —</option>' + L.map(x => `<option value="${x.key}">${x.sid} — ${esc(x.name || '')} — 0${d10(x.mobile)}${x.done ? ' ✅' : ''}</option>`).join('');
+    if(cur && L.some(x => x.key === cur)) sel.value = cur;
     syncBtn(); drawList();
     const m = $('pkRegMsg'); if(m && !sel.value && !window._pkCtx) m.innerHTML = L.length ? '' : '<span style="color:#b45309">فہرست خالی ہے — 🔄 دبا کر تازہ کریں (انٹرنیٹ چاہیے)</span>';
   }
@@ -20945,7 +20942,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     b.style.display = '';
     const c = window._pkCtx;
     fillSel();
-    if(c && c.recId && c.recId === editingServiceId){ $('pkRegSel').value = c.sid; showPicked(c, '✅ ریکارڈ لگ گیا — نام، موبائل، ضلع فارم میں ہیں؛ باقی فارم مکمل کر کے محفوظ کریں'); }
+    if(c && c.recId && c.recId === editingServiceId){ $('pkRegSel').value = c.key || c.sid; showPicked(c, '✅ ریکارڈ لگ گیا — نام، موبائل، ضلع فارم میں ہیں؛ باقی فارم مکمل کر کے محفوظ کریں'); }
     else { $('pkRegSel').value = ''; $('pkRegMsg').textContent = ''; window._pkCtx = null; }
     const pn = $('pkRegPanel'); if(pn) pn.hidden = true;
     fillSel();
@@ -20972,10 +20969,10 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     const sel = $('pkRegSel'), m = $('pkRegMsg'); if(!sel) return;
     syncBtn();
     if(!sel.value){ window._pkCtx = null; m.textContent = ''; return; }
-    const u = (window._pkEntries || []).find(x => x.sid === sel.value); if(!u){ m.innerHTML = '<span style="color:#b91c1c">یہ ID فہرست میں نہیں ملی — 🔄 دبائیں</span>'; return; }
+    const u = (window._pkEntries || []).find(x => x.key === sel.value); if(!u){ m.innerHTML = '<span style="color:#b91c1c">یہ ID فہرست میں نہیں ملی — 🔄 دبائیں</span>'; return; }
     const k = d10(u.mobile);
     const basic = (store.services || []).find(x => x && d10(x.whatsapp) === k && (x.stage === 'basic' || !x.stage));
-    window._pkCtx = { sid: u.sid, name: u.name || '', mobile: u.mobile, district: u.district || '', recId: basic ? basic.id : (editingServiceId || null) };
+    window._pkCtx = { sid: u.sid, key: u.key, name: u.name || '', mobile: u.mobile, district: u.district || '', recId: basic ? basic.id : (editingServiceId || null) };
     if(basic && basic.id !== editingServiceId){
       try{ closeModal('serviceFormModal'); }catch(e){}
       try{ if(typeof svcMyBasicAdd === 'function') svcMyBasicAdd(basic.id); }catch(e){}
@@ -21010,7 +21007,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
           const k = d10(c.mobile), rec = (store.services || []).find(x => x && (x.id === before || x.id === c.recId)) || (store.services || []).find(x => x && d10(x.whatsapp) === k);
           if(!rec) return;
           window._pkCtx = null; window._pkSkipFp = rec.id;
-          try{ rec.more = rec.more || {}; if(!rec.more.sid) rec.more.sid = c.sid; }catch(e){}
+          try{ rec.more = rec.more || {}; if(!rec.more.sid && /^MCS/.test(c.sid)) rec.more.sid = c.sid; }catch(e){}
           pkAfterSave(rec, c);
         }catch(e){}
       }, 900);
@@ -21217,7 +21214,15 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
 <style id="mcsCbx349">
 /* MCS1211TH350 (مالک کا حکم): فیصد / مرحلوں کی پٹی فارم سے ختم، رنگ گہرے، کونے زیادہ گول */
 .cbx{border:3px solid #c9971c;border-radius:28px;margin:0 0 16px;padding:10px 12px 12px;box-shadow:0 4px 14px rgba(120,80,10,.18),inset 0 0 0 2px rgba(255,255,255,.55);overflow:hidden}
-.cbx-blue{background:#c7dcff}.cbx-green{background:#c3eecf}.cbx-red{background:#fbcaca}
+/* MCS1211TH351 (مالک کا حکم): گہرے خوبصورت رنگ + فارم کا پچھلا پس منظر نیلا سبز */
+.cbx-blue{background:linear-gradient(180deg,#9cc3ff 0%,#80b0f7 100%)}.cbx-green{background:linear-gradient(180deg,#8fdcaa 0%,#6fcb92 100%)}.cbx-red{background:linear-gradient(180deg,#f7a8a8 0%,#f08c8c 100%)}
+.cbx-hd{color:#0b2545!important}.cbx-hd>span:first-child{text-shadow:0 1px 0 rgba(255,255,255,.6)}
+#serviceFormModal .fm-body,#doctorFormModal .fm-body{background:linear-gradient(180deg,#b9e2ec 0%,#c4e9d6 100%)!important}
+#pfEditModal .modal-box{background:linear-gradient(180deg,#b9e2ec 0%,#c4e9d6 100%)!important}
+.cbx-red.cbx-earn .cbx-bt{display:none}
+.cbx-earnbtn{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;border:2px solid #fff;border-radius:18px;background:linear-gradient(180deg,#dc2626,#b91c1c);color:#fff;font:inherit;font-weight:800;font-size:16px;padding:6px 14px;cursor:pointer;box-shadow:0 4px 12px rgba(127,29,29,.35);text-align:start}
+.cbx-earnbtn b{flex:none;width:40px;height:40px;border-radius:50%;background:#fff;color:#b91c1c;font:900 30px/40px Arial,sans-serif;text-align:center}
+.cbx-earnbtn small{display:block;font-size:12px;font-weight:700;opacity:.95}
 .cbx .field{border-radius:16px!important}
 .cbx .field>label{border-radius:14px!important}
 .cbx input,.cbx select,.cbx textarea,.cbx .csel-btn{border-radius:14px!important}
@@ -21297,7 +21302,11 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
     if(src){ Array.from(src.children).forEach(ch => { if(SKIP(ch) || ch === w) return; if(c.inner || ch.parentNode === body) inn('green').appendChild(ch); }); }
     { const B = c.blue().filter(Boolean); B.forEach((e, i) => { const at = inn('blue').children[i]; if(at !== e) inn('blue').insertBefore(e, at || null); }); }
     c.red().filter(Boolean).forEach(e => { if(e.parentNode !== inn('red')) inn('red').appendChild(e); });
-    ['blue', 'red'].forEach(k => { const b = w.querySelector('.cbx-' + k); b.hidden = !inn(k).children.length; });
+    ['blue'].forEach(k => { const b = w.querySelector('.cbx-' + k); b.hidden = !inn(k).children.length; });
+    /* MCS1211TH351 (مالک کا حکم): سرخ ڈبہ = «➕ Earn with MCS — ایجنٹ بنیں»؛ ➕ دبانے پر ہی سرخ ایجنٹ فارم (agEarnOpen)؛ Save / View / Edit نہیں */
+    { const rb = w.querySelector('.cbx-red'); rb.classList.add('cbx-earn'); rb.hidden = false; const hs = rb.querySelector('.cbx-hd > span:first-child'); if(hs) hs.innerHTML = '🔴 Earn with MCS <small style="font:600 12px Arial,sans-serif;opacity:.75">ایجنٹ بنیں</small>'; const st = rb.querySelector('.cbx-st'); if(st) st.style.display = 'none';
+      if(!rb.querySelector('.cbx-earnbtn')){ const eb = document.createElement('button'); eb.type = 'button'; eb.className = 'cbx-earnbtn'; eb.innerHTML = '<b>+</b><span>Earn with MCS — Be an Agent<small>ایجنٹ بننے کے لیے ➕ دبائیں — سرخ ایجنٹ فارم کھلے گا</small></span>';
+        eb.onclick = () => { try{ agEarnOpen(); }catch(e){ try{ agOpen(); }catch(_){} } }; rb.appendChild(eb); } }
     if(mid === 'pfEditModal'){ const sb = $('pfSaveBtn'); if(sb) sb.style.display = 'none'; }
     if(mid === 'serviceFormModal' || mid === 'doctorFormModal'){ const m = $(mid); m.querySelectorAll('.fm-save-btn').forEach(x => x.style.display = 'none'); }
   }
@@ -21396,6 +21405,55 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
   setTimeout(() => { if(typeof window.fpReview === 'function') window.fpReview = function(){}; }, 0);
   const boot = () => Object.keys(CFG).forEach(hook);
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+
+<!-- MCS1211TH351 (مالک کا حکم): MCS ID صرف رجسٹرڈ (ایک سال لیا ہوا) کاروبار کو — پہلے تین: حبیب شہباز MCS00101، غوثیہ نان شاپ MCS00201، پنجاب سیٹنگ (آصف) MCS00301؛
+     باقی کسی کو نہیں (سرور `sidreset`)۔ ڈویلپر کے فون پر ایک بار خود پاپ اپ (تصدیق کے لیے)، بعد میں ایجنٹ پینل میں «🆔 MCS IDs» -->
+<script id="mcsSid351">
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const d10 = s => String(s || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10);
+  const E = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const WANT = [
+    { t: 'حبیب شہباز — Habib Shahbaz', f: r => /حبیب\s*شہباز|habib\s*shahbaz/i.test(txt(r)) || d10(r.whatsapp) === '3015079681' },
+    { t: 'غوثیہ نان شاپ — Ghousia Naan Shop', f: r => /غوث|gh?ou?s|ghaus/i.test(txt(r)) && /نان|naan|\bnan\b/i.test(txt(r)) },
+    { t: 'پنجاب سیٹنگ (آصف) — Punjab Setting', f: r => /پنجاب|punjab/i.test(txt(r)) && /سیٹنگ|سٹنگ|setting/i.test(txt(r)) }
+  ];
+  function txt(r){ return [r.nameUr, r.name, r.nameEn, r.intro, r.owner, r.more && r.more.ownerEn].filter(Boolean).join(' '); }
+  function recs(){ try{ return [].concat(store.services || [], store.doctors || []).filter(r => r && d10(r.whatsapp).length === 10); }catch(e){ return []; } }
+  function live(r){ try{ const rk = pfKeyOf(r, r.category ? 'service' : 'doctor'), p = rk && pfAct && pfAct[rk]; return p && p.until > Date.now() ? 1 : 0; }catch(e){ return 0; } }
+  window.sidResetOpen = function(){
+    const R = recs(), pick = WANT.map(w => R.filter(w.f).sort((a, b) => live(b) - live(a)));
+    const row = (w, i) => `<div style="margin:8px 0;padding:8px;border:2px solid #c9971c;border-radius:14px;background:#fff">
+      <div style="font-weight:800">MCS00${i + 1}01 — ${E(w.t)}</div>
+      <select id="sidR${i}" style="width:100%;min-height:40px;margin-top:4px;border-radius:10px">${pick[i].length ? '' : '<option value="">⚠️ نہیں ملا — نیچے نمبر لکھیں</option>'}${pick[i].map(r => `<option value="${E(d10(r.whatsapp))}|${E(r.nameUr || r.name || '')}">${E(r.nameUr || r.name || '')} — 0${E(d10(r.whatsapp))}${live(r) ? ' ✅' : ''}</option>`).join('')}</select>
+      <input id="sidM${i}" inputmode="tel" dir="ltr" placeholder="یا موبائل نمبر 03xxxxxxxxx" style="width:100%;min-height:38px;margin-top:4px;border-radius:10px;box-sizing:border-box"></div>`;
+    agModal(`<div class="ag-hd">🆔 MCS IDs — صرف رجسٹرڈ کاروبار <small>Only paid / registered businesses get an MCS ID</small></div>
+      <div class="cp-hint">انہی تین کو ID ملے گی؛ باقی سب کی MCS ID ختم۔ ساتھ سب ایجنٹ ترتیب سے AG-001، AG-002… (پہلا حبیب شہباز)۔ DEV / CODEV / PBT صرف ریفرل۔ آگے جو کاروبار رجسٹر (ایک سال) ہوگا اسے خود اگلی ID۔</div>
+      ${WANT.map(row).join('')}<div class="ag-err" id="sidErr"></div>
+      <button type="button" class="btn block" onclick="sidResetGo()">✅ یہی تین — MCS ID لگائیں</button>`);
+  };
+  window.sidResetGo = async function(){
+    const err = t => { const e = $('sidErr'); if(e) e.textContent = t; };
+    const list = [0, 1, 2].map(i => { const m = d10(($('sidM' + i) || {}).value); if(m.length === 10) return { mob: '0' + m, name: '' }; const v = (($('sidR' + i) || {}).value || '').split('|'); return v[0] ? { mob: '0' + v[0], name: v[1] || '' } : null; });
+    if(list.some(x => !x)) return err('⚠️ تینوں کاروبار چنیں یا نمبر لکھیں');
+    if(new Set(list.map(x => x.mob)).size !== 3) return err('⚠️ تینوں نمبر الگ ہونے چاہییں');
+    err('⏳ …');
+    try{ const h = await vfAdminHdr(); const j = await (await fetch(PF_API + '/mcsauth', { method: 'POST', headers: h, body: JSON.stringify({ op: 'sidreset', list, agentFirst: list[0].mob }) })).json();
+      if(!j || !j.ok) return err('⚠️ نہیں ہوا: ' + ((j && j.reason) || '') + (j && j.reason === 'admin_only' ? ' — پہلے ڈویلپر لاگ اِن کریں' : ''));
+      try{ localStorage.setItem('mcsSidReset351', String(Date.now())); localStorage.removeItem('mcsRegList'); }catch(e){}
+      try{ closeModal('agModal'); }catch(e){}
+      showToast('✅ MCS IDs: ' + j.list.map(x => x.subid.replace(/-/g, '')).join('، ') + ((j.agents || []).length ? ' • ایجنٹ: ' + j.agents.map(a => a.code + ' ' + (a.name || '')).join('، ') : ''), 9000);
+      try{ if(typeof agKnownLoad === 'function') agKnownLoad(); }catch(e){}
+      try{ if(typeof pfLoadList === 'function') pfLoadList(); }catch(e){}
+    }catch(e){ err('📶 انٹرنیٹ نہیں'); }
+  };
+  /* ڈویلپر کے فون پر ایک بار خود */
+  let tries = 0; const t = setInterval(() => { tries++; if(tries > 60){ clearInterval(t); return; }
+    try{ if(localStorage.getItem('mcsSidReset351')){ clearInterval(t); return; } }catch(e){ clearInterval(t); return; }
+    if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && recs().length > 20 && !document.querySelector('.modal-overlay.active')){ clearInterval(t); sidResetOpen(); } }, 5000);
 })();
 </script>
 
