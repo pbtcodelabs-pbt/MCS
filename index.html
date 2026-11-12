@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH384";
+const APP_VERSION = "MCS1211TH385";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH385": "🔎 Search bar now finds a card by its MCS ID — type MCS005 (all businesses of that account) or MCS00501 (that one card)",
   "MCS1211TH384": "🆔 Only MCS ID everywhere (old p… business ID removed) • Your own MCS ID at the top of the registration form • Bolder, clearer form text",
   "MCS1211TH383": "✂️ Approval pop-ups shortened — one short English line, no long Urdu sentences",
   "MCS1211TH382": "✅ Agents / co-developer: registration goes to the developer for approval by itself (with login ID) — no Help Desk message • Developer's own registrations: «checked everything?» + password → 1 year",
@@ -6163,6 +6164,11 @@ function renderUserSearch(){
     const dHit = doctorResults.filter(d=>idKey(shortRecordId('doctor', d))===idQ), sHit = serviceResults.filter(x=>idKey(shortRecordId('service', x))===idQ);
     if(dHit.length || sHit.length){ doctorResults.length = 0; doctorResults.push(...dHit); serviceResults.length = 0; serviceResults.push(...sHit); }
   }
+  { const _mid = mcsIdQ(qRaw);   /* MCS1211TH385: MCS ID لکھیں تو صرف اسی ID کے کارڈ */
+    if(_mid){
+      const dH = store.doctors.filter(d=>dupVis(d) && ubPass({rec:d, cat:'doctor'}, locKeys) && mcsIdHit('doctor', d, _mid)), sH = store.services.filter(x=>dupVis(x) && ubPass({rec:x, cat:x.category}, locKeys) && mcsIdHit('service', x, _mid));
+      doctorResults.length = 0; doctorResults.push(...dH); serviceResults.length = 0; serviceResults.push(...sH);
+    } }
 
   try{ const d2 = ccCityFirst(doctorResults), s2 = ccCityFirst(serviceResults); doctorResults.splice(0, doctorResults.length, ...d2); serviceResults.splice(0, serviceResults.length, ...s2); }catch(e){}
   const total = doctorResults.length + serviceResults.length;
@@ -6499,9 +6505,26 @@ function favRecords(){
   }).filter(Boolean);
 }
 /* MCS2310FR046: فیورٹس صفحے کی اپنی تلاش — وہی یونیورسل تلاش (نام، دکان، کیٹگری، علاقہ، نمبر، ID) */
+/* MCS1211TH385 (مالک کا حکم): سرچ بار میں MCS ID (MCS005 / MCS-005 / MCS00501) لکھیں تو وہی کارڈ فوراً — باقی لفظی تلاش جیسی تھی ویسی */
+function mcsIdQ(qRaw){
+  const s = String(qRaw||'').replace(/[۰-۹]/g, c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).trim();
+  if(!/^mcs[\s\-_]*[0-9][0-9\s\-_]*$/i.test(s)) return null;
+  const dg = s.replace(/\D/g,'');
+  return dg.length > 8 ? null : dg;
+}
+function mcsIdHit(kind, rec, dg){
+  const id = idKey(shortRecordId(kind, rec)); if(!id) return false;
+  const k = 'mcs' + dg;
+  if(dg.length >= 3) return id === k || (id.length === k.length + 2 && id.startsWith(k));   /* MCS005 = اکاؤنٹ کے سب کاروبار، MCS00501 = صرف وہی ایک */
+  const pk = 'mcs' + dg.padStart(3, '0');
+  return id.startsWith(k) || id === pk || (id.length === pk.length + 2 && id.startsWith(pk));
+}
 function searchAllRecords(qRaw){
   const srch = ubParseQuery(qRaw);
   if(srch.empty) return [];
+  const _mid = mcsIdQ(qRaw);
+  if(_mid) return store.doctors.filter(d=>dupVis(d) && mcsIdHit('doctor', d, _mid)).map(rec=>({kind:'doctor', rec}))
+    .concat(store.services.filter(x=>dupVis(x) && mcsIdHit('service', x, _mid)).map(rec=>({kind:'service', rec})));
   let docs = store.doctors.filter(d=> dupVis(d) && ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d)], d.whatsapp));
   let svcs = store.services.filter(x=>{ if(!dupVis(x)) return false; const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, ubOwnerEn(x), x.type, ...clsBits(x), x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
   const idQ = idKey(qRaw);
