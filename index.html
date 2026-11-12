@@ -4310,11 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH343";
+const APP_VERSION = "MCS1211TH344";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1211TH343": "🛠️ The «Update complete» box now shows only what was changed in that version — each version has its own line",
+  "MCS1211TH344": "🛠️ The «Update complete» box now shows only what was changed in that version — each version has its own line",
   "MCS1211TH341": "🧭 Qibla compass no longer shakes (smooth needle, no sudden spin, steady green glow) • 🏠 Home screen stays fixed — no up/down pulling or jumping",
   "MCS1211TH340": "✏️ Agent CNIC message now says DEV / CODEV (the old PBT-D / PBT-C wording removed)",
   "MCS1211TH339": "🪪 Developer or Co-Developer CNIC cannot become an agent — their own DEV / CODEV code is the referral code (own business on that CNIC is still allowed) • new «Developer CNIC» button in the agent panel",
@@ -12432,7 +12432,7 @@ window.addEventListener('load', ()=> setTimeout(()=>{ ['openServiceForm','openDo
   w._af = 1; window[fn] = w; }); }, 1500));
 /* ===== MCS0711SA187 (مالک کا حکم): مائی اکاؤنٹ ← ایجنٹ پورٹل (ذاتی تفصیل، سارے کاروبار، رجسٹریشن مکمل کرنا)
    ⚠️ پلے اسٹور: رقم / کمیشن / ادائیگی کا کوئی نظام یہاں نہیں — وہ الگ ویب سائٹ پر بنے گا */
-function d2Account(){ try{ ptOpen(); return; }catch(e){ console.error(e); } openControlPanel(); }   /* MCS1211TH343: نارمل (بغیر لاگ اِن) میں بھی My Account = پورٹل (Login/Sign Up + لاگ آؤٹ بٹن)؛ لاگ اِن صفحہ صرف لاگ آؤٹ کے بعد */   /* MCS0811SU217: لاگ اِن نہ ہو تو My Account = لاگ اِن صفحہ */   /* MCS0711SA194: My Account = ایک ہی پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / کاروبار / پروفیشن / یوزر) */
+function d2Account(){ try{ ptOpen(); return; }catch(e){ console.error(e); } openControlPanel(); }   /* MCS1211TH344: نارمل (بغیر لاگ اِن) میں بھی My Account = پورٹل (Login/Sign Up + لاگ آؤٹ بٹن)؛ لاگ اِن صفحہ صرف لاگ آؤٹ کے بعد */   /* MCS0811SU217: لاگ اِن نہ ہو تو My Account = لاگ اِن صفحہ */   /* MCS0711SA194: My Account = ایک ہی پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / کاروبار / پروفیشن / یوزر) */
 function apMeCard(me, rows){
   const E = escapeHtml, ph = me.phone ? '0' + String(me.phone).slice(2) : '', nB = rows.filter(x=>x.kind !== 'doctor').length, nP = rows.length - nB;
   const L = [['👤 نام', me.name], ['📱 موبائل', ph], ['🆔 ایجنٹ کوڈ', me.code], ['🏙️ شہر', me.city]].filter(x=>x[1]);
@@ -15720,7 +15720,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function busy(b){ document.querySelectorAll('#uaOv .uaBtn').forEach(x => x.disabled = !!b); }
   function done(r, msg){
     const next = uaPending; uaPending = null;
-    ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); ls.set('mcsGuest', null); try{ if(r.user && r.user.pk) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk, name: r.user.name, at: Date.now() })); }catch(e){}
+    ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); ls.set('mcsGuest', null); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){}
     { const rm = $('uaRem'); ls.set('mcsAuthTmp', rm && !rm.checked ? '1' : null); try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){} }   /* MCS1111WE312: «Remember me» نہیں تو ایپ بند ہوتے ہی لاگ آؤٹ */
     uaHide(); try{ showToast(msg || ('✅ خوش آمدید، ' + (r.user && r.user.name || ''))); }catch(e){}
     uaSync();
@@ -15747,7 +15747,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     show(`${head()}<div class="uaCard uaLg">
       <div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>
       ${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}
-      ${field('uaId', 'user', 'Mobile No. / Account ID (MCS-001)', { ac:'username' })}
+      ${field('uaId', 'user', 'Mobile No. / Account ID (MCS001)', { ac:'username' })}
       ${field('uaPw', 'lock', 'PIN / Password', { type:'password', ac:'current-password' })}
       
       <div class="uaRow" style="justify-content:space-between;display:flex;align-items:center"><label class="uaChk" style="margin:0"><input type="checkbox" id="uaRem" checked><span>Remember me</span></label><a onclick="uaForgot()">Forgot PIN?</a></div>
@@ -15788,7 +15788,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     let n = 0; const t = setInterval(() => { if(role !== 'dev' || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || ++n > 20){ clearInterval(t); try{ ptOpen(); }catch(e){} } }, role === 'dev' ? 150 : 350);
   }
   window.uaDoLogin = async function(){
-    const id = ($('uaId').value || '').trim(), pw = $('uaPw').value || '';
+    const id = mcsSidSrv(($('uaId').value || '').trim()), pw = $('uaPw').value || '';
     if(!id || !pw){ setErr('login'); return; }
     busy(1); setErr('');
     const FB = window.MCSFirebase, d = id.replace(/\D/g, ''), isMob = /^[\d\s\-+]+$/.test(id) && d.length >= 10, pin = pw.replace(/\D/g, '');
@@ -15826,7 +15826,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     busy(1); setErr(''); const r = await api({ op:'signup', name, mobile, email:'', pw: pw.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)), city: dist, district: dist }); busy(0);
     if(!r.ok) return setErr(r.reason);
     try{ localStorage.setItem('mcsHomeCity', dist); localStorage.removeItem('mcsCityPick'); }catch(e){}
-    done(r, '✅ Account created — your Account ID: ' + (r.user.sid || r.user.id));
+    done(r, '✅ Account created — your Account ID: ' + mcsSidFmt(r.user.sid || r.user.id));
     try{ uaAutoCard(r.user); }catch(e){}
     try{ ccApplyCity(true); }catch(e){}
     setTimeout(() => { try{ uaPkView(r.user, 1); }catch(e){} }, 350);
@@ -15835,20 +15835,21 @@ body.d2 #homeAds .ad-ribbon{display:none}
   /* MCS1211TH333 (مالک کا حکم): اکاؤنٹ بنتے ہی پکی ID + 4 ہندسوں کا رجسٹریشن کوڈ — «اپنے ایجنٹ کو بھیجیں»؛ ایجنٹ رجسٹریشن فارم میں
      ID + یہ کوڈ لکھ کر اس کا ریکارڈ لاتا ہے (سرور /mcsauth op reglook)۔ فون میں mcsMyPk (لاگ اِن صفحے / My Account پر بھی) */
   window.uaPkView = function(u, fresh){
-    u = u || ((uaMe() || {}).user) || {}; if(!u.pk) return;
-    try{ ls.set('mcsMyPk', JSON.stringify({ sid: u.sid || u.id, pk: u.pk, name: u.name, at: Date.now() })); }catch(e){}
-    const sid = u.sid || u.id, msg = 'My City Shines — رجسٹریشن\n👤 ' + (u.name || '') + '\n🆔 Account ID: ' + sid + '\n🔑 رجسٹریشن کوڈ: ' + u.pk + '\n\nبرائے مہربانی میری رجسٹریشن مکمل کر دیں۔';
-    show(`${head()}<div class="uaCard"><div class="uaHd"><i>✅</i><h2 style="font-size:22px">${fresh ? 'Account Created' : 'Registration Code'}</h2></div><div class="uaSub">${fresh ? 'آپ کا اکاؤنٹ بن گیا — ' : ''}${esc(u.name || '')}</div>
-      <div class="uaPkBox"><div class="l">🆔 Your Account ID — آپ کی پکی ID</div><div class="v" dir="ltr">${esc(sid)}</div>
-        <div class="l" style="margin-top:8px">🔑 Registration Code — رجسٹریشن کوڈ</div><div class="v pk" dir="ltr">${esc(u.pk)}</div></div>
-      <div class="uaMsg" style="background:#fff7e6;border-color:#f6c26b;color:#7c2d12;font-weight:700;line-height:1.9">📨 رجسٹریشن کے لیے یہ <b>ID</b> اور <b>چار ہندسوں کا کوڈ</b> اپنے ایجنٹ کو بھیجیں — وہ آپ کی رجسٹریشن مکمل کر کے منظوری کے بعد آپ کو میسج دے گا، وہی میسج یہاں لاگ اِن صفحے پر پیسٹ کریں۔<br><small>Send this ID and 4-digit code to your agent to complete your registration.</small></div>
+    u = u || ((uaMe() || {}).user) || {}; if(!(u.sid || u.id)) return;
+    const sid = mcsSidFmt(u.sid || u.id);
+    try{ ls.set('mcsMyPk', JSON.stringify({ sid: u.sid || u.id, pk: u.pk || '', name: u.name, at: Date.now() })); }catch(e){}
+    /* MCS1211TH344 (مالک کا حکم): 4 ہندسوں کا کوڈ ختم — صرف اکاؤنٹ ID (MCS001 …، بغیر ڈیش / وقفہ)؛ ایجنٹ اپنے فون کی فہرست سے یہی ID چنے گا */
+    const msg = 'My City Shines — رجسٹریشن\n👤 ' + (u.name || '') + '\n🆔 Account ID: ' + sid + '\n\nبرائے مہربانی میری رجسٹریشن مکمل کر دیں۔';
+    show(`${head()}<div class="uaCard"><div class="uaHd"><i>✅</i><h2 style="font-size:22px">${fresh ? 'Account Created' : 'My Account ID'}</h2></div><div class="uaSub">${fresh ? 'آپ کا اکاؤنٹ بن گیا — ' : ''}${esc(u.name || '')}</div>
+      <div class="uaPkBox"><div class="l">🆔 Your Account ID — آپ کی پکی ID</div><div class="v" dir="ltr" style="font-size:44px;letter-spacing:3px">${esc(sid)}</div></div>
+      <div class="uaMsg" style="background:#fff7e6;border-color:#f6c26b;color:#7c2d12;font-weight:700;line-height:1.9">📨 رجسٹریشن کے لیے یہ <b>ID</b> اپنے ایجنٹ کو بھیجیں — ایجنٹ اپنے موبائل کے فارم میں ID کی فہرست سے آپ کی ID چنے گا اور آپ کی معلومات خود آ جائیں گی۔ ایجنٹ رجسٹریشن مکمل کر کے ڈویلپر کو بھیجے گا؛ ادائیگی کی تصدیق کے بعد آپ کا کاروبار خود رجسٹر ہو جائے گا — پھر اپنے 6 ہندسوں کے PIN سے لاگ اِن کریں۔</div>
       <div class="uaTwo"><a class="uaBtn bG" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">📤 WhatsApp</a><button class="uaBtn bW" onclick="uaPkCopy()">📋 Copy</button></div>
       <button class="uaBtn bB" onclick="uaHide()">${IC.login}Continue — آگے</button></div>`);
     window._uaPkMsg = msg;
   };
   window.uaPkCopy = function(){ const t = window._uaPkMsg || ''; try{ navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){ prompt('کاپی کریں', t); } };
-  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.pk) return ''; return `<div class="uaPkTiny" dir="ltr"><span onclick="uaPkCopyMini()">🔒 ${esc(o.sid)} • ${esc(o.pk)}</span><button type="button" onclick="uaPkCopyMini()" title="Copy">⧉</button></div>`; }catch(e){ return ''; } }   /* MCS1211TH341: لاگ اِن صفحے پر چھوٹی سی ID+کوڈ نیچے بائیں، ساتھ باریک کاپی بٹن */
-  window.uaPkCopyMini = function(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); const t = 'My City Shines — Account ID: ' + o.sid + ' • رجسٹریشن کوڈ: ' + o.pk; navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){} };
+  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.sid) return ''; return `<div class="uaPkTiny" dir="ltr"><span onclick="uaPkCopyMini()">🔒 ${esc(mcsSidFmt(o.sid))}</span><button type="button" onclick="uaPkCopyMini()" title="Copy">⧉</button></div>`; }catch(e){ return ''; } }   /* MCS1211TH341: لاگ اِن صفحے پر چھوٹی سی ID+کوڈ نیچے بائیں، ساتھ باریک کاپی بٹن */
+  window.uaPkCopyMini = function(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); const t = 'My City Shines — Account ID: ' + mcsSidFmt(o.sid); navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){} };
   window.uaAutoCard = function(u){
     if(!u || !u.mobile || typeof store === 'undefined') return;
     const d10 = String(u.mobile).replace(/\D/g, '').slice(-10), wa = '0' + d10;
@@ -15887,7 +15888,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     const a = uaMe(); if(!a) return uaLogin();
     const u = a.user || {}, recent = a.via === 'g' || (Date.now() - (a.at || 0) < 14 * 60e3);
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.user}</i><h2 style="font-size:22px">My Account</h2></div><div class="uaSub">میرا اکاؤنٹ</div>
-      <div class="uaInfo">🆔 Account ID: <b>${esc(u.sid || u.id)}</b>${u.pk ? ' &nbsp; 🔑 رجسٹریشن کوڈ: <b dir="ltr">' + esc(u.pk) + '</b>' : ''}<br>👤 ${esc(u.name)}<br>📱 <b>${esc(u.mobile)}</b>${u.district ? '<br>📍 ' + esc(u.district) : ''}${u.email ? '<br>✉️ ' + esc(u.email) : ''}${u.gmail ? '<br>🟢 Google: ' + esc(u.gmail) : ''}</div>
+      <div class="uaInfo">🆔 Account ID: <b dir="ltr">${esc(mcsSidFmt(u.sid || u.id))}</b><br>👤 ${esc(u.name)}<br>📱 <b>${esc(u.mobile)}</b>${u.district ? '<br>📍 ' + esc(u.district) : ''}${u.email ? '<br>✉️ ' + esc(u.email) : ''}${u.gmail ? '<br>🟢 Google: ' + esc(u.gmail) : ''}</div>
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bB" onclick="fedListOpen()">📨 میرے درج کیے ہوئے <small style="font-weight:700;opacity:.85">— دوسروں کے کاروبار کے دعوتی میسج</small></button>
       <button class="uaBtn bW" onclick="uaInvAsk()">📥 مجھے ملا ہوا دعوتی میسج پیسٹ کریں</button>
@@ -15947,7 +15948,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     try{ const c0 = window.cpAcctSync; if(typeof c0 === 'function' && !c0.__ua){ window.cpAcctSync = function(){ const r = c0.apply(this, arguments); uaSync(); return r; }; window.cpAcctSync.__ua = 1; } }catch(e){}
     /* MCS0711SA194: h2Type کلک ختم */
   }
-  async function recheck(){ const a = uaMe(); if(!a || (a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ if(r.user && r.user.pk) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk, name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ ls.set('mcsAuth', null); ls.set('mcsGuest', '1'); uaSync(); } }
+  async function recheck(){ const a = uaMe(); if(!a || (a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ ls.set('mcsAuth', null); ls.set('mcsGuest', '1'); uaSync(); } }
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ڈویلپر کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
@@ -16238,7 +16239,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       try{ mpRender(); hlRenderSoon(); ccApplyCity(true); pfLoadList(); }catch(e){}
       const e = mpEntry(rec), left = e ? mpLeftOf(e) : null;
       agModal(`<div class="ag-hd">🎉 مبارک ہو ${esc(u.name || inv.n)}!</div>
-        <div class="ag-ok">🏪 ${esc(rec.nameUr || rec.name || '')}<br><small>🆔 ${fedBizId(inv.k, inv.i)} • Account ID: ${esc(u.sid || u.id || '')}</small></div>
+        <div class="ag-ok">🏪 ${esc(rec.nameUr || rec.name || '')}<br><small>🆔 ${fedBizId(inv.k, inv.i)} • Account ID: ${esc(mcsSidFmt(u.sid || u.id || ''))}</small></div>
         ${taken ? '<div class="ag-wait" style="margin:8px 0">⚠️ یہ کاروبار کسی دوسرے فون سے جڑا ہوا ہے — Help Desk پر بتائیں، ڈویلپر «فون سے آزاد» کر دیں گے۔</div>'
           : (e && e.pend) ? '<div class="ag-wait" style="margin:8px 0">⏳ آپ کا کاروبار / پروفیشن جڑ گیا — ڈویلپر کی ایک منظوری کے فوراً بعد 7 دن مفت شروع اور سب کو پوری تفصیل نظر آئے گی۔</div>'
           : (left && left > 30) ? `<div class="ag-ok" style="margin:8px 0">⭐ رجسٹریشن مکمل — ایک سال کی ممبرشپ فعال (${left} دن باقی)۔</div>`
@@ -17392,11 +17393,11 @@ function mstWho(){
   const mob = x => x ? '0' + String(x).replace(/\D/g, '').slice(-10) : '';
   if(rl === 'dev'){ const p = ptDevProf(); nm = p.name || 'Developer'; lines = [['Role', 'Developer'], ['Mobile', p.phone || '']]; badge = 'Developer'; }
   else if(rl === 'codev'){ const c = codevMe() || {}; nm = c.name || 'Co-Developer'; lines = [['Role', 'Co-Developer'], ['Mobile', mob(c.phone)]]; badge = 'Co-Developer'; }
-  else if(rl === 'agent'){ nm = ag.name || u.name || 'Agent'; lines = [['Agent ID', ag.code || ''], ['Account ID', u.sid || u.id || '']]; if(!lines[0][1] && !lines[1][1]) lines = [['Mobile', mob(ag.phone)]]; badge = 'Active Agent'; }
+  else if(rl === 'agent'){ nm = ag.name || u.name || 'Agent'; lines = [['Agent ID', ag.code || ''], ['Account ID', mcsSidFmt(u.sid || u.id || '')]]; if(!lines[0][1] && !lines[1][1]) lines = [['Mobile', mob(ag.phone)]]; badge = 'Active Agent'; }
   else {
     let L = []; try{ L = mpListReal(); }catch(e){}
     nm = u.name || ag.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || '';
-    if(ua){ lines = [['Account ID', u.sid || u.id || ''], ['Mobile', u.mobile || '']]; badge = rl === 'biz' ? 'Business' : rl === 'prof' ? 'Profession' : 'Member'; }
+    if(ua){ lines = [['Account ID', mcsSidFmt(u.sid || u.id || '')], ['Mobile', u.mobile || '']]; badge = rl === 'biz' ? 'Business' : rl === 'prof' ? 'Profession' : 'Member'; }
     else if(L.length){ lines = [['Role', rl === 'prof' ? 'Profession' : 'Business']]; badge = rl === 'prof' ? 'Profession' : 'Business'; }
     else { nm = 'Guest'; guest = true; badge = 'Guest'; lines = [['Status', 'Not logged in']]; }
   }
@@ -17465,7 +17466,7 @@ function mstSub(title, bodyHtml){
 }
 function mstAccInfo(){
   const w = mstWho(), u = w.u || {}, ag = w.ag || {};
-  const kv = [['Name', w.nm], ['Mobile', u.mobile || (ag.phone ? '0' + String(ag.phone).slice(2) : '')], ['Email', u.email || ''], ['Account ID', u.sid || u.id || ''], ['Agent ID', ag.code || ''], ['Role', (w.M && w.M[2]) || '']].filter(x => x[1] && !(x[0] === 'Name' && w.guest));
+  const kv = [['Name', w.nm], ['Mobile', u.mobile || (ag.phone ? '0' + String(ag.phone).slice(2) : '')], ['Email', u.email || ''], ['Account ID', mcsSidFmt(u.sid || u.id || '')], ['Agent ID', ag.code || ''], ['Role', (w.M && w.M[2]) || '']].filter(x => x[1] && !(x[0] === 'Name' && w.guest));
   const av = w.sv ? `<div style="text-align:center;padding:12px 0 4px"><div class="mst-av" style="margin:0 auto;width:92px;height:92px"><img src="${mstEsc(w.sv)}" alt=""></div></div>` : '';
   mstSub('Account Information',
     (w.guest ? `<div class="mst-card"><div class="mst-kv"><span>Status</span><b>Not logged in</b></div></div>` : `<div class="mst-card">${av}${kv.map(x => `<div class="mst-kv"><span>${mstEsc(x[0])}</span><b>${mstEsc(x[1])}</b></div>`).join('')}</div>`)
@@ -19463,7 +19464,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     var ID = 'portalModal', ua = (typeof uaMe === 'function' && uaMe()) || null, u = (ua && ua.user) || {}, me = agMe() || {}, L = mpListReal();
     var nm = u.name || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
     var mob = u.mobile || u.phone || (me.phone ? '0' + String(me.phone).slice(2) : '');
-    var acid = u.sid || u.id || mob || '';
+    var acid = mcsSidFmt(u.sid || u.id || mob || '');
     var sv = ''; try{ sv = ptSelfieGet(rl) || ''; }catch(e){}
     var best = null; L.forEach(function(x){ var lf = mpLeftOf(x.p); if(lf != null && (best == null || lf > best.lf)) best = {lf: lf, p: x.p}; });
     var active = !!(best && best.lf > 0);
@@ -20471,7 +20472,7 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   };
   window.mcsRegMessage = function(rec){
     var u = null; try{ u = (uaMe() || {}).user || null; }catch(e){}
-    var sid = (rec.more && rec.more.sid) || (u && (u.sid || u.id)) || '';
+    var sid = mcsSidFmt((rec.more && rec.more.sid) || (u && (u.sid || u.id)) || '');
     var lines = ['MCS-REG', 'ID: ' + sid, 'Name: ' + ((u && u.name) || rec.owner || rec.nameUr || ''), 'Mobile: ' + (rec.whatsapp || (u && u.mobile) || ''), 'Shop: ' + (rec.nameUr || rec.nameEn || ''), 'Address: ' + [rec.address, rec.area, rec.city].filter(Boolean).join('، ')];
     return lines.join('\n') + '\n\nMy City Shines — رجسٹریشن مکمل کرنے کے لیے یہ پورا پیغام ایپ میں «Paste basic information» میں پیسٹ کریں۔';
   };
@@ -20811,6 +20812,37 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   const $ = id => document.getElementById(id);
   const d10 = s => String(s || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10);
   const role = () => { try{ return typeof bzRole === 'function' ? bzRole() : ''; }catch(e){ return ''; } };
+  /* MCS1211TH344 (مالک کا حکم): 4 ہندسوں کے کوڈ کی جگہ «ID کی ڈراپ ڈاؤن فہرست» — ID چھوتے ہی نام، موبائل، ضلع فارم میں آ جاتے ہیں */
+  function entries(){
+    const map = {};
+    const add = (sid, name, mobile, district, done) => {
+      sid = mcsSidFmt(sid); if(!/^MCS\d+$/.test(sid) || !mobile) return;
+      const o = map[sid] || { sid }; if(name && !o.name) o.name = name; if(mobile && !o.mobile) o.mobile = mobile; if(district && !o.district) o.district = district; if(done) o.done = true; map[sid] = o;
+    };
+    try{ JSON.parse(localStorage.getItem('mcsRegList') || '[]').forEach(x => x && add(x.sid, x.name, x.mobile, x.district, false)); }catch(e){}
+    try{ [].concat(store.services || [], store.doctors || [], (typeof pendingApprovals !== 'undefined' ? pendingApprovals : [])).forEach(r => { if(r && r.more && r.more.sid) add(r.more.sid, r.nameUr || r.name, r.whatsapp, r.district, !!(r.stage && r.stage !== 'basic')); }); }catch(e){}
+    return Object.keys(map).map(k => map[k]).sort((x, y) => parseInt(x.sid.slice(3), 10) - parseInt(y.sid.slice(3), 10));
+  }
+  function fillSel(){
+    const sel = $('pkRegSel'); if(!sel) return;
+    const cur = sel.value, L = entries(); window._pkEntries = L;
+    sel.innerHTML = '<option value="">— ID چنیں (' + L.length + ') —</option>' + L.map(x => `<option value="${x.sid}">${x.sid} — ${esc(x.name || '')} — 0${d10(x.mobile)}${x.done ? ' ✅' : ''}</option>`).join('');
+    if(cur && L.some(x => x.sid === cur)) sel.value = cur;
+    const m = $('pkRegMsg'); if(m && !sel.value && !window._pkCtx) m.innerHTML = L.length ? '' : '<span style="color:#b45309">فہرست خالی ہے — 🔄 دبا کر تازہ کریں (انٹرنیٹ چاہیے)</span>';
+  }
+  let _rf = 0;
+  window.mcsRegRefresh = async function(manual){
+    const now = Date.now(); if(!manual && now - _rf < 60000) return; _rf = now;
+    const m = $('pkRegMsg'); if(manual && m) m.textContent = '⏳ فہرست تازہ ہو رہی ہے…';
+    let r = null;
+    try{
+      if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){ const hdr = await vfAdminHdr(); r = await (await fetch(API, { method: 'POST', headers: hdr, body: JSON.stringify({ op: 'reglist' }) })).json(); }
+      else { const a = (typeof agMe === 'function' && agMe()) || {}; if(a.phone && a.pin) r = await (await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ op: 'reglist', phone: a.phone, pin: a.pin, dev: agDev() }) })).json(); }
+    }catch(e){}
+    if(r && r.ok && Array.isArray(r.list)){ try{ localStorage.setItem('mcsRegList', JSON.stringify(r.list.slice(0, 5000))); }catch(e){} if(manual && m) m.textContent = ''; }
+    else if(manual && m){ m.innerHTML = '<span style="color:#b45309">سرور سے فہرست نہیں ملی — جو IDs فون میں موجود ہیں وہی دکھائی گئی ہیں</span>'; }
+    fillSel();
+  };
   function box(){
     const body = document.querySelector('#serviceFormModal .fm-body'); if(!body) return;
     let b = $('pkRegBox');
@@ -20818,19 +20850,19 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     if(!b){
       b = document.createElement('div'); b.id = 'pkRegBox'; b.setAttribute('data-noen', '');
       b.style.cssText = 'margin:4px 0 8px;padding:6px 8px;border:1px solid #86efac;border-radius:10px;background:#f0fdf4;direction:rtl';
-      b.innerHTML = `<div style="font-weight:800;color:#14532d;font-size:12.5px;line-height:1.6">🔑 یوزر کی <b>ID</b> اور <b>چار ہندسوں کا کوڈ</b> لکھیں</div>
+      b.innerHTML = `<div style="font-weight:800;color:#14532d;font-size:12.5px;line-height:1.6">🆔 سائن اپ شدہ بندے کی <b>ID</b> فہرست سے چنیں</div>
         <div style="display:flex;gap:6px;margin-top:6px;direction:ltr">
-          <input id="pkRegId" type="text" placeholder="MCS-008 / 03XXXXXXXXX" autocomplete="off" style="flex:1.4;min-width:0;height:36px;border:1px solid #86efac;border-radius:8px;padding:0 8px;font:700 14px Arial,sans-serif">
-          <input id="pkRegCode" type="text" inputmode="numeric" maxlength="4" placeholder="Code" autocomplete="off" style="flex:.8;min-width:0;height:36px;border:1px solid #86efac;border-radius:8px;padding:0 6px;font:900 16px Arial,sans-serif;letter-spacing:4px;text-align:center">
-          <button type="button" onclick="pkRegFetch()" style="flex:none;height:36px;border:0;border-radius:8px;background:#16a34a;color:#fff;font-weight:900;font-size:13px;padding:0 10px;cursor:pointer">🔍 لائیں</button></div>
+          <select id="pkRegSel" onchange="pkRegPick()" style="flex:1;min-width:0;height:38px;border:1px solid #86efac;border-radius:8px;padding:0 6px;font:700 14px Arial,sans-serif;background:#fff;color:#0f1f45"></select>
+          <button type="button" onclick="mcsRegRefresh(true)" title="Refresh" style="flex:none;height:38px;border:0;border-radius:8px;background:#16a34a;color:#fff;font-weight:900;font-size:16px;padding:0 12px;cursor:pointer">🔄</button></div>
         <div id="pkRegMsg" style="margin-top:6px;font-weight:800;font-size:13px;line-height:1.8"></div>`;
       body.insertBefore(b, body.firstChild);
-      $('pkRegCode').addEventListener('keydown', e => { if(e.key === 'Enter') pkRegFetch(); });
     }
     b.style.display = '';
     const c = window._pkCtx;
-    if(c && c.recId && c.recId === editingServiceId){ $('pkRegId').value = c.sid; $('pkRegMsg').innerHTML = `<span style="color:#047857">✅ ${esc(c.name)} (${esc(c.sid)}) — ریکارڈ لگ گیا؛ باقی فارم مکمل کر کے محفوظ کریں</span>`; }
-    else { $('pkRegId').value = ''; $('pkRegCode').value = ''; $('pkRegMsg').textContent = ''; window._pkCtx = null; }
+    fillSel();
+    if(c && c.recId && c.recId === editingServiceId){ $('pkRegSel').value = c.sid; $('pkRegMsg').innerHTML = `<span style="color:#047857">✅ ${esc(c.name)} (${esc(c.sid)}) — ریکارڈ لگ گیا؛ باقی فارم مکمل کر کے محفوظ کریں</span>`; }
+    else { $('pkRegSel').value = ''; $('pkRegMsg').textContent = ''; window._pkCtx = null; fillSel(); }
+    mcsRegRefresh(false);
   }
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function fill(c){
@@ -20845,25 +20877,22 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
       ['svcOwner', 'svcWhatsapp', 'svcDistrict'].forEach(id => { const e = $(id); if(e) try{ e.dispatchEvent(new Event('input', { bubbles: true })); e.dispatchEvent(new Event('change', { bubbles: true })); }catch(_){} });
     }catch(e){}
   }
-  window.pkRegFetch = async function(){
-    const id = ($('pkRegId').value || '').trim(), pk = d10($('pkRegCode').value).slice(-4), m = $('pkRegMsg');
-    if(!id || pk.length !== 4){ m.innerHTML = '<span style="color:#b91c1c">ID اور 4 ہندسوں کا کوڈ دونوں لکھیں</span>'; return; }
-    m.innerHTML = '⏳ ریکارڈ لا رہا ہوں…';
-    let r = null; try{ r = await (await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ op: 'reglook', id, pk }) })).json(); }catch(e){}
-    if(!r){ m.innerHTML = '<span style="color:#b91c1c">📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں</span>'; return; }
-    if(!r.ok){ m.innerHTML = '<span style="color:#b91c1c">' + (r.reason === 'wait' ? '⛔ کئی بار غلط کوڈ — 15 منٹ بعد کوشش کریں' : '❌ ID یا کوڈ درست نہیں — بندے سے دوبارہ پوچھیں') + '</span>'; return; }
-    const u = r.user, k = d10(u.mobile);
+  window.pkRegPick = function(){
+    const sel = $('pkRegSel'), m = $('pkRegMsg'); if(!sel) return;
+    if(!sel.value){ window._pkCtx = null; m.textContent = ''; return; }
+    const u = (window._pkEntries || []).find(x => x.sid === sel.value); if(!u){ m.innerHTML = '<span style="color:#b91c1c">یہ ID فہرست میں نہیں ملی — 🔄 دبائیں</span>'; return; }
+    const k = d10(u.mobile);
     const basic = (store.services || []).find(x => x && d10(x.whatsapp) === k && (x.stage === 'basic' || !x.stage));
-    window._pkCtx = { sid: u.sid, name: u.name, mobile: u.mobile, district: u.district || '', recId: basic ? basic.id : (editingServiceId || null) };
+    window._pkCtx = { sid: u.sid, name: u.name || '', mobile: u.mobile, district: u.district || '', recId: basic ? basic.id : (editingServiceId || null) };
     if(basic && basic.id !== editingServiceId){
       try{ closeModal('serviceFormModal'); }catch(e){}
       try{ if(typeof svcMyBasicAdd === 'function') svcMyBasicAdd(basic.id); }catch(e){}
       setTimeout(() => { try{ svcRegisterOpen(basic.id); }catch(e){} setTimeout(() => fill(window._pkCtx), 250); }, 150);
-      showToast('✅ ' + u.name + ' (' + u.sid + ') کا کارڈ مل گیا — رجسٹریشن فارم کھل رہا ہے', 3500);
+      showToast('✅ ' + (u.name || '') + ' (' + u.sid + ') کا کارڈ مل گیا — رجسٹریشن فارم کھل رہا ہے', 3500);
       return;
     }
     fill(window._pkCtx);
-    m.innerHTML = `<span style="color:#047857">✅ ${esc(u.name)} (${esc(u.sid)}) — نام، موبائل، ضلع لگ گئے؛ باقی فارم (کاروبار کا نام، قسم، پتہ، شناختی کارڈ…) مکمل کر کے محفوظ کریں</span>`;
+    m.innerHTML = `<span style="color:#047857">✅ ${esc(u.name || '')} (${esc(u.sid)}) — نام، موبائل، ضلع لگ گئے؛ باقی فارم (کاروبار کا نام، قسم، پتہ، شناختی کارڈ…) مکمل کر کے محفوظ کریں</span>`;
   };
   const _osf = window.openServiceForm;
   /* MCS1211TH341: خود فارم بھرنے والے کے لیے ڈبہ نہیں — لاگ اِن کی معلومات (نام، موبائل، ضلع) خود بخود آ جاتی ہیں */
@@ -20900,7 +20929,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     const dev = role() === 'dev'; window._pkLast = { kind: 'service', rec };
     agModal(`<div class="ag-hd">✅ رجسٹریشن محفوظ <small>${esc(rec.nameUr || rec.name || '')}</small></div>
       <div class="ag-ok">👤 ${esc(c.name)} • 🆔 ${esc(c.sid)}<br>📱 <bdi dir="ltr">0${esc(d10(c.mobile))}</bdi>${c.district ? ' • 📍 ' + esc(c.district) : ''}</div>
-      <div class="cp-hint" style="margin:8px 0">اگلا قدم: <b>ایک سال کی ممبرشپ</b> — ${dev ? 'آپ خود دیں' : 'منظوری کے لیے ڈویلپر کو بھیجیں'}۔ منظوری کے بعد تیار لاگ اِن میسج بنے گا — وہ اس بندے کو بھیجیں، وہ لاگ اِن صفحے پر پیسٹ کرے گا تو رجسٹریشن اور ایک سال کی ممبرشپ اس کے فون پر مکمل۔</div>
+      <div class="cp-hint" style="margin:8px 0">اگلا قدم: <b>ایک سال کی ممبرشپ</b> — ${dev ? 'آپ خود دیں' : 'ادائیگی کی تصدیق اور منظوری کے لیے ڈویلپر کو بھیجیں'}۔ منظوری کے بعد کوئی کوڈ نہیں بنتا — کاروبار خود رجسٹر ہو جاتا ہے؛ وہ بندہ اپنی ID / موبائل اور 6 ہندسوں کے PIN سے لاگ اِن کرے تو اسے مبارکباد کا کارڈ اور اپنا کاروباری کارڈ مل جائے گا۔</div>
       ${dev ? `<button type="button" class="btn block ag-send" onclick="closeModal('agModal');bzGiveYear(window._pkLast)">⭐ ایک سال کی ممبرشپ دیں</button>`
             : `<button type="button" class="btn block ag-send" onclick="bzYearReq(window._pkLast)">📨 ایک سال کی منظوری کے لیے ڈویلپر کو بھیجیں</button>`}
       <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agModal')">بعد میں</button>`);
@@ -20973,6 +21002,121 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
         actCodeShow({ kind: x.kind, rec: x.rec, name: owner || x.rec.nameUr || '', mobile: x.rec.whatsapp || '', _inv: 1 }, { name: owner || x.rec.nameUr || '', phone: x.rec.whatsapp || '', prof: x.rec.nameUr || x.rec.name || '', until: nu }); } }catch(e){}
     return r;
   };
+})();
+</script>
+<script id="mcsTH344">
+/* MCS1211TH344 (مالک کا حکم):
+   (1) اکاؤنٹ ID کی شکل: MCS001، MCS002 … (بڑے حروف، بغیر ڈیش / وقفہ، تین ہندسے) — ترتیب سرور دیتا ہے، یہاں صرف شکل
+   (2) ہوم کے ہیڈر میں لاگ اِن بندے کی ID
+   (3) منظوری / ایک سال دینے کے بعد کوئی کوڈ نہیں — کاروبار خود رجسٹر؛ پیغام میں صرف ID اور لاگ اِن کا طریقہ
+   (4) دکاندار PIN سے لاگ اِن کرے تو اس کا منظور شدہ کارڈ (اسی موبائل نمبر کا) خود اس کے فون میں جڑ جاتا ہے
+   (5) رجسٹریشن مکمل ہونے پر پہلی بار کھولنے پر نستعلیق میں مبارکباد کا کارڈ */
+(function(){
+  'use strict';
+  var LS = { get:function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set:function(k,v){ try{ v==null ? localStorage.removeItem(k) : localStorage.setItem(k,v); }catch(e){} } };
+  var d10 = function(s){ return String(s||'').replace(/[۰-۹]/g,function(c){ return '۰۱۲۳۴۵۶۷۸۹'.indexOf(c); }).replace(/\D/g,'').slice(-10); };
+  var E = function(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  function parts(s){ var m = String(s==null?'':s).trim().match(/^mcs[\s\-_]*0*(\d{1,6})$/i); if(!m) return null; var n = m[1]; while(n.length < 3) n = '0' + n; return n; }
+  window.mcsSidFmt = function(s){ var n = parts(s); return n ? 'MCS' + n : String(s==null?'':s); };
+  window.mcsSidSrv = function(s){ var n = parts(s); return n ? 'MCS-' + n : String(s==null?'':s); };   /* سرور کو وہی شکل جس میں وہ پہلے سے ID رکھتا ہے */
+
+  /* (2) ہوم ہیڈر میں ID */
+  function chip(){
+    try{
+      var t = document.getElementById('h2Type'); if(!t) return;
+      var a = typeof uaMe === 'function' ? uaMe() : null, c = document.getElementById('h2Sid');
+      var sid = a && a.user ? window.mcsSidFmt(a.user.sid || a.user.id || '') : '';
+      if(!/^MCS\d+$/.test(sid)){ if(c) c.remove(); return; }
+      if(!c){ c = document.createElement('span'); c.id = 'h2Sid'; c.className = 'h2-type on'; c.setAttribute('dir','ltr'); c.style.cssText = 'margin-inline-start:6px;font-weight:800;letter-spacing:.5px'; t.insertAdjacentElement('afterend', c); }
+      var txt = '🆔 ' + sid; if(c.textContent !== txt) c.textContent = txt;
+    }catch(e){}
+  }
+
+  /* (3) ایک سال دینے / منظوری کے بعد: کوئی کوڈ نہیں */
+  window.actCodeShow = async function(p, o){
+    o = o || {}; var rec = p.rec || {};
+    try{
+      if(rec.approved === false && rec.fsId && window.MCSFirebase && typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){
+        var FB = window.MCSFirebase; await FB.updateDoc(FB.doc(FB.db, p.kind === 'doctor' ? 'doctors' : 'services', rec.fsId), { approved: true });
+        rec.approved = true; saveStore(); try{ refreshVisibleLists(); }catch(e){}
+      }
+    }catch(e){}
+    var ph = d10(o.phone || p.mobile || rec.whatsapp), nm = o.name || p.name || '', prof = o.prof || rec.nameUr || rec.name || '';
+    var sid = window.mcsSidFmt((rec.more && rec.more.sid) || ''); if(!/^MCS\d+$/.test(sid)) sid = '';
+    var until = o.until ? new Date(o.until).toLocaleDateString('en-GB') : '';
+    var msg = ['🌟 *My City Shines* — مبارک ہو! ✅', '', 'السلام علیکم ' + nm + ' صاحب!', '«' + prof + '» رجسٹر ہو گیا ہے اور *ایک سال کی ممبرشپ فعال* ہے' + (until ? ' — ' + until + ' تک' : '') + '۔', '',
+      (sid ? '🆔 آپ کی ID: *' + sid + '*' : ''), 'ایپ کھولیں ← لاگ اِن میں اپنی ID یا موبائل نمبر اور اپنا 6 ہندسوں کا PIN لکھیں — آپ کا کاروباری کارڈ آپ کے سامنے ہوگا۔', '', '📲 ' + (typeof MCS_PLAY_URL !== 'undefined' ? MCS_PLAY_URL : '')].filter(function(x, i, a){ return x !== '' || (a[i-1] !== '' && i); }).join('\n');
+    agModal('<div class="ag-hd">✅ رجسٹر ہو گیا — ایک سال کی ممبرشپ فعال</div>'
+      + '<div style="text-align:center;margin:8px 0;padding:12px;border:2px dashed #16a34a;border-radius:14px;background:#f0fdf4"><div style="font-weight:800;color:#14532d">👤 ' + E(nm) + '</div>'
+      + (sid ? '<div dir="ltr" style="font:900 30px Arial,sans-serif;letter-spacing:3px;color:#0f1f45;margin-top:4px">' + E(sid) + '</div>' : '')
+      + '<div style="font-size:12.5px;color:#14532d">' + E(prof) + (until ? ' • ⭐ ' + E(until) + ' تک' : '') + '</div></div>'
+      + '<div class="cp-hint" style="margin:0 0 6px">کوئی کوڈ نہیں بنتا — کاروبار سسٹم میں رجسٹر ہو چکا۔ وہ بندہ اپنی ID / موبائل اور 6 ہندسوں کے PIN سے لاگ اِن کرے گا تو اسے مبارکباد کا کارڈ اور اپنا کاروباری کارڈ مل جائے گا۔</div>'
+      + (ph.length === 10 ? '<a class="btn block ag-send" style="text-align:center;margin-top:6px" target="_blank" rel="noopener" href="https://wa.me/92' + ph + '?text=' + encodeURIComponent(msg) + '">📤 دکاندار کو واٹس ایپ</a>' : '')
+      + '<button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal(\'agModal\')">ٹھیک ہے</button>');
+  };
+
+  /* (4) لاگ اِن کے بعد اسی موبائل نمبر کا منظور شدہ کارڈ اس فون کے «میرا کاروبار» میں */
+  function adopt(){
+    try{
+      var a = uaMe(); if(!a || !a.user || !a.user.mobile) return; var k = d10(a.user.mobile); if(k.length !== 10) return;
+      var mine = mpAll(), ch = false;
+      [['service', store.services || []], ['doctor', store.doctors || []]].forEach(function(g){ g[1].forEach(function(r){
+        if(!r || r.approved === false || d10(r.whatsapp) !== k || r.category === 'emergencyNumbers' || r.category === 'govOffices') return;
+        if(mine.some(function(p){ return p.kind === g[0] && (p.id === r.id || (p.fsId && p.fsId === r.fsId)); })) return;
+        if(!Array.isArray(store.myProfiles)) store.myProfiles = [];
+        store.myProfiles.push({ kind: g[0], id: r.id, fsId: r.fsId || '' }); mine = mpAll(); ch = true;
+      }); });
+      if(ch){ saveStore(); try{ mpRender(); }catch(e){} }
+    }catch(e){}
+  }
+
+  /* (5) مبارکباد کا کارڈ — ہر کارڈ کے لیے ایک ہی بار */
+  function welcome(){
+    try{
+      var a = uaMe(); if(!a || !a.user || document.getElementById('mcsWel')) return; var k = d10(a.user.mobile); if(k.length !== 10) return;
+      var groups = [['service', store.services || []], ['doctor', store.doctors || []]];
+      for(var gi = 0; gi < groups.length; gi++){ var kind = groups[gi][0], arr = groups[gi][1];
+        for(var i = 0; i < arr.length; i++){ var r = arr[i];
+          if(!r || r.approved === false || d10(r.whatsapp) !== k || r.category === 'emergencyNumbers' || r.category === 'govOffices') continue;
+          var act = pfAct[pfKeyOf(r, kind)]; if(!act || !act.until || act.until <= Date.now() || mpIsTrialSpan(act.since, act.until)) continue;
+          if((act.until - Date.now()) / 864e5 < 300) continue;   /* تازہ ایک سال کی ممبرشپ ہی */
+          var flag = 'mcsWelcomed:' + pfKeyOf(r, kind); if(LS.get(flag)) continue;
+          LS.set(flag, '1'); return showWel(r, kind, a.user, act);
+        } }
+    }catch(e){}
+  }
+  function showWel(r, kind, u, act){
+    var nm = String(u.name || '').trim(); if(nm && !/صاحب$/.test(nm)) nm += ' صاحب';
+    var prof = r.nameUr || r.name || '', sid = window.mcsSidFmt((r.more && r.more.sid) || u.sid || u.id || ''); if(!/^MCS\d+$/.test(sid)) sid = '';
+    var until = new Date(act.until).toLocaleDateString('en-GB');
+    var o = document.createElement('div'); o.id = 'mcsWel'; o.setAttribute('data-noen','');
+    o.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(15,31,69,.78);display:flex;align-items:center;justify-content:center;padding:16px;direction:rtl;overflow:auto';
+    o.innerHTML = '<div style="width:100%;max-width:430px;border-radius:28px;overflow:hidden;background:linear-gradient(160deg,#0f766e 0%,#0f1f45 100%);color:#fff;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);border:2px solid #fde047;font-family:\'Jameel Noori Nastaleeq Kasheeda\',\'Jameel Noori Nastaleeq Regular\',serif">'
+      + '<div style="padding:22px 18px 6px"><div style="font-size:52px;line-height:1.2">🎉</div><div style="font-size:34px;color:#fde047;line-height:2">خوش آمدید</div>'
+      + '<div style="font:700 11px Arial,sans-serif;letter-spacing:2px;opacity:.8;direction:ltr">MY CITY SHINES</div></div>'
+      + '<div style="margin:10px 14px;padding:16px 14px;border-radius:20px;background:rgba(255,255,255,.12);font-size:23px;line-height:2.4">'
+      + 'مبارک ہو <b style="color:#fde047">' + E(nm) + '</b>!<br>آپ کا کاروبار یا شعبہ <b style="color:#86efac">«' + E(prof) + '»</b> مائی سٹی شائنز میں کامیابی سے درج ہو چکا ہے۔<br>'
+      + '<span style="font-size:19px;opacity:.95">ایک سال کی ممبرشپ فعال — <bdi dir="ltr">' + E(until) + '</bdi> تک</span><br>'
+      + 'اب اپنی پروفائل کھولیں، اسے دوسروں کے ساتھ شیئر کریں اور اپنے کاروبار کو پروموٹ کریں۔</div>'
+      + (sid ? '<div dir="ltr" style="font:900 26px Arial,sans-serif;letter-spacing:3px;color:#fde047;margin:2px 0 6px">🆔 ' + E(sid) + '</div>' : '')
+      + '<div style="padding:8px 16px 20px;display:grid;gap:8px;font-family:Arial,sans-serif">'
+      + '<button type="button" id="mcsWelOpen" style="border:0;border-radius:14px;padding:13px;font:800 16px Arial,sans-serif;background:#fde047;color:#0f1f45;cursor:pointer">🏪 میری پروفائل کھولیں</button>'
+      + '<button type="button" id="mcsWelShare" style="border:0;border-radius:14px;padding:13px;font:800 16px Arial,sans-serif;background:#16a34a;color:#fff;cursor:pointer">📤 شیئر کریں</button>'
+      + '<button type="button" id="mcsWelX" style="border:0;border-radius:14px;padding:11px;font:700 14px Arial,sans-serif;background:rgba(255,255,255,.18);color:#fff;cursor:pointer">بعد میں</button></div></div>';
+    document.body.appendChild(o);
+    var close = function(){ try{ o.remove(); }catch(e){} };
+    o.querySelector('#mcsWelX').onclick = close;
+    o.querySelector('#mcsWelOpen').onclick = function(){ close(); try{ var L = mpListReal(), ix = L.findIndex(function(x){ return x.rec === r; }); if(ix >= 0 && typeof ptView === 'function'){ ptView(ix); return; } }catch(e){} try{ ptOpen(); }catch(e){} };
+    o.querySelector('#mcsWelShare').onclick = function(){
+      var txt = '🌟 میرا کاروبار «' + prof + '» اب My City Shines میں درج ہے ✅' + (typeof MCS_PLAY_URL !== 'undefined' ? '\n📲 ' + MCS_PLAY_URL : '');
+      try{ if(navigator.share){ navigator.share({ text: txt }).catch(function(){}); return; } }catch(e){}
+      window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
+    };
+  }
+
+  function tick(){ chip(); adopt(); welcome(); }
+  window.addEventListener('load', function(){ setTimeout(tick, 1500); });
+  setInterval(tick, 3000);
 })();
 </script>
 </body>
