@@ -4311,10 +4311,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH356";
+const APP_VERSION = "MCS1211TH357";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH357": "🤝 A deactivated agent is no longer shown as MCS Agent (badge and list)",
   "MCS1211TH356": "🔢 Referral list shows a serial number on every line (1 DEV, 2 CODEV, 3 PBT, 4 AG001…)",
   "MCS1211TH355": "🤝 Referral code list is now a small clean list — DEV Developer, CODEV Co-Developer, PBT Company, AG001 agent name — one tap to choose",
   "MCS1211TH354": "🗑️ Deleting a business card also ends its membership and its MCS ID",
@@ -9408,7 +9409,9 @@ async function refInfoOpen(c){
 function agMarkRecords(){
   const FB = window.MCSFirebase; if(!FB || !isAdminSignedIn) return;
   [['doctors','doctor'],['services','service']].forEach(([col,kind])=>{ (store[col]||[]).forEach(r=>{
-    if(r.mcsAgent || !r.fsId) return; let k = ''; try{ k = agKnownOf(kind, r.id); }catch(_){}
+    if(!r.fsId) return; let k = ''; try{ k = agKnownOf(kind, r.id); }catch(_){}
+    /* MCS1211TH357 (مالک کا حکم): ایجنٹ غیر فعال / ختم ہو تو کارڈ سے «MCS Agent» نشان بھی ہٹے (صرف جب ایجنٹ فہرست پوری آ چکی ہو) */
+    if(r.mcsAgent){ if(!(k && k !== 'pending') && (agList || []).length && r.category !== 'mcsAgent'){ r.mcsAgent = false; try{ FB.updateDoc(FB.doc(FB.db, col, r.fsId), {mcsAgent: false}).catch(()=>{}); }catch(_){} } return; }
     if(k && k !== 'pending'){ r.mcsAgent = true; try{ FB.updateDoc(FB.doc(FB.db, col, r.fsId), {mcsAgent: true}).catch(()=>{}); }catch(_){} }
   }); });
   try{ saveStore(); }catch(_){}
@@ -12804,7 +12807,7 @@ let agList = [], agTab = 'pending', agQ = '';
 var agKnown = {codes:{}, phones:{}}; try{ const k = JSON.parse(localStorage.getItem('mcsAgKnown')||'null'); if(k && k.codes && k.phones) agKnown = k; }catch(e){}
 function agKnownSave(){ try{ localStorage.setItem('mcsAgKnown', JSON.stringify(agKnown)); }catch(e){} }
 function agKnownAdd(phone, code, st){ const p = String(phone||'').replace(/\D/g,'').slice(-10); st = st || 'approved'; if(p.length === 10) agKnown.phones[p] = st; if(code) agKnown.codes[code] = st; agKnownSave(); agKnownRefresh(); }
-function agKnownBuild(list){ const k = {codes:{}, phones:{}}; (list||[]).forEach(a=>{ if(!a || a.status === 'rejected') return; const p = String(a.phone||'').replace(/\D/g,'').slice(-10); if(p.length === 10) k.phones[p] = a.status || 'approved'; if(a.code) k.codes[a.code] = a.status || 'approved'; if(a.bizRk) k.codes[a.bizRk] = a.status || 'approved'; }); agKnown = k; agKnownSave(); try{ agMarkRecords(); }catch(_){} agKnownRefresh(); }
+function agKnownBuild(list){ try{ if((list||[]).length) agList = list; }catch(_){} const k = {codes:{}, phones:{}}; (list||[]).forEach(a=>{ if(!a || a.status === 'rejected' || a.off) return;   /* MCS1211TH357: غیر فعال ایجنٹ ایجنٹ نہیں */ const p = String(a.phone||'').replace(/\D/g,'').slice(-10); if(p.length === 10) k.phones[p] = a.status || 'approved'; if(a.code) k.codes[a.code] = a.status || 'approved'; if(a.bizRk) k.codes[a.bizRk] = a.status || 'approved'; }); agKnown = k; agKnownSave(); try{ agMarkRecords(); }catch(_){} agKnownRefresh(); }
 function agKnownRefresh(){ try{ if(currentScreen==='doctor-list') renderDoctorList('list'); if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list'); hlRenderSoon(); }catch(e){} }
 function agKnownOf(kind, id){
   const rec = kind==='doctor' ? (store.doctors||[]).find(x=>x.id===id) : (store.services||[]).find(x=>x.id===id); if(!rec) return '';
@@ -21471,6 +21474,9 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
 })();
 </script>
 
+<script id="mcsAg357">/* MCS1211TH357: ڈویلپر کے فون پر کھلنے کے کچھ دیر بعد ایجنٹ فہرست تازہ — غیر فعال ایجنٹ کا نشان کارڈ سے ہٹے */
+setTimeout(function(){ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && typeof agKnownLoad === 'function') agKnownLoad(); }catch(e){} }, 12000);
+</script>
 <script id="mcsDel354">
 /* MCS1211TH354 (مالک کا حکم): ڈویلپر کاروبار / پروفیشن کا کارڈ حذف کرے تو اس کی ممبرشپ (سرور) بھی ختم — MCS ممبرشپ ID (مثلاً MCS00302) غائب؛
    اسی موبائل + قسم کا کوئی اور کارڈ باقی ہو تو ممبرشپ نہیں چھیڑتی (پرانا دہرا کارڈ مٹانے پر اصل کی ممبرشپ محفوظ) */
