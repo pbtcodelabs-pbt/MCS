@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH344";
+const APP_VERSION = "MCS1211TH345";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH345": "🆔 Registration form: the ID list now shows each person's name with the ID (plus mobile and district) — picking an ID auto-fills name, mobile and district, and the rest of the form follows",
   "MCS1211TH344": "🛠️ The «Update complete» box now shows only what was changed in that version — each version has its own line",
   "MCS1211TH341": "🧭 Qibla compass no longer shakes (smooth needle, no sudden spin, steady green glow) • 🏠 Home screen stays fixed — no up/down pulling or jumping",
   "MCS1211TH340": "✏️ Agent CNIC message now says DEV / CODEV (the old PBT-D / PBT-C wording removed)",
@@ -20813,23 +20814,74 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   const d10 = s => String(s || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10);
   const role = () => { try{ return typeof bzRole === 'function' ? bzRole() : ''; }catch(e){ return ''; } };
   /* MCS1211TH344 (مالک کا حکم): 4 ہندسوں کے کوڈ کی جگہ «ID کی ڈراپ ڈاؤن فہرست» — ID چھوتے ہی نام، موبائل، ضلع فارم میں آ جاتے ہیں */
+  /* MCS1211TH345 (مالک کا حکم): ID کی فہرست میں ہر ID کے ساتھ اسی بندے کا نام (جس نے سائن اپ کیا) + موبائل + ضلع؛ چنتے ہی نام، موبائل، ضلع فارم میں خود لگ جاتے ہیں */
+  const pickF = (o, keys) => { for(const k of keys){ const v = o && o[k]; if(v != null && String(v).trim()) return String(v).trim(); } return ''; };
   function entries(){
     const map = {};
     const add = (sid, name, mobile, district, done) => {
       sid = mcsSidFmt(sid); if(!/^MCS\d+$/.test(sid) || !mobile) return;
       const o = map[sid] || { sid }; if(name && !o.name) o.name = name; if(mobile && !o.mobile) o.mobile = mobile; if(district && !o.district) o.district = district; if(done) o.done = true; map[sid] = o;
     };
-    try{ JSON.parse(localStorage.getItem('mcsRegList') || '[]').forEach(x => x && add(x.sid, x.name, x.mobile, x.district, false)); }catch(e){}
-    try{ [].concat(store.services || [], store.doctors || [], (typeof pendingApprovals !== 'undefined' ? pendingApprovals : [])).forEach(r => { if(r && r.more && r.more.sid) add(r.more.sid, r.nameUr || r.name, r.whatsapp, r.district, !!(r.stage && r.stage !== 'basic')); }); }catch(e){}
-    return Object.keys(map).map(k => map[k]).sort((x, y) => parseInt(x.sid.slice(3), 10) - parseInt(y.sid.slice(3), 10));
+    try{ JSON.parse(localStorage.getItem('mcsRegList') || '[]').forEach(x => { if(!x) return;
+      add(pickF(x, ['sid', 'id', 'uid', 'accountId', 'account']), pickF(x, ['name', 'nameUr', 'n', 'fullName', 'fullname', 'userName', 'username']), pickF(x, ['mobile', 'phone', 'm', 'mob', 'whatsapp']), pickF(x, ['district', 'dist', 'd', 'city']), false); }); }catch(e){}
+    let recs = []; try{ recs = [].concat(store.services || [], store.doctors || [], (typeof pendingApprovals !== 'undefined' ? pendingApprovals : [])); }catch(e){}
+    try{ recs.forEach(r => { if(r && r.more && r.more.sid) add(r.more.sid, r.nameUr || r.name, r.whatsapp, r.district, !!(r.stage && r.stage !== 'basic')); }); }catch(e){}
+    const L = Object.keys(map).map(k => map[k]).sort((x, y) => parseInt(x.sid.slice(3), 10) - parseInt(y.sid.slice(3), 10));
+    /* نام / ضلع سرور کی فہرست میں خالی ہو تو اسی موبائل کے فون میں موجود کارڈ سے */
+    L.forEach(o => { if(o.name && o.district) return; const k = d10(o.mobile);
+      const r = recs.find(z => z && d10(z.whatsapp) === k && (z.nameUr || z.name)); if(!r) return;
+      if(!o.name) o.name = r.nameUr || r.name; if(!o.district && r.district) o.district = r.district; });
+    return L;
+  }
+  function pkCss(){
+    if($('pkRegCss')) return; const st = document.createElement('style'); st.id = 'pkRegCss';
+    st.textContent = '#pkRegBox .pk-btn{flex:1;min-width:0;min-height:44px;display:flex;align-items:center;gap:8px;border:1.5px solid #86efac;border-radius:10px;background:#fff;padding:4px 10px;cursor:pointer;font-family:inherit;text-align:start;color:#0f1f45}'
+      + '#pkRegBox .pk-btn .pk-ph{flex:1;font-weight:800;font-size:14px}#pkRegBox .pk-btn .ar{margin-inline-start:auto;color:#16a34a;font-size:14px}'
+      + '#pkRegBox .pk-id{flex:none;background:#14532d;color:#fff;border-radius:8px;padding:2px 8px;font:800 13px Arial,sans-serif;letter-spacing:.4px;direction:ltr}'
+      + '#pkRegBox .pk-nm{flex:1;min-width:0;font-size:17px;font-weight:800;line-height:1.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#0f1f45}'
+      + '#pkRegBox .pk-panel{margin-top:6px;border:1px solid #bbf7d0;border-radius:10px;background:#fff;overflow:hidden}'
+      + '#pkRegBox .pk-q{width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #d1fae5;padding:10px 12px;font:600 14px inherit;font-family:inherit;outline:0;background:#f8fffb;direction:rtl}'
+      + '#pkRegBox .pk-list{max-height:46vh;overflow:auto;-webkit-overflow-scrolling:touch}'
+      + '#pkRegBox .pk-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #ecfdf5;background:#fff;padding:8px 10px;cursor:pointer;font-family:inherit;text-align:start;direction:rtl}'
+      + '#pkRegBox .pk-row.on{background:#dcfce7}#pkRegBox .pk-row:active{background:#d1fae5}'
+      + '#pkRegBox .pk-sub{flex:1 0 100%;font:600 12px Arial,sans-serif;color:#475569;direction:ltr;text-align:start}'
+      + '#pkRegBox .pk-none{padding:12px;text-align:center;color:#b45309;font-weight:700;font-size:13px}'
+      + '#pkRegBox .pk-card{border:1.5px solid #4ade80;background:#fff;border-radius:12px;padding:8px 12px;line-height:1.9}'
+      + '#pkRegBox .pk-c-nm{font-size:21px;font-weight:900;color:#14532d}#pkRegBox .pk-c-ok{margin-top:4px;color:#047857;font-size:12.5px;font-weight:800}';
+    document.head.appendChild(st);
+  }
+  const pkLabel = x => x ? `<span class="pk-id">${esc(x.sid)}</span><span class="pk-nm" dir="auto">${esc(x.name || '— نام نہیں ملا —')}</span>` : '';
+  function syncBtn(){
+    const sel = $('pkRegSel'), b = $('pkRegBtn'); if(!sel || !b) return;
+    const u = sel.value ? (window._pkEntries || []).find(x => x.sid === sel.value) : null;
+    b.innerHTML = (u ? pkLabel(u) : `<span class="pk-ph">— ID چنیں (${(window._pkEntries || []).length}) —</span>`) + '<span class="ar">▾</span>';
+  }
+  function drawList(){
+    const box = $('pkRegList'); if(!box) return;
+    const sel = $('pkRegSel'), cur = sel ? sel.value : '', L = window._pkEntries || [];
+    const qv = (($('pkRegQ') || {}).value || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).toLowerCase().replace(/\s+/g, '');
+    const hit = x => !qv || (x.sid + (x.name || '') + (x.district || '') + '0' + d10(x.mobile) + d10(x.mobile)).toLowerCase().replace(/\s+/g, '').includes(qv);
+    const F = L.filter(hit);
+    box.innerHTML = F.length ? F.map(x => `<button type="button" class="pk-row${x.sid === cur ? ' on' : ''}" onclick="pkRegChoose('${x.sid}')">${pkLabel(x)}<span class="pk-sub">📱 0${esc(d10(x.mobile))}${x.district ? ' &nbsp;•&nbsp; 📍 ' + esc(x.district) : ''}${x.done ? ' &nbsp;✅' : ''}</span></button>`).join('')
+      : `<div class="pk-none">${L.length ? 'کوئی نہیں ملا' : 'فہرست خالی ہے — 🔄 دبا کر تازہ کریں (انٹرنیٹ چاہیے)'}</div>`;
+  }
+  function showPicked(c, noteHtml){
+    const m = $('pkRegMsg'); if(!m || !c) return;
+    m.innerHTML = `<div class="pk-card"><div class="pk-c-nm" dir="auto">👤 ${esc(c.name || '— نام نہیں ملا —')}</div>
+      <div>🆔 <b dir="ltr">${esc(c.sid)}</b> &nbsp;•&nbsp; 📱 <bdi dir="ltr">0${esc(d10(c.mobile))}</bdi>${c.district ? ' &nbsp;•&nbsp; 📍 ' + esc(c.district) : ''}</div>
+      <div class="pk-c-ok">${noteHtml || '✅ نام، موبائل، ضلع فارم میں لگ گئے — باقی فارم نیچے مکمل کر کے محفوظ کریں'}</div></div>`;
   }
   function fillSel(){
     const sel = $('pkRegSel'); if(!sel) return;
     const cur = sel.value, L = entries(); window._pkEntries = L;
     sel.innerHTML = '<option value="">— ID چنیں (' + L.length + ') —</option>' + L.map(x => `<option value="${x.sid}">${x.sid} — ${esc(x.name || '')} — 0${d10(x.mobile)}${x.done ? ' ✅' : ''}</option>`).join('');
     if(cur && L.some(x => x.sid === cur)) sel.value = cur;
+    syncBtn(); drawList();
     const m = $('pkRegMsg'); if(m && !sel.value && !window._pkCtx) m.innerHTML = L.length ? '' : '<span style="color:#b45309">فہرست خالی ہے — 🔄 دبا کر تازہ کریں (انٹرنیٹ چاہیے)</span>';
   }
+  window.pkRegToggle = function(){ const p = $('pkRegPanel'); if(!p) return; p.hidden = !p.hidden; if(!p.hidden){ drawList(); try{ p.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }catch(e){} } };
+  window.pkRegFilter = function(){ drawList(); };
+  window.pkRegChoose = function(sid){ const sel = $('pkRegSel'); if(!sel) return; sel.value = sid; const p = $('pkRegPanel'); if(p) p.hidden = true; const q = $('pkRegQ'); if(q) q.value = ''; syncBtn(); drawList(); window.pkRegPick(); };
   let _rf = 0;
   window.mcsRegRefresh = async function(manual){
     const now = Date.now(); if(!manual && now - _rf < 60000) return; _rf = now;
@@ -20847,38 +20899,48 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     const body = document.querySelector('#serviceFormModal .fm-body'); if(!body) return;
     let b = $('pkRegBox');
     if(!role()){ if(b) b.style.display = 'none'; return; }
+    pkCss();
     if(!b){
       b = document.createElement('div'); b.id = 'pkRegBox'; b.setAttribute('data-noen', '');
       b.style.cssText = 'margin:4px 0 8px;padding:6px 8px;border:1px solid #86efac;border-radius:10px;background:#f0fdf4;direction:rtl';
-      b.innerHTML = `<div style="font-weight:800;color:#14532d;font-size:12.5px;line-height:1.6">🆔 سائن اپ شدہ بندے کی <b>ID</b> فہرست سے چنیں</div>
-        <div style="display:flex;gap:6px;margin-top:6px;direction:ltr">
-          <select id="pkRegSel" onchange="pkRegPick()" style="flex:1;min-width:0;height:38px;border:1px solid #86efac;border-radius:8px;padding:0 6px;font:700 14px Arial,sans-serif;background:#fff;color:#0f1f45"></select>
-          <button type="button" onclick="mcsRegRefresh(true)" title="Refresh" style="flex:none;height:38px;border:0;border-radius:8px;background:#16a34a;color:#fff;font-weight:900;font-size:16px;padding:0 12px;cursor:pointer">🔄</button></div>
+      b.innerHTML = `<div style="font-weight:800;color:#14532d;font-size:12.5px;line-height:1.6">🆔 سائن اپ شدہ بندے کی <b>ID</b> فہرست سے چنیں — ID کے ساتھ اسی بندے کا نام نظر آئے گا</div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button type="button" id="pkRegBtn" class="pk-btn" onclick="pkRegToggle()"></button>
+          <button type="button" onclick="mcsRegRefresh(true)" title="Refresh" style="flex:none;height:44px;border:0;border-radius:10px;background:#16a34a;color:#fff;font-weight:900;font-size:16px;padding:0 12px;cursor:pointer">🔄</button></div>
+        <select id="pkRegSel" style="display:none" onchange="pkRegPick()"></select>
+        <div id="pkRegPanel" class="pk-panel" hidden><input type="text" id="pkRegQ" class="pk-q" placeholder="🔍 نام / ID / موبائل لکھیں" autocomplete="off" oninput="pkRegFilter()"><div id="pkRegList" class="pk-list"></div></div>
         <div id="pkRegMsg" style="margin-top:6px;font-weight:800;font-size:13px;line-height:1.8"></div>`;
       body.insertBefore(b, body.firstChild);
     }
     b.style.display = '';
     const c = window._pkCtx;
     fillSel();
-    if(c && c.recId && c.recId === editingServiceId){ $('pkRegSel').value = c.sid; $('pkRegMsg').innerHTML = `<span style="color:#047857">✅ ${esc(c.name)} (${esc(c.sid)}) — ریکارڈ لگ گیا؛ باقی فارم مکمل کر کے محفوظ کریں</span>`; }
-    else { $('pkRegSel').value = ''; $('pkRegMsg').textContent = ''; window._pkCtx = null; fillSel(); }
+    if(c && c.recId && c.recId === editingServiceId){ $('pkRegSel').value = c.sid; showPicked(c, '✅ ریکارڈ لگ گیا — نام، موبائل، ضلع فارم میں ہیں؛ باقی فارم مکمل کر کے محفوظ کریں'); }
+    else { $('pkRegSel').value = ''; $('pkRegMsg').textContent = ''; window._pkCtx = null; }
+    const pn = $('pkRegPanel'); if(pn) pn.hidden = true;
+    fillSel();
     mcsRegRefresh(false);
   }
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function fill(c){
     try{
+      const lat = /[A-Za-z]/.test(c.name || '');
+      const nu = $('svcNameUr'); if(nu && !nu.value.trim()) nu.value = c.name;
+      const ne = $('svcNameEn'); if(ne && lat && !ne.value.trim()) ne.value = c.name;
       const o = $('svcOwner'); if(o && !o.value.trim()) o.value = c.name;
+      const oe = $('svcOwnerEn'); if(oe && lat && !oe.value.trim()) oe.value = c.name;
       const w = $('svcWhatsapp'); if(w && d10(w.value) !== d10(c.mobile)) w.value = '0' + d10(c.mobile);
       if(c.district){
         const prov = Object.keys(DISTRICTS).find(p => (DISTRICTS[p] || []).includes(c.district)) || '';
         const cur = { country: 'پاکستان', province: prov, district: c.district, city: ($('svcCity') || {}).value || c.district, area: ($('svcArea') || {}).value || '' };
         try{ setLocationFormValues('svc', cur); }catch(e){}
       }
-      ['svcOwner', 'svcWhatsapp', 'svcDistrict'].forEach(id => { const e = $(id); if(e) try{ e.dispatchEvent(new Event('input', { bubbles: true })); e.dispatchEvent(new Event('change', { bubbles: true })); }catch(_){} });
+      ['svcNameUr', 'svcNameEn', 'svcOwner', 'svcOwnerEn', 'svcWhatsapp', 'svcDistrict'].forEach(id => { const e = $(id); if(e) try{ e.dispatchEvent(new Event('input', { bubbles: true })); e.dispatchEvent(new Event('change', { bubbles: true })); }catch(_){} });
     }catch(e){}
   }
   window.pkRegPick = function(){
     const sel = $('pkRegSel'), m = $('pkRegMsg'); if(!sel) return;
+    syncBtn();
     if(!sel.value){ window._pkCtx = null; m.textContent = ''; return; }
     const u = (window._pkEntries || []).find(x => x.sid === sel.value); if(!u){ m.innerHTML = '<span style="color:#b91c1c">یہ ID فہرست میں نہیں ملی — 🔄 دبائیں</span>'; return; }
     const k = d10(u.mobile);
@@ -20892,7 +20954,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
       return;
     }
     fill(window._pkCtx);
-    m.innerHTML = `<span style="color:#047857">✅ ${esc(u.name || '')} (${esc(u.sid)}) — نام، موبائل، ضلع لگ گئے؛ باقی فارم (کاروبار کا نام، قسم، پتہ، شناختی کارڈ…) مکمل کر کے محفوظ کریں</span>`;
+    showPicked(window._pkCtx);
   };
   const _osf = window.openServiceForm;
   /* MCS1211TH341: خود فارم بھرنے والے کے لیے ڈبہ نہیں — لاگ اِن کی معلومات (نام، موبائل، ضلع) خود بخود آ جاتی ہیں */
