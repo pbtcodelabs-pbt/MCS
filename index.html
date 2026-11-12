@@ -1877,6 +1877,17 @@ html.mcs-dark .hl-tx b,html.mcs-dark .hl-h b{color:#e2f5f2;}html.mcs-dark .hl-tx
 .pf-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .pf-slot{position:relative;aspect-ratio:1;border-radius:12px;border:2px dashed #94a3b8;background:#f8fafc;display:flex;align-items:center;justify-content:center;font-size:26px;color:#94a3b8;cursor:pointer;overflow:hidden;}
 .pf-slot img{width:100%;height:100%;object-fit:cover;}
+.pf-plus{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:linear-gradient(180deg,#14b8a6,#0f766e);color:#fff;font-size:34px;font-weight:800;line-height:1;box-shadow:0 3px 8px rgba(0,0,0,.3);border:2.5px solid #fff;font-style:normal}
+.pf-plus.sm{width:36px;height:36px;font-size:26px}
+.pf-slot.empty{flex-direction:column;gap:5px;border:2.5px dashed #0f766e;background:linear-gradient(135deg,#f0fdfa,#fef9c3)}
+.pf-slot.empty em{font-style:normal;font-size:11px;font-weight:800;color:#0f766e;text-align:center;line-height:1.4;padding:0 6px}
+.pf-slot.shop img{object-fit:contain;background:#fff}
+.pf1-shop.ph.add{cursor:pointer;gap:6px;border:2.5px dashed #0f766e;background:linear-gradient(135deg,#f0fdfa,#fef9c3)}
+.pf1-shop.ph.add em{font-style:normal;font-size:12.5px;font-weight:800;color:#0f766e}
+.pf1-dp.add{cursor:pointer;background:linear-gradient(135deg,#f0fdfa,#fef9c3)}
+.ph-chip{padding:6px 10px;border-radius:12px;border:1.5px solid #0f766e;background:#ecfdf5;font-weight:800;font-size:12.5px}
+.ph-chip.on{background:#0f766e;color:#fff}
+.agc-row select{flex:1;height:36px;border-radius:10px;border:1.5px solid #cbd5e1;font-family:inherit}
 .pf-slot i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#dc2626;color:#fff;font-style:normal;font-size:13px;display:flex;align-items:center;justify-content:center;}
 .pf-slot b{position:absolute;bottom:3px;right:3px;font-size:10px;background:#f59e0b;color:#fff;border-radius:6px;padding:0 5px;}
 .pf-irow{display:grid;grid-template-columns:1fr 92px 34px;gap:6px;margin-bottom:6px;}
@@ -3657,6 +3668,8 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
     <input type="file" accept="image/*" id="pfSelfieIn" hidden onchange="pfSelfiePicked(this)">
     <input type="file" accept="image/*" capture="environment" id="pfImgCam" hidden onchange="pfImgPicked(this)">
     <input type="file" accept="image/*" capture="user" id="pfSelfieCam" hidden onchange="pfSelfiePicked(this)">
+    <input type="file" accept="image/*" capture="environment" id="pfSelfieCamB" hidden onchange="pfSelfiePicked(this)">
+    <input type="file" accept="image/*" capture="user" id="pfImgCamF" hidden onchange="pfImgPicked(this)">
     <div id="pfEFields"></div>
     <button type="button" class="btn block accent" id="pfSaveBtn" onclick="pfSave()">💾 ممبرشپ محفوظ کریں</button>
     <div class="cp-hint" id="pfSaveMsg" style="margin-top:6px;text-align:center"></div>
@@ -4311,10 +4324,13 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH361";
+const APP_VERSION = "MCS1211TH364";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH364": "✅ Business photos: big ＋ on empty shop photo and selfie (tap to add), gallery / back camera / front camera, crop, zoom, brightness, enhance, round and frame options",
+  "MCS1211TH363": "✅ Business edit: the owner opens Edit with their 6-digit MCS login PIN, the developer with the developer password (any business)",
+  "MCS1211TH362": "✅ Registered business page: full shop photo (nothing hidden), colourful capsules on their own background, small Google Maps pin + Location, card opens on every tap",
   "MCS1211TH361": "✅ Emoji box removed from all business cards — only the owner photo shows",
   "MCS1211TH360": "✅ Registered business cards: big round owner photo top-left, badge bottom-left, MCS badge visible; tap opens a one-page profile (call, WhatsApp, Google Maps); edit needs developer password; update fix",
   "MCS1211TH357": "🤝 A deactivated agent is no longer shown as MCS Agent (badge and list)",
@@ -4724,7 +4740,8 @@ function mpCity(){ const m = mpRec(); return m && m.rec.city && !isBlankVal(m.re
 function mpEntry(rec){ const rk = pfKeyOf(rec); return rk ? mpAll().find(p=>p.rk === rk || p.id === rec.id || (rec.fsId && p.fsId === rec.fsId)) || null : null; }
 function mpLeftOf(p){ return p && p.until && !p.pend ? Math.ceil((p.until - Date.now())/864e5) : null; }
 function mpLeft(){ const x = mpList().find(x=>x.p.until); return x ? mpLeftOf(x.p) : 0; }
-function pfIsOwner(rec){ if(rec && codevOn()) return true; const e = rec && mpEntry(rec); return !!(e && e.key); }
+function pfAcctOwns(rec){ try{ const a = typeof uaMe === 'function' ? uaMe() : null; const m = a && a.user && String(a.user.mobile || '').replace(/\D/g, '').slice(-10); const w = String((rec && rec.whatsapp) || '').replace(/\D/g, '').slice(-10); return !!(m && m.length === 10 && m === w); }catch(e){ return false; } }
+function pfIsOwner(rec){ if(rec && codevOn()) return true; if(rec && pfAcctOwns(rec)) return true; const e = rec && mpEntry(rec); return !!(e && e.key); }
 function pfActive(rec){
   const k = pfKeyOf(rec); if(!k) return false;
   const e = mpAll().find(p=>p.rk === k && p.key); if(e && (e.until||0) > Date.now()) return true;
@@ -4908,26 +4925,28 @@ function pfSlotsRender(pre){
   const L = [['🏪 دکان کی تصویر', 'سامنے سے دکان — تفصیل میں بڑی نظر آئے گی', 'shop'], ['🤳 اپنی سیلفی', 'گول فریم — کارڈ پر لگے گی', 'selfie']];
   let saved = ''; try{ saved = localStorage.getItem('mcsSelfie') || ''; }catch(e){}
   box.innerHTML = L.map((l, i)=>{ const x = S.imgs[i];
-    return `<div class="pf-s2"><div class="pf-slot ${l[2]}" onclick="pfPickSlot('${pre}',${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot('${pre}',${i})">✖</i>` : '➕'}</div><b>${l[0]}</b><small>${l[1]}</small>`
+    return `<div class="pf-s2"><div class="pf-slot ${l[2]}${x ? '' : ' empty'}" onclick="pfPickSlot('${pre}',${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot('${pre}',${i})">✖</i>` : `<span class="pf-plus">＋</span><em>${i === 1 ? 'سیلفی لگانے کے لیے ٹچ کریں' : 'دکان کی تصویر لگانے کے لیے ٹچ کریں'}</em>`}</div><b>${l[0]}</b><small>${l[1]}</small>`
       + (i === 1 && !x && saved ? `<button type="button" class="pf-reuse" onclick="pfUseSavedSelfie('${pre}')">↩️ پہلے والی اپنی سیلفی لگائیں</button>` : '') + `</div>`; }).join('');
 }
 let pfPickPre = '';
 
 /* ===== MCS0711SA201 (مالک کا حکم): دکان کی چورس تصویر اور سیلفی — گیلری / کیمرہ، کاٹنا، روشنی، صفائی، گھمانا، زوم ===== */
-const PH = {img:null, mode:'shop', q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh:false, ptr:{}, pd:0};
+const PH = {img:null, mode:'shop', q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh:false, ptr:{}, pd:0, ar:4/3, round:false, frame:''};
+function phDims(S){ const ar = PH.mode === 'selfie' ? 1 : (PH.ar || 1); return ar >= 1 ? [S, Math.round(S/ar)] : [Math.round(S*ar), S]; }
 function phChoose(){
   let m = document.getElementById('phChooseModal');
   if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'phChooseModal'; m.style.zIndex = '2147481000'; document.body.appendChild(m); }
   m.innerHTML = `<div class="modal-box" style="max-width:340px;text-align:center"><div class="ag-hd" style="margin-bottom:8px">📸 تصویر کہاں سے لگائیں؟</div>
     <button type="button" class="btn block" onclick="phPick('gal')">🖼️ گیلری سے چنیں</button>
-    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="phPick('cam')">📷 کیمرے سے کھینچیں</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="phPick('back')">📷 پچھلا (بیک) کیمرہ</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="phPick('front')">🤳 اگلا (فرنٹ) کیمرہ</button>
     <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('phChooseModal')">✖ رہنے دیں</button></div>`;
   openModal('phChooseModal');
 }
 function phPick(how){
   closeModal('phChooseModal');
   const sf = (pfEd[pfPickPre] || {}).slot === 1;
-  const id = sf ? (how === 'cam' ? 'pfSelfieCam' : 'pfSelfieIn') : (how === 'cam' ? 'pfImgCam' : 'pfImgIn');
+  const id = sf ? (how === 'front' ? 'pfSelfieCam' : how === 'back' ? 'pfSelfieCamB' : 'pfSelfieIn') : (how === 'back' ? 'pfImgCam' : how === 'front' ? 'pfImgCamF' : 'pfImgIn');
   const el = document.getElementById(id); if(el) el.click();
 }
 function phFromFile(f, mode){
@@ -4937,7 +4956,7 @@ function phFromFile(f, mode){
   im.src = url;
 }
 function phOpen(c, mode){
-  Object.assign(PH, {img:c, mode, q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh: mode === 'shop', ptr:{}, pd:0});
+  Object.assign(PH, {img:c, mode, q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh: mode === 'shop', ptr:{}, pd:0, ar:4/3, round:false, frame:''});
   const sf = mode === 'selfie';
   let m = document.getElementById('phCropModal');
   if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'phCropModal'; m.style.zIndex = '2147482000'; document.body.appendChild(m); }
@@ -4947,6 +4966,8 @@ function phOpen(c, mode){
     <div class="agc-row"><button type="button" onclick="phFit()">⤢ پوری تصویر</button><button type="button" onclick="phFill()">⤡ دائرہ بھر دیں</button></div>
     <div class="agc-row"><button type="button" onclick="phRot(-1)">↺ بائیں گھمائیں</button><button type="button" onclick="phRot(1)">↻ دائیں گھمائیں</button></div>
     <div class="agc-row"><span>📐 سیدھا</span><input type="range" id="phF" min="-100" max="100" value="0" style="flex:1"></div>
+    ${sf ? '' : `<div class="agc-row"><span>📐 سائز</span><button type="button" class="ph-chip" data-ar="1.7778" onclick="phSetAr(16/9)">▬ چوڑی 16:9</button><button type="button" class="ph-chip on" data-ar="1.3333" onclick="phSetAr(4/3)">▭ 4:3</button><button type="button" class="ph-chip" data-ar="1" onclick="phSetAr(1)">⬜ چوکور</button></div>
+    <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="phR"> ⭕ گول کریں</label><select id="phFr"><option value="">🖼️ فریم نہیں</option><option value="#ffffff">⬜ سفید فریم</option><option value="#f59e0b">🟨 سنہری فریم</option><option value="#16a34a">🟩 ہرا فریم</option><option value="#dc2626">🟥 سرخ فریم</option><option value="#1d4ed8">🟦 نیلا فریم</option></select></div>`}
     <div class="agc-row"><span>☀️ روشنی</span><input type="range" id="phB" min="60" max="170" value="100" style="flex:1"></div>
     <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="phE" ${PH.enh ? 'checked' : ''}> ✨ صاف ستھرا کریں (کنٹراسٹ اور صفائی خود بہتر)</label></div>
     <div class="agc-row"><button type="button" onclick="phReset()">↩️ شروع سے</button></div>
@@ -4958,6 +4979,7 @@ function phOpen(c, mode){
   document.getElementById('phF').oninput = e=>{ PH.fine = e.target.value/10; phDraw(); };
   document.getElementById('phB').oninput = e=>{ PH.br = +e.target.value; phDraw(); };
   document.getElementById('phE').onchange = e=>{ PH.enh = e.target.checked; phDraw(); };
+  { const r = document.getElementById('phR'), f = document.getElementById('phFr'); if(r) r.onchange = e=>{ PH.round = e.target.checked; phDraw(); }; if(f) f.onchange = e=>{ PH.frame = e.target.value; phDraw(); }; }
   cv.onpointerdown = e=>{ cv.setPointerCapture(e.pointerId); PH.ptr[e.pointerId] = {x:e.clientX, y:e.clientY}; PH.pd = 0; };
   cv.onpointerup = cv.onpointercancel = e=>{ delete PH.ptr[e.pointerId]; PH.pd = 0; };
   cv.onpointermove = e=>{
@@ -4969,22 +4991,31 @@ function phOpen(c, mode){
 }
 function phSetZoom(z){ PH.zoom = Math.max(.25, Math.min(4, z)); const el = document.getElementById('phZ'); if(el) el.value = Math.round(PH.zoom*100); phDraw(); }
 function phZoomStep(d){ phSetZoom(PH.zoom + d/100); }
-function phFit(){ const im = PH.img, odd = PH.q % 2, iw = odd ? im.height : im.width, ih = odd ? im.width : im.height; PH.ox = PH.oy = 0; PH.fine = 0; const f = document.getElementById('phF'); if(f) f.value = 0; phSetZoom(PH.mode === 'selfie' ? Math.min(iw, ih) / Math.hypot(iw, ih) : Math.min(iw, ih) / Math.max(iw, ih)); }
+function phFit(){ const im = PH.img, odd = PH.q % 2, iw = odd ? im.height : im.width, ih = odd ? im.width : im.height; PH.ox = PH.oy = 0; PH.fine = 0; const f = document.getElementById('phF'); if(f) f.value = 0; if(PH.mode === 'selfie') phSetZoom(Math.min(iw, ih) / Math.hypot(iw, ih)); else { const a = (PH.ar || 1) / iw, b = 1 / ih; phSetZoom(Math.min(a, b) / Math.max(a, b)); } }
+function phSetAr(a){ PH.ar = a; PH.ox = PH.oy = 0; document.querySelectorAll('#phCropModal .ph-chip').forEach(b=>b.classList.toggle('on', Math.abs(+b.dataset.ar - a) < .01)); phDraw(); }
 function phFill(){ PH.ox = PH.oy = 0; phSetZoom(1); }
 function phRot(d){ PH.q = (PH.q + d + 4) % 4; PH.ox = PH.oy = 0; phDraw(); }
 function phReset(){
-  Object.assign(PH, {q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh: PH.mode === 'shop'});
+  Object.assign(PH, {q:0, fine:0, zoom:1, ox:0, oy:0, br:100, enh: PH.mode === 'shop', round:false, frame:''});
+  { const r = document.getElementById('phR'), f = document.getElementById('phFr'); if(r) r.checked = false; if(f) f.value = ''; }
   const set = (id, v)=>{ const e = document.getElementById(id); if(e) e.value = v; };
   set('phZ', 100); set('phF', 0); set('phB', 100); const ce = document.getElementById('phE'); if(ce) ce.checked = PH.enh; phDraw();
 }
 function phPaint(cv, S){
+  const [W, H] = phDims(S); if(cv.width !== W) cv.width = W; if(cv.height !== H) cv.height = H;
   const ctx = cv.getContext('2d'), im = PH.img, odd = PH.q % 2, iw = odd ? im.height : im.width, ih = odd ? im.width : im.height;
   const rad = PH.fine * Math.PI / 180, cs = Math.abs(Math.cos(rad)), sn = Math.abs(Math.sin(rad));
-  const sc = Math.max((S*cs + S*sn) / iw, (S*sn + S*cs) / ih) * PH.zoom;
-  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S, S); ctx.save();
-  ctx.translate(S/2 + PH.ox*S, S/2 + PH.oy*S); ctx.rotate(rad); ctx.scale(sc, sc); ctx.rotate(PH.q * Math.PI / 2); ctx.drawImage(im, -im.width/2, -im.height/2); ctx.restore();
+  const sc = Math.max((W*cs + H*sn) / iw, (W*sn + H*cs) / ih) * PH.zoom;
+  ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H); ctx.save();
+  ctx.translate(W/2 + PH.ox*W, H/2 + PH.oy*H); ctx.rotate(rad); ctx.scale(sc, sc); ctx.rotate(PH.q * Math.PI / 2); ctx.drawImage(im, -im.width/2, -im.height/2); ctx.restore();
 }
-function phDraw(){ const cv = document.getElementById('phCv'); if(!cv) return; phPaint(cv, cv.width); cv.style.filter = `brightness(${PH.br/100}) contrast(${PH.enh ? 1.12 : 1})`; }
+/* MCS1211TH364: گول شکل اور فریم — سنوارنے (روشنی) کے بعد لگتے ہیں */
+function phShape(cv){
+  if(PH.mode === 'selfie') return; const ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+  if(PH.round){ ctx.save(); ctx.globalCompositeOperation = 'destination-in'; ctx.beginPath(); ctx.ellipse(W/2, H/2, W/2, H/2, 0, 0, Math.PI*2); ctx.fill(); ctx.globalCompositeOperation = 'destination-over'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H); ctx.restore(); }
+  if(PH.frame){ const lw = Math.max(6, Math.round(Math.min(W, H) * .035)); ctx.save(); ctx.lineWidth = lw; ctx.strokeStyle = PH.frame; ctx.beginPath(); if(PH.round) ctx.ellipse(W/2, H/2, W/2 - lw/2, H/2 - lw/2, 0, 0, Math.PI*2); else ctx.rect(lw/2, lw/2, W - lw, H - lw); ctx.stroke(); ctx.restore(); }
+}
+function phDraw(){ const cv = document.getElementById('phCv'); if(!cv) return; phPaint(cv, 480); cv.style.aspectRatio = String(PH.mode === 'selfie' ? 1 : PH.ar); phShape(cv); cv.style.filter = `brightness(${PH.br/100}) contrast(${PH.enh ? 1.12 : 1})`; }
 /* روشنی کو اصل تصویر میں پکا کریں (کینوس فلٹر ہر فون پر نہیں چلتا، اس لیے پکسل سے) */
 function phBake(cv){
   const ctx = cv.getContext('2d'), id = ctx.getImageData(0, 0, cv.width, cv.height), d = id.data, b = PH.br/100, c = PH.enh ? 1.12 : 1, lut = new Uint8Array(256);
@@ -4993,9 +5024,10 @@ function phBake(cv){
   ctx.putImageData(id, 0, 0);
 }
 async function phDone(){
-  const sf = PH.mode === 'selfie', S = sf ? 600 : 1000, out = document.createElement('canvas'); out.width = out.height = S; phPaint(out, S);
+  const sf = PH.mode === 'selfie', S = sf ? 600 : 1000, out = document.createElement('canvas'); phPaint(out, S);
   if(PH.br !== 100 || PH.enh){ try{ phBake(out); }catch(e){} }
   if(PH.enh){ try{ agcEnhance(out); }catch(e){} }
+  phShape(out);
   const pre = pfPickPre; closeModal('phCropModal');
   if(sf && window._ptSR){ const sm = document.createElement('canvas'); sm.width = sm.height = 360; sm.getContext('2d').drawImage(out, 0, 0, 360, 360); ptSelfieSaved(sm.toDataURL('image/jpeg', .85)); return; }
   if(sf && window._phAg){ window._phAg = false; agImgs.selfie = out.toDataURL('image/jpeg', .85); agShowPic('selfie'); selfieSaveLocal(agImgs.selfie); showToast('✅ سیلفی لگ گئی'); return; }
@@ -5003,7 +5035,7 @@ async function phDone(){
     if(sf){ await pfSetSelfie(pre, out.toDataURL('image/jpeg', .85)); }
     else{
       let d = out.toDataURL('image/jpeg', .8);
-      for(const [sz, q] of [[1000,.7],[900,.62],[800,.55]]){ if(d.length <= 420000) break; const o2 = document.createElement('canvas'); o2.width = o2.height = sz; o2.getContext('2d').drawImage(out, 0, 0, sz, sz); d = o2.toDataURL('image/jpeg', q); }
+      for(const [sz, q] of [[1000,.7],[900,.62],[800,.55]]){ if(d.length <= 420000) break; const o2 = document.createElement('canvas'); o2.width = Math.round(out.width * sz / 1000); o2.height = Math.round(out.height * sz / 1000); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', q); }
       const St = pfEd[pre]; if(!St) return; St.imgs[0] = {src:d, changed:true}; delete St.del[0]; pfSlotsRender(pre);
     }
     showToast('✅ تصویر لگ گئی');
@@ -5068,7 +5100,24 @@ async function pfSubmit(kind, rec, pre){
 let pfUnlocked = {};
 function pfCardTap(ev, kind, id){
   try{ if(ev && ev.target && ev.target.closest && ev.target.closest('a,button,input,select,textarea,.doc-side')) return; }catch(e){}
+  try{ const rr = pfRecById(kind, id); if(!rr || !(pfActive(rr) || agIsRec(kind, rr))) return; }catch(e){}   /* MCS1211TH362: فیصلہ دبانے کے وقت — پہلے کارڈ بنتے وقت ہوتا تھا، اس لیے کبھی کھلتا کبھی نہیں */
   pfOpen(kind, id);
+}
+function pfAskPin(msg){
+  return new Promise(res=>{
+    let ov = document.getElementById('pfPinModal');
+    if(!ov){ ov = document.createElement('div'); ov.id = 'pfPinModal'; ov.className = 'modal-overlay'; ov.style.zIndex = '2147482500'; document.body.appendChild(ov); }
+    ov.innerHTML = `<div class="modal-box adm-pw"><div class="adm-pw-ic">🔐</div><div class="adm-pw-t">اپنا MCS لاگ اِن PIN لکھیں</div><div class="adm-pw-m">${escapeHtml(msg||'')}</div>
+      <div class="adm-pw-row"><input type="password" id="pfPinIn" dir="ltr" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="● ● ● ● ● ●"><button type="button" onclick="const i=document.getElementById('pfPinIn');i.type=i.type==='password'?'text':'password'">👁</button></div>
+      <div class="adm-pw-err" id="pfPinErr"></div>
+      <div class="adm-pw-btns"><button type="button" class="adm-pw-cancel">بند</button><button type="button" class="adm-pw-ok">✏️ ایڈٹ کھولیں</button></div></div>`;
+    const done = v=>{ ov.classList.remove('active'); res(v); };
+    const inp = ov.querySelector('#pfPinIn'), err = ov.querySelector('#pfPinErr'), ok = ov.querySelector('.adm-pw-ok');
+    const go = ()=>{ const v = inp.value.replace(/\D/g,''); if(v.length < 4){ err.textContent = 'اپنا PIN لکھیں'; inp.focus(); return; } done(v); };
+    ok.onclick = go; ov.querySelector('.adm-pw-cancel').onclick = ()=>done(null);
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') go(); });
+    ov.classList.add('active'); setTimeout(()=>inp.focus(), 150);
+  });
 }
 async function pfEditAuth(){
   const c = pfCur; if(!c) return false;
@@ -5084,7 +5133,16 @@ async function pfEditAuth(){
       if(v === null) return false;
       ok = String(v).trim() === String(m.pin).trim();
       if(!ok) showToast('❌ پاس ورڈ غلط ہے — کچھ نہیں بدلا');
-    } else showToast('🔒 یہ کاروبار محفوظ ہے — ایڈٹ کے لیے ڈویلپر یا کو-ڈویلپر کا پاس ورڈ چاہیے', 4500);
+    } else if(pfIsOwner(c.rec)){   /* MCS1211TH363: مالک — اپنا MCS لاگ اِن PIN */
+      if(!(typeof uaMe === 'function' && uaMe())){ showToast('🔒 پہلے اپنے MCS اکاؤنٹ سے لاگ اِن کریں، پھر ایڈٹ کھلے گا', 4500); }
+      else {
+        const pin = await pfAskPin((nm ? '«' + nm + '» — ' : '') + 'ایڈٹ کھولنے کے لیے اپنے موبائل کا 6 ہندسوں والا MCS لاگ اِن PIN لکھیں۔');
+        if(pin === null) return false;
+        const r = await uaCheckPin(pin);
+        ok = !!(r && r.ok);
+        if(!ok) showToast(r && r.reason === 'wait' ? '⏳ کئی بار غلط PIN — 15 منٹ بعد کوشش کریں' : r && r.reason === 'net' ? '📡 انٹرنیٹ نہیں — دوبارہ کوشش کریں' : '❌ PIN غلط ہے — کچھ نہیں بدلا', 4000);
+      }
+    } else showToast('🔒 یہ کاروبار محفوظ ہے — ایڈٹ صرف اس کے مالک، ڈویلپر یا کو-ڈویلپر کے لیے ہے', 4500);
   }
   if(ok){ pfUnlocked[c.rk] = 1; try{ pfRender(); }catch(e){} }
   return ok;
@@ -5107,20 +5165,25 @@ function pfOneHtml(c, x){
       <div class="pf1-act"><button type="button" onclick="pfEditOpen()">✏️ ایڈٹ</button><button type="button" onclick="fpOpen('${c.kind}','${A(c.rec.id)}')">📄 مکمل پروفائل</button>${adm && c.prof ? `<button type="button" onclick="pfAdmin('year')">➕ ایک سال</button>` : ''}</div>`
     : `<div class="pf1-st"><span>🆔 ●●●●●●●</span><span>📞 ●●●</span><span>👀 ●●●</span></div><div class="pf1-st"><span>⭐ ممبرشپ ●●●●●● دن</span></div>`;
   return `<div class="pf1">
-    <div class="pf1-hero">${shopImg ? `<img class="pf1-shop" data-pfimg="${A(shopImg.id)}" data-ts="${shopImg.ts}" alt="">` : `<div class="pf1-shop ph">${cm.emoji}</div>`}
-      <div class="pf1-dp">${sf ? `<img src="${A(sf)}" alt="">` : `<span>${cm.emoji}</span>`}</div>
+    <div class="pf1-hero">${shopImg ? `<img class="pf1-shop" data-pfimg="${A(shopImg.id)}" data-ts="${shopImg.ts}" alt="">` : (showPriv ? `<div class="pf1-shop ph add" onclick="pfHeroAdd(0)"><span class="pf-plus">＋</span><em>یہاں دکان کی تصویر لگانے کے لیے ٹچ کریں</em></div>` : `<div class="pf1-shop ph">${cm.emoji}</div>`)}
+      ${sf || !showPriv ? `<div class="pf1-dp">${sf ? `<img src="${A(sf)}" alt="">` : `<span>${cm.emoji}</span>`}</div>` : `<div class="pf1-dp add" onclick="pfHeroAdd(1)"><span class="pf-plus sm">＋</span></div>`}
       <span class="pf1-bdg">✅ رجسٹرڈ ${c.kind === 'doctor' ? 'پروفیشن' : 'بزنس'}</span></div>
     <div class="pf1-nm">${E(nm)}</div>
     <div class="pf1-sub">${E([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}</div>
     <div class="pf1-call">${ph0 ? `<a class="c" href="tel:${ph0}">📞 کال <bdi dir="ltr">${E(phones[0])}</bdi></a>` : ''}${wa ? `<a class="w" href="${A(wa)}" target="_blank" rel="noopener">💬 واٹس ایپ</a>` : ''}</div>
     <div class="pf1-grid">
       ${cap('🌅', 'کھلتی / بند', hrs)}${cap('🚫', 'چھٹی', d.off ? E(d.off) : '')}${more2}
-      ${loc ? `<div class="pf1-cap wide"><i>📍</i><span><small>پتہ</small><b>${E(loc)}</b></span>${map ? `<a class="pf1-go" href="${A(map)}" target="_blank" rel="noopener">🧭 لوکیشن</a>` : ''}</div>` : (map ? `<a class="pf1-go solo" href="${A(map)}" target="_blank" rel="noopener">🧭 لوکیشن — گوگل میپ پر راستہ</a>` : '')}
+      ${loc ? `<div class="pf1-cap wide"><i>📍</i><span><small>پتہ</small><b>${E(loc)}</b></span>${map ? `<a class="pf1-go" href="${A(map)}" target="_blank" rel="noopener" aria-label="Google Maps"><svg viewBox="0 0 24 36" aria-hidden="true"><defs><linearGradient id="gmPinG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#EA4335"/><stop offset="1" stop-color="#C5221F"/></linearGradient></defs><path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="url(#gmPinG)"/><circle cx="12" cy="12" r="5" fill="#7f1d1d"/><circle cx="12" cy="12" r="3.2" fill="#fff"/></svg><span>لوکیشن</span></a>` : ''}</div>` : (map ? `<a class="pf1-go solo" href="${A(map)}" target="_blank" rel="noopener" aria-label="Google Maps"><svg viewBox="0 0 24 36" aria-hidden="true"><defs><linearGradient id="gmPinG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#EA4335"/><stop offset="1" stop-color="#C5221F"/></linearGradient></defs><path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="url(#gmPinG)"/><circle cx="12" cy="12" r="5" fill="#7f1d1d"/><circle cx="12" cy="12" r="3.2" fill="#fff"/></svg><span>لوکیشن</span></a>` : '')}
     </div>
     ${items ? `<div class="pf1-h">🏷️ خدمات اور ریٹ</div><div class="pf1-its">${items}</div>` : ''}
     ${(d.about || own.rest) ? `<div class="pf1-about">📝 ${E(d.about || own.rest)}</div>` : ''}
     <div class="pf1-safe ${locked ? 'lock' : ''}"><div class="pf1-sin">${priv}</div>${locked ? `<button type="button" class="pf1-lk" onclick="${showPriv ? 'pfEditAuth()' : "showToast('🔒 یہ معلومات محفوظ ہیں')"}">🔒 محفوظ${showPriv ? ' — کھولنے کے لیے پاس ورڈ' : ''}</button>` : ''}</div>
   </div>`;
+}
+async function pfHeroAdd(i){
+  const c = pfCur; if(!c) return;
+  if(!(await pfEditAuth())) return;
+  await pfEditOpen(); if(document.getElementById('pfEditModal').classList.contains('active')) pfPickSlot('pfE', i);
 }
 async function pfEditOpen(){
   const c = pfCur; if(!c) return;
@@ -6383,7 +6446,7 @@ function userResultCard(item){
     ? `<button class="ub-edit" onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم">✏️</button><button class="ub-edit ub-del" onclick="${item.kind==='doctor'?`deleteDoctor('${escapeAttr(item.id)}')`:`deleteService('${escapeAttr(item.id)}')`}" aria-label="حذف">🗑️</button>`
     : `<button class="a-reqadmin" onclick="openReportChoice('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`) : '';
   return `
-    <div class="ub-row${item.id && pfActive(item) ? ' pf-gold' : ''}${_sfU ? ' dpbig' : ''}"${(item.id && (pfActive(item) || _agU)) ? ` onclick="pfCardTap(event,'${escapeAttr(item.kind)}','${escapeAttr(item.id)}')"` : ''} style="--rc:${pal[0]};--rbg:${pal[1]}">
+    <div class="ub-row${item.id && pfActive(item) ? ' pf-gold' : ''}${_sfU ? ' dpbig' : ''}"${item.id ? ` onclick="pfCardTap(event,'${escapeAttr(item.kind)}','${escapeAttr(item.id)}')"` : ''} style="--rc:${pal[0]};--rbg:${pal[1]}">
       ${item.id ? agBadgeHtml(item.kind, item.kind==='doctor' ? store.doctors.find(x=>x.id===item.id) : store.services.find(x=>x.id===item.id)) : ''}
       <div class="ub-top">
         <div class="ub-ico${_sfU ? ' sf' : ''}">${_sfU ? `<img src="${escapeAttr(_sfU)}" alt="">` : item.emoji}</div>
@@ -8586,7 +8649,7 @@ function docCardHtml(d, mode){
     const nameUr = d.nameUr || d.name || '';
     const sfOnD = d.more && d.more.selfie;   /* MCS0911MO265 (#170) */
     return `
-    <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}${sfOnD ? ' dpbig' : ''}${dupOld(d) && dupSeer() ? ' dupOld' : ''}"${(pfActive(d) || agIsRec('doctor', d)) ? ` onclick="pfCardTap(event,'doctor','${escapeAttr(d.id)}')"` : ''}>${dupBadge('doctor', d)}${ewRib('doctor', d)}${agBadgeHtml('doctor', d)}
+    <div class="doc-card${pfActive(d) ? ' pf-gold' : ''}${sfOnD ? ' dpbig' : ''}${dupOld(d) && dupSeer() ? ' dupOld' : ''}"${d.id ? ` onclick="pfCardTap(event,'doctor','${escapeAttr(d.id)}')"` : ''}>${dupBadge('doctor', d)}${ewRib('doctor', d)}${agBadgeHtml('doctor', d)}
       <div class="doc-toprow">
       <div class="doc-avatar${sfOnD ? ' sf' : ''}">${sfOnD ? `<img src="${escapeAttr(d.more.selfie)}" alt="">` : ''}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v5a5 5 0 0 0 10 0V3"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg></div>
       <div class="doc-body">
@@ -9879,7 +9942,7 @@ function svcCardHtml(s, meta){
     const intl = '92' + digits.replace(/^0/,'');
     const sfOn = s.more && s.more.selfie;   /* MCS0711SA194 + MCS0911MO265 (ہیلپ ڈیسک #170): رجسٹرڈ کاروبار کے مالک کی گول تصویر (پورٹل والی DP) کارڈ پر */
     return `
-    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}${sfOn ? ' dpbig' : ''}${dupOld(s) && dupSeer() ? ' dupOld' : ''}"${(pfActive(s) || agIsRec('service', s)) ? ` onclick="pfCardTap(event,'service','${escapeAttr(s.id)}')"` : ''}${(isAdminSignedIn && s.category === UNASSIGNED_KEY) ? ` data-unid="${escapeAttr(s.id)}"` : ''}>${dupBadge('service', s)}${ewRib('service', s)}${agBadgeHtml('service', s)}
+    <div class="doc-card${pfActive(s) ? ' pf-gold' : ''}${sfOn ? ' dpbig' : ''}${dupOld(s) && dupSeer() ? ' dupOld' : ''}"${s.id ? ` onclick="pfCardTap(event,'service','${escapeAttr(s.id)}')"` : ''}${(isAdminSignedIn && s.category === UNASSIGNED_KEY) ? ` data-unid="${escapeAttr(s.id)}"` : ''}>${dupBadge('service', s)}${ewRib('service', s)}${agBadgeHtml('service', s)}
       <div class="doc-toprow">
       <div class="doc-avatar${sfOn ? ' sf' : ''}">${sfOn ? `<img src="${escapeAttr(s.more.selfie)}" alt="">` : `<span style="font-size:20px;">${meta.emoji}</span>`}</div>
       <div class="doc-body">
@@ -15807,6 +15870,12 @@ body.d2 #homeAds .ad-ribbon{display:none}
     try{ const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ dev: (typeof agDev === 'function' ? agDev() : '') }, body)) }); return await r.json(); }
     catch(e){ return { ok:false, reason:'net' }; }
   }
+  /* MCS1211TH363: کاروبار ایڈٹ — مالک کا اپنا MCS لاگ اِن PIN سرور سے جانچنا (لاگ اِن بدلے بغیر) */
+  window.uaCheckPin = async function(pin){
+    const a = uaMe(), u = a && a.user; if(!u) return { ok:false, reason:'nologin' };
+    const r = await api({ op:'login', id: u.mobile || u.sid, pw: String(pin) });
+    return r || { ok:false, reason:'net' };
+  };
   function setErr(r){ const e = $('uaErr'); if(e) e.textContent = r ? (ERR[r] || ('خرابی: ' + r)) : ''; }
   function busy(b){ document.querySelectorAll('#uaOv .uaBtn').forEach(x => x.disabled = !!b); }
   function done(r, msg){
@@ -21620,25 +21689,38 @@ html body .doc-card.dpbig > .ag-corner{left:62px !important;top:2px !important;w
 html body .doc-card.pf-gold{cursor:pointer}
 /* ایک صفحے کی پروفائل */
 .pf1{padding:0 2px 6px;font-family:inherit}
-.pf1-hero{position:relative;margin-bottom:46px}
-.pf1-shop{width:100%;height:150px;object-fit:cover;border-radius:18px;display:block;border:2px solid #e9a23b;background:#f3f4f6}
-.pf1-shop.ph{display:flex;align-items:center;justify-content:center;font-size:56px}
-.pf1-dp{position:absolute;left:12px;bottom:-40px;width:88px;height:88px;border-radius:50%;overflow:hidden;background:#fff;border:3.5px solid #f59e0b;box-shadow:0 3px 10px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:36px}
+.pf1-hero{position:relative;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.pf1-shop{flex:0 0 100%;width:100%;height:auto;object-fit:contain;border-radius:18px;display:block;border:2px solid #e9a23b;background:#f3f4f6}
+.pf1-shop.ph{height:150px;flex-direction:column;display:flex;align-items:center;justify-content:center;font-size:56px}
+.pf1-dp{position:relative;flex:0 0 auto;width:88px;height:88px;border-radius:50%;overflow:hidden;background:#fff;border:3.5px solid #f59e0b;box-shadow:0 3px 10px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:36px}
 .pf1-dp img{width:100%;height:100%;object-fit:cover}
-.pf1-bdg{position:absolute;right:10px;bottom:-30px;background:linear-gradient(180deg,#16a34a,#14532d);color:#fff;border:2px solid #fff;border-radius:14px;padding:4px 10px;font-size:12px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.pf1-bdg{position:static;background:linear-gradient(180deg,#16a34a,#14532d);color:#fff;border:2px solid #fff;border-radius:14px;padding:4px 10px;font-size:12px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .pf1-nm{font-size:19px;font-weight:800;text-align:center;line-height:1.3}
 .pf1-sub{font-size:12.5px;text-align:center;opacity:.8;margin:2px 0 8px}
 .pf1-call{display:flex;gap:8px;margin-bottom:8px}
 .pf1-call a{flex:1;text-align:center;padding:9px 6px;border-radius:24px;font-weight:800;font-size:14px;text-decoration:none;color:#fff;border:2px solid rgba(255,255,255,.8);box-shadow:0 2px 5px rgba(0,0,0,.2)}
 .pf1-call a.c{background:linear-gradient(180deg,#2563eb,#1e3a8a)}.pf1-call a.w{background:linear-gradient(180deg,#22c55e,#15803d)}
-.pf1-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pf1-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:9px;border-radius:22px;background:linear-gradient(135deg,#fef3c7 0%,#d1fae5 50%,#e0e7ff 100%);border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.12),inset 0 0 0 1px rgba(15,118,110,.18)}
 .pf1-cap{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:16px;background:#fffbeb;border:1.5px solid #f3c969;text-decoration:none;color:inherit;min-width:0}
 .pf1-cap.wide{grid-column:1/-1;background:#ecfdf5;border-color:#6ee7b7;flex-wrap:wrap}
 .pf1-cap i{font-style:normal;font-size:20px}
 .pf1-cap span{display:flex;flex-direction:column;min-width:0;flex:1}
 .pf1-cap small{font-size:10.5px;opacity:.7}.pf1-cap b{font-size:13px;overflow-wrap:anywhere}
-.pf1-go{display:inline-block;padding:6px 12px;border-radius:16px;background:linear-gradient(180deg,#ef4444,#991b1b);color:#fff;font-weight:800;font-size:12.5px;text-decoration:none;border:2px solid rgba(255,255,255,.8)}
-.pf1-go.solo{grid-column:1/-1;text-align:center;padding:9px}
+.pf1-go{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex:0 0 auto;min-width:62px;padding:5px 10px 4px;border-radius:18px;background:#fff;border:2px solid #fecaca;box-shadow:0 3px 8px rgba(0,0,0,.22);color:#b91c1c;font-weight:800;font-size:11.5px;line-height:1.2;text-decoration:none;transition:transform .12s}
+.pf1-go:active{transform:scale(.92)}
+.pf1-go svg{width:26px;height:36px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.pf1-go.solo{grid-column:1/-1;justify-self:center}
+.pf1-grid .pf1-cap:nth-child(4n+1){background:linear-gradient(180deg,#fffbe6,#fde68a);border-color:#f59e0b}
+.pf1-grid .pf1-cap:nth-child(4n+2){background:linear-gradient(180deg,#f0f9ff,#bae6fd);border-color:#38bdf8}
+.pf1-grid .pf1-cap:nth-child(4n+3){background:linear-gradient(180deg,#fdf2f8,#fbcfe8);border-color:#ec4899}
+.pf1-grid .pf1-cap:nth-child(4n){background:linear-gradient(180deg,#f5f3ff,#ddd6fe);border-color:#8b5cf6}
+.pf1-grid .pf1-cap.wide{background:linear-gradient(180deg,#f0fdf4,#bbf7d0);border-color:#22c55e;flex-wrap:nowrap}
+.pf1-grid .pf1-cap{box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pf1-safe{background:linear-gradient(135deg,#fef9c3,#dcfce7,#dbeafe);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.pf1-st span:nth-child(3n+1){background:#fef3c7;border-color:#f59e0b}
+.pf1-st span:nth-child(3n+2){background:#e0f2fe;border-color:#38bdf8}
+.pf1-st span:nth-child(3n){background:#fce7f3;border-color:#ec4899}
+.pf1-lk{background:rgba(255,255,255,.45)}
 .pf1-h{font-size:12.5px;font-weight:800;margin:8px 4px 4px}
 .pf1-its{display:flex;flex-wrap:wrap;gap:5px}
 .pf1-it{padding:4px 10px;border-radius:14px;background:#eef2ff;border:1.5px solid #a5b4fc;font-size:12.5px}.pf1-it b{color:#166534}
