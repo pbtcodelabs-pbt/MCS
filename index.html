@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH345";
+const APP_VERSION = "MCS1211TH346";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH346": "👤 My Account always opens the new English blue design for a signed-in person (no more falling back to the old Urdu page); agents get it too with an «Agent Portal» row",
   "MCS1211TH345": "🆔 Registration form: the ID list now shows each person's name with the ID (plus mobile and district) — picking an ID auto-fills name, mobile and district, and the rest of the form follows",
   "MCS1211TH344": "🛠️ The «Update complete» box now shows only what was changed in that version — each version has its own line",
   "MCS1211TH341": "🧭 Qibla compass no longer shakes (smooth needle, no sudden spin, steady green glow) • 🏠 Home screen stays fixed — no up/down pulling or jumping",
@@ -19460,14 +19461,15 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
   function recOf(x){ var r = x.p.kind === 'doctor' ? fhDoc(x.rec) : fhSvc(x.rec); return r; }
 
   /* ---------- 👤 My Account (یوزر / کاروبار / پروفیشن) ---------- */
-  window.mxAccOpen = function(rl){
+  var sf = function(f, d){ try{ var v = f(); return v == null ? d : v; }catch(e){ return d; } };
+  window.mxAccOpen = function(rl, lite){
     try{ ptPrev = null; }catch(e){}
-    var ID = 'portalModal', ua = (typeof uaMe === 'function' && uaMe()) || null, u = (ua && ua.user) || {}, me = agMe() || {}, L = mpListReal();
+    var ID = 'portalModal', ua = (typeof uaMe === 'function' && uaMe()) || null, u = (ua && ua.user) || {}, me = sf(agMe, {}) || {}, L = lite ? [] : sf(mpListReal, []);
     var nm = u.name || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
     var mob = u.mobile || u.phone || (me.phone ? '0' + String(me.phone).slice(2) : '');
     var acid = mcsSidFmt(u.sid || u.id || mob || '');
     var sv = ''; try{ sv = ptSelfieGet(rl) || ''; }catch(e){}
-    var best = null; L.forEach(function(x){ var lf = mpLeftOf(x.p); if(lf != null && (best == null || lf > best.lf)) best = {lf: lf, p: x.p}; });
+    var best = null; L.forEach(function(x){ var lf = sf(function(){ return mpLeftOf(x.p); }, null); if(lf != null && (best == null || lf > best.lf)) best = {lf: lf, p: x.p}; });
     var active = !!(best && best.lf > 0);
     var h = top(ID, 'My Account', 'Personal Account &amp; Membership', '👤') + '<div class="mx-in">';
     h += '<div class="mx-card mx-prof"><div class="mx-av" onclick="ptSelfieAsk()">' + (sv ? '<img src="' + escapeAttr(sv) + '" alt="">' : '👤') + '</div>'
@@ -19484,12 +19486,13 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     h += '<div class="mx-sec pl">Account Management</div><div class="mx-card mx-list">'
       + (ua ? row('👤', 'Personal Information', ID, 'uaAccount', 'c1', 'نام، موبائل، ای میل') : row('🔐', 'Login / Sign Up', ID, 'uaLogin', 'c1', 'اکاؤنٹ بنائیں'))
       + (ua ? row('🛡️', 'Security &amp; Password', ID, 'uaPwForm', 'c2', 'پاس ورڈ بنائیں / بدلیں') : '')
-      + row('🔔', 'Notifications', ID, 'mstNotif', 'c4', (typeof mstNotifState === 'function' ? mstNotifState() : ''))
+      + row('🔔', 'Notifications', ID, 'mstNotif', 'c4', sf(function(){ return typeof mstNotifState === 'function' ? mstNotifState() : ''; }, ''))
       + row('🔒', 'Privacy &amp; Account', ID, 'mstPrivacy', 'c5', 'پرائیویسی پالیسی')
       + row('🎧', 'Help &amp; Support', ID, 'ptHelp', 'c6', 'مسئلہ / تجویز')
       + '</div>';
     h += '<div class="mx-sec pl">More</div><div class="mx-card mx-list">'
-      + L.map(function(x, i){ if(fpIsBasic(x.p.kind, x.rec)) return ''; var r = recOf(x); return '<button type="button" class="mx-li" onclick="mxGo(\'' + ID + '\',\'mxFp\',' + i + ')"><i class="c3">📄</i><span>My Profile<small>' + esc(r.nameUr || r.name || '') + '</small></span></button>'; }).join('')
+      + L.map(function(x, i){ try{ if(fpIsBasic(x.p.kind, x.rec)) return ''; var r = recOf(x); }catch(e){ return ''; } return '<button type="button" class="mx-li" onclick="mxGo(\'' + ID + '\',\'mxFp\',' + i + ')"><i class="c3">📄</i><span>My Profile<small>' + esc(r.nameUr || r.name || '') + '</small></span></button>'; }).join('')
+      + (rl === 'agent' ? row('🤝', 'Agent Portal', ID, 'mxAgentOld', 'c3', 'ایجنٹ پورٹل — رجسٹریشن، کاروبار') : '')
       + row('🏪', 'My Portal', ID, 'mpoOpen', 'c2', 'کاروبار کا انتظام')
       + row('🤝', me.code ? 'Referral &amp; Agent' : 'Earn with MCS', ID, 'agOpen', 'c3', me.code ? 'ریفرل کوڈ: ' + esc(me.code) : 'ایجنٹ بنیں')
       + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
@@ -19500,8 +19503,21 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     shell(ID, h);
   };
   var _po = window.ptOpen;
+  /* MCS1211TH346 (مالک کا حکم): سائن اِن بندے کو ہمیشہ نیا انگلش «My Account» — ایرر آئے تو بھی پرانا اردو پورٹل نہیں؛
+     ایجنٹ (جو سائن اِن بھی ہو) کو بھی یہی صفحہ، اور اس میں «Agent Portal» کی قطار سے ایجنٹ کا پورٹل */
+  window.mxAgentOld = function(){ window._mxOld = 1; var m = document.getElementById('portalModal'); if(m) m.className = 'modal-overlay'; return _po.call(window); };
   window.ptOpen = function(editProf, prev){
-    try{ if(!prev){ var rl = ptRole(); if(rl === 'user' || rl === 'biz' || rl === 'prof'){ mxAccOpen(rl); return; } } }catch(e){ console.error(e); }
+    try{
+      if(!prev){
+        var m0 = document.getElementById('portalModal');
+        if(!(m0 && m0.classList.contains('active'))) window._mxOld = 0;
+        var rl = ptRole(), ua = (typeof uaMe === 'function' && uaMe()) || null;
+        if(!window._mxOld && (rl === 'user' || rl === 'biz' || rl === 'prof' || (rl === 'agent' && ua))){
+          try{ mxAccOpen(rl); return; }catch(e){ console.error(e); }
+          try{ mxAccOpen(rl, true); return; }catch(e2){ console.error(e2); }
+        }
+      }
+    }catch(e){ console.error(e); }
     var m = document.getElementById('portalModal'); if(m) m.className = 'modal-overlay';
     return _po.apply(this, arguments);
   };
