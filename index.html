@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH333";
+const APP_VERSION = "MCS1211TH334";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH334": "🔑 After approval the developer gets an activation code (e.g. K7QM-4XT9) — the shopkeeper types it on the login page and enters as a registered business with 1-year membership; your own ID + code stay locked on the login page",
   "MCS1211TH333": "🔑 Sign up: name, mobile, district, 6-digit PIN — your Account ID + 4-digit registration code appear at once; agents fetch your record with that code, developer approves 1 year, you paste the ready message on the login page",
   "MCS1211TH332": "🔠 Home screen text is now about 20% bigger and easier to read — bottom bar, colours and design unchanged",
   "MCS1111WE331": "🛡️ My Chats now has a pinned «Approvals» row for the developer — membership, new business, agent requests; tap to open the real page, it clears itself when done",
@@ -15576,7 +15577,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
 #uaOv .uaHd h2{margin:0;font-size:26px;font-weight:800;color:#0b2f8f}
 #uaOv .uaSub{text-align:center;color:#5b6b8c;font-size:13.5px;margin:4px 0 12px}
 #uaOv .uaPkBox{text-align:center;border:2px dashed #16a34a;border-radius:16px;background:#f0fdf4;padding:12px;margin:8px 0}#uaOv .uaPkBox .l{font-size:13px;font-weight:800;color:#166534}#uaOv .uaPkBox .v{font:900 30px Arial,sans-serif;color:#0f1f45;letter-spacing:2px}#uaOv .uaPkBox .v.pk{font-size:40px;letter-spacing:10px;color:#b45309}
-#uaOv .uaPkMini{background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:7px 10px;margin:0 0 8px;text-align:center;font:800 15px Arial,sans-serif;color:#14532d;cursor:pointer}#uaOv .uaPkMini small{display:block;font:700 11.5px inherit;color:#166534;direction:rtl;margin-top:2px}
+#uaOv .uaPkMini .lk{float:left;font-size:14px;opacity:.8}#uaOv .uaPkMini{position:relative;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:7px 10px;margin:0 0 8px;text-align:center;font:800 15px Arial,sans-serif;color:#14532d;cursor:pointer}#uaOv .uaPkMini small{display:block;font:700 11.5px inherit;color:#166534;direction:rtl;margin-top:2px}
 #uaOv .uaF{display:flex;align-items:center;height:50px;border:1.5px solid #d5deee;border-radius:14px;background:#fff;margin-bottom:10px;padding:0 12px}
 #uaOv .uaF:focus-within{border-color:#1546c0;box-shadow:0 0 0 4px rgba(21,70,192,.12)}
 #uaOv .uaF svg{width:21px;height:21px;flex:none;color:#3b4a6b}
@@ -15686,7 +15687,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       <button class="uaBtn bB" onclick="uaDoLogin()">${IC.login}LOGIN</button>
       <button class="uaBtn bO" onclick="uaExit()">${IC.exit}EXIT</button>
       <button class="uaBtn bG" onclick="uaSignup()">${IC.add}CREATE NEW ACCOUNT</button>
-      <div class="uaOr" style="margin-top:6px">📨 اپنی رجسٹریشن کا میسج</div>
+      <div class="uaOr" style="margin-top:6px">🔑 ایجنٹ سے ملا کوڈ</div>
       <div id="uaRegBox">${invBox()}</div></div>`);
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); });
   };
@@ -15779,7 +15780,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     window._uaPkMsg = msg;
   };
   window.uaPkCopy = function(){ const t = window._uaPkMsg || ''; try{ navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){ prompt('کاپی کریں', t); } };
-  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.pk) return ''; return `<div class="uaPkMini" dir="ltr" onclick="uaPkCopyMini()">🆔 <b>${esc(o.sid)}</b> &nbsp; 🔑 <b>${esc(o.pk)}</b><small>${esc(o.name || '')} — رجسٹریشن کے لیے اپنے ایجنٹ کو بھیجیں (دبائیں تو کاپی)</small></div>`; }catch(e){ return ''; } }
+  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.pk) return ''; return `<div class="uaPkMini" dir="ltr" onclick="uaPkCopyMini()"><span class="lk">🔒</span>🆔 <b>${esc(o.sid)}</b> &nbsp; 🔑 <b>${esc(o.pk)}</b><small>${esc(o.name || '')} — آپ کی پکی ID اور کوڈ (تبدیل نہیں ہو سکتے) — رجسٹریشن کے لیے اپنے ایجنٹ کو بھیجیں • دبائیں تو کاپی</small></div>`; }catch(e){ return ''; } }
   window.uaPkCopyMini = function(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); const t = 'My City Shines — Account ID: ' + o.sid + ' • رجسٹریشن کوڈ: ' + o.pk; navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){} };
   window.uaAutoCard = function(u){
     if(!u || !u.mobile || typeof store === 'undefined') return;
@@ -16027,8 +16028,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
   };
 
   /* ---- نیا بندہ: میسج پیسٹ ---- */
-  const invBox = () => `<div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:700;line-height:1.9"><b>اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں</b> — ڈویلپر / درج کرنے والے کا بھیجا ہوا پورا میسج (کاروبار، پروفیشن یا ایجنٹ)</div>
-    <textarea id="uaInvTx" rows="2" dir="auto" placeholder="اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں…" onpaste="setTimeout(function(){uaInvGo(1)},120)" style="width:100%;box-sizing:border-box;border:1.5px solid #d5deee;border-radius:14px;padding:10px;font-size:15px;font-family:inherit;margin-bottom:8px;background:#fff;color:#0f1f45"></textarea>
+  const invBox = () => `<div class="uaMsg" style="background:#fff7e6;border-color:#f6c26b;color:#7c2d12;font-weight:800;line-height:1.9;text-align:center">🔑 <b>ایجنٹ سے ملنے والا کوڈ یہاں لکھیں / پیسٹ کریں</b><br><small style="font-weight:700">Enter the code you got from your agent (e.g. K7QM-4XT9)</small></div>
+    <input id="uaInvTx" type="text" dir="ltr" maxlength="400" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX" onpaste="setTimeout(function(){uaInvGo(1)},120)" onkeydown="if(event.key==='Enter')uaInvGo()" style="width:100%;box-sizing:border-box;height:52px;border:2px solid #f6c26b;border-radius:14px;padding:0 12px;font:900 22px Arial,sans-serif;letter-spacing:3px;text-align:center;text-transform:uppercase;margin-bottom:8px;background:#fff;color:#0f1f45">
     <div class="uaErr" id="uaInvErr"></div>
     <div class="uaTwo"><button class="uaBtn bO" onclick="uaInvPaste()">📋 پیسٹ</button><button class="uaBtn bB" onclick="uaInvGo()">${IC.login}داخل ہوں</button></div>`;
   window.uaRegToggle = function(cb){ const b = $('uaRegBox'); if(!b) return; b.style.display = cb.checked ? 'block' : 'none'; if(cb.checked){ setTimeout(() => { try{ b.scrollIntoView({ behavior:'smooth', block:'center' }); const t = $('uaInvTx'); if(t) t.focus(); }catch(e){} }, 60); } };
@@ -16036,13 +16037,24 @@ body.d2 #homeAds .ad-ribbon{display:none}
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.login}</i><h2 style="font-size:22px">رجسٹریشن کا میسج پیسٹ کریں</h2></div><div class="uaSub">اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں</div>${invBox()}
       <button class="uaBtn bO" onclick="${uaMe() ? 'uaAccount()' : 'uaLogin()'}">← واپس</button></div>`);
   };
+  /* MCS1211TH334 (مالک کا حکم): ایجنٹ سے ملا ایکٹیویشن کوڈ → سرور (actuse) اسی موبائل کا اکاؤنٹ + لاگ اِن، پھر کاروبار جڑتا ہے (fedApplyPending — ایک سال کی ممبرشپ پہلے سے) */
+  window.uaActGo = async function(c){
+    const e = $('uaInvErr'); if(e) e.textContent = '⏳ کوڈ جانچ رہا ہوں…';
+    busy(1); let r = null; try{ r = await api({ op:'actuse', code: c }); }catch(_){} busy(0);
+    if(!r){ if(e) e.textContent = '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'; return; }
+    if(!r.ok){ if(e) e.textContent = r.reason === 'wait' ? '⛔ کئی بار غلط کوڈ — 15 منٹ بعد کوشش کریں' : '❌ یہ کوڈ درست نہیں — ایجنٹ سے دوبارہ پوچھیں'; return; }
+    const a = r.act || {}, m = mob11(a.mobile || (r.user && r.user.mobile) || '');
+    if(a.recId && m.length === 11) ls.set('mcsInvite', JSON.stringify({ n: a.name || (r.user && r.user.name) || '', m, k: a.kind === 'doctor' ? 'd' : 's', i: a.recId, b: a.prof || '' }));
+    done(r, '✅ رجسٹرڈ کاروباری کے طور پر خوش آمدید — Account ID: ' + ((r.user && (r.user.sid || r.user.id)) || ''));
+  };
   window.uaInvPaste = async function(){
-    try{ const t = await navigator.clipboard.readText(); if(t){ $('uaInvTx').value = t; uaInvGo(1); return; } }catch(e){}
+    try{ const t = await navigator.clipboard.readText(); if(t){ $('uaInvTx').value = t.trim(); uaInvGo(1); return; } }catch(e){}
     const e = $('uaInvErr'); if(e) e.textContent = 'کلپ بورڈ نہیں کھلا — خانے پر دبائے رکھیں اور «Paste / پیسٹ» چنیں';
   };
   window.uaInvGo = function(auto){
     const t = ($('uaInvTx') || {}).value || '', e = $('uaInvErr'); if(e) e.textContent = '';
-    if(!t.trim()){ if(!auto && e) e.textContent = 'پہلے میسج پیسٹ کریں'; return; }
+    if(!t.trim()){ if(!auto && e) e.textContent = 'پہلے کوڈ لکھیں'; return; }
+    { const c = t.toUpperCase().replace(/[^A-Z0-9]/g, ''); if(t.trim().length <= 14 && c.length === 8) return uaActGo(c); if(t.trim().length <= 14){ if(!auto && e) e.textContent = '⚠️ کوڈ مکمل نہیں — 8 حروف / ہندسے (XXXX-XXXX)'; return; } }
     { const ag = agtParse(t); if(ag){ ls.set('mcsAgtInv', JSON.stringify(ag)); return uaAgtView(); } }
     const inv = fedParse(t);
     if(!inv){ if(e) e.textContent = '⚠️ میسج مکمل نہیں — بھیجنے والے سے پورا میسج (آخری لمبی MCS-INV لائن سمیت) دوبارہ منگوا کر پیسٹ کریں'; return; }
@@ -20836,18 +20848,51 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     }catch(e){}
     return r;
   };
+  /* MCS1211TH334 (مالک کا حکم): منظوری کے بعد ایکٹیویشن کوڈ XXXX-XXXX (سرور actmake، صرف ڈویلپر) — دکاندار لاگ اِن صفحے پر لکھے تو لاگ اِن + رجسٹرڈ + ایک سال */
+  async function actMake(p, o){
+    try{
+      const hdr = await vfAdminHdr();
+      const j = await (await fetch(PF_API + '/mcsauth', { method: 'POST', headers: hdr, body: JSON.stringify({ op: 'actmake', mobile: o.phone || p.mobile || (p.rec && p.rec.whatsapp) || '', name: o.name || p.name || '', rec: (function(){ try{ return pfKeyOf(p.rec, p.kind); }catch(e){ return ''; } })(), kind: p.kind, recId: p.rec.id, until: o.until || 0, prof: o.prof || p.rec.nameUr || p.rec.name || '' }) })).json();
+      return j && j.ok ? j.code : '';
+    }catch(e){ return ''; }
+  }
+  window.actCodeShow = async function(p, o){
+    agModal('<div class="ag-st">⏳ ایکٹیویشن کوڈ بن رہا ہے…</div>');
+    const code = await actMake(p, o);
+    if(!code){ if(typeof fedInvMsg === 'function'){ window._pkInvFor = p; return memDoneShow(o); } return _md(o); }
+    const ph = d10(o.phone || p.mobile || p.rec.whatsapp), nm = o.name || p.name || '', prof = o.prof || p.rec.nameUr || p.rec.name || '';
+    const msg = ['🌟 *My City Shines* — رجسٹریشن مکمل ✅', '', 'السلام علیکم ' + nm + '!', '«' + prof + '» کی رجسٹریشن مکمل اور *ایک سال کی ممبرشپ فعال* ہے' + (o.until ? ' — ' + new Date(o.until).toLocaleDateString('en-GB') + ' تک' : '') + '۔', '',
+      '🔑 *آپ کا ایکٹیویشن کوڈ:* ' + code, '', 'ایپ کھولیں ← لاگ اِن صفحے پر «🔑 ایجنٹ سے ملا کوڈ» میں یہ کوڈ لکھیں — آپ رجسٹرڈ کاروباری کے طور پر داخل ہو جائیں گے۔', '', '📲 ' + (typeof MCS_PLAY_URL !== 'undefined' ? MCS_PLAY_URL : '')].join('\n');
+    agModal(`<div class="ag-hd">✅ منظور — ایکٹیویشن کوڈ تیار</div>
+      <div style="text-align:center;margin:8px 0;padding:12px;border:2px dashed #b45309;border-radius:14px;background:#fffbeb"><div style="font-weight:800;color:#92400e">🔑 Activation Code — ${esc(nm)}</div><div dir="ltr" style="font:900 34px Arial,sans-serif;letter-spacing:4px;color:#0f1f45;margin-top:4px">${esc(code)}</div><div style="font-size:12.5px;color:#7c2d12">${esc(prof)}${o.until ? ' • ⭐ ' + new Date(o.until).toLocaleDateString('en-GB') + ' تک' : ''}</div></div>
+      <div class="cp-hint" style="margin:0 0 6px">یہ کوڈ ایجنٹ یا دکاندار کو بھیجیں — دکاندار My City Shines کے لاگ اِن صفحے پر «ایجنٹ سے ملا کوڈ» میں لکھے؛ لاگ اِن، رجسٹریشن اور ایک سال کی ممبرشپ اس کے فون پر خود۔</div>
+      ${ph.length === 10 ? `<a class="btn block ag-send" style="text-align:center;margin-top:6px" target="_blank" rel="noopener" href="https://wa.me/92${ph}?text=${encodeURIComponent(msg)}">📤 دکاندار کو واٹس ایپ</a>` : ''}
+      <a class="btn block" style="text-align:center;margin-top:6px" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">📤 ایجنٹ کو واٹس ایپ (نمبر چنیں)</a>
+      <button type="button" class="btn block secondary" style="margin-top:6px" onclick="agCopy(${JSON.stringify(msg).replace(/"/g, '&quot;')})">📋 کوڈ اور میسج کاپی کریں</button>`);
+  };
   const _md = window.memDoneShow;
   if(typeof _md === 'function') window.memDoneShow = memDoneShow = function(o){
     const p = window._pkInvFor; window._pkInvFor = null;
-    if(!p || typeof fedInvMsg !== 'function') return _md.apply(this, arguments);
+    if(!p || !p.rec) return _md.apply(this, arguments);
+    if(!p._inv) return actCodeShow(Object.assign({}, p, { _inv: 1 }), o);
+    if(typeof fedInvMsg !== 'function') return _md.apply(this, arguments);
     const msg = fedInvMsg(p.kind, p.rec, o.name || p.name, o.phone || p.mobile, o.until);
     const ph = d10(o.phone || p.mobile);
     agModal(`<div class="ag-hd">✅ ایک سال کی ممبرشپ — لاگ اِن میسج تیار</div>
-      <div class="cp-hint" style="margin:0 0 6px">یہ میسج ایجنٹ / دکاندار کو بھیجیں — دکاندار My City Shines کے لاگ اِن صفحے پر «اپنی رجسٹریشن کا میسج» میں پیسٹ کرے؛ رجسٹریشن اور ایک سال کی ممبرشپ اس کے فون پر جڑ جائے گی۔</div>
       <textarea readonly rows="9" dir="auto" onclick="this.select()" style="width:100%;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:12px;padding:10px;font-size:13px;line-height:1.8;font-family:inherit">${esc(msg)}</textarea>
       ${ph.length === 10 ? `<a class="btn block ag-send" style="text-align:center;margin-top:8px" target="_blank" rel="noopener" href="https://wa.me/92${ph}?text=${encodeURIComponent(msg)}">📤 دکاندار کو واٹس ایپ</a>` : ''}
-      <a class="btn block" style="text-align:center;margin-top:6px" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">📤 ایجنٹ کو واٹس ایپ (نمبر چنیں)</a>
       <button type="button" class="btn block secondary" style="margin-top:6px" onclick="agCopy(${JSON.stringify(msg).replace(/"/g, '&quot;')})">📋 میسج کاپی کریں</button>`);
+  };
+  // ڈویلپر خود «⭐ ایک سال دیں» کرے تو بھی کوڈ
+  const _bg = window.bzGiveYear;
+  if(typeof _bg === 'function') window.bzGiveYear = bzGiveYear = async function(x){
+    let rk = ''; try{ rk = pfKeyOf(x.rec, x.kind); }catch(e){}
+    const was = rk && pfAct[rk] ? pfAct[rk].until || 0 : 0;
+    const r = await _bg.apply(this, arguments);
+    try{ const nu = rk && pfAct[rk] ? pfAct[rk].until || 0 : 0;
+      if(nu > was && nu > Date.now() + 200 * 864e5){ let owner = ''; try{ owner = splitOwnerIntro(x.rec.intro).owner || ''; }catch(e){}
+        actCodeShow({ kind: x.kind, rec: x.rec, name: owner || x.rec.nameUr || '', mobile: x.rec.whatsapp || '', _inv: 1 }, { name: owner || x.rec.nameUr || '', phone: x.rec.whatsapp || '', prof: x.rec.nameUr || x.rec.name || '', until: nu }); } }catch(e){}
+    return r;
   };
 })();
 </script>
