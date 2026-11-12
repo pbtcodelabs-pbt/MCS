@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH376";
+const APP_VERSION = "MCS1211TH377";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH377": "🛠️ Form: no more jumping down to the red box when it opens • chosen Subtype / Title now counts (View and Save no longer say it is empty)",
   "MCS1211TH376": "✅ Sign-up is instant — your basic card stays only on your own phone (no approval, nobody else sees it); developer approval only when you complete registration / membership",
   "MCS1211TH375": "🪪 Registration form: CNIC box at the top of the green Registration box",
   "MCS1211TH374": "✍️ Urdu names in the sector / title lists are now bigger and bolder (Noori Nastaleeq Kasheeda)",
@@ -9593,7 +9594,10 @@ function clsRenderSubs(){ const box = clsEl('svcSubs'); if(!box) return;
   clsSubs.forEach(v=>{ if(!list.some(x=>x.toLowerCase() === String(v).toLowerCase())) list.push(v); });
   box.innerHTML = list.length ? list.map(v=>{ const on = clsHasSub(v), ur = clsTitleUr(v);
     return `<button type="button" class="cls-chip${on ? ' on' : ''}" data-v="${escapeAttr(v)}" onclick="clsSubTog(this.dataset.v)">${on ? '✔ ' : ''}${ur ? escapeHtml(ur) + ' <small style="opacity:.8">' + escapeHtml(v) + '</small>' : escapeHtml(v)}</button>`; }).join('')
-    : '<small class="cls-sh">پہلے اوپر شعبہ منتخب کریں — پھر اس کے ٹائٹل یہاں آئیں گے</small>'; }
+    : '<small class="cls-sh">پہلے اوپر شعبہ منتخب کریں — پھر اس کے ٹائٹل یہاں آئیں گے</small>';
+  clsSyncType(); }
+/* MCS1211TH377: چنا ہوا ٹائٹل فوراً «قسم» (svcType) میں — دیکھیں / Save خالی نہ سمجھیں */
+function clsSyncType(){ const st = clsEl('svcType'); if(!st) return; if(currentServiceCategory === 'emergencyNumbers' || currentServiceCategory === 'govOffices') return; const prim = clsSubs.length ? (clsTitleUr(clsSubs[0]) || clsSubs[0]) : ''; if(!prim) return; if(!Array.from(st.options).some(o=>o.value === prim)) st.add(new Option(prim, prim)); if(st.value !== prim){ st.value = prim; try{ st.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){} } }
 function clsSubTog(v){ const k = String(v).toLowerCase(); const i = clsSubs.findIndex(x=>String(x).toLowerCase() === k); if(i < 0) clsSubs.push(v); else clsSubs.splice(i, 1); clsRenderSubs(); }
 function clsSubCustom(){ const inp = clsEl('svcSubIn'); if(!inp) return; const v = inp.value.trim().slice(0, 60).replace(/\|/g, ' '); if(!v) return;
   { const pt = (clsEl('svcPType') || {}).value, mc = (clsEl('svcMCat') || {}).value, cc = CLS_CATS[pt + '|' + mc];   /* MCS1211TH370: نیا ٹائٹل سب کی فہرست میں بھی */
@@ -21753,7 +21757,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
   }
   document.addEventListener('input', e => { const f = e.target.closest && e.target.closest('.cbx .field.cbx-bad'); if(f) f.classList.remove('cbx-bad'); }, true);
   document.addEventListener('change', e => { const f = e.target.closest && e.target.closest('.cbx .field.cbx-bad'); if(f) f.classList.remove('cbx-bad'); }, true);
-  function lock(b, on){ if(on) b.querySelectorAll('.field.cbx-bad').forEach(f => f.classList.remove('cbx-bad')); b.classList.toggle('locked', !!on); b.querySelector('.cbx-st').textContent = on ? '🔒 محفوظ' : '✍️ لکھیں'; if(!on){ try{ b.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }catch(e){} } }
+  function lock(b, on, quiet){ if(on) b.querySelectorAll('.field.cbx-bad').forEach(f => f.classList.remove('cbx-bad')); b.classList.toggle('locked', !!on); b.querySelector('.cbx-st').textContent = on ? '🔒 محفوظ' : '✍️ لکھیں'; if(!on && !quiet){ try{ b.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }catch(e){} } }
   const vis = e => !!(e && (e.offsetParent || e.getClientRects().length));
   function rows(scope){
     const out = [];
@@ -21762,6 +21766,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
       const lab = f.querySelector('label'), inp = f.querySelector('input:not([type=file]):not([type=hidden]):not([type=checkbox]), select, textarea'); if(!lab || !inp) return;
       let v = inp.tagName === 'SELECT' ? (inp.selectedOptions[0] ? inp.selectedOptions[0].textContent : '') : inp.value;
       if(inp.tagName === 'SELECT' && !inp.value) v = '';
+      try{ if(f.querySelector('#svcSubs')) v = (typeof clsSubs !== 'undefined' ? clsSubs : []).map(x => clsTitleUr(x) || x).join('، '); else if(f.querySelector('#svcProds')) v = (typeof clsProds !== 'undefined' ? clsProds : []).join('، ') || inp.value; }catch(e){}   /* MCS1211TH377: چنے ٹائٹل / مصنوعات (چپس) — خالی لکھنے کا خانہ نہیں */
       const req = lab.classList.contains('req') || !!lab.querySelector('.req') || /\*\s*$/.test(lab.textContent.trim());
       out.push({ f, inp, name: lab.textContent.replace(/\s+/g, ' ').replace(/\*/g, '').trim().slice(0, 60), v: String(v || '').trim(), req });
     });
@@ -21808,7 +21813,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
     const m = $(mid); if(!m) return;
     const run = () => { try{ place(mid); }catch(e){ console.error('cbx', e); } };
     let wasOpen = false;
-    new MutationObserver(() => { const open = vis(m.querySelector('.modal-box') || m); if(open && !wasOpen){ m.querySelectorAll('.cbx').forEach(b => lock(b, false)); setTimeout(() => { run(); draftLoad(mid); }, 60); setTimeout(run, 600); } wasOpen = open; })
+    new MutationObserver(() => { const open = vis(m.querySelector('.modal-box') || m); if(open && !wasOpen){ m.querySelectorAll('.cbx').forEach(b => lock(b, false, true));   /* MCS1211TH377: کھلتے وقت کسی ڈبے پر کودنا نہیں */ setTimeout(() => { run(); draftLoad(mid); }, 60); setTimeout(run, 600); } wasOpen = open; })
       .observe(m, { attributes: true, attributeFilter: ['class', 'style'] });
     const c = CFG[mid], body = c.body();
     if(body) new MutationObserver(() => { clearTimeout(timers[mid]); timers[mid] = setTimeout(run, 30); }).observe(c.inner ? c.inner() || body : body, { childList: true });
