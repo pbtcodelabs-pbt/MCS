@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1111WE331";
+const APP_VERSION = "MCS1211TH332";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH332": "🔠 Home screen text is now about 20% bigger and easier to read — bottom bar, colours and design unchanged",
   "MCS1111WE331": "🛡️ My Chats now has a pinned «Approvals» row for the developer — membership, new business, agent requests; tap to open the real page, it clears itself when done",
   "MCS1111WE330": "🏪 Membership requests now show as a strip on the developer home — open to Approve / Ask more details / Keep pending / Not now",
   "MCS1111WE329": "🔤 Developer code is now DEV, Co-Developer code is CODEV • Category list A→Z in English with Urdu beside it • Agent list: DEV / CODEV / PBT on top, then AG-001, AG-002… in order",
@@ -20649,5 +20650,39 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
 .mc-appr-av.s{background:#fef3c7;font-size:24px}
 .mc-appr .l1 b small{font-weight:600;color:#92400e}
 </style>
+<script id="mcsHomeFont225">
+/* MCS1211TH332 (ہیلپ ڈیسک #225، کو-ڈویلپر کی تجویز، مالک کا ⚡): ہوم اسکرین کی لکھائی ~20٪ بڑی — صرف #screen-home کے اندر
+   (نیچے کی پٹی #bnav، باقی صفحے، رنگ / ڈیزائن ویسے)۔ ہر عنصر کا اصل سائز (html.fs225 ہٹا کر ناپا) data-fs میں، پھر
+   html.fs225 [data-fs="N"]{font-size:N×1.2px} — دوبارہ بنا حصہ (mpRender، bpRender…) بھی خود (MutationObserver)۔ */
+(function(){
+  var K = 1.2, root = null, made = {}, sheet = null, busy = false, tmr = null;
+  function fk(el){ return el.closest('.mpx-add') ? 'a' : el.closest('#homeAds, .h2-d > div:nth-child(2)') ? 'z' : el.closest('.h2-d') ? 'd' : el.closest('#hdr2') ? 'h' : 'n'; } // اشتہار کا ڈبہ مقررہ اونچائی کا — ویسا
+  var KF = { n: K, h: 1.1, d: 1.04, z: 1, a: 1.04 };
+  try{ var cs = document.createElement('style'); cs.textContent = 'html.fs225 #screen-home .mpx-hd{flex-wrap:wrap;row-gap:6px}'; document.head.appendChild(cs); }catch(e){}
+  function rule(v, k){
+    if(made[v + k]) return; made[v + k] = 1;
+    if(!sheet){ var st = document.createElement('style'); st.id = 'mcsHomeFont225css'; document.head.appendChild(st); sheet = st.sheet; }
+    try{ sheet.insertRule('html.fs225 #screen-home [data-fs="' + v + '"][data-fk="' + k + '"]{font-size:' + (Math.round(v * KF[k] * 10) / 10) + 'px !important}', sheet.cssRules.length); }catch(e){}
+  }
+  function run(){
+    tmr = null; root = root || document.getElementById('screen-home'); if(!root || busy) return;
+    var list = root.querySelectorAll('*:not([data-fs]):not(script):not(style):not(svg *)'); if(!list.length) return;
+    busy = true;
+    var H = document.documentElement; H.classList.remove('fs225');
+    var vals = []; for(var i = 0; i < list.length; i++){ var fs = parseFloat(getComputedStyle(list[i]).fontSize) || 0; vals.push(Math.round(fs * 2) / 2); }
+    for(var j = 0; j < list.length; j++){ if(vals[j] > 0){ var k = fk(list[j]); list[j].setAttribute('data-fk', k); list[j].setAttribute('data-fs', vals[j]); rule(vals[j], k); } else list[j].setAttribute('data-fs', '0'); }
+    H.classList.add('fs225');
+    setTimeout(function(){ busy = false; }, 0);
+  }
+  function kick(){ if(!tmr) tmr = setTimeout(run, 60); }
+  function init(){
+    root = document.getElementById('screen-home'); if(!root) return;
+    run();
+    try{ new MutationObserver(function(ms){ if(busy) return; for(var i = 0; i < ms.length; i++){ if(ms[i].addedNodes && ms[i].addedNodes.length){ kick(); return; } } }).observe(root, { childList: true, subtree: true }); }catch(e){}
+    try{ document.fonts && document.fonts.ready && document.fonts.ready.then(function(){ document.querySelectorAll('#screen-home [data-fs]').forEach(function(e){ e.removeAttribute('data-fs'); }); run(); }); }catch(e){}
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
 </body>
 </html>
