@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH372";
+const APP_VERSION = "MCS1211TH373";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH373": "🗂️ Sectors and titles now in one-line dropdowns (A→Z, Z→A, most records) — cards show right below",
   "MCS1211TH372": "🗂️ All sectors are back on screen: 15 Business + 14 Professional sectors with 400 titles, in English and Urdu — tap a sector, then a title, to see its cards",
   "MCS1211TH371": "🕌 New home header: account ID & type, welcome + city, weather on the left • live clock and big Qibla compass in the middle • your photo and English / Hijri (Urdu) / Desi dates on the right",
   "MCS1211TH370": "➕ Every list now has a + : Profile Type, Category and Titles can each get new entries (saved for everyone) • 📚 New «All Lists» page for developer / co-developer / agents — full tree Type → Category → Titles with search, add, copy and one-tap «use in form»",
@@ -22128,7 +22129,7 @@ html #screen-home #hdr2.h229 .h2-d #h2H{font:400 2.5cqw/1.6 'Jameel Noori Nastal
 .sec-hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:4px 2px 8px;font:800 16px/1.3 'Segoe UI',Selawik,Arial,sans-serif;color:#0b3b33;direction:ltr}
 .sec-hd .ur{font:400 15px/1.7 'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif;color:#0f766e}
 .sec-hd small{font:600 11.5px/1.2 'Segoe UI',Selawik,Arial,sans-serif;color:#64748b}
-.sec-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;direction:ltr}
+.sec-grid{display:block;direction:ltr}
 @media (max-width:359px){.sec-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:700px){.sec-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
 .sec-t{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;text-align:center;padding:9px 5px 8px;border-radius:16px;border:1.5px solid rgba(15,118,110,.25);background:linear-gradient(160deg,var(--s1,#e9f6f4),var(--s2,#c7ece4));box-shadow:0 3px 8px rgba(15,60,55,.12);cursor:pointer;min-width:0;font-family:inherit;color:#0b3b33}
@@ -22160,14 +22161,42 @@ html #screen-home #hdr2.h229 .h2-d #h2H{font:400 2.5cqw/1.6 'Jameel Noori Nastal
 #secModal .sec-cnt{padding:8px 12px 4px;font:700 13px 'Segoe UI',Selawik,Arial,sans-serif;color:#334155;direction:ltr}
 #secModal .sec-add{display:block;margin:6px auto 4px;border:0;border-radius:99px;padding:8px 18px;background:linear-gradient(#22c55e,#15803d);color:#fff;font:800 13px 'Segoe UI',Arial,sans-serif;cursor:pointer}
 #secModal .sec-none{text-align:center;padding:24px 12px;color:#64748b;font:600 13px/1.8 'Segoe UI',Selawik,Arial,'Jameel Noori Nastaleeq Regular',sans-serif}
+
+/* MCS1211TH373: سب ایک لائن کی ڈراپ ڈاؤن — شعبہ / ٹائٹل؛ A→Z، Z→A، زیادہ ریکارڈ */
+.sec-dd{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;min-height:46px;padding:6px 14px;border-radius:14px;border:2px solid #0f766e;background:#fff;color:#0b3b33;cursor:pointer;direction:ltr;text-align:left;font:800 14px/1.3 'Segoe UI',Selawik,Arial,sans-serif;box-shadow:0 2px 6px rgba(15,60,55,.12)}
+.sec-dd .lb{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec-dd .ur{font:400 13.5px/1.7 'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif;color:#0f766e;direction:rtl;margin-left:6px}
+.sec-dd s{text-decoration:none;padding:1px 8px;border-radius:99px;background:#0f766e;color:#fff;font:800 12px/1.6 Arial,sans-serif}
+.sec-dd .ar{font-size:14px;color:#0f766e}
+#secModal .sec-ddw{padding:10px 10px 0}
+#secPickModal .modal-box{max-width:440px;width:94vw;max-height:calc(100vh - 170px);margin-bottom:110px;display:flex;flex-direction:column;padding:12px;box-sizing:border-box}
+#secPickModal .sp-hd{display:flex;align-items:center;gap:8px;direction:ltr;font:800 15px 'Segoe UI',Arial,sans-serif;color:#0b3b33;margin-bottom:8px}
+#secPickModal .sp-hd b{flex:1}
+#secPickModal .sp-x{border:0;background:#e2e8f0;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer}
+#secPickModal .sp-q{width:100%;box-sizing:border-box;height:40px;border-radius:99px;border:1.5px solid #99d5c9;padding:0 14px;font:600 14px 'Segoe UI',Selawik,Arial,'Jameel Noori Nastaleeq Regular',sans-serif}
+#secPickModal .sp-sort{display:flex;gap:6px;margin:8px 0;direction:ltr}
+#secPickModal .sp-sort button{flex:1;border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:99px;padding:6px 4px;font:800 12px 'Segoe UI',Arial,sans-serif;cursor:pointer}
+#secPickModal .sp-sort button.on{background:#0f766e;color:#fff}
+#secPickModal .sp-l{flex:1;overflow:auto;border-top:1px solid #e2e8f0}
+#secPickModal .sp-r{height:48px;box-sizing:border-box;white-space:nowrap;overflow:hidden;display:flex;align-items:center;gap:8px;width:100%;border:0;border-bottom:1px solid #eef2f7;background:#fff;padding:9px 6px;cursor:pointer;direction:ltr;text-align:left;font:700 13.5px/1.3 'Segoe UI',Selawik,Arial,sans-serif;color:#0b3b33}
+#secPickModal .sp-r.on{background:#e6f7f3}
+#secPickModal .sp-r i{font-style:normal;width:26px;text-align:center}
+#secPickModal .sp-r span{flex:1 1 60%;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+#secPickModal .sp-r .ur{flex:0 1 38%;font-size:12px !important;overflow:hidden;text-overflow:ellipsis;font:400 13px/1.7 'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif;color:#0f766e;direction:rtl;text-align:right}
+#secPickModal .sp-r s{text-decoration:none;min-width:24px;text-align:center;padding:0 6px;border-radius:99px;background:#e2e8f0;color:#334155;font:800 11px/1.7 Arial,sans-serif}
+#secPickModal .sp-r s.has{background:#0f766e;color:#fff}
 </style>
 <div class="modal-overlay sr-full" id="secModal"><div class="sr-page">
   <div class="sec-top"><div class="sec-row"><button type="button" class="sec-bk" onclick="closeModal('secModal')" aria-label="Back">←</button><span class="sec-ic" id="secIc"></span><div class="sec-ti" id="secTi" data-noen></div></div>
-    <input type="search" class="sec-q" id="secQ" placeholder="Search titles / خدمات تلاش کریں" autocomplete="off" oninput="secChips()"></div>
-  <div class="sec-chips" id="secChips" data-noen></div>
+    </div>
+  <div class="sec-ddw" id="secChips" data-noen></div>
   <div class="sec-cnt" id="secCnt"></div>
   <div class="sr-list hl" id="secList"></div>
 </div></div>
+<div class="modal-overlay" id="secPickModal"><div class="modal-box"><div class="sp-hd"><b id="spT"></b><button type="button" class="sp-x" onclick="closeModal('secPickModal')">✖</button></div>
+  <input type="search" class="sp-q" id="spQ" placeholder="🔍 Search…" autocomplete="off" oninput="spDraw()">
+  <div class="sp-sort"><button type="button" data-s="az" onclick="spSort('az')">A → Z</button><button type="button" data-s="za" onclick="spSort('za')">Z → A</button><button type="button" data-s="n" onclick="spSort('n')">Most records</button></div>
+  <div class="sp-l" id="spL" data-noen></div></div></div>
 <script id="mcsSec372">
 /* MCS1211TH372: تمام شعبے — شعبہ ← ٹائٹل ← کارڈ؛ ریکارڈ کا شعبہ: more.ptype/mcat/subs، ورنہ قسم (type) / پرانی کیٹگری سے اندازہ */
 (function(){
@@ -22206,29 +22235,38 @@ html #screen-home #hdr2.h229 .h2-d #h2H{font:400 2.5cqw/1.6 'Jameel Noori Nastal
     MAPAT = Date.now(); return MAP;
   }
   function list(pt){ var C = cats(); return Object.keys(C).filter(function(k){ return C[k].pt === pt; }); }
+  var SP = {items:[], cb:null, sort:'n', cur:''};
+  try{ SP.sort = localStorage.getItem('mcsSecSort') || 'n'; }catch(e){}
+  window.spSort = function(m){ SP.sort = m; try{ localStorage.setItem('mcsSecSort', m); }catch(e){} spDraw(); };
+  window.spDraw = function(){
+    var q = nz((document.getElementById('spQ') || {}).value), L = SP.items.filter(function(x){ return !q || nz(x.en).indexOf(q) >= 0 || nz(x.ur).indexOf(q) >= 0; });
+    var fix = L.filter(function(x){ return x.top; }), rest = L.filter(function(x){ return !x.top; });
+    rest.sort(SP.sort === 'n' ? function(a, b){ return (b.n - a.n) || a.en.localeCompare(b.en); } : SP.sort === 'za' ? function(a, b){ return b.en.localeCompare(a.en); } : function(a, b){ return a.en.localeCompare(b.en); });
+    document.querySelectorAll('#secPickModal .sp-sort button').forEach(function(b){ b.classList.toggle('on', b.dataset.s === SP.sort); });
+    var box = document.getElementById('spL');
+    box.innerHTML = fix.concat(rest).map(function(x){ return '<button type="button" class="sp-r' + (x.v === SP.cur ? ' on' : '') + '" data-v="' + esc(x.v) + '"><i>' + (x.ic || '▸') + '</i><span>' + esc(x.en) + '</span>' + (x.ur ? '<span class="ur">' + esc(x.ur) + '</span>' : '') + '<s class="' + (x.n ? 'has' : '') + '">' + x.n + '</s></button>'; }).join('') || '<div class="sec-none">No match — کچھ نہیں ملا</div>';
+    box.querySelectorAll('.sp-r').forEach(function(b){ b.onclick = function(){ var cb = SP.cb; closeModal('secPickModal'); if(cb) cb(b.dataset.v); }; });
+  };
+  function spOpen(title, items, cur, cb){ SP.items = items; SP.cb = cb; SP.cur = cur; document.getElementById('spT').textContent = title; document.getElementById('spQ').value = ''; openModal('secPickModal'); spDraw(); }
+  function ddHtml(ic, en, ur, n){ return '<span class="ar">' + ic + '</span><span class="lb">' + esc(en) + (ur ? '<span class="ur">' + esc(ur) + '</span>' : '') + '</span>' + (n != null ? '<s>' + n + '</s>' : '') + '<span class="ar">▾</span>'; }
   window.secGrid = function(pt){
     var w = document.querySelector('.sec-wrap[data-pt="' + pt + '"] .sec-grid'); if(!w) return;
-    var M = build(), C = CLS_CATS;
-    w.innerHTML = list(pt).map(function(k){ var c = C[k], n = (M[k] || {all:[]}).all.length;
-      return '<button type="button" class="sec-t" data-k="' + esc(k) + '"><span class="cn' + (n ? '' : ' z') + '">' + n + '</span><i>' + (EMO[c.en] || '🗂️') + '</i><b>' + esc(c.en) + '</b><span class="ur" data-noen>' + esc(c.ur) + '</span><em>' + c.titles.length + ' titles</em></button>'; }).join('');
-    w.querySelectorAll('.sec-t').forEach(function(b){ b.onclick = function(){ secOpen(b.dataset.k); }; });
+    var M = build(), ks = list(pt), tot = 0; ks.forEach(function(k){ tot += (M[k] || {all:[]}).all.length; });
+    w.innerHTML = '<button type="button" class="sec-dd">' + ddHtml('🗂️', 'Select sector (' + ks.length + ')', pt === 'business' ? 'شعبہ منتخب کریں' : 'پیشہ منتخب کریں', tot) + '</button>';
+    w.firstChild.onclick = function(){ var C = CLS_CATS; spOpen(pt === 'business' ? 'Business Sectors' : 'Professional Sectors', ks.map(function(k){ return {v:k, en:C[k].en, ur:C[k].ur, n:(M[k] || {all:[]}).all.length, ic:EMO[C[k].en] || '🗂️'}; }), '', function(k){ secOpen(k); }); };
   };
   window.secOpen = function(k){
     var c = cats()[k]; if(!c) return; cur = {k:k, t:''}; shown = 40;
     document.getElementById('secIc').textContent = EMO[c.en] || '🗂️';
     document.getElementById('secTi').innerHTML = '<b>' + esc(c.en) + '</b><span class="ur">' + esc(c.ur) + '</span>';
-    document.getElementById('secQ').value = '';
-    openModal('secModal'); secChips(); secList();
+        openModal('secModal'); secChips(); secList();
   };
   window.secChips = function(){
-    var c = CLS_CATS[cur.k]; if(!c) return; var M = build(), e = M[cur.k] || {all:[], t:{}}, q = nz((document.getElementById('secQ') || {}).value);
-    var ts = c.titles.filter(function(t){ return !q || nz(t.en).indexOf(q) >= 0 || nz(t.ur).indexOf(q) >= 0; });
-    ts.sort(function(a, b){ return ((e.t[nz(b.en)] || []).length - (e.t[nz(a.en)] || []).length) || a.en.localeCompare(b.en); });
+    var c = CLS_CATS[cur.k]; if(!c) return; var M = build(), e = M[cur.k] || {all:[], t:{}};
+    var tt = cur.t ? c.titles.find(function(t){ return nz(t.en) === cur.t; }) : null;
     var box = document.getElementById('secChips');
-    box.innerHTML = (q ? '' : '<button type="button" class="sec-c has' + (cur.t ? '' : ' on') + '" data-t="">All <span class="ur">سب</span><s>' + e.all.length + '</s></button>')
-      + ts.map(function(t){ var n = (e.t[nz(t.en)] || []).length; return '<button type="button" class="sec-c' + (n ? ' has' : '') + (cur.t === nz(t.en) ? ' on' : '') + '" data-t="' + esc(nz(t.en)) + '">' + esc(t.en) + (t.ur ? ' <span class="ur">' + esc(t.ur) + '</span>' : '') + '<s>' + n + '</s></button>'; }).join('')
-      + (ts.length ? '' : '<div class="sec-none">No title found — کوئی ٹائٹل نہیں ملا</div>');
-    box.querySelectorAll('.sec-c').forEach(function(b){ b.onclick = function(){ cur.t = b.dataset.t; shown = 40; secChips(); secList(); }; });
+    box.innerHTML = '<button type="button" class="sec-dd">' + ddHtml('📋', tt ? tt.en : 'All titles (' + c.titles.length + ')', tt ? tt.ur : 'سب خدمات', tt ? (e.t[cur.t] || []).length : e.all.length) + '</button>';
+    box.firstChild.onclick = function(){ spOpen(c.en, [{v:'', en:'All', ur:'سب', n:e.all.length, ic:'📋', top:1}].concat(c.titles.map(function(t){ return {v:nz(t.en), en:t.en, ur:t.ur, n:(e.t[nz(t.en)] || []).length}; })), cur.t, function(v){ cur.t = v; shown = 40; secChips(); secList(); }); };
   };
   window.secList = function(){
     var M = build(), e = M[cur.k] || {all:[], t:{}}, c = CLS_CATS[cur.k] || {titles:[]};
@@ -22247,9 +22285,9 @@ html #screen-home #hdr2.h229 .h2-d #h2H{font:400 2.5cqw/1.6 'Jameel Noori Nastal
       var sc = document.getElementById(a[0]); if(!sc || sc.querySelector('.sec-wrap')) return;
       var g = sc.querySelector('.cat-grid'); if(!g) return;
       var w = document.createElement('div'); w.className = 'sec-wrap'; w.setAttribute('data-pt', a[1]);
-      w.innerHTML = '<div class="sec-hd"><span>🗂️ ' + a[2] + ' <small>(' + list(a[1]).length + ')</small></span><span class="ur" data-noen>' + a[3] + '</span></div><div class="sec-grid"></div>';
+      w.innerHTML = '<div class="sec-grid" data-noen></div>';
       g.parentNode.insertBefore(w, g);
-      var h2 = document.createElement('div'); h2.className = 'sec-hd sec-hd2'; h2.innerHTML = '<span>⭐ ' + a[4] + '</span><span class="ur" data-noen>' + a[5] + '</span>'; g.parentNode.insertBefore(h2, g);
+      
     });
   }
   function onScreen(){ ['business', 'professional'].forEach(function(pt){ var id = pt === 'business' ? 'screen-business-categories' : 'screen-specialist-categories', s = document.getElementById(id); if(s && s.classList.contains('active')) secGrid(pt); }); }
