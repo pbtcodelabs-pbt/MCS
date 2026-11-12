@@ -4311,10 +4311,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH355";
+const APP_VERSION = "MCS1211TH356";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH356": "🔢 Referral list shows a serial number on every line (1 DEV, 2 CODEV, 3 PBT, 4 AG001…)",
   "MCS1211TH355": "🤝 Referral code list is now a small clean list — DEV Developer, CODEV Co-Developer, PBT Company, AG001 agent name — one tap to choose",
   "MCS1211TH354": "🗑️ Deleting a business card also ends its membership and its MCS ID",
   "MCS1211TH353": "🆔 MCS IDs fixed on the server in your order (Habib Shahbaz MCS00101, Ghousia Naan Shop MCS00201, Punjab Setting MCS00301; Habib Shahbaz agent AG001) • old «MCS ID» button removed, IDs shown clearly",
@@ -21504,6 +21505,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
 #rpkPop .r{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:12px;background:transparent;padding:10px 12px;font:inherit;font-size:15px;color:#0b2545;cursor:pointer;direction:ltr;text-align:left}
 #rpkPop .r+.r{border-top:1px solid #eef2f7}
 #rpkPop .r b{font:800 15px Arial,sans-serif;min-width:62px;color:#0b2545}
+#rpkPop .r em{flex:none;width:24px;height:24px;border-radius:50%;background:#c9971c;color:#fff;font:800 12px/24px Arial,sans-serif;text-align:center;font-style:normal}/* MCS1211TH356: سیریل نمبر */
 #rpkPop .r span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #rpkPop .r.on{background:#dcfce7}#rpkPop .r.on b{color:#15803d}
 #rpkPop .r:active{background:#e0f2fe}
@@ -21522,7 +21524,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
   function open(sel, btn){
     let p = document.getElementById('rpkPop'); if(p) p.remove();
     p = document.createElement('div'); p.id = 'rpkPop'; p.setAttribute('data-noen', '');
-    p.innerHTML = '<div class="box">' + items(sel).map(x => `<button type="button" class="r${x.c === sel.value ? ' on' : ''}" data-c="${esc(x.c)}"><b>${esc(show(x.c))}</b><span dir="auto">${esc(x.n)}</span></button>`).join('') + '</div>';
+    p.innerHTML = '<div class="box">' + items(sel).map((x, i) => `<button type="button" class="r${x.c === sel.value ? ' on' : ''}" data-c="${esc(x.c)}"><em>${i + 1}</em><b>${esc(show(x.c))}</b><span dir="auto">${esc(x.n)}</span></button>`).join('') + '</div>';
     p.addEventListener('click', e => { const r = e.target.closest('.r'); if(r){ sel.value = r.dataset.c; try{ sel.dispatchEvent(new Event('change', { bubbles: true })); sel.dispatchEvent(new Event('input', { bubbles: true })); }catch(_){} btn.innerHTML = label(sel); } p.remove(); });
     document.body.appendChild(p);
   }
