@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH380";
+const APP_VERSION = "MCS1211TH381";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH381": "✅ Registration goes to the developer for approval by itself — no code, no message • Developer: full summary + «checked everything?» + password → 1 year • Shopkeeper gets a welcome",
   "MCS1211TH380": "⭐ Membership sheet shows only Google Play • «Send registration-complete confirmation» is a separate button in My Portal • Welcome message when the developer activates your business",
   "MCS1211TH379": "⭐ After registration the Google Play membership opens at once (shows which package) • If Play does not work: a short 6-letter confirmation code to send the developer — no long message",
   "MCS1211TH378": "🛡️ Play Store policy: removed the word «payment» from the agent registration step — only Google Play purchase mentions payment",
@@ -22343,7 +22344,20 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
   function codeFor(rk){ let m = {}; try{ m = JSON.parse(localStorage.getItem('mcsMemCode') || '{}'); }catch(e){} if(!m[rk]){ let c = ''; const a = new Uint32Array(6); try{ crypto.getRandomValues(a); }catch(e){ for(let i = 0; i < 6; i++) a[i] = Math.random() * 1e9; } for(let i = 0; i < 6; i++) c += AL[a[i] % AL.length]; m[rk] = c; try{ localStorage.setItem('mcsMemCode', JSON.stringify(m)); }catch(e){} } return m[rk]; }
   function rkOf(kind, rec){ let e = mpEntry(rec); if(!e){ try{ mpAdd(kind, rec, true); e = mpEntry(rec); }catch(_){} } const rk = pfKeyOf(rec, kind); if(e && !e.rk){ e.rk = rk; try{ saveStore(); }catch(_){} } return rk; }
   function slotName(x){ try{ return mpSlotLabel(x.p); }catch(e){ return ''; } }
-  window.memFlowOpen = function(kind, rec){ if(!rec) return; const rk = rkOf(kind || 'service', rec); setTimeout(() => memFlowRk(rk), 50); };
+  /* MCS1211TH381 (مالک کا حکم): رجسٹریشن محفوظ ہوتے ہی خود منظوری کے لیے ڈویلپر کو — نہ کوڈ، نہ پیغام، نہ کچھ لکھنا */
+  window.memAutoSend = function(kind, rec, quiet){
+    if(!rec) return; if(typeof codevBlock === 'function' && codevBlock()) return;
+    const rk = rkOf(kind || 'service', rec), more = rec.more || {}, own = kind === 'doctor' ? {owner: ''} : (typeof splitOwnerIntro === 'function' ? splitOwnerIntro(rec.intro) : {owner: ''});
+    let cat = ''; try{ cat = ubCatMeta(kind === 'doctor' ? 'doctor' : rec.category).ur; }catch(e){}
+    const me = (typeof uaMe === 'function' && uaMe()) || null, u = (me && me.user) || {};
+    try{ mrqSend(rk, {self: 1, fsId: rec.fsId || rec.id, col: kind === 'doctor' ? 'doctors' : 'services', name: own.owner || u.name || rec.nameUr || '', mobile: rec.whatsapp || u.mobile || '', wa: more.wa2 || '', gmail: more.email || '', prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', district: rec.district || '', ref: more.ref || '', refName: (typeof rpkNameOf === 'function' && more.ref) ? (rpkNameOf(more.ref) || '') : '', uid: (typeof agDev === 'function' ? agDev() : ''), kind: kind || 'service', sid: u.sid || '', text: ''}); }catch(e){}
+    try{ const m = JSON.parse(localStorage.getItem('mcsMemSent') || '{}'); m[rk] = Date.now(); localStorage.setItem('mcsMemSent', JSON.stringify(m)); }catch(e){}
+    try{ if(window.fpMarkSent) fpMarkSent(rk); }catch(e){}
+    if(!quiet) agModal(`<div style="text-align:center;font-size:50px">✅</div><div class="ag-hd" style="text-align:center">رجسٹریشن مکمل <small>Registration complete</small></div>
+      <div class="mem-pk"><div class="n">🏪 ${E(rec.nameUr || rec.name || '')}</div><small style="font-size:14px;margin-top:6px">آپ کا ریکارڈ منظوری کے لیے ڈویلپر کے پاس پہنچ گیا ہے۔ منظور ہوتے ہی ایپ کھولنے پر آپ کو خوش آمدید کا پیغام ملے گا — آپ کو کچھ نہیں لکھنا۔</small></div>
+      <button type="button" class="mem-play" onclick="closeModal('agModal')">ٹھیک ہے</button>`);
+  };
+  window.memFlowOpen = function(kind, rec){ if(!rec) return; setTimeout(() => memAutoSend(kind || 'service', rec), 50); };
   window.memFlowRk = function(rk, noPlay){
     const x = mpList().find(y => y.p.rk === rk) || mpList()[0]; if(!x) return;
     if(noPlay || !mcsPlayOk()) return memCode(x.p.rk);
@@ -22379,13 +22393,14 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     try{ const L = mpListReal(), rows = document.querySelectorAll('#myPortalModal .mx-bz');
       rows.forEach((row, i) => { const x = L[i]; if(!x || !needConf(x) || (row.nextElementSibling && row.nextElementSibling.classList.contains('mem-conf'))) return;
         const b = document.createElement('button'); b.type = 'button'; b.className = 'mem-alt mem-conf'; b.style.marginTop = '4px';
-        b.innerHTML = '📨 رجسٹریشن مکمل ہونے کی تصدیق ڈویلپر کو بھیجیں<br><small style="font-weight:600;color:#64748b">Send registration-complete confirmation to developer</small>';
-        b.onclick = () => { try{ closeModal('myPortalModal'); }catch(e){} setTimeout(() => memCode(x.p.rk), 120); };
+        let sent = 0; try{ sent = (JSON.parse(localStorage.getItem('mcsMemSent') || '{}'))[x.p.rk] || 0; }catch(e){}
+        b.innerHTML = (sent ? '⏳ منظوری کے لیے بھیجا جا چکا — دوبارہ بھیجیں' : '📨 رجسٹریشن منظوری کے لیے ڈویلپر کو بھیجیں') + '<br><small style="font-weight:600;color:#64748b">' + (sent ? 'Sent for approval — send again' : 'Send registration for approval') + '</small>';
+        b.onclick = () => { try{ closeModal('myPortalModal'); }catch(e){} setTimeout(() => memAutoSend(x.p.kind, x.rec), 120); };
         row.after(b); }); }catch(e){}
     return r; };
   /* ڈویلپر کے چالو کرتے ہی دکاندار کے فون پر ایک بار «🎉 ویلکم» */
   function welcomeCheck(){
-    try{ let W = {}, C = {}; try{ W = JSON.parse(localStorage.getItem('mcsMemWelcome') || '{}'); C = JSON.parse(localStorage.getItem('mcsMemCode') || '{}'); }catch(e){}
+    try{ let W = {}, C = {}; try{ W = JSON.parse(localStorage.getItem('mcsMemWelcome') || '{}'); C = Object.assign({}, JSON.parse(localStorage.getItem('mcsMemCode') || '{}'), JSON.parse(localStorage.getItem('mcsMemSent') || '{}')); }catch(e){}
       const x = mpListReal().find(y => C[y.p.rk] && !W[y.p.rk] && (mpLeftOf(y.p) || 0) > 300); if(!x) return;
       W[x.p.rk] = Date.now(); localStorage.setItem('mcsMemWelcome', JSON.stringify(W));
       const r = x.rec, d = new Date(x.p.until);
@@ -22396,6 +22411,27 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
   }
   const _mr = window.mpRender; if(typeof _mr === 'function') window.mpRender = mpRender = function(){ const r = _mr.apply(this, arguments); setTimeout(welcomeCheck, 800); return r; };
   setInterval(welcomeCheck, 60000);
+  /* MCS1211TH381: ڈویلپر کی منظوری — (1) پورا خلاصہ اردو میں «سب چیک کر لیا؟» (2) پاس ورڈ (اندر yearPwOk) → ایک سال + کارڈ منظور؛ خود رجسٹریشن والے کو کوئی پیغام نہیں بنتا */
+  const _ap = window.mrqApprove;
+  if(typeof _ap === 'function') window.mrqApprove = mrqApprove = function(i){
+    const x = (window._mrqShown || [])[i]; if(!x) return; const d = x.data || {}, ph = String(d.mobile || '').replace(/\D/g, '').slice(-10);
+    const row = (k, v) => v ? `<div class="mrq-r"><span>${k}</span><b dir="auto">${E(v)}</b></div>` : '';
+    agModal(`<div class="ag-hd">✅ منظوری — ایک سال <small>Approve 1-year registration</small></div>
+      <div class="mem-pk" style="text-align:right">${row('🏪 کاروبار', d.prof)}${row('👤 نام', d.name)}${row('📱 موبائل', ph ? '0' + ph : '')}${row('📍 جگہ', [d.area, d.city, d.district].filter(Boolean).join('، '))}${row('🤝 لانے والا', d.ref ? refN(d.ref) + (d.refName ? ' — ' + d.refName : '') : 'PBT')}${row('🆔 ID', x.sid ? mcsSidFmt(x.sid) : '')}</div>
+      <div class="cp-hint" style="font-weight:800;color:#b45309;text-align:center">⚠️ کیا آپ نے فارم کی ہر چیز چیک کر لی ہے؟ کوئی غلطی یا کمی تو نہیں؟<br>یہ کاروبار ایک سال کے لیے رجسٹر ہونے جا رہا ہے۔</div>
+      <button type="button" class="btn block secondary" onclick="mrqView(${i})">👁️ پورا فارم دیکھیں</button>
+      <button type="button" class="mem-play" style="margin-top:8px" id="mrqGo381">✅ ہاں، سب چیک کر لیا — پاس ورڈ دے کر منظور کریں</button>
+      <button type="button" class="mem-alt" onclick="closeModal('agModal')">ابھی نہیں</button>`);
+    document.getElementById('mrqGo381').onclick = async () => {
+      closeModal('agModal'); const oc = window.confirm; window.confirm = () => true; window._mrqSelf = !!d.self;
+      let r; try{ setTimeout(() => { window.confirm = oc; }, 300); r = await _ap.call(this, i); }finally{ window.confirm = oc; }
+      try{ if(x.st === 'done' && d.fsId && window.MCSFirebase){ const FB = window.MCSFirebase; await FB.updateDoc(FB.doc(FB.db, d.col || 'services', d.fsId), {approved: true}); } }catch(e){}
+      setTimeout(() => { window._mrqSelf = false; }, 3000);
+      if(x.st === 'done') showToast('✅ منظور — ' + (d.prof || '') + ' ایک سال کے لیے رجسٹر؛ دکاندار کے فون پر خود چالو', 5000);
+      return r; };
+  };
+  const _dn = window.memDoneShow;
+  if(typeof _dn === 'function') window.memDoneShow = memDoneShow = function(){ if(window._mrqSelf) return; return _dn.apply(this, arguments); };
   /* ڈویلپر: کوڈ لکھیں → اسی کی درخواست کھلے */
   window.mrqByCode = async function(v){
     v = String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); if(v.length < 4){ showToast('کوڈ لکھیں'); return; }
