@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH378";
+const APP_VERSION = "MCS1211TH379";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH379": "⭐ After registration the Google Play membership opens at once (shows which package) • If Play does not work: a short 6-letter confirmation code to send the developer — no long message",
   "MCS1211TH378": "🛡️ Play Store policy: removed the word «payment» from the agent registration step — only Google Play purchase mentions payment",
   "MCS1211TH377": "🛠️ Form: no more jumping down to the red box when it opens • chosen Subtype / Title now counts (View and Save no longer say it is empty)",
   "MCS1211TH376": "✅ Sign-up is instant — your basic card stays only on your own phone (no approval, nobody else sees it); developer approval only when you complete registration / membership",
@@ -5416,6 +5417,7 @@ async function mcsPlaySync(force){
 }
 document.addEventListener('DOMContentLoaded', () => setTimeout(() => { try{ mcsPlaySync(); mcsPlayDetails(); }catch(e){} }, 5000));
 function mpSubscribe(rk, noPlay){
+  if(typeof memFlowRk === 'function' && !window._memOldForm) return memFlowRk(rk, noPlay);   /* MCS1211TH379 */
   const x = mpList().find(x=>x.p.rk === rk) || mpList()[0]; if(!x) return;
   if(mcsPlayOk() && !noPlay){
     const r0 = x.rec, cat0 = ubCatMeta(x.p.kind==='doctor' ? 'doctor' : r0.category).ur, left0 = mpLeftOf(x.p);
@@ -9877,6 +9879,7 @@ function docRegSave(id){
 /* MCS0811SU245 (ہیلپ ڈیسک #142): مرحلہ مکمل ہوتے ہی اگلا مرحلہ — «ممبرشپ: تفصیل ڈویلپر کو بھیجیں» → منظوری کا انتظار */
 function fpNextStep(kind, rec){
   if(!rec) return;
+  if(typeof memFlowOpen === 'function') return memFlowOpen(kind, rec);   /* MCS1211TH379: رجسٹریشن کے فوراً بعد Google Play پیکج */
   agModal(`<div class="ag-hd">✅ رجسٹریشن مکمل <small>${escapeHtml(rec.nameUr||rec.name||'')}</small></div>
     ${window.fpCardSteps ? fpCardSteps(kind, rec) : ''}
     <div class="cp-hint" style="margin:8px 0">اگلا مرحلہ: <b>⭐ ممبرشپ</b> — اپنی تفصیل ڈویلپر کو بھیجیں؛ منظوری ہوتے ہی آپ کی پوری تفصیل سب کو نظر آئے گی۔</div>
@@ -22318,6 +22321,68 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     onScreen();
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(go, 0); }); else setTimeout(go, 0);
+})();
+</script>
+<style id="mcsMem379css">
+/* MCS1211TH379: ممبرشپ کا سیدھا راستہ — Google Play پیکج، ورنہ چھوٹا تصدیقی کوڈ */
+.mem-pk{border:2px solid #0f766e;border-radius:16px;padding:12px;background:linear-gradient(160deg,#ecfdf5,#d1fae5);text-align:center;margin:8px 0}
+.mem-pk .n{font:800 13px 'Segoe UI',Arial,sans-serif;color:#065f46}
+.mem-pk .p{font:900 26px 'Segoe UI',Arial,sans-serif;color:#0b3b33;margin:4px 0}
+.mem-pk small{display:block;color:#475569;font-size:12px}
+.mem-play{display:block;width:100%;border:0;border-radius:14px;padding:14px;background:linear-gradient(#22c55e,#15803d);color:#fff;font:900 17px 'Segoe UI',Arial,sans-serif;box-shadow:0 4px 0 #14532d;cursor:pointer}
+.mem-alt{display:block;width:100%;margin-top:12px;border:1.5px dashed #64748b;background:#fff;border-radius:12px;padding:9px;color:#334155;font:700 13px 'Segoe UI',Arial,sans-serif;cursor:pointer}
+.mem-code{font:900 38px/1.2 'Segoe UI',Consolas,monospace;letter-spacing:6px;color:#0b3b33;background:#fef9c3;border:2px dashed #ca8a04;border-radius:16px;padding:10px;text-align:center;margin:10px 0;direction:ltr;user-select:all}
+.mem-row{display:flex;gap:8px}.mem-row>*{flex:1}
+.mrq-code{display:flex;gap:6px;margin:0 0 10px;direction:ltr}.mrq-code input{flex:1;height:44px;border-radius:12px;border:2px solid #0f766e;padding:0 12px;font:800 20px Consolas,monospace;letter-spacing:3px;text-transform:uppercase}.mrq-code button{border:0;border-radius:12px;background:#0f766e;color:#fff;font:800 14px Arial,sans-serif;padding:0 14px}
+</style>
+<script id="mcsMem379">
+(function(){
+  const E = s => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s == null ? '' : s));
+  const AL = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  function codeFor(rk){ let m = {}; try{ m = JSON.parse(localStorage.getItem('mcsMemCode') || '{}'); }catch(e){} if(!m[rk]){ let c = ''; const a = new Uint32Array(6); try{ crypto.getRandomValues(a); }catch(e){ for(let i = 0; i < 6; i++) a[i] = Math.random() * 1e9; } for(let i = 0; i < 6; i++) c += AL[a[i] % AL.length]; m[rk] = c; try{ localStorage.setItem('mcsMemCode', JSON.stringify(m)); }catch(e){} } return m[rk]; }
+  function rkOf(kind, rec){ let e = mpEntry(rec); if(!e){ try{ mpAdd(kind, rec, true); e = mpEntry(rec); }catch(_){} } const rk = pfKeyOf(rec, kind); if(e && !e.rk){ e.rk = rk; try{ saveStore(); }catch(_){} } return rk; }
+  function slotName(x){ try{ return mpSlotLabel(x.p); }catch(e){ return ''; } }
+  window.memFlowOpen = function(kind, rec){ if(!rec) return; const rk = rkOf(kind || 'service', rec); setTimeout(() => memFlowRk(rk), 50); };
+  window.memFlowRk = function(rk, noPlay){
+    const x = mpList().find(y => y.p.rk === rk) || mpList()[0]; if(!x) return;
+    if(noPlay || !mcsPlayOk()) return memCode(x.p.rk);
+    const r = x.rec, left = mpLeftOf(x.p);
+    agModal(`<div class="ag-hd">⭐ ایک سال کی ممبرشپ <small>Membership — 1 year</small></div>
+      <div class="cp-hint">✅ رجسٹریشن: <b>${E(r.nameUr || r.name || '')}</b>${slotName(x) ? ' — ' + E(slotName(x)) : ''}${left > 0 ? `<br>آپ کے باقی ${left} دن بھی ساتھ رہیں گے۔` : ''}</div>
+      <div class="mem-pk"><div class="n" id="memPkN">⏳ Google Play پیکج…</div><div class="p" id="memPkP">—</div><small>Google Play کے ذریعے — ہر سال خود تجدید، جب چاہیں Play Store سے بند کریں</small></div>
+      <button type="button" class="mem-play" onclick="mcsPlayBuy('${E(x.p.rk)}')">▶️ Google Play سے ممبرشپ لیں</button>
+      <button type="button" class="mem-alt" onclick="memCode('${E(x.p.rk)}')">Play سے نہیں ہو پا رہا؟ — 🔑 تصدیقی کوڈ بنائیں</button>`);
+    (async () => { try{ const det = await mcsPlayDetails(); let owned = []; try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(y => y.itemId); }catch(_){}
+      const k = MCS_PLAY_SKUS.find(z => !owned.includes(z)), d = det && k && det[k], n = document.getElementById('memPkN'), pp = document.getElementById('memPkP');
+      if(n) n.textContent = k ? '📦 پیکج: ' + (MCS_PLAY_NAMES[k] || k) + ' (' + (MCS_PLAY_SKUS.indexOf(k) + 1) + ' / 5)' : '⚠️ اس گوگل اکاؤنٹ پر 5 ممبرشپس پہلے سے فعال ہیں';
+      if(pp) pp.textContent = d && d.p ? d.p + (/^P1Y$/i.test(d.per || '') ? ' / سال' : '') : (k ? '—' : ''); }catch(e){} })();
+  };
+  window.memCode = function(rk){
+    const x = mpList().find(y => y.p.rk === rk); if(!x) return; if(typeof codevBlock === 'function' && codevBlock()) return;
+    const r = x.rec, c = codeFor(rk), own = (x.p.kind === 'doctor') ? {owner: ''} : (typeof splitOwnerIntro === 'function' ? splitOwnerIntro(r.intro) : {owner: ''}), more = r.more || {};
+    let cat = ''; try{ cat = ubCatMeta(x.p.kind === 'doctor' ? 'doctor' : r.category).ur; }catch(e){}
+    const me = (typeof uaMe === 'function' && uaMe()) || null, u = (me && me.user) || {};
+    try{ mrqSend(rk, {code: c, name: own.owner || u.name || r.nameUr || '', mobile: r.whatsapp || u.mobile || '', wa: more.wa2 || '', gmail: more.email || '', prof: (r.nameUr || r.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: r.city || '', area: r.area || '', ref: more.ref || '', refName: (typeof rpkNameOf === 'function' && more.ref) ? (rpkNameOf(more.ref) || '') : '', uid: (typeof agDev === 'function' ? agDev() : ''), kind: x.p.kind || '', sid: u.sid || '', text: ''}); }catch(e){}
+    try{ if(window.fpMarkSent) fpMarkSent(rk); }catch(e){}
+    const t = 'My City Shines — Registration code: ' + c;
+    agModal(`<div class="ag-hd">🔑 تصدیقی کوڈ <small>Registration confirmation code</small></div>
+      <div class="cp-hint">یہ کوڈ ڈویلپر کو بھیجیں — اسی سے آپ کی رجسٹریشن کھلے گی اور ایک سال کی ممبرشپ لگ جائے گی۔</div>
+      <div class="mem-code" id="memCodeV">${c}</div>
+      <div class="mem-row"><button type="button" class="btn" onclick="try{navigator.clipboard.writeText('${c}').then(()=>showToast('📋 کاپی ہو گیا'))}catch(e){}">📋 کاپی</button>
+      <a class="btn" style="text-align:center;text-decoration:none;background:#16a34a;color:#fff" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(t)}">💬 واٹس ایپ</a></div>
+      <button type="button" class="btn block secondary" style="margin-top:8px" onclick="closeModal('agModal')">ٹھیک ہے</button>`);
+  };
+  /* ڈویلپر: کوڈ لکھیں → اسی کی درخواست کھلے */
+  window.mrqByCode = async function(v){
+    v = String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); if(v.length < 4){ showToast('کوڈ لکھیں'); return; }
+    await mrqLoad(true); const hit = MRQ.filter(x => String((x.data || {}).code || '').toUpperCase() === v);
+    if(!hit.length){ showToast('⚠️ یہ کوڈ نہیں ملا — درست لکھیں یا تھوڑی دیر بعد'); return; }
+    const all = MRQ; hit.forEach(x => { if(x.st === 'done' || x.st === 'rej'){} }); MRQ = hit; try{ mrqOpen(); }finally{ MRQ = all; }
+  };
+  const _mo = window.mrqOpen;
+  if(typeof _mo === 'function') window.mrqOpen = mrqOpen = function(){ const r = _mo.apply(this, arguments);
+    try{ const hd = document.querySelector('#agModal .ag-hd'); if(hd && !document.getElementById('mrqCodeIn')){ const d = document.createElement('div'); d.className = 'mrq-code'; d.innerHTML = '<input id="mrqCodeIn" maxlength="8" placeholder="CODE" autocomplete="off"><button type="button">🔑 کوڈ سے کھولیں</button>'; hd.after(d); const go = () => mrqByCode(document.getElementById('mrqCodeIn').value); d.querySelector('button').onclick = go; d.querySelector('input').onkeydown = e => { if(e.key === 'Enter') go(); }; } }catch(e){}
+    return r; };
 })();
 </script>
 </body>
