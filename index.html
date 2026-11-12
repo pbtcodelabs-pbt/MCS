@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH351";
+const APP_VERSION = "MCS1211TH352";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH352": "🆔 MCS ID is given at sign-up — the new person appears in the registration ID list straight away • agent codes without dash (AG001, AG002)",
   "MCS1211TH351": "🆔 MCS ID only for registered businesses (MCS00101…); ID list shows DEV, CODEV, agents and registered businesses only • empty referral = PBT (Company) • red box: ➕ Earn with MCS opens the agent form • deeper colours",
   "MCS1211TH350": "🧹 Cleaner forms — the percentage / steps strip removed, box colours a little deeper, rounder corners",
   "MCS1211TH349": "🎨 Forms in coloured boxes with gold rounded corners — 🔵 basic info, 🟢 registration (sent to developer for approval), 🔴 agent referral; each box has Edit / View / Save, View marks empty required boxes in red and tapping opens that box; what you type is kept as a draft",
@@ -20855,7 +20856,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
       const raw = String(x.sid).trim(); let sid;
       if(/^(DEV|CODEV)$/i.test(raw)) sid = raw.toUpperCase(); else if(/^AG-?\d+$/i.test(raw)) sid = raw.toUpperCase().replace(/^AG-?/, 'AG-'); else if(/^MCS[\s-]*\d+$/i.test(raw)) sid = String(x.subid || raw).replace(/[\s-]/g, '').toUpperCase(); else return;
       const key = sid + '|' + d10(x.mobile); if(seen[key]) return; seen[key] = 1;
-      const o = { sid, key, name: pickF(x, ['name']), mobile: pickF(x, ['mobile']), district: pickF(x, ['district']), kind: x.kind || '' };
+      const o = { sid, key, name: pickF(x, ['name']), mobile: pickF(x, ['mobile']), district: pickF(x, ['district']), kind: x.kind || '', done: x.kind === 'reg' };
       if(!o.name || !o.district){ const k = d10(o.mobile), r = k && recs.find(z => z && d10(z.whatsapp) === k && (z.nameUr || z.name)); if(r){ if(!o.name) o.name = r.nameUr || r.name; if(!o.district && r.district) o.district = r.district; } }
       L.push(o); }); }catch(e){}
     return L;
@@ -21450,6 +21451,13 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
       try{ if(typeof pfLoadList === 'function') pfLoadList(); }catch(e){}
     }catch(e){ err('📶 انٹرنیٹ نہیں'); }
   };
+  /* MCS1211TH352 (مالک کا حکم): ایجنٹ کوڈ دکھنے میں بغیر ڈیش — AG001، AG002 (اندر سرور پر AG-001 ہی؛ لکھا ہوا AG001 خود پہچانا جاتا ہے) */
+  const AGRX = /\bAG-(\d{3,5})\b/g, SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1 };
+  function agFix(root){ try{ const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT); let n; while((n = w.nextNode())){ const v = n.nodeValue; if(v && v.indexOf('AG-') >= 0 && !(n.parentNode && SKIP[n.parentNode.nodeName])){ const t = v.replace(AGRX, 'AG$1'); if(t !== v) n.nodeValue = t; } } }catch(e){} }
+  let agT = 0; const agMo = new MutationObserver(() => { if(agT) return; agT = setTimeout(() => { agT = 0; agFix(document.body); }, 120); });
+  const agBoot = () => { agFix(document.body); agMo.observe(document.body, { childList: true, subtree: true, characterData: true }); };
+  if(document.body) agBoot(); else document.addEventListener('DOMContentLoaded', agBoot);
+  ['agCopy'].forEach(fn => { const o = window[fn]; if(typeof o === 'function') window[fn] = function(v){ return o.call(this, typeof v === 'string' ? v.replace(AGRX, 'AG$1') : v); }; });
   /* ڈویلپر کے فون پر ایک بار خود */
   let tries = 0; const t = setInterval(() => { tries++; if(tries > 60){ clearInterval(t); return; }
     try{ if(localStorage.getItem('mcsSidReset351')){ clearInterval(t); return; } }catch(e){ clearInterval(t); return; }
