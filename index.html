@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH346";
+const APP_VERSION = "MCS1211TH347";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH347": "🆔 Registration ID list now loads from the server — every signed-up ID shows with name, mobile and district (Developer, Co-Developer and agents) • Developer CNIC is saved on the server too",
   "MCS1211TH346": "👤 My Account always opens the new English blue design for a signed-in person (no more falling back to the old Urdu page); agents get it too with an «Agent Portal» row",
   "MCS1211TH345": "🆔 Registration form: the ID list now shows each person's name with the ID (plus mobile and district) — picking an ID auto-fills name, mobile and district, and the rest of the form follows",
   "MCS1211TH344": "🛠️ The «Update complete» box now shows only what was changed in that version — each version has its own line",
@@ -13022,7 +13023,8 @@ function agGuardSet(o){ try{ localStorage.setItem('mcsGuardCnic', JSON.stringify
 function agGuardSaveDev(){
   const cur = agGuardGet(), v = prompt('ڈویلپر کا اپنا شناختی کارڈ نمبر (13 ہندسے) — خالی چھوڑ کر OK دبائیں تو ہٹ جائے گا:', cur.dev || ''); if(v === null) return;
   const d = agGDig(v); if(d && d.length !== 13){ showToast('⚠️ شناختی کارڈ کے پورے 13 ہندسے لکھیں'); return; }
-  cur.dev = d; agGuardSet(cur); showToast(d ? '✅ ڈویلپر کا شناختی کارڈ محفوظ — اس پر ایجنٹ کوڈ نہیں بنے گا' : 'ہٹا دیا گیا'); try{ agAdminRender(); }catch(e){}
+  cur.dev = d; agGuardSet(cur); try{ if(isAdminSignedIn) vfAdminHdr().then(h => fetch(PF_API + '/mcsauth', { method: 'POST', headers: h, body: JSON.stringify({ op: 'staffcnic', who: 'DEV', cnic: d }) })).then(r => r.json()).then(j => { if(!j || !j.ok) showToast('⚠️ سرور پر محفوظ نہیں ہوا' + (j && j.reason === 'cnic_used' ? ' — یہ شناختی کارڈ ' + j.other + ' کا ہے' : '')); }).catch(() => {}); }catch(e){}   /* MCS1211TH347: سرور پر بھی — اس کارڈ پر کسی فون سے ایجنٹ کوڈ نہیں بنتا */
+  showToast(d ? '✅ ڈویلپر کا شناختی کارڈ محفوظ — اس پر ایجنٹ کوڈ نہیں بنے گا' : 'ہٹا دیا گیا'); try{ agAdminRender(); }catch(e){}
 }
 async function agGuardCheck(cnic){
   const d = agGDig(cnic); if(d.length !== 13) return '';
@@ -20905,7 +20907,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     let r = null;
     try{
       if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){ const hdr = await vfAdminHdr(); r = await (await fetch(API, { method: 'POST', headers: hdr, body: JSON.stringify({ op: 'reglist' }) })).json(); }
-      else { const a = (typeof agMe === 'function' && agMe()) || {}; if(a.phone && a.pin) r = await (await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ op: 'reglist', phone: a.phone, pin: a.pin, dev: agDev() }) })).json(); }
+      else { let a = (typeof agMe === 'function' && agMe()) || {}; if(!(a.phone && a.pin)){ try{ a = (typeof codevMe === 'function' && codevMe()) || {}; }catch(_){ a = {}; } }   /* MCS1211TH347: کو-ڈویلپر کو بھی فہرست */ if(a.phone && a.pin) r = await (await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ op: 'reglist', phone: a.phone, pin: a.pin, dev: agDev() }) })).json(); }
     }catch(e){}
     if(r && r.ok && Array.isArray(r.list)){ try{ localStorage.setItem('mcsRegList', JSON.stringify(r.list.slice(0, 5000))); }catch(e){} if(manual && m) m.textContent = ''; }
     else if(manual && m){ m.innerHTML = '<span style="color:#b45309">سرور سے فہرست نہیں ملی — جو IDs فون میں موجود ہیں وہی دکھائی گئی ہیں</span>'; }
