@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH348";
+const APP_VERSION = "MCS1211TH349";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH349": "🎨 Forms in coloured boxes with gold rounded corners — 🔵 basic info, 🟢 registration (sent to developer for approval), 🔴 agent referral; each box has Edit / View / Save, View marks empty required boxes in red and tapping opens that box; what you type is kept as a draft",
   "MCS1211TH348": "🆔 IDs shown without dashes everywhere (MCS001, membership MCS00101) • Co-Developer CNIC (CODEV) saved on the server — no agent code on it",
   "MCS1211TH347": "🆔 Registration ID list now loads from the server — every signed-up ID shows with name, mobile and district (Developer, Co-Developer and agents) • Developer CNIC is saved on the server too",
   "MCS1211TH346": "👤 My Account always opens the new English blue design for a signed-in person (no more falling back to the old Urdu page); agents get it too with an «Agent Portal» row",
@@ -21209,5 +21210,184 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   setInterval(tick, 3000);
 })();
 </script>
+<!-- MCS1211TH349 (مالک کا حکم، رنگوں کا انتخاب `https://claude.ai/artifact/BkwzNeXMiUesAcrx2cwXZT`): ہر فارم رنگین ڈبوں میں — سنہری گول کونا،
+     🔵 نیلا = بنیادی معلومات (سب سے اوپر سائن اپ والی ID کی فہرست، پھر موبائل، مالک کا نام اردو / انگلش، ضلع — ID چنتے ہی خود بھریں؛ سائن اپ پورا)، 🟢 سبز = رجسٹریشن (باقی سب) → منظوری کے لیے ڈویلپر کو، 🔴 سرخ = ایجنٹ ریفرل / ایجنٹ فارم؛
+     ہر ڈبے کے آخر میں دائیں ✏️ Edit، درمیان 👁️ View، بائیں 💾 Save — Save پر ڈبہ لاک، Edit سے کھلے؛ View میں خالی ضروری خانہ سرخ، دبائیں تو وہی خانہ؛ نیا فارم لکھتے ہی خود محفوظ (مسودہ) -->
+<style id="mcsCbx349">
+.cbx{border:3px solid #c9971c;border-radius:22px;margin:0 0 12px;padding:6px 10px 8px;box-shadow:0 2px 8px rgba(201,151,28,.18)}
+.cbx-blue{background:#eff6ff}.cbx-green{background:#f0fdf4}.cbx-red{background:#fef2f2}
+.cbx-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800;font-size:15px;padding:2px 4px 6px;color:#0f1f45}
+.cbx-blue .cbx-hd{color:#1d4ed8}.cbx-green .cbx-hd{color:#15803d}.cbx-red .cbx-hd{color:#b91c1c}
+.cbx-st{font-size:12px;font-weight:800;border-radius:999px;padding:0 10px;background:#fff;border:1px solid #e5e7eb;white-space:nowrap}
+.cbx.locked .cbx-st{background:#dcfce7;border-color:#86efac;color:#166534}
+.cbx.locked .cbx-in{pointer-events:none;opacity:.78;filter:saturate(.8)}
+.cbx-bt{display:flex;gap:6px;margin-top:8px;direction:rtl}
+.cbx-bt button{flex:1;min-width:0;min-height:42px;border-radius:12px;border:1.5px solid #c9971c;background:#fff;color:#0f1f45;font:inherit;font-weight:800;font-size:14px;cursor:pointer;padding:0 6px}
+.cbx-bt .cbx-save{background:#15803d;border-color:#15803d;color:#fff}
+.cbx-blue .cbx-save{background:#1d4ed8;border-color:#1d4ed8}.cbx-red .cbx-save{background:#b91c1c;border-color:#b91c1c}
+.cbx-bt small{display:block;font-size:10.5px;font-weight:700;line-height:1.2;opacity:.9}
+.cbx .field.cbx-bad{outline:2.5px solid #dc2626;outline-offset:2px;border-radius:10px;background:#fff1f2}
+.cbx .fm-cols{margin:0}
+html body .fm-body .cbx .field{flex-wrap:wrap!important;align-items:stretch}
+html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html body .fm-body .cbx .field>textarea{flex:1 1 100%;max-width:100%}
+#serviceFormModal .mcsPasteBtn.cbx-dup{display:none!important}
+.cbx-known{border:1.5px dashed #86efac;background:#f0fdf4;border-radius:12px;padding:6px 10px;margin:0 0 8px;font-size:13px;line-height:1.9;direction:rtl}
+.cbx-known b{color:#14532d}.cbx-known a{color:#1d4ed8;text-decoration:underline;cursor:pointer;font-weight:800;margin-inline-start:6px}
+#cbxRv{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+#cbxRv .rv{background:#fff;border:3px solid #c9971c;border-radius:22px;max-width:520px;width:100%;max-height:84vh;overflow:auto;padding:10px 14px;direction:rtl}
+#cbxRv .rv h4{margin:0 0 6px;font-size:16px}
+#cbxRv .rv-r{display:flex;gap:8px;justify-content:space-between;border-bottom:1px solid #eef2f7;padding:5px 4px;cursor:pointer;font-size:14px;line-height:1.7}
+#cbxRv .rv-r b{flex:none;max-width:48%}#cbxRv .rv-r span{min-width:0;overflow-wrap:anywhere;text-align:left;direction:auto}
+#cbxRv .rv-r.bad{background:#fee2e2;color:#b91c1c;border-radius:8px}
+#cbxRv .rv-ok{margin:8px 0 4px;font-weight:800;color:#15803d}
+#cbxRv .rv-x{width:100%;min-height:42px;margin-top:8px;border:0;border-radius:12px;background:#0f1f45;color:#fff;font:inherit;font-weight:800}
+.uaCard:has(#uaName){border:3px solid #c9971c!important;border-radius:22px!important;background:#eff6ff!important}
+.ag-f.agx{border:3px solid #c9971c;border-radius:22px;background:#fef2f2;padding:8px 10px}
+</style>
+<script id="mcsCbx349js">
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const fld = id => { const e = $(id); return e ? (e.closest('.field') || e) : null; };
+  const T = {
+    blue:  ['🔵 بنیادی معلومات', 'Basic information'],
+    green: ['🟢 رجسٹریشن کی تفصیل', 'Registration details'],
+    red:   ['🔴 ایجنٹ ریفرل', 'Agent referral']
+  };
+  /* ہر فارم: کون سا خانہ کس ڈبے میں (باقی سب سبز)؛ کون سا Save اصل محفوظ کرتا ہے */
+  const CFG = {
+    serviceFormModal: { body: () => document.querySelector('#serviceFormModal .fm-body'),
+      blue: () => [$('pkRegBox'), fld('svcWhatsapp'), $('svcOwnerField'), $('svcOwnerEnField'), fld('svcDistrict')],   /* ID سب سے اوپر — چنتے ہی نیچے کے خانے خود بھر جائیں */
+      red:  () => [document.querySelector('#serviceFormModal .fm-ref')],
+      save: () => { try{ saveService(false); }catch(e){ console.error(e); } }, draft: 'mcsFormDraft_svc', editing: () => typeof editingServiceId !== 'undefined' && editingServiceId },
+    doctorFormModal: { body: () => document.querySelector('#doctorFormModal .fm-body'),
+      blue: () => [fld('docNameUr'), $('docNameEn'), fld('docDept')], red: () => [],
+      save: () => { try{ saveDoctor(false); }catch(e){ console.error(e); } }, draft: 'mcsFormDraft_doc', editing: () => typeof editingDoctorId !== 'undefined' && editingDoctorId },
+    pfEditModal: { body: () => document.querySelector('#pfEditModal .modal-box'), inner: () => $('pfEFields'),
+      blue: () => [], red: () => [fld('pfERef')],
+      save: () => { try{ pfSave(); }catch(e){ console.error(e); } } }
+  };
+  const SKIP = el => !el || el.nodeType !== 1 || el.classList.contains('cbx-wrap') || el.classList.contains('fp-bar') || el.id === 'svcStageBar' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE';
+  function mk(mid, k){
+    const b = document.createElement('div'); b.className = 'cbx cbx-' + k; b.dataset.k = k; b.dataset.m = mid; b.setAttribute('data-noen', '');
+    const sv = k === 'blue' ? '💾 Save<small>محفوظ / لاک</small>' : '💾 Save<small>' + (mid === 'pfEditModal' ? 'ممبرشپ محفوظ' : 'منظوری کے لیے ڈویلپر کو') + '</small>';
+    b.innerHTML = `<div class="cbx-hd"><span>${T[k][0]} <small style="font:600 11px Arial,sans-serif;opacity:.7">${T[k][1]}</small></span><span class="cbx-st">✍️ لکھیں</span></div><div class="cbx-in"></div>
+      <div class="cbx-bt"><button type="button" class="cbx-edit">✏️ Edit<small>ترمیم</small></button><button type="button" class="cbx-view">👁️ View<small>دیکھیں</small></button><button type="button" class="cbx-save">${sv}</button></div>`;
+    b.querySelector('.cbx-edit').onclick = () => lock(b, false);
+    b.querySelector('.cbx-view').onclick = () => review(b, false);
+    b.querySelector('.cbx-save').onclick = () => saveBox(b);
+    return b;
+  }
+  function place(mid){
+    const c = CFG[mid], body = c && c.body(); if(!body) return;
+    let w = body.querySelector(':scope > .cbx-wrap');
+    if(!w){ w = document.createElement('div'); w.className = 'cbx-wrap'; ['blue', 'green', 'red'].forEach(k => w.appendChild(mk(mid, k)));
+      const anchor = c.inner ? c.inner() : null; if(anchor) anchor.parentNode.insertBefore(w, anchor); else body.appendChild(w); }
+    const inn = k => w.querySelector('.cbx-' + k + ' > .cbx-in');
+    /* سبز: باقی سب */
+    const src = c.inner ? c.inner() : body;
+    if(src){ Array.from(src.children).forEach(ch => { if(SKIP(ch) || ch === w) return; if(c.inner || ch.parentNode === body) inn('green').appendChild(ch); }); }
+    { const B = c.blue().filter(Boolean); B.forEach((e, i) => { const at = inn('blue').children[i]; if(at !== e) inn('blue').insertBefore(e, at || null); }); }
+    c.red().filter(Boolean).forEach(e => { if(e.parentNode !== inn('red')) inn('red').appendChild(e); });
+    ['blue', 'red'].forEach(k => { const b = w.querySelector('.cbx-' + k); b.hidden = !inn(k).children.length; });
+    if(mid === 'pfEditModal'){ const sb = $('pfSaveBtn'); if(sb) sb.style.display = 'none'; }
+    if(mid === 'serviceFormModal' || mid === 'doctorFormModal'){ const m = $(mid); m.querySelectorAll('.fm-save-btn').forEach(x => x.style.display = 'none'); }
+  }
+  document.addEventListener('input', e => { const f = e.target.closest && e.target.closest('.cbx .field.cbx-bad'); if(f) f.classList.remove('cbx-bad'); }, true);
+  document.addEventListener('change', e => { const f = e.target.closest && e.target.closest('.cbx .field.cbx-bad'); if(f) f.classList.remove('cbx-bad'); }, true);
+  function lock(b, on){ if(on) b.querySelectorAll('.field.cbx-bad').forEach(f => f.classList.remove('cbx-bad')); b.classList.toggle('locked', !!on); b.querySelector('.cbx-st').textContent = on ? '🔒 محفوظ' : '✍️ لکھیں'; if(!on){ try{ b.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }catch(e){} } }
+  const vis = e => !!(e && (e.offsetParent || e.getClientRects().length));
+  function rows(scope){
+    const out = [];
+    scope.querySelectorAll('.field').forEach(f => {
+      if(!vis(f) || f.parentNode.closest('.field')) return;
+      const lab = f.querySelector('label'), inp = f.querySelector('input:not([type=file]):not([type=hidden]):not([type=checkbox]), select, textarea'); if(!lab || !inp) return;
+      let v = inp.tagName === 'SELECT' ? (inp.selectedOptions[0] ? inp.selectedOptions[0].textContent : '') : inp.value;
+      if(inp.tagName === 'SELECT' && !inp.value) v = '';
+      const req = lab.classList.contains('req') || !!lab.querySelector('.req') || /\*\s*$/.test(lab.textContent.trim());
+      out.push({ f, inp, name: lab.textContent.replace(/\s+/g, ' ').replace(/\*/g, '').trim().slice(0, 60), v: String(v || '').trim(), req });
+    });
+    return out;
+  }
+  function review(b, all){
+    const scope = all ? b.closest('.cbx-wrap') : b.querySelector('.cbx-in'), R = rows(scope), bad = R.filter(r => r.req && !r.v);
+    document.querySelectorAll('.cbx .field.cbx-bad').forEach(f => f.classList.remove('cbx-bad'));
+    bad.forEach(r => r.f.classList.add('cbx-bad'));
+    let ov = $('cbxRv'); if(ov) ov.remove();
+    ov = document.createElement('div'); ov.id = 'cbxRv'; ov.setAttribute('data-noen', '');
+    ov.innerHTML = `<div class="rv"><h4>👁️ ${all ? 'پورا فارم' : T[b.dataset.k][0]}</h4>${R.map((r, i) => `<div class="rv-r${r.req && !r.v ? ' bad' : ''}" data-i="${i}"><b>${r.req ? '* ' : ''}${esc(r.name)}</b><span>${r.v ? esc(r.v) : (r.req ? '⚠️ یہاں لکھیں' : '—')}</span></div>`).join('')}
+      ${bad.length ? `<div class="rv-ok" style="color:#b91c1c">⚠️ ${bad.length} ضروری خانے خالی — سرخ لائن دبائیں، وہی خانہ کھلے گا</div>` : '<div class="rv-ok">✅ سب ٹھیک ہے</div>'}
+      <button type="button" class="rv-x">بند کریں</button></div>`;
+    document.body.appendChild(ov);
+    ov.querySelector('.rv-x').onclick = () => ov.remove();
+    ov.addEventListener('click', e => { if(e.target === ov) ov.remove(); });
+    ov.querySelectorAll('.rv-r').forEach(el => el.onclick = () => { const r = R[+el.dataset.i]; ov.remove(); go(r); });
+    return bad;
+  }
+  function go(r){ const b = r.f.closest('.cbx'); if(b) lock(b, false); const d = r.f.closest('details'); if(d) d.open = true;
+    setTimeout(() => { try{ r.f.scrollIntoView({ block: 'center', behavior: 'smooth' }); }catch(e){} try{ r.inp.focus(); if(r.inp.tagName === 'SELECT' && r.inp.showPicker) r.inp.showPicker(); }catch(e){} }, 120); }
+  function saveBox(b){
+    const mid = b.dataset.m, c = CFG[mid], k = b.dataset.k;
+    const own = rows(b.querySelector('.cbx-in')).filter(r => r.req && !r.v);
+    if(own.length){ review(b, false); return; }
+    if(k === 'blue'){ lock(b, true); draftSave(mid); try{ showToast('🔒 بنیادی معلومات محفوظ — اب سبز ڈبہ مکمل کریں', 2500); }catch(e){} const g = b.parentNode.querySelector('.cbx-green'); if(g) try{ g.scrollIntoView({ block: 'start', behavior: 'smooth' }); }catch(e){} return; }
+    const allBad = rows(b.closest('.cbx-wrap')).filter(r => r.req && !r.v);
+    if(allBad.length){ review(b, true); return; }
+    b.closest('.cbx-wrap').querySelectorAll('.cbx').forEach(x => lock(x, true));
+    draftSave(mid); c.save();
+  }
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+  /* مسودہ: نیا فارم (ابھی محفوظ نہیں) لکھتے ہی فون میں؛ دوبارہ کھلے اور خانے خالی ہوں تو واپس */
+  function draftSave(mid){ const c = CFG[mid]; if(!c.draft || c.editing()) return; const body = c.body(); if(!body) return; const o = {};
+    body.querySelectorAll('input[id], textarea[id]').forEach(e => { if(e.type === 'file' || e.type === 'checkbox' || e.type === 'hidden') return; if(e.value && e.value.trim()) o[e.id] = e.value; });
+    try{ Object.keys(o).length ? localStorage.setItem(c.draft, JSON.stringify({ at: Date.now(), v: o })) : localStorage.removeItem(c.draft); }catch(e){} }
+  function draftLoad(mid){ const c = CFG[mid]; if(!c.draft || c.editing()) return; let d = null; try{ d = JSON.parse(localStorage.getItem(c.draft) || 'null'); }catch(e){}
+    if(!d || !d.v || Date.now() - d.at > 7 * 864e5) return; let n = 0;
+    Object.keys(d.v).forEach(id => { const e = $(id); if(e && !e.value){ e.value = d.v[id]; n++; } });
+    if(n) try{ showToast('📝 پچھلا لکھا ہوا واپس لگ گیا (' + n + ' خانے)', 2500); }catch(e){} }
+  const timers = {};
+  function hook(mid){
+    const m = $(mid); if(!m) return;
+    const run = () => { try{ place(mid); }catch(e){ console.error('cbx', e); } };
+    let wasOpen = false;
+    new MutationObserver(() => { const open = vis(m.querySelector('.modal-box') || m); if(open && !wasOpen){ m.querySelectorAll('.cbx').forEach(b => lock(b, false)); setTimeout(() => { run(); draftLoad(mid); }, 60); setTimeout(run, 600); } wasOpen = open; })
+      .observe(m, { attributes: true, attributeFilter: ['class', 'style'] });
+    const c = CFG[mid], body = c.body();
+    if(body) new MutationObserver(() => { clearTimeout(timers[mid]); timers[mid] = setTimeout(run, 30); }).observe(c.inner ? c.inner() || body : body, { childList: true });
+    m.addEventListener('input', () => { clearTimeout(timers[mid + 'd']); timers[mid + 'd'] = setTimeout(() => draftSave(mid), 800); });
+    run();
+  }
+  /* اصل محفوظ ہوتے ہی مسودہ ختم */
+  ['saveService', 'saveDoctor'].forEach((fn, i) => { const o = window[fn]; if(typeof o !== 'function') return; const key = i ? 'mcsFormDraft_doc' : 'mcsFormDraft_svc', mid = i ? 'doctorFormModal' : 'serviceFormModal';
+    window[fn] = async function(){ const r = await o.apply(this, arguments); try{ if(!vis($(mid).querySelector('.modal-box'))) localStorage.removeItem(key); else $(mid).querySelectorAll('.cbx').forEach(b => lock(b, false)); }catch(e){} return r; }; });
+  /* MCS1211TH349 (مالک کا حکم): دہرا سوال نہیں — جو بات پہلے بتا چکے (نام، موبائل، واٹس ایپ، ای میل، ریفرل…) وہ دوبارہ خالی خانے کی شکل میں نہیں؛
+     اوپر ایک سبز پٹی «✅ پہلے سے معلوم» + «✏️ بدلیں» (خانے اندر موجود، قیمت وہی جاتی ہے) */
+  function collapseKnown(pairs, host){
+    pairs = pairs.filter(x => x.inp && x.inp.value && x.inp.value.trim()); if(!pairs.length || !host || host.querySelector(':scope > .cbx-known')) return;
+    const box = document.createElement('div'); box.className = 'cbx-known'; box.setAttribute('data-noen', '');
+    box.innerHTML = '✅ <b>پہلے سے معلوم:</b> ' + pairs.map(x => esc(x.name) + ': <bdi>' + esc(x.inp.value.trim()) + '</bdi>').join(' · ') + ' <a>✏️ بدلیں</a>';
+    pairs.forEach(x => x.hide.forEach(h => { if(h) h.style.display = 'none'; }));
+    box.querySelector('a').onclick = () => { pairs.forEach(x => x.hide.forEach(h => { if(h) h.style.display = ''; })); box.remove(); };
+    host.insertBefore(box, host.firstChild);
+  }
+  const lbl = inp => { const p = inp.previousElementSibling; return p && p.tagName === 'LABEL' ? p : null; };
+  if(typeof window.mpSubscribe === 'function'){ const o = window.mpSubscribe; window.mpSubscribe = function(rk){ const r = o.apply(this, arguments);
+    setTimeout(() => { try{ const f = document.querySelector('.ag-f.mem-green'); if(!f) return;
+      const x = (typeof mpList === 'function' ? mpList() : []).find(z => z.p.rk === rk), ref = x && x.rec && x.rec.more && x.rec.more.ref, rf = $('msRef');
+      if(rf && !rf.value && ref && ref !== 'PBT') rf.value = ref;
+      const P = [['msName', 'نام'], ['msPhone', 'موبائل'], ['msWa', 'واٹس ایپ'], ['msMail', 'Gmail'], ['msRef', 'ریفرل']].map(([id, n]) => { const i = $(id); return { inp: i, name: n, hide: i ? [i, lbl(i)] : [] }; });
+      const wa = $('msWa'), ph = $('msPhone'); if(wa && ph && wa.value.replace(/\D/g, '').slice(-10) === ph.value.replace(/\D/g, '').slice(-10)) P[2].name = 'واٹس ایپ (وہی)';
+      collapseKnown(P, f); }catch(e){} }, 50); return r; }; }
+  if(typeof window.agFullForm === 'function'){ const o = window.agFullForm; window.agFullForm = function(){ const r = o.apply(this, arguments);
+    setTimeout(() => { try{ const f = document.querySelector('.ag-f.agx'); if(!f) return;
+      const P = [['agxName', 'نام'], ['agxPhone', 'موبائل'], ['agxEmail', 'ای میل'], ['agxCity', 'شہر']].map(([id, n]) => { const i = $(id); return { inp: i, name: n, hide: i ? [i.closest('.agx-f')] : [] }; });
+      collapseKnown(P, f); }catch(e){} }, 50); return r; }; }
+  /* ID کی فہرست (نام، موبائل، ضلع خود) ہو تو «Paste basic information» دہرا — چھپا */
+  setInterval(() => { const pk = $('pkRegBox'); document.querySelectorAll('#serviceFormModal .mcsPasteBtn').forEach(b => b.classList.toggle('cbx-dup', !!(pk && vis(pk)))); }, 1500);
+  const boot = () => Object.keys(CFG).forEach(hook);
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+
 </body>
 </html>
