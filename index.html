@@ -4311,10 +4311,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH353";
+const APP_VERSION = "MCS1211TH354";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH354": "🗑️ Deleting a business card also ends its membership and its MCS ID",
   "MCS1211TH353": "🆔 MCS IDs fixed on the server in your order (Habib Shahbaz MCS00101, Ghousia Naan Shop MCS00201, Punjab Setting MCS00301; Habib Shahbaz agent AG001) • old «MCS ID» button removed, IDs shown clearly",
   "MCS1211TH352": "🆔 MCS ID is given at sign-up — the new person appears in the registration ID list straight away • agent codes without dash (AG001, AG002)",
   "MCS1211TH351": "🆔 MCS ID only for registered businesses (MCS00101…); ID list shows DEV, CODEV, agents and registered businesses only • empty referral = PBT (Company) • red box: ➕ Earn with MCS opens the agent form • deeper colours",
@@ -21468,5 +21469,27 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
 })();
 </script>
 
+<script id="mcsDel354">
+/* MCS1211TH354 (مالک کا حکم): ڈویلپر کاروبار / پروفیشن کا کارڈ حذف کرے تو اس کی ممبرشپ (سرور) بھی ختم — MCS ممبرشپ ID (مثلاً MCS00302) غائب؛
+   اسی موبائل + قسم کا کوئی اور کارڈ باقی ہو تو ممبرشپ نہیں چھیڑتی (پرانا دہرا کارڈ مٹانے پر اصل کی ممبرشپ محفوظ) */
+(function(){
+  const o = window.deleteFromFirebase; if(typeof o !== 'function') return;
+  window.deleteFromFirebase = async function(col, item){
+    const ok = await o.apply(this, arguments);
+    try{
+      if(ok && item && typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){
+        const kind = col === 'doctors' ? 'doctor' : 'service', rk = pfKeyOf(item, kind);
+        const others = [].concat(store.services || [], store.doctors || []).some(x => x && x.id !== item.id && pfKeyOf(x, x.category ? 'service' : 'doctor') === rk);
+        if(rk && pfAct && pfAct[rk] && !others){
+          const hdr = await vfAdminHdr();
+          const j = await (await fetch(PF_API + '/padmin', { method: 'POST', headers: hdr, body: JSON.stringify({ rec: rk, act: 'del' }) })).json();
+          if(j && j.ok){ delete pfAct[rk]; try{ localStorage.setItem('mcsPfList', JSON.stringify(pfAct)); }catch(e){} try{ showToast('🗑️ ممبرشپ اور اس کی MCS ID بھی ختم', 3500); }catch(e){} try{ pfLoadList(); }catch(e){} }
+        }
+      }
+    }catch(e){}
+    return ok;
+  };
+})();
+</script>
 </body>
 </html>
