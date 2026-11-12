@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH349";
+const APP_VERSION = "MCS1211TH350";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH350": "🧹 Cleaner forms — the percentage / steps strip removed, box colours a little deeper, rounder corners",
   "MCS1211TH349": "🎨 Forms in coloured boxes with gold rounded corners — 🔵 basic info, 🟢 registration (sent to developer for approval), 🔴 agent referral; each box has Edit / View / Save, View marks empty required boxes in red and tapping opens that box; what you type is kept as a draft",
   "MCS1211TH348": "🆔 IDs shown without dashes everywhere (MCS001, membership MCS00101) • Co-Developer CNIC (CODEV) saved on the server — no agent code on it",
   "MCS1211TH347": "🆔 Registration ID list now loads from the server — every signed-up ID shows with name, mobile and district (Developer, Co-Developer and agents) • Developer CNIC is saved on the server too",
@@ -21214,8 +21215,15 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
      🔵 نیلا = بنیادی معلومات (سب سے اوپر سائن اپ والی ID کی فہرست، پھر موبائل، مالک کا نام اردو / انگلش، ضلع — ID چنتے ہی خود بھریں؛ سائن اپ پورا)، 🟢 سبز = رجسٹریشن (باقی سب) → منظوری کے لیے ڈویلپر کو، 🔴 سرخ = ایجنٹ ریفرل / ایجنٹ فارم؛
      ہر ڈبے کے آخر میں دائیں ✏️ Edit، درمیان 👁️ View، بائیں 💾 Save — Save پر ڈبہ لاک، Edit سے کھلے؛ View میں خالی ضروری خانہ سرخ، دبائیں تو وہی خانہ؛ نیا فارم لکھتے ہی خود محفوظ (مسودہ) -->
 <style id="mcsCbx349">
-.cbx{border:3px solid #c9971c;border-radius:22px;margin:0 0 12px;padding:6px 10px 8px;box-shadow:0 2px 8px rgba(201,151,28,.18)}
-.cbx-blue{background:#eff6ff}.cbx-green{background:#f0fdf4}.cbx-red{background:#fef2f2}
+/* MCS1211TH350 (مالک کا حکم): فیصد / مرحلوں کی پٹی فارم سے ختم، رنگ گہرے، کونے زیادہ گول */
+.cbx{border:3px solid #c9971c;border-radius:28px;margin:0 0 16px;padding:10px 12px 12px;box-shadow:0 4px 14px rgba(120,80,10,.18),inset 0 0 0 2px rgba(255,255,255,.55);overflow:hidden}
+.cbx-blue{background:#c7dcff}.cbx-green{background:#c3eecf}.cbx-red{background:#fbcaca}
+.cbx .field{border-radius:16px!important}
+.cbx .field>label{border-radius:14px!important}
+.cbx input,.cbx select,.cbx textarea,.cbx .csel-btn{border-radius:14px!important}
+.cbx #pkRegBox{border-radius:18px!important;background:rgba(255,255,255,.55)!important}
+.cbx-bt button{border-radius:16px}
+#serviceFormModal .fp-bar,#doctorFormModal .fp-bar,#pfEditModal .fp-bar,#agModal .fp-bar,#serviceFormModal #svcStageBar.cbx-dup{display:none!important}
 .cbx-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800;font-size:15px;padding:2px 4px 6px;color:#0f1f45}
 .cbx-blue .cbx-hd{color:#1d4ed8}.cbx-green .cbx-hd{color:#15803d}.cbx-red .cbx-hd{color:#b91c1c}
 .cbx-st{font-size:12px;font-weight:800;border-radius:999px;padding:0 10px;background:#fff;border:1px solid #e5e7eb;white-space:nowrap}
@@ -21383,7 +21391,9 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
       const P = [['agxName', 'نام'], ['agxPhone', 'موبائل'], ['agxEmail', 'ای میل'], ['agxCity', 'شہر']].map(([id, n]) => { const i = $(id); return { inp: i, name: n, hide: i ? [i.closest('.agx-f')] : [] }; });
       collapseKnown(P, f); }catch(e){} }, 50); return r; }; }
   /* ID کی فہرست (نام، موبائل، ضلع خود) ہو تو «Paste basic information» دہرا — چھپا */
-  setInterval(() => { const pk = $('pkRegBox'); document.querySelectorAll('#serviceFormModal .mcsPasteBtn').forEach(b => b.classList.toggle('cbx-dup', !!(pk && vis(pk)))); }, 1500);
+  setInterval(() => { const pk = $('pkRegBox'), on = !!(pk && vis(pk)); document.querySelectorAll('#serviceFormModal .mcsPasteBtn').forEach(b => b.classList.toggle('cbx-dup', on)); const sb = $('svcStageBar'); if(sb) sb.classList.toggle('cbx-dup', on); }, 800);
+  /* MCS1211TH350: فیصد والی پٹی ہٹی تو 100٪ پر خود کھلنے والا جائزہ بھی نہیں — ہر ڈبے کا 👁️ View کافی */
+  setTimeout(() => { if(typeof window.fpReview === 'function') window.fpReview = function(){}; }, 0);
   const boot = () => Object.keys(CFG).forEach(hook);
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
