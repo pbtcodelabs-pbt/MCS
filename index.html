@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH383";
+const APP_VERSION = "MCS1211TH384";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH384": "🆔 Only MCS ID everywhere (old p… business ID removed) • Your own MCS ID at the top of the registration form • Bolder, clearer form text",
   "MCS1211TH383": "✂️ Approval pop-ups shortened — one short English line, no long Urdu sentences",
   "MCS1211TH382": "✅ Agents / co-developer: registration goes to the developer for approval by itself (with login ID) — no Help Desk message • Developer's own registrations: «checked everything?» + password → 1 year",
   "MCS1211TH381": "✅ Registration goes to the developer for approval by itself — no code, no message • Developer: full summary + «checked everything?» + password → 1 year • Shopkeeper gets a welcome",
@@ -4922,7 +4923,7 @@ function pfHtml(c){
       ${mapUrl ? `<a class="pf-map" href="${escapeAttr(mapUrl)}" target="_blank" rel="noopener">🗺️ نقشے پر راستہ دیکھیں</a>` : ''}
       ${more.email ? `<a class="pf-lnk" href="mailto:${escapeAttr(more.email)}">✉️ ${escapeHtml(more.email)}</a>` : ''}${(d.links||[]).map(l=>`<a class="pf-lnk" href="${escapeAttr(l)}" target="_blank" rel="noopener">🌐 ${escapeHtml(l)}</a>`).join('')}</div>`
     + ((owner || adm || live) ? `<div class="pf-own" style="gap:6px">${(owner || adm) ? `<button type="button" class="pf-edit" onclick="fpOpen('${c.kind}','${escapeAttr(c.rec.id)}')">📄 مکمل پروفائل — ایک صفحہ (پرنٹ / شیئر)</button>` : ''}<button type="button" class="pf-edit" style="background:linear-gradient(135deg,#f7dd9c,#d4a017);color:#3a2600" onclick="fpOpen('${c.kind}','${escapeAttr(c.rec.id)}').then(function(){fpPromoOpen()})">📣 بزنس پروفائل شیئر کریں</button></div>` : '')
-    + ((owner || adm) && c.rk ? `<div class="pf-id">🆔 کاروبار ID: <b dir="ltr">${escapeHtml(c.rk)}</b><button type="button" onclick="agCopy('${escapeAttr(c.rk)}')">📋 کاپی</button></div>` : '')
+    + ((owner || adm) ? (()=>{ let mid = ''; try{ mid = shortRecordId(c.kind === 'doctor' ? 'doctor' : 'service', r); }catch(e){} if(!mid && owner){ try{ const u = (uaMe() || {}).user || {}; if(u.sid) mid = mcsSidFmt(u.sid); }catch(e){} } return mid ? `<div class="pf-id">🆔 MCS ID: <b dir="ltr">${escapeHtml(mid)}</b><button type="button" onclick="agCopy('${escapeAttr(mid)}')">📋 Copy</button></div>` : ''; })() : '')   /* MCS1211TH384: پرانی p… ID نہیں — صرف MCS ID */
     + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ ممبرشپ فعال — ${left} دن باقی` : '⚠️ ممبرشپ کی مدت ختم — جاری رکھنے کے لیے تفصیل بھیجیں'}</div>` : ''}
         ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں — 7 دن مفت'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
         ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">${mcsPlayOk() ? '⭐ ممبرشپ ایک سال کے لیے جاری رکھیں — Google Play' : '📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں'}</button>` : ''}
@@ -22473,6 +22474,32 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
   if(typeof _mo === 'function') window.mrqOpen = mrqOpen = function(){ const r = _mo.apply(this, arguments);
     try{ const hd = document.querySelector('#agModal .ag-hd'); if(hd && !document.getElementById('mrqCodeIn')){ const d = document.createElement('div'); d.className = 'mrq-code'; d.innerHTML = '<input id="mrqCodeIn" maxlength="8" placeholder="CODE" autocomplete="off"><button type="button">🔑 کوڈ سے کھولیں</button>'; hd.after(d); const go = () => mrqByCode(document.getElementById('mrqCodeIn').value); d.querySelector('button').onclick = go; d.querySelector('input').onkeydown = e => { if(e.key === 'Enter') go(); }; } }catch(e){}
     return r; };
+})();
+</script>
+<style id="mcsForm384css">
+/* MCS1211TH384 (مالک کا حکم): فارم کی لکھائی موٹی اور صاف */
+#serviceFormModal .cbx input,#serviceFormModal .cbx select,#serviceFormModal .cbx textarea,#doctorFormModal .cbx input,#doctorFormModal .cbx select,#doctorFormModal .cbx textarea,#pfEditModal input,#pfEditModal textarea{font-weight:700 !important;font-size:16px !important;color:#0b1f1c !important}
+#serviceFormModal .cbx .field>label,#doctorFormModal .cbx .field>label{font-weight:800 !important;color:#0b3b33 !important}
+#serviceFormModal .cbx input::placeholder,#serviceFormModal .cbx textarea::placeholder{font-weight:500 !important;color:#94a3b8 !important}
+#selfIdBox{margin:2px 0 10px;padding:10px 12px;border:2px solid #1d4ed8;border-radius:16px;background:#eff6ff;display:flex;align-items:center;justify-content:space-between;gap:8px;direction:ltr}
+#selfIdBox span{font:700 13px 'Segoe UI',Arial,sans-serif;color:#1e3a8a}#selfIdBox b{font:900 24px 'Segoe UI',Consolas,monospace;color:#0b1f4d;letter-spacing:1px}
+</style>
+<script id="mcsForm384">
+/* MCS1211TH384: عام دکاندار کے فارم میں سب سے اوپر نیلے ڈبے میں اس کی اپنی MCS ID (عملے کو ID کی فہرست پہلے سے) */
+(function(){
+  function put(){
+    const m = document.getElementById('serviceFormModal'); if(!m) return;
+    let staff = false; try{ staff = !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()) || (typeof agMe === 'function' && agMe() && (agMe().code || agMe().pin))); }catch(e){}
+    const blue = m.querySelector('.cbx-blue > .cbx-in'); let b = document.getElementById('selfIdBox');
+    let sid = ''; try{ const u = ((typeof uaMe === 'function' && uaMe()) || {}).user || {}; sid = u.sid ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(u.sid) : u.sid) : ''; }catch(e){}
+    if(staff || !sid || !blue){ if(b) b.remove(); return; }
+    if(!b){ b = document.createElement('div'); b.id = 'selfIdBox'; b.setAttribute('data-noen', ''); }
+    b.innerHTML = '<span>🆔 Your MCS ID</span><b>' + sid + '</b>';
+    if(blue.firstChild !== b) blue.insertBefore(b, blue.firstChild);
+    const box = blue.closest('.cbx'); if(box) box.hidden = false;
+  }
+  function hook(){ const m = document.getElementById('serviceFormModal'); if(!m) return; new MutationObserver(() => setTimeout(put, 700)).observe(m, {attributes: true, attributeFilter: ['class', 'style']}); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hook); else hook();
 })();
 </script>
 </body>
