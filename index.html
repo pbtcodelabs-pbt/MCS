@@ -1905,9 +1905,9 @@ html.mcs-dark .hl-tx b,html.mcs-dark .hl-h b{color:#e2f5f2;}html.mcs-dark .hl-tx
 /* MCS0111SU111: قبلہ کمپاس + نماز */
 .cc-qibla{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:#fff;font-family:inherit;padding:0;cursor:pointer;}
 .cq-dial{width:62px;height:62px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));}
-#cqRing{transition:transform .25s linear;transform-origin:50px 50px;}
+#cqRing{transition:transform .35s ease-out;transform-origin:50px 50px;will-change:transform;}
 .cq-t{font-size:11px;line-height:1.5;white-space:nowrap;}
-.cq-t b{font:800 11.5px Arial,sans-serif;direction:ltr;display:inline-block;}
+.cq-t b{font:800 11.5px Arial,sans-serif;direction:ltr;display:inline-block;min-width:6.2em;text-align:center;}
 .cc-r2{display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex:0 1 auto;min-width:0;}
 .cc-namaz{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-family:inherit;font-size:11.5px;line-height:1.55;padding:1px 7px;cursor:pointer;text-align:left;direction:rtl;max-width:150px;}
 .cc-namaz:empty{display:none;}
@@ -4310,11 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH340";
+const APP_VERSION = "MCS1211TH341";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1211TH340": "🔑 After approval the developer gets an activation code (e.g. K7QM-4XT9) — the shopkeeper types it on the login page and enters as a registered business with 1-year membership; your own ID + code stay locked on the login page",
+  "MCS1211TH341": "🔑 After approval the developer gets an activation code (e.g. K7QM-4XT9) — the shopkeeper types it on the login page and enters as a registered business with 1-year membership; your own ID + code stay locked on the login page",
   "MCS1211TH333": "🔑 Sign up: name, mobile, district, 6-digit PIN — your Account ID + 4-digit registration code appear at once; agents fetch your record with that code, developer approves 1 year, you paste the ready message on the login page",
   "MCS1211TH332": "🔠 Home screen text is now about 20% bigger and easier to read — bottom bar, colours and design unchanged",
   "MCS1111WE331": "🛡️ My Chats now has a pinned «Approvals» row for the developer — membership, new business, agent requests; tap to open the real page, it clears itself when done",
@@ -5626,7 +5626,7 @@ let ubOpen = '';
 const UB_LABELS = {province:'صوبہ', district:'ضلع', city:'شہر', area:'علاقہ', cat:'کیٹگری'};
 const UB_PALETTE = [['#0f766e','#e3f4f1'],['#c2740a','#fff1dc'],['#1d4ed8','#e6eeff'],['#be185d','#ffe6ef'],
   ['#6d28d9','#f0e8ff'],['#15803d','#e4f6e0'],['#c2410c','#ffeadb'],['#0369a1','#e0f1fb']];
-/* MCS1211TH340 (مالک کا حکم): ایک ہی موبائل نمبر کے دو کارڈ — جس پر ایم سی ایس نمبر لگ چکا وہی اصل؛ بغیر ایم سی ایس والا پرانا کارڈ
+/* MCS1211TH341 (مالک کا حکم): ایک ہی موبائل نمبر کے دو کارڈ — جس پر ایم سی ایس نمبر لگ چکا وہی اصل؛ بغیر ایم سی ایس والا پرانا کارڈ
    صرف ڈویلپر کو لال کراس کے ساتھ نظر آئے (حذف کا بٹن)، باقی سب (یوزر، ایجنٹ، کو-ڈویلپر) سے چھپا رہے */
 let _dupC = { t: 0, n: -1, m: null };
 function dupMap(){
@@ -5639,7 +5639,7 @@ function dupMap(){
   _dupC = { t: now, n, m: old }; return old;
 }
 function dupOld(r){ try{ return !!r && dupMap().has(r); }catch(e){ return false; } }
-function dupSeer(){ try{ return !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn())); }catch(e){ return false; } }   /* MCS1211TH340: ڈویلپر اور کو-ڈویلپر دونوں کو پرانا کارڈ نظر آئے */
+function dupSeer(){ try{ return !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn())); }catch(e){ return false; } }   /* MCS1211TH341: ڈویلپر اور کو-ڈویلپر دونوں کو پرانا کارڈ نظر آئے */
 function dupVis(r){ try{ return dupSeer() || !dupOld(r); }catch(e){ return true; } }
 function dupBadge(kind, r){
   if(!dupSeer() || !dupOld(r)) return '';
@@ -7191,7 +7191,7 @@ async function sidReplace(kind, id){
     showToast('✅ ' + old + ' → ' + j.sid);
   }catch(e){ showToast('Could not set ID — check internet / admin login'); }
 }
-/* MCS1211TH340 (مالک کا حکم): کاروبار کی واحد ID = ایم سی ایس نمبر (سبسکرپشن ہو تو MCS-001-01)؛ قسم وار / دوسری کوئی ID نہیں۔ ایم سی ایس کے بغیر ریکارڈ کی ID خالی */
+/* MCS1211TH341 (مالک کا حکم): کاروبار کی واحد ID = ایم سی ایس نمبر (سبسکرپشن ہو تو MCS-001-01)؛ قسم وار / دوسری کوئی ID نہیں۔ ایم سی ایس کے بغیر ریکارڈ کی ID خالی */
 function legacyRecordId(kind, item){
   const digits = String(item.fsId || item.id || '').replace(/[^0-9]/g,'');
   const tail = (digits.slice(-5) || '00000').padStart(5,'0');
@@ -13003,7 +13003,7 @@ function agCreatedShow(a){ try{ agList = agList.filter(x=>x.id!==a.id); agList.p
       <a class="btn block" style="text-align:center;margin-top:8px" target="_blank" rel="noopener" href="https://wa.me/${escapeAttr(a.phone)}?text=${encodeURIComponent(msg)}">💬 ایجنٹ کو واٹس ایپ پر بھیجیں</a>
       <button type="button" class="btn block secondary" style="margin-top:6px" onclick="devAgentsOpen()">↩️ میرے رجسٹرڈ ایجنٹس</button>`);
 }
-/* MCS1211TH340 (مالک کا حکم): ڈویلپر / کو-ڈویلپر کے شناختی کارڈ پر ایجنٹ نہیں بن سکتا — ان کا اپنا DEV / CODEV کوڈ ہی ریفرل ہے؛ اسی کارڈ پر اپنا کاروبار بن سکتا ہے */
+/* MCS1211TH341 (مالک کا حکم): ڈویلپر / کو-ڈویلپر کے شناختی کارڈ پر ایجنٹ نہیں بن سکتا — ان کا اپنا DEV / CODEV کوڈ ہی ریفرل ہے؛ اسی کارڈ پر اپنا کاروبار بن سکتا ہے */
 const AG_GUARD_DEV = '🚫 اس شناختی کارڈ پر آپ ڈویلپر کا ریفرل کوڈ (DEV) پہلے سے محفوظ ہے — الگ ایجنٹ کوڈ نہیں بن سکتا۔ اپنا ڈویلپر کوڈ ہی ریفرل کوڈ کے طور پر استعمال کریں۔ (اسی شناختی کارڈ پر اپنا کاروبار بنانے کی اجازت ہے)';
 const AG_GUARD_CD = '🚫 اس شناختی کارڈ پر کو-ڈویلپر کا ریفرل کوڈ (CODEV) پہلے سے محفوظ ہے — الگ ایجنٹ کوڈ نہیں بن سکتا۔ کو-ڈویلپر والا کوڈ ہی ریفرل کوڈ کے طور پر استعمال کریں۔ (اسی شناختی کارڈ پر اپنا کاروبار بنانے کی اجازت ہے)';
 const agGDig = x => String(x || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '');
@@ -15156,7 +15156,7 @@ function ccNamazAll(){
   document.body.appendChild(b);
 }
 function ccQiblaDeg(lat, lon){ const D = Math.PI/180, kl = 21.4225*D, kL = 39.8262*D, la = lat*D, dL = kL - lon*D; return (Math.atan2(Math.sin(dL), Math.cos(la)*Math.tan(kl) - Math.sin(la)*Math.cos(dL))/D + 360) % 360; }
-let ccHeading = null, ccQDeg = null, ccQRaf = 0;
+let ccHeading = null, ccQDeg = null, ccQRaf = 0, ccLastT = 0;
 function ccQiblaShow(){
   const c = ccCoords(), t = document.getElementById('ccQiblaT'), ring = document.getElementById('cqRing'), k = document.getElementById('cqKaaba');
   if(!t || !ring || !k) return;
@@ -15165,7 +15165,7 @@ function ccQiblaShow(){
   k.setAttribute('transform', `rotate(${ccQDeg.toFixed(1)} 50 50)`);
   ring.style.transform = ccHeading == null ? '' : `rotate(${(-ccHeading).toFixed(1)}deg)`;
   /* MCS0111SU112: فون کا رخ قبلہ کی طرف (±6°) ہو تو کمپاس سبز چمکے */
-  const q = document.getElementById('ccQibla'); if(q){ const diff = ccHeading == null ? 999 : Math.abs(((ccQDeg - ccHeading + 540) % 360) - 180); q.classList.toggle('aligned', diff < 6); }
+  const q = document.getElementById('ccQibla'); if(q){ const hn = ccHeading == null ? null : ((ccHeading % 360) + 360) % 360, diff = hn == null ? 999 : Math.abs(((ccQDeg - hn + 540) % 360) - 180); const on = q.classList.contains('aligned'); const want = on ? diff < 10 : diff < 5; if(want !== on) q.classList.toggle('aligned', want); }   /* MCS1211TH341: سبز چمک کے لیے دو حدیں (۵° آن، ۱۰° آف) تاکہ سرحد پر ٹمٹمائے نہیں */
   const v = `قبلہ <b>Qibla ${Math.round(ccQDeg)}°</b>`; if(t.innerHTML !== v) t.innerHTML = v;
 }
 function ccOnOrient(e){
@@ -15175,7 +15175,9 @@ function ccOnOrient(e){
   if(h == null || isNaN(h)) return;
   const so = (screen.orientation && screen.orientation.angle) || window.orientation || 0; h = (h + so + 360) % 360;
   /* سوئی کانپے نہیں — ہلکی ہمواری */
-  if(ccHeading == null) ccHeading = h; else { const d = ((h - ccHeading + 540) % 360) - 180; ccHeading = (ccHeading + d*0.25 + 360) % 360; }
+  /* MCS1211TH341 (مالک کا حکم): سوئی کا کانپنا بند — (۱) زاویہ مسلسل رہتا ہے (۰/۳۶۰ پر الٹا چکر نہیں)، (۲) ۲ ڈگری سے چھوٹی ہلچل نظر انداز، (۳) زیادہ ہمواری، (۴) ایک سیکنڈ میں صرف ~۱۲ تازہ کاری */
+  if(ccHeading == null) ccHeading = h; else { const d = ((h - ccHeading + 540) % 360) - 180; if(Math.abs(d) < 2) return; ccHeading = ccHeading + d*0.15; }
+  const _n = Date.now(); if(_n - ccLastT < 80) return; ccLastT = _n;
   if(!ccQRaf) ccQRaf = requestAnimationFrame(()=>{ ccQRaf = 0; if(!mcsTyping()) ccQiblaShow(); });
 }
 let ccOrientOn = false;
@@ -15668,6 +15670,11 @@ body.d2 #homeAds .ad-ribbon{display:none}
 <g fill="#7dd3fc" opacity=".5"><rect x="20" y="58" width="26" height="50"/><rect x="50" y="42" width="18" height="66"/><rect x="72" y="66" width="30" height="42"/><path d="M110 108V68h8V50l6-14 6 14v18h8v40z"/><circle cx="160" cy="72" r="20"/><rect x="140" y="72" width="40" height="36"/><rect x="188" y="20" width="7" height="88"/><path d="M186 20l5.5-14 5.5 14z"/><rect x="204" y="54" width="34" height="54"/><rect x="244" y="38" width="20" height="70"/><circle cx="290" cy="74" r="16"/><rect x="274" y="74" width="32" height="34"/><rect x="312" y="60" width="24" height="48"/><rect x="342" y="46" width="16" height="62"/><rect x="362" y="68" width="22" height="40"/></g>
 <path d="M0 98 C80 76 150 112 220 98 S330 76 390 92 V130 H0z" fill="url(#uaG2)" opacity=".9"/><path d="M0 114 C90 96 170 126 250 112 S350 102 390 110 V130 H0z" fill="#15803d" opacity=".55"/></svg></div>
 <script>
+/* MCS1211TH341: ہوم اسکرین پر صفحہ کبھی اوپر نیچے کھسکے تو فوراً واپس صفر پر */
+(function(){ function lock(){ try{ if(!document.querySelector('#screen-home.active')) return; var se = document.scrollingElement || document.documentElement; if(se.scrollTop !== 0) se.scrollTop = 0; if(document.body.scrollTop !== 0) document.body.scrollTop = 0; var h = document.getElementById('screen-home'); if(h && h.scrollTop !== 0) h.scrollTop = 0; }catch(e){} }
+  window.addEventListener('scroll', lock, {passive:true, capture:true}); window.addEventListener('resize', function(){ setTimeout(lock, 50); }); setInterval(lock, 1500); })();
+</script>
+<script>
 (function(){
   const API = 'https://aio-pos-verify.pbtcodelabs.workers.dev/mcsauth';
   const GCID = '954131537356-2be2rne30mje71l9qibosblvj3j0eqoj.apps.googleusercontent.com';
@@ -15832,7 +15839,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     window._uaPkMsg = msg;
   };
   window.uaPkCopy = function(){ const t = window._uaPkMsg || ''; try{ navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){ prompt('کاپی کریں', t); } };
-  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.pk) return ''; return `<div class="uaPkTiny" dir="ltr"><span onclick="uaPkCopyMini()">🔒 ${esc(o.sid)} • ${esc(o.pk)}</span><button type="button" onclick="uaPkCopyMini()" title="Copy">⧉</button></div>`; }catch(e){ return ''; } }   /* MCS1211TH340: لاگ اِن صفحے پر چھوٹی سی ID+کوڈ نیچے بائیں، ساتھ باریک کاپی بٹن */
+  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.pk) return ''; return `<div class="uaPkTiny" dir="ltr"><span onclick="uaPkCopyMini()">🔒 ${esc(o.sid)} • ${esc(o.pk)}</span><button type="button" onclick="uaPkCopyMini()" title="Copy">⧉</button></div>`; }catch(e){ return ''; } }   /* MCS1211TH341: لاگ اِن صفحے پر چھوٹی سی ID+کوڈ نیچے بائیں، ساتھ باریک کاپی بٹن */
   window.uaPkCopyMini = function(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); const t = 'My City Shines — Account ID: ' + o.sid + ' • رجسٹریشن کوڈ: ' + o.pk; navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){} };
   window.uaAutoCard = function(u){
     if(!u || !u.mobile || typeof store === 'undefined') return;
@@ -16082,13 +16089,13 @@ body.d2 #homeAds .ad-ribbon{display:none}
   /* ---- نیا بندہ: میسج پیسٹ ---- */
   const invBox = () => `<div class="agl">🔑 ایجنٹ کی طرف سے ملنے والا کوڈ</div>
     <div style="display:flex;gap:6px;direction:ltr;align-items:center"><input id="uaInvTx" type="text" dir="ltr" maxlength="400" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX" onpaste="setTimeout(function(){uaInvGo(1)},120)" onkeydown="if(event.key==='Enter')uaInvGo()" style="flex:1;min-width:0;box-sizing:border-box;height:38px;border:1.5px solid #cbd5e1;border-radius:10px;padding:0 10px;font:800 15px Arial,sans-serif;letter-spacing:2px;text-align:center;text-transform:uppercase;background:#fff;color:#0f1f45"><button type="button" class="uaBtn bO" style="flex:none;width:auto;height:38px;margin:0;padding:0 10px;font-size:13px" onclick="uaInvPaste()">📋</button><button type="button" class="uaBtn bB" style="flex:none;width:auto;height:38px;margin:0;padding:0 12px;font-size:13px" onclick="uaInvGo()">OK</button></div>
-    <div class="uaErr" id="uaInvErr" style="margin:4px 0 0"></div>`;   /* MCS1211TH340: باریک خانہ؛ قبول ہوتے ہی کوڈ مٹ جاتا ہے، لکھتے وقت چھپا رہتا ہے */
+    <div class="uaErr" id="uaInvErr" style="margin:4px 0 0"></div>`;   /* MCS1211TH341: باریک خانہ؛ قبول ہوتے ہی کوڈ مٹ جاتا ہے، لکھتے وقت چھپا رہتا ہے */
   window.uaRegToggle = function(cb){ const b = $('uaRegBox'); if(!b) return; b.style.display = cb.checked ? 'block' : 'none'; if(cb.checked){ setTimeout(() => { try{ b.scrollIntoView({ behavior:'smooth', block:'center' }); const t = $('uaInvTx'); if(t) t.focus(); }catch(e){} }, 60); } };
   window.uaInvAsk = function(){
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.login}</i><h2 style="font-size:22px">رجسٹریشن کا میسج پیسٹ کریں</h2></div><div class="uaSub">اپنی رجسٹریشن کا میسج یہاں پیسٹ کریں</div>${invBox()}
       <button class="uaBtn bO" onclick="${uaMe() ? 'uaAccount()' : 'uaLogin()'}">← واپس</button></div>`);
   };
-  /* MCS1211TH340 (مالک کا حکم): ایجنٹ سے ملا ایکٹیویشن کوڈ → سرور (actuse) اسی موبائل کا اکاؤنٹ + لاگ اِن، پھر کاروبار جڑتا ہے (fedApplyPending — ایک سال کی ممبرشپ پہلے سے) */
+  /* MCS1211TH341 (مالک کا حکم): ایجنٹ سے ملا ایکٹیویشن کوڈ → سرور (actuse) اسی موبائل کا اکاؤنٹ + لاگ اِن، پھر کاروبار جڑتا ہے (fedApplyPending — ایک سال کی ممبرشپ پہلے سے) */
   window.uaActGo = async function(c){
     const e = $('uaInvErr'); if(e) e.textContent = '⏳ کوڈ جانچ رہا ہوں…';
     busy(1); let r = null; try{ r = await api({ op:'actuse', code: c }); }catch(_){} busy(0);
@@ -16408,7 +16415,10 @@ body.d2 .qt-plus{top:3px !important;bottom:auto !important;left:auto !important;
 .cat-bar .cb-grp{max-width:100%;}
 body:has(#screen-home.active){overflow-y:hidden;}
 html:has(#screen-home.active){overflow-y:hidden;}
-#screen-home.active{overflow:hidden;}
+#screen-home.active{overflow:hidden;touch-action:pan-x;}
+/* MCS1211TH341 (مالک کا حکم): ہوم اسکرین ایک جگہ پکی — اوپر نیچے کھنچنا / اچھلنا بند */
+html,body{overscroll-behavior:none;}
+body:has(#screen-home.active){position:relative;touch-action:pan-x;}
 </style>
 
 <script>
@@ -20848,7 +20858,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     m.innerHTML = `<span style="color:#047857">✅ ${esc(u.name)} (${esc(u.sid)}) — نام، موبائل، ضلع لگ گئے؛ باقی فارم (کاروبار کا نام، قسم، پتہ، شناختی کارڈ…) مکمل کر کے محفوظ کریں</span>`;
   };
   const _osf = window.openServiceForm;
-  /* MCS1211TH340: خود فارم بھرنے والے کے لیے ڈبہ نہیں — لاگ اِن کی معلومات (نام، موبائل، ضلع) خود بخود آ جاتی ہیں */
+  /* MCS1211TH341: خود فارم بھرنے والے کے لیے ڈبہ نہیں — لاگ اِن کی معلومات (نام، موبائل، ضلع) خود بخود آ جاتی ہیں */
   function ownFill(){
     try{
       if(role()) return; const a = typeof uaMe === 'function' && uaMe(); if(!a || !a.user) return;
@@ -20909,7 +20919,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     }catch(e){}
     return r;
   };
-  /* MCS1211TH340 (مالک کا حکم): منظوری کے بعد ایکٹیویشن کوڈ XXXX-XXXX (سرور actmake، صرف ڈویلپر) — دکاندار لاگ اِن صفحے پر لکھے تو لاگ اِن + رجسٹرڈ + ایک سال */
+  /* MCS1211TH341 (مالک کا حکم): منظوری کے بعد ایکٹیویشن کوڈ XXXX-XXXX (سرور actmake، صرف ڈویلپر) — دکاندار لاگ اِن صفحے پر لکھے تو لاگ اِن + رجسٹرڈ + ایک سال */
   async function actMake(p, o){
     try{
       const hdr = await vfAdminHdr();
