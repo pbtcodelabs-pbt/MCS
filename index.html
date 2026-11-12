@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH375";
+const APP_VERSION = "MCS1211TH376";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH376": "✅ Sign-up is instant — your basic card stays only on your own phone (no approval, nobody else sees it); developer approval only when you complete registration / membership",
   "MCS1211TH375": "🪪 Registration form: CNIC box at the top of the green Registration box",
   "MCS1211TH374": "✍️ Urdu names in the sector / title lists are now bigger and bolder (Noori Nastaleeq Kasheeda)",
   "MCS1211TH373": "🗂️ Sectors and titles now in one-line dropdowns (A→Z, Z→A, most records) — cards show right below",
@@ -10263,7 +10264,7 @@ function svcCardHtml(s, meta){
         <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('service',s))) ? ' on' : ''}">${shortRecordId('service',s) ? 'ID: ' + escapeHtml(shortRecordId('service',s)) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('service',s))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('service','${escapeAttr(s.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
       </div>
       ${cardStageBtn('service', s)}
-      ${s.approved===false ? `<div class="doc-pending-line">${s.synced?'⏳ Pending Approval...':'📡 انٹرنیٹ کے انتظار میں — ابھی ایڈمن تک نہیں پہنچا'}</div>` : ``}
+      ${s.approved===false && !(s.stage==='basic' && s.category==='cat_unassigned') ? `<div class="doc-pending-line">${s.synced?'⏳ Pending Approval...':'📡 انٹرنیٹ کے انتظار میں — ابھی ایڈمن تک نہیں پہنچا'}</div>` : ``}
     </div>`;
 }
 function syncServiceCreateToFirebase(local){
@@ -10307,6 +10308,8 @@ function pushEditToFirebase(col, fsId, payload){
 }
 function syncServiceUpdateToFirebase(local){
   const FB = window.MCSFirebase;
+  /* MCS1211TH376: سائن اپ والا کارڈ (localOnly) — رجسٹریشن مکمل ہونے پر ہی پہلی بار سرور پر، ڈویلپر کی منظوری کے لیے */
+  if(local && local.localOnly && !local.fsId){ if(local.stage === 'registered' || local.category !== UNASSIGNED_KEY){ delete local.localOnly; local.approved = !!isAdminSignedIn; saveStore(); syncServiceCreateToFirebase(local); } return; }
   if(!FB || !local.fsId) return;
   pushEditToFirebase('services', local.fsId, {
     category: local.category, nameUr: local.nameUr, nameEn: local.nameEn, type: local.type,
@@ -12279,7 +12282,7 @@ function startPendingApprovalsListener(){
     const colRef = FB.collection(FB.db, col);
     const pendingQ = FB.query(colRef, FB.where('approved','==', false));
     const unsub = FB.onSnapshot(pendingQ, (snap)=>{
-      pendingByCollection[col] = snap.docs.map(d=>({fsId:d.id, _col:col, ...d.data()}));
+      pendingByCollection[col] = snap.docs.map(d=>({fsId:d.id, _col:col, ...d.data()})).filter(x=>!(x.stage === 'basic' && x.category === 'cat_unassigned'));   /* MCS1211TH376: سائن اپ کا سادہ کارڈ منظوری میں نہیں — صرف رجسٹریشن */
       const before = new Set(pendingApprovals.map(x=>x.fsId));
       pendingApprovals = [...pendingByCollection.doctors, ...pendingByCollection.services];
       /* MCS2310FR041: نیا ریکارڈ آتے ہی ایڈمن کو فوراً خبر — ٹوسٹ، تھرتھراہٹ، ٹن */
@@ -16310,10 +16313,10 @@ body.d2 #homeAds .ad-ribbon{display:none}
     if((store.services || []).concat(store.doctors || []).some(x => String(x.whatsapp || '').replace(/\D/g, '').slice(-10) === d10)) return;
     let city = ''; try{ city = (typeof hcGet === 'function' ? hcGet() : '') || ''; }catch(e){}
     const now = Date.now(), data = { id: 'svc_' + now + '_' + Math.floor(Math.random() * 1000), category: UNASSIGNED_KEY, nameUr: u.name, nameEn: /[A-Za-z]/.test(u.name) ? u.name : '', type: '', address: '', intro: '',
-      whatsapp: wa, country: 'پاکستان', province: (function(){ try{ return Object.keys(DISTRICTS).find(p => (DISTRICTS[p] || []).includes(u.district)) || ''; }catch(e){ return ''; } })(), district: u.district || '', city: city || u.district || '', area: '', stage: 'basic', more: u.sid ? { sid: u.sid } : {}, createdAt: now, updatedAt: now, approved: false };
+      whatsapp: wa, country: 'پاکستان', province: (function(){ try{ return Object.keys(DISTRICTS).find(p => (DISTRICTS[p] || []).includes(u.district)) || ''; }catch(e){ return ''; } })(), district: u.district || '', city: city || u.district || '', area: '', stage: 'basic', more: u.sid ? { sid: u.sid } : {}, createdAt: now, updatedAt: now, approved: true, localOnly: true };   /* MCS1211TH376: سائن اپ فوراً — کارڈ صرف اپنے فون پر، سرور / منظوری میں نہیں */
     store.services.push(data);
     try{ svcMyBasicAdd(data.id); }catch(e){}
-    syncServiceCreateToFirebase(data); saveStore();
+    saveStore();
     try{ renderServiceList('list'); mpRender(); }catch(e){}
   };
   window.uaGoogle = async function(cred){
