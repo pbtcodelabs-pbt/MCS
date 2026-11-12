@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH385";
+const APP_VERSION = "MCS1211TH386";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH386": "🆔 MCS number now printed in the bottom-right corner of every registered card • Search works with any case: mcs003 / MCS003 / Mcs003 / mcs 3",
   "MCS1211TH385": "🔎 Search bar now finds a card by its MCS ID — type MCS005 (all businesses of that account) or MCS00501 (that one card)",
   "MCS1211TH384": "🆔 Only MCS ID everywhere (old p… business ID removed) • Your own MCS ID at the top of the registration form • Bolder, clearer form text",
   "MCS1211TH383": "✂️ Approval pop-ups shortened — one short English line, no long Urdu sentences",
@@ -6406,6 +6407,10 @@ function catRefreshSearches(){
   setTimeout(()=>document.querySelectorAll('.cat-search input').forEach(i=>{ if(i.value.trim()) catFilter(i); }), 300);
 }
 function catRecordSearch(raw, business){
+  const _mid = mcsIdQ(raw);   /* MCS ID لکھیں تو اسی ID کا کارڈ */
+  if(_mid){ const pool0 = []; if(!business) store.doctors.forEach(d=>{ if(dupVis(d) && mcsIdHit('doctor', d, _mid)) pool0.push({kind:'doctor', rec:d}); });
+    store.services.forEach(x=>{ const g = (CATEGORY_META[x.category] && CATEGORY_META[x.category].group) || 'professional'; if((g==='business') === business && dupVis(x) && mcsIdHit('service', x, _mid)) pool0.push({kind:'service', rec:x}); });
+    return {list: pool0, exact:true}; }
   const qs = ubParseQuery(raw||'');
   if(qs.empty || (!qs.phone && ubNorm(raw).replace(/ /g,'').length < 2)) return {list:[], exact:true};
   const grpOf = k => (CATEGORY_META[k] && CATEGORY_META[k].group) || 'professional';
@@ -6507,8 +6512,9 @@ function favRecords(){
 /* MCS2310FR046: فیورٹس صفحے کی اپنی تلاش — وہی یونیورسل تلاش (نام، دکان، کیٹگری، علاقہ، نمبر، ID) */
 /* MCS1211TH385 (مالک کا حکم): سرچ بار میں MCS ID (MCS005 / MCS-005 / MCS00501) لکھیں تو وہی کارڈ فوراً — باقی لفظی تلاش جیسی تھی ویسی */
 function mcsIdQ(qRaw){
-  const s = String(qRaw||'').replace(/[۰-۹]/g, c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).trim();
-  if(!/^mcs[\s\-_]*[0-9][0-9\s\-_]*$/i.test(s)) return null;
+  let s = String(qRaw||'').replace(/[۰-۹]/g, c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g, c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)).trim();
+  s = s.replace(/^(ا?یم|ام)[\s\-_]*سی[\s\-_]*ا?یس/, 'mcs');   /* «ایم سی ایس 003» اردو میں لکھیں تو بھی */
+  if(!/^mcs[\s\-_]*[0-9][0-9\s\-_]*$/i.test(s)) return null;   /* /i — MCS / mcs / Mcs سب برابر */
   const dg = s.replace(/\D/g,'');
   return dg.length > 8 ? null : dg;
 }
@@ -7465,7 +7471,7 @@ function categoryCode(kind, category){
   return CATEGORY_CODE_MAP[category] || (category||'CAT').replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase() || 'CAT';
 }
 function idKey(t){ return String(t||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
-function idMatches(kind, rec, q){ const k = idKey(q); return k.length>=3 && /[a-z]/.test(k) && idKey(shortRecordId(kind, rec)).includes(k); }
+function idMatches(kind, rec, q){ const _m = mcsIdQ(q); if(_m) return mcsIdHit(kind, rec, _m); const k = idKey(q); return k.length>=3 && /[a-z]/.test(k) && idKey(shortRecordId(kind, rec)).includes(k); }
 /* MCS1111WE312 (مالک کا حکم): پرانے (فیڈ) کارڈ کی قسم وار ID کی جگہ اسی موبائل کی سسٹم ID (MCS-NNN، نہ ہو تو اگلی) */
 async function sidReplace(kind, id){
   const item = kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id); if(!item) return;
@@ -8820,7 +8826,7 @@ function docCardHtml(d, mode){
       ${d.intro ? `<div class="doc-intro">${introIcon(d.intro)} ${escapeHtml(d.intro)}</div>` : ``}
       <div class="doc-foot">
         ${([d.address,d.area,d.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[d.address,d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
-        <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('doctor',d))) ? ' on' : ''}">${shortRecordId('doctor',d) ? 'ID: ' + escapeHtml(shortRecordId('doctor',d)) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('doctor',d))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('doctor','${escapeAttr(d.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
+        <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('doctor',d))) ? ' on' : ''}">${shortRecordId('doctor',d) ? escapeHtml(shortRecordId('doctor',d).toUpperCase()) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('doctor',d))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('doctor','${escapeAttr(d.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
       </div>
       ${cardStageBtn('doctor', d)}
       ${d.approved===false ? `<div class="doc-pending-line">${d.synced?'⏳ Pending Approval...':'📡 انٹرنیٹ کے انتظار میں — ابھی ایڈمن تک نہیں پہنچا'}</div>` : ``}
@@ -10297,7 +10303,7 @@ function svcCardHtml(s, meta){
       ${(splitOwnerIntro(s.intro).rest && !svcHideIntro('service', s.id)) ? `<div class="doc-intro">💬 ${escapeHtml(splitOwnerIntro(s.intro).rest)}</div>` : ``}
       <div class="doc-foot">
         ${([s.address,s.area,s.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[s.address,s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
-        <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('service',s))) ? ' on' : ''}">${shortRecordId('service',s) ? 'ID: ' + escapeHtml(shortRecordId('service',s)) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('service',s))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('service','${escapeAttr(s.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
+        <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('service',s))) ? ' on' : ''}">${shortRecordId('service',s) ? escapeHtml(shortRecordId('service',s).toUpperCase()) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('service',s))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('service','${escapeAttr(s.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
       </div>
       ${cardStageBtn('service', s)}
       ${s.approved===false && !(s.stage==='basic' && s.category==='cat_unassigned') ? `<div class="doc-pending-line">${s.synced?'⏳ Pending Approval...':'📡 انٹرنیٹ کے انتظار میں — ابھی ایڈمن تک نہیں پہنچا'}</div>` : ``}
@@ -22525,5 +22531,10 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hook); else hook();
 })();
 </script>
+<style id="mcsIdCorner">
+/* MCS1211TH386 (مالک کا حکم): ہر رجسٹرڈ کارڈ کے نیچے دائیں کونے میں اس کا MCS نمبر — باقی ریکارڈ کو چھیڑے بغیر */
+html body .doc-card .doc-foot .doc-recid.on{display:block !important;position:absolute !important;right:9px !important;bottom:4px !important;left:auto !important;margin:0 !important;padding:1px 7px !important;z-index:5 !important;direction:ltr !important;unicode-bidi:isolate !important;font:800 11px/1.35 Arial,Helvetica,sans-serif !important;letter-spacing:.6px !important;color:#fff7d6 !important;background:rgba(0,0,0,.38) !important;border-radius:8px !important;opacity:1 !important;white-space:nowrap !important;pointer-events:none}
+html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px !important;box-sizing:border-box}
+</style>
 </body>
 </html>
