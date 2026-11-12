@@ -10,7 +10,8 @@
 .fm-head h3,.sheet-head h3,.bs-head h3,.oa-app small,.cc-r,.ad-free,.ad-cd,body.d2 .bnav button,.fp-bar,.fp-card,html body .doc-card > .fp-card .fp-ct,.fp-card .fp-ct,.fp-page,.mx .mx-brand small,.mx .mx-li small,.mx .mx-tl small{direction:ltr!important}
 .fp-page{text-align:left!important}
 html body .doc-recid.on{display:inline-block!important;font-size:10px!important;font-weight:700;color:#0f766e;opacity:1!important}
-.doc-recid .sid-rep{font-size:10px;padding:1px 6px;margin-left:4px;border-radius:8px;border:1px solid #2563eb;background:#eff6ff;color:#1d4ed8;font-weight:700;cursor:pointer}
+.doc-recid .sid-rep{display:none!important;}/* MCS1211TH353: پرانا «🔁 MCS ID دیں» ختم — ID سرور خود دیتا ہے */
+.doc-recid .sid-rep-old{font-size:10px;padding:1px 6px;margin-left:4px;border-radius:8px;border:1px solid #2563eb;background:#eff6ff;color:#1d4ed8;font-weight:700;cursor:pointer}
 label .ur-cap{display:block}
 label .ur-cap::before{content:attr(data-ur);display:block;font-size:.78em;font-weight:400;opacity:.72;line-height:1.5;margin-top:1px;font-family:'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif!important}
 </style>
@@ -4310,10 +4311,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH352";
+const APP_VERSION = "MCS1211TH353";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH353": "🆔 MCS IDs fixed on the server in your order (Habib Shahbaz MCS00101, Ghousia Naan Shop MCS00201, Punjab Setting MCS00301; Habib Shahbaz agent AG001) • old «MCS ID» button removed, IDs shown clearly",
   "MCS1211TH352": "🆔 MCS ID is given at sign-up — the new person appears in the registration ID list straight away • agent codes without dash (AG001, AG002)",
   "MCS1211TH351": "🆔 MCS ID only for registered businesses (MCS00101…); ID list shows DEV, CODEV, agents and registered businesses only • empty referral = PBT (Company) • red box: ➕ Earn with MCS opens the agent form • deeper colours",
   "MCS1211TH350": "🧹 Cleaner forms — the percentage / steps strip removed, box colours a little deeper, rounder corners",
@@ -8544,7 +8546,7 @@ function docCardHtml(d, mode){
       ${d.intro ? `<div class="doc-intro">${introIcon(d.intro)} ${escapeHtml(d.intro)}</div>` : ``}
       <div class="doc-foot">
         ${([d.address,d.area,d.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[d.address,d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
-        <div class="doc-recid${(isAdminSignedIn || /^MCS-/.test(shortRecordId('doctor',d))) ? ' on' : ''}">${shortRecordId('doctor',d) ? 'ID: ' + escapeHtml(shortRecordId('doctor',d)) : ''}${(isAdminSignedIn && !/^MCS-/.test(shortRecordId('doctor',d))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('doctor','${escapeAttr(d.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
+        <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('doctor',d))) ? ' on' : ''}">${shortRecordId('doctor',d) ? 'ID: ' + escapeHtml(shortRecordId('doctor',d)) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('doctor',d))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('doctor','${escapeAttr(d.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
       </div>
       ${cardStageBtn('doctor', d)}
       ${d.approved===false ? `<div class="doc-pending-line">${d.synced?'⏳ Pending Approval...':'📡 انٹرنیٹ کے انتظار میں — ابھی ایڈمن تک نہیں پہنچا'}</div>` : ``}
@@ -9833,7 +9835,7 @@ function svcCardHtml(s, meta){
       ${(splitOwnerIntro(s.intro).rest && !svcHideIntro('service', s.id)) ? `<div class="doc-intro">💬 ${escapeHtml(splitOwnerIntro(s.intro).rest)}</div>` : ``}
       <div class="doc-foot">
         ${([s.address,s.area,s.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[s.address,s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
-        <div class="doc-recid${(isAdminSignedIn || /^MCS-/.test(shortRecordId('service',s))) ? ' on' : ''}">${shortRecordId('service',s) ? 'ID: ' + escapeHtml(shortRecordId('service',s)) : ''}${(isAdminSignedIn && !/^MCS-/.test(shortRecordId('service',s))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('service','${escapeAttr(s.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
+        <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('service',s))) ? ' on' : ''}">${shortRecordId('service',s) ? 'ID: ' + escapeHtml(shortRecordId('service',s)) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('service',s))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('service','${escapeAttr(s.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
       </div>
       ${cardStageBtn('service', s)}
       ${s.approved===false ? `<div class="doc-pending-line">${s.synced?'⏳ Pending Approval...':'📡 انٹرنیٹ کے انتظار میں — ابھی ایڈمن تک نہیں پہنچا'}</div>` : ``}
@@ -13154,7 +13156,7 @@ function agAdminRender(){
   const L = agList.filter(a=> a.status === agTab && (!q || [a.name, a.father, a.cnic, a.phone, '0'+String(a.phone||'').slice(2), a.code, a.city, a.biz].join(' ').toLowerCase().replace(/[\s-]/g,'').includes(q)));
   const E = s => escapeHtml(s||'');
   agModal(`<div class="ag-hd">🤝 ایجنٹ اور ریفرل کوڈ</div>
-    ${isAdminSignedIn ? `<button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveDev()">🪪 ڈویلپر کا شناختی کارڈ ${agGuardGet().dev ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'} <small>(اس پر ایجنٹ کوڈ نہیں بنے گا)</small></button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="sidResetOpen()">🆔 MCS IDs — صرف رجسٹرڈ کاروبار</button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveCd()">🪪 کو-ڈویلپر کا شناختی کارڈ (CODEV) ${agGuardGet().cdOwn ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'}</button>` : ''}
+    ${isAdminSignedIn ? `<button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveDev()">🪪 ڈویلپر کا شناختی کارڈ ${agGuardGet().dev ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'} <small>(اس پر ایجنٹ کوڈ نہیں بنے گا)</small></button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveCd()">🪪 کو-ڈویلپر کا شناختی کارڈ (CODEV) ${agGuardGet().cdOwn ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'}</button>` : ''}
     <button type="button" class="btn block ag-send" style="margin:4px 0 6px" onclick="agWaOpen()">📋 واٹس ایپ فارم سے نیا ایجنٹ <small>(کاروبار + ایک سال + ایجنٹ ایک ساتھ)</small></button>
     <button type="button" class="btn block secondary" style="margin:0 0 8px" onclick="agCreateOpen()">➕ خود ایجنٹ بنائیں (کاروبار پہلے سے جڑا ہو)</button>
     <div class="ag-tabs">${[['pending','⏳ نئی درخواستیں'],['approved','✅ ایجنٹ / کوڈ'],['rejected','❌ رد']].map(([k,t])=>`<button type="button" class="${agTab===k?'on':''}" onclick="agTab='${k}';agAdminRender()">${t} <b>${n(k)}</b></button>`).join('')}</div>
@@ -21459,7 +21461,8 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
   if(document.body) agBoot(); else document.addEventListener('DOMContentLoaded', agBoot);
   ['agCopy'].forEach(fn => { const o = window[fn]; if(typeof o === 'function') window[fn] = function(v){ return o.call(this, typeof v === 'string' ? v.replace(AGRX, 'AG$1') : v); }; });
   /* ڈویلپر کے فون پر ایک بار خود */
-  let tries = 0; const t = setInterval(() => { tries++; if(tries > 60){ clearInterval(t); return; }
+  /* MCS1211TH353: یہ پاپ اپ اب خود نہیں کھلتا — سرور نے IDs خود لگا دیں (sidFix353) */
+  let tries = 99; const t = setInterval(() => { tries++; if(tries > 60){ clearInterval(t); return; }
     try{ if(localStorage.getItem('mcsSidReset351')){ clearInterval(t); return; } }catch(e){ clearInterval(t); return; }
     if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && recs().length > 20 && !document.querySelector('.modal-overlay.active')){ clearInterval(t); sidResetOpen(); } }, 5000);
 })();
