@@ -4310,10 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH347";
+const APP_VERSION = "MCS1211TH348";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH348": "🆔 IDs shown without dashes everywhere (MCS001, membership MCS00101) • Co-Developer CNIC (CODEV) saved on the server — no agent code on it",
   "MCS1211TH347": "🆔 Registration ID list now loads from the server — every signed-up ID shows with name, mobile and district (Developer, Co-Developer and agents) • Developer CNIC is saved on the server too",
   "MCS1211TH346": "👤 My Account always opens the new English blue design for a signed-in person (no more falling back to the old Urdu page); agents get it too with an «Agent Portal» row",
   "MCS1211TH345": "🆔 Registration form: the ID list now shows each person's name with the ID (plus mobile and district) — picking an ID auto-fills name, mobile and district, and the rest of the form follows",
@@ -7210,8 +7211,8 @@ function legacyRecordId(kind, item){
 }
 function shortRecordId(kind, item){
   /* MCS1111WE312 (مالک کا حکم): سسٹم ID — سبسکرپشن ہو تو MCS-001-01، ورنہ MCS-001؛ پرانے فیڈ کارڈ پرانی قسم وار ID پر جب تک «Replace» نہ دبے */
-  try{ const rk = pfKeyOf(item, kind), p = rk && typeof pfAct !== 'undefined' && pfAct && pfAct[rk]; if(p && p.subid) return p.subid; if(p && p.sid) return p.sid; }catch(e){}
-  if(item && item.more && item.more.sid) return item.more.sid;
+  try{ const rk = pfKeyOf(item, kind), p = rk && typeof pfAct !== 'undefined' && pfAct && pfAct[rk]; if(p && p.subid) return String(p.subid).replace(/[\s-]/g,''); if(p && p.sid) return String(p.sid).replace(/[\s-]/g,''); }catch(e){}   /* MCS1211TH348: MCS00101 — کہیں ڈیش نہیں */
+  if(item && item.more && item.more.sid) return String(item.more.sid).replace(/[\s-]/g,'');
   return '';
 }
 
@@ -12377,7 +12378,7 @@ async function agxStaffSend(){
   if(cnic.length !== 13) return err('⚠️ شناختی کارڈ کے 13 ہندسے لکھیں', 'agxCnic');
   const c = {name: v('agxName'), phone: '0' + phone.slice(-10), code: window._agxRk || '', biz: window._agxBiz || '', city: v('agxCity'), cnic, father: v('agxFather'), address: v('agxAddr'), email: v('agxEmail'), wa: '0' + phone.slice(-10), img: Object.assign({}, agImgs)};
   const btn = document.getElementById('agSendBtn'), lbl = btn.innerHTML; btn.disabled = true; btn.textContent = '⏳ …';
-  const R = {no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس موبائل نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار پہلے سے کسی ایجنٹ کا ہے', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے', bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں', missing:'نام اور موبائل لکھیں' + (codevOn() && !isAdminSignedIn ? '، اور «کاروبار سے بھریں» سے کاروبار چنیں' : ''), login:'کو-ڈویلپر لاگ اِن دوبارہ کریں'};
+  const R = {no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس موبائل نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار پہلے سے کسی ایجنٹ کا ہے', cnic_staff:'⛔ یہ شناختی کارڈ ڈویلپر / کو-ڈویلپر کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے', bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں', missing:'نام اور موبائل لکھیں' + (codevOn() && !isAdminSignedIn ? '، اور «کاروبار سے بھریں» سے کاروبار چنیں' : ''), login:'کو-ڈویلپر لاگ اِن دوبارہ کریں'};
   try{
     if(!isAdminSignedIn){ const cdv = codevMe(); const r = await (await fetch(AG_API + '/agpropose', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({cphone: cdv.phone, cpin: cdv.pin, c})})).json();
       if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + (R[r && r.reason] || 'نہیں گیا') + (r && r.other ? ' (' + r.other + ')' : '')); }
@@ -12404,7 +12405,7 @@ async function agFullSend(){
   err(''); const btn = document.getElementById('agSendBtn'), lbl = btn.innerHTML; btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہے…';
   try{
     const r = await (await fetch(AG_API + '/agapply', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({full: 1, name: v('agxName'), father: v('agxFather'), cnic, phone, wa: phone, email: v('agxEmail'), city: v('agxCity'), address: v('agxAddr'), exp: '', biz: '', bizRk: '', dev: agDev(), img: agImgs})})).json();
-    if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + ({pending:'آپ کی ایک درخواست پہلے سے منظوری کے انتظار میں ہے — نئی درخواست نہیں جا سکتی', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کے نام ہے', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'سب خانے بھریں'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
+    if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + ({pending:'آپ کی ایک درخواست پہلے سے منظوری کے انتظار میں ہے — نئی درخواست نہیں جا سکتی', cnic_staff:'⛔ یہ شناختی کارڈ ڈویلپر / کو-ڈویلپر کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کے نام ہے', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'سب خانے بھریں'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
     const p92 = '92' + phone.replace(/^0/,'').replace(/^92/,'').slice(-10);
     localStorage.setItem('mcsAgent', JSON.stringify({phone: p92, name: v('agxName'), at: Date.now()}));
     ['front','back','selfie'].forEach(k=> delete agImgs[k]);
@@ -12780,7 +12781,7 @@ async function agSend(){
   err(''); const btn = document.getElementById('agSendBtn'); btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہے…';
   try{
     const r = await (await fetch(AG_API + '/agapply', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({name: v('agName'), father: v('agFather'), cnic, phone, wa: v('agWa'), email: v('agEmail'), city: v('agCity'), address: v('agAddr'), exp: v('agExp'), biz: rec.nameUr||rec.name||'', bizRk: bi ? (bi.p.rk || pfKeyOf(rec, bi.p.kind)) : '', dev: agDev(), img: agImgs})})).json();
-    if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 درخواست بھیجیں'; return err('⚠️ ' + ({not_paid:'ایجنٹ بننے کے لیے پہلے اوپر چنی ہوئی اپنی ممبرشپ ایک سال کے لیے جاری کروائیں («📨 ایک سال کے لیے جاری رکھیں»)', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'ضروری خانے بھریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی اور ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
+    if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 درخواست بھیجیں'; return err('⚠️ ' + ({not_paid:'ایجنٹ بننے کے لیے پہلے اوپر چنی ہوئی اپنی ممبرشپ ایک سال کے لیے جاری کروائیں («📨 ایک سال کے لیے جاری رکھیں»)', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'ضروری خانے بھریں', cnic_staff:'⛔ یہ شناختی کارڈ ڈویلپر / کو-ڈویلپر کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی اور ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
     const p92 = '92' + phone.replace(/^0/,'').replace(/^92/,'').slice(-10);
     localStorage.setItem('mcsAgent', JSON.stringify({phone: p92, name: v('agName'), at: Date.now()}));
     ['front','back','selfie'].forEach(k=> delete agImgs[k]);
@@ -12937,7 +12938,7 @@ async function agDocsSend(){
   for(const [k, t] of [['front','کارڈ سامنے'],['back','کارڈ پیچھے'],['selfie','سیلفی']]) if(!agImgs[k]) return err('⚠️ «' + t + '» والی تصویر لگائیں');
   const btn = document.getElementById('agSendBtn'); btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہیں…';
   try{ const r = await (await fetch(AG_API + '/agdocs', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: me.phone, pin: me.pin, dev: agDev(), cnic, father: (document.getElementById('agFather').value||'').trim(), img: agImgs})})).json();
-    if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; return err('⚠️ ' + ({login:'دوبارہ «میں پہلے سے ایجنٹ ہوں» سے موبائل اور PIN لکھیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر درست نہیں — دوبارہ لگائیں', cnic_taken:'یہ شناختی کارڈ کسی اور ایجنٹ کا ہے'}[r && r.reason] || 'نہیں گیا — دوبارہ کوشش کریں')); }
+    if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; return err('⚠️ ' + ({login:'دوبارہ «میں پہلے سے ایجنٹ ہوں» سے موبائل اور PIN لکھیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر درست نہیں — دوبارہ لگائیں', cnic_staff:'⛔ یہ شناختی کارڈ ڈویلپر / کو-ڈویلپر کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ کسی اور ایجنٹ کا ہے'}[r && r.reason] || 'نہیں گیا — دوبارہ کوشش کریں')); }
     agDocsMark(true); ['front','back','selfie'].forEach(k=> delete agImgs[k]); showToast('✅ تصویریں پہنچ گئیں — شکریہ', 3500); agOpen();
   }catch(x){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; err('📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
 }
@@ -13026,9 +13027,18 @@ function agGuardSaveDev(){
   cur.dev = d; agGuardSet(cur); try{ if(isAdminSignedIn) vfAdminHdr().then(h => fetch(PF_API + '/mcsauth', { method: 'POST', headers: h, body: JSON.stringify({ op: 'staffcnic', who: 'DEV', cnic: d }) })).then(r => r.json()).then(j => { if(!j || !j.ok) showToast('⚠️ سرور پر محفوظ نہیں ہوا' + (j && j.reason === 'cnic_used' ? ' — یہ شناختی کارڈ ' + j.other + ' کا ہے' : '')); }).catch(() => {}); }catch(e){}   /* MCS1211TH347: سرور پر بھی — اس کارڈ پر کسی فون سے ایجنٹ کوڈ نہیں بنتا */
   showToast(d ? '✅ ڈویلپر کا شناختی کارڈ محفوظ — اس پر ایجنٹ کوڈ نہیں بنے گا' : 'ہٹا دیا گیا'); try{ agAdminRender(); }catch(e){}
 }
+/* MCS1211TH348 (مالک کا حکم): کو-ڈویلپر کا شناختی کارڈ = CODEV — سرور پر (staffcnic)، اس پر کسی فون سے ایجنٹ کوڈ نہیں */
+function agGuardSaveCd(){
+  const cur = agGuardGet(), v = prompt('کو-ڈویلپر کا شناختی کارڈ نمبر (13 ہندسے) — خالی چھوڑ کر OK دبائیں تو ہٹ جائے گا:', cur.cdOwn || ''); if(v === null) return;
+  const d = agGDig(v); if(d && d.length !== 13){ showToast('⚠️ شناختی کارڈ کے پورے 13 ہندسے لکھیں'); return; }
+  vfAdminHdr().then(h => fetch(PF_API + '/mcsauth', { method: 'POST', headers: h, body: JSON.stringify({ op: 'staffcnic', who: 'CODEV', cnic: d }) })).then(r => r.json()).then(j => {
+    if(j && j.ok){ cur.cdOwn = d; agGuardSet(cur); showToast(d ? '✅ کو-ڈویلپر کا شناختی کارڈ سرور پر محفوظ (CODEV) — اس پر ایجنٹ کوڈ نہیں بنے گا' : 'ہٹا دیا گیا'); try{ agAdminRender(); }catch(e){} }
+    else showToast('⚠️ محفوظ نہیں ہوا' + (j && j.reason === 'cnic_used' ? ' — یہ شناختی کارڈ ' + j.other + ' کا ہے' : j && j.reason === 'admin_only' ? ' — پہلے ڈویلپر لاگ اِن کریں' : ''));
+  }).catch(() => showToast('📶 انٹرنیٹ نہیں'));
+}
 async function agGuardCheck(cnic){
   const d = agGDig(cnic); if(d.length !== 13) return '';
-  const g = agGuardGet(); if(g.dev && g.dev === d) return AG_GUARD_DEV;
+  const g = agGuardGet(); if(g.dev && g.dev === d) return AG_GUARD_DEV; if(g.cdOwn && g.cdOwn === d) return AG_GUARD_CD;
   let cds = g.cd || {};
   if(isAdminSignedIn){ try{ const j = await Promise.race([cdAdminCall({op:'list'}), new Promise(r => setTimeout(() => r(null), 6000))]); if(j && j.ok && Array.isArray(j.list)){ cds = {}; j.list.forEach(c => { const k = agGDig(c && c.cnic); if(k.length === 13) cds[k] = c.name || '1'; }); g.cd = cds; agGuardSet(g); } }catch(e){} }
   return cds[d] !== undefined ? AG_GUARD_CD : '';
@@ -13043,12 +13053,12 @@ async function agCreateGo(){
   if(!c.name || c.phone.length < 10 || (c.code && !/^p\d{10}/.test(c.code)) || (cdv && !c.code)){ e.textContent = '⚠️ اوپر تلاش سے کاروبار چنیں، یا نام اور موبائل لکھیں'; return; }
   e.textContent = '⏳ …';
   if(cdv){ try{ const r = await (await fetch(AG_API + '/agpropose', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({cphone: cdv.phone, cpin: cdv.pin, c})})).json();
-      if(!r || !r.ok){ e.textContent = '⚠️ ' + ({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', login:'کو-ڈویلپر لاگ اِن دوبارہ کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں گیا'); return; }
+      if(!r || !r.ok){ e.textContent = '⚠️ ' + ({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', login:'کو-ڈویلپر لاگ اِن دوبارہ کریں', cnic_staff:'⛔ یہ شناختی کارڈ ڈویلپر / کو-ڈویلپر کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں گیا'); return; }
       agModal(`<div class="ag-hd">⏳ منظوری کے لیے بھیج دیا</div><div class="ag-wait">${escapeHtml(c.name)} — مالک (پی بی ٹی کوڈ لیبز) کی منظوری کے بعد ایجنٹ بنے گا۔ منظوری پر PIN مالک خود ایجنٹ کو بھیجیں گے۔</div>`); }
     catch(x){ e.textContent = '📶 انٹرنیٹ نہیں'; } return; }
   try{ const r = await agAdminCall({op:'create', c});
     if(r && !r.ok && (r.reason === 'exists' || r.reason === 'code_taken')) agKnownAdd(c.phone, r.reason === 'code_taken' ? c.code : '', 'approved');
-    if(!r || !r.ok){ e.textContent = '⚠️ ' + ({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', missing:'خانے بھریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں بنا'); return; }
+    if(!r || !r.ok){ e.textContent = '⚠️ ' + ({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', missing:'خانے بھریں', cnic_staff:'⛔ یہ شناختی کارڈ ڈویلپر / کو-ڈویلپر کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں بنا'); return; }
     agCreatedShow(r.agent);
   }catch(x){ e.textContent = '⚠️ پہلے ایڈمن لاگ اِن کریں / انٹرنیٹ دیکھیں'; }
 }
@@ -13119,7 +13129,7 @@ async function agWaFinish(rec, o){
     await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: rk, act:'until', until})});
     if(pfAct[rk]) pfAct[rk].until = until; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
     const r = await agAdminCall({op:'create', c:{name: o.name, phone: o.phone, code: rk, city: o.city, biz: rec.nameUr || o.biz, cnic: o.cnic || ''}});
-    if(!r || !r.ok) throw new Error(({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار کسی اور ایجنٹ کا ہے', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'})[r && r.reason] || 'ایجنٹ نہیں بنا');
+    if(!r || !r.ok) throw new Error(({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار کسی اور ایجنٹ کا ہے', cnic_staff:'⛔ یہ شناختی کارڈ ڈویلپر / کو-ڈویلپر کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'})[r && r.reason] || 'ایجنٹ نہیں بنا');
     const a = r.agent, msg = 'السلام علیکم ' + a.name + '\nمبارک ہو! آپ کا کاروبار «' + (rec.nameUr||'') + '» My City Shines پر درج ہو گیا اور آپ MCS ایجنٹ بن گئے ہیں 🤝\nآپ کا ریفرل کوڈ: ' + a.code + '\n🔑 PIN: ' + a.pin + '\n\nایپ انسٹال کریں ← «🤝 MCS ایجنٹ بنیں» ← «🔑 میں پہلے سے ایجنٹ ہوں» ← اپنا موبائل نمبر اور یہ PIN لکھیں، پھر اپنے شناختی کارڈ کی دونوں طرف کی تصویر اور سیلفی لگا دیں۔';
     agModal(`<div class="ag-hd">✅ سب بن گیا</div><div class="ag-ok">🏪 ${escapeHtml(rec.nameUr||'')}<br>👤 ${escapeHtml(a.name)} — ایجنٹ</div>
       <div class="cp-hint" style="text-align:center">⭐ ممبرشپ ایک سال کے لیے جاری</div>
@@ -13139,7 +13149,7 @@ function agAdminRender(){
   const L = agList.filter(a=> a.status === agTab && (!q || [a.name, a.father, a.cnic, a.phone, '0'+String(a.phone||'').slice(2), a.code, a.city, a.biz].join(' ').toLowerCase().replace(/[\s-]/g,'').includes(q)));
   const E = s => escapeHtml(s||'');
   agModal(`<div class="ag-hd">🤝 ایجنٹ اور ریفرل کوڈ</div>
-    ${isAdminSignedIn ? `<button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveDev()">🪪 ڈویلپر کا شناختی کارڈ ${agGuardGet().dev ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'} <small>(اس پر ایجنٹ کوڈ نہیں بنے گا)</small></button>` : ''}
+    ${isAdminSignedIn ? `<button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveDev()">🪪 ڈویلپر کا شناختی کارڈ ${agGuardGet().dev ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'} <small>(اس پر ایجنٹ کوڈ نہیں بنے گا)</small></button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveCd()">🪪 کو-ڈویلپر کا شناختی کارڈ (CODEV) ${agGuardGet().cdOwn ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'}</button>` : ''}
     <button type="button" class="btn block ag-send" style="margin:4px 0 6px" onclick="agWaOpen()">📋 واٹس ایپ فارم سے نیا ایجنٹ <small>(کاروبار + ایک سال + ایجنٹ ایک ساتھ)</small></button>
     <button type="button" class="btn block secondary" style="margin:0 0 8px" onclick="agCreateOpen()">➕ خود ایجنٹ بنائیں (کاروبار پہلے سے جڑا ہو)</button>
     <div class="ag-tabs">${[['pending','⏳ نئی درخواستیں'],['approved','✅ ایجنٹ / کوڈ'],['rejected','❌ رد']].map(([k,t])=>`<button type="button" class="${agTab===k?'on':''}" onclick="agTab='${k}';agAdminRender()">${t} <b>${n(k)}</b></button>`).join('')}</div>
@@ -15942,7 +15952,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       if(t && a && !staff() && /Normal/.test(t.textContent)){ t.textContent = '👤 ' + String(a.user.name || '').split(' ')[0]; t.classList.add('on'); const o = $('h2Out'); if(o) o.style.display = ''; }
       let box = $('uaCpBox'); const host = $('cpAcctType');
       if(host){ if(!box){ box = document.createElement('div'); box.id = 'uaCpBox'; host.insertAdjacentElement('afterend', box); }
-        box.innerHTML = a ? `🔐 <b>${esc(a.user.name)}</b> — ${esc(a.user.sid || a.user.id)}<br><button style="background:#1d4ed8;color:#fff" onclick="uaAccount()">👤 میرا اکاؤنٹ</button><button style="background:#6366f1;color:#fff" onclick="fedListOpen()">📨 میرے درج کیے ہوئے</button><button style="background:#fee2e2;color:#b91c1c" onclick="uaLogout()">لاگ آؤٹ</button>`
+        box.innerHTML = a ? `🔐 <b>${esc(a.user.name)}</b> — ${esc(mcsSidFmt(a.user.sid || a.user.id))}<br><button style="background:#1d4ed8;color:#fff" onclick="uaAccount()">👤 میرا اکاؤنٹ</button><button style="background:#6366f1;color:#fff" onclick="fedListOpen()">📨 میرے درج کیے ہوئے</button><button style="background:#fee2e2;color:#b91c1c" onclick="uaLogout()">لاگ آؤٹ</button>`
           : `👀 آپ Guest ہیں — کاروبار جوڑنے کے لیے<br><button style="background:#1d4ed8;color:#fff" onclick="uaLogin()">🔐 Login</button><button style="background:#16a34a;color:#fff" onclick="uaSignup()">➕ Sign Up</button>`; }
     }catch(e){}
   };
@@ -20644,7 +20654,7 @@ function mrqOpen(){
   const card = (x, i) => { const d = x.data || {}, ph = String(d.mobile || '').replace(/\D/g, '').slice(-10), mem = !x.has ? '⚠️ Not on server yet' : x.pend ? '⏳ Waiting (shopkeeper made it)' : (x.until > Date.now() ? '✅ Active till ' + new Date(x.until).toLocaleDateString('en-GB') : '⛔ Expired / not active');
     return `<div class="mrq-c" data-st="${x.st}">
       <div class="mrq-h"><b dir="auto">🏪 ${E(d.prof || x.rec)}</b>${tag(x.st)}</div>
-      <div class="mrq-sm">📩 ${mrqAgo(x.ts)} · <bdi dir="ltr">${E(x.sid || x.rec)}</bdi></div>
+      <div class="mrq-sm">📩 ${mrqAgo(x.ts)} · <bdi dir="ltr">${E(x.sid ? mcsSidFmt(x.sid) : x.rec)}</bdi></div>
       ${row('👤 Name', E(d.name))}${row('📱 Mobile', ph ? `<a href="tel:0${ph}">0${ph}</a>` : '')}${row('💬 WhatsApp', E(d.wa && d.wa !== d.mobile ? d.wa : ''))}${row('✉️ Gmail', E(d.gmail))}
       ${row('🏷️ Category', E(d.cat))}${row('📍 Place', E([d.area, d.city].filter(Boolean).join(', ')))}${row('🤝 Brought by', E(d.ref ? refN(d.ref) + (d.refName ? ' — ' + d.refName : '') : 'PBT (came by self)'))}${row('⭐ Membership now', mem)}
       ${d.text ? `<div class="mrq-tx" dir="auto">📝 ${E(d.text)}</div>` : ''}${x.note ? `<div class="mrq-nt" dir="auto">💬 Your last message: ${E(x.note)}</div>` : ''}
