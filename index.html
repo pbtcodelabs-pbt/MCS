@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH374";
+const APP_VERSION = "MCS1211TH375";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH375": "🪪 Registration form: CNIC box at the top of the green Registration box",
   "MCS1211TH374": "✍️ Urdu names in the sector / title lists are now bigger and bolder (Noori Nastaleeq Kasheeda)",
   "MCS1211TH373": "🗂️ Sectors and titles now in one-line dropdowns (A→Z, Z→A, most records) — cards show right below",
   "MCS1211TH372": "🗂️ All sectors are back on screen: 15 Business + 14 Professional sectors with 400 titles, in English and Urdu — tap a sector, then a title, to see its cards",
@@ -21737,6 +21738,8 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
     if(src){ Array.from(src.children).forEach(ch => { if(SKIP(ch) || ch === w) return; if(c.inner || ch.parentNode === body) inn('green').appendChild(ch); }); }
     { const B = c.blue().filter(Boolean); B.forEach((e, i) => { const at = inn('blue').children[i]; if(at !== e) inn('blue').insertBefore(e, at || null); }); }
     c.red().filter(Boolean).forEach(e => { if(e.parentNode !== inn('red')) inn('red').appendChild(e); });
+    /* MCS1211TH375 (مالک کا حکم): شناختی کارڈ سبز ڈبے (کاروبار کی رجسٹریشن) میں سب سے اوپر (نام کا خانہ نظر آئے تو اس کے فوراً نیچے) — نیلے میں نہیں */
+    if(mid === 'serviceFormModal'){ const cn = $('svcCnicField'), g = inn('green'), nm = fld('svcNameUr'); if(cn && g){ const vis = nm && nm.parentNode === g && nm.offsetHeight > 0; const at = vis ? nm.nextElementSibling : g.firstElementChild; if(at !== cn) g.insertBefore(cn, at); } }
     ['blue'].forEach(k => { const b = w.querySelector('.cbx-' + k); b.hidden = !inn(k).children.length; });
     /* MCS1211TH351 (مالک کا حکم): سرخ ڈبہ = «➕ Earn with MCS — ایجنٹ بنیں»؛ ➕ دبانے پر ہی سرخ ایجنٹ فارم (agEarnOpen)؛ Save / View / Edit نہیں */
     { const rb = w.querySelector('.cbx-red'); rb.classList.add('cbx-earn'); rb.hidden = false; const hs = rb.querySelector('.cbx-hd > span:first-child'); if(hs) hs.innerHTML = '🔴 Earn with MCS <small style="font:600 12px Arial,sans-serif;opacity:.75">ایجنٹ بنیں</small>'; const st = rb.querySelector('.cbx-st'); if(st) st.style.display = 'none';
