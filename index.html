@@ -3357,6 +3357,26 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
 .ub-more .ubm-l{display:block;white-space:normal}
 /* 3-part form: part1 basic info / part2 registration / part3 membership */
 #serviceFormModal .svc-hide{display:none!important}
+/* MCS1211TH366: پانچ بنیادی فیلڈز کا ڈبہ */
+.cls-box{margin:6px 0 6px;padding:8px 9px;border:1.5px solid #99f6e4;border-radius:12px;background:#f0fdfa}
+#serviceFormModal .cls-box .field{margin-bottom:8px}
+#serviceFormModal .cls-box .field>label{color:#0b5c56!important;font-weight:800}
+#serviceFormModal .cls-box .field>label small{color:#64748b!important;font-weight:400}
+.cls-box select{width:100%;height:42px;border:1.5px solid #cbd5e1;border-radius:10px;padding:0 8px;font-family:inherit;font-size:14px;background:#fff;color:#0f172a}
+.cls-cat{display:block;padding:9px 10px;border-radius:10px;background:#fff;border:1.5px solid #cbd5e1;font-weight:800;font-size:14px;color:#0f172a}
+.cls-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
+.cls-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #cbd5e1;background:#fff;color:#334155;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.cls-chip.on{background:#0f766e;border-color:#0f766e;color:#fff}
+.cls-chip.pr{background:#ecfdf5;border-color:#14b8a6;color:#0b5c56;cursor:default}
+.cls-chip.pr i{font-style:normal;color:#b91c1c;cursor:pointer;padding:0 2px}
+.cls-row{display:flex;gap:6px}
+.cls-row input{flex:1;min-width:0;height:40px;border:1.5px solid #cbd5e1;border-radius:10px;padding:0 8px;font-family:inherit;font-size:14px;background:#fff;color:#0f172a}
+.cls-row button{border:none;border-radius:10px;background:#0f766e;color:#fff;font-weight:800;padding:0 14px;font-size:16px}
+.cls-sh{font-size:11.5px;color:#64748b;font-weight:400}
+.cls-box, .cls-box *{font-family:MCSDigits,'Jameel Noori Nastaleeq Regular','Segoe UI',Tahoma,Geneva,Verdana,sans-serif !important}
+.cls-chip{line-height:1.9;padding:2px 12px}
+.cls-row input,.cls-row button{line-height:1.9}
+
 .svc-stage-bar{margin:0 0 10px;padding:9px 12px;border-radius:12px;background:#ecfdf5;border:1px solid #99f6e4;color:#0b5c56;font-weight:700;font-size:14px;line-height:1.7}
 .svc-stage-bar small{display:block;font-weight:400;color:#475569;font-size:12px}
 .svc-reg-btn{display:block;width:100%;margin-top:8px;padding:12px 10px;border:0;border-radius:12px;background:linear-gradient(180deg,#14b8a6,#0f766e);color:#fff;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
@@ -3414,9 +3434,22 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
         <label class="req">👤 مالک / پروفیشنل کا نام <small class="fm-opt">(اردو)</small></label>
         <input type="text" id="svcOwner" placeholder="مثلاً عبدالستار" autocomplete="off" enterkeyhint="next">
       </div>
+      <div class="cls-box" id="svcCls1">
+        <div class="field"><label>① پروفائل کی نوعیت <small>Profile Type</small></label><select id="svcPType" onchange="clsPTypeChg()"></select></div>
+        <div class="field"><label>② شعبہ / کیٹیگری <small>Profile Category</small></label><select id="svcMCat" onchange="clsMCatChg()"></select><small class="cls-sh" id="svcCatShow"></small></div>
+      </div>
       <div class="field">
         <label id="svcTypeLabel" class="req">قسم</label>
         <div class="field-with-add"><select id="svcType"></select><button class="add-circle" onclick="promptAddOption('serviceType','svcType')">+</button></div>
+      </div>
+      <div class="cls-box" id="svcCls2">
+        <div class="field"><label class="req">③ ذیلی قسم / ٹائٹل <small>Subtype — ایک سے زیادہ چن سکتے ہیں (پہلا کارڈ پر آئے گا)</small></label><div class="cls-chips" id="svcSubs"></div>
+          <div class="cls-row"><input type="text" id="svcSubIn" maxlength="60" placeholder="فہرست میں نہ ہو تو اپنی قسم لکھیں (Other)" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();clsSubCustom();}"><button type="button" onclick="clsSubCustom()">➕</button></div></div>
+        <div class="field"><label>④ مصنوعات اور خدمات <small>Products &amp; Services — ایک ایک کر کے لکھیں</small></label>
+          <div class="cls-chips" id="svcProds"></div>
+          <div class="cls-row"><input type="text" id="svcProdIn" maxlength="60" placeholder="مثلاً Burger، Shawarma، چائے" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();clsProdAdd();}"><button type="button" onclick="clsProdAdd()">➕</button></div>
+        </div>
+        <div class="field"><label>⑤ وابستہ ادارہ / برانڈ <small>Associated Organization</small></label><div class="field-with-add"><select id="svcOrg"></select><button class="add-circle" type="button" onclick="promptAddOption('org','svcOrg')">+</button></div></div>
       </div>
     </div>
     <div class="fm-col fm-col-loc">
@@ -3451,7 +3484,7 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
     <details class="fm-more" id="svcMoreBox">
       <summary>➕ مزید تفصیل <small>(اختیاری) خدمات، نقشہ، ای میل</small></summary>
       <div class="fm-more-note"><b class="req-dot">*</b> والے خانے ضروری ہیں · یہاں سب خانے اختیاری</div>
-      <div class="field"><label>🛠️ خدمات / مال</label><textarea id="svcServices" rows="2" maxlength="400" placeholder="Services Offered — مثلاً: موبائل ریپئرنگ، نئی بیٹری"></textarea></div>
+      <div class="field mcs-off"><label>🛠️ خدمات / مال</label><textarea id="svcServices" rows="2" maxlength="400" placeholder="Services Offered — مثلاً: موبائل ریپئرنگ، نئی بیٹری"></textarea></div>
       <div class="field mcs-off" id="svcAddressField"><label>🏠 پرانا پتہ <small>(خالی کریں تو چھپ جائے گا — اب اوپر «پتہ / علاقہ» میں لکھیں)</small></label><input type="text" id="svcAddress" maxlength="200" placeholder="Complete Address — دکان نمبر 5، مین بازار"></div>
       <div class="fm-more-row">
         <div class="field"><label>📮 پوسٹل کوڈ</label><input type="text" id="svcPostal" inputmode="numeric" maxlength="8" dir="ltr" placeholder="Postal Code — 54000"></div>
@@ -4324,10 +4357,14 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH364";
+const APP_VERSION = "MCS1211TH368";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH368": "✍️ Subtype now replaces the old Type box (first chosen title becomes the card type); new fields use Noori Nastaleeq and the app dropdown style",
+  "MCS1211TH367": "📚 Bilingual master lists added: 15 business + 15 professional categories with 400 titles (English + Urdu) — choose Category, then multiple Titles; search works in both languages",
+  "MCS1211TH366": "🏷️ Five core profile fields added to the entry form: Profile Type, Category, Subtypes (multi-select), Products & Services (separate items), Associated Organization — searchable",
+  "MCS1211TH365": "🔐 Edit pencil now asks for a password first: developer → developer password, owner → own 6-digit login PIN. Pencil shows only on your own cards; Delete is developer-only (owners send a delete request)",
   "MCS1211TH364": "✅ Business photos: big ＋ on empty shop photo and selfie (tap to add), gallery / back camera / front camera, crop, zoom, brightness, enhance, round and frame options",
   "MCS1211TH363": "✅ Business edit: the owner opens Edit with their 6-digit MCS login PIN, the developer with the developer password (any business)",
   "MCS1211TH362": "✅ Registered business page: full shop photo (nothing hidden), colourful capsules on their own background, small Google Maps pin + Location, card opens on every tap",
@@ -4592,6 +4629,7 @@ function loadStore(){
     parsed.cities = parsed.cities || [];
     parsed.areas = parsed.areas || [];
     parsed.services = parsed.services || [];
+    parsed.orgs = parsed.orgs || [];
     parsed.serviceTypes = parsed.serviceTypes || emptyServiceTypes();
     parsed.customCategories = parsed.customCategories || [];
     parsed.lastLocation = parsed.lastLocation || null;
@@ -4607,7 +4645,7 @@ function emptyServiceTypes(){
   return obj;
 }
 function loadStoreFallback(){
-  return { doctors:[], departments:[], specialties:[], hospitals:[], cities:[], areas:[],
+  return { doctors:[], departments:[], specialties:[], hospitals:[], cities:[], areas:[], orgs:[],
     services:[], serviceTypes:emptyServiceTypes(),
     customCategories:[],
     contact:{...DEFAULT_CONTACT}, lastLocation:null };
@@ -5179,6 +5217,30 @@ function pfOneHtml(c, x){
     ${(d.about || own.rest) ? `<div class="pf1-about">📝 ${E(d.about || own.rest)}</div>` : ''}
     <div class="pf1-safe ${locked ? 'lock' : ''}"><div class="pf1-sin">${priv}</div>${locked ? `<button type="button" class="pf1-lk" onclick="${showPriv ? 'pfEditAuth()' : "showToast('🔒 یہ معلومات محفوظ ہیں')"}">🔒 محفوظ${showPriv ? ' — کھولنے کے لیے پاس ورڈ' : ''}</button>` : ''}</div>
   </div>`;
+}
+/* MCS1211TH365: کارڈ کا پنسل / ڈیلیٹ — پہلے پاس ورڈ؛ پنسل صرف ڈویلپر یا اسی کاروبار کے مالک کو */
+function pfOwnsStrict(rec){ try{ if(!rec) return false; if(pfAcctOwns(rec)) return true; const e = mpEntry(rec); return !!(e && e.key); }catch(e){ return false; } }
+async function cardEdit(kind, id){
+  const rec = pfRecById(kind, id); if(!rec) return;
+  const nm = rec.nameUr || rec.name || '';
+  if(isAdminSignedIn){
+    if(!(await askAdminPassword('🔐 «' + nm + '» — ایڈٹ کھولنے کے لیے اپنا ڈویلپر لاگ اِن پاس ورڈ لکھیں۔', '✏️ ایڈٹ کھولیں'))) return;
+    if(kind === 'doctor') openDoctorForm(id); else openServiceForm(id);
+    return;
+  }
+  if(!pfOwnsStrict(rec)){ showToast('🔒 ایڈٹ صرف اس کاروبار کے مالک یا ڈویلپر کے لیے ہے', 4000); return; }
+  if(!(typeof uaMe === 'function' && uaMe())){ showToast('🔒 پہلے اپنے MCS اکاؤنٹ سے لاگ اِن کریں، پھر ایڈٹ کھلے گا', 4500); return; }
+  const pin = await pfAskPin('«' + nm + '» — ایڈٹ کھولنے کے لیے اپنے موبائل کا 6 ہندسوں والا MCS لاگ اِن PIN لکھیں۔');
+  if(pin === null) return;
+  const r = await uaCheckPin(pin);
+  if(!(r && r.ok)){ showToast(r && r.reason === 'wait' ? '⏳ کئی بار غلط PIN — 15 منٹ بعد کوشش کریں' : r && r.reason === 'net' ? '📡 انٹرنیٹ نہیں — دوبارہ کوشش کریں' : '❌ PIN غلط ہے — کچھ نہیں کھلا', 4000); return; }
+  await pfOpen(kind, id);
+  if(pfCur && pfCur.rec && pfCur.rec.id === id){ pfUnlocked[pfCur.rk] = 1; await pfEditOpen(); }
+}
+function cardDel(kind, id){
+  if(isAdminSignedIn){ if(kind === 'doctor') deleteDoctor(id); else deleteService(id); return; }
+  const rec = pfRecById(kind, id); if(!rec || !pfOwnsStrict(rec)) return;
+  if(confirm('«' + (rec.nameUr || rec.name || '') + '» کو حذف کرنے کی درخواست ڈویلپر کو بھیجی جائے گی۔\nڈویلپر کی منظوری کے بغیر کچھ حذف نہیں ہوتا۔\n\nدرخواست بھیجیں؟')) requestAdminAction(kind, id, 'del');
 }
 async function pfHeroAdd(i){
   const c = pfCur; if(!c) return;
@@ -6047,7 +6109,7 @@ function renderUserSearch(){
     if(!dupVis(s)) return false;
     if(!ubPass({rec:s, cat:s.category}, locKeys)) return false;
     const cm = CATEGORY_META[s.category]||{};
-    return ubMatch(srch, [s.nameUr, s.nameEn, ubOwnerEn(s), s.type, s.address, s.intro, s.city, s.area, s.district, s.province, cm.ur, cm.listTitle, s.category, shortRecordId('service', s)], s.whatsapp);
+    return ubMatch(srch, [s.nameUr, s.nameEn, ubOwnerEn(s), s.type, ...clsBits(s), s.address, s.intro, s.city, s.area, s.district, s.province, cm.ur, cm.listTitle, s.category, shortRecordId('service', s)], s.whatsapp);
   });
   /* MCS2310FR044: پوری ID (مثلاً MED-12345 یا med12345) لکھیں تو صرف وہی ایک ریکارڈ */
   const idQ = idKey(qRaw);
@@ -6301,7 +6363,7 @@ function catRecordSearch(raw, business){
   store.services.forEach(x=>{
     if((grpOf(x.category)==='business') !== business) return;
     const cm = CATEGORY_META[x.category]||{};
-    pool.push({kind:'service', rec:x, fields:[x.nameUr, x.nameEn, ubOwnerEn(x), x.type, x.address, x.intro, x.city, x.area, x.district, cm.ur, cm.listTitle]});
+    pool.push({kind:'service', rec:x, fields:[x.nameUr, x.nameEn, ubOwnerEn(x), x.type, ...clsBits(x), x.address, x.intro, x.city, x.area, x.district, cm.ur, cm.listTitle]});
   });
   if(qs.phone) return {list: pool.filter(o=> ubMatch(qs, o.fields, o.rec.whatsapp)), exact:true};
   /* سب الفاظ ملیں تو وہی؛ ورنہ جتنے زیادہ الفاظ ملیں اتنا اوپر */
@@ -6395,7 +6457,7 @@ function searchAllRecords(qRaw){
   const srch = ubParseQuery(qRaw);
   if(srch.empty) return [];
   let docs = store.doctors.filter(d=> dupVis(d) && ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d)], d.whatsapp));
-  let svcs = store.services.filter(x=>{ if(!dupVis(x)) return false; const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, ubOwnerEn(x), x.type, x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
+  let svcs = store.services.filter(x=>{ if(!dupVis(x)) return false; const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, ubOwnerEn(x), x.type, ...clsBits(x), x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
   const idQ = idKey(qRaw);
   if(/^[a-z]{2,4}[0-9]{5}$/.test(idQ)){
     const dh = docs.filter(d=>idKey(shortRecordId('doctor', d))===idQ), sh = svcs.filter(x=>idKey(shortRecordId('service', x))===idQ);
@@ -6442,8 +6504,8 @@ function userResultCard(item){
   const locLine = [loc, item.address].filter(Boolean).join(' — ');
   const rid = item.id ? shortRecordId(item.kind, item) : '';
   let _sfU = '', _agU = false; try{ const _rr = item.id ? (item.kind==='doctor' ? store.doctors.find(x=>x.id===item.id) : store.services.find(x=>x.id===item.id)) : null; _sfU = (_rr && _rr.more && _rr.more.selfie) || ''; _agU = !!(_rr && agIsRec(item.kind, _rr)); }catch(e){}
-  const adminBtn = item.id ? (isAdminSignedIn
-    ? `<button class="ub-edit" onclick="${item.kind==='doctor'?`openDoctorForm('${escapeAttr(item.id)}')`:`openServiceForm('${escapeAttr(item.id)}')`}" aria-label="ترمیم">✏️</button><button class="ub-edit ub-del" onclick="${item.kind==='doctor'?`deleteDoctor('${escapeAttr(item.id)}')`:`deleteService('${escapeAttr(item.id)}')`}" aria-label="حذف">🗑️</button>`
+  const adminBtn = item.id ? ((isAdminSignedIn || pfOwnsStrict(item))
+    ? `<button class="ub-edit" onclick="cardEdit('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ترمیم">✏️</button><button class="ub-edit ub-del" onclick="cardDel('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="حذف">🗑️</button>`
     : `<button class="a-reqadmin" onclick="openReportChoice('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`) : '';
   return `
     <div class="ub-row${item.id && pfActive(item) ? ' pf-gold' : ''}${_sfU ? ' dpbig' : ''}"${item.id ? ` onclick="pfCardTap(event,'${escapeAttr(item.kind)}','${escapeAttr(item.id)}')"` : ''} style="--rc:${pal[0]};--rbg:${pal[1]}">
@@ -6975,7 +7037,7 @@ let addOptionTargetKey = null, addOptionTargetSelect = null;
 function promptAddOption(key, selectId){
   addOptionTargetKey = key; addOptionTargetSelect = selectId;
   const labels = {department:'نیا شعبہ', specialty:'نئی اسپیشلٹی', hospital:'نیا ہسپتال', city:'نیا شہر', area:'نیا علاقہ',
-    serviceType: (CATEGORY_META[currentServiceCategory]||{}).addOptLabel || 'نئی چیز'};
+    serviceType: (CATEGORY_META[currentServiceCategory]||{}).addOptLabel || 'نئی چیز', org:'نیا ادارہ / برانڈ'};
   document.getElementById('addOptionTitle').textContent = labels[key] || 'نئی چیز شامل کریں';
   document.getElementById('addOptionInput').value = '';
   openModal('addOptionModal');
@@ -6986,6 +7048,7 @@ function promptAddOption(key, selectId){
 /* MCS1310TU008: پہلے سے لکھی ہوئی چیزیں — لکھتے ہی کیپسول بن کر سامنے؛ دبائیں تو وہی چن لی جائے */
 function addOptPool(){
   const k = addOptionTargetKey;
+  if(k==='org') return clsOrgList();
   if(k==='serviceType'){
     const set = new Set(store.serviceTypes[currentServiceCategory] || []);
     store.services.forEach(x=>{ if(x.category===currentServiceCategory && x.type) set.add(x.type); });
@@ -7014,6 +7077,13 @@ function addOptPick(v){
 function confirmAddOption(){
   const val = document.getElementById('addOptionInput').value.trim();
   if(!val){ showToast('نام لکھیں'); return; }
+  if(addOptionTargetKey==='org'){   /* MCS1211TH366: وابستہ ادارہ / برانڈ */
+    store.orgs = store.orgs || []; if(!store.orgs.includes(val)) store.orgs.push(val);
+    saveStore(); clsOrgFill(val); closeModal('addOptionModal'); showToast('شامل کر دیا گیا — آئندہ سب کے لیے محفوظ ✓');
+    const FBo = window.MCSFirebase;
+    if(FBo){ const ro = FBo.doc(FBo.db,'appConfig','dropdowns'); FBo.updateDoc(ro, {orgs: store.orgs}).catch(()=> FBo.setDoc(ro, {orgs: store.orgs}, {merge:true}).catch(()=>{})); }
+    return;
+  }
   let arr, fbField, svcCat=null;
   if(addOptionTargetKey==='serviceType'){
     svcCat = currentServiceCategory;
@@ -7379,14 +7449,16 @@ function requestAdminAction(kind, id, mode){
   const waRaw = normalizePkNumber((store.contact && store.contact.whatsapp) || DEFAULT_CONTACT.whatsapp);
   const digits = waRaw.replace(/[^0-9]/g,'');
   const intl = '92' + digits.replace(/^0/,'');
-  const msg = mode==='own' || !mode
+  const msg = mode==='del'
+    ? `السلام علیکم،\nمیں اپنے اس اندراج کو حذف کروانا چاہتا ہوں (ڈیلیٹ ریکویسٹ):\n\nنام: ${name}\nآئی ڈی: ${sid}\n\nازراہ کرم میرا نمبر ملا کر تصدیق کریں اور منظوری دیں۔ شکریہ۔`
+    : mode==='own' || !mode
     ? `السلام علیکم،\nمیں اپنے اس اندراج میں تبدیلی یا حذف کروانا چاہتا ہوں:\n\nنام: ${name}\nآئی ڈی: ${sid}\n\nازراہ کرم رابطہ کریں۔ شکریہ۔`
     : `السلام علیکم،\nمیں اس اندراج کی شکایت کرنا چاہتا ہوں (غلط یا نامناسب معلومات):\n\nنام: ${name}\nآئی ڈی: ${sid}\n\nوجہ: `;
   if(mode==='email'){
     location.href = 'mailto:pbtcodelabs@gmail.com?subject=' + encodeURIComponent('Report listing ' + sid + ' - My City Shines') + '&body=' + encodeURIComponent(msg);
     return;
   }
-  try{ if(window.PBTHelp && PBTHelp.open){ PBTHelp.open({ app:'MCS', text: msg, type: mode==='own' || !mode ? 'ask' : 'bug' }); return; } }catch(e){}
+  try{ if(window.PBTHelp && PBTHelp.open){ PBTHelp.open({ app:'MCS', text: msg, type: mode==='own' || mode==='del' || !mode ? 'ask' : 'bug' }); return; } }catch(e){}
   try{ openHelpDesk(); }catch(e){}   /* MCS0511TH163: ذاتی واٹس ایپ نمبر پر نہیں — Help Desk */
 }
 function shareProfileCardById(kind, id){
@@ -8669,9 +8741,9 @@ function docCardHtml(d, mode){
           </div>` : ``}
       ${favBtnHtml('doctor', d.id)}
       <button class="a-share" onclick="shareProfileCardById('doctor','${escapeAttr(d.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>
-      ${mode==='list' ? (isAdminSignedIn ? `<div class="doc-mini">
-            <button onclick="openDoctorForm('${escapeAttr(d.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-            <button class="mini-del" onclick="deleteDoctor('${escapeAttr(d.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+      ${mode==='list' ? ((isAdminSignedIn || pfOwnsStrict(d)) ? `<div class="doc-mini">
+            <button onclick="cardEdit('doctor','${escapeAttr(d.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+            <button class="mini-del" onclick="cardDel('doctor','${escapeAttr(d.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
           </div>` : `<button class="a-reqadmin" onclick="openReportChoice('doctor','${escapeAttr(d.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`) : ``}
       </div>
       ${d.intro ? `<div class="doc-intro">${introIcon(d.intro)} ${escapeHtml(d.intro)}</div>` : ``}
@@ -9406,7 +9478,8 @@ const SVC_MORE = {ownerEn:'svcOwnerEn', services:'svcServices', postal:'svcPosta
 function svcMoreFill(m){
   m = m || {};
   Object.entries(SVC_MORE).forEach(([k, id])=>{ const el = document.getElementById(id); if(el) el.value = m[k] || ''; });
-  const box = document.getElementById('svcMoreBox'); if(box) box.open = !!(m && Object.entries(m).some(([k, v])=> k !== 'ref' && k !== 'ownerEn' && v));
+  const box = document.getElementById('svcMoreBox'); if(box) box.open = !!(m && Object.entries(m).some(([k, v])=> k !== 'ref' && k !== 'ownerEn' && k !== 'ptype' && k !== 'subs' && k !== 'prods' && k !== 'org' && k !== 'services' && v));
+  try{ clsFill(m); }catch(e){ console.warn('cls', e); }
 }
 function svcMoreRead(){
   const m = {};
@@ -9416,6 +9489,7 @@ function svcMoreRead(){
   if(!m.ref) m.ref = 'PBT';   /* MCS1211TH351 (مالک کا حکم): ریفرل خالی = PBT (کمپنی) — حصہ ڈویلپر / کو-ڈویلپر آدھا آدھا */
   if(m.ref){ try{ const e0 = document.getElementById('svcRef'); if(e0 && e0.tagName === 'SELECT'){ m.refSel = 1; const n0 = rpkNameOf(m.ref); if(n0) m.refName = n0; } }catch(e){} }   /* MCS1011TU280: ریفرل فہرست سے — نام اور کوڈ دونوں */
   try{ const S = pfEd.svcPf; if(S && S.thumb) m.selfie = S.thumb; }catch(e){}   /* MCS0711SA194: کارڈ کی گول سیلفی (چھوٹی) */
+  try{ clsApply(m); }catch(e){ console.warn('cls', e); }
   return m;
 }
 function svcMapHere(){
@@ -9441,6 +9515,8 @@ function svcMoreHtml(m){
   if(!m) return '';
   const L = [];
   if(m.services) L.push(`<span class="ubm-l">🛠️ ${escapeHtml(m.services)}</span>`);
+  if(Array.isArray(m.subs) && m.subs.length) L.push(`<span class="ubm-l">🏷️ ${escapeHtml(clsSubsUr(m).join('، '))}</span>`);
+  if(m.org) L.push(`<span class="ubm-l">🤝 ${escapeHtml(m.org)}</span>`);
   if(m.postal) L.push(`<span class="ubm-l">📮 پوسٹل کوڈ: <bdi dir="ltr">${escapeHtml(m.postal)}</bdi></span>`);
   const links = [];
   if(m.map) links.push(`<a href="${escapeAttr(m.map)}" target="_blank" rel="noopener">🗺️ نقشہ</a>`);
@@ -9449,6 +9525,78 @@ function svcMoreHtml(m){
   if(links.length) L.push(`<span class="ubm-l">${links.join(' · ')}</span>`);
   return L.length ? `<div class="ub-more">${L.join('')}</div>` : '';
 }
+
+/* ===== MCS1211TH367 (مالک کا حکم): پانچ بنیادی فیلڈز + دو زبانی ماسٹر فہرست (شیٹ: 175 کاروباری + 225 پیشہ ورانہ ٹائٹل، 30 شعبے)
+   ① نوعیت ② شعبہ ③ ٹائٹل (ایک سے زیادہ) ④ مصنوعات و خدمات (الگ الگ) ⑤ وابستہ ادارہ — سب `more` کے اندر (ptype, mcat, subs, prods, org)؛ مصنوعات ساتھ ہی `more.services` میں ===== */
+const CLS_MASTER = [["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Fast Food","فاسٹ فوڈ"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Hotel / Restaurant","ہوٹل / ریسٹورنٹ"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Catering Service","کیٹرنگ سروس"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Cafe","کیفے"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Tea Shop","چائے کا ہوٹل"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Bakery","بیکری"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Sweet Shop","مٹھائی کی دکان"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","BBQ Restaurant","باربی کیو ریسٹورنٹ"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Pizza Shop","پیزا شاپ"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Burger Shop","برگر شاپ"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Juice & Shake Bar","جوس اور شیک بار"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Ice Cream Shop","آئس کریم شاپ"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Food Delivery","فوڈ ڈیلیوری"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Dairy Shop","دودھ دہی کی دکان"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Butcher Shop","گوشت کی دکان"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Tandoor","تندور"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Grocery / Karyana Store","کریانہ اسٹور"],["Business","Food & Restaurants","کھانے پینے اور ریسٹورنٹس","Snacks Shop","سنیکس شاپ"],["Business","Retail & Shopping","خریداری اور ریٹیل","General Store","جنرل اسٹور"],["Business","Retail & Shopping","خریداری اور ریٹیل","Departmental Store","ڈیپارٹمنٹل اسٹور"],["Business","Retail & Shopping","خریداری اور ریٹیل","Supermarket","سپر مارکیٹ"],["Business","Retail & Shopping","خریداری اور ریٹیل","Clothing Store","کپڑوں کی دکان"],["Business","Retail & Shopping","خریداری اور ریٹیل","Garments Shop","گارمنٹس شاپ"],["Business","Retail & Shopping","خریداری اور ریٹیل","Shoe Store","جوتوں کی دکان"],["Business","Retail & Shopping","خریداری اور ریٹیل","Cosmetics Shop","کاسمیٹکس شاپ"],["Business","Retail & Shopping","خریداری اور ریٹیل","Jewellery Shop","جیولری شاپ"],["Business","Retail & Shopping","خریداری اور ریٹیل","Gift Shop","گفٹ شاپ"],["Business","Retail & Shopping","خریداری اور ریٹیل","Toys Shop","کھلونوں کی دکان"],["Business","Retail & Shopping","خریداری اور ریٹیل","Book Shop","کتابوں کی دکان"],["Business","Retail & Shopping","خریداری اور ریٹیل","Stationery Shop","اسٹیشنری شاپ"],["Business","Retail & Shopping","خریداری اور ریٹیل","Sports Goods Shop","کھیلوں کے سامان کی دکان"],["Business","Retail & Shopping","خریداری اور ریٹیل","Furniture Store","فرنیچر اسٹور"],["Business","Retail & Shopping","خریداری اور ریٹیل","Crockery Shop","کروکری شاپ"],["Business","Retail & Shopping","خریداری اور ریٹیل","Mobile Accessories Shop","موبائل اسیسریز شاپ"],["Business","Retail & Shopping","خریداری اور ریٹیل","Hardware Store","ہارڈویئر اسٹور"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Construction Company","تعمیراتی کمپنی"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Building Contractor","بلڈنگ کنٹریکٹر"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Architectural Services","آرکیٹیکچرل سروسز"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Cement & Steel Store","سیمنٹ اور سریا اسٹور"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Hardware & Sanitary Store","ہارڈویئر اور سینیٹری اسٹور"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Paint Store","پینٹ اسٹور"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Tiles & Marble Shop","ٹائلز اور ماربل شاپ"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Glass & Aluminium Works","گلاس اور ایلومینیم ورکس"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Wood & Timber Store","لکڑی اور ٹمبر اسٹور"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Interior Design Studio","انٹیریئر ڈیزائن اسٹوڈیو"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Property Renovation","پراپرٹی رینوویشن"],["Business","Construction & Building","تعمیرات اور بلڈنگ","Building Material Supplier","تعمیراتی سامان سپلائر"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","Electronics Shop","الیکٹرانکس شاپ"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","Computer Shop","کمپیوٹر شاپ"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","Mobile Phone Shop","موبائل فون شاپ"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","Electrical Store","الیکٹریکل اسٹور"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","Home Appliances Store","ہوم اپلائنسز اسٹور"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","Solar Products & Systems","سولر مصنوعات اور سسٹمز"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","UPS & Battery Shop","یو پی ایس اور بیٹری شاپ"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","CCTV & Security Systems","سی سی ٹی وی اور سکیورٹی سسٹمز"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","Audio & Video Shop","آڈیو اور ویڈیو شاپ"],["Business","Electronics & Appliances","الیکٹرانکس اور گھریلو آلات","Printer & Photocopier Shop","پرنٹر اور فوٹو کاپیئر شاپ"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Car Dealership","کار ڈیلرشپ"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Motorcycle Dealership","موٹر سائیکل ڈیلرشپ"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Auto Workshop","آٹو ورکشاپ"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Motorcycle Workshop","موٹر سائیکل ورکشاپ"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Auto Parts Store","آٹو پارٹس اسٹور"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Tyre Shop","ٹائر شاپ"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Car Wash","کار واش"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Car Decoration Shop","کار ڈیکوریشن شاپ"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Oil Change & Lubricants","آئل چینج اور لبریکنٹس"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Rent A Car","رینٹ اے کار"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Transport Company","ٹرانسپورٹ کمپنی"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Goods Carrier Service","مال بردار سروس"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Courier & Cargo Service","کوریئر اور کارگو سروس"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Driving School","ڈرائیونگ اسکول"],["Business","Automobile & Transport","آٹوموبائل اور ٹرانسپورٹ","Fuel Station","فیول اسٹیشن"],["Business","Education & Training","تعلیم اور تربیت","School","اسکول"],["Business","Education & Training","تعلیم اور تربیت","College","کالج"],["Business","Education & Training","تعلیم اور تربیت","University / Campus","یونیورسٹی / کیمپس"],["Business","Education & Training","تعلیم اور تربیت","Academy","اکیڈمی"],["Business","Education & Training","تعلیم اور تربیت","Tuition Centre","ٹیوشن سینٹر"],["Business","Education & Training","تعلیم اور تربیت","Computer Training Institute","کمپیوٹر ٹریننگ انسٹی ٹیوٹ"],["Business","Education & Training","تعلیم اور تربیت","Technical Training Centre","ٹیکنیکل ٹریننگ سینٹر"],["Business","Education & Training","تعلیم اور تربیت","Vocational Training Centre","فنی تربیتی مرکز"],["Business","Education & Training","تعلیم اور تربیت","Language Centre","لینگویج سینٹر"],["Business","Education & Training","تعلیم اور تربیت","Quran Education Centre","قرآن ایجوکیشن سینٹر"],["Business","Education & Training","تعلیم اور تربیت","Online Education / E-Learning","آن لائن تعلیم / ای لرننگ"],["Business","Education & Training","تعلیم اور تربیت","Daycare / Montessori","ڈے کیئر / مونٹیسوری"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Hospital","ہسپتال"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Medical Clinic","میڈیکل کلینک"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Dental Clinic","ڈینٹل کلینک"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Pharmacy / Medical Store","فارمیسی / میڈیکل اسٹور"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Medical Laboratory","میڈیکل لیبارٹری"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Diagnostic Centre","ڈائیگناسٹک سینٹر"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Physiotherapy Centre","فزیوتھراپی سینٹر"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Optical Shop","آپٹیکل شاپ"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Veterinary Clinic","ویٹرنری کلینک"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Home Healthcare Service","ہوم ہیلتھ کیئر سروس"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Ambulance Service","ایمبولینس سروس"],["Business","Healthcare & Medical","صحت اور طبی خدمات","Maternity Centre","میٹرنٹی سینٹر"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Agriculture Farm","زرعی فارم"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Dairy Farm","ڈیری فارم"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Poultry Farm","پولٹری فارم"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Livestock Farm","لائیو اسٹاک فارم"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Fish Farm","فش فارم"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Seed Store","بیج اسٹور"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Fertilizer Store","کھاد اسٹور"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Pesticide Store","زرعی ادویات اسٹور"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Agriculture Machinery Rental","زرعی مشینری کرایہ"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Tractor & Machinery Dealer","ٹریکٹر اور مشینری ڈیلر"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Animal Feed Store","جانوروں کی خوراک کی دکان"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Veterinary Supplies Store","ویٹرنری سپلائیز اسٹور"],["Business","Agriculture & Livestock","زراعت اور مویشی پالنا","Nursery / Plant Shop","نرسری / پودوں کی دکان"],["Business","Real Estate & Property","رئیل اسٹیٹ اور پراپرٹی","Real Estate Agency","رئیل اسٹیٹ ایجنسی"],["Business","Real Estate & Property","رئیل اسٹیٹ اور پراپرٹی","Property Dealer Office","پراپرٹی ڈیلر آفس"],["Business","Real Estate & Property","رئیل اسٹیٹ اور پراپرٹی","Property Developer","پراپرٹی ڈویلپر"],["Business","Real Estate & Property","رئیل اسٹیٹ اور پراپرٹی","Housing Society","ہاؤسنگ سوسائٹی"],["Business","Real Estate & Property","رئیل اسٹیٹ اور پراپرٹی","Property Management","پراپرٹی مینجمنٹ"],["Business","Real Estate & Property","رئیل اسٹیٹ اور پراپرٹی","Rent / Lease Services","کرایہ / لیز سروسز"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Beauty Salon","بیوٹی سیلون"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Barber Shop","حجام کی دکان"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Ladies Salon","لیڈیز سیلون"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Spa & Wellness Centre","سپا اور ویلنس سینٹر"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Makeup Studio","میک اپ اسٹوڈیو"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Skin Care Clinic","اسکن کیئر کلینک"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Fitness / Gym","فٹنس / جم"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Yoga / Fitness Studio","یوگا / فٹنس اسٹوڈیو"],["Business","Beauty & Personal Care","بیوٹی اور ذاتی نگہداشت","Laundry & Dry Cleaning","لانڈری اور ڈرائی کلیننگ"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Hotel","ہوٹل"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Guest House","گیسٹ ہاؤس"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Marriage Hall","میرج ہال"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Banquet Hall","بینکوئٹ ہال"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Event Management","ایونٹ مینجمنٹ"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Catering Service","کیٹرنگ سروس"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Tent & Catering Service","ٹینٹ اور کیٹرنگ سروس"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Event Decoration","ایونٹ ڈیکوریشن"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Photography & Videography Studio","فوٹوگرافی اور ویڈیوگرافی اسٹوڈیو"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Travel Agency","ٹریول ایجنسی"],["Business","Hospitality & Events","ہوٹلنگ اور تقریبات","Tour Operator","ٹور آپریٹر"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Accounting & Tax Consultancy","اکاؤنٹنگ اور ٹیکس کنسلٹنسی"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Audit Firm","آڈٹ فرم"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Law Firm","قانونی فرم"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Consultancy Firm","کنسلٹنسی فرم"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Insurance Agency","انشورنس ایجنسی"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Marketing Agency","مارکیٹنگ ایجنسی"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Digital Marketing Agency","ڈیجیٹل مارکیٹنگ ایجنسی"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Recruitment Agency","ریکروٹمنٹ ایجنسی"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Printing & Photocopy Shop","پرنٹنگ اور فوٹو کاپی شاپ"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Courier Franchise","کوریئر فرنچائز"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Internet / IT Services","انٹرنیٹ / آئی ٹی سروسز"],["Business","Professional & Business Services","پیشہ ورانہ اور کاروباری خدمات","Security Agency","سکیورٹی ایجنسی"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Furniture Manufacturing","فرنیچر سازی"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Steel Fabrication","اسٹیل فیبریکیشن"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Welding Workshop","ویلڈنگ ورکشاپ"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Woodworking Workshop","لکڑی کا کام ورکشاپ"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Garment Manufacturing","گارمنٹس مینوفیکچرنگ"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Food Manufacturing","فوڈ مینوفیکچرنگ"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Packaging Unit","پیکیجنگ یونٹ"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Printing Press","پرنٹنگ پریس"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Plastic Products Manufacturing","پلاسٹک مصنوعات کی تیاری"],["Business","Manufacturing & Workshops","مینوفیکچرنگ اور ورکشاپس","Bottled Water Plant","بوتل بند پانی کا پلانٹ"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Cleaning Services","صفائی کی خدمات"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Pest Control Services","پیسٹ کنٹرول سروسز"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Plumbing Services","پلمبنگ سروسز"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Electrical Services","الیکٹریکل سروسز"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","AC & Refrigeration Services","اے سی اور ریفریجریشن سروسز"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Solar Installation Services","سولر انسٹالیشن سروسز"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Water Filter Services","واٹر فلٹر سروسز"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Gardening & Landscaping","گارڈننگ اور لینڈ اسکیپنگ"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Moving & Packing Services","شفٹنگ اور پیکنگ سروسز"],["Business","Home & Facility Services","گھریلو اور سہولتی خدمات","Repair & Maintenance Services","مرمت اور دیکھ بھال کی خدمات"],["Business","Other Businesses","دیگر کاروبار","Wholesale Business","ہول سیل کاروبار"],["Business","Other Businesses","دیگر کاروبار","Distribution Business","ڈسٹری بیوشن کاروبار"],["Business","Other Businesses","دیگر کاروبار","Online Store","آن لائن اسٹور"],["Business","Other Businesses","دیگر کاروبار","E-Commerce Business","ای کامرس کاروبار"],["Business","Other Businesses","دیگر کاروبار","Franchise","فرنچائز"],["Business","Other Businesses","دیگر کاروبار","Rental Services","کرایہ پر سامان دینے کی سروس"],["Business","Other Businesses","دیگر کاروبار","Scrap / Recycling Business","کباڑ / ری سائیکلنگ کاروبار"],["Business","Other Businesses","دیگر کاروبار","Other Business","دیگر کاروبار"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Mason","راج مستری"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Plumber","پلمبر"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Electrician","الیکٹریشن"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Carpenter","بڑھئی"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Painter","پینٹر"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Welder","ویلڈر"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Tile Fixer","ٹائل لگانے والا"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Marble Fixer","ماربل لگانے والا"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Steel Fixer","سریا باندھنے والا"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Shuttering Carpenter","شٹرنگ مستری"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Glass Installer","شیشہ لگانے والا"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Aluminium Fabricator","ایلومینیم فیکٹریٹر"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Gypsum / False Ceiling Installer","جپسم / فالز سیلنگ انسٹالر"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Building Contractor","بلڈنگ کنٹریکٹر"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Surveyor","سرویئر"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Architect","ماہر تعمیرات"],["Professional","Construction & Building Trades","تعمیرات اور بلڈنگ ہنر","Civil Engineer","سول انجینئر"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Electrical Technician","الیکٹریکل ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Electronics Technician","الیکٹرانکس ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Solar Technician","سولر ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Solar Installer","سولر انسٹالر"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","UPS Technician","یو پی ایس ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Generator Mechanic","جنریٹر مکینک"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","AC Technician","اے سی ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Refrigerator Technician","فریج ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Washing Machine Technician","واشنگ مشین ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","CCTV Technician","سی سی ٹی وی ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Lift Technician","لفٹ ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Fiber Optic Technician","فائبر آپٹک ٹیکنیشن"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Electrical Engineer","الیکٹریکل انجینئر"],["Professional","Electrical & Electronics","الیکٹریکل اور الیکٹرانکس","Electronics Engineer","الیکٹرانکس انجینئر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Computer Technician","کمپیوٹر ٹیکنیشن"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Laptop Technician","لیپ ٹاپ ٹیکنیشن"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Mobile Repair Technician","موبائل ریپئرنگ ٹیکنیشن"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Software Developer","سافٹ ویئر ڈویلپر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Web Developer","ویب ڈویلپر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","App Developer","ایپ ڈویلپر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Graphic Designer","گرافک ڈیزائنر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","UI / UX Designer","یو آئی / یو ایکس ڈیزائنر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Data Entry Operator","ڈیٹا انٹری آپریٹر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","IT Support Specialist","آئی ٹی سپورٹ اسپیشلسٹ"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Network Technician","نیٹ ورک ٹیکنیشن"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Database Administrator","ڈیٹابیس ایڈمنسٹریٹر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Cybersecurity Specialist","سائبر سکیورٹی اسپیشلسٹ"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Digital Marketer","ڈیجیٹل مارکیٹر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","SEO Specialist","ایس ای او اسپیشلسٹ"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Social Media Manager","سوشل میڈیا مینیجر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Video Editor","ویڈیو ایڈیٹر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Photographer","فوٹوگرافر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Printer Technician","پرنٹر ٹیکنیشن"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","Computer Instructor","کمپیوٹر انسٹرکٹر"],["Professional","Computer & Information Technology","کمپیوٹر اور انفارمیشن ٹیکنالوجی","AI Specialist","مصنوعی ذہانت کا ماہر"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Auto Mechanic","آٹو مکینک"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Motorcycle Mechanic","موٹر سائیکل مکینک"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Auto Electrician","آٹو الیکٹریشن"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Car Electrician","کار الیکٹریشن"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Diesel Mechanic","ڈیزل مکینک"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Tractor Mechanic","ٹریکٹر مکینک"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Heavy Vehicle Mechanic","ہیوی وہیکل مکینک"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Denter","ڈینٹر"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Auto Painter","آٹو پینٹر"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Tyre Technician","ٹائر ٹیکنیشن"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Wheel Alignment Technician","وہیل الائنمنٹ ٹیکنیشن"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Car AC Technician","کار اے سی ٹیکنیشن"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Locksmith","تالہ ساز"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Machinist","مشینسٹ"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Crane Operator","کرین آپریٹر"],["Professional","Automobile & Mechanical","آٹوموبائل اور مکینیکل","Heavy Machinery Operator","بھاری مشینری آپریٹر"],["Professional","Medical & Healthcare","طب اور صحت","General Physician","جنرل فزیشن"],["Professional","Medical & Healthcare","طب اور صحت","Medical Specialist","ماہر ڈاکٹر"],["Professional","Medical & Healthcare","طب اور صحت","Surgeon","سرجن"],["Professional","Medical & Healthcare","طب اور صحت","Dentist","دانتوں کا ڈاکٹر"],["Professional","Medical & Healthcare","طب اور صحت","Cardiologist","ماہر امراض قلب"],["Professional","Medical & Healthcare","طب اور صحت","Dermatologist","ماہر امراض جلد"],["Professional","Medical & Healthcare","طب اور صحت","Pediatrician / Child Specialist","ماہر اطفال"],["Professional","Medical & Healthcare","طب اور صحت","Eye Specialist","ماہر امراض چشم"],["Professional","Medical & Healthcare","طب اور صحت","ENT Specialist","ناک، کان، گلے کا ماہر"],["Professional","Medical & Healthcare","طب اور صحت","Gynecologist","ماہر امراض نسواں"],["Professional","Medical & Healthcare","طب اور صحت","Orthopedic Surgeon","ہڈیوں کا سرجن"],["Professional","Medical & Healthcare","طب اور صحت","Physiotherapist","فزیوتھراپسٹ"],["Professional","Medical & Healthcare","طب اور صحت","Psychologist","ماہر نفسیات"],["Professional","Medical & Healthcare","طب اور صحت","Psychiatrist","ماہر امراض ذہنی"],["Professional","Medical & Healthcare","طب اور صحت","Pharmacist","فارماسسٹ"],["Professional","Medical & Healthcare","طب اور صحت","Nurse","نرس"],["Professional","Medical & Healthcare","طب اور صحت","Midwife","دائی"],["Professional","Medical & Healthcare","طب اور صحت","Medical Lab Technician","میڈیکل لیب ٹیکنیشن"],["Professional","Medical & Healthcare","طب اور صحت","Radiology Technician","ریڈیالوجی ٹیکنیشن"],["Professional","Medical & Healthcare","طب اور صحت","Ultrasound Technician","الٹراساؤنڈ ٹیکنیشن"],["Professional","Medical & Healthcare","طب اور صحت","Optometrist","ماہر بصارت"],["Professional","Medical & Healthcare","طب اور صحت","Nutritionist","ماہر غذائیت"],["Professional","Medical & Healthcare","طب اور صحت","Veterinary Doctor","جانوروں کا ڈاکٹر"],["Professional","Medical & Healthcare","طب اور صحت","Dispenser","ڈسپنسر"],["Professional","Medical & Healthcare","طب اور صحت","Paramedic","پیرا میڈیکل اہلکار"],["Professional","Education & Training","تعلیم اور تربیت","School Teacher","اسکول ٹیچر"],["Professional","Education & Training","تعلیم اور تربیت","College Lecturer","کالج لیکچرار"],["Professional","Education & Training","تعلیم اور تربیت","University Professor","یونیورسٹی پروفیسر"],["Professional","Education & Training","تعلیم اور تربیت","Principal","پرنسپل"],["Professional","Education & Training","تعلیم اور تربیت","Academy Teacher","اکیڈمی ٹیچر"],["Professional","Education & Training","تعلیم اور تربیت","Quran Teacher","قرآن ٹیچر"],["Professional","Education & Training","تعلیم اور تربیت","Arabic Teacher","عربی ٹیچر"],["Professional","Education & Training","تعلیم اور تربیت","English Language Teacher","انگریزی زبان کا استاد"],["Professional","Education & Training","تعلیم اور تربیت","Computer Instructor","کمپیوٹر انسٹرکٹر"],["Professional","Education & Training","تعلیم اور تربیت","Technical Instructor","ٹیکنیکل انسٹرکٹر"],["Professional","Education & Training","تعلیم اور تربیت","Vocational Trainer","فنی تربیت دینے والا"],["Professional","Education & Training","تعلیم اور تربیت","Tuition Teacher","ٹیوشن ٹیچر"],["Professional","Education & Training","تعلیم اور تربیت","Montessori Teacher","مونٹیسوری ٹیچر"],["Professional","Education & Training","تعلیم اور تربیت","Special Education Teacher","خصوصی تعلیم کا استاد"],["Professional","Education & Training","تعلیم اور تربیت","Career Counselor","کیریئر کونسلر"],["Professional","Education & Training","تعلیم اور تربیت","Education Consultant","تعلیمی مشیر"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Farmer","کسان"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Agricultural Engineer","زرعی انجینئر"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Agronomist","ماہر زراعت"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Farm Manager","فارم مینیجر"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Tractor Operator","ٹریکٹر آپریٹر"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Gardener","مالی"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Horticulturist","ماہر باغبانی"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Dairy Farmer","ڈیری فارمر"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Livestock Farmer","مویشی پالنے والا"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Poultry Farmer","پولٹری فارمر"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Beekeeper","شہد کی مکھیوں کا پالنے والا"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Fisherman","ماہی گیر"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Veterinary Assistant","ویٹرنری اسسٹنٹ"],["Professional","Agriculture & Livestock","زراعت اور مویشی پالنا","Animal Breeder","جانوروں کی افزائش کرنے والا"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Accountant","اکاؤنٹنٹ"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Auditor","آڈیٹر"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Tax Consultant","ٹیکس کنسلٹنٹ"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Business Consultant","کاروباری مشیر"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Financial Advisor","مالیاتی مشیر"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Insurance Agent","انشورنس ایجنٹ"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Real Estate Agent","پراپرٹی ڈیلر"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Property Consultant","پراپرٹی کنسلٹنٹ"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Lawyer","وکیل"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Advocate","ایڈووکیٹ"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Legal Advisor","قانونی مشیر"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Notary Public","نوٹری پبلک"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","HR Consultant","ایچ آر کنسلٹنٹ"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Marketing Consultant","مارکیٹنگ کنسلٹنٹ"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Sales Representative","سیلز نمائندہ"],["Professional","Business, Finance & Legal","کاروبار، مالیات اور قانون","Travel Agent","ٹریول ایجنٹ"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Barber","حجام"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Hair Stylist","ہیئر اسٹائلسٹ"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Beautician","بیوٹیشن"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Makeup Artist","میک اپ آرٹسٹ"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Skin Care Specialist","جلد کی دیکھ بھال کا ماہر"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Hair Colorist","بالوں کو رنگنے والا"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Tailor","درزی"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Fashion Designer","فیشن ڈیزائنر"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Dress Designer","لباس ڈیزائنر"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Embroidery Worker","کڑھائی کرنے والا"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Henna Artist","مہندی آرٹسٹ"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Nail Technician","نیل ٹیکنیشن"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Shoe Maker","موچی"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Dry Cleaner","ڈرائی کلینر"],["Professional","Beauty, Fashion & Personal Care","بیوٹی، فیشن اور ذاتی نگہداشت","Laundry Worker","کپڑے دھونے والا"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Chef","شیف"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Cook","باورچی"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Baker","بیکر"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Pastry Chef","پیسٹری شیف"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Pizza Maker","پیزا بنانے والا"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Fast Food Cook","فاسٹ فوڈ باورچی"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","BBQ Chef","باربی کیو شیف"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Waiter","ویٹر"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Restaurant Manager","ریسٹورنٹ مینیجر"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Hotel Manager","ہوٹل مینیجر"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Catering Manager","کیٹرنگ مینیجر"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Barista","کافی بنانے والا"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Butcher","قصاب"],["Professional","Food & Hospitality","کھانے پینے اور ہوٹلنگ","Confectioner","مٹھائی بنانے والا"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Professional Driver","پروفیشنل ڈرائیور"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Truck Driver","ٹرک ڈرائیور"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Bus Driver","بس ڈرائیور"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Taxi Driver","ٹیکسی ڈرائیور"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Rickshaw Driver","رکشہ ڈرائیور"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","School Van Driver","اسکول وین ڈرائیور"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Delivery Rider","ڈیلیوری رائیڈر"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Courier","کوریئر سروس فراہم کنندہ"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Logistics Manager","لاجسٹکس مینیجر"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Forklift Operator","فورک لفٹ آپریٹر"],["Professional","Transport & Logistics","ٹرانسپورٹ اور لاجسٹکس","Warehouse Supervisor","گودام سپروائزر"],["Professional","Home & Domestic Services","گھریلو خدمات","House Cleaner","گھر کی صفائی کرنے والا"],["Professional","Home & Domestic Services","گھریلو خدمات","Domestic Helper","گھریلو ملازم"],["Professional","Home & Domestic Services","گھریلو خدمات","Housekeeper","گھر کی دیکھ بھال کرنے والا"],["Professional","Home & Domestic Services","گھریلو خدمات","Home Cook","گھریلو باورچی"],["Professional","Home & Domestic Services","گھریلو خدمات","Babysitter","بچوں کی دیکھ بھال کرنے والا"],["Professional","Home & Domestic Services","گھریلو خدمات","Caregiver","تیماردار"],["Professional","Home & Domestic Services","گھریلو خدمات","Elderly Care Assistant","بزرگوں کی دیکھ بھال کرنے والا"],["Professional","Home & Domestic Services","گھریلو خدمات","Security Guard","سکیورٹی گارڈ"],["Professional","Home & Domestic Services","گھریلو خدمات","Watchman","چوکیدار"],["Professional","Home & Domestic Services","گھریلو خدمات","Pest Control Technician","پیسٹ کنٹرول ٹیکنیشن"],["Professional","Home & Domestic Services","گھریلو خدمات","Water Tank Cleaner","پانی کی ٹینکی صاف کرنے والا"],["Professional","Home & Domestic Services","گھریلو خدمات","Sofa Cleaner","صوفے کی صفائی کرنے والا"],["Professional","Home & Domestic Services","گھریلو خدمات","Swimming Pool Technician","سوئمنگ پول ٹیکنیشن"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Journalist","صحافی"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","News Reporter","نیوز رپورٹر"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","News Anchor","نیوز اینکر"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Writer","مصنف"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Content Creator","کانٹینٹ کریئیٹر"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","YouTuber","یوٹیوبر"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Blogger","بلاگر"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Vlogger","وی لاگر"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Actor","اداکار"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Singer","گلوکار"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Musician","موسیقار"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Artist","فنکار"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Calligrapher","خطاط"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Illustrator","مصور"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Animator","اینیمیٹر"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Voice Artist","وائس آرٹسٹ"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Film Director","فلم ڈائریکٹر"],["Professional","Media, Arts & Creative","میڈیا، فنون اور تخلیقی شعبے","Videographer","ویڈیو گرافر"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Goldsmith","سنار"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Silversmith","چاندی کے زیورات بنانے والا"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Blacksmith","لوہار"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Potter","کمہار"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Cobbler","موچی"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Upholsterer","فرنیچر کی گدّی بنانے والا"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Signboard Maker","سائن بورڈ بنانے والا"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Printing Press Operator","پرنٹنگ پریس آپریٹر"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Bookbinder","جلد ساز"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Tent Maker","ٹینٹ بنانے والا"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Event Decorator","تقریب سجانے والا"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Florist","پھول فروش"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Scrap Dealer","کباڑیا"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Water Filter Technician","واٹر فلٹر ٹیکنیشن"],["Professional","Other Skilled Trades","دیگر ہنر مند پیشے","Borewell Technician","بورنگ ٹیکنیشن"]];   /* [نوعیت, شعبہ English, شعبہ اردو, ٹائٹل English, ٹائٹل اردو] */
+const CLS_CATS = (function(){ const o = {}; CLS_MASTER.forEach(r=>{ const k = (r[0] === 'Business' ? 'business' : 'professional') + '|' + r[1]; if(!o[k]) o[k] = {pt:(r[0] === 'Business' ? 'business' : 'professional'), en:r[1], ur:r[2], titles:[]}; o[k].titles.push({en:r[3], ur:r[4]}); }); return o; })();
+const CLS_TITLE_UR = (function(){ const o = {}; CLS_MASTER.forEach(r=>{ const k = r[3].toLowerCase(); if(!o[k]) o[k] = r[4]; }); return o; })();
+const CLS_PTYPES = [['business','🏪 کاروبار','Business'],['professional','👔 پروفیشنل','Professional'],['education','🎓 تعلیمی ادارہ','Education'],['healthcare','🏥 طبی / صحت','Healthcare'],['government','🏛️ سرکاری محکمہ','Government'],['organization','🤝 تنظیم / ادارہ','Organization'],['other','➕ دیگر','Other']];
+const CLS_NOORG = 'آزاد / کوئی وابستگی نہیں';
+let clsSubs = [], clsProds = [];
+function clsEl(id){ return document.getElementById(id); }
+function clsDefType(cat){ const m = CATEGORY_META[cat] || {}; if(cat==='govOffices' || cat==='emergencyNumbers') return 'government'; return m.group==='business' ? 'business' : 'professional'; }
+function clsTitleUr(en){ return CLS_TITLE_UR[String(en).toLowerCase()] || ''; }
+function clsCatsFor(pt){ return Object.keys(CLS_CATS).map(k=>CLS_CATS[k]).filter(c=>c.pt === pt); }
+function clsFillCats(sel0){ const pt = (clsEl('svcPType') || {}).value, s = clsEl('svcMCat'); if(!s) return; const list = clsCatsFor(pt);
+  s.innerHTML = `<option value="">— شعبہ منتخب کریں —</option>` + list.map(c=>`<option value="${escapeAttr(c.en)}" data-en="${escapeAttr(c.en)}">${escapeHtml(c.ur)}</option>`).join('');
+  s.value = (sel0 && list.some(c=>c.en === sel0)) ? sel0 : ''; enhanceCapsuleSelect('svcMCat'); resyncCapsuleSelect('svcMCat'); }
+function clsPTypeChg(){ clsFillCats(''); clsSubs = []; clsRenderSubs(); }
+function clsMCatChg(){ clsSubs = []; clsRenderSubs(); }
+function clsOrgList(){ const set = new Set(store.orgs || []); (store.services || []).forEach(x=>{ const o = x.more && x.more.org; if(o) set.add(o); }); return Array.from(set).sort((a,b)=>a.localeCompare(b, 'ur')); }
+function clsOrgFill(val){ const sel = clsEl('svcOrg'); if(!sel) return; const list = clsOrgList(); if(val && !list.includes(val)) list.push(val);
+  sel.innerHTML = `<option value="__none">${escapeHtml(CLS_NOORG)}</option>` + list.map(v=>`<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join(''); sel.value = val || '__none'; enhanceCapsuleSelect('svcOrg'); resyncCapsuleSelect('svcOrg'); }
+function clsHasSub(v){ const k = String(v).toLowerCase(); return clsSubs.some(x=>String(x).toLowerCase() === k); }
+function clsRenderSubs(){ const box = clsEl('svcSubs'); if(!box) return;
+  const pt = (clsEl('svcPType') || {}).value, mc = (clsEl('svcMCat') || {}).value, c = CLS_CATS[pt + '|' + mc];
+  const list = c ? c.titles.map(x=>x.en) : [];
+  clsSubs.forEach(v=>{ if(!list.some(x=>x.toLowerCase() === String(v).toLowerCase())) list.push(v); });
+  box.innerHTML = list.length ? list.map(v=>{ const on = clsHasSub(v), ur = clsTitleUr(v);
+    return `<button type="button" class="cls-chip${on ? ' on' : ''}" data-v="${escapeAttr(v)}" onclick="clsSubTog(this.dataset.v)">${on ? '✔ ' : ''}${ur ? escapeHtml(ur) + ' <small style="opacity:.8">' + escapeHtml(v) + '</small>' : escapeHtml(v)}</button>`; }).join('')
+    : '<small class="cls-sh">پہلے اوپر شعبہ منتخب کریں — پھر اس کے ٹائٹل یہاں آئیں گے</small>'; }
+function clsSubTog(v){ const k = String(v).toLowerCase(); const i = clsSubs.findIndex(x=>String(x).toLowerCase() === k); if(i < 0) clsSubs.push(v); else clsSubs.splice(i, 1); clsRenderSubs(); }
+function clsSubCustom(){ const inp = clsEl('svcSubIn'); if(!inp) return; const v = inp.value.trim().slice(0, 60); if(!v) return;
+  if(clsSubs.length < 30 && !clsHasSub(v)) clsSubs.push(v); inp.value = ''; clsRenderSubs(); }
+function clsRenderProds(){ const box = clsEl('svcProds'); if(!box) return;
+  box.innerHTML = clsProds.map((v, i)=>`<span class="cls-chip pr">${escapeHtml(v)} <i onclick="clsProdDel(${i})">✖</i></span>`).join(''); }
+function clsProdAdd(){ const inp = clsEl('svcProdIn'); if(!inp) return;
+  inp.value.split(/[،,\n;؛]+/).map(x=>x.trim()).filter(Boolean).forEach(p=>{ const k = p.toLowerCase(); if(clsProds.length < 40 && !clsProds.some(x=>x.toLowerCase() === k)) clsProds.push(p.slice(0, 60)); });
+  inp.value = ''; clsRenderProds(); }
+function clsProdDel(i){ clsProds.splice(i, 1); clsRenderProds(); }
+function clsFill(m){
+  m = m || {};
+  const ps = clsEl('svcPType'); if(ps){ ps.innerHTML = CLS_PTYPES.map(t=>`<option value="${t[0]}" data-en="${t[2]}">${t[1]}</option>`).join(''); ps.value = m.ptype || clsDefType(currentServiceCategory); enhanceCapsuleSelect('svcPType'); resyncCapsuleSelect('svcPType'); }
+  clsFillCats(m.mcat || '');
+  const cm = CATEGORY_META[currentServiceCategory] || {}; const cs = clsEl('svcCatShow'); if(cs) cs.textContent = 'ایپ کی فہرست: ' + ((cm.emoji || '') + ' ' + (cm.ur || '')).trim();
+  const anyNum = currentServiceCategory === 'emergencyNumbers' || currentServiceCategory === 'govOffices';
+  ['svcCls1', 'svcCls2'].forEach(id=>{ const e = clsEl(id); if(e) e.classList.toggle('mcs-off', anyNum); });
+  const stf = clsEl('svcType'); if(stf){ const f = stf.closest('.field'); if(f) f.classList.toggle('mcs-off', !anyNum); }   /* پرانی «قسم» اب ③ ٹائٹل میں ضم؛ صرف ایمرجنسی/سرکاری میں باقی */
+  clsSubs = Array.isArray(m.subs) ? m.subs.slice() : [];
+  { const cur = stf ? stf.value : ''; if(!clsSubs.length && cur && !isBlankVal(cur)) clsSubs = [cur]; }
+  clsProds = Array.isArray(m.prods) ? m.prods.slice() : (m.services ? String(m.services).split(/[،,\n;؛]+/).map(x=>x.trim()).filter(Boolean).slice(0, 40) : []);
+  clsOrgFill(m.org || ''); clsRenderSubs(); clsRenderProds();
+  ['svcProdIn', 'svcSubIn'].forEach(id=>{ const e = clsEl(id); if(e) e.value = ''; });
+}
+function clsApply(m){
+  if(svcStage === 'basic') return;
+  if(currentServiceCategory === 'emergencyNumbers' || currentServiceCategory === 'govOffices') return;
+  const c = clsEl('svcPType'); if(!c) return;
+  const pin = clsEl('svcProdIn'); if(pin && pin.value.trim()) clsProdAdd();
+  const sin = clsEl('svcSubIn'); if(sin && sin.value.trim()) clsSubCustom();
+  m.ptype = c.value || clsDefType(currentServiceCategory);
+  const mc = (clsEl('svcMCat') || {}).value || ''; if(mc) m.mcat = mc; else delete m.mcat;
+  if(clsSubs.length) m.subs = clsSubs.slice(); else delete m.subs;
+  { const st = clsEl('svcType'); if(st){ const prim = clsSubs.length ? (clsTitleUr(clsSubs[0]) || clsSubs[0]) : '';
+      if(prim && !Array.from(st.options).some(o=>o.value === prim)) st.add(new Option(prim, prim));
+      st.value = prim; } }   /* پہلا چنا ہوا ٹائٹل ہی کارڈ کی «قسم» بنتا ہے */
+  if(clsProds.length){ m.prods = clsProds.slice(); m.services = clsProds.join('، ').slice(0, 400); } else { delete m.prods; delete m.services; }
+  const o0 = (clsEl('svcOrg') || {}).value || ''; const o = o0 === '__none' ? '' : o0; if(o) m.org = o; else delete m.org;
+}
+function clsSubsUr(m){ return (Array.isArray(m.subs) ? m.subs : []).map(v=>clsTitleUr(v) || v); }
+function clsBits(x){ const m = (x && x.more) || {}; const pt = CLS_PTYPES.find(t=>t[0] === m.ptype);
+  const c = CLS_CATS[(m.ptype || '') + '|' + (m.mcat || '')];
+  const subs = Array.isArray(m.subs) ? m.subs : [];
+  return [m.services, subs.join(' '), subs.map(clsTitleUr).join(' '), c ? (c.ur + ' ' + c.en) : '', m.org, pt ? (pt[1] + ' ' + pt[2]) : '']; }
 /* ===== تین حصوں والا فارم: ① بنیادی معلومات ② رجسٹریشن ③ ممبرشپ ===== */
 let svcStage = 'full', svcRegFlag = false;
 function svcMyBasic(){ try{ return JSON.parse(localStorage.getItem('mcsMyBasic')||'[]'); }catch(e){ return []; } }
@@ -9616,7 +9764,7 @@ function svcApplyStage(id, pendingRec){
   const fieldOf = i => { const e = document.getElementById(i); return e ? (e.closest('.field') || e) : null; };
   const hide = (list, on) => list.forEach(e=>{ if(e) e.classList.toggle('svc-hide', !!on); });
   const p1 = [...q('.fm-phone'), fieldOf('svcNameEn'), fieldOf('svcNameUr'), document.getElementById('svcNameSuggest'), document.getElementById('svcOwnerEnField'), document.getElementById('svcOwnerField'), ...q('.fm-col-loc'), ...q('.fm-scan')];
-  const p2 = [fieldOf('svcType'), ...q('.fm-ref'), document.getElementById('svcMoreBox')];
+  const p2 = [fieldOf('svcType'), ...q('.fm-ref'), document.getElementById('svcMoreBox'), document.getElementById('svcCls1'), document.getElementById('svcCls2')];
   hide(p1, st==='reg');
   hide(p2, st==='basic');
   hide([document.getElementById('svcPfBox')], st!=='full');
@@ -9793,13 +9941,13 @@ function saveService(approve){
   if(!editingServiceId && !anyNum){
     const own = (document.getElementById('svcOwner') || {}).value || '';
     if(!own.trim()){ showToast('* مالک / پروفیشنل کا نام لکھیں'); return; }
-    if(svcStage!=='basic' && !document.getElementById('svcType').value){ showToast('* قسم منتخب کریں'); return; }
+    if(svcStage!=='basic' && !document.getElementById('svcType').value){ showToast('* ③ ذیلی قسم / ٹائٹل منتخب کریں'); return; }
     if(!loc.province){ showToast('* صوبہ منتخب کریں' + (loc.country !== 'پاکستان' ? ' / لکھیں' : '')); return; }
     if(!loc.district && loc.country === 'پاکستان'){ showToast('* ضلع منتخب کریں'); return; }
   }
   let regCnic = '';
   if(svcStage==='reg'){
-    if(!document.getElementById('svcType').value){ showToast('* دکان / پروفیشن کی قسم منتخب کریں'); return; }
+    if(!document.getElementById('svcType').value){ showToast('* ③ ذیلی قسم / ٹائٹل منتخب کریں'); return; }
     regCnic = (document.getElementById('svcCnic').value||'').replace(/\D/g,'');
     if(regCnic.length !== 13){ document.getElementById('svcCnic').focus(); showToast('شناختی کارڈ کے پورے 13 ہندسے لکھیں'); return; }
   }
@@ -9922,7 +10070,7 @@ function renderServiceList(mode){
       (s.district||'').toLowerCase().includes(q) ||
       (s.province||'').toLowerCase().includes(q) ||
       idMatches('service', s, q) ||
-      ubMatch(ubParseQuery(qRaw), [s.nameUr, s.nameEn, ubOwnerEn(s), s.type, s.intro, s.address, s.city, s.area], s.whatsapp);
+      ubMatch(ubParseQuery(qRaw), [s.nameUr, s.nameEn, ubOwnerEn(s), s.type, ...clsBits(s), s.intro, s.address, s.city, s.area], s.whatsapp);
     });
   }
   if(listFilter!=='all') items = items.filter(s=>listFilterPass('service', s));
@@ -9960,9 +10108,9 @@ function svcCardHtml(s, meta){
         </div>` : ``}
         ${favBtnHtml('service', s.id)}
         <button class="a-share" onclick="shareProfileCardById('service','${escapeAttr(s.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>
-        ${isAdminSignedIn ? `<div class="doc-mini">
-          <button onclick="openServiceForm('${escapeAttr(s.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-          <button class="mini-del" onclick="deleteService('${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+        ${(isAdminSignedIn || pfOwnsStrict(s)) ? `<div class="doc-mini">
+          <button onclick="cardEdit('service','${escapeAttr(s.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+          <button class="mini-del" onclick="cardDel('service','${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>` : `<button class="a-reqadmin" onclick="openReportChoice('service','${escapeAttr(s.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`}
       </div>
       ${(splitOwnerIntro(s.intro).rest && !svcHideIntro('service', s.id)) ? `<div class="doc-intro">💬 ${escapeHtml(splitOwnerIntro(s.intro).rest)}</div>` : ``}
@@ -11930,7 +12078,8 @@ function initFirebaseSync(){
     if(!snap.exists()) return;
     const d = snap.data();
     let changed = false;
-    ['departments','specialties','hospitals','cities','areas'].forEach(k=>{
+    if(!store.orgs) store.orgs = [];
+    ['departments','specialties','hospitals','cities','areas','orgs'].forEach(k=>{
       if(Array.isArray(d[k])){ const merged = unionMerge(store[k], d[k]); if(merged.length!==store[k].length){ store[k]=merged; changed=true; } }
     });
     if(d.serviceTypes){
