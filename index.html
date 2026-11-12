@@ -4310,11 +4310,11 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH342";
+const APP_VERSION = "MCS1211TH343";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1211TH342": "🛠️ The «Update complete» box now shows only what was changed in that version — each version has its own line",
+  "MCS1211TH343": "🛠️ The «Update complete» box now shows only what was changed in that version — each version has its own line",
   "MCS1211TH341": "🧭 Qibla compass no longer shakes (smooth needle, no sudden spin, steady green glow) • 🏠 Home screen stays fixed — no up/down pulling or jumping",
   "MCS1211TH340": "✏️ Agent CNIC message now says DEV / CODEV (the old PBT-D / PBT-C wording removed)",
   "MCS1211TH339": "🪪 Developer or Co-Developer CNIC cannot become an agent — their own DEV / CODEV code is the referral code (own business on that CNIC is still allowed) • new «Developer CNIC» button in the agent panel",
@@ -12432,7 +12432,7 @@ window.addEventListener('load', ()=> setTimeout(()=>{ ['openServiceForm','openDo
   w._af = 1; window[fn] = w; }); }, 1500));
 /* ===== MCS0711SA187 (مالک کا حکم): مائی اکاؤنٹ ← ایجنٹ پورٹل (ذاتی تفصیل، سارے کاروبار، رجسٹریشن مکمل کرنا)
    ⚠️ پلے اسٹور: رقم / کمیشن / ادائیگی کا کوئی نظام یہاں نہیں — وہ الگ ویب سائٹ پر بنے گا */
-function d2Account(){ try{ if(ptRole() === 'user' && !(typeof uaMe === 'function' && uaMe())){ uaLogin(); return; } ptOpen(); return; }catch(e){ console.error(e); } openControlPanel(); }   /* MCS0811SU217: لاگ اِن نہ ہو تو My Account = لاگ اِن صفحہ */   /* MCS0711SA194: My Account = ایک ہی پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / کاروبار / پروفیشن / یوزر) */
+function d2Account(){ try{ ptOpen(); return; }catch(e){ console.error(e); } openControlPanel(); }   /* MCS1211TH343: نارمل (بغیر لاگ اِن) میں بھی My Account = پورٹل (Login/Sign Up + لاگ آؤٹ بٹن)؛ لاگ اِن صفحہ صرف لاگ آؤٹ کے بعد */   /* MCS0811SU217: لاگ اِن نہ ہو تو My Account = لاگ اِن صفحہ */   /* MCS0711SA194: My Account = ایک ہی پورٹل (ڈویلپر / کو-ڈویلپر / ایجنٹ / کاروبار / پروفیشن / یوزر) */
 function apMeCard(me, rows){
   const E = escapeHtml, ph = me.phone ? '0' + String(me.phone).slice(2) : '', nB = rows.filter(x=>x.kind !== 'doctor').length, nP = rows.length - nB;
   const L = [['👤 نام', me.name], ['📱 موبائل', ph], ['🆔 ایجنٹ کوڈ', me.code], ['🏙️ شہر', me.city]].filter(x=>x[1]);
