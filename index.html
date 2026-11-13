@@ -4386,11 +4386,13 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH387";
+const APP_VERSION = "MCS1311FR389";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1211TH387": "🔒 A card waiting for approval is shown only on its own phone (no one else, not even the developer) • After saving registration: «Send for approval» and, separately below, «Google Play membership»",
+  "MCS1311FR389": "💳 Settings now has a «Membership Packages» button — see Google Play plans and prices straight from Settings",
+  "MCS1311FR388": "🧭 New registration wizard: 1 Account → 2 Free private business card → 3 Google Play subscription (CNIC, expiry, email, referral dropdown) → Admin approval → 4 Optional MCS Agent request • progress saved on every field • one permanent MCS ID",
+  "MCS1311FR388": "🔒 A card waiting for approval is shown only on its own phone (no one else, not even the developer) • After saving registration: «Send for approval» and, separately below, «Google Play membership»",
   "MCS1211TH386": "🆔 MCS number now printed in the bottom-right corner of every registered card • Search works with any case: mcs003 / MCS003 / Mcs003 / mcs 3",
   "MCS1211TH385": "🔎 Search bar now finds a card by its MCS ID — type MCS005 (all businesses of that account) or MCS00501 (that one card)",
   "MCS1211TH384": "🆔 Only MCS ID everywhere (old p… business ID removed) • Your own MCS ID at the top of the registration form • Bolder, clearer form text",
@@ -5900,7 +5902,7 @@ function dupMap(){
 function dupOld(r){ try{ return !!r && dupMap().has(r); }catch(e){ return false; } }
 function dupSeer(){ try{ return !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn())); }catch(e){ return false; } }   /* MCS1211TH341: ڈویلپر اور کو-ڈویلپر دونوں کو پرانا کارڈ نظر آئے */
 function dupVis(r){
-  /* MCS1211TH387 (مالک کا حکم): منظوری سے پہلے (approved false) کارڈ صرف اپنے فون پر — ڈویلپر سمیت کسی اور کی فہرست / تلاش میں نہیں */
+  /* MCS1311FR388 (مالک کا حکم): منظوری سے پہلے (approved false) کارڈ صرف اپنے فون پر — ڈویلپر سمیت کسی اور کی فہرست / تلاش میں نہیں */
   try{ if(r && r.approved === false && !((typeof mpEntry === 'function' && mpEntry(r)) || (typeof svcMyBasic === 'function' && svcMyBasic().includes(r.id)))) return false; }catch(e){}
   try{ return dupSeer() || !dupOld(r); }catch(e){ return true; } }
 function dupBadge(kind, r){
@@ -17939,6 +17941,7 @@ function mstOpen(){
     mstRow('linear-gradient(135deg,#9a52de,#6a2bb8)', 'A/ج', 'Language', 'English / اردو', 'mstLang', '', 1),
     mstRow('linear-gradient(135deg,#3fc83f,#18951c)', MST_IC.bell, 'Notification Settings', 'Manage your alerts and notifications', 'mstNotif', '', 1),
     mstRow('linear-gradient(135deg,#55a8f5,#2468e0)', MST_IC.link, 'Connected Account', 'My City Shines connection & device management', 'mstConnected', '', 1),
+    mstRow('linear-gradient(135deg,#f6c445,#e08a0c)', '💳', 'Membership Packages', 'Google Play plans and prices', 'mcsPlayPackages'),
     mstRow('linear-gradient(135deg,#ffa63d,#ee7a0c)', '<span style="font-size:27px">?</span>', 'Help and Support', 'Get help, FAQs and contact support', 'mstHelp'),
     mstRow('linear-gradient(135deg,#8a3fd0,#5b1f9f)', MST_IC.info, 'About ' + (ag ? 'MCS-Agent' : 'My City Shines'), 'App version, features and information', 'mstAbout', '', 1),
     mstRow('linear-gradient(135deg,#3cc03c,#168a22)', MST_IC.shield, 'Privacy Policy', 'Read our privacy policy', 'mstPrivacy'),
@@ -22422,7 +22425,7 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     if(rl === 'dev') return bzGiveYear({kind: kind || 'service', rec});
     if(rl === 'codev' || rl === 'agent') return bzYearReq({kind: kind || 'service', rec});
     memAfterReg(kind || 'service', rec); }, 50); };
-  /* MCS1211TH387: رجسٹریشن محفوظ — دو بالکل الگ ڈبے: اوپر «منظوری کے لیے ڈویلپر کو»، دور نیچے الگ «Google Play ممبرشپ» */
+  /* MCS1311FR388: رجسٹریشن محفوظ — دو بالکل الگ ڈبے: اوپر «منظوری کے لیے ڈویلپر کو»، دور نیچے الگ «Google Play ممبرشپ» */
   window.memAfterReg = function(kind, rec){
     const rk = rkOf(kind, rec); window._marArgs = [kind, rec];
     agModal(`<div style="text-align:center;font-size:46px">✅</div><div class="ag-hd" style="text-align:center">Registration saved <small>${E(rec.nameUr || rec.name || '')}</small></div>
@@ -22551,5 +22554,343 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
 html body .doc-card .doc-foot .doc-recid.on{display:block !important;position:absolute !important;right:9px !important;bottom:4px !important;left:auto !important;margin:0 !important;padding:1px 7px !important;z-index:5 !important;direction:ltr !important;unicode-bidi:isolate !important;font:800 11px/1.35 Arial,Helvetica,sans-serif !important;letter-spacing:.6px !important;color:#fff7d6 !important;background:rgba(0,0,0,.38) !important;border-radius:8px !important;opacity:1 !important;white-space:nowrap !important;pointer-events:none}
 html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px !important;box-sizing:border-box}
 </style>
+<style id="mcsWiz388css">
+/* MCS1311FR388: رجسٹریشن ویزرڈ — ایک وقت میں ایک اسکرین، چار مرحلے */
+#wzOv{position:fixed;inset:0;z-index:2147483100;display:none;overflow:auto;background:linear-gradient(180deg,#eef4ff,#f7fbff 40%,#eefaf1);font-family:MCSDigits,"Segoe UI",Roboto,Arial,sans-serif;color:#0f1f45}
+#wzOv.on{display:block}
+#wzOv .wzW{max-width:440px;margin:0 auto;padding:10px 14px 60px}
+#wzOv .u{font-family:"Jameel Noori Nastaleeq","JameelNoori",MCSDigits,serif;direction:rtl}
+#wzOv .wzTop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+#wzOv .wzTitle{background:#0b3b8f;color:#fff;border-radius:14px;padding:6px 12px;font-weight:800;font-size:15px;line-height:1.5;flex:1;text-align:center}
+#wzOv .wzTitle small{display:block;font-weight:600;font-size:13px;opacity:.95}
+#wzOv .wzX{width:38px;height:38px;border-radius:50%;border:0;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.18);font-size:18px}
+#wzOv .wzPg{display:flex;align-items:flex-start;justify-content:space-between;margin:8px 2px 12px}
+#wzOv .wzPg div{flex:1;text-align:center;font-size:10.5px;font-weight:700;color:#64748b;position:relative}
+#wzOv .wzPg div i{display:grid;place-items:center;width:30px;height:30px;margin:0 auto 3px;border-radius:50%;background:#e2e8f0;color:#475569;font-style:normal;font-weight:900;font-size:15px;position:relative;z-index:2}
+#wzOv .wzPg div:not(:last-child):after{content:"";position:absolute;top:14px;left:calc(50% + 17px);right:calc(-50% + 17px);height:3px;background:#e2e8f0;z-index:1}
+#wzOv .wzPg div.on i{background:#0b3b8f;color:#fff;box-shadow:0 0 0 4px rgba(11,59,143,.15)}
+#wzOv .wzPg div.ok i{background:#16a34a;color:#fff}
+#wzOv .wzPg div.ok:not(:last-child):after{background:#16a34a}
+#wzOv .wzCard{background:#fff;border:1px solid #dbe5f6;border-radius:20px;padding:14px 13px 16px;box-shadow:0 12px 34px rgba(15,31,69,.10)}
+#wzOv .wzHd{text-align:center;margin:0 0 10px}
+#wzOv .wzHd i{display:grid;place-items:center;width:52px;height:52px;margin:0 auto 4px;border-radius:50%;background:#e8f0ff;font-style:normal;font-size:26px}
+#wzOv .wzHd b{display:block;font-size:19px;color:#0b2f8f}
+#wzOv .wzHd span{display:block;font-size:17px;color:#1e3a8a}
+#wzOv label.wzL{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:9px 2px 3px;font-weight:800;font-size:13.5px;color:#0b2f6b}
+#wzOv label.wzL .u{font-size:15px;font-weight:700;color:#1e3a8a}
+#wzOv label.wzL em{color:#dc2626;font-style:normal}
+#wzOv .wzI,#wzOv select.wzI,#wzOv textarea.wzI{width:100%;box-sizing:border-box;min-height:46px;border:1.5px solid #cbd5e1;border-radius:12px;padding:8px 11px;font-size:16px;background:#fff;color:#0f1f45;font-family:inherit;font-weight:600}
+#wzOv .wzI:focus{outline:0;border-color:#1546c0;box-shadow:0 0 0 4px rgba(21,70,192,.12)}
+#wzOv .wzI[readonly]{background:#f1f5f9;color:#475569}
+#wzOv textarea.wzI{min-height:70px}
+#wzOv .wzChk{display:flex;gap:9px;align-items:center;margin:8px 2px;font-size:14px;font-weight:700}
+#wzOv .wzChk input{width:20px;height:20px;accent-color:#16a34a}
+#wzOv .wzBtn{width:100%;min-height:50px;border:0;border-radius:14px;font-size:16.5px;font-weight:800;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;cursor:pointer;font-family:inherit}
+#wzOv .wzBtn small{display:block;width:100%;font-size:13px;font-weight:600;opacity:.95}
+#wzOv .wzBtn:disabled{opacity:.55}
+#wzOv .bG{background:linear-gradient(180deg,#22c55e,#0f7a35);color:#fff;box-shadow:0 4px 0 #0b5e29}
+#wzOv .bB{background:linear-gradient(180deg,#2563eb,#0b2f8f);color:#fff;box-shadow:0 4px 0 #0a2775}
+#wzOv .bW{background:#fff;color:#0b2f8f;border:1.5px solid #9db4e8}
+#wzOv .wzErr{min-height:18px;color:#b91c1c;font-weight:800;font-size:14px;text-align:center;margin-top:8px;direction:rtl}
+#wzOv .wzChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+#wzOv .wzChip{border:1.5px solid #9db4e8;background:#f5f8ff;border-radius:999px;padding:6px 11px;font-size:14px;font-weight:700;color:#0b2f8f}
+#wzOv .wzChip.on{background:#0b3b8f;color:#fff;border-color:#0b3b8f}
+#wzOv .wzChip i{font-style:normal;margin-inline-start:6px;opacity:.85}
+#wzOv .wzRow{display:flex;gap:8px}#wzOv .wzRow>*{flex:1}
+#wzOv .wzOk{text-align:center;padding:10px 4px}
+#wzOv .wzOk .big{font-size:54px}
+#wzOv .wzId{display:inline-block;font:900 32px "Segoe UI",Consolas,monospace;letter-spacing:2px;color:#0b1f4d;background:#eff6ff;border:2px dashed #1d4ed8;border-radius:14px;padding:6px 16px;margin:6px 0}
+#wzOv .wzNote{background:#fffbeb;border:1px solid #f59e0b;color:#78350f;border-radius:12px;padding:8px 10px;font-weight:700;font-size:14px;line-height:1.9;margin-top:10px}
+#wzOv .wzGreen{background:#f0fdf4;border:1px solid #86efac;color:#14532d;border-radius:12px;padding:8px 10px;font-weight:700;font-size:14px;line-height:1.9;margin-top:10px}
+#wzOv .wzSt{display:inline-block;border-radius:999px;padding:3px 12px;font-weight:800;font-size:13px}
+#wzOv .st-pend{background:#fef3c7;color:#92400e}#wzOv .st-ok{background:#dcfce7;color:#166534}#wzOv .st-rej{background:#fee2e2;color:#991b1b}#wzOv .st-act{background:#dbeafe;color:#1e40af}#wzOv .st-none{background:#e2e8f0;color:#475569}
+#wzOv .wzBen{list-style:none;margin:6px 0 0;padding:8px 10px;background:#eef6ff;border-radius:12px}
+#wzOv .wzBen li{padding:3px 0;font-size:14px;font-weight:700}#wzOv .wzBen li:before{content:"✔";color:#16a34a;margin-inline-end:7px;font-weight:900}
+#wzOv .wzPlay{display:flex;align-items:center;gap:10px;border:1.5px solid #cbd5e1;border-radius:12px;padding:9px 11px;background:#f8fafc;font-weight:800}
+#wzOv .wzPrev{border:2px solid #16a34a;border-radius:14px;background:#f0fdf4;padding:10px;margin-top:8px}
+#wzOv .wzPrev div{padding:2px 0;font-size:14.5px}
+</style>
+<div id="wzOv" data-noen aria-modal="true" role="dialog"><div class="wzW" id="wzW"></div></div>
+<script id="mcsWiz388">
+/* MCS1311FR388 (مالک کا حکم): My City Shines — مکمل رجسٹریشن ویزرڈ.
+   ① اکاؤنٹ (مفت) ② مفت بزنس کارڈ (نجی) ③ ادائیگی (Google Play) ← ایڈمن منظوری ④ ایجنٹ (اختیاری)
+   پرانے نظام سے جڑا ہے: /mcsauth signup، uaAutoCard، CLS فیلڈز، mpAdd، mcsPlayBuy، memAutoSend، svcSaveCnic، agForm؛ کچھ نیا الگ نہیں بنایا */
+(function(){
+  const API = 'https://aio-pos-verify.pbtcodelabs.workers.dev/mcsauth';
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const lsG = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
+  const lsS = (k, v) => { try{ v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); }catch(e){} };
+  const dg = s => String(s || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c));
+  const d10 = s => dg(s).replace(/\D/g, '').slice(-10);
+  const LBL = (en, ur, rq) => `<label class="wzL"><span>${en}${rq ? ' <em>*</em>' : ''}</span><span class="u">${ur}</span></label>`;
+
+  /* ---------- محفوظ حالت: ہر خانے پر خود محفوظ، دوبارہ کھولنے پر وہیں سے ---------- */
+  let S = (function(){ try{ return JSON.parse(lsG('mcsWiz388') || 'null') || {}; }catch(e){ return {}; } })();
+  S.step = S.step || 1; S.a = S.a || {}; S.c = S.c || {subs: [], prods: []}; S.p = S.p || {};
+  const save = () => lsS('mcsWiz388', JSON.stringify(S));
+  let busy = false;
+
+  /* ---------- مددگار ---------- */
+  const me = () => { try{ return (typeof uaMe === 'function' && uaMe()) || null; }catch(e){ return null; } };
+  const sidNow = () => { const m = me(); const u = m && m.user; const s = (u && (u.sid || u.id)) || S.sid || ''; return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : s) : ''; };
+  const myCard = () => { try{ const mob = d10((me() && me().user && me().user.mobile) || S.a.mobile); if(!mob) return null;
+    return (store.services || []).find(x => d10(x.whatsapp) === mob) || null; }catch(e){ return null; } };
+  const provOf = d => { try{ return Object.keys(DISTRICTS).find(p => (DISTRICTS[p] || []).includes(d)) || ''; }catch(e){ return ''; } };
+  const enOf = x => { try{ return (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; }catch(e){ return ''; } };
+  const distAll = () => { const T = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && T.add(x))); }catch(e){} return Array.from(T).sort((a, b) => (enOf(a) || a).localeCompare(enOf(b) || b, 'en')); };
+  const statusOf = rec => {   /* ادائیگی / منظوری کی حالت — فون پر موجود معلومات سے */
+    try{ if(rec && typeof pfActive === 'function' && pfActive(rec)) return 'act';
+      const rk = rec && pfKeyOf(rec, 'service'); const m = JSON.parse(lsG('mcsMemSent') || '{}');
+      if((rk && m[rk]) || lsG('mcsPlayPending')) return 'pend'; }catch(e){}
+    return 'none'; };
+  const STX = { none:['st-none', 'Not started', 'شروع نہیں ہوا'], pend:['st-pend', 'Pending — awaiting Admin approval', 'منظوری کا انتظار'], act:['st-act', 'Active — Public', 'فعال — سب کو نظر آ رہا ہے'], ok:['st-ok', 'Approved', 'منظور'], rej:['st-rej', 'Rejected', 'مسترد'] };
+  const stChip = k => `<span class="wzSt ${STX[k][0]}">${STX[k][1]} · <span class="u">${STX[k][2]}</span></span>`;
+
+  /* ---------- ڈھانچہ: عنوان + 4 مرحلوں کی پٹی ---------- */
+  const STEPS = [['Account', 'اکاؤنٹ'], ['Business Card', 'بزنس کارڈ'], ['Subscription', 'سبسکرپشن'], ['MCS Agent', 'ایجنٹ']];
+  function frame(inner){
+    const pg = STEPS.map((s, i) => `<div class="${S.step === i + 1 ? 'on' : (S.step > i + 1 ? 'ok' : '')}"><i>${S.step > i + 1 ? '✓' : i + 1}</i>${s[0]}<br><span class="u">${s[1]}</span></div>`).join('');
+    $('wzW').innerHTML = `<div class="wzTop"><div class="wzTitle">Registration &amp; Activation<small class="u">رجسٹریشن اور ایکٹیویشن کا مکمل عمل</small></div><button class="wzX" onclick="mcsWizClose()" title="Close">✕</button></div><div class="wzPg">${pg}</div>${inner}`;
+    $('wzOv').scrollTop = 0;
+  }
+  const err = m => { const e = $('wzErr'); if(e) e.textContent = m || ''; };
+  window.mcsWizClose = function(){ const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; };
+  window.mcsWizOpen = function(step){
+    const m = me(); if(m && !S.sid) S.sid = (m.user.sid || m.user.id || '');
+    let st = step || S.step || 1;
+    if(!m && st > 1) st = 1;                 /* اکاؤنٹ کے بغیر آگے نہیں */
+    if(m && st === 1 && !step) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* لاگ اِن ہے تو اکاؤنٹ والا مرحلہ مکمل */
+    S.step = st; save(); $('wzOv').classList.add('on'); document.body.style.overflow = 'hidden'; draw();
+  };
+  const draw = () => { ({1: s1, 2: s2, 3: s3, 4: s4})[S.step](); };
+  window.wzGo = function(n){ if(n > 1 && !me()){ S.step = 1; save(); return draw(); } S.step = n; save(); draw(); };
+
+  /* ================= مرحلہ ۱: اکاؤنٹ ================= */
+  function s1(){
+    const a = S.a, ds = distAll();
+    frame(`<div class="wzCard"><div class="wzHd"><i>👤</i><b>Create Your Account</b><span class="u">اپنا اکاؤنٹ بنائیں</span></div>
+      ${LBL('Full Name', 'مکمل نام', 1)}<input class="wzI" id="wzName" autocomplete="name" placeholder="Enter your full name" value="${esc(a.name)}" oninput="wzKeep()">
+      ${LBL('Mobile No.', 'موبائل نمبر', 1)}<input class="wzI" id="wzMob" inputmode="tel" dir="ltr" placeholder="03XX XXXXXXX" maxlength="13" value="${esc(a.mobile)}" oninput="wzKeep()">
+      ${LBL('WhatsApp No. (Optional)', 'واٹس ایپ نمبر (اختیاری)')}<input class="wzI" id="wzWa" inputmode="tel" dir="ltr" maxlength="13" value="${esc(a.same ? a.mobile : a.wa)}" ${a.same ? 'readonly' : ''} oninput="wzKeep()">
+      <label class="wzChk"><input type="checkbox" id="wzSame" ${a.same ? 'checked' : ''} onchange="wzSame()"><span>Same as Mobile No. / <span class="u">موبائل نمبر جیسا ہی</span></span></label>
+      ${LBL('Email (Optional)', 'ای میل (اختیاری)')}<input class="wzI" id="wzMail" type="email" dir="ltr" placeholder="example@email.com" value="${esc(a.email)}" oninput="wzKeep()">
+      ${LBL('District', 'ضلع', 1)}<select class="wzI" id="wzDist" onchange="wzKeep();wzProv()"><option value="">Select District — ضلع منتخب کریں</option>${ds.map(x => `<option value="${esc(x)}" ${a.dist === x ? 'selected' : ''}>${esc(enOf(x) ? enOf(x) + ' — ' + x : x)}</option>`).join('')}</select>
+      <div class="wzRow"><div>${LBL('Country (Auto)', 'ملک (خودکار)')}<input class="wzI" id="wzCtry" readonly value="Pakistan — پاکستان"></div><div>${LBL('Province (Auto)', 'صوبہ (خودکار)')}<input class="wzI" id="wzProv" readonly value="${esc(provOf(a.dist))}"></div></div>
+      ${LBL('Password (6 digits)', 'پاس ورڈ (۶ ہندسے)', 1)}<div style="position:relative"><input class="wzI" id="wzPw" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" value="" autocomplete="new-password"><button type="button" onclick="wzEye()" style="position:absolute;top:6px;right:8px;border:0;background:none;font-size:20px">👁️</button></div>
+      <label class="wzChk"><input type="checkbox" id="wzAgree"><span>I agree to the <a href="privacy.html#terms" target="_blank">Terms</a> &amp; <a href="privacy.html" target="_blank">Privacy Policy</a></span></label>
+      <div class="wzErr u" id="wzErr"></div>
+      <button class="wzBtn bG" id="wzSave1" onclick="wzDo1()">Create Account<small class="u">اکاؤنٹ بنائیں</small></button>
+      <div style="text-align:center;margin-top:10px;font-weight:700">Already registered? <a href="#" onclick="event.preventDefault();mcsWizClose();try{uaLogin()}catch(e){}" style="color:#1546c0">Log In</a></div></div>`);
+  }
+  window.wzKeep = function(){ const g = i => ($(i) || {}).value; const a = S.a;
+    if($('wzName')) a.name = g('wzName'); if($('wzMob')) a.mobile = g('wzMob'); if($('wzMail')) a.email = g('wzMail'); if($('wzDist')) a.dist = g('wzDist');
+    if($('wzSame') && $('wzSame').checked){ a.same = 1; a.wa = a.mobile; if($('wzWa')) $('wzWa').value = a.mobile; } else { a.same = 0; if($('wzWa')) a.wa = g('wzWa'); }
+    save(); };
+  window.wzSame = function(){ const on = $('wzSame').checked; $('wzWa').readOnly = on; wzKeep(); };
+  window.wzProv = function(){ const p = $('wzProv'); if(p) p.value = provOf(($('wzDist') || {}).value); };
+  window.wzEye = function(){ const i = $('wzPw'); if(i) i.type = i.type === 'password' ? 'text' : 'password'; };
+  const AERR = { mobile_taken:'اس موبائل نمبر سے پہلے ہی اکاؤنٹ بنا ہوا ہے — LOGIN کریں', email_taken:'اس ای میل سے پہلے ہی اکاؤنٹ ہے', net:'انٹرنیٹ نہیں — انٹرنیٹ چلا کر دوبارہ کوشش کریں', wait:'کئی بار غلط کوشش — کچھ دیر بعد کریں' };
+  window.wzDo1 = async function(){
+    if(busy) return; wzKeep(); const a = S.a, mob = dg(a.mobile).replace(/\D/g, ''), pw = dg($('wzPw').value).trim();
+    if((a.name || '').trim().length < 2) return err('پورا نام لکھیں — Full name required');
+    if(mob.length < 10 || mob.length > 11) return err('درست موبائل نمبر لکھیں (03XXXXXXXXX)');
+    if(!a.dist) return err('اپنا ضلع منتخب کریں — District required');
+    if(!/^\d{6}$/.test(pw)) return err('پاس ورڈ ٹھیک ۶ ہندسوں کا ہو — Password must be 6 digits');
+    if(a.email && !/^\S+@\S+\.\S+$/.test(a.email.trim())) return err('ای میل درست نہیں');
+    if(!$('wzAgree').checked) return err('شرائط اور پرائیویسی پالیسی پر ٹک لگائیں');
+    busy = true; $('wzSave1').disabled = true; err('');
+    let r; try{ const x = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dev: (typeof agDev === 'function' ? agDev() : ''), op:'signup', name: a.name.trim(), mobile: mob, email: (a.email || '').trim(), pw, city: a.dist, district: a.dist})}); r = await x.json(); }catch(e){ r = {ok:false, reason:'net'}; }
+    busy = false; $('wzSave1').disabled = false;
+    if(!r || !r.ok) return err(AERR[r && r.reason] || ('خرابی: ' + ((r && r.reason) || 'net')));
+    lsS('mcsAuth', JSON.stringify({tok: r.tok, user: r.user, at: Date.now()})); lsS('mcsGuest', null);
+    try{ lsS('mcsMyPk', JSON.stringify({sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now()})); }catch(e){}
+    try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}
+    try{ localStorage.setItem('mcsHomeCity', a.dist); localStorage.removeItem('mcsCityPick'); }catch(e){}
+    S.sid = r.user.sid || r.user.id; save();
+    try{ uaAutoCard(r.user); }catch(e){}
+    try{ const c = myCard(); if(c){ c.more = c.more || {}; const wa = d10(a.same ? mob : a.wa); if(wa && wa !== d10(mob)) c.more.wa2 = '0' + wa; if(a.email) c.more.email = a.email.trim(); saveStore(); } }catch(e){}
+    try{ uaSync(); }catch(e){} try{ ccApplyCity(true); }catch(e){}
+    ok1(r.user);
+  };
+  function ok1(u){
+    const sid = (typeof mcsSidFmt === 'function' ? mcsSidFmt(u.sid || u.id) : (u.sid || u.id));
+    frame(`<div class="wzCard"><div class="wzOk"><div class="big">✅</div><b style="font-size:20px;color:#166534">Account Created Successfully!</b><div class="u" style="font-size:19px;color:#166534">آپ کا اکاؤنٹ کامیابی سے بن گیا!</div>
+      <div class="wzId" dir="ltr">${esc(sid)}</div><div style="font-weight:700">Account ID — <span class="u">آپ کی پکی ID</span></div></div>
+      <button class="wzBtn bG" onclick="wzGo(2)">Next: Create Business Card<small class="u">اگلا: بزنس کارڈ بنائیں</small></button></div>`);
+  }
+
+  /* ================= مرحلہ ۲: مفت بزنس کارڈ (نجی) ================= */
+  const PT = () => (typeof CLS_PTYPES !== 'undefined' ? CLS_PTYPES : []);
+  const catsFor = pt => { try{ return clsCatsFor(pt); }catch(e){ return []; } };
+  function s2(){
+    const c = S.c, rec = myCard(), m = (rec && rec.more) || {};
+    if(rec && !c.init){ c.init = 1; c.nameUr = c.nameUr || rec.nameUr || ''; c.nameEn = c.nameEn || rec.nameEn || ''; c.ptype = c.ptype || m.ptype || ''; c.mcat = c.mcat || m.mcat || ''; if(!(c.subs || []).length && Array.isArray(m.subs)) c.subs = m.subs.slice(); if(!(c.prods || []).length && Array.isArray(m.prods)) c.prods = m.prods.slice(); c.org = c.org || m.org || ''; c.city = c.city || rec.city || ''; c.addr = c.addr || rec.address || ''; save(); }
+    if(!c.city) c.city = S.a.dist || (rec && rec.district) || '';
+    const cats = catsFor(c.ptype), orgs = (function(){ try{ return clsOrgList(); }catch(e){ return []; } })();
+    const cur = (cats.find(x => x.en === c.mcat) || {titles: []});
+    const subList = cur.titles.map(t => t.en); (c.subs || []).forEach(v => { if(!subList.some(x => x.toLowerCase() === String(v).toLowerCase())) subList.push(v); });
+    const cities = (function(){ const T = new Set(); try{ (store.services || []).forEach(r => r.city && !isBlankVal(r.city) && T.add(r.city)); }catch(e){} return Array.from(T).slice(0, 300); })();
+    frame(`<div class="wzCard"><div class="wzHd"><i>🪪</i><b>Create Your Business Card</b><span class="u">اپنا بزنس کارڈ بنائیں</span></div>
+      ${LBL('Profile Type', 'پروفائل ٹائپ', 1)}<select class="wzI" id="wzPt" onchange="wzC('pt')"><option value="">Select Profile Type — منتخب کریں</option>${PT().map(t => `<option value="${esc(t[0])}" ${c.ptype === t[0] ? 'selected' : ''}>${esc(t[2] + ' — ' + t[1].replace(/^\S+\s/, ''))}</option>`).join('')}</select>
+      ${LBL('Profile Category', 'پروفائل کیٹگری', 1)}<select class="wzI" id="wzMc" onchange="wzC('mc')"><option value="">Select Category — شعبہ منتخب کریں</option>${cats.map(x => `<option value="${esc(x.en)}" ${c.mcat === x.en ? 'selected' : ''}>${esc(x.en + ' — ' + x.ur)}</option>`).join('')}</select>
+      ${LBL('Profile SubType(s) — multi-select', 'پروفائل سب ٹائپ (ایک سے زیادہ)', 1)}<div class="wzChips" id="wzSubs">${subList.length ? subList.map(v => { const on = (c.subs || []).some(x => String(x).toLowerCase() === v.toLowerCase()), ur = (function(){ try{ return clsTitleUr(v); }catch(e){ return ''; } })(); return `<button type="button" class="wzChip${on ? ' on' : ''}" data-v="${esc(v)}" onclick="wzSub(this.dataset.v)">${on ? '✔ ' : ''}${esc(v)}${ur ? ' <span class="u">' + esc(ur) + '</span>' : ''}</button>`; }).join('') : '<small class="u" style="color:#64748b">پہلے ٹائپ اور کیٹگری منتخب کریں</small>'}</div>
+      <div class="wzRow" style="margin-top:6px"><input class="wzI" id="wzSubIn" placeholder="Other / دیگر — add your own"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 74px" onclick="wzSubAdd()">＋ Add</button></div>
+      ${LBL('Products &amp; Services (multiple)', 'مصنوعات و خدمات (ایک سے زیادہ)')}<div class="wzRow"><input class="wzI" id="wzPrIn" placeholder="Enter products and services — ایک ایک لکھ کر ＋ دبائیں"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 74px" onclick="wzProdAdd()">＋ Add</button></div>
+      <div class="wzChips">${(c.prods || []).map((v, i) => `<span class="wzChip on">${esc(v)}<i onclick="wzProdDel(${i})">✖</i></span>`).join('')}</div>
+      ${LBL('Associated Organization / Brand', 'متعلقہ ادارہ / برانڈ')}<select class="wzI" id="wzOrg" onchange="wzC('org')"><option value="">${esc((typeof CLS_NOORG !== 'undefined' ? CLS_NOORG : 'Independent'))}</option>${orgs.map(v => `<option value="${esc(v)}" ${c.org === v ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>
+      ${LBL('Business Name (English)', 'کاروبار کا نام (انگریزی)')}<input class="wzI" id="wzNEn" dir="ltr" placeholder="Enter business name" value="${esc(c.nameEn)}" oninput="wzC('t')">
+      ${LBL('Business Name (Urdu)', 'کاروبار کا نام (اردو)', 1)}<input class="wzI u" id="wzNUr" placeholder="کاروبار کا نام درج کریں" value="${esc(c.nameUr)}" oninput="wzC('t')" style="font-size:19px">
+      ${LBL('City / Main Area', 'شہر / مرکزی علاقہ', 1)}<input class="wzI" id="wzCity" list="wzCityL" placeholder="Select City / Area" value="${esc(c.city)}" oninput="wzC('t')"><datalist id="wzCityL">${cities.map(x => `<option value="${esc(x)}">`).join('')}</datalist>
+      ${LBL('Full Address', 'مکمل پتہ', 1)}<textarea class="wzI u" id="wzAddr" placeholder="مکمل پتہ درج کریں" oninput="wzC('t')">${esc(c.addr)}</textarea>
+      <div class="wzGreen">🔒 <b>Private card</b> — <span class="u">یہ مفت کارڈ صرف آپ کو (My Portal میں) نظر آئے گا، عوامی فہرست میں نہیں۔ ادائیگی اور ایڈمن کی منظوری کے بعد ہی سب کو دکھے گا۔</span></div>
+      <div class="wzErr u" id="wzErr"></div>
+      <button class="wzBtn bW" onclick="wzPreview()">👁️ Preview<small class="u">پہلے دیکھیں</small></button>
+      <button class="wzBtn bG" id="wzSave2" onclick="wzDo2()">Create Business Card — FREE<small class="u">بزنس کارڈ بنائیں — مفت (محفوظ کریں)</small></button>
+      <button class="wzBtn bW" onclick="wzGo(1)" style="margin-top:6px">← Back</button></div>`);
+  }
+  window.wzC = function(w){
+    const c = S.c, g = i => ($(i) || {}).value || '';
+    if(w === 'pt'){ c.ptype = g('wzPt'); c.mcat = ''; c.subs = []; save(); return s2(); }
+    if(w === 'mc'){ c.mcat = g('wzMc'); c.subs = []; save(); return s2(); }
+    if(w === 'org'){ c.org = g('wzOrg'); }
+    if($('wzNEn')) c.nameEn = g('wzNEn'); if($('wzNUr')) c.nameUr = g('wzNUr'); if($('wzCity')) c.city = g('wzCity'); if($('wzAddr')) c.addr = g('wzAddr');
+    save(); };
+  window.wzSub = function(v){ const k = String(v).toLowerCase(), i = (S.c.subs || []).findIndex(x => String(x).toLowerCase() === k); if(i < 0) S.c.subs.push(v); else S.c.subs.splice(i, 1); wzC('t'); s2(); };
+  window.wzSubAdd = function(){ const i = $('wzSubIn'), v = ((i && i.value) || '').trim().slice(0, 60).replace(/\|/g, ' '); if(!v) return; if(!(S.c.subs || []).some(x => String(x).toLowerCase() === v.toLowerCase()) && S.c.subs.length < 30) S.c.subs.push(v); wzC('t'); s2(); };
+  window.wzProdAdd = function(){ const i = $('wzPrIn'); if(!i) return; i.value.split(/[،,\n;؛]+/).map(x => x.trim()).filter(Boolean).forEach(p => { if(S.c.prods.length < 40 && !S.c.prods.some(x => x.toLowerCase() === p.toLowerCase())) S.c.prods.push(p.slice(0, 60)); }); wzC('t'); s2(); };
+  window.wzProdDel = function(i){ S.c.prods.splice(i, 1); wzC('t'); s2(); };
+  function chk2(){ const c = S.c;
+    if(!c.ptype) return 'پروفائل ٹائپ منتخب کریں'; if(!c.mcat) return 'پروفائل کیٹگری منتخب کریں'; if(!(c.subs || []).length) return 'کم از کم ایک سب ٹائپ منتخب کریں';
+    if(!(c.nameUr || '').trim()) return 'کاروبار کا نام اردو میں لکھیں'; if(!(c.city || '').trim()) return 'شہر / علاقہ لکھیں'; if(!(c.addr || '').trim()) return 'مکمل پتہ لکھیں'; return ''; }
+  window.wzPreview = function(){ wzC('t'); const m = chk2(); if(m) return err(m); const c = S.c, pt = PT().find(t => t[0] === c.ptype);
+    const box = document.createElement('div'); box.id = 'wzPv'; box.style.cssText = 'position:fixed;inset:0;z-index:2147483200;background:rgba(15,23,42,.55);display:grid;place-items:center;padding:14px';
+    box.innerHTML = `<div class="wzCard" style="max-width:420px;width:100%;max-height:88vh;overflow:auto"><div class="wzHd"><b>Preview — <span class="u">پیش نظارہ</span></b></div><div class="wzPrev u" style="direction:rtl;text-align:right">
+      <div style="font-size:20px;font-weight:800">🏪 ${esc(c.nameUr)}</div>${c.nameEn ? `<div dir="ltr" style="text-align:left">${esc(c.nameEn)}</div>` : ''}
+      <div>📂 ${esc(pt ? pt[1] : '')} › ${esc(c.mcat)}</div><div>🏷️ ${esc((c.subs || []).join('، '))}</div>${(c.prods || []).length ? `<div>🛒 ${esc(c.prods.join('، '))}</div>` : ''}${c.org ? `<div>🤝 ${esc(c.org)}</div>` : ''}<div>📍 ${esc(c.city)} — ${esc(c.addr)}</div><div style="margin-top:6px"><span class="wzSt st-none">🔒 Private — نجی</span></div></div>
+      <button class="wzBtn bB" onclick="document.getElementById('wzPv').remove()">✏️ Edit — درست کریں</button></div>`;
+    document.body.appendChild(box); };
+  window.wzDo2 = function(){
+    if(busy) return; wzC('t'); const m = chk2(); if(m) return err(m);
+    const rec = myCard(); if(!rec) return err('آپ کا کارڈ نہیں ملا — دوبارہ لاگ اِن کریں');
+    busy = true; const c = S.c;
+    try{
+      rec.nameUr = c.nameUr.trim(); rec.nameEn = (c.nameEn || '').trim(); rec.city = c.city.trim(); rec.address = c.addr.trim();
+      rec.more = rec.more || {}; const mm = rec.more; mm.ptype = c.ptype; mm.mcat = c.mcat; mm.subs = c.subs.slice(); mm.prods = c.prods.slice(); mm.services = c.prods.join('، '); if(c.org) mm.org = c.org; else delete mm.org;
+      const prim = c.subs.length ? ((function(){ try{ return clsTitleUr(c.subs[0]); }catch(e){ return ''; } })() || c.subs[0]) : ''; if(prim) rec.type = prim;
+      rec.updatedAt = Date.now(); rec.stage = rec.stage || 'basic';
+      try{ svcMyBasicAdd(rec.id); }catch(e){}
+      saveStore();
+      try{ mpAdd('service', rec, true); }catch(e){}
+      try{ renderServiceList('list'); mpRender(); }catch(e){}
+    }catch(e){ busy = false; return err('محفوظ نہیں ہو سکا — دوبارہ کوشش کریں'); }
+    busy = false; ok2(rec);
+  };
+  function ok2(rec){
+    const sid = sidNow();
+    frame(`<div class="wzCard"><div class="wzOk"><div class="big">✅</div><b style="font-size:20px;color:#166534">Your Business Card is Created!</b><div class="u" style="font-size:19px;color:#166534">آپ کا بزنس کارڈ بن گیا!</div>
+      <div class="wzId" dir="ltr">${esc(sid)}</div><div style="font-weight:700">Card ID (permanent) — <span class="u">کارڈ کی ایک ہی پکی ID</span></div>
+      <div style="margin-top:8px"><span class="wzSt st-none">🔒 Private – Not Publicly Listed · <span class="u">فی الحال نجی — عوامی فہرست میں نہیں</span></span></div></div>
+      <button class="wzBtn bG" onclick="wzGo(3)">Next: Get Paid Subscription<small class="u">اگلا: پیڈ سبسکرپشن</small></button>
+      <button class="wzBtn bW" onclick="wzGo(2)">✏️ Edit card — کارڈ میں ترمیم</button></div>`);
+  }
+
+  /* ================= مرحلہ ۳: پیڈ سبسکرپشن (Google Play) ================= */
+  function s3(){
+    const rec = myCard(), p = S.p, st = statusOf(rec);
+    if(!rec || !(rec.more || {}).ptype){ S.step = 2; save(); return s2(); }
+    if(!p.email) p.email = ((rec.more || {}).email) || (me() && me().user && me().user.email) || '';
+    if(!p.ref) p.ref = (rec.more || {}).ref || '';
+    frame(`<div class="wzCard"><div class="wzHd"><i>💳</i><b>Get Paid Subscription</b><span class="u">پیڈ سبسکرپشن حاصل کریں</span></div>
+      <div style="text-align:center">${stChip(st)}</div>
+      <div style="background:#e8f2ff;border-radius:12px;padding:8px 10px;margin-top:8px;text-align:center;font-weight:800;color:#0b2f8f">Make Your Business Public<div class="u" style="font-size:17px">اپنا کاروبار سب کے لیے ظاہر کریں</div></div>
+      <ul class="wzBen"><li>Public Business Listing <span class="u">/ عوامی کاروباری فہرست</span></li><li>Appear in Category &amp; Area Searches <span class="u">/ کیٹگری اور علاقے کی تلاش میں</span></li><li>Get More Customers <span class="u">/ مزید گاہک</span></li></ul>
+      ${LBL('CNIC Number', 'قومی شناختی کارڈ نمبر', 1)}<input class="wzI" id="wzCnic" inputmode="numeric" dir="ltr" maxlength="15" placeholder="XXXXX-XXXXXXX-X" value="${esc(p.cnic)}" oninput="wzCnicF(this)">
+      ${LBL('CNIC Expiry Date', 'شناختی کارڈ کی میعاد', 1)}<input class="wzI" id="wzExp" type="date" value="${esc(p.exp)}" onchange="wzP()">
+      ${LBL('Email Address', 'ای میل ایڈریس', 1)}<div class="wzRow"><input class="wzI" id="wzEm" type="email" dir="ltr" placeholder="Enter email" value="${esc(p.email)}" oninput="wzP()"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 96px;font-size:13px" onclick="wzGoogle()">Google</button></div><div id="wzGBox"></div>
+      ${LBL('Referral Code', 'ریفرل کوڈ')}<select class="wzI" id="wzRef" onchange="wzP()"><option value="">Select Referral Code — فہرست سے ایجنٹ چنیں</option></select><div id="wzRefNm" class="u" style="font-size:14px;color:#047857;font-weight:700;margin:3px 2px"></div>
+      ${LBL('Payment Method', 'ادائیگی کا طریقہ', 1)}<div class="wzPlay"><span style="font-size:26px">▶️</span><div>Google Play Billing<div class="u" style="font-size:14px;font-weight:600">گوگل پلے کے ذریعے ادائیگی</div></div></div>
+      <div class="wzNote u">⚠️ ادائیگی کے بعد بھی کاروبار فوراً سب کو نظر نہیں آتا — ایڈمن کی منظوری لازمی ہے۔<br><span dir="ltr" style="font-family:inherit">Payment → Admin Approval → Public Activation</span></div>
+      <div class="wzErr u" id="wzErr"></div>
+      ${st === 'none' ? `<button class="wzBtn bG" id="wzPay" onclick="wzDo3()">Proceed to Payment<small class="u">ادائیگی کے لیے آگے بڑھیں</small></button>` : ''}
+      ${st === 'pend' ? `<div class="wzGreen u">✅ ادائیگی ہو چکی / درخواست بھیجی جا چکی — ایڈمن کی منظوری کا انتظار ہے۔</div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
+      ${st === 'act' ? `<div class="wzGreen u">🎉 سبسکرپشن منظور — اب آپ کا کاروبار سب کو نظر آ رہا ہے۔</div><button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>` : ''}
+      <div id="wzAlt"></div>
+      <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button>${st !== 'act' ? `<button class="wzBtn bW" onclick="wzGo(4)" style="margin-top:6px">Skip — Agent step later · <span class="u">ایجنٹ والا مرحلہ بعد میں</span></button>` : ''}</div>`);
+    wzRefInit(); const n = $('wzRef'); if(n && p.ref) n.value = p.ref; wzRefNm();
+  }
+  window.wzCnicF = function(el){ const d = dg(el.value).replace(/\D/g, '').slice(0, 13); el.value = d.length > 12 ? d.slice(0, 5) + '-' + d.slice(5, 12) + '-' + d.slice(12) : d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d; wzP(); };
+  window.wzP = function(){ const g = i => ($(i) || {}).value || ''; S.p.cnic = g('wzCnic'); S.p.exp = g('wzExp'); S.p.email = g('wzEm'); S.p.ref = g('wzRef'); save(); wzRefNm(); };
+  function wzRefInit(){   /* سب مجاز ایجنٹس کی فہرست — موجودہ ریفرل نظام (rpkFill) سے */
+    try{ const sel = $('wzRef'); if(!sel) return; if(typeof rpkFill === 'function'){ const keep = sel.value; const tmp = document.createElement('select'); rpkFill(tmp); if(tmp.options.length > 1){ sel.innerHTML = tmp.innerHTML; return; } } }catch(e){}
+    try{ const S2 = (typeof rpkSorted === 'function' ? rpkSorted() : null) || {}; const all = [].concat(S2.en || [], S2.ur || []).filter(x => x && x.c); const sel = $('wzRef'); all.forEach(x => sel.add(new Option(x.c + ' · ' + (x.n || ''), x.c))); }catch(e){} }
+  function wzRefNm(){ const el = $('wzRefNm'), s = $('wzRef'); if(!el || !s) return; const o = s.options[s.selectedIndex]; el.textContent = s.value ? ('✅ ' + ((o && o.dataset && o.dataset.n) || (typeof rpkNameOf === 'function' ? rpkNameOf(s.value) : '') || '') + ' — ' + s.value) : ''; }
+  window.wzGoogle = async function(){   /* ای میل: ہاتھ سے یا Google اکاؤنٹ چن کر */
+    const box = $('wzGBox'); if(!box) return; box.innerHTML = '<small>⏳ …</small>';
+    try{ if(!window.google || !google.accounts){ await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+      google.accounts.id.initialize({client_id: '954131537356-2be2rne30mje71l9qibosblvj3j0eqoj.apps.googleusercontent.com', callback: r => { try{ const j = JSON.parse(decodeURIComponent(escape(atob(r.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))); if(j.email){ $('wzEm').value = j.email; wzP(); box.innerHTML = '<small style="color:#047857">✅ ' + esc(j.email) + '</small>'; } }catch(e){} }, auto_select: false, ux_mode: 'popup' });
+      box.innerHTML = ''; google.accounts.id.renderButton(box, {theme:'outline', size:'large', text:'continue_with', width: 300});
+    }catch(e){ box.innerHTML = '<small style="color:#64748b">Google ابھی نہیں کھل سکا — ای میل خود لکھیں</small>'; } };
+  function chk3(){ const p = S.p, cn = dg(p.cnic).replace(/\D/g, '');
+    if(cn.length !== 13) return 'شناختی کارڈ کے پورے ۱۳ ہندسے لکھیں';
+    if(!p.exp) return 'شناختی کارڈ کی میعاد منتخب کریں'; if(new Date(p.exp + 'T23:59:59') < new Date()) return 'شناختی کارڈ کی میعاد ختم ہو چکی — نیا کارڈ ضروری ہے';
+    if(!/^\S+@\S+\.\S+$/.test((p.email || '').trim())) return 'ای میل لازمی ہے — درست ای میل لکھیں'; return ''; }
+  function saveP(rec){   /* نجی معلومات: شناختی کارڈ + میعاد + ای میل + ریفرل */
+    const p = S.p, cn = dg(p.cnic).replace(/\D/g, ''); rec.more = rec.more || {}; rec.more.email = p.email.trim();
+    if(p.ref){ rec.more.ref = p.ref; try{ rec.more.refName = (typeof rpkNameOf === 'function' ? rpkNameOf(p.ref) : '') || ''; }catch(e){} }
+    try{ svcSaveCnic(rec, cn); }catch(e){}
+    try{ const m = JSON.parse(lsG('mcsRegCnicExp') || '{}'); m[rec.id] = p.exp; lsS('mcsRegCnicExp', JSON.stringify(m)); }catch(e){}
+    try{ const FB = window.MCSFirebase; if(FB) FB.setDoc(FB.doc(FB.db, 'regPrivate', rec.fsId || rec.id), {cnicExp: p.exp, email: p.email.trim(), ts: Date.now()}, {merge: true}).catch(() => {}); }catch(e){}
+    saveStore(); }
+  window.wzDo3 = async function(){
+    if(busy) return; wzP(); const m = chk3(); if(m) return err(m);
+    const rec = myCard(); if(!rec) return err('آپ کا کارڈ نہیں ملا'); busy = true; const b = $('wzPay'); if(b) b.disabled = true; err('');
+    try{ saveP(rec); try{ mpAdd('service', rec, true); }catch(e){}
+      const rk = pfKeyOf(rec, 'service');
+      if(typeof mcsPlayOk === 'function' && mcsPlayOk()){
+        await mcsPlayBuy(rk);     /* Google Play ادائیگی + سرور سے تصدیق (پرانا نظام) */
+        const paid = !!(lsG('mcsPlayPending')) || (function(){ try{ const e = mpAll().find(x => x.rk === rk); return !!(e && (e.until || 0) > Date.now()); }catch(_){ return false; } })();
+        if(paid){ try{ memAutoSend('service', rec, true); }catch(e){} S.p.paid = Date.now(); save(); }   /* ادائیگی ← منظوری کی درخواست ایڈمن کو */
+      } else { altPath(rec); }
+    }catch(e){ err('ادائیگی مکمل نہیں ہوئی — دوبارہ کوشش کریں'); }
+    busy = false; if(b) b.disabled = false; if(S.step === 3 && statusOf(rec) !== 'none' && !$('wzAlt').innerHTML) s3();
+  };
+  window.wzResend = function(){ const rec = myCard(); if(rec) try{ memAutoSend('service', rec); }catch(e){} };
+  function altPath(rec){   /* جو بندہ Google Play سے ادائیگی نہیں کر سکتا — صرف اکاؤنٹ کی تفصیل تصدیق کے لیے */
+    const a = $('wzAlt'); if(!a) return;
+    a.innerHTML = `<div class="wzNote u">اس فون پر Google Play ادائیگی دستیاب نہیں۔<br>اپنے اکاؤنٹ کی تفصیل تصدیق (Verification) کے لیے بھیجیں — ڈویلپر دیکھ کر منظوری دیں گے۔<br><span dir="ltr" style="font-family:inherit">Send your account details for verification.</span></div>
+      <button class="wzBtn bB" onclick="wzSendVer()">📨 Send Account Details for Verification<small class="u">تصدیق کے لیے اکاؤنٹ کی تفصیل بھیجیں</small></button>`; }
+  window.wzSendVer = function(){ const rec = myCard(); if(!rec) return; try{ saveP(rec); memAutoSend('service', rec); S.p.sentVer = Date.now(); save(); }catch(e){} };
+
+  /* ================= مرحلہ ۴: MCS ایجنٹ (اختیاری) ================= */
+  function s4(){
+    const rec = myCard(), st = statusOf(rec), okAgent = st === 'act', isAg = (function(){ try{ return typeof agMe === 'function' && !!(agMe() && agMe().code); }catch(e){ return false; } })();
+    frame(`<div class="wzCard"><div class="wzHd"><i>🛡️</i><b>Apply to Be an MCS Agent</b><span class="u">ایم سی ایس ایجنٹ بننے کے لیے درخواست دیں</span></div>
+      <div class="${okAgent ? 'wzGreen' : 'wzNote'}">${okAgent ? '✅' : '🔒'} <b>Eligibility:</b> At least one paid and Admin-approved subscription is required.<div class="u">اہلیت: کم از کم ایک ادا شدہ اور ایڈمن سے منظور شدہ سبسکرپشن لازمی ہے۔</div></div>
+      <div style="margin-top:8px;font-weight:800;text-align:center" class="u">درکار دستاویزات: سیلفی • شناختی کارڈ سامنے • شناختی کارڈ پیچھے</div>
+      ${isAg ? `<div class="wzGreen u">🎉 مبارک ہو! آپ MCS ایجنٹ ہیں۔ کمیشن اور کمائی صرف الگ MCS-Agent ایپ میں دیکھی جاتی ہے۔</div>` : ''}
+      <div class="wzErr u" id="wzErr"></div>
+      <button class="wzBtn bG" ${okAgent && !isAg ? '' : 'disabled'} onclick="wzDo4()">Add Request for MCS Agent<small class="u">ایم سی ایس ایجنٹ کے لیے درخواست بھیجیں</small></button>
+      <div class="wzNote u" style="background:#eff6ff;border-color:#93c5fd;color:#1e3a8a">ایجنٹ کی درخواست ایڈمن کی الگ منظوری سے چلتی ہے۔ منظوری کے بعد ہی ایجنٹ ID، بیج اور ریفرل فہرست میں نام آتا ہے۔</div>
+      <button class="wzBtn bW" onclick="wzGo(3)" style="margin-top:6px">← Back</button><button class="wzBtn bW" onclick="mcsWizClose()" style="margin-top:6px">Finish — مکمل</button></div>`);
+  }
+  window.wzDo4 = function(){ if(statusOf(myCard()) !== 'act') return err('پہلے منظور شدہ سبسکرپشن لازمی ہے'); mcsWizClose(); try{ agForm(); }catch(e){ try{ showToast('ایجنٹ فارم نہیں کھلا'); }catch(_){} } };
+
+  /* ---------- داخلے کے راستے ---------- */
+  document.addEventListener('DOMContentLoaded', () => {
+    const o = window.uaSignup;
+    window.uaSignup = function(pre){ if(pre && pre.gtoken && typeof o === 'function') return o.apply(this, arguments);
+      try{ uaHide(); }catch(e){} S.step = 1; save(); mcsWizOpen(1); };
+    const pm = window.mpoOpen;
+    if(typeof pm === 'function') window.mpoOpen = function(){ const r = pm.apply(this, arguments);
+      try{ const box = document.querySelector('#myPortalModal .modal-box') || document.getElementById('myPortalModal'); if(box && !box.querySelector('.wzEnt') && me()){
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'wzEnt btn block'; b.style.cssText = 'margin:8px 0;background:#0b3b8f;color:#fff;border:0;border-radius:12px;padding:10px;font-weight:800;width:100%';
+        b.innerHTML = '🧭 رجسٹریشن کے مراحل — Registration Steps'; b.onclick = () => { try{ closeModal('myPortalModal'); }catch(e){} mcsWizOpen(); };
+        const n = box.querySelector('.mpo-note'); if(n) n.insertAdjacentElement('afterend', b); else box.appendChild(b); } }catch(e){}
+      return r; };
+  });
+})();
+</script>
+
 </body>
 </html>
