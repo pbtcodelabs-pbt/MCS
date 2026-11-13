@@ -4386,10 +4386,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1311FR389";
+const APP_VERSION = "MCS1311FR391";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1311FR391": "💳 Membership Packages: Subscribe button, locked order (next package only), cleaner screen",
+  "MCS1311FR390": "💳 Membership Packages: cleaner price (PKR 1000) and colourful capsule cards",
   "MCS1311FR389": "💳 Settings now has a «Membership Packages» button — see Google Play plans and prices straight from Settings",
   "MCS1311FR388": "🧭 New registration wizard: 1 Account → 2 Free private business card → 3 Google Play subscription (CNIC, expiry, email, referral dropdown) → Admin approval → 4 Optional MCS Agent request • progress saved on every field • one permanent MCS ID",
   "MCS1311FR388": "🔒 A card waiting for approval is shown only on its own phone (no one else, not even the developer) • After saving registration: «Send for approval» and, separately below, «Google Play membership»",
@@ -5368,15 +5370,32 @@ async function mcsPlayDetails(){
   if(!det){ try{ const c = JSON.parse(localStorage.getItem('mcsPlayDet') || 'null'); if(c && c.det) det = c.det; }catch(e){} }
   return det;
 }
+const MCS_PLAY_CLR = {mcs_mem_default:['#f59e0b','#d97706'], mcs_mem_1:['#3b82f6','#1d4ed8'], mcs_mem_2:['#10b981','#047857'], mcs_mem_3:['#8b5cf6','#6d28d9'], mcs_mem_4:['#ec4899','#be185d']};
+/* MCS1311FR390: قیمت صاف — «PKR 1000.000000» کی جگہ «PKR 1000» */
+function mcsPlayPrice(p){ const m = /^\s*([A-Za-z]{3})\s+(-?[\d.,]+)\s*$/.exec(p || ''); if(!m) return p || '—'; const n = parseFloat(m[2].replace(/,/g, '')); if(!isFinite(n)) return p; return m[1].toUpperCase() + ' ' + (Math.abs(n - Math.round(n)) < 0.005 ? String(Math.round(n)) : n.toFixed(2)); }
+(function(){ if(document.getElementById('mpcCss')) return; const st = document.createElement('style'); st.id = 'mpcCss';
+  st.textContent = '.mpc{border-radius:30px;padding:14px 16px;margin:0 0 12px;color:#fff;box-shadow:0 5px 14px rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.35)}.mpc.lk{filter:grayscale(.9);opacity:.6}.mpc-t{display:flex;align-items:center;justify-content:space-between;gap:10px}.mpc-l{min-width:0}.mpc-l b{display:block;font-size:16px;font-weight:900;line-height:1.35}.mpc-l small{display:block;opacity:.85;font-size:11px;margin-top:2px}.mpc-r{text-align:center;flex-shrink:0}.mpc-p{display:inline-block;background:#fff;color:#111827;font-weight:900;font-size:16px;border-radius:30px;padding:7px 15px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}.mpc-r small{display:block;font-size:11px;margin-top:3px;opacity:.95}.mpc-w{background:#fff;color:#dc2626;border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700}.mpc-a{margin-top:11px;text-align:center}.mpc-btn{width:100%;border:0;border-radius:30px;padding:11px;background:#fff;font-weight:900;font-size:16px;box-shadow:0 3px 8px rgba(0,0,0,.18);cursor:pointer}.mpc-ok,.mpc-lk{display:inline-block;background:rgba(255,255,255,.25);border-radius:30px;padding:7px 18px;font-weight:800;font-size:14px}';
+  document.head.appendChild(st); })();
 function mcsPlayPer(p){ return /^P1Y$/i.test(p) ? ' / سال' : /^P1M$/i.test(p) ? ' / ماہ' : (p ? ' / ' + escapeHtml(p) : ''); }
 async function mcsPlayPackages(){
   agModal('<div class="ag-st">⏳ Play سے پیکج دیکھے جا رہے ہیں…</div>');
   const det = await mcsPlayDetails(); let owned = [];
   if(mcsPlayOk()){ try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(x => x.itemId); }catch(e){} }
+  const next = MCS_PLAY_SKUS.find(k => !owned.includes(k));   /* MCS1311FR391: صرف اگلا پیکج کھلا؛ لیا ہوا اور باقی بند */
   const rows = MCS_PLAY_SKUS.map((k, i)=>{ const d = det && det[k];
-    return `<div class="pt-card"><b>${i + 1}. ${escapeHtml(MCS_PLAY_NAMES[k] || k)} <small dir="ltr">${k}</small></b>${d ? `${escapeHtml(d.t)} — <b dir="ltr">${escapeHtml(d.p || '—')}</b>${mcsPlayPer(d.per)}` : '<span style="color:#dc2626">⚠️ Play Console میں نہیں ملا</span>'}${owned.includes(k) ? ' <span style="color:#16a34a">✅ اس گوگل اکاؤنٹ پر فعال</span>' : ''}</div>`; }).join('');
-  agModal(`<div class="ag-hd">💳 Google Play کے پیکج اور قیمت <small>ہر گوگل اکاؤنٹ پر 5 ممبرشپس تک — ہر ایک کا الگ پیکج</small></div>${rows}
-    <div class="cp-hint" dir="auto" style="font-size:12px">🔎 تشخیص: ${escapeHtml(mcsPlayDiag || '—')}</div><div class="cp-hint">${mcsPlayOk() ? (det ? 'قیمتیں Google Play سے آئیں۔ بدلنی ہوں تو Play Console ← Monetize ← Products میں بدلیں۔' : '⚠️ Play سے کوئی پیکج نہیں آیا۔ Play Console ← Monetize ← Products میں یہ پانچوں ID (اوپر لکھی) بنائیں، Active کریں اور ایپ کو اسی ٹریک پر رکھیں جہاں ٹیسٹ ہو رہا ہے۔') : 'ℹ️ قیمتیں صرف Play Store سے انسٹال کی ہوئی ایپ میں آتی ہیں۔ جو آخری بار دیکھی تھیں وہی دکھ رہی ہیں (اگر دیکھی ہوں)۔'}</div>`);
+    const c = MCS_PLAY_CLR[k] || ['#475569', '#334155'], pr = d ? mcsPlayPrice(d.p) : '';
+    const own = owned.includes(k), isNext = k === next;
+    const act = own ? '<span class="mpc-ok">✅ فعال</span>' : isNext ? `<button type="button" class="mpc-btn" style="color:${c[1]}" onclick="mcsPlayGo()">سبسکرائب کریں</button>` : '<span class="mpc-lk">🔒 بند</span>';
+    return `<div class="mpc${own || isNext ? '' : ' lk'}" style="background:linear-gradient(135deg,${c[0]},${c[1]})"><div class="mpc-t"><div class="mpc-l"><b>${i === 0 ? '⭐ ' : ''}${escapeHtml(MCS_PLAY_NAMES[k] || k)}</b><small dir="ltr">${k}</small></div><div class="mpc-r">${d ? `<span class="mpc-p" dir="ltr">${escapeHtml(pr)}</span><small>${mcsPlayPer(d.per)}</small>` : '<span class="mpc-w">⚠️ Play Console میں نہیں ملا</span>'}</div></div><div class="mpc-a">${act}</div></div>`; }).join('');
+  agModal(`<div class="ag-hd">💳 Google Play پیکج</div>${rows}${det ? '' : `<div class="cp-hint" dir="auto" style="font-size:12px">⚠️ ${escapeHtml(mcsPlayDiag || '—')}</div>`}`);
+}
+/* MCS1311FR391: سبسکرائب کریں — کاروبار چن کر وہی ممبرشپ کا راستہ؛ SKU خود اگلا خالی (mcsPlayBuy) */
+function mcsPlayGo(){
+  const L = mpList();
+  if(!L.length){ alert('پہلے اپنا کاروبار یا پروفیشن درج کریں، پھر ممبرشپ لیں۔'); return; }
+  const need = L.filter(x => !(x.p.until && mpLeftOf(x.p) > 0)), pick = need.length ? need : L;
+  if(pick.length === 1){ closeModal('agModal'); mpSubscribe(pick[0].p.rk); return; }
+  agModal(`<div class="ag-hd">کس کاروبار کی ممبرشپ؟</div>` + pick.map(x => `<button type="button" class="btn block" style="margin-bottom:8px" onclick="closeModal('agModal');mpSubscribe('${escapeAttr(x.p.rk)}')">${escapeHtml(x.rec.nameUr || x.rec.name || '')}</button>`).join(''));
 }
 function mcsPlayOk(){ return typeof window.getDigitalGoodsService === 'function'; }
 async function mcsPlaySvc(){ return await window.getDigitalGoodsService('https://play.google.com/billing'); }
