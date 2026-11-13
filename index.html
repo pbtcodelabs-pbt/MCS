@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1211TH386";
+const APP_VERSION = "MCS1211TH387";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1211TH387": "🔒 A card waiting for approval is shown only on its own phone (no one else, not even the developer) • After saving registration: «Send for approval» and, separately below, «Google Play membership»",
   "MCS1211TH386": "🆔 MCS number now printed in the bottom-right corner of every registered card • Search works with any case: mcs003 / MCS003 / Mcs003 / mcs 3",
   "MCS1211TH385": "🔎 Search bar now finds a card by its MCS ID — type MCS005 (all businesses of that account) or MCS00501 (that one card)",
   "MCS1211TH384": "🆔 Only MCS ID everywhere (old p… business ID removed) • Your own MCS ID at the top of the registration form • Bolder, clearer form text",
@@ -5898,7 +5899,10 @@ function dupMap(){
 }
 function dupOld(r){ try{ return !!r && dupMap().has(r); }catch(e){ return false; } }
 function dupSeer(){ try{ return !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn())); }catch(e){ return false; } }   /* MCS1211TH341: ڈویلپر اور کو-ڈویلپر دونوں کو پرانا کارڈ نظر آئے */
-function dupVis(r){ try{ return dupSeer() || !dupOld(r); }catch(e){ return true; } }
+function dupVis(r){
+  /* MCS1211TH387 (مالک کا حکم): منظوری سے پہلے (approved false) کارڈ صرف اپنے فون پر — ڈویلپر سمیت کسی اور کی فہرست / تلاش میں نہیں */
+  try{ if(r && r.approved === false && !((typeof mpEntry === 'function' && mpEntry(r)) || (typeof svcMyBasic === 'function' && svcMyBasic().includes(r.id)))) return false; }catch(e){}
+  try{ return dupSeer() || !dupOld(r); }catch(e){ return true; } }
 function dupBadge(kind, r){
   if(!dupSeer() || !dupOld(r)) return '';
   const adm = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn);
@@ -22417,7 +22421,18 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
   window.memFlowOpen = function(kind, rec){ if(!rec) return; const rl = roleNow(); setTimeout(() => {
     if(rl === 'dev') return bzGiveYear({kind: kind || 'service', rec});
     if(rl === 'codev' || rl === 'agent') return bzYearReq({kind: kind || 'service', rec});
-    memAutoSend(kind || 'service', rec); }, 50); };
+    memAfterReg(kind || 'service', rec); }, 50); };
+  /* MCS1211TH387: رجسٹریشن محفوظ — دو بالکل الگ ڈبے: اوپر «منظوری کے لیے ڈویلپر کو»، دور نیچے الگ «Google Play ممبرشپ» */
+  window.memAfterReg = function(kind, rec){
+    const rk = rkOf(kind, rec); window._marArgs = [kind, rec];
+    agModal(`<div style="text-align:center;font-size:46px">✅</div><div class="ag-hd" style="text-align:center">Registration saved <small>${E(rec.nameUr || rec.name || '')}</small></div>
+      <div class="mem-pk" style="background:#eff6ff;border-color:#1d4ed8"><div class="n" style="color:#1e3a8a">📨 Approval</div>
+        <button type="button" class="mem-play" style="background:linear-gradient(#2563eb,#1d4ed8);box-shadow:0 4px 0 #1e3a8a;margin-top:8px" onclick="memAutoSend(window._marArgs[0], window._marArgs[1])">📨 Send to developer for approval</button></div>
+      <div style="height:42px"></div>
+      <div class="mem-pk"><div class="n">⭐ Google Play Membership</div><small>1 year</small>
+        <button type="button" class="mem-play" style="margin-top:8px" onclick="memFlowRk('${E(rk)}')">▶️ Get membership — Google Play</button></div>
+      <button type="button" class="mem-alt" onclick="closeModal('agModal')">Later</button>`);
+  };
   window.memFlowRk = function(rk, noPlay){
     const x = mpList().find(y => y.p.rk === rk) || mpList()[0]; if(!x) return;
     if(noPlay || !mcsPlayOk()) return memCode(x.p.rk);
