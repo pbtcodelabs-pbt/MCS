@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1311FR391";
+const APP_VERSION = "MCS1311FR392";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1311FR392": "💳 Settings: big «Google Play Package Plans» button right at the front • 3D glossy package capsules, each with its own colour and border; only the next package is bright, the rest show 🔒 Locked",
   "MCS1311FR391": "💳 Membership Packages: Subscribe button, locked order (next package only), cleaner screen",
   "MCS1311FR390": "💳 Membership Packages: cleaner price (PKR 1000) and colourful capsule cards",
   "MCS1311FR389": "💳 Settings now has a «Membership Packages» button — see Google Play plans and prices straight from Settings",
@@ -5370,24 +5371,25 @@ async function mcsPlayDetails(){
   if(!det){ try{ const c = JSON.parse(localStorage.getItem('mcsPlayDet') || 'null'); if(c && c.det) det = c.det; }catch(e){} }
   return det;
 }
-const MCS_PLAY_CLR = {mcs_mem_default:['#f59e0b','#d97706'], mcs_mem_1:['#3b82f6','#1d4ed8'], mcs_mem_2:['#10b981','#047857'], mcs_mem_3:['#8b5cf6','#6d28d9'], mcs_mem_4:['#ec4899','#be185d']};
+const MCS_PLAY_CLR = {mcs_mem_default:['#ffd94d','#e88a00','#fff3b0','#a85d00'], mcs_mem_1:['#5cc0ff','#1768e0','#d4eeff','#0b3f99'], mcs_mem_2:['#4be6a0','#0a9560','#d3ffe9','#05603c'], mcs_mem_3:['#c08bff','#6d2bd6','#eddcff','#41168a'], mcs_mem_4:['#ff7cc0','#d4207a','#ffdcee','#860e4c']};   /* MCS1311FR392: [اوپر روشن، نیچے گہرا، بارڈر، 3D کنارا] */
 /* MCS1311FR390: قیمت صاف — «PKR 1000.000000» کی جگہ «PKR 1000» */
 function mcsPlayPrice(p){ const m = /^\s*([A-Za-z]{3})\s+(-?[\d.,]+)\s*$/.exec(p || ''); if(!m) return p || '—'; const n = parseFloat(m[2].replace(/,/g, '')); if(!isFinite(n)) return p; return m[1].toUpperCase() + ' ' + (Math.abs(n - Math.round(n)) < 0.005 ? String(Math.round(n)) : n.toFixed(2)); }
-(function(){ if(document.getElementById('mpcCss')) return; const st = document.createElement('style'); st.id = 'mpcCss';
-  st.textContent = '.mpc{border-radius:30px;padding:14px 16px;margin:0 0 12px;color:#fff;box-shadow:0 5px 14px rgba(0,0,0,.2);border:2px solid rgba(255,255,255,.35)}.mpc.lk{filter:grayscale(.9);opacity:.6}.mpc-t{display:flex;align-items:center;justify-content:space-between;gap:10px}.mpc-l{min-width:0}.mpc-l b{display:block;font-size:16px;font-weight:900;line-height:1.35}.mpc-l small{display:block;opacity:.85;font-size:11px;margin-top:2px}.mpc-r{text-align:center;flex-shrink:0}.mpc-p{display:inline-block;background:#fff;color:#111827;font-weight:900;font-size:16px;border-radius:30px;padding:7px 15px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}.mpc-r small{display:block;font-size:11px;margin-top:3px;opacity:.95}.mpc-w{background:#fff;color:#dc2626;border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700}.mpc-a{margin-top:11px;text-align:center}.mpc-btn{width:100%;border:0;border-radius:30px;padding:11px;background:#fff;font-weight:900;font-size:16px;box-shadow:0 3px 8px rgba(0,0,0,.18);cursor:pointer}.mpc-ok,.mpc-lk{display:inline-block;background:rgba(255,255,255,.25);border-radius:30px;padding:7px 18px;font-weight:800;font-size:14px}';
+(function(){ const o = document.getElementById('mpcCss'); if(o) o.remove(); const st = document.createElement('style'); st.id = 'mpcCss';
+  st.textContent = '.mpc{position:relative;overflow:hidden;border-radius:34px;padding:15px 18px 16px;margin:0 2px 18px;color:#fff;background:linear-gradient(180deg,var(--c0) 0%,var(--c1) 100%);border:3px solid var(--bd);box-shadow:0 0 0 2px var(--dk),0 8px 0 var(--dk),0 14px 20px rgba(0,0,0,.32),inset 0 3px 0 rgba(255,255,255,.55),inset 0 -8px 14px rgba(0,0,0,.22)}.mpc:before{content:"";position:absolute;left:5%;right:5%;top:3px;height:42%;border-radius:30px 30px 60% 60%/30px 30px 24px 24px;background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(255,255,255,.04));pointer-events:none}.mpc>*{position:relative}.mpc.on{transform:translateY(-2px) scale(1.015);box-shadow:0 0 0 2px var(--dk),0 8px 0 var(--dk),0 0 26px 4px var(--c0),0 16px 24px rgba(0,0,0,.38),inset 0 3px 0 rgba(255,255,255,.7),inset 0 -8px 14px rgba(0,0,0,.2);animation:mpcGlow 2.2s ease-in-out infinite}@keyframes mpcGlow{50%{box-shadow:0 0 0 2px var(--dk),0 8px 0 var(--dk),0 0 38px 8px var(--c0),0 16px 24px rgba(0,0,0,.38),inset 0 3px 0 rgba(255,255,255,.7),inset 0 -8px 14px rgba(0,0,0,.2)}}.mpc.done{opacity:.96}.mpc.lk{filter:saturate(.38) brightness(.82);box-shadow:0 0 0 2px #6b7280,0 6px 0 #4b5563,0 10px 14px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -6px 10px rgba(0,0,0,.2);border-color:#cbd5e1}.mpc-t{display:flex;align-items:center;justify-content:space-between;gap:10px}.mpc-l{min-width:0}.mpc-l b{display:block;font-size:18px;font-weight:900;line-height:1.35;text-shadow:0 2px 0 rgba(0,0,0,.28)}.mpc-l small{display:block;opacity:.9;font-size:11px;margin-top:2px}.mpc-r{text-align:center;flex-shrink:0}.mpc-p{display:inline-block;background:linear-gradient(180deg,#fff,#eef2f7);color:#111827;font-weight:900;font-size:17px;border-radius:30px;padding:7px 16px;box-shadow:0 4px 0 rgba(0,0,0,.28),inset 0 -2px 0 rgba(0,0,0,.08)}.mpc-r small{display:block;font-size:11px;margin-top:6px;opacity:.95}.mpc-w{background:#fff;color:#dc2626;border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700}.mpc-a{margin-top:12px;text-align:center}.mpc-btn{width:100%;border:0;border-radius:30px;padding:12px;background:linear-gradient(180deg,#fff,#f1f5f9);font-weight:900;font-size:17px;box-shadow:0 5px 0 rgba(0,0,0,.3),0 8px 12px rgba(0,0,0,.2);cursor:pointer}.mpc-btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.3)}.mpc-ok,.mpc-lk{display:inline-block;border-radius:30px;padding:8px 22px;font-weight:900;font-size:14px;box-shadow:0 3px 0 rgba(0,0,0,.25)}.mpc-ok{background:#fff;color:#047857}.mpc-lk{background:rgba(17,24,39,.72);color:#fff}.mpg-t{display:flex;align-items:center;justify-content:center;gap:9px}.mpg-t svg{width:30px;height:30px}';
   document.head.appendChild(st); })();
 function mcsPlayPer(p){ return /^P1Y$/i.test(p) ? ' / سال' : /^P1M$/i.test(p) ? ' / ماہ' : (p ? ' / ' + escapeHtml(p) : ''); }
+const MCS_GP_SVG = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#00a0ff" d="M6 4L26 24 6 44Q4 43 4 40V8Q4 5 6 4z"/><path fill="#00e07a" d="M6 4L32 18.4 26 24z"/><path fill="#ffd500" d="M32 18.4L42 24 32 29.6 26 24z"/><path fill="#ff3a44" d="M26 24L32 29.6 6 44z"/></svg>';
 async function mcsPlayPackages(){
   agModal('<div class="ag-st">⏳ Play سے پیکج دیکھے جا رہے ہیں…</div>');
   const det = await mcsPlayDetails(); let owned = [];
   if(mcsPlayOk()){ try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(x => x.itemId); }catch(e){} }
   const next = MCS_PLAY_SKUS.find(k => !owned.includes(k));   /* MCS1311FR391: صرف اگلا پیکج کھلا؛ لیا ہوا اور باقی بند */
   const rows = MCS_PLAY_SKUS.map((k, i)=>{ const d = det && det[k];
-    const c = MCS_PLAY_CLR[k] || ['#475569', '#334155'], pr = d ? mcsPlayPrice(d.p) : '';
+    const c = MCS_PLAY_CLR[k] || ['#94a3b8', '#475569', '#e2e8f0', '#1e293b'], pr = d ? mcsPlayPrice(d.p) : '';
     const own = owned.includes(k), isNext = k === next;
-    const act = own ? '<span class="mpc-ok">✅ فعال</span>' : isNext ? `<button type="button" class="mpc-btn" style="color:${c[1]}" onclick="mcsPlayGo()">سبسکرائب کریں</button>` : '<span class="mpc-lk">🔒 بند</span>';
-    return `<div class="mpc${own || isNext ? '' : ' lk'}" style="background:linear-gradient(135deg,${c[0]},${c[1]})"><div class="mpc-t"><div class="mpc-l"><b>${i === 0 ? '⭐ ' : ''}${escapeHtml(MCS_PLAY_NAMES[k] || k)}</b><small dir="ltr">${k}</small></div><div class="mpc-r">${d ? `<span class="mpc-p" dir="ltr">${escapeHtml(pr)}</span><small>${mcsPlayPer(d.per)}</small>` : '<span class="mpc-w">⚠️ Play Console میں نہیں ملا</span>'}</div></div><div class="mpc-a">${act}</div></div>`; }).join('');
-  agModal(`<div class="ag-hd">💳 Google Play پیکج</div>${rows}${det ? '' : `<div class="cp-hint" dir="auto" style="font-size:12px">⚠️ ${escapeHtml(mcsPlayDiag || '—')}</div>`}`);
+    const act = own ? '<span class="mpc-ok">✅ فعال</span>' : isNext ? `<button type="button" class="mpc-btn" style="color:${c[1]}" onclick="mcsPlayGo()">سبسکرائب کریں</button>` : '<span class="mpc-lk">🔒 لاک</span>';
+    return `<div class="mpc ${own ? 'done' : isNext ? 'on' : 'lk'}" style="--c0:${c[0]};--c1:${c[1]};--bd:${c[2]};--dk:${c[3]}"><div class="mpc-t"><div class="mpc-l"><b>${i === 0 ? '⭐ ' : ''}${escapeHtml(MCS_PLAY_NAMES[k] || k)}</b><small dir="ltr">${k}</small></div><div class="mpc-r">${d ? `<span class="mpc-p" dir="ltr">${escapeHtml(pr)}</span><small>${mcsPlayPer(d.per)}</small>` : '<span class="mpc-w">⚠️ Play Console میں نہیں ملا</span>'}</div></div><div class="mpc-a">${act}</div></div>`; }).join('');
+  agModal(`<div class="ag-hd"><div class="mpg-t">${MCS_GP_SVG}<span>Google Play پیکج پلانز</span></div></div>${rows}${det ? '' : `<div class="cp-hint" dir="auto" style="font-size:12px">⚠️ ${escapeHtml(mcsPlayDiag || '—')}</div>`}`);
 }
 /* MCS1311FR391: سبسکرائب کریں — کاروبار چن کر وہی ممبرشپ کا راستہ؛ SKU خود اگلا خالی (mcsPlayBuy) */
 function mcsPlayGo(){
@@ -17949,6 +17951,9 @@ function mstHead(w, bellBtn){
     + `<svg class="mst-wv" viewBox="0 0 430 20" preserveAspectRatio="none"><path d="M0 10C70 24 130 2 215 9S360 22 430 6V20H0z" fill="#c9f2e8"/></svg></div>`;
 }
 function mstBack(){ const sm = document.getElementById('mstSubModal'); if(sm && sm.classList.contains('active')) return closeModal('mstSubModal'); const m = document.getElementById('mySettingsModal'); if(m) closeModal('mySettingsModal'); }
+(function(){ if(document.getElementById('mstGpCss')) return; const st = document.createElement('style'); st.id = 'mstGpCss';
+  st.textContent = '.mst-gp{display:flex;align-items:center;gap:12px;width:calc(100% - 16px);margin:12px 8px 0;padding:11px 14px;border-radius:26px;border:3px solid #fff3b0;background:linear-gradient(180deg,#ffd94d,#e88a00);color:#3b2200;text-align:left;box-shadow:0 0 0 2px #a85d00,0 6px 0 #a85d00,0 12px 16px rgba(0,0,0,.28),inset 0 3px 0 rgba(255,255,255,.6)}.mst-gp:active{transform:translateY(3px);box-shadow:0 0 0 2px #a85d00,0 3px 0 #a85d00,0 6px 8px rgba(0,0,0,.25)}.mst-gpi{flex:0 0 auto;width:50px;height:50px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 rgba(0,0,0,.25)}.mst-gpi svg{width:32px;height:32px}.mst-gpt{flex:1;min-width:0;display:block}.mst-gpt small{display:block;font-size:13px;font-weight:800;opacity:.85}.mst-gpt b{display:block;font-size:21px;font-weight:900;line-height:1.15}.mst-gpt em{display:block;font-style:normal;font-size:12px;font-weight:700;margin-top:2px;opacity:.9}.mst-gpc{font-size:34px;font-weight:900;line-height:1;opacity:.7}';
+  document.head.appendChild(st); })();
 function mstOpen(){
   const w = mstWho(), ag = w.rl === 'agent';
   window.__mstSf = 0;
@@ -17960,7 +17965,6 @@ function mstOpen(){
     mstRow('linear-gradient(135deg,#9a52de,#6a2bb8)', 'A/ج', 'Language', 'English / اردو', 'mstLang', '', 1),
     mstRow('linear-gradient(135deg,#3fc83f,#18951c)', MST_IC.bell, 'Notification Settings', 'Manage your alerts and notifications', 'mstNotif', '', 1),
     mstRow('linear-gradient(135deg,#55a8f5,#2468e0)', MST_IC.link, 'Connected Account', 'My City Shines connection & device management', 'mstConnected', '', 1),
-    mstRow('linear-gradient(135deg,#f6c445,#e08a0c)', '💳', 'Membership Packages', 'Google Play plans and prices', 'mcsPlayPackages'),
     mstRow('linear-gradient(135deg,#ffa63d,#ee7a0c)', '<span style="font-size:27px">?</span>', 'Help and Support', 'Get help, FAQs and contact support', 'mstHelp'),
     mstRow('linear-gradient(135deg,#8a3fd0,#5b1f9f)', MST_IC.info, 'About ' + (ag ? 'MCS-Agent' : 'My City Shines'), 'App version, features and information', 'mstAbout', '', 1),
     mstRow('linear-gradient(135deg,#3cc03c,#168a22)', MST_IC.shield, 'Privacy Policy', 'Read our privacy policy', 'mstPrivacy'),
@@ -17973,6 +17977,7 @@ function mstOpen(){
     + `<div class="mst-tpw"><div class="mst-tp">${MST_IC.gear}<b>Settings</b></div></div>`
     + `<div class="mst-sp">Manage Your ${ag ? 'Agent ' : ''}Account &amp; App Preferences</div>`
     + `<div class="mst-pc"><button type="button" class="mst-av" aria-label="Change photo" onclick="mstSelfie()">${av}</button><div class="mst-pi"><div class="mst-pn">${mstEsc(w.nm)}</div>${lines}</div>${bd}</div>`
+    + `<button type="button" class="mst-gp" onclick="mstGo('mcsPlayPackages')"><span class="mst-gpi">${MCS_GP_SVG}</span><span class="mst-gpt"><small>Google Play</small><b>Package Plans</b><em>گوگل پلے پیکج پلانز — قیمت اور سبسکرپشن</em></span><span class="mst-gpc">›</span></button>`
     + `<div class="mst-sc"><div class="mst-st">Settings &amp; Preferences</div><div class="mst-ls">${rows}</div></div>`
     + `<div class="mst-vr">${typeof APP_VERSION !== 'undefined' ? 'Version ' + APP_VERSION : ''}</div>`);
 }
