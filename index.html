@@ -3461,7 +3461,7 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
       </div>
       <div class="cls-box" id="svcCls2">
         <div class="field"><label class="req">③ ذیلی قسم / ٹائٹل <small>Subtype — ایک سے زیادہ چن سکتے ہیں (پہلا کارڈ پر آئے گا)</small></label><div class="cls-chips" id="svcSubs"></div>
-          <div class="cls-row"><input type="text" id="svcSubIn" maxlength="60" placeholder="فہرست میں نہ ہو تو نیا ٹائٹل لکھ کر ➕ دبائیں — سب کی فہرست میں شامل ہوگا" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();clsSubCustom();}"><button type="button" onclick="clsSubCustom()">➕</button></div></div>
+          <div class="cls-row"><input type="text" id="svcSubIn" maxlength="60" placeholder="فہرست میں نہ ہو تو نیا ٹائٹل لکھ کر ➕ دبائیں — سب کی فہرست میں شامل ہوگا" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();clsSubCustom();}" onblur="clsSubCustom()"><button type="button" onclick="clsSubCustom()">➕</button></div></div>
         <div class="field"><label>④ مصنوعات اور خدمات <small>Products &amp; Services — ایک ایک کر کے لکھیں</small></label>
           <div class="cls-chips" id="svcProds"></div>
           <div class="cls-row"><input type="text" id="svcProdIn" maxlength="60" placeholder="مثلاً Burger، Shawarma، چائے" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();clsProdAdd();}"><button type="button" onclick="clsProdAdd()">➕</button></div>
@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1311FR394";
+const APP_VERSION = "MCS1311FR395";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1311FR395": "🛠️ Form: Subtype / Title typed in the box now counts and is added automatically (no more red box when you did not press ➕)",
   "MCS1311FR394": "🏪 My Portal: fixed the broken half-width layout (Registration Steps button now sits inside the page) • 💳 Package plans: friendlier message when Google Play does not return prices",
   "MCS1311FR393": "💳 Package capsules: smaller and compact, brighter prettier colours (locked ones keep their colour, just a 🔒 badge)",
   "MCS1311FR392": "💳 Settings: big «Google Play Package Plans» button right at the front • 3D glossy package capsules, each with its own colour and border; only the next package is bright, the rest show 🔒 Locked",
@@ -21838,7 +21839,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
       const lab = f.querySelector('label'), inp = f.querySelector('input:not([type=file]):not([type=hidden]):not([type=checkbox]), select, textarea'); if(!lab || !inp) return;
       let v = inp.tagName === 'SELECT' ? (inp.selectedOptions[0] ? inp.selectedOptions[0].textContent : '') : inp.value;
       if(inp.tagName === 'SELECT' && !inp.value) v = '';
-      try{ if(f.querySelector('#svcSubs')) v = (typeof clsSubs !== 'undefined' ? clsSubs : []).map(x => clsTitleUr(x) || x).join('، '); else if(f.querySelector('#svcProds')) v = (typeof clsProds !== 'undefined' ? clsProds : []).join('، ') || inp.value; }catch(e){}   /* MCS1211TH377: چنے ٹائٹل / مصنوعات (چپس) — خالی لکھنے کا خانہ نہیں */
+      try{ if(f.querySelector('#svcSubs')) v = (typeof clsSubs !== 'undefined' ? clsSubs : []).map(x => clsTitleUr(x) || x).join('، ') || ((document.getElementById('svcSubIn') || {}).value || '').trim(); else if(f.querySelector('#svcProds')) v = (typeof clsProds !== 'undefined' ? clsProds : []).join('، ') || inp.value; }catch(e){}   /* MCS1211TH377: چنے ٹائٹل / مصنوعات (چپس) — خالی لکھنے کا خانہ نہیں */
       const req = lab.classList.contains('req') || !!lab.querySelector('.req') || /\*\s*$/.test(lab.textContent.trim());
       out.push({ f, inp, name: lab.textContent.replace(/\s+/g, ' ').replace(/\*/g, '').trim().slice(0, 60), v: String(v || '').trim(), req });
     });
