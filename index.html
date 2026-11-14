@@ -4385,10 +4385,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA412";
+const APP_VERSION = "MCS1411SA413";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA413": "🛠️ ایڈمن کی ڈیوائس پر ہر کارڈ (رجسٹرڈ، نان رجسٹرڈ، تلاش) پر ✏️ ایڈٹ اور 🗑️ ڈیلیٹ کے بٹن اب ہمیشہ نظر آتے ہیں — پہلے ایڈمن لاگ اِن لمحہ بھر کو بحال نہ ہوتا تو غائب ہو جاتے تھے • ایڈمن لاگ اِن بحال نہ ہو تو بٹن دبانے پر صاف پیغام اور لاگ اِن کا ڈبہ • ایڈٹ / ڈیلیٹ پہلے کی طرح ایڈمن پاس ورڈ کے بعد ہی چلتے ہیں",
   "MCS1411SA412": "🟢 رجسٹرڈ کارڈ: بڑا بیج ختم، اس کی جگہ چھوٹا «لائیو — آخری تاریخ • باقی دن» • کارڈ کی چوڑائی کم • ایڈمن کو ہر کارڈ پر ✏️ ایڈٹ اور 🗑️ ڈیلیٹ (پاس ورڈ کے ساتھ) • غلط DP کی خرابی ٹھیک — اپنی DP صرف اپنے ہی کاروبار پر لگتی ہے • Google Play خریداری ہوتے ہی کاروبار فوراً منظور / رجسٹر / عوامی، اور فارم خود ایڈمن کے پاس جائزے کے لیے (جائزہ = منظوری نہیں)",
   "MCS1411SA411": "لاگ آؤٹ کے بعد اب بڑا خوبصورت خوش آمدید صفحہ آتا ہے: آپ کا MCS نمبر نظر آتا ہے اور صرف 6 ہندسوں کا PIN مانگا جاتا ہے۔ سائن اپ والا صفحہ دوبارہ نہیں کھلتا۔ ہوم پیج پر Log Out بٹن ہر لاگ ان صارف کو نظر آتا ہے۔",
   "MCS1411SA410": "🛡️ ڈویلپر اور کو-ڈویلپر کا کردار ختم — اب صرف «ایڈمن» (ڈویلپر کا پاس ورڈ ہی ایڈمن کا پاس ورڈ) • ＋ / نیا شامل کریں سب کے لیے نیا رجسٹریشن ویزرڈ کھولتا ہے • کارڈ پر مالک کا نام کاروبار کے نام کے ساتھ دوبارہ نہیں آتا • ریفرل فہرست سے DEV / CODEV ہٹ گئے",
@@ -5297,6 +5298,8 @@ function pfOwnsStrict(rec){ try{ if(!rec) return false; if(pfAcctOwns(rec)) retu
 async function cardEdit(kind, id){
   const rec = pfRecById(kind, id); if(!rec) return;
   const nm = rec.nameUr || rec.name || '';
+  /* MCS1411SA413: ایڈمن کی ڈیوائس پر بٹن ہمیشہ نظر آتے ہیں؛ لاگ اِن ابھی بحال نہ ہو تو صاف بتائے */
+  if(!isAdminSignedIn && isDevDevice() && !pfOwnsStrict(rec)){ showToast('🔐 ایڈمن لاگ اِن ابھی بحال نہیں — لاگ اِن کریں، پھر ایڈٹ کھلے گا', 4500); try{ showAdminPop(true); }catch(e){} return; }
   if(isAdminSignedIn){
     if(!(await askAdminPassword('🔐 «' + nm + '» — ایڈٹ کھولنے کے لیے اپنا ایڈمن لاگ اِن پاس ورڈ لکھیں۔', '✏️ ایڈٹ کھولیں'))) return;
     if(kind === 'doctor') openDoctorForm(id); else openServiceForm(id);
@@ -5312,6 +5315,7 @@ async function cardEdit(kind, id){
   if(pfCur && pfCur.rec && pfCur.rec.id === id){ pfUnlocked[pfCur.rk] = 1; await pfEditOpen(); }
 }
 function cardDel(kind, id){
+  /* MCS1411SA413 */ if(!isAdminSignedIn && isDevDevice()){ const r0 = pfRecById(kind, id); if(r0 && !pfOwnsStrict(r0)){ showToast('🔐 ایڈمن لاگ اِن ابھی بحال نہیں — لاگ اِن کریں، پھر ڈیلیٹ ہو گا', 4500); try{ showAdminPop(true); }catch(e){} return; } }
   if(isAdminSignedIn){ if(kind === 'doctor') deleteDoctor(id); else deleteService(id); return; }
   const rec = pfRecById(kind, id); if(!rec || !pfOwnsStrict(rec)) return;
   if(confirm('«' + (rec.nameUr || rec.name || '') + '» کو حذف کرنے کی درخواست ایڈمن کو بھیجی جائے گی۔\nایڈمن کی منظوری کے بغیر کچھ حذف نہیں ہوتا۔\n\nدرخواست بھیجیں؟')) requestAdminAction(kind, id, 'del');
@@ -6668,7 +6672,7 @@ function userResultCard(item){
   const locLine = [loc, item.address].filter(Boolean).join(' — ');
   const rid = item.id ? shortRecordId(item.kind, item) : '';
   let _sfU = '', _agU = false; try{ const _rr = item.id ? (item.kind==='doctor' ? store.doctors.find(x=>x.id===item.id) : store.services.find(x=>x.id===item.id)) : null; _sfU = (_rr && _rr.more && _rr.more.selfie) || ''; _agU = !!(_rr && agIsRec(item.kind, _rr)); }catch(e){}
-  const adminBtn = item.id ? ((isAdminSignedIn || pfOwnsStrict(item))
+  const adminBtn = item.id ? (((isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice() && !window.__noAdmBtn)) || pfOwnsStrict(item))
     ? `<button class="ub-edit" onclick="cardEdit('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="ترمیم">✏️</button><button class="ub-edit ub-del" onclick="cardDel('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="حذف">🗑️</button>`
     : `<button class="a-reqadmin" onclick="openReportChoice('${escapeAttr(item.kind)}','${escapeAttr(item.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`) : '';
   return `
@@ -8268,8 +8272,8 @@ async function buildShareCanvasH2C(kind, item, opts){
   try{
     await loadH2C();
     const rec = kind==='doctor' ? fhDoc(item) : fhSvc(item);
-    const wasAdmin = isAdminSignedIn; isAdminSignedIn = false;   /* عام صارف والا کارڈ (ترمیم/حذف کے بٹن نہیں) */
-    let cardHtml; try{ cardHtml = kind==='doctor' ? docCardHtml(rec, 'list') : svcCardHtml(rec); } finally { isAdminSignedIn = wasAdmin; }
+    const wasAdmin = isAdminSignedIn; isAdminSignedIn = false; window.__noAdmBtn = true;   /* عام صارف والا کارڈ (ترمیم/حذف کے بٹن نہیں) */
+    let cardHtml; try{ cardHtml = kind==='doctor' ? docCardHtml(rec, 'list') : svcCardHtml(rec); } finally { isAdminSignedIn = wasAdmin; window.__noAdmBtn = false; }
     const box = document.createElement('div');
     box.className = 'lc-share';
     box.innerHTML = `<div class="lc-head"><img src="icons/icon-192.png?v=${APP_VERSION}" alt=""><b>مائی سٹی شائنز</b></div>
@@ -8913,7 +8917,7 @@ function docCardHtml(d, mode){
           </div>` : ``}
       ${favBtnHtml('doctor', d.id)}
       <button class="a-share" onclick="shareProfileCardById('doctor','${escapeAttr(d.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>
-      ${(mode==='list' || isAdminSignedIn) ? ((isAdminSignedIn || pfOwnsStrict(d)) ? `<div class="doc-mini">
+      ${(mode==='list' || (isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice() && !window.__noAdmBtn))) ? (((isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice() && !window.__noAdmBtn)) || pfOwnsStrict(d)) ? `<div class="doc-mini">
             <button onclick="cardEdit('doctor','${escapeAttr(d.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
             <button class="mini-del" onclick="cardDel('doctor','${escapeAttr(d.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
           </div>` : `<button class="a-reqadmin" onclick="openReportChoice('doctor','${escapeAttr(d.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`) : ``}
@@ -10402,7 +10406,7 @@ function svcCardHtml(s, meta){
         </div>` : ``}
         ${favBtnHtml('service', s.id)}
         <button class="a-share" onclick="shareProfileCardById('service','${escapeAttr(s.id)}')" aria-label="شیئر کریں"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6l-6.8 3.9"/></svg></button>
-        ${(isAdminSignedIn || pfOwnsStrict(s)) ? `<div class="doc-mini">
+        ${((isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice() && !window.__noAdmBtn)) || pfOwnsStrict(s)) ? `<div class="doc-mini">
           <button onclick="cardEdit('service','${escapeAttr(s.id)}')" aria-label="ترمیم"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
           <button class="mini-del" onclick="cardDel('service','${escapeAttr(s.id)}')" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>` : `<button class="a-reqadmin" onclick="openReportChoice('service','${escapeAttr(s.id)}')" aria-label="شکایت یا ایڈمن سے رابطہ">📩</button>`}
@@ -23407,7 +23411,7 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
     const prods = doc ? [] : (Array.isArray(m.prods) && m.prods.length ? m.prods : (m.services ? String(m.services).split(/[،,]/).map(x => x.trim()).filter(Boolean) : []));
     const addr = [s.address, s.area, s.city].filter(Boolean).map(E).join('، ');
     const rid = shortRecordId(kind, s) || '';
-    const mine = (isAdminSignedIn || pfOwnsStrict(s));
+    const mine = ((isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice() && !window.__noAdmBtn)) || pfOwnsStrict(s));
     const nameUr = s.nameUr || s.name || '';
     const thumb = m.shop || TH[key] || '';
     if(!thumb) want(kind, s, key);
@@ -23415,7 +23419,7 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
     const typ = doc ? '' : (isBlankVal(s.type) ? '' : s.type);
     const intro = doc && s.intro ? String(s.intro).slice(0, 110) : '';
     const sid = s.id ? escapeAttr(s.id) : '';
-    const adm = !!(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn);
+    const adm = !!(typeof isAdminSignedIn !== 'undefined' && (isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice() && !window.__noAdmBtn)));
     const act = adm ? '' : ((doc && mode !== 'list') ? '' : (mine
       ? `<button onclick="event.stopPropagation();cardEdit('${kind}','${sid}')" aria-label="ترمیم">✏️</button>`
       : `<button class="a-reqadmin" onclick="event.stopPropagation();openReportChoice('${kind}','${sid}')" aria-label="رابطہ">📩</button>`));
