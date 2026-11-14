@@ -4385,10 +4385,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA415";
+const APP_VERSION = "MCS1411SA417";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA417": "🛠️ ویزرڈ: «Subscribe» دبانے پر خاموشی ختم — غلطی (شناختی کارڈ، میعاد، ای میل) اب اوپر لال پٹی میں نظر آتی ہے اور وہی خانہ لال ہو کر سامنے آ جاتا ہے؛ Google Play نہ کھلے تو وجہ لکھی آتی ہے • سکرول / ٹچ: پیچھے ہوم اسکرین کے ٹائمر اور سوائپ ویزرڈ کھلنے پر بند، ویزرڈ کا اپنا پکا سکرول۔",
+  "MCS1411SA416": "🎨 رجسٹریشن ویزرڈ کے رنگ، سائز اور لکھائی دی گئی تصویر سے ناپ کر ملائے (گہرا نیلا #043464، سبز #04641c، ہلکا نیلا #D4ECFC، سفید پس منظر، چاروں مراحل کی پٹی ایک جیسی نیلی) • MCS001 / MCS002: ایڈمن کے لیے محفوظ — جن کاروباروں کے پاس یہ سرور پر پہلے سے الاٹ ہیں ان کی فہرست ایڈمن کو ایک بار دکھتی ہے (ایپ سرور کی ID خود نہیں بدل سکتی)۔",
   "MCS1411SA415": "🤝 ریفرل ہر جگہ صرف فہرست سے (نام کے ساتھ)، MCS001 = ایڈمن، MCS002 = کو ڈویلپر؛ سائن اپ کارڈ سب کو نظر آئے؛ کارڈ پر صرف سائن اپ والا MCS نمبر۔",
   "MCS1411SA414": "🛠️ ایڈمن: ✏️ ایڈٹ / 🗑️ ڈیلیٹ ہر کارڈ پر ہر وقت؛ لاگ اِن گرا ہو تو بھی پاس ورڈ ڈالنے پر خود لاگ اِن ہو کر کام ہوتا ہے؛ «🔒 محفوظ» پر ٹچ سے ایڈمن لاگ اِن۔",
   "MCS1411SA413": "🛠️ ایڈمن کی ڈیوائس پر ہر کارڈ (رجسٹرڈ، نان رجسٹرڈ، تلاش) پر ✏️ ایڈٹ اور 🗑️ ڈیلیٹ کے بٹن اب ہمیشہ نظر آتے ہیں — پہلے ایڈمن لاگ اِن لمحہ بھر کو بحال نہ ہوتا تو غائب ہو جاتے تھے • ایڈمن لاگ اِن بحال نہ ہو تو بٹن دبانے پر صاف پیغام اور لاگ اِن کا ڈبہ • ایڈٹ / ڈیلیٹ پہلے کی طرح ایڈمن پاس ورڈ کے بعد ہی چلتے ہیں",
@@ -16349,7 +16351,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
 <path d="M0 98 C80 76 150 112 220 98 S330 76 390 92 V130 H0z" fill="url(#uaG2)" opacity=".9"/><path d="M0 114 C90 96 170 126 250 112 S350 102 390 110 V130 H0z" fill="#15803d" opacity=".55"/></svg></div>
 <script>
 /* MCS1211TH341: ہوم اسکرین پر صفحہ کبھی اوپر نیچے کھسکے تو فوراً واپس صفر پر */
-(function(){ function lock(){ try{ if(!document.querySelector('#screen-home.active')) return; var se = document.scrollingElement || document.documentElement; if(se.scrollTop !== 0) se.scrollTop = 0; if(document.body.scrollTop !== 0) document.body.scrollTop = 0; var h = document.getElementById('screen-home'); if(h && h.scrollTop !== 0) h.scrollTop = 0; }catch(e){} }
+(function(){ function lock(){ try{ if(document.body.classList.contains('wz-on')) return; if(!document.querySelector('#screen-home.active')) return; var se = document.scrollingElement || document.documentElement; if(se.scrollTop !== 0) se.scrollTop = 0; if(document.body.scrollTop !== 0) document.body.scrollTop = 0; var h = document.getElementById('screen-home'); if(h && h.scrollTop !== 0) h.scrollTop = 0; }catch(e){} }
   window.addEventListener('scroll', lock, {passive:true, capture:true}); window.addEventListener('resize', function(){ setTimeout(lock, 50); }); setInterval(lock, 1500); })();
 </script>
 <script>
@@ -17175,7 +17177,7 @@ body:has(#screen-home.active){position:relative;touch-action:pan-x;}
 (function(){
   var busy=false;
   function fit(){
-    if(busy) return; busy=true;
+    if(busy || document.body.classList.contains('wz-on')) return; busy=true;
     try{
       var sc=document.getElementById('screen-home'); if(!sc) return;
       if(!sc.classList.contains('active')){ sc.style.zoom=''; return; }
@@ -22949,7 +22951,89 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
 #wzOv .wzFlow .it em{display:block;font-style:normal;font-size:8.5px;color:#4b5563}
 #wzOv .wzFlow .it:not(:last-child):after{content:"›";position:absolute;right:-4px;top:4px;color:#1d4ed8;font-size:18px;font-weight:700}
 </style>
+<style id="mcsWiz416css">
+/* MCS1411SA416 (مالک کا حکم): تصویر سے ناپے گئے رنگ — نیلا #043464، سبز #04641c، ہلکا نیلا #D4ECFC، سفید پس منظر، خانوں کی حد #CCC، نجی ڈبہ #FCF4CC، اہلیت ڈبہ #E4F4E4 */
+#wzOv{background:#fff}
+#wzOv .wzW{max-width:480px}
+#wzOv .wzLogo b{color:#043464}
+#wzOv .wzLogo small{color:#04641c}
+#wzOv .wzGuide{background:#d4ecfc;color:#043464;border-radius:14px}
+#wzOv .wzTop{background:#043464;border-radius:18px;padding:12px 46px 10px}
+#wzOv .wzTitle{color:#fff;font-size:19px;font-weight:700}
+#wzOv .wzTitle small{color:#fff;font-size:17px}
+#wzOv .wzS4,#wzOv .wzS4.on,#wzOv .wzS4.ok{background:#043464;color:#fff;border-radius:14px;min-height:68px;box-shadow:none}
+#wzOv .wzS4 i{background:transparent;border:2px solid #fff;color:#fff}
+#wzOv .wzS4.on{box-shadow:0 0 0 2px #fff,0 0 0 4px #04641c}
+#wzOv .wzS4.on i{background:#fff;color:#043464}
+#wzOv .wzS4.ok i{background:#04641c;border-color:#04641c;color:#fff}
+#wzOv .wzCard{background:#fff;border:1.5px solid #043464;border-radius:18px;box-shadow:none}
+#wzOv .wzHd i{background:#0362b4}
+#wzOv .wzHd b,#wzOv .wzHd span{color:#043464}
+#wzOv label.wzL{color:#111;font-weight:700}
+#wzOv label.wzL .u{color:#043464;font-weight:600}
+#wzOv .wzI,#wzOv select.wzI,#wzOv textarea.wzI{background:#fff;border:1px solid #ccc;border-radius:6px}
+#wzOv .wzI:focus{background:#fff;border-color:#0362b4;box-shadow:0 0 0 3px rgba(3,98,180,.15)}
+#wzOv .wzBtn{min-height:52px;border-radius:10px;font-size:18px;font-weight:700}
+#wzOv .bG{background:#04641c;color:#fff}
+#wzOv .bB{background:#0362b4;color:#fff}
+#wzOv .bW{background:#fff;color:#043464;border-color:#043464}
+#wzOv .wzUp{border-color:#0362b4;background-color:#eef6fd;color:#043464}
+#wzOv .wzChip.on,#wzOv .wzPl.on{border-color:#0362b4}
+#wzOv .wzChip.on{background:#d4ecfc;color:#043464}
+#wzOv .wzPl button{background:#04641c}
+#wzOv .wzBen li:before{background:#04641c;color:#fff;width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px}
+#wzOv .wzCard div[style*="#e8f2ff"]{background:#dcecfc!important;color:#043464!important}
+#wzOv .wzNote{background:#e9f4fd;border-color:#b9d4f0;color:#043464}
+#wzOv .wzGreen{background:#e4f4e4;border:1px solid #9bd3a2;border-left:4px solid #04641c;color:#0b3d17}
+#wzOv .wzSt.st-none{background:#fcf4cc;border:1px solid #e3cf86;color:#4a3a00}
+#wzOv .wzSt.st-pend{background:#fcf4cc;color:#4a3a00}
+#wzOv .wzSt.st-ok,#wzOv .wzSt.st-act{background:#e4f4e4;color:#04641c}
+#wzOv .wzCard:has(>.wzOk){background:#f6fcfa;border-color:#04641c}
+#wzOv .wzOk .big{background:#04641c}
+#wzOv .wzOk b{color:#043464!important}
+#wzOv .wzOk .u{color:#04641c!important}
+#wzOv .wzFlow{background:#ccecfc;border-radius:16px}
+#wzOv .wzFlow h4,#wzOv .wzFlow .it .u{color:#043464}
+#wzOv .wzFlow .it:not(:last-child):after{color:#0362b4}
+/* MCS1411SA417: سکرول اور ٹچ پکا — ویزرڈ اپنا ہی سکرول رکھتا ہے، پیچھے ہوم کا ٹچ نہیں آتا */
+#wzOv{overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;overflow-anchor:none;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+#wzOv button,#wzOv label,#wzOv select,#wzOv input,#wzOv textarea{touch-action:manipulation}
+#wzOv #wzPlans{min-height:300px}
+#wzOv #wzFlash{display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:12px;right:12px;max-width:456px;margin:0 auto;z-index:50;background:#d92d20;color:#fff;border-radius:10px;padding:11px 14px;font:700 15px/1.8 "Jameel Noori Nastaleeq","JameelNoori",MCSDigits,serif;direction:rtl;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#wzOv #wzFlash.ok{background:#04641c}
+</style>
 <div id="wzOv" data-noen aria-modal="true" role="dialog"><div class="wzW" id="wzW"></div></div>
+
+<script id="mcsRes416">
+/* MCS1411SA416 (مالک کا حکم): MCS001 = ایڈمن، MCS002 = ایڈمن — یہ دو نمبر کسی کاروبار کے نہیں ہونے چاہییں۔
+   نمبر سرور (/mcsauth) دیتا ہے جو اس ایپ کے کوڈ سے باہر ہے؛ ایپ صرف یہ بتا سکتی ہے کہ سرور پر کس کے پاس یہ دو ہیں۔ ایڈمن کو ایک بار فہرست دکھتی ہے۔ */
+(function(){
+  'use strict';
+  var LSG = function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } };
+  var LSS = function(k, v){ try{ localStorage.setItem(k, v); }catch(e){} };
+  var E = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  var acct = function(v){ var t = String(v || '').toUpperCase().replace(/[\s-]/g, ''), m = /^MCS(\d{3})(?:M\d+|\d{2})?$/.exec(t); return m ? parseInt(m[1], 10) : 0; };
+  window.mcsIsReservedSid = function(v){ var n = acct(v); return n === 1 || n === 2; };
+  function holders(){
+    var out = [], seen = {};
+    var add = function(sid, name, mob, src){ if(!window.mcsIsReservedSid(sid)) return; var k = acct(sid) + '|' + String(mob || name || '').replace(/\D/g, ''); if(seen[k]) return; seen[k] = 1; out.push({ n: acct(sid), sid: String(sid), name: name || '', mob: mob || '', src: src }); };
+    try{ [].concat(store.services || [], store.doctors || []).forEach(function(r){ if(!r) return; var m = r.more || {}; add(m.sid, r.nameUr || r.name || '', r.whatsapp, 'card'); add(m.subid, r.nameUr || r.name || '', r.whatsapp, 'card'); }); }catch(e){}
+    try{ JSON.parse(LSG('mcsRegList') || '[]').forEach(function(x){ if(x) { add(x.sid, x.name, x.mobile, 'list'); add(x.subid, x.name, x.mobile, 'list'); } }); }catch(e){}
+    try{ var a = typeof uaMe === 'function' ? uaMe() : null; if(a && a.user && !(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn)) add(a.user.sid || a.user.id, a.user.name, a.user.mobile, 'me'); }catch(e){}
+    return out;
+  }
+  window.mcsReservedAudit = function(force){
+    var H = holders();
+    if(!H.length){ try{ showToast('✅ MCS001 اور MCS002 کسی کاروبار کے پاس نہیں ملے'); }catch(e){} return H; }
+    var rows = H.map(function(h){ return '<div style="margin:6px 0;padding:8px;border:2px solid #c0392b;border-radius:12px;background:#fff"><b dir="ltr">' + E('MCS00' + h.n) + '</b> — ' + E(h.name || '—') + (h.mob ? '<br><span dir="ltr">📱 ' + E(h.mob) + '</span>' : '') + '<br><small dir="ltr">' + E(h.sid) + '</small></div>'; }).join('');
+    try{ agModal('<div class="ag-hd">🔒 MCS001 / MCS002 — ایڈمن کے لیے محفوظ <small>Reserved for Admin</small></div><div class="cp-hint">یہ دونوں نمبر ایڈمن کے ہیں، مگر سرور پر ابھی ان کاروباروں کے نام ہیں۔ نمبر سرور دیتا ہے، ایپ اسے خود نہیں بدل سکتی — سرور میں شمار 003 سے شروع کر کے ان دونوں کو نئی ID دینا ضروری ہے۔</div>' + rows); }catch(e){ try{ showToast('⚠️ MCS001/002 کاروباروں کے پاس: ' + H.map(function(h){ return h.name; }).join('، '), 9000); }catch(_){} }
+    return H;
+  };
+  var tries = 0, t = setInterval(function(){ tries++; if(tries > 40){ clearInterval(t); return; }
+    try{ if(LSG('mcsRes416')){ clearInterval(t); return; }
+      if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && (store.services || []).length > 5 && !document.querySelector('.modal-overlay.active')){ clearInterval(t); LSS('mcsRes416', String(Date.now())); if(holders().length) window.mcsReservedAudit(); } }catch(e){} }, 5000);
+})();
+</script>
 <script id="mcsWiz388">
 /* MCS1311FR388 (مالک کا حکم): My City Shines — مکمل رجسٹریشن ویزرڈ.
    ① اکاؤنٹ (مفت) ② مفت بزنس کارڈ (نجی) ③ ادائیگی (Google Play) ← ایڈمن منظوری ④ ایجنٹ (اختیاری)
@@ -23006,7 +23090,12 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
     lastStep = S.step; if(ov) ov.scrollTop = keepY;
     if(aid){ const n = $(aid); if(n){ try{ n.focus({preventScroll: true}); if(sel && n.setSelectionRange) n.setSelectionRange(sel[0], sel[1]); }catch(e){} } }
   }
-  const err = m => { const e = $('wzErr'); if(e) e.textContent = m || ''; };
+  function flash(m, ok){ const ov = $('wzOv'); if(!ov) return; let f = $('wzFlash'); if(!f){ f = document.createElement('div'); f.id = 'wzFlash'; ov.appendChild(f); } f.textContent = m; f.className = ok ? 'ok' : ''; f.style.display = 'block'; clearTimeout(flash.t); flash.t = setTimeout(() => { f.style.display = 'none'; }, 6500); }   /* MCS1411SA417: غلطی اب اوپر صاف نظر آتی ہے — پہلے نیچے چھپی رہتی تھی */
+  (function(){ const ov = $('wzOv'); if(ov) ['touchstart','touchmove','pointerdown','pointermove','pointerup'].forEach(ev => ov.addEventListener(ev, e => e.stopPropagation(), {passive: true})); })();   /* MCS1411SA417: ہوم اسکرین کے سوائپ / ٹچ والے حصے ویزرڈ کے ٹچ میں دخل نہ دیں */
+  const err = m => { const e = $('wzErr'); if(e) e.textContent = m || ''; if(m) flash(m); };
+  function wzBad(){ const p = S.p, cn = dg(p.cnic).replace(/\D/g, ''); const id = cn.length !== 13 ? 'wzCnic' : (!p.exp || new Date(p.exp + 'T23:59:59') < new Date()) ? 'wzExp' : 'wzEm'; const n = $(id); if(!n) return;
+    n.style.borderColor = '#d92d20'; n.style.boxShadow = '0 0 0 3px rgba(217,45,32,.18)'; n.addEventListener('input', () => { n.style.borderColor = ''; n.style.boxShadow = ''; }, {once: true});
+    try{ n.scrollIntoView({block: 'center'}); }catch(e){} }
   window.mcsWizClose = function(){ const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('wz-on'); };
   window.mcsWizOpen = function(step){
     const m = me(); if(m && !S.sid) S.sid = (m.user.sid || m.user.id || '');
@@ -23245,8 +23334,8 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
     try{ const FB = window.MCSFirebase; if(FB) FB.setDoc(FB.doc(FB.db, 'regPrivate', rec.fsId || rec.id), {cnicExp: p.exp, email: p.email.trim(), ts: Date.now()}, {merge: true}).catch(() => {}); }catch(e){}
     saveStore(); }
   window.wzDo3 = async function(){
-    if(busy) return; wzP(); const m = chk3(); if(m) return err(m);
-    const rec = myCard(); if(!rec) return err('آپ کا کارڈ نہیں ملا'); busy = true; const b = $('wzPay'); if(b) b.disabled = true; err('');
+    if(busy) return; wzP(); const m = chk3(); if(m){ wzBad(); return err(m); }
+    const rec = myCard(); if(!rec) return err('آپ کا کارڈ نہیں ملا'); busy = true; const b = $('wzPay'); if(b) b.disabled = true; err(''); flash('⏳ Google Play کھل رہا ہے…', 1);
     try{ saveP(rec); try{ mpAdd('service', rec, true); }catch(e){}
       const rk = pfKeyOf(rec, 'service');
       if(typeof mcsPlayOk === 'function' && mcsPlayOk()){
@@ -23267,8 +23356,9 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
   function altPath(rec){   /* جو بندہ Google Play سے ادائیگی نہیں کر سکتا — صرف اکاؤنٹ کی تفصیل تصدیق کے لیے */
     const a = $('wzAlt'); if(!a) return;
     a.innerHTML = `<div class="wzNote u">اس فون پر Google Play ادائیگی دستیاب نہیں۔<br>اپنے اکاؤنٹ کی تفصیل تصدیق (Verification) کے لیے بھیجیں — ایڈمن دیکھ کر منظوری دیں گے۔<br><span dir="ltr" style="font-family:inherit">Send your account details for verification.</span></div>
-      <button class="wzBtn bB" onclick="wzSendVer()">📨 Send Account Details for Verification<small class="u">تصدیق کے لیے اکاؤنٹ کی تفصیل بھیجیں</small></button>`; }
-  window.wzSendVer = function(){ const rec = myCard(); if(!rec) return; try{ saveP(rec); memAutoSend('service', rec); S.p.sentVer = Date.now(); save(); }catch(e){} };
+      <button class="wzBtn bB" onclick="wzSendVer()">📨 Send Account Details for Verification<small class="u">تصدیق کے لیے اکاؤنٹ کی تفصیل بھیجیں</small></button>`;
+    flash('اس فون پر Google Play ادائیگی نہیں کھل سکی — ایپ Play Store کے ٹیسٹ لنک سے انسٹال ہونی چاہیے۔ نیچے «تصدیق کے لیے بھیجیں» کا راستہ کھلا ہے۔'); try{ a.scrollIntoView({block: 'center'}); }catch(e){} }
+  window.wzSendVer = function(){ const rec = myCard(); if(!rec) return; try{ saveP(rec); memAutoSend('service', rec); S.p.sentVer = Date.now(); save(); flash('✅ تفصیل ایڈمن کو بھیج دی گئی', 1); }catch(e){} };
 
   /* ================= مرحلہ ۴: MCS ایجنٹ (اختیاری) ================= */
   function agState(){   /* ایجنٹ: none / pend / ok */
