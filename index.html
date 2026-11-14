@@ -2977,7 +2977,7 @@ html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !im
       <div class="qt" style="--c:#C8412F;--bg:#fde8ea;--ic:#dc2626" onclick="openServiceCategory('emergencyNumbers')">
         <span class="qt-n" id="homeCount_emg">0</span><span class="qt-ic">🚨</span><span class="qt-t"><b>ہنگامی نمبرز</b><small>Emergency</small></span>
       </div>
-      <div class="qt" style="--c:#5A47C2;--bg:#efeafd;--ic:#7c3aed" onclick="openDevChat()">
+      <div class="qt qt-hide" style="--c:#5A47C2;--bg:#efeafd;--ic:#7c3aed" onclick="openDevChat()">
         <span class="qt-ic">🎧</span><span class="qt-t"><b>مدد / رہنمائی</b><small>Help Desk</small></span>
       </div>
       <div class="qt qt-hide" style="--c:#5A47C2" onclick="openSearch()">
@@ -4383,10 +4383,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA422";
+const APP_VERSION = "MCS1411SA423";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA423": "🧹 ڈبل فنکشنز صاف: Help صرف Settings میں، Earn / Log Out / Add New / اشتہار صرف ہوم پر، Notifications / Privacy / پیکج صرف Settings میں، اپنی معلومات صرف My Account میں؛ My Portal اور My Account کے اوپر دہرا ٹائٹل ہٹا",
   "MCS1411SA422": "🔐 ایک بار لاگ اِن ہونے کے بعد لاگ اِن صفحہ بار بار نہیں آئے گا — جب تک آپ خود «لاگ آؤٹ» نہ کریں • لاگ اِن فون میں زیادہ پکا محفوظ (میموری بھر جائے تب بھی)",
   "MCS1411SA421": "🪪 شناختی کارڈ اور میعاد کے ڈبے ایک لائن میں برابر • 🔵 رجسٹریشن کے سب مرحلوں کا پس منظر ایک ہی نیلا",
   "MCS1411SA420": "🪪 شناختی کارڈ نمبر کے ساتھ ہی ایک لائن میں میعاد (DD/MM/YYYY، سلیش خود لگتا ہے) • ❌ «ایڈمن کو منظوری کے لیے بھیجا» والے سب جملے ختم • 🧾 Google Play کی اصل خریداری کے بعد آرڈر نمبر (GPA…) ایپ میں پیسٹ کرنا لازمی — تبھی فارم رجسٹرڈ، مکمل اور مبارکباد",
@@ -18064,7 +18065,7 @@ function mpoOpen(){
     + mpoT(ID, '➕', L.length ? 'ایک اور کاروبار / پروفیشن' : 'کاروبار / پروفیشن رجسٹر کریں', L.length ? '' : '7 دن مفت', 'mpNewMore')
     + mpoT(ID, '🛠️', 'خدمات / تفصیل سنواریں', 'تصویریں، خدمات، پتہ', 'mpoServices')
     + mpoT(ID, '📢', 'اشتہار لگوائیں', 'اپنے کاروبار کی تشہیر', 'adRequestOpen')
-    + (['dev', 'codev', 'agent'].includes(rl) ? mpoT(ID, '🏪', 'کاروبار ہب', 'نیا · پہلے سے درج', 'bzHubOpen') : mpoT(ID, '💰', 'Earn with MCS', 'ایجنٹ بنیں', 'agEarnOpen'))
+    + (['dev', 'codev', 'agent'].includes(rl) ? mpoT(ID, '🏪', 'کاروبار ہب', 'نیا · پہلے سے درج', 'bzHubOpen') : '')
     + `</div>`;
   mpoModal(ID, 'mpo-hd', '🏪', 'My Portal — میرا پورٹل', 'کاروبار اور پیشے کا انتظام', b);
 }
@@ -18246,7 +18247,6 @@ function mstOpen(){
   const lines = w.lines.map(x => `<div class="mst-ln"><span>${mstEsc(x[0])}:</span><em>${mstEsc(x[1])}</em></div>`).join('');
   const bd = `<div class="mst-ac${w.guest ? ' off' : ''}">${w.guest ? MST_IC.gst : MST_IC.chk}${mstEsc(w.badge)}</div>`;
   const rows = [
-    mstRow('linear-gradient(135deg,#55b6f0,#1f84dc)', MST_IC.user, 'Account Information', 'View your account and ' + (ag ? 'agent' : 'profile') + ' details', 'mstAccInfo', '', 1),
     mstRow('linear-gradient(135deg,#9a52de,#6a2bb8)', 'A/ج', 'Language', 'English / اردو', 'mstLang', '', 1),
     mstRow('linear-gradient(135deg,#3fc83f,#18951c)', MST_IC.bell, 'Notification Settings', 'Manage your alerts and notifications', 'mstNotif', '', 1),
     mstRow('linear-gradient(135deg,#55a8f5,#2468e0)', MST_IC.link, 'Connected Account', 'My City Shines connection & device management', 'mstConnected', '', 1),
@@ -18254,14 +18254,13 @@ function mstOpen(){
     mstRow('linear-gradient(135deg,#8a3fd0,#5b1f9f)', MST_IC.info, 'About ' + (ag ? 'MCS-Agent' : 'My City Shines'), 'App version, features and information', 'mstAbout', '', 1),
     mstRow('linear-gradient(135deg,#3cc03c,#168a22)', MST_IC.shield, 'Privacy Policy', 'Read our privacy policy', 'mstPrivacy'),
     mstRow('linear-gradient(135deg,#3f8cf6,#1559d8)', MST_IC.doc, 'Terms and Conditions', 'Read the terms and conditions', 'mstTerms'),
-    w.loggedIn ? mstRow('linear-gradient(135deg,#ff5a45,#dc2a22)', MST_IC.out, 'Logout', 'Sign out from your ' + (ag ? 'agent ' : '') + 'account', 'mcsLogoutAll', 'red')
+    w.loggedIn ? ''
                : mstRow('linear-gradient(135deg,#3f8cf6,#1559d8)', MST_IC.login, 'Login / Sign Up', 'Sign in to your My City Shines account', 'uaLogin')
   ].join('');
   mstShell('mySettingsModal', '', '',
     mstHead(w, true)
     + `<div class="mst-tpw"><div class="mst-tp">${MST_IC.gear}<b>Settings</b></div></div>`
     + `<div class="mst-sp">Manage Your ${ag ? 'Agent ' : ''}Account &amp; App Preferences</div>`
-    + `<div class="mst-pc"><button type="button" class="mst-av" aria-label="Change photo" onclick="mstSelfie()">${av}</button><div class="mst-pi"><div class="mst-pn">${mstEsc(w.nm)}</div>${lines}</div>${bd}</div>`
     + `<button type="button" class="mst-gp" onclick="mstGo('mcsPlayPackages')"><span class="mst-gpi">${MCS_GP_SVG}</span><span class="mst-gpt"><small>Google Play</small><b>Package Plans</b><em>گوگل پلے پیکج پلانز — قیمت اور سبسکرپشن</em></span><span class="mst-gpc">›</span></button>`
     + `<div class="mst-sc"><div class="mst-st">Settings &amp; Preferences</div><div class="mst-ls">${rows}</div></div>`
     + `<div class="mst-vr">${typeof APP_VERSION !== 'undefined' ? 'Version ' + APP_VERSION : ''}</div>`);
@@ -20256,8 +20255,8 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
   function esc(s){ try{ return escapeHtml(String(s == null ? '' : s)); }catch(e){ return String(s || ''); } }
   function top(id, title, sub, ic){
     return '<div class="mx-top"><button type="button" class="mx-back" onclick="closeModal(\'' + id + '\')" aria-label="پیچھے">‹</button>' + SKY
-      + '<div class="mx-brand"><img src="icons/icon-192.png" alt="" onerror="this.style.visibility=\'hidden\'"><div><b>My City Shines</b><small>مائی سٹی شائنز</small></div></div>'
-      + '<button type="button" class="mx-bell" onclick="mxGo(\'' + id + '\',\'mstNotif\')" aria-label="اطلاعات">🔔</button></div>'
+      + '<div class="mx-brand"><img src="icons/icon-192.png" alt="" onerror="this.style.visibility=\'hidden\'"></div>'
+      + '</div>'
       + '<div class="mx-pill"><h2><span>' + ic + '</span>' + title + '</h2><p>' + sub + '</p></div>';
   }
   function shell(id, html){
@@ -20298,20 +20297,14 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     h += '<div class="mx-sec pl">Account Management</div><div class="mx-card mx-list">'
       + (ua ? row('👤', 'Personal Information', ID, 'uaAccount', 'c1', 'نام، موبائل، ای میل') : row('🔐', 'Login / Sign Up', ID, 'uaLogin', 'c1', 'اکاؤنٹ بنائیں'))
       + (ua ? row('🛡️', 'Security &amp; Password', ID, 'uaPwForm', 'c2', 'پاس ورڈ بنائیں / بدلیں') : '')
-      + row('🔔', 'Notifications', ID, 'mstNotif', 'c4', sf(function(){ return typeof mstNotifState === 'function' ? mstNotifState() : ''; }, ''))
-      + row('🔒', 'Privacy &amp; Account', ID, 'mstPrivacy', 'c5', 'پرائیویسی پالیسی')
-      + row('🎧', 'Help &amp; Support', ID, 'ptHelp', 'c6', 'مسئلہ / تجویز')
       + '</div>';
     h += '<div class="mx-sec pl">More</div><div class="mx-card mx-list">'
       + L.map(function(x, i){ try{ if(fpIsBasic(x.p.kind, x.rec)) return ''; var r = recOf(x); }catch(e){ return ''; } return '<button type="button" class="mx-li" onclick="mxGo(\'' + ID + '\',\'mxFp\',' + i + ')"><i class="c3">📄</i><span>My Profile<small>' + esc(r.nameUr || r.name || '') + '</small></span></button>'; }).join('')
       + (rl === 'agent' ? row('🤝', 'Agent Portal', ID, 'mxAgentOld', 'c3', 'ایجنٹ پورٹل — رجسٹریشن، کاروبار') : '')
-      + row('🏪', 'My Portal', ID, 'mpoOpen', 'c2', 'کاروبار کا انتظام')
-      + row('🤝', me.code ? 'Referral &amp; Agent' : 'Earn with MCS', ID, 'agOpen', 'c3', me.code ? 'ریفرل کوڈ: ' + esc(me.code) : 'ایجنٹ بنیں')
+      + (me.code ? row('🤝', 'Referral &amp; Agent', ID, 'agOpen', 'c3', 'ریفرل کوڈ: ' + esc(me.code)) : '')   /* MCS1411SA423: Earn with MCS صرف ہوم پر */
       + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
-      + row('⚙️', 'Settings', ID, 'mstOpen', 'c6', 'ترتیبات')
-      + row('🔄', 'Switch Account', ID, 'ptSwitch', 'c3', 'دوسرے اکاؤنٹ سے لاگ اِن')
       + '</div>';
-    h += '<button type="button" class="mx-out" onclick="mxGo(\'' + ID + '\',\'mcsLogoutAll\')">⎋ Log Out — لاگ آؤٹ</button><div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
+    h += '<div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
     shell(ID, h);
   };
   var _po = window.ptOpen;
@@ -20355,12 +20348,9 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     } else {
       h += '<div class="mx-card" style="text-align:center;font-size:13.5px;color:#475569">ابھی آپ کا کوئی کاروبار / پروفیشن درج نہیں</div>';
     }
-    h += '<button type="button" class="mx-big" onclick="mxGo(\'' + ID + '\',\'mpNewMore\')"><i>+</i>' + (L.length ? 'Register Another Business' : 'Register Business / Profession') + '</button>';
     h += '<div class="mx-sec">🧰 Business Tools</div><div class="mx-tools">'
       + '<div class="mx-tl" onclick="mpoServices()"><i>🛠️</i><div>Services<small>تصویریں، خدمات، پتہ</small></div></div>'
-      + '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'adRequestOpen\')"><i>📣</i><div>Promotions<small>اشتہار کی درخواست</small></div></div>'
-      + (['dev', 'codev', 'agent'].indexOf(rl) >= 0 ? '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'bzHubOpen\')"><i>🏪</i><div>Business Hub<small>نیا · پہلے سے درج</small></div></div>' : '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'agEarnOpen\')"><i>💰</i><div>Earn with MCS<small>ایجنٹ بنیں</small></div></div>')
-      + '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'ptHelp\')"><i>🎧</i><div>Help &amp; Support<small>مسئلہ / تجویز</small></div></div>'
+      + (['dev', 'codev', 'agent'].indexOf(rl) >= 0 ? '<div class="mx-tl" onclick="mxGo(\'' + ID + '\',\'bzHubOpen\')"><i>🏪</i><div>Business Hub<small>نیا · پہلے سے درج</small></div></div>' : '')
       + '</div><div class="mx-note">🏪 اپنے کاروبار / پیشے کا انتظام۔ ذاتی معلومات «My Account» میں۔</div><div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
     shell(ID, h);
   };
@@ -20655,12 +20645,12 @@ function unreadN(){ return (mcList || []).reduce((a, x) => a + (x.nw || 0), 0); 
 function hd(back, bell, gear){
   const n = unreadN();
   return `<div class="mst-hd"><button type="button" class="mst-bk" aria-label="Back" onclick="${back}">${MST_IC.back}</button><img class="mst-lg" src="${MST_LOGO}" alt=""><div class="mst-ht"><b>My City Shines</b><small>میرا روشن شہر</small></div><img class="mst-sk" src="${MST_SKY}" alt="">`
-    + `<div class="mc2-ha">${bell ? `<button type="button" class="mc2-bl" id="mc2Bl" aria-label="Notifications" onclick="mc2Bell()">${MST_IC.bell}<i ${n ? '' : 'hidden'}>${n > 99 ? '99+' : n}</i></button>` : ''}${gear ? `<button type="button" class="mc2-gb" onclick="mc2Set()">${MST_IC.gear}${t('settings')}</button>` : ''}</div>`
+    + `<div class="mc2-ha">${false ? `<button type="button" class="mc2-bl" id="mc2Bl" aria-label="Notifications" onclick="mc2Bell()">${MST_IC.bell}<i ${n ? '' : 'hidden'}>${n > 99 ? '99+' : n}</i></button>` : ''}${gear ? `<button type="button" class="mc2-gb" onclick="mc2Set()">${MST_IC.gear}${t('settings')}</button>` : ''}</div>`
     + `<svg class="mst-wv" viewBox="0 0 430 20" preserveAspectRatio="none"><path d="M0 10C70 24 130 2 215 9S360 22 430 6V20H0z" fill="#c9f2e8"/></svg></div>`;
 }
 function nav(on){
   const b = (k, ic, lb, fn) => `<button type="button" class="${on === k ? 'on' : ''}" onclick="${fn}">${ic}<span>${t(lb)}</span></button>`;
-  return `<div class="mc2-nv">${b('home', IC.home, 'home', "mc2Nav('home')")}${b('subs', IC.subs, 'subs', "mc2Nav('subs')")}${b('earn', IC.earn, 'earn', "mc2Nav('earn')")}${b('chat', IC.chat, 'myChat', 'mc2Show()')}</div>`;
+  return `<div class="mc2-nv">${b('home', IC.home, 'home', "mc2Nav('home')")}${b('chat', IC.chat, 'myChat', 'mc2Show()')}</div>`;
 }
 window.mc2Nav = function(k){
   try{ mcClose(); }catch(e){}
