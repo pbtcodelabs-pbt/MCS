@@ -4385,10 +4385,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA413";
+const APP_VERSION = "MCS1411SA415";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA415": "🤝 ریفرل ہر جگہ صرف فہرست سے (نام کے ساتھ)، MCS001 = ایڈمن، MCS002 = کو ڈویلپر؛ سائن اپ کارڈ سب کو نظر آئے؛ کارڈ پر صرف سائن اپ والا MCS نمبر۔",
+  "MCS1411SA414": "🛠️ ایڈمن: ✏️ ایڈٹ / 🗑️ ڈیلیٹ ہر کارڈ پر ہر وقت؛ لاگ اِن گرا ہو تو بھی پاس ورڈ ڈالنے پر خود لاگ اِن ہو کر کام ہوتا ہے؛ «🔒 محفوظ» پر ٹچ سے ایڈمن لاگ اِن۔",
   "MCS1411SA413": "🛠️ ایڈمن کی ڈیوائس پر ہر کارڈ (رجسٹرڈ، نان رجسٹرڈ، تلاش) پر ✏️ ایڈٹ اور 🗑️ ڈیلیٹ کے بٹن اب ہمیشہ نظر آتے ہیں — پہلے ایڈمن لاگ اِن لمحہ بھر کو بحال نہ ہوتا تو غائب ہو جاتے تھے • ایڈمن لاگ اِن بحال نہ ہو تو بٹن دبانے پر صاف پیغام اور لاگ اِن کا ڈبہ • ایڈٹ / ڈیلیٹ پہلے کی طرح ایڈمن پاس ورڈ کے بعد ہی چلتے ہیں",
   "MCS1411SA412": "🟢 رجسٹرڈ کارڈ: بڑا بیج ختم، اس کی جگہ چھوٹا «لائیو — آخری تاریخ • باقی دن» • کارڈ کی چوڑائی کم • ایڈمن کو ہر کارڈ پر ✏️ ایڈٹ اور 🗑️ ڈیلیٹ (پاس ورڈ کے ساتھ) • غلط DP کی خرابی ٹھیک — اپنی DP صرف اپنے ہی کاروبار پر لگتی ہے • Google Play خریداری ہوتے ہی کاروبار فوراً منظور / رجسٹر / عوامی، اور فارم خود ایڈمن کے پاس جائزے کے لیے (جائزہ = منظوری نہیں)",
   "MCS1411SA411": "لاگ آؤٹ کے بعد اب بڑا خوبصورت خوش آمدید صفحہ آتا ہے: آپ کا MCS نمبر نظر آتا ہے اور صرف 6 ہندسوں کا PIN مانگا جاتا ہے۔ سائن اپ والا صفحہ دوبارہ نہیں کھلتا۔ ہوم پیج پر Log Out بٹن ہر لاگ ان صارف کو نظر آتا ہے۔",
@@ -4922,7 +4924,7 @@ function pfHtml(c){
   const r = c.kind==='doctor' ? fhDoc(c.rec) : fhSvc(c.rec), cm = ubCatMeta(c.kind==='doctor' ? 'doctor' : r.category);
   const own = c.kind==='doctor' ? {owner:'', rest:r.intro||''} : splitOwnerIntro(r.intro);
   const p = c.prof || {}, d = p.data || {}, more = c.rec.more || {};
-  const owner = pfIsOwner(c.rec), adm = isAdminSignedIn, live = pfActive(c.rec);
+  const owner = pfIsOwner(c.rec), adm = admUi(), live = pfActive(c.rec);
   const showFull = live || owner || adm;
   const shopImg = showFull ? (p.imgs||[]).find(x=>String(x.id).split('_').pop() === '0') : null;   /* MCS0711SA194: دکان کی بڑی تصویر خوبصورت فریم میں */
   const gal = shopImg ? `<div class="pf-shop"><img data-pfimg="${escapeAttr(shopImg.id)}" data-ts="${shopImg.ts}" alt=""></div>` : '';
@@ -4979,6 +4981,7 @@ function pfRender(){
 async function pfAdmin(act){
   if(act === 'year'){ showToast('ایک سال دینے کا نظام ختم — ممبرشپ صرف گوگل پلے کی ادائیگی سے شروع ہوتی ہے'); return; }
   const c = pfCur; if(!c) return;
+  if(!(await admEnsure('🔐 ایڈمن کا کام — پاس ورڈ لکھیں۔'))) return;
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ showToast('ایڈمن لاگ ان درکار ہے'); return; }
   try{
     if(act === 'del' && !confirm('اس دکان کی ممبرشپ (تصویریں، تفصیل) ختم کر دیں؟ سادہ ریکارڈ رہے گا۔')) return;
@@ -5237,7 +5240,7 @@ async function pfEditAuth(){
   if(pfUnlocked[c.rk]) return true;
   const nm = (c.rec && (c.rec.nameUr || c.rec.name)) || '';
   let ok = false;
-  if(isAdminSignedIn){
+  if(admUi()){
     ok = await askAdminPassword('🔐 ' + (nm ? '«' + nm + '» — ' : '') + 'یہ کاروبار محفوظ ہے۔ ایڈٹ کھولنے کے لیے ایڈمن پاس ورڈ لکھیں۔', '✏️ ایڈٹ کھولیں');
   } else {
     const m = codevMe();
@@ -5274,7 +5277,7 @@ function pfOneHtml(c, x){
   const priv = showPriv ? `
       ${st ? `<div class="pf1-st"><span>👀 ${st.view}</span><span>📞 ${st.call}</span><span>💬 ${st.wa}</span><small>${st.days} دن</small></div>` : ''}
       ${left != null ? `<div class="pf1-st"><span>${left > 0 ? '⭐ ممبرشپ فعال — ' + left + ' دن باقی' : '⚠️ مدت ختم'}</span></div>` : ''}
-      <div class="pf1-st"><span dir="ltr">🆔 ${E(c.rk || '')}</span></div>
+      ${(()=>{ let i = ''; try{ i = shortRecordId(c.kind, c.rec) || ''; }catch(e){} return i ? `<div class="pf1-st"><span dir="ltr">🆔 ${E(i)}</span></div>` : ''; })()}
       <div class="pf1-act"><button type="button" onclick="pfEditOpen()">✏️ ایڈٹ</button><button type="button" onclick="fpOpen('${c.kind}','${A(c.rec.id)}')">📄 مکمل پروفائل</button></div>`
     : `<div class="pf1-st"><span>🆔 ●●●●●●●</span><span>📞 ●●●</span><span>👀 ●●●</span></div><div class="pf1-st"><span>⭐ ممبرشپ ●●●●●● دن</span></div>`;
   return `<div class="pf1">
@@ -5290,7 +5293,7 @@ function pfOneHtml(c, x){
     </div>
     ${items ? `<div class="pf1-h">🏷️ خدمات اور ریٹ</div><div class="pf1-its">${items}</div>` : ''}
     ${(d.about || own.rest) ? `<div class="pf1-about">📝 ${E(d.about || own.rest)}</div>` : ''}
-    <div class="pf1-safe ${locked ? 'lock' : ''}"><div class="pf1-sin">${priv}</div>${locked ? `<button type="button" class="pf1-lk" onclick="${showPriv ? 'pfEditAuth()' : "showToast('🔒 یہ معلومات محفوظ ہیں')"}">🔒 محفوظ${showPriv ? ' — کھولنے کے لیے پاس ورڈ' : ''}</button>` : ''}</div>
+    <div class="pf1-safe ${locked ? 'lock' : ''}"><div class="pf1-sin">${priv}</div>${locked ? `<button type="button" class="pf1-lk" onclick="${showPriv ? 'pfEditAuth()' : 'admQuickLogin()'}">🔒 محفوظ${showPriv ? ' — کھولنے کے لیے پاس ورڈ' : ''}</button>` : ''}</div>
   </div>`;
 }
 /* MCS1211TH365: کارڈ کا پنسل / ڈیلیٹ — پہلے پاس ورڈ؛ پنسل صرف ایڈمن یا اسی کاروبار کے مالک کو */
@@ -5299,8 +5302,7 @@ async function cardEdit(kind, id){
   const rec = pfRecById(kind, id); if(!rec) return;
   const nm = rec.nameUr || rec.name || '';
   /* MCS1411SA413: ایڈمن کی ڈیوائس پر بٹن ہمیشہ نظر آتے ہیں؛ لاگ اِن ابھی بحال نہ ہو تو صاف بتائے */
-  if(!isAdminSignedIn && isDevDevice() && !pfOwnsStrict(rec)){ showToast('🔐 ایڈمن لاگ اِن ابھی بحال نہیں — لاگ اِن کریں، پھر ایڈٹ کھلے گا', 4500); try{ showAdminPop(true); }catch(e){} return; }
-  if(isAdminSignedIn){
+  if(admUi()){
     if(!(await askAdminPassword('🔐 «' + nm + '» — ایڈٹ کھولنے کے لیے اپنا ایڈمن لاگ اِن پاس ورڈ لکھیں۔', '✏️ ایڈٹ کھولیں'))) return;
     if(kind === 'doctor') openDoctorForm(id); else openServiceForm(id);
     return;
@@ -5315,8 +5317,7 @@ async function cardEdit(kind, id){
   if(pfCur && pfCur.rec && pfCur.rec.id === id){ pfUnlocked[pfCur.rk] = 1; await pfEditOpen(); }
 }
 function cardDel(kind, id){
-  /* MCS1411SA413 */ if(!isAdminSignedIn && isDevDevice()){ const r0 = pfRecById(kind, id); if(r0 && !pfOwnsStrict(r0)){ showToast('🔐 ایڈمن لاگ اِن ابھی بحال نہیں — لاگ اِن کریں، پھر ڈیلیٹ ہو گا', 4500); try{ showAdminPop(true); }catch(e){} return; } }
-  if(isAdminSignedIn){ if(kind === 'doctor') deleteDoctor(id); else deleteService(id); return; }
+  if(admUi()){ if(kind === 'doctor') deleteDoctor(id); else deleteService(id); return; }
   const rec = pfRecById(kind, id); if(!rec || !pfOwnsStrict(rec)) return;
   if(confirm('«' + (rec.nameUr || rec.name || '') + '» کو حذف کرنے کی درخواست ایڈمن کو بھیجی جائے گی۔\nایڈمن کی منظوری کے بغیر کچھ حذف نہیں ہوتا۔\n\nدرخواست بھیجیں؟')) requestAdminAction(kind, id, 'del');
 }
@@ -5533,7 +5534,7 @@ function mpSubscribe(rk, noPlay){
   agModal(`<div class="ag-hd">📨 تفصیل ایڈمن کو بھیجیں <small>Send account details to admin</small></div>
     <div class="cp-hint">ممبرشپ: <b>${escapeHtml(r.nameUr||r.name||'')}</b> (${escapeHtml(cat)}) — ایک سال کے لیے جاری ہوگی${left > 0 ? (mpIsTrialSpan(x.p.since, x.p.until) ? '؛ پورا ایک سال آج سے شروع ہو گا — ٹرائل کے دن شامل نہیں ہوں گے' : `؛ آپ کے باقی ${left} دن بھی ساتھ جمع ہو جائیں گے`) : ''}۔</div>
     <div class="ag-f mem-green">
-      <label>🤝 ایجنٹ کا ریفرل کوڈ <small>(کوڈ، ایجنٹ کا موبائل یا شناختی کارڈ — اختیاری)</small></label><input id="msRef" dir="ltr" maxlength="32" placeholder="MS-001 / 03xx-xxxxxxx / شناختی کارڈ" onchange="msRefResolve()"><div class="cp-hint" id="msRefOk"></div>
+      <label>🤝 ایجنٹ کا ریفرل کوڈ <small>(کوڈ، ایجنٹ کا موبائل یا شناختی کارڈ — اختیاری)</small></label><input id="msRef" dir="ltr" maxlength="32"><div class="cp-hint" id="msRefOk"></div>
       <label>👤 نام *</label><input id="msName" maxlength="80" value="${escapeAttr(own.owner || r.nameUr || '')}">
       <label>📱 موبائل نمبر *</label><input id="msPhone" inputmode="tel" dir="ltr" maxlength="16" value="${escapeAttr(r.whatsapp||'')}">
       <label>💬 واٹس ایپ نمبر</label><input id="msWa" inputmode="tel" dir="ltr" maxlength="16" value="${escapeAttr(more.wa2 || r.whatsapp || '')}">
@@ -5541,6 +5542,7 @@ function mpSubscribe(rk, noPlay){
       <div class="ag-err" id="msErr"></div>
       <button type="button" class="btn block" onclick="mpSendDetails('${escapeAttr(x.p.rk)}')">📨 ایڈمن کو بھیجیں</button>
     </div>`);
+  try{ rpkPrep('msRef'); }catch(e){}   /* MCS1411SA414: ریفرل صرف ڈراپ ڈاؤن، نام کے ساتھ */
 }
 /* تصدیق: «اپنی تفصیل دیکھ لیں — کوئی غلطی تو نہیں؟» → ✅ بھیجیں / ✏️ درست کریں */
 function mcsReview(rows, onOk, onBack){
@@ -5990,7 +5992,7 @@ function dupOld(r){ try{ return !!r && dupMap().has(r); }catch(e){ return false;
 function dupSeer(){ try{ return !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn())); }catch(e){ return false; } }   /* MCS1211TH341: ایڈمن دونوں کو پرانا کارڈ نظر آئے */
 function dupVis(r){
   /* MCS1311FR388 (مالک کا حکم): منظوری سے پہلے (approved false) کارڈ صرف اپنے فون پر — ایڈمن سمیت کسی اور کی فہرست / تلاش میں نہیں */
-  try{ if(r && r.approved === false && !((typeof mpEntry === 'function' && mpEntry(r)) || (typeof svcMyBasic === 'function' && svcMyBasic().includes(r.id)))) return false; }catch(e){}
+  /* MCS1411SA414 (مالک کا حکم): بنیادی معلومات والا سائن اپ کارڈ ہر کسی کو نظر آئے — پہلے منظوری سے پہلے چھپتا تھا */
   try{ return dupSeer() || !dupOld(r); }catch(e){ return true; } }
 function dupBadge(kind, r){
   if(!dupSeer() || !dupOld(r)) return '';
@@ -10311,13 +10313,17 @@ async function deleteService(id){
   });
 }
 /* MCS0111SU110: حذف سے پہلے ایڈمن کا پاس ورڈ — فائربیس سے جانچ (اسی ایڈمن ای میل پر دوبارہ سائن اِن)، غلط ہو تو کچھ نہیں مٹتا */
-function askAdminPassword(msg, okText){
+function askAdminPassword(msg, okText, force){
   return new Promise(res=>{
     const FB = window.MCSFirebase, u = FB && FB.auth && FB.auth.currentUser;
-    if(!isAdminSignedIn || !u || !u.email){ showToast('پہلے ایڈمن لاگ ان کریں'); res(false); return; }
+    /* MCS1411SA414: ایڈمن کی ڈیوائس پر لاگ اِن گرا ہوا ہو تب بھی پاس ورڈ کا ڈبہ کھلے — درست پاس ورڈ سے خود لاگ اِن بحال */
+    let em = (u && u.email) || ''; try{ if(!em) em = localStorage.getItem(ADMIN_EMAIL_KEY) || ''; }catch(e){}
+    if(!FB || !(force || (isAdminSignedIn && u && u.email) || isDevDevice())){ showToast('پہلے ایڈمن لاگ ان کریں'); res(false); return; }
+    const needEm = !em;
     let ov = document.getElementById('admPwModal');
     if(!ov){ ov = document.createElement('div'); ov.id = 'admPwModal'; ov.className = 'modal-overlay'; ov.style.zIndex = '2147482000'; document.body.appendChild(ov); }
     ov.innerHTML = `<div class="modal-box adm-pw"><div class="adm-pw-ic">🔐</div><div class="adm-pw-t">ایڈمن پاس ورڈ لکھیں</div><div class="adm-pw-m">${escapeHtml(msg||'')}</div>
+      ${needEm ? `<div class="adm-pw-row"><input type="email" id="admPwEm" dir="ltr" autocomplete="username" placeholder="ایڈمن ای میل"></div>` : ''}
       <div class="adm-pw-row"><input type="password" id="admPwIn" dir="ltr" autocomplete="current-password" placeholder="پاس ورڈ"><button type="button" onclick="const i=document.getElementById('admPwIn');i.type=i.type==='password'?'text':'password'">👁</button></div>
       <div class="adm-pw-err" id="admPwErr"></div>
       <div class="adm-pw-btns"><button type="button" class="adm-pw-cancel">بند</button><button type="button" class="adm-pw-ok">${escapeHtml(okText||"🗑️ حذف کریں")}</button></div></div>`;
@@ -10326,7 +10332,12 @@ function askAdminPassword(msg, okText){
     const go = async ()=>{
       const pw = inp.value; if(!pw){ err.textContent = 'پاس ورڈ لکھیں'; inp.focus(); return; }
       ok.disabled = true; ok.textContent = '⏳ جانچ…'; err.textContent = '';
-      try{ await FB.signInWithEmailAndPassword(FB.auth, u.email, pw); done(true); }
+      const emUse = needEm ? ((ov.querySelector('#admPwEm') || {}).value || '').trim() : em;
+      if(!emUse){ ok.disabled = false; ok.textContent = okText || '🗑️ حذف کریں'; err.textContent = 'ایڈمن ای میل لکھیں'; return; }
+      try{ await FB.signInWithEmailAndPassword(FB.auth, emUse, pw);
+        try{ localStorage.setItem(ADMIN_EMAIL_KEY, emUse); localStorage.setItem(ADMIN_LAST_KEY, '1'); }catch(e){} markDevDevice();
+        for(let i = 0; i < 30 && !isAdminSignedIn; i++) await new Promise(r=>setTimeout(r, 100));   /* لاگ اِن حالت بحال ہونے تک ذرا رکیں */
+        done(true); }
       catch(e){ ok.disabled = false; ok.textContent = okText || '🗑️ حذف کریں'; const c = (e && e.code) || '';
         err.textContent = /network/.test(c) ? 'انٹرنیٹ نہیں — دوبارہ کوشش کریں' : /too-many/.test(c) ? 'بہت زیادہ غلط کوشش — تھوڑی دیر بعد' : (okText ? '❌ پاس ورڈ غلط ہے — کچھ نہیں بدلا' : '❌ پاس ورڈ غلط ہے — ریکارڈ حذف نہیں ہوا'); inp.select(); }
     };
@@ -10429,14 +10440,20 @@ function syncServiceCreateToFirebase(local){
     country: local.country, province: local.province, district: local.district,
     city: local.city, area: local.area,
     ...(local.stage ? {stage: local.stage} : {}),
-    approved: local.approved===true && !!isAdminSignedIn, createdAt: FB.serverTimestamp()
+    approved: (local.approved===true && !!isAdminSignedIn) || local.stage === 'basic', createdAt: FB.serverTimestamp()   /* MCS1411SA414: بنیادی کارڈ فوراً سب کو */
   };
   /* MCS29SEPTU0344AM: local id ہی فائربیس کی id ہے (دیکھیں syncDoctorCreateToFirebase) */
   if(!local.fsId){ local.fsId = local.id; saveStore(); }
   if(local.more && Object.keys(local.more).length) setTimeout(()=>pushMoreToFirebase('services', local.fsId, local.more), 2500);   /* MCS0311TU119 */
   FB.setDoc(FB.doc(FB.db,'services', local.fsId), payload)
     .then(()=>{ local.synced = true; saveStore(); if(local.hide && local.hide.length) pushHideToFirebase('services', local.fsId, local.hide); })   /* سرور نے وصول کر لیا — اب صرف ایڈمن کی منظوری باقی */
-    .catch((e)=>{ if(e && e.code==='permission-denied') showToast('سرور نے اندراج قبول نہیں کیا — ایڈمن سے رابطہ کریں'); });
+    .catch((e)=>{
+      if(e && e.code==='permission-denied' && payload.approved === true && !isAdminSignedIn){   /* قواعد نے approved:true نہ مانا — پرانے طریقے سے (منظوری کے بعد) */
+        payload.approved = false;
+        FB.setDoc(FB.doc(FB.db,'services', local.fsId), payload).then(()=>{ local.synced = true; saveStore(); }).catch(()=>{ showToast('سرور نے اندراج قبول نہیں کیا — ایڈمن سے رابطہ کریں'); });
+        return;
+      }
+      if(e && e.code==='permission-denied') showToast('سرور نے اندراج قبول نہیں کیا — ایڈمن سے رابطہ کریں'); });
 }
 /* MCS02OCTFR0316AM: ترمیم سرور تک پہنچانے کا محفوظ طریقہ۔ پہلے خالی (undefined) خانوں کی وجہ سے فائربیس
    پوری تبدیلی رد کر دیتا تھا اور غلطی چھپ جاتی تھی — ریفریش پر پرانا ڈیٹا واپس آ جاتا تھا۔ */
@@ -12232,9 +12249,21 @@ const DEV_KEY = 'mcsDevDevice';
 var ADMIN_LAST_KEY = 'mcsAdminLast', ADMIN_EMAIL_KEY = 'mcsAdminEmail';
 function adminWasIn(){ try{ return localStorage.getItem(ADMIN_LAST_KEY)==='1'; }catch(e){ return false; } }
 var adminRestoring = adminWasIn();
-function isDevDevice(){ try{ return localStorage.getItem(DEV_KEY)==='1'; }catch(e){ return false; } }
+function isDevDevice(){ try{ return localStorage.getItem(DEV_KEY)==='1' || localStorage.getItem(ADMIN_LAST_KEY)==='1' || !!localStorage.getItem(ADMIN_EMAIL_KEY); }catch(e){ return false; } }   /* MCS1411SA414: ایڈمن آخری بار لاگ اِن تھا تو بھی ایڈمن ڈیوائس */
+/* MCS1411SA414 (مالک کا حکم): ایڈمن کے بٹن (✏️ ایڈٹ / 🗑️ ڈیلیٹ) ہر وقت — فائربیس لاگ اِن گرے یا فون ڈیٹا بدلے، پاس ورڈ ڈالنے پر خود لاگ اِن ہو کر کام ہو جائے */
+function admUi(){ try{ return !!(isAdminSignedIn || (isDevDevice() && !window.__noAdmBtn)); }catch(e){ return false; } }
+/* MCS1411SA414: کسی بھی کارڈ کے «🔒 محفوظ» پر ٹچ — ایڈمن ای میل + پاس ورڈ سے فوراً لاگ اِن؛ پھر ہر کارڈ پر ✏️ / 🗑️ آ جاتے ہیں */
+async function admQuickLogin(){
+  if(admUi() && isAdminSignedIn){ showToast('✅ آپ ایڈمن لاگ اِن ہیں'); return; }
+  const ok = await askAdminPassword('🔐 یہ معلومات صرف مالک / ایڈمن کے لیے ہیں۔ ایڈمن ہیں تو ای میل اور پاس ورڈ لکھیں۔', '🔓 ایڈمن لاگ اِن', true);
+  if(ok) showToast('✅ ایڈمن لاگ اِن — اب ہر کارڈ پر ✏️ ایڈٹ اور 🗑️ ڈیلیٹ نظر آئیں گے', 4000);
+}
+async function admEnsure(msg, okText){
+  if(isAdminSignedIn){ try{ const FB = window.MCSFirebase; if(FB && FB.auth && FB.auth.currentUser) return true; }catch(e){} }
+  return await askAdminPassword(msg || '🔐 ایڈمن پاس ورڈ لکھیں۔', okText || '✅ ٹھیک ہے');
+}
 function markDevDevice(){ try{ localStorage.setItem(DEV_KEY,'1'); }catch(e){} }
-function hideDevButton(){ try{ localStorage.removeItem(DEV_KEY); }catch(e){} showAdminPop(false); updateAdminBadge(); showToast('اس ڈیوائس سے ایڈمن بٹن ہٹا دیا گیا'); }
+function hideDevButton(){ try{ localStorage.removeItem(DEV_KEY); localStorage.removeItem(ADMIN_LAST_KEY); }catch(e){} showAdminPop(false); updateAdminBadge(); showToast('اس ڈیوائس سے ایڈمن بٹن ہٹا دیا گیا'); }
 function updateAdminBadge(){
   const btn = document.getElementById('devAdminBtn');
   const show = !!isAdminSignedIn || isDevDevice();
@@ -12425,6 +12454,8 @@ function initFirebaseSync(){
     if(isAdminSignedIn){ startPendingApprovalsListener(); renderAdminCategoryList(); } else stopPendingApprovalsListener();
     if(currentScreen==='doctor-list') renderDoctorList('list');
     if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
+    /* MCS1411SA414: باقی صفحات (تلاش، خاص نمبر، رجسٹرڈ کارڈ، ایجنٹ) بھی فوراً تازہ تاکہ بٹن غائب نہ رہیں */
+    setTimeout(()=>{ try{ if(typeof renderUserSearch==='function') renderUserSearch(); }catch(e){} try{ if(typeof renderFavorites==='function') renderFavorites(); }catch(e){} try{ if(typeof mpRender==='function') mpRender(); }catch(e){} try{ if(typeof hlRenderSoon==='function') hlRenderSoon(); }catch(e){} }, 60);
   });
 }
 
@@ -12612,7 +12643,7 @@ function pbDefaultRef(){
 }
 function pbStampRef(data){ try{ if(codevOn()) return false; if(data.more && data.more.ref) return false; data.more = Object.assign({}, data.more || {}, {ref: pbDefaultRef()}); return true; }catch(e){ return false; } }
 /* MCS1111WE329 (مالک کا حکم): ایڈمن = DEV، ایڈمن = CODEV (پرانا DEV / CODEV بھی مانا جاتا ہے) */
-function refN(v){ const c = String(v || '').trim().toUpperCase().replace(/\s+/g, ''); return c === 'PBT-D' ? 'DEV' : c === 'PBT-C' ? 'CODEV' : c; }
+function refN(v){ const c = String(v || '').trim().toUpperCase().replace(/\s+/g, ''), m = /^MCS-?0*([12])$/.exec(c); return c === 'PBT-D' || (m && m[1] === '1') ? 'DEV' : c === 'PBT-C' || (m && m[1] === '2') ? 'CODEV' : c; }   /* MCS1411SA414: MCS001 = ایڈمن (DEV)، MCS002 = کو ڈویلپر (CODEV) */
 const OWN_REF_RX = /^(PBT|PBT-[DC]|DEV|CODEV)$/i;
 function agNormCode(v){ const t = String(v||'').trim().replace(/\s+/g,''); const m2 = /^([A-Za-z]{2})[-.]?0*(\d{1,5})$/.exec(t); if(m2) return m2[1].toUpperCase() + '-' + m2[2].padStart(3,'0');   /* MCS0511TH142: ms1 / MS 001 → MS-001 */
   { const c13 = t.replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g,''); if(c13.length === 13) return c13.slice(0,5) + '-' + c13.slice(5,12) + '-' + c13.slice(12); }   /* MCS0511TH144: ایجنٹ کا شناختی کارڈ نمبر بھی */ if(/^p\d{10}_[a-z0-9]{2,12}$/i.test(t)) return t.toLowerCase(); const d = t.replace(/\D/g,''); if(d.length >= 10) return '0' + d.slice(-10); if(/^MCS-?AG/i.test(t) && d) return 'MCS-AG-' + String(parseInt(d,10)).padStart(4,'0'); return t; }
@@ -19814,7 +19845,7 @@ function rpkPeople(){
 }
 function rpkNameOf(code){
   code = refN(code); if(!code) return '';
-  if(code === 'DEV') return 'ایڈمن'; if(code === 'CODEV') return 'ایڈمن'; if(code === 'PBT') return '';
+  if(code === 'DEV') return 'ایڈمن (مالک)'; if(code === 'CODEV') return 'کو ڈویلپر'; if(code === 'PBT') return '';
   const p = rpkPeople().find(x=>x.c === code); return p ? p.n : '';
 }
 function rpkSorted(){
@@ -19832,13 +19863,15 @@ function rpkFill(sel){   /* MCS1111WE329 (مالک کا حکم): اوپر DEV / 
   const num = c => { const m = /(\d+)\s*$/.exec(String(c)); return m ? +m[1] : 1e9; };
   all.sort((x, y) => { const ax = /^AG-/i.test(x.c) ? 0 : 1, ay = /^AG-/i.test(y.c) ? 0 : 1; return (ax - ay) || String(x.c).replace(/\d+$/, '').localeCompare(String(y.c).replace(/\d+$/, ''), 'en') || (num(x.c) - num(y.c)); });
   const opt = p => `<option value="${escapeAttr(p.c)}" data-n="${escapeAttr(p.n)}" data-noen="1">${escapeHtml(pad(p.c))} · ${escapeHtml(p.n || '—')}</option>`;
-  let h = '<option value="">— Choose who brought it —</option><optgroup label="Company">';
+  let h = '<option value="">— فہرست سے چنیں —</option><optgroup label="Admin">';
+  h += `<option value="DEV" data-n="ایڈمن (مالک)" data-noen="1">${pad('MCS001')} · ایڈمن (مالک)</option><option value="CODEV" data-n="کو ڈویلپر" data-noen="1">${pad('MCS002')} · کو ڈویلپر</option></optgroup><optgroup label="Company">`;
+  h += '<optgroup label="Company">';
   h += `<option value="PBT">${pad('PBT')} · Company — Piary Bhai Traders</option></optgroup>`;
   if(all.length) h += '<optgroup label="Agents">' + all.map(opt).join('') + '</optgroup>';
-  sel.innerHTML = h; sel.setAttribute('dir', 'ltr'); sel.style.fontVariantNumeric = 'tabular-nums'; rpkSetVal(sel, keep);
+  sel.innerHTML = h; sel.setAttribute('dir', 'ltr'); sel.style.fontVariantNumeric = 'tabular-nums'; rpkSetVal(sel, keep || (adm && sel.id === 'svcRef' ? 'DEV' : ''));   /* MCS1411SA414: ایڈمن بزنس فیڈ کرے تو MCS001 پہلے سے */
 }
 function rpkPrep(id){
-  if(!rpkPriv()) return null;
+  /* MCS1411SA414 (مالک کا حکم): ریفرل ہر کسی کے لیے صرف فہرست سے چننا — ہاتھ سے لکھنا بند */
   let el = document.getElementById(id); if(!el) return null;
   if(el.tagName !== 'SELECT'){
     const old = el.value || '', sel = document.createElement('select');
@@ -19846,7 +19879,7 @@ function rpkPrep(id){
     el.parentNode.replaceChild(sel, el);
     const D = rpkSelVal();
     Object.defineProperty(sel, 'value', {configurable:true, get(){ return D.get.call(sel); }, set(v){ rpkSetVal(sel, v); }});
-    sel.addEventListener('change', ()=>{ const ok = document.getElementById(id + 'Ok'); if(ok){ const c = sel.value, n = rpkNameOf(c); ok.textContent = c ? '✅ ' + (n ? n + ' — ' : '') + c : ''; ok.style.color = '#047857'; } });
+    sel.addEventListener('change', ()=>{ const ok = document.getElementById(id + 'Ok'); if(ok){ const c = sel.value, n = rpkNameOf(c); ok.textContent = c ? '✅ ' + (n ? n + ' — ' : '') + (c === 'DEV' ? 'MCS001' : c === 'CODEV' ? 'MCS002' : c) : ''; ok.style.color = '#047857'; } });
     const fld = sel.closest('.field'); if(fld){ fld.querySelectorAll('.ref-paste').forEach(b=>{ b.style.display = 'none'; }); }
     rpkFill(sel); rpkSetVal(sel, old); el = sel;
   } else rpkFill(el);
