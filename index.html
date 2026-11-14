@@ -4383,10 +4383,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA421";
+const APP_VERSION = "MCS1411SA422";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA422": "🔐 ایک بار لاگ اِن ہونے کے بعد لاگ اِن صفحہ بار بار نہیں آئے گا — جب تک آپ خود «لاگ آؤٹ» نہ کریں • لاگ اِن فون میں زیادہ پکا محفوظ (میموری بھر جائے تب بھی)",
   "MCS1411SA421": "🪪 شناختی کارڈ اور میعاد کے ڈبے ایک لائن میں برابر • 🔵 رجسٹریشن کے سب مرحلوں کا پس منظر ایک ہی نیلا",
   "MCS1411SA420": "🪪 شناختی کارڈ نمبر کے ساتھ ہی ایک لائن میں میعاد (DD/MM/YYYY، سلیش خود لگتا ہے) • ❌ «ایڈمن کو منظوری کے لیے بھیجا» والے سب جملے ختم • 🧾 Google Play کی اصل خریداری کے بعد آرڈر نمبر (GPA…) ایپ میں پیسٹ کرنا لازمی — تبھی فارم رجسٹرڈ، مکمل اور مبارکباد",
   "MCS1411SA419": "💳 Google Play: خریداری کی «acknowledge» اب ایپ خود کرتی ہے (ورنہ گوگل 3 دن میں سبسکرپشن کینسل کر دیتا ہے) — پرانی خریداریاں بھی اگلی بار ایپ کھلنے پر • ادائیگی کے فوراً بعد وزرڈ کا کارڈ سرور پر پہنچتا ہے تاکہ منظور / عوامی ہو سکے • کارڈ پر «پچھلے ۱ دن» والی کٹی عبارت درست۔",
@@ -16422,8 +16423,24 @@ body.d2 #homeAds .ad-ribbon{display:none}
   };
   const $ = id => document.getElementById(id);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const ls = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k, v){ try{ v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); }catch(e){} } };
-  try{ if(ls.get('mcsAuthTmp') && !sessionStorage.getItem('mcsAuthLive')){ ls.set('mcsAuth', null); ls.set('mcsAuthTmp', null); } }catch(e){}
+  /* MCS1411SA422 (مالک کا حکم): ایک بار لاگ اِن ہو گیا تو لاگ اِن صفحہ بار بار نہ آئے، جب تک بندہ خود لاگ آؤٹ نہ کرے۔
+     وجہ: لاگ اِن کی معلومات صرف localStorage میں لکھی جاتی تھیں؛ ایپ کا ڈیٹا بھرنے پر وہ لکھائی چپکے سے ناکام ہو جاتی تھی
+     اور اگلے ہی کام پر دوبارہ لاگ اِن آ جاتا تھا۔ اب mcsAuth / mcsMyPk تین جگہ: میموری + localStorage + IndexedDB (بیک اپ)۔ */
+  const DUR = { mcsAuth:1, mcsMyPk:1 }, MEM = {};
+  const idbOpen = () => new Promise((res, rej) => { try{ const q = indexedDB.open('mcsDurable', 1); q.onupgradeneeded = () => { try{ q.result.createObjectStore('kv'); }catch(e){} }; q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }catch(e){ rej(e); } });
+  const idbSet = (k, v) => idbOpen().then(db => new Promise(res => { try{ const t = db.transaction('kv', 'readwrite'), o = t.objectStore('kv'); if(v == null) o.delete(k); else o.put(v, k); t.oncomplete = t.onerror = t.onabort = () => { try{ db.close(); }catch(e){} res(); }; }catch(e){ try{ db.close(); }catch(_){} res(); } })).catch(() => {});
+  const idbAll = () => idbOpen().then(db => new Promise(res => { const out = {}; try{ const c = db.transaction('kv', 'readonly').objectStore('kv').openCursor(); c.onsuccess = () => { const cur = c.result; if(cur){ out[cur.key] = cur.value; cur.continue(); } else { try{ db.close(); }catch(e){} res(out); } }; c.onerror = () => { try{ db.close(); }catch(e){} res(out); }; }catch(e){ try{ db.close(); }catch(_){} res(out); } })).catch(() => ({}));
+  const ls = {
+    get(k){ if(DUR[k] && MEM[k] != null) return MEM[k]; try{ return localStorage.getItem(k); }catch(e){ return null; } },
+    set(k, v){ if(DUR[k]){ if(v == null) delete MEM[k]; else MEM[k] = v; idbSet(k, v); } try{ v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); }catch(e){} }
+  };
+  window.uaDur = function(k, v){ if(v != null && k === 'mcsAuth') ls.set('mcsLoggedOut', null); ls.set(k, v); };
+  /* ایپ کھلتے ہی: localStorage سے لاگ اِن غائب ہو تو IndexedDB بیک اپ سے بحال (جب تک بندے نے خود لاگ آؤٹ نہ کیا ہو) */
+  window.uaDurRestore = function(){ return new Promise(res => { let fin = false; const end = () => { if(!fin){ fin = true; res(); } }; setTimeout(end, 1500);
+    idbAll().then(all => { try{ const outFlag = localStorage.getItem('mcsLoggedOut') === '1';
+      Object.keys(DUR).forEach(k => { if(all[k] == null) return; if(k === 'mcsAuth' && outFlag) return; MEM[k] = all[k]; try{ if(localStorage.getItem(k) == null) localStorage.setItem(k, all[k]); }catch(e){} });
+    }catch(e){} end(); }).catch(end); }); };
+  try{ ls.set('mcsAuthTmp', null); }catch(e){}   /* «Remember me» کی پرانی نشانی ختم — اب خود بخود لاگ آؤٹ کبھی نہیں */
   window.uaMe = function(){ try{ const a = JSON.parse(ls.get('mcsAuth') || 'null'); return a && a.tok ? a : null; }catch(e){ return null; } };
   function staff(){ try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } }
   /* MCS0911MO279 (مالک کا حکم): ایک بار پورٹل / ممبرشپ میں داخل ہو گئے (ایڈمن، ایجنٹ، کاروبار والا) تو لاگ اِن صفحہ بار بار نہ آئے */
@@ -16450,7 +16467,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function done(r, msg){
     const next = uaPending; uaPending = null;
     ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); ls.set('mcsGuest', null); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){}
-    { const rm = $('uaRem'); ls.set('mcsAuthTmp', rm && !rm.checked ? '1' : null); try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){} }   /* MCS1111WE312: «Remember me» نہیں تو ایپ بند ہوتے ہی لاگ آؤٹ */
+    ls.set('mcsAuthTmp', null); ls.set('mcsLoggedOut', null); try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}   /* MCS1411SA422: اب لاگ اِن ہمیشہ قائم، صرف خود لاگ آؤٹ سے جائے گا */
     uaHide(); try{ showToast(msg || ('✅ خوش آمدید، ' + (r.user && r.user.name || ''))); }catch(e){}
     uaSync();
     try{ if(invGet()) setTimeout(fedApplyPending, 300); }catch(e){}
@@ -16479,7 +16496,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       ${field('uaId', 'user', 'Mobile No. / Account ID (MCS001)', { ac:'username' })}
       ${field('uaPw', 'lock', 'PIN / Password', { type:'password', ac:'current-password' })}
       
-      <div class="uaRow" style="justify-content:space-between;display:flex;align-items:center"><label class="uaChk" style="margin:0"><input type="checkbox" id="uaRem" checked><span>Remember me</span></label><a onclick="uaForgot()">Forgot PIN?</a></div>
+      <div class="uaRow" style="justify-content:space-between;display:flex;align-items:center"><span></span><a onclick="uaForgot()">Forgot PIN?</a></div>
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bB" onclick="uaDoLogin()">${IC.login}LOGIN</button>
       <button class="uaBtn bO" onclick="uaExit()">${IC.exit}EXIT</button>
@@ -16560,7 +16577,6 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
       <label class="uaF" data-noen>${IC.pin}<select id="uaDist" style="flex:1;border:0;outline:0;background:transparent;font-size:15px;padding:0 8px;min-width:0;font-family:inherit;color:#0f1f45">${distSel()}</select><span class="rq">*</span></label>
       ${field('uaPw2', 'lock', 'Create 6-digit PIN', { type:'password', rq:1, im:'numeric', ac:'new-password' })}
       <label class="uaChk"><input type="checkbox" id="uaAgree"><span>I agree to the <a href="privacy.html#terms" target="_blank">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank">Privacy Policy</a></span></label>
-      <label class="uaChk"><input type="checkbox" id="uaRem" checked><span>Remember me</span></label>
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bG" onclick="uaDoSignup()">${IC.add}SIGN UP</button>
       <div class="uaFoot">Already have an account? &nbsp;<a onclick="uaLogin()" style="text-decoration:underline">LOGIN</a></div></div>`);
@@ -16714,7 +16730,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     const a = uaMe(); if(!a) return; if(!confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return;
     api({ op:'logout', tok: a.tok }); mcsLogoutAll(true);
   };
-  function uaDrop(){ ls.set('mcsAuth', null); uaSync(); uaEnter('دوبارہ لاگ اِن کریں'); }
+  function uaDrop(){ setErr('session'); try{ showToast('🔑 یہ کام کرنے کے لیے ایک بار «لاگ آؤٹ» کر کے PIN سے دوبارہ لاگ اِن کریں', 4500); }catch(e){} }   /* MCS1411SA422: لاگ اِن مٹاتے نہیں — ورنہ پوری ایپ میں لاگ اِن صفحہ آ جاتا */
   /* Guest روک: ہر «کام» سے پہلے */
   window.uaGuard = function(next, msg){ if(uaOk()) return true; uaPending = next || null; uaEnter(msg || 'یہ کام کرنے کے لیے پہلے Sign In یا Sign Up کریں — Guest صرف دیکھ سکتا ہے'); return false; };
   const GUARD = ['mpStartNew', 'd2AddOpen', 'pickAddCategory', 'openServiceForm', 'openDoctorForm', 'agOpen', 'agEarnOpen', 'pfEditOpen', 'pfClaimMine', 'pfClaimPlain', 'svcRegClaim', 'mpSubscribe', 'adRequestOpen', 'toggleAddStrip', 'mpNewMore', 'saveService', 'saveDoctor', 'pfSave', 'agPinLogin'];
@@ -16741,7 +16757,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     try{ const c0 = window.cpAcctSync; if(typeof c0 === 'function' && !c0.__ua){ window.cpAcctSync = function(){ const r = c0.apply(this, arguments); uaSync(); return r; }; window.cpAcctSync.__ua = 1; } }catch(e){}
     /* MCS0711SA194: h2Type کلک ختم */
   }
-  async function recheck(){ const a = uaMe(); if(!a || (a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ ls.set('mcsAuth', null); ls.set('mcsGuest', '1'); uaSync(); } }
+  async function recheck(){ const a = uaMe(); if(!a || (a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ایڈمن کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
@@ -17045,7 +17061,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
   function boot(){
     wrapAll(); hook(); uaSync();
     ls.set('mcsGuest', null);
-    if(!uaOk()) setTimeout(() => { if(!uaOk()) uaEnter(); }, 600);
+    uaDurRestore().then(() => { try{ uaSync(); h2Sync(); }catch(e){} if(!uaOk()) setTimeout(() => { if(!uaOk()) uaEnter(); }, 600); });   /* MCS1411SA422: پہلے بیک اپ سے لاگ اِن بحال، پھر ہی فیصلہ */
     setTimeout(recheck, 4000);
     setTimeout(() => { try{ if(uaMe() && invGet()) fedApplyPending(); else if(!uaMe() && invGet() && !staff()) uaInviteView(); else if(agtGet() && !agentOn() && !staff()) uaAgtView(); }catch(e){} }, 5000);
     document.addEventListener('keydown', e => { if(e.key === 'Escape' && $('uaOv').classList.contains('on') && (uaMe() || staff())) uaHide(); });
@@ -23208,8 +23224,8 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     let r; try{ const x = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dev: (typeof agDev === 'function' ? agDev() : ''), op:'signup', name: a.name.trim(), mobile: mob, email: (a.email || '').trim(), pw, city: a.dist, district: a.dist})}); r = await x.json(); }catch(e){ r = {ok:false, reason:'net'}; }
     busy = false; $('wzSave1').disabled = false;
     if(!r || !r.ok) return err(AERR[r && r.reason] || ('خرابی: ' + ((r && r.reason) || 'net')));
-    lsS('mcsAuth', JSON.stringify({tok: r.tok, user: r.user, at: Date.now()})); lsS('mcsGuest', null);
-    try{ lsS('mcsMyPk', JSON.stringify({sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now()})); }catch(e){}
+    { const D = window.uaDur || lsS; D('mcsAuth', JSON.stringify({tok: r.tok, user: r.user, at: Date.now()})); lsS('mcsGuest', null);
+    try{ D('mcsMyPk', JSON.stringify({sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now()})); }catch(e){} }   /* MCS1411SA422 */
     try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}
     try{ localStorage.setItem('mcsHomeCity', a.dist); localStorage.removeItem('mcsCityPick'); }catch(e){}
     S.sid = r.user.sid || r.user.id; save();
