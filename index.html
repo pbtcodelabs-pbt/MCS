@@ -4385,10 +4385,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA418";
+const APP_VERSION = "MCS1411SA419";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA419": "💳 Google Play: خریداری کی «acknowledge» اب ایپ خود کرتی ہے (ورنہ گوگل 3 دن میں سبسکرپشن کینسل کر دیتا ہے) — پرانی خریداریاں بھی اگلی بار ایپ کھلنے پر • ادائیگی کے فوراً بعد وزرڈ کا کارڈ سرور پر پہنچتا ہے تاکہ منظور / عوامی ہو سکے • کارڈ پر «پچھلے ۱ دن» والی کٹی عبارت درست۔",
   "MCS1411SA418": "🛠️ رجسٹریشن ویزرڈ نیچے کھسک کر اوپر ہوم کی فہرست نظر آنے والا مسئلہ: ویزرڈ اب پوری اسکرین پر پکا جما رہتا ہے، کھلا ہو تو پیچھے ہوم اور نیچے کی پٹی چھپ جاتی ہے، اور ڈبہ ہٹے تو خود واپس اوپر آ جاتا ہے۔",
   "MCS1411SA417": "🛠️ ویزرڈ: «Subscribe» دبانے پر خاموشی ختم — غلطی (شناختی کارڈ، میعاد، ای میل) اب اوپر لال پٹی میں نظر آتی ہے اور وہی خانہ لال ہو کر سامنے آ جاتا ہے؛ Google Play نہ کھلے تو وجہ لکھی آتی ہے • سکرول / ٹچ: پیچھے ہوم اسکرین کے ٹائمر اور سوائپ ویزرڈ کھلنے پر بند، ویزرڈ کا اپنا پکا سکرول۔",
   "MCS1411SA416": "🎨 رجسٹریشن ویزرڈ کے رنگ، سائز اور لکھائی دی گئی تصویر سے ناپ کر ملائے (گہرا نیلا #043464، سبز #04641c، ہلکا نیلا #D4ECFC، سفید پس منظر، چاروں مراحل کی پٹی ایک جیسی نیلی) • MCS001 / MCS002: ایڈمن کے لیے محفوظ — جن کاروباروں کے پاس یہ سرور پر پہلے سے الاٹ ہیں ان کی فہرست ایڈمن کو ایک بار دکھتی ہے (ایپ سرور کی ID خود نہیں بدل سکتی)۔",
@@ -4945,7 +4946,7 @@ function pfHtml(c){
     + (owner && !live && p.until && !pend ? `<div class="pf-lock">🔒 آپ کی پوری تفصیل لوگوں سے چھپی ہوئی ہے — لوگوں کو صرف سادہ کارڈ دکھ رہا ہے۔<br><b>تفصیل ایڈمن کو بھیجیں — جاری ہوتے ہی فوراً دوبارہ چالو</b> (سب کچھ محفوظ ہے)<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">📨 ممبرشپ جاری رکھیں — تفصیل ایڈمن کو بھیجیں</button></div>` : '')
     + gal + `<div class="pf-top">${sfThumb ? `<span class="pf-ic sf"><img src="${escapeAttr(sfThumb)}" alt=""></span>` : `<span class="pf-ic">${cm.emoji}</span>`}<div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${live ? '<span class="pf-star">⭐ نمایاں</span>' : ''}</div>
       <div class="pf-sub">${escapeHtml([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}${r.nameEn ? `<br><span style="font-family:MCSDigits,Arial;direction:ltr">${escapeHtml(r.nameEn)}</span>` : ''}</div></div></div>`
-    + (st ? `<div class="pf-stats"><div><b>${st.view}</b><small>👀 دیکھا</small></div><div><b>${st.call}</b><small>📞 کالیں</small></div><div><b>${st.wa}</b><small>💬 واٹس ایپ</small></div><span>پچھلے ${st.days} دن میں — ایپ سے</span></div>` : '')
+    + (st ? `<div class="pf-stats"><div><b>${st.view}</b><small>👀 دیکھا</small></div><div><b>${st.call}</b><small>📞 کالیں</small></div><div><b>${st.wa}</b><small>💬 واٹس ایپ</small></div><span data-noen dir="ltr" style="display:block;text-align:center">Last ${st.days} day(s) — from app</span></div>` : '')
     + (showFull && (d.about || own.rest || more.services) ? `<div class="pf-sec"><h4>📝 تفصیل</h4><p>${escapeHtml(d.about || [own.rest, more.services].filter(Boolean).join('\n'))}</p></div>` : '')
     + (showFull && (d.items||[]).length ? `<div class="pf-sec"><h4>🏷️ خدمات / چیزیں اور ریٹ</h4>${d.items.map(x=>`<div class="pf-it"><span>${escapeHtml(x.n)}</span>${x.p ? `<b>Rs ${escapeHtml(x.p)}</b>` : ''}</div>`).join('')}</div>` : '')
     + (showFull && (d.hours || d.off) ? `<div class="pf-sec"><h4>🕘 اوقات</h4><p>${escapeHtml(d.hours||'')}${d.off ? `${d.hours ? ' • ' : ''}چھٹی: ${escapeHtml(d.off)}` : ''}</p></div>` : '')
@@ -5440,6 +5441,16 @@ function mcsFsOf(rk){
   }catch(e){}
   return null;
 }
+/* MCS1411SA419: Play کا حکم — خریداری کی «acknowledge» 3 دن میں نہ ہو تو گوگل سبسکرپشن خود کینسل کر دیتا ہے۔ سرور کی تصدیق کامیاب ہو تو یہاں سے بھی تصدیق (دوسری بار ہو تو کوئی نقصان نہیں) */
+async function mcsPlayAck(token){ try{ if(!token || !mcsPlayOk()) return; const svc = await mcsPlaySvc(); await svc.acknowledge(token, 'onetime'); }catch(e){} }
+/* MCS1411SA419: وزرڈ والا کارڈ سائن اپ پر صرف فون میں ہوتا ہے (localOnly) — ادائیگی کے فوراً بعد اسے سرور پر پہنچاتے ہیں تاکہ سرور اسے منظور / عوامی کر سکے */
+async function mcsEnsureCloud(rk){
+  try{
+    const r0 = (store.services || []).find(r => r && pfKeyOf(r, 'service') === rk); if(!r0 || r0.fsId) return;
+    r0.stage = 'registered'; saveStore(); syncServiceUpdateToFirebase(r0);
+    for(let i = 0; i < 20 && !r0.fsId; i++) await new Promise(r => setTimeout(r, 400));
+  }catch(e){}
+}
 async function mcsPlayVerify(token, sku, rk){
   const fs = mcsFsOf(rk);
   const r = await fetch(PF_API + '/mcsbuy', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({purchaseToken: token, sku, rec: rk || '', fs: fs || undefined})});
@@ -5497,22 +5508,23 @@ async function mcsPlayBuy(rk){
     if(!token) throw new Error('no_token');
     closeModal('agModal');
     showToast('⏳ ادائیگی ہو گئی — ممبرشپ چالو ہو رہی ہے…', 4000);
+    try{ await mcsEnsureCloud(rk); }catch(e){}
     try{ await mcsGoLive(rk); }catch(e){}   /* MCS1411SA412: ادائیگی ہوتے ہی لائیو + ایڈمن کو جائزے کے لیے */
     let j = null;
     for(let i = 0; i < 3 && !(j && j.ok); i++){ try{ j = await mcsPlayVerify(token, sku, rk); }catch(e){} if(!(j && j.ok)) await new Promise(r => setTimeout(r, 2000)); }
-    if(j && j.ok){ mcsPlayApply(j, sku); alert('✅ ممبرشپ ایک سال کے لیے جاری ہو گئی — شکریہ!'); }
+    if(j && j.ok){ mcsPlayApply(j, sku); mcsPlayAck(token); alert('✅ ممبرشپ ایک سال کے لیے جاری ہو گئی — شکریہ!'); }
     else { localStorage.setItem('mcsPlayPending', JSON.stringify({token, sku, rk, at: Date.now()})); alert('✅ ادائیگی ہو گئی۔ ممبرشپ چند منٹ میں خود چالو ہو جائے گی (انٹرنیٹ ٹھیک ہوتے ہی)۔'); }
   }catch(e){ if(!e || e.name !== 'AbortError') alert('❌ خریداری مکمل نہیں ہوئی — دوبارہ کوشش کریں۔'); }
 }
 /* ایپ کھلنے پر: رکی ہوئی خریداری + اس گوگل اکاؤنٹ کی سب ممبرشپس کی تازہ مدت (تجدید، نیا فون) — 6 گھنٹے میں ایک بار */
 async function mcsPlaySync(force){
   if(!mcsPlayOk()) return;
-  try{ const pd = JSON.parse(localStorage.getItem('mcsPlayPending') || 'null'); if(pd && pd.token){ const j = await mcsPlayVerify(pd.token, pd.sku, pd.rk); if(j && j.ok){ mcsPlayApply(j); localStorage.removeItem('mcsPlayPending'); } } }catch(e){}
+  try{ const pd = JSON.parse(localStorage.getItem('mcsPlayPending') || 'null'); if(pd && pd.token){ const j = await mcsPlayVerify(pd.token, pd.sku, pd.rk); if(j && j.ok){ mcsPlayApply(j); mcsPlayAck(pd.token); localStorage.removeItem('mcsPlayPending'); } } }catch(e){}
   const last = +localStorage.getItem('mcsPlaySyncAt') || 0;
   if(!force && Date.now() - last < 6 * 3600e3) return;
   try{
     const svc = await mcsPlaySvc(); const list = ((await svc.listPurchases()) || []).filter(x => MCS_PLAY_SKUS.includes(x.itemId));
-    for(const x of list){ try{ mcsPlayApply(await mcsPlayVerify(x.purchaseToken, x.itemId, ''), x.itemId); }catch(e){} }
+    for(const x of list){ try{ const jj = await mcsPlayVerify(x.purchaseToken, x.itemId, ''); mcsPlayApply(jj, x.itemId); if(jj && jj.ok) mcsPlayAck(x.purchaseToken); }catch(e){} }
     localStorage.setItem('mcsPlaySyncAt', String(Date.now()));
   }catch(e){}
 }
