@@ -4385,10 +4385,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA417";
+const APP_VERSION = "MCS1411SA418";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA418": "🛠️ رجسٹریشن ویزرڈ نیچے کھسک کر اوپر ہوم کی فہرست نظر آنے والا مسئلہ: ویزرڈ اب پوری اسکرین پر پکا جما رہتا ہے، کھلا ہو تو پیچھے ہوم اور نیچے کی پٹی چھپ جاتی ہے، اور ڈبہ ہٹے تو خود واپس اوپر آ جاتا ہے۔",
   "MCS1411SA417": "🛠️ ویزرڈ: «Subscribe» دبانے پر خاموشی ختم — غلطی (شناختی کارڈ، میعاد، ای میل) اب اوپر لال پٹی میں نظر آتی ہے اور وہی خانہ لال ہو کر سامنے آ جاتا ہے؛ Google Play نہ کھلے تو وجہ لکھی آتی ہے • سکرول / ٹچ: پیچھے ہوم اسکرین کے ٹائمر اور سوائپ ویزرڈ کھلنے پر بند، ویزرڈ کا اپنا پکا سکرول۔",
   "MCS1411SA416": "🎨 رجسٹریشن ویزرڈ کے رنگ، سائز اور لکھائی دی گئی تصویر سے ناپ کر ملائے (گہرا نیلا #043464، سبز #04641c، ہلکا نیلا #D4ECFC، سفید پس منظر، چاروں مراحل کی پٹی ایک جیسی نیلی) • MCS001 / MCS002: ایڈمن کے لیے محفوظ — جن کاروباروں کے پاس یہ سرور پر پہلے سے الاٹ ہیں ان کی فہرست ایڈمن کو ایک بار دکھتی ہے (ایپ سرور کی ID خود نہیں بدل سکتی)۔",
   "MCS1411SA415": "🤝 ریفرل ہر جگہ صرف فہرست سے (نام کے ساتھ)، MCS001 = ایڈمن، MCS002 = کو ڈویلپر؛ سائن اپ کارڈ سب کو نظر آئے؛ کارڈ پر صرف سائن اپ والا MCS نمبر۔",
@@ -23001,6 +23002,8 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
 #wzOv #wzPlans{min-height:300px}
 #wzOv #wzFlash{display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:12px;right:12px;max-width:456px;margin:0 auto;z-index:50;background:#d92d20;color:#fff;border-radius:10px;padding:11px 14px;font:700 15px/1.8 "Jameel Noori Nastaleeq","JameelNoori",MCSDigits,serif;direction:rtl;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #wzOv #wzFlash.ok{background:#04641c}
+#wzOv{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;max-height:none!important;transform:none!important}
+body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA418: ویزرڈ کھلا ہو تو پیچھے ہوم کی فہرست نظر ہی نہ آئے */
 </style>
 <div id="wzOv" data-noen aria-modal="true" role="dialog"><div class="wzW" id="wzW"></div></div>
 
@@ -23096,13 +23099,20 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
   function wzBad(){ const p = S.p, cn = dg(p.cnic).replace(/\D/g, ''); const id = cn.length !== 13 ? 'wzCnic' : (!p.exp || new Date(p.exp + 'T23:59:59') < new Date()) ? 'wzExp' : 'wzEm'; const n = $(id); if(!n) return;
     n.style.borderColor = '#d92d20'; n.style.boxShadow = '0 0 0 3px rgba(217,45,32,.18)'; n.addEventListener('input', () => { n.style.borderColor = ''; n.style.boxShadow = ''; }, {once: true});
     try{ n.scrollIntoView({block: 'center'}); }catch(e){} }
-  window.mcsWizClose = function(){ const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('wz-on'); };
+  let guardT = 0;
+  function wzGuard(on){   /* MCS1411SA418: ویزرڈ کا ڈبہ کبھی اسکرین سے نیچے نہ کھسکے — کھسکے تو خود اوپر پورا کھینچ لے */
+    clearInterval(guardT); if(!on) return;
+    guardT = setInterval(() => { try{ const o = $('wzOv'); if(!o || !o.classList.contains('on')){ clearInterval(guardT); return; }
+      const r = o.getBoundingClientRect(), vh = window.innerHeight || document.documentElement.clientHeight;
+      if(Math.abs(r.top) > 1 || r.height < vh - 2 || Math.abs(r.left) > 1){ o.style.top = '0'; o.style.left = '0'; o.style.height = '100%'; window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
+    }catch(e){} }, 400); }
+  window.mcsWizClose = function(){ wzGuard(0); const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('wz-on'); };
   window.mcsWizOpen = function(step){
     const m = me(); if(m && !S.sid) S.sid = (m.user.sid || m.user.id || '');
     let st = step || S.step || 1;
     if(!m && st > 1) st = 1;                 /* اکاؤنٹ کے بغیر آگے نہیں */
     if(m && st === 1 && !step) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* لاگ اِن ہے تو اکاؤنٹ والا مرحلہ مکمل */
-    S.step = st; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; draw();
+    S.step = st; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
   };
   const draw = () => { ({1: s1, 2: s2, 3: s3, 4: s4})[S.step](); };
   window.wzGo = function(n){ if(n > 1 && !me()){ S.step = 1; save(); return draw(); } S.step = n; save(); draw(); };
