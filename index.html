@@ -4262,9 +4262,7 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
     <!-- MCS2310FR041: عام صارف کا نیا ریکارڈ — منظوری کا پیغام -->
     <div id="afterSavePending" class="mcs-note-block" style="display:none;">
       <div class="mnb-t">✅ آپ کا ریکارڈ کامیابی سے محفوظ ہو گیا ہے</div>
-      <p>اب یہ منظوری اور جائزے کے لیے <b>ایڈمن</b> کے پاس بھیج دیا گیا ہے۔ جیسے ہی ایڈمن اسے دیکھ کر منظور کریں گے، آپ کا ریکارڈ <b>لائیو</b> ہو کر تمام سبسکرائبرز تک پہنچنا شروع ہو جائے گا۔</p>
-      <div class="mnb-w">⏳ براہِ کرم ایڈمن کی منظوری کا انتظار فرمائیں</div>
-      <p class="mnb-s">منظوری ہوتے ہی اسی موبائل پر آپ کو اطلاع مل جائے گی۔</p>
+      
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <div class="cs-open-row"><button type="button" class="cs-open" onclick="afterSaveState && openCardStyle(afterSaveState.kind, afterSaveState.item)" aria-label="کارڈ کا رنگ اور انداز">🎨</button><span>کارڈ کا رنگ / انداز</span></div>
@@ -4385,10 +4383,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA419";
+const APP_VERSION = "MCS1411SA420";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA420": "🪪 شناختی کارڈ نمبر کے ساتھ ہی ایک لائن میں میعاد (DD/MM/YYYY، سلیش خود لگتا ہے) • ❌ «ایڈمن کو منظوری کے لیے بھیجا» والے سب جملے ختم • 🧾 Google Play کی اصل خریداری کے بعد آرڈر نمبر (GPA…) ایپ میں پیسٹ کرنا لازمی — تبھی فارم رجسٹرڈ، مکمل اور مبارکباد",
   "MCS1411SA419": "💳 Google Play: خریداری کی «acknowledge» اب ایپ خود کرتی ہے (ورنہ گوگل 3 دن میں سبسکرپشن کینسل کر دیتا ہے) — پرانی خریداریاں بھی اگلی بار ایپ کھلنے پر • ادائیگی کے فوراً بعد وزرڈ کا کارڈ سرور پر پہنچتا ہے تاکہ منظور / عوامی ہو سکے • کارڈ پر «پچھلے ۱ دن» والی کٹی عبارت درست۔",
   "MCS1411SA418": "🛠️ رجسٹریشن ویزرڈ نیچے کھسک کر اوپر ہوم کی فہرست نظر آنے والا مسئلہ: ویزرڈ اب پوری اسکرین پر پکا جما رہتا ہے، کھلا ہو تو پیچھے ہوم اور نیچے کی پٹی چھپ جاتی ہے، اور ڈبہ ہٹے تو خود واپس اوپر آ جاتا ہے۔",
   "MCS1411SA417": "🛠️ ویزرڈ: «Subscribe» دبانے پر خاموشی ختم — غلطی (شناختی کارڈ، میعاد، ای میل) اب اوپر لال پٹی میں نظر آتی ہے اور وہی خانہ لال ہو کر سامنے آ جاتا ہے؛ Google Play نہ کھلے تو وجہ لکھی آتی ہے • سکرول / ٹچ: پیچھے ہوم اسکرین کے ٹائمر اور سوائپ ویزرڈ کھلنے پر بند، ویزرڈ کا اپنا پکا سکرول۔",
@@ -4942,7 +4941,7 @@ function pfHtml(c){
   const st = c.stats;
   const pend = !!p.pend;
   if(live || agIsRec(c.kind, c.rec)) return pfOneHtml(c, {r, cm, own, p, d, more, owner, adm, phones, loc, mapUrl, left, st, shopImg});
-  return (pend && (owner || adm) ? `<div class="pf-lock" style="background:#fffbeb;border-color:#f59e0b">⏳ ${adm ? 'یہ کاروبار / پروفیشن دکاندار نے خود جوڑا ہے — آپ کی منظوری کا انتظار۔ منظور کریں تو 7 دن مفت شروع اور سب کو نظر آئے گی۔' : 'آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے۔ نیچے «✏️ تفصیل سنواریں» سے تفصیل، ریٹ، اوقات پوری بھریں — منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی۔'}${adm ? `<div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="pf-adm" style="background:#16a34a;color:#fff" onclick="pfAdmin('approve')">✅ منظور — 7 دن شروع</button><button type="button" class="pf-adm red" onclick="pfAdmin('reject')">❌ ابھی نہیں</button></div>` : ''}</div>` : '')
+  return (pend && (owner || adm) ? `<div class="pf-lock" style="background:#fffbeb;border-color:#f59e0b">⏳ ${adm ? 'یہ کاروبار / پروفیشن دکاندار نے خود جوڑا ہے — آپ کی منظوری کا انتظار۔ منظور کریں تو 7 دن مفت شروع اور سب کو نظر آئے گی۔' : 'نیچے «✏️ تفصیل سنواریں» سے تفصیل، ریٹ، اوقات پوری بھریں۔'}${adm ? `<div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="pf-adm" style="background:#16a34a;color:#fff" onclick="pfAdmin('approve')">✅ منظور — 7 دن شروع</button><button type="button" class="pf-adm red" onclick="pfAdmin('reject')">❌ ابھی نہیں</button></div>` : ''}</div>` : '')
     + (owner && !live && p.until && !pend ? `<div class="pf-lock">🔒 آپ کی پوری تفصیل لوگوں سے چھپی ہوئی ہے — لوگوں کو صرف سادہ کارڈ دکھ رہا ہے۔<br><b>تفصیل ایڈمن کو بھیجیں — جاری ہوتے ہی فوراً دوبارہ چالو</b> (سب کچھ محفوظ ہے)<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">📨 ممبرشپ جاری رکھیں — تفصیل ایڈمن کو بھیجیں</button></div>` : '')
     + gal + `<div class="pf-top">${sfThumb ? `<span class="pf-ic sf"><img src="${escapeAttr(sfThumb)}" alt=""></span>` : `<span class="pf-ic">${cm.emoji}</span>`}<div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${live ? '<span class="pf-star">⭐ نمایاں</span>' : ''}</div>
       <div class="pf-sub">${escapeHtml([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}${r.nameEn ? `<br><span style="font-family:MCSDigits,Arial;direction:ltr">${escapeHtml(r.nameEn)}</span>` : ''}</div></div></div>`
@@ -5340,7 +5339,7 @@ async function pfSave(){
   const c = pfCur; if(!c) return; if(codevBlock()) return;
   const btn = document.getElementById('pfSaveBtn'), msg = document.getElementById('pfSaveMsg');
   btn.disabled = true; msg.textContent = '⏳ محفوظ ہو رہا ہے…';
-  try{ await pfSubmit(c.kind, c.rec, 'pfE'); msg.textContent = ''; closeModal('pfEditModal'); const pe = mpEntry(c.rec); showToast(pe && pe.pend && !isAdminSignedIn ? '✅ محفوظ — منظوری کے لیے بھیج دی گئی؛ منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی' : '✅ تفصیل محفوظ — سب کے فون پر', 5000); mpRender(); hlRenderSoon(); pfOpen(c.kind, c.rec.id); }
+  try{ await pfSubmit(c.kind, c.rec, 'pfE'); msg.textContent = ''; closeModal('pfEditModal'); const pe = mpEntry(c.rec); showToast(pe && pe.pend && !isAdminSignedIn ? '✅ تفصیل محفوظ — سب کے فون پر' : '✅ تفصیل محفوظ — سب کے فون پر', 5000); mpRender(); hlRenderSoon(); pfOpen(c.kind, c.rec.id); }
   catch(e){ msg.textContent = '❌ محفوظ نہیں ہوا — ' + (String(e.message) === 'taken' ? 'یہ کاروبار کسی دوسرے فون سے جڑا ہے، ہم سے رابطہ کریں' : String(e.message) === 'bad_key' ? 'یہ کاروبار اس فون سے نہیں جڑا' : 'انٹرنیٹ چیک کر کے دوبارہ دبائیں'); }
   btn.disabled = false;
 }
@@ -5356,7 +5355,7 @@ async function pfFormLoad(kind, rec){
 }
 async function pfFormSave(kind, rec){
   if(!rec) return;
-  try{ const r = await pfSubmit(kind, rec, 'svcPf'); if(r.ok){ showToast(isAdminSignedIn ? '⭐ پوری تفصیل بھی محفوظ' : ((mpEntry(rec)||{}).pend ? '⭐ آپ کا کاروبار منظوری کے لیے بھیج دیا گیا — منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی' : '⭐ آپ کی تفصیل محفوظ ہو گئی'), 5000); mpRender(); hlRenderSoon(); } }
+  try{ const r = await pfSubmit(kind, rec, 'svcPf'); if(r.ok){ showToast(isAdminSignedIn ? '⭐ پوری تفصیل بھی محفوظ' : ((mpEntry(rec)||{}).pend ? '⭐ آپ کی تفصیل محفوظ ہو گئی' : '⭐ آپ کی تفصیل محفوظ ہو گئی'), 5000); mpRender(); hlRenderSoon(); } }
   catch(e){ showToast(String(e.message) === 'taken' ? 'یہ کاروبار کسی دوسرے فون سے جڑا ہے — ہم سے رابطہ کریں' : 'تفصیل محفوظ نہیں ہوئی — بعد میں «تفصیل سنواریں» سے دوبارہ', 4500); }
 }
 /* ---- «میرا کاروبار / پروفیشن» ---- */
@@ -5451,9 +5450,48 @@ async function mcsEnsureCloud(rk){
     for(let i = 0; i < 20 && !r0.fsId; i++) await new Promise(r => setTimeout(r, 400));
   }catch(e){}
 }
-async function mcsPlayVerify(token, sku, rk){
+
+/* ===== MCS1411SA420 (مالک کا حکم): Google Play آرڈر نمبر (GPA.xxxx-xxxx-xxxx-xxxxx) پیسٹ کیے بغیر فارم رجسٹرڈ نہیں ===== */
+function mcsGpaHoldGet(){ try{ return JSON.parse(localStorage.getItem('mcsGpaHold') || 'null'); }catch(e){ return null; } }
+function mcsGpaHeld(token, rk){ const h = mcsGpaHoldGet(); if(!h) return false; if(token) return h.token === token; if(rk) return h.rk === rk; return true; }
+function mcsGpaNorm(t){
+  t = String(t || '').toUpperCase().replace(/[۰-۹]/g, c => String(c.charCodeAt(0) - 1776)).replace(/[٠-٩]/g, c => String(c.charCodeAt(0) - 1632));
+  const m = /GPA\.?\s*(\d{4})\s*-?\s*(\d{4})\s*-?\s*(\d{4})\s*-?\s*(\d{5})/.exec(t);
+  return m ? 'GPA.' + m[1] + '-' + m[2] + '-' + m[3] + '-' + m[4] : '';
+}
+function mcsGpaAsk(){
+  const h = mcsGpaHoldGet(); if(!h) return;
+  agModal(`<div style="text-align:center;font-size:44px">🧾</div><div class="ag-hd" style="text-align:center">Google Play آرڈر نمبر <small>Order number</small></div>
+    <div class="cp-hint" style="text-align:right">Play Store ← Payments &amp; subscriptions ← Budget &amp; history میں یا گوگل کی ای میل رسید میں «Order number» دیکھیں، اسے یہاں پیسٹ کریں۔ پیسٹ ہوتے ہی فارم رجسٹرڈ اور مکمل ہو جائے گا۔</div>
+    <input id="gpaIn" dir="ltr" maxlength="40" autocomplete="off" placeholder="GPA.0000-0000-0000-00000" style="width:100%;padding:12px;border-radius:12px;border:1px solid #cbd5e1;font-size:16px;margin:8px 0">
+    <div id="gpaErr" style="color:#b91c1c;font-weight:700;min-height:18px;font-size:14px"></div>
+    <button type="button" class="btn block" id="gpaBtn" onclick="mcsGpaOk()">✅ تصدیق کریں</button>
+    <button type="button" class="btn block secondary" onclick="closeModal('agModal')">بعد میں</button>`);
+}
+async function mcsGpaOk(){
+  const el = document.getElementById('gpaIn'), er = document.getElementById('gpaErr'), bt = document.getElementById('gpaBtn');
+  const bad = m => { if(er) er.textContent = m; if(bt){ bt.disabled = false; } };
+  const h = mcsGpaHoldGet(); if(!h){ closeModal('agModal'); return; }
+  const gpa = mcsGpaNorm(el && el.value);
+  if(!gpa) return bad('⚠️ آرڈر نمبر درست نہیں — یہ GPA.1234-5678-9012-34567 جیسا ہوتا ہے');
+  let used = {}; try{ used = JSON.parse(localStorage.getItem('mcsGpaUsed') || '{}') || {}; }catch(e){}
+  if(used[gpa] && used[gpa] !== h.rk) return bad('⚠️ یہ آرڈر نمبر پہلے کسی اور کارڈ پر لگ چکا ہے');
+  if(bt) bt.disabled = true; if(er) er.textContent = '⏳ تصدیق ہو رہی ہے…';
+  let j = null;
+  for(let i = 0; i < 3 && !(j && j.ok); i++){ try{ j = await mcsPlayVerify(h.token, h.sku, h.rk, gpa); }catch(e){} if(!(j && j.ok)) await new Promise(r => setTimeout(r, 1500)); }
+  if(!(j && j.ok)) return bad('📶 تصدیق نہیں ہو سکی — انٹرنیٹ چیک کر کے دوبارہ دبائیں');
+  if(j.test || j.testPurchase || j.purchaseType === 0 || j.purchaseType === '0') return bad('⛔ یہ ٹیسٹ خریداری ہے — اصل ادائیگی کے بغیر فارم رجسٹرڈ نہیں ہوتا');
+  used[gpa] = h.rk; try{ localStorage.setItem('mcsGpaUsed', JSON.stringify(used)); localStorage.removeItem('mcsGpaHold'); }catch(e){}
+  try{ const r0 = (store.services || []).find(r => r && pfKeyOf(r, 'service') === h.rk); if(r0){ r0.more = r0.more || {}; r0.more.gpa = gpa; saveStore(); const FB = window.MCSFirebase; if(FB && FB.setDoc) FB.setDoc(FB.doc(FB.db, 'regPrivate', r0.fsId || r0.id), {gpa, ts: Date.now()}, {merge: true}).catch(() => {}); } }catch(e){}
+  try{ mcsPlayApply(j, h.sku); mcsPlayAck(h.token); }catch(e){}
+  try{ await mcsGoLive(h.rk); }catch(e){}
+  closeModal('agModal');
+  try{ if(window.wzOk3 && document.getElementById('wzW')) wzOk3(); }catch(e){}
+  showToast('🎉 مبارک ہو! آپ کا فارم رجسٹرڈ اور مکمل ہو گیا', 6000);
+}
+async function mcsPlayVerify(token, sku, rk, gpa){
   const fs = mcsFsOf(rk);
-  const r = await fetch(PF_API + '/mcsbuy', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({purchaseToken: token, sku, rec: rk || '', fs: fs || undefined})});
+  const r = await fetch(PF_API + '/mcsbuy', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({purchaseToken: token, sku, rec: rk || '', fs: fs || undefined, gpa: gpa || undefined})});
   return await r.json();
 }
 /* MCS1411SA412 (مالک کا حکم): پلے سٹور سے خریداری ہوتے ہی بزنس فوراً منظور + رجسٹر + عوام کے لیے شائع؛ اور اسی لمحے فارم خود ایڈمن کے پاس «جائزے» کے لیے۔
@@ -5496,6 +5534,7 @@ function mcsPlayApply(j, sku){
 async function mcsPlayBuy(rk){
   if(codevBlock()) return;
   if(!mcsPlayOk()){ alert('یہ خریداری صرف پلے اسٹور سے انسٹال ایپ میں ہوتی ہے۔'); return; }
+  if(mcsGpaHeld(null, rk)){ mcsGpaAsk(); return; }   /* پہلی خریداری کا آرڈر نمبر باقی ہے — دوسری بار خریداری نہیں */
   let owned = [];
   try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(x => x.itemId); }catch(e){}
   const sku = MCS_PLAY_SKUS.find(k => !owned.includes(k));
@@ -5507,13 +5546,11 @@ async function mcsPlayBuy(rk){
     await res.complete('success');
     if(!token) throw new Error('no_token');
     closeModal('agModal');
-    showToast('⏳ ادائیگی ہو گئی — ممبرشپ چالو ہو رہی ہے…', 4000);
+    /* MCS1411SA420 (مالک کا حکم): خریداری ہوتے ہی کارڈ لائیو نہیں — پہلے Google Play کا آرڈر نمبر (GPA…) ایپ میں پیسٹ ہو، تب ہی فارم رجسٹرڈ */
+    try{ localStorage.setItem('mcsGpaHold', JSON.stringify({token, sku, rk, at: Date.now()})); }catch(e){}
     try{ await mcsEnsureCloud(rk); }catch(e){}
-    try{ await mcsGoLive(rk); }catch(e){}   /* MCS1411SA412: ادائیگی ہوتے ہی لائیو + ایڈمن کو جائزے کے لیے */
-    let j = null;
-    for(let i = 0; i < 3 && !(j && j.ok); i++){ try{ j = await mcsPlayVerify(token, sku, rk); }catch(e){} if(!(j && j.ok)) await new Promise(r => setTimeout(r, 2000)); }
-    if(j && j.ok){ mcsPlayApply(j, sku); mcsPlayAck(token); alert('✅ ممبرشپ ایک سال کے لیے جاری ہو گئی — شکریہ!'); }
-    else { localStorage.setItem('mcsPlayPending', JSON.stringify({token, sku, rk, at: Date.now()})); alert('✅ ادائیگی ہو گئی۔ ممبرشپ چند منٹ میں خود چالو ہو جائے گی (انٹرنیٹ ٹھیک ہوتے ہی)۔'); }
+    showToast('✅ ادائیگی ہو گئی — اب Google Play کا آرڈر نمبر (GPA…) پیسٹ کریں', 6000);
+    setTimeout(() => { try{ mcsGpaAsk(); }catch(e){} }, 400);
   }catch(e){ if(!e || e.name !== 'AbortError') alert('❌ خریداری مکمل نہیں ہوئی — دوبارہ کوشش کریں۔'); }
 }
 /* ایپ کھلنے پر: رکی ہوئی خریداری + اس گوگل اکاؤنٹ کی سب ممبرشپس کی تازہ مدت (تجدید، نیا فون) — 6 گھنٹے میں ایک بار */
@@ -5524,7 +5561,7 @@ async function mcsPlaySync(force){
   if(!force && Date.now() - last < 6 * 3600e3) return;
   try{
     const svc = await mcsPlaySvc(); const list = ((await svc.listPurchases()) || []).filter(x => MCS_PLAY_SKUS.includes(x.itemId));
-    for(const x of list){ try{ const jj = await mcsPlayVerify(x.purchaseToken, x.itemId, ''); mcsPlayApply(jj, x.itemId); if(jj && jj.ok) mcsPlayAck(x.purchaseToken); }catch(e){} }
+    for(const x of list){ if(mcsGpaHeld(x.purchaseToken)) continue; try{ const jj = await mcsPlayVerify(x.purchaseToken, x.itemId, ''); mcsPlayApply(jj, x.itemId); if(jj && jj.ok) mcsPlayAck(x.purchaseToken); }catch(e){} }
     localStorage.setItem('mcsPlaySyncAt', String(Date.now()));
   }catch(e){}
 }
@@ -5722,7 +5759,7 @@ function mpRender(){
           <span class="mpx-loc">📍 ${escapeHtml([r.area, r.city].filter(Boolean).join('، ') || '—')}</span>
           ${p.until && !p.pend ? `<span class="mpx-val"><i>${left != null && left > 0 ? left + ' Days' : 'Expired'}</i> <small>till</small> <b dir="ltr">${fmtD(p.until)}</b> 📅</span>` : ''}</div>
         ${(()=>{ const d = String(r.whatsapp||'').replace(/\D/g,''); return d ? `<span class="mpx-act" onclick="event.stopPropagation()"><a class="mpx-wa" href="https://wa.me/92${d.replace(/^0/,'').slice(-10)}" target="_blank" rel="noopener">💬</a><a class="mpx-tel" href="tel:${d}">📞</a></span>` : '<i class="mpx-go">›</i>'; })()}</div>`
-      + (p.pend ? `<div class="cp-hint" style="text-align:center">⏳ آپ کا کاروبار / پروفیشن منظوری کے لیے بھیج دیا گیا ہے — منظور ہوتے ہی 7 دن مفت سب کو نظر آئے گی</div><button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">✏️ پوری تفصیل بھریں / سنواریں</button>`
+      + (p.pend ? `<div class="cp-hint" style="text-align:center">✏️ تفصیل، ریٹ، اوقات پوری بھریں</div><button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">✏️ پوری تفصیل بھریں / سنواریں</button>`
         : left == null ? `<button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">⭐ پوری تفصیل بھریں — ریٹ، اوقات (7 دن مفت)</button>`
         : (left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(p.rk)}')">⭐ ${left > 0 ? `${left} دن باقی` : 'ممبرشپ چھپی ہوئی ہے'} — ایک سال کے لیے جاری رکھیں${left > 0 ? (mpIsTrialSpan(p.since, p.until) ? `<small>ایک سال آج سے شروع — ٹرائل کے دن شامل نہیں</small>` : `<small>باقی ${left} دن جمع ہو جائیں گے</small>`) : ''}</button>`
           : ''))
@@ -7514,7 +7551,7 @@ function saveDoctor(approve){
     data.approved = !!isAdminSignedIn; // MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور؛ باقی سب ایڈمن کی منظوری کے بعد
     store.doctors.push(data);
     syncDoctorCreateToFirebase(data);
-    if(codevOn()){ const _c = codevMe() || {}; data.more = {ref:'CODEV', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}; setTimeout(()=>pushMoreToFirebase('doctors', data.fsId || data.id, data.more), 2500); setTimeout(()=>showToast('👥 ایڈمن کی منظوری کے لیے بھیج دیا ✓', 4000), 600); } else if(pbStampRef(data)){ setTimeout(()=>{ try{ pushMoreToFirebase('doctors', data.fsId || data.id, data.more); }catch(e){} }, 2500); }
+    if(codevOn()){ const _c = codevMe() || {}; data.more = {ref:'CODEV', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}; setTimeout(()=>pushMoreToFirebase('doctors', data.fsId || data.id, data.more), 2500);  } else if(pbStampRef(data)){ setTimeout(()=>{ try{ pushMoreToFirebase('doctors', data.fsId || data.id, data.more); }catch(e){} }, 2500); }
     try{ mpAfterSave('doctor', data); }catch(e){}
   }
   saveStore();
@@ -10297,7 +10334,7 @@ function saveService(approve){
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
     data.approved = !!isAdminSignedIn;   /* MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور */
-    if(codevOn()){ const _c = codevMe() || {}; data.more = Object.assign({}, data.more || {}, {ref:'CODEV', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}); setTimeout(()=>showToast('👥 ایڈمن کی منظوری کے لیے بھیج دیا ✓', 4000), 600); } else { pbStampRef(data); }
+    if(codevOn()){ const _c = codevMe() || {}; data.more = Object.assign({}, data.more || {}, {ref:'CODEV', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)});  } else { pbStampRef(data); }
     store.services.push(data);
     if(data.stage==='basic') svcMyBasicAdd(data.id);
     syncServiceCreateToFirebase(data);
@@ -22663,7 +22700,7 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     try{ const m = JSON.parse(localStorage.getItem('mcsMemSent') || '{}'); m[rk] = Date.now(); localStorage.setItem('mcsMemSent', JSON.stringify(m)); }catch(e){}
     try{ if(window.fpMarkSent) fpMarkSent(rk); }catch(e){}
     if(!quiet) agModal(`<div style="text-align:center;font-size:50px">✅</div><div class="ag-hd" style="text-align:center">رجسٹریشن مکمل <small>Registration complete</small></div>
-      <div class="mem-pk"><div class="n">🏪 ${E(rec.nameUr || rec.name || '')}</div><small style="font-size:14px;margin-top:6px">Sent to admin for review</small></div>
+      <div class="mem-pk"><div class="n">🏪 ${E(rec.nameUr || rec.name || '')}</div><small style="font-size:14px;margin-top:6px">Registered</small></div>
       <button type="button" class="mem-play" onclick="closeModal('agModal')">ٹھیک ہے</button>`);
   };
   /* MCS1211TH382 (مالک کا حکم): کسی اور کی رجسٹریشن — ایجنٹ / ایڈمن: خود «منظوری کے لیے ایڈمن کو» (کوئی لمبا پیغام / Help Desk نہیں)؛ ایڈمن: وہی «سب چیک کر لیا؟» + پاس ورڈ */
@@ -23206,7 +23243,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
       ${LBL('Business Name (Urdu)', 'کاروبار کا نام (اردو)', 1)}<input class="wzI u" id="wzNUr" placeholder="کاروبار کا نام درج کریں" value="${esc(c.nameUr)}" oninput="wzC('t')" style="font-size:19px">
       ${LBL('City / Main Area', 'شہر / مرکزی علاقہ', 1)}<input class="wzI" id="wzCity" list="wzCityL" placeholder="Select City / Area" value="${esc(c.city)}" oninput="wzC('t')"><datalist id="wzCityL">${cities.map(x => `<option value="${esc(x)}">`).join('')}</datalist>
       ${LBL('Full Address', 'مکمل پتہ', 1)}<textarea class="wzI u" id="wzAddr" placeholder="مکمل پتہ درج کریں" oninput="wzC('t')">${esc(c.addr)}</textarea>
-      <div class="wzGreen">🔒 <b>Private card</b> — <span class="u">یہ مفت کارڈ صرف آپ کو (My Portal میں) نظر آئے گا، عوامی فہرست میں نہیں۔ ادائیگی (Google Play) ہوتے ہی یہ سب کو دکھے گا؛ ایڈمن فارم کا جائزہ بعد میں لیتا ہے۔</span></div>
+      <div class="wzGreen">🔒 <b>Private card</b> — <span class="u">یہ مفت کارڈ صرف آپ کو (My Portal میں) نظر آئے گا، عوامی فہرست میں نہیں۔ Google Play کی اصل خریداری کے بعد آرڈر نمبر (GPA…) یہاں پیسٹ کرتے ہی یہ سب کو دکھے گا۔</span></div>
       <div class="wzErr u" id="wzErr"></div>
       <button class="wzBtn bW" onclick="wzPreview()">👁️ Preview<small class="u">پہلے دیکھیں</small></button>
       <button class="wzBtn bG" id="wzSave2" onclick="wzDo2()">Create Business Card — FREE<small class="u">بزنس کارڈ بنائیں — مفت (محفوظ کریں)</small></button>
@@ -23277,16 +23314,16 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
       <div style="text-align:center">${stChip(st)}</div>
       <div style="background:#e8f2ff;border-radius:12px;padding:8px 10px;margin-top:8px;text-align:center;font-weight:800;color:#0b2f8f">Make Your Business Public<div class="u" style="font-size:17px">اپنا کاروبار سب کے لیے ظاہر کریں</div></div>
       <ul class="wzBen"><li>Public Business Listing <span class="u">/ عوامی کاروباری فہرست</span></li><li>Appear in Category &amp; Area Searches <span class="u">/ کیٹگری اور علاقے کی تلاش میں</span></li><li>Get More Customers <span class="u">/ مزید گاہک</span></li></ul>
-      ${LBL('CNIC Number', 'قومی شناختی کارڈ نمبر', 1)}<input class="wzI" id="wzCnic" inputmode="numeric" dir="ltr" maxlength="15" placeholder="XXXXX-XXXXXXX-X" value="${esc(p.cnic)}" oninput="wzCnicF(this)">
-      ${LBL('CNIC Expiry Date', 'شناختی کارڈ کی میعاد', 1)}<input class="wzI" id="wzExp" type="date" value="${esc(p.exp)}" onchange="wzP()">
+      <div class="wzRow" style="align-items:flex-start;gap:8px"><div style="flex:1.65;min-width:0">${LBL('CNIC Number', 'شناختی کارڈ نمبر', 1)}<input class="wzI" id="wzCnic" inputmode="numeric" dir="ltr" maxlength="15" placeholder="XXXXX-XXXXXXX-X" value="${esc(p.cnic)}" oninput="wzCnicF(this)" style="font-size:15px;padding-left:8px;padding-right:8px"></div><div style="flex:1;min-width:0">${LBL('Expiry · DD/MM/YYYY', 'میعاد', 1)}<input class="wzI" id="wzExp" type="text" inputmode="numeric" dir="ltr" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY" value="${esc(p.expTxt || wzExpDisp(p.exp))}" oninput="wzExpF(this)" style="font-size:15px;padding-left:8px;padding-right:8px"></div></div>
       ${LBL('Email Address', 'ای میل ایڈریس', 1)}<div class="wzRow"><input class="wzI" id="wzEm" type="email" dir="ltr" placeholder="Enter email" value="${esc(p.email)}" oninput="wzP()"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 96px;font-size:13px" onclick="wzGoogle()">Google</button></div><div id="wzGBox"></div>
       ${LBL('Referral Code', 'ریفرل کوڈ')}<select class="wzI" id="wzRef" onchange="wzP()"><option value="">Select Referral Code — فہرست سے ایجنٹ چنیں</option></select><div id="wzRefNm" class="u" style="font-size:14px;color:#047857;font-weight:700;margin:3px 2px"></div>
       ${LBL('Payment Method', 'ادائیگی کا طریقہ', 1)}<div class="wzPlay"><span class="gp">${typeof MCS_GP_SVG === 'string' ? MCS_GP_SVG : '▶'}</span><span>Google Play Billing<small class="u" style="display:block;font-weight:400">گوگل پلے کے ذریعے ادائیگی</small></span></div>
       ${st === 'none' ? `<div class="wzSec"><span>Choose Your Plan</span><span class="u">اپنا پلان منتخب کریں</span></div><div id="wzPlans"><div class="wzNote u">⏳ Google Play سے پلان آ رہے ہیں…</div></div>` : ''}
-      <div class="wzNote u">✅ ادائیگی ہوتے ہی کاروبار فوراً سب کو نظر آنے لگتا ہے — ایڈمن بعد میں آپ کا فارم جائزہ لیتے ہیں، کوئی مسئلہ ہوا تو آپ سے رابطہ کریں گے۔<br><span dir="ltr" style="font-family:inherit">Payment → Public at once → Admin review afterwards</span></div>
+      <div class="wzNote u">✅ Google Play سے اصل خریداری کے بعد اس کا آرڈر نمبر (GPA…) یہاں پیسٹ کریں — تب فارم رجسٹرڈ ہو کر سب کو نظر آئے گا۔ ٹیسٹ خریداری قبول نہیں۔<br><span dir="ltr" style="font-family:inherit">Real purchase → paste Order No. → Registered</span></div>
       <div class="wzErr u" id="wzErr"></div>
       ${st === 'pend' ? `<div class="wzGreen"><b>⏳ Payment received — verification in progress</b><div class="u">ادائیگی موصول — تصدیق ہو رہی ہے۔ تصدیق ہوتے ہی کاروبار عوامی ہو جائے گا۔</div></div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
       ${st === 'act' ? `<div class="wzGreen"><b>🎉 Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! اب آپ کا کاروبار عوام کے لیے ظاہر ہے۔</div></div><button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>` : ''}
+      ${(function(){ try{ return mcsGpaHeld(null, pfKeyOf(rec, 'service')) ? `<div class="wzGreen"><b>⏳ Payment done — paste the Google Play Order Number</b><div class="u">ادائیگی ہو گئی — فارم مکمل کرنے کے لیے آرڈر نمبر (GPA…) پیسٹ کریں۔</div></div><button class="wzBtn bB" onclick="mcsGpaAsk()">🧾 Paste Order Number<small class="u">گوگل پلے آرڈر نمبر پیسٹ کریں</small></button>` : ''; }catch(e){ return ''; } })()}
       <div id="wzAlt"></div>
       ${st !== 'act' ? `<button class="wzBtn bW" onclick="wzDel()" style="color:#b42318;border-color:#fda29b;margin-top:6px">🗑️ Delete this business card<small class="u">یہ بزنس کارڈ حذف کریں</small></button>` : ''}
       <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button>${st !== 'act' ? `<button class="wzBtn bW" onclick="wzGo(4)" style="margin-top:6px">Skip — Agent step later · <span class="u">ایجنٹ والا مرحلہ بعد میں</span></button>` : ''}</div>`);
@@ -23305,13 +23342,14 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   }
   function ok3(rec, tries){
     const sub = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || '', m = rec.more || {};
-    frame(`<div class="wzCard"><div class="wzOk"><div class="big">✓</div><b>Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! آپ کا کاروبار اب عوام کے لیے ظاہر ہے۔</div></div>
+    frame(`<div class="wzCard"><div class="wzOk"><div class="big">✓</div><b>🎉 Congratulations! Registration Complete</b><div class="u">مبارک ہو! آپ کا فارم رجسٹرڈ اور مکمل ہو گیا — کاروبار اب سب کو نظر آ رہا ہے۔</div></div>
       <div class="wzMini"><div class="nm u">${esc(rec.nameUr || rec.name || '')}</div>${rec.nameEn ? `<div dir="ltr" style="text-align:left">${esc(rec.nameEn)}</div>` : ''}<div class="u">${esc((m.subs || []).join('، '))}</div><div class="u">${esc(rec.city || '')}${rec.address ? ' — ' + esc(rec.address) : ''}</div><span class="mid">${esc(sub || '…')}</span></div>
       ${sub ? '' : '<div class="wzNote u">ادائیگی مل گئی — سرور سے MCS نمبر آ رہا ہے، چند لمحوں میں کارڈ پر لگ جائے گا۔</div>'}
       <button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>
       <button class="wzBtn bW" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button></div>`);
     if(!sub && (tries || 0) < 5) setTimeout(() => { if(S.step === 3 && $('wzW')){ try{ mcsPlaySync(true); }catch(e){} const r2 = myCard(); if(r2) ok3(r2, (tries || 0) + 1); } }, 4000);
   }
+  window.wzOk3 = function(){ const r = myCard(); if(r) ok3(r); };
   window.wzDel = async function(){   /* MCS1411SA399 (مالک کا حکم): بنتے ہوئے کارڈ کو حذف کرنے کا بٹن */
     const rec = myCard(); if(!rec) return err('کارڈ نہیں ملا');
     const nm = rec.nameUr || rec.name || '';
@@ -23333,7 +23371,10 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     S.step = 2; save(); draw();
   };
   window.wzCnicF = function(el){ const d = dg(el.value).replace(/\D/g, '').slice(0, 13); el.value = d.length > 12 ? d.slice(0, 5) + '-' + d.slice(5, 12) + '-' + d.slice(12) : d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d; wzP(); };
-  window.wzP = function(){ const g = i => ($(i) || {}).value || ''; S.p.cnic = g('wzCnic'); S.p.exp = g('wzExp'); S.p.email = g('wzEm'); S.p.ref = g('wzRef'); save(); wzRefNm(); };
+  window.wzExpIso = function(t){ const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(t || ''); if(!m) return ''; const d = +m[1], mo = +m[2], y = +m[3]; const dt = new Date(y, mo - 1, d); if(y < 2000 || y > 2100 || dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return ''; return m[3] + '-' + m[2] + '-' + m[1]; };
+  window.wzExpDisp = function(iso){ const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : ''; };
+  window.wzExpF = function(el){ let d = dg(el.value).replace(/\D/g, '').slice(0, 8), v = d; if(d.length > 4) v = d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4); else if(d.length > 2) v = d.slice(0, 2) + '/' + d.slice(2); el.value = v; wzP(); };
+  window.wzP = function(){ const g = i => ($(i) || {}).value || ''; S.p.cnic = g('wzCnic'); S.p.expTxt = g('wzExp'); S.p.exp = wzExpIso(S.p.expTxt); S.p.email = g('wzEm'); S.p.ref = g('wzRef'); save(); wzRefNm(); };
   function wzRefInit(){   /* سب مجاز ایجنٹس کی فہرست — موجودہ ریفرل نظام (rpkFill) سے */
     try{ const sel = $('wzRef'); if(!sel) return; if(typeof rpkFill === 'function'){ const keep = sel.value; const tmp = document.createElement('select'); rpkFill(tmp); if(tmp.options.length > 1){ sel.innerHTML = tmp.innerHTML; return; } } }catch(e){}
     try{ const S2 = (typeof rpkSorted === 'function' ? rpkSorted() : null) || {}; const all = [].concat(S2.en || [], S2.ur || []).filter(x => x && x.c); const sel = $('wzRef'); all.forEach(x => sel.add(new Option(x.c + ' · ' + (x.n || ''), x.c))); }catch(e){} }
@@ -23346,7 +23387,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     }catch(e){ box.innerHTML = '<small style="color:#64748b">Google ابھی نہیں کھل سکا — ای میل خود لکھیں</small>'; } };
   function chk3(){ const p = S.p, cn = dg(p.cnic).replace(/\D/g, '');
     if(cn.length !== 13) return 'شناختی کارڈ کے پورے ۱۳ ہندسے لکھیں';
-    if(!p.exp) return 'شناختی کارڈ کی میعاد منتخب کریں'; if(new Date(p.exp + 'T23:59:59') < new Date()) return 'شناختی کارڈ کی میعاد ختم ہو چکی — نیا کارڈ ضروری ہے';
+    if(!p.exp) return 'شناختی کارڈ کی میعاد DD/MM/YYYY میں لکھیں (مثلاً 23/04/2031)'; if(new Date(p.exp + 'T23:59:59') < new Date()) return 'شناختی کارڈ کی میعاد ختم ہو چکی — نیا کارڈ ضروری ہے';
     if(!/^\S+@\S+\.\S+$/.test((p.email || '').trim())) return 'ای میل لازمی ہے — درست ای میل لکھیں'; return ''; }
   function saveP(rec){   /* نجی معلومات: شناختی کارڈ + میعاد + ای میل + ریفرل */
     const p = S.p, cn = dg(p.cnic).replace(/\D/g, ''); rec.more = rec.more || {}; rec.more.email = p.email.trim();
@@ -23377,10 +23418,10 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   window.wzResend = function(){ const rec = myCard(); if(rec) try{ memAutoSend('service', rec); }catch(e){} };
   function altPath(rec){   /* جو بندہ Google Play سے ادائیگی نہیں کر سکتا — صرف اکاؤنٹ کی تفصیل تصدیق کے لیے */
     const a = $('wzAlt'); if(!a) return;
-    a.innerHTML = `<div class="wzNote u">اس فون پر Google Play ادائیگی دستیاب نہیں۔<br>اپنے اکاؤنٹ کی تفصیل تصدیق (Verification) کے لیے بھیجیں — ایڈمن دیکھ کر منظوری دیں گے۔<br><span dir="ltr" style="font-family:inherit">Send your account details for verification.</span></div>
+    a.innerHTML = `<div class="wzNote u">اس فون پر Google Play ادائیگی دستیاب نہیں۔<br>اصل Google Play خریداری ہی رجسٹریشن کی شرط ہے — Play Store سے انسٹال ایپ میں خریداری کریں۔<br><span dir="ltr" style="font-family:inherit">Send your account details for verification.</span></div>
       <button class="wzBtn bB" onclick="wzSendVer()">📨 Send Account Details for Verification<small class="u">تصدیق کے لیے اکاؤنٹ کی تفصیل بھیجیں</small></button>`;
     flash('اس فون پر Google Play ادائیگی نہیں کھل سکی — ایپ Play Store کے ٹیسٹ لنک سے انسٹال ہونی چاہیے۔ نیچے «تصدیق کے لیے بھیجیں» کا راستہ کھلا ہے۔'); try{ a.scrollIntoView({block: 'center'}); }catch(e){} }
-  window.wzSendVer = function(){ const rec = myCard(); if(!rec) return; try{ saveP(rec); memAutoSend('service', rec); S.p.sentVer = Date.now(); save(); flash('✅ تفصیل ایڈمن کو بھیج دی گئی', 1); }catch(e){} };
+  window.wzSendVer = function(){ const rec = myCard(); if(!rec) return; try{ saveP(rec); memAutoSend('service', rec); S.p.sentVer = Date.now(); save(); flash('✅ محفوظ', 1); }catch(e){} };
 
   /* ================= مرحلہ ۴: MCS ایجنٹ (اختیاری) ================= */
   function agState(){   /* ایجنٹ: none / pend / ok */
