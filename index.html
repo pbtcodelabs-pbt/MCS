@@ -4385,10 +4385,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA410";
+const APP_VERSION = "MCS1411SA411";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA411": "لاگ آؤٹ کے بعد اب بڑا خوبصورت خوش آمدید صفحہ آتا ہے: آپ کا MCS نمبر نظر آتا ہے اور صرف 6 ہندسوں کا PIN مانگا جاتا ہے۔ سائن اپ والا صفحہ دوبارہ نہیں کھلتا۔ ہوم پیج پر Log Out بٹن ہر لاگ ان صارف کو نظر آتا ہے۔",
   "MCS1411SA410": "🛡️ ڈویلپر اور کو-ڈویلپر کا کردار ختم — اب صرف «ایڈمن» (ڈویلپر کا پاس ورڈ ہی ایڈمن کا پاس ورڈ) • ＋ / نیا شامل کریں سب کے لیے نیا رجسٹریشن ویزرڈ کھولتا ہے • کارڈ پر مالک کا نام کاروبار کے نام کے ساتھ دوبارہ نہیں آتا • ریفرل فہرست سے DEV / CODEV ہٹ گئے",
   "MCS1411SA409": "🧭 رجسٹریشن مکمل نئے ڈیزائن میں (اکاؤنٹ ← بزنس کارڈ ← سبسکرپشن ← ایجنٹ) • ＋ اور «نیا شامل کریں» اب پرانے فارم کی جگہ سیدھا نیا ویزرڈ کھولتے ہیں • فارم بار بار اوپر نہیں کودتا • کارڈ پر نام دو بار نہیں آتا • رجسٹرڈ کارڈ اور بیج چھوٹے",
   "MCS1411SA403": "⚡ Paid card now goes live from the server (works for every phone) • co-admins can see the «New businesses for review» list and open chat / call / WhatsApp • old registered cards pick up the shop photo automatically (no re-upload) • professional (doctor etc.) cards use the new registered-card design",
@@ -16348,6 +16349,68 @@ body.d2 #homeAds .ad-ribbon{display:none}
       <div id="uaRegBox" class="uaAgBox">${invBox()}</div>${pkLoginBox()}</div>`);
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); });
   };
+  /* MCS1411SA411: لاگ آؤٹ کے بعد "خوش آمدید" صفحہ — اپنا MCS نمبر نظر آئے اور صرف 6 ہندسوں کا PIN مانگے (سائن اپ صفحہ دوبارہ نہ کھلے) */
+  function uwMyPk(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); return o && o.sid ? o : null; }catch(e){ return null; } }
+  function uwCss(){
+    if($('uwCss')) return;
+    const s = document.createElement('style'); s.id = 'uwCss';
+    s.textContent = `#uaOv .uwCard{margin-top:14px;border-radius:26px;padding:22px 18px 18px;text-align:center;color:#fff;background:linear-gradient(160deg,#0f766e 0%,#0d3b66 55%,#0f1f45 100%);box-shadow:0 18px 48px rgba(13,59,102,.35);border:2px solid #fde68a}
+#uaOv .uwHi{font-size:15px;font-weight:700;color:#fde68a;letter-spacing:.3px}
+#uaOv .uwHi u{display:block;text-decoration:none;font-family:MCSDigits,"Jameel Noori Nastaleeq Kasheeda","Jameel Noori Nastaleeq Regular",serif;font-size:24px;line-height:1.7;direction:rtl;margin-top:2px}
+#uaOv .uwName{font-size:20px;font-weight:800;margin:6px 0 2px;word-break:break-word}
+#uaOv .uwLbl{font-size:12.5px;font-weight:700;color:#bfdbfe;margin-top:14px;letter-spacing:.3px}
+#uaOv .uwLbl u{display:block;text-decoration:none;font-family:MCSDigits,"Jameel Noori Nastaleeq Kasheeda","Jameel Noori Nastaleeq Regular",serif;font-size:17px;line-height:1.7;direction:rtl;color:#e0f2fe}
+#uaOv .uwId{margin:8px auto 0;background:rgba(255,255,255,.12);border:1.5px solid rgba(253,230,138,.7);border-radius:18px;padding:12px 8px;font:900 clamp(22px,7.4vw,32px) Arial,sans-serif;letter-spacing:1.5px;color:#fff;overflow-wrap:anywhere;direction:ltr}
+#uaOv .uwPinRow{position:relative;margin:10px auto 0;max-width:300px}
+#uaOv .uwPin{width:100%;box-sizing:border-box;height:62px;border-radius:18px;border:2px solid #fde68a;background:#fff;color:#0b2f8f;text-align:center;font:900 30px Arial,sans-serif;letter-spacing:.42em;padding:0 44px 0 calc(44px + .42em);outline:none}
+#uaOv .uwPin::placeholder{letter-spacing:.3em;color:#94a3b8}
+#uaOv .uwEye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:40px;height:40px;border:0;background:transparent;font-size:20px;color:#475569}
+#uaOv .uwCard .uaErr{color:#fecaca;margin-top:10px}
+#uaOv .uwCard .uaBtn{margin-top:12px}
+#uaOv .uwLinks{display:flex;justify-content:space-between;gap:10px;margin-top:14px;font-size:13.5px}
+#uaOv .uwLinks a{color:#bfdbfe;text-decoration:underline;cursor:pointer;font-weight:700}
+html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif !important}
+#uaOv .uwMsg{background:#fef3c7;color:#78350f;border-radius:12px;padding:8px 10px;font-weight:800;font-size:14px;margin-bottom:6px}`;
+    document.head.appendChild(s);
+  }
+  window.uaWelcome = function(msg){
+    const o = uwMyPk(); if(!o) return uaLogin(msg);
+    uwCss();
+    const sid = (typeof mcsSidFmt === 'function' ? mcsSidFmt(o.sid) : String(o.sid));
+    show(`${head()}<div class="uwCard">
+      ${msg ? `<div class="uwMsg">${esc(msg)}</div>` : ''}
+      <div class="uwHi">Welcome Back<u data-noen>خوش آمدید</u></div>
+      ${o.name ? `<div class="uwName">${esc(o.name)}</div>` : ''}
+      <div class="uwLbl">Your MCS Account ID<u data-noen>آپ کا MCS نمبر</u></div>
+      <div class="uwId" dir="ltr">${esc(sid)}</div>
+      <div class="uwLbl">Enter your 6-digit PIN<u data-noen>اپنا 6 ہندسوں کا PIN کوڈ لکھیں</u></div>
+      <div class="uwPinRow"><input id="uwPin" class="uwPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" autocomplete="current-password" oninput="uaWelcomeIn(this)"><button type="button" class="uwEye" onclick="uaEye('uwPin', this)">👁</button></div>
+      <div class="uaErr" id="uaErr"></div>
+      <button class="uaBtn bB" onclick="uaWelcomeGo()">${IC.login}LOGIN</button>
+      <div class="uwLinks"><a onclick="uaForgot()">Forgot PIN?</a><a onclick="uaLogin()">Other account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>
+    </div>`);
+    setTimeout(() => { try{ const p = $('uwPin'); if(p) p.focus(); }catch(e){} }, 250);
+  };
+  window.uaEnter = function(msg){ try{ if(uwMyPk()) return uaWelcome(msg); }catch(e){} return uaLogin(msg); };
+  window.uaWelcomeIn = function(el){
+    const v = String(el.value || '').replace(/[۰-۹٠-٩]/g, c => { const i = '۰۱۲۳۴۵۶۷۸۹'.indexOf(c); return String(i >= 0 ? i : '٠١٢٣٤٥٦٧٨٩'.indexOf(c)); }).replace(/\D/g, '').slice(0, 6);
+    if(el.value !== v) el.value = v;
+    setErr('');
+    if(v.length === 6) uaWelcomeGo();
+  };
+  let uwBusy = false;
+  window.uaWelcomeGo = async function(){
+    if(uwBusy) return;
+    const o = uwMyPk(), inp = $('uwPin'); if(!o || !inp) return;
+    const pin = String(inp.value || '').replace(/\D/g, '');
+    if(pin.length < 5){ setErr('pw'); return; }
+    uwBusy = true; busy(1); setErr('');
+    const id = (typeof mcsSidSrv === 'function' ? mcsSidSrv(o.sid) : o.sid);
+    let r = null; try{ r = await api({ op:'login', id, pw: pin }); }catch(e){}
+    uwBusy = false; busy(0);
+    if(!r || !r.ok){ setErr((r && r.reason) || 'net'); try{ inp.value = ''; inp.focus(); }catch(e){} return; }
+    uaClearOthers('user'); done(r);
+  };
   /* MCS1211TH333 (مالک کا حکم): سائن اپ میں ضلع لازمی — انگریزی A→Z، ساتھ اردو */
   const distSel = () => { let cur = ''; try{ cur = (typeof hcGet === 'function' ? hcGet() : '') || ''; }catch(e){} const S = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && S.add(x))); }catch(e){} const EN = x => (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; const L = Array.from(S).sort((a, b) => (EN(a) || 'zz' + a).localeCompare(EN(b) || 'zz' + b, 'en')); return '<option value="">Select your District — اپنا ضلع چنیں</option>' + L.map(x => '<option value="' + esc(x) + '"' + (x === cur ? ' selected' : '') + '>' + esc(EN(x) ? EN(x) + ' — ' + x : x) + '</option>').join(''); };
   const distOpts = cur => { const S = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && S.add(x))); }catch(e){} const EN = x => (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; const L = Array.from(S).sort((a, b) => { const ea = EN(a), eb = EN(b); if(ea && eb) return ea.localeCompare(eb, 'en'); if(ea) return -1; if(eb) return 1; return a.localeCompare(b, 'ur'); }); if(cur && !S.has(cur)) L.unshift(cur); return '<option value="">ضلع منتخب کریں — Select District</option>' + L.map(x => '<option value="' + esc(x) + '"' + (EN(x) ? ' data-en="' + esc(EN(x)) + '"' : '') + (x === cur ? ' selected' : '') + '>' + esc(x) + '</option>').join(''); };   /* MCS1111WE307: انگریزی A→Z + اردو نوری نستعلیق، کیپسول ڈراپ ڈاؤن */
@@ -16401,9 +16464,10 @@ body.d2 #homeAds .ad-ribbon{display:none}
     try{ if(skip !== true && !confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return; }catch(e){}
     try{ closeModal('portalModal'); }catch(e){}
     try{ const a = uaMe(); if(a) api({ op:'logout', tok: a.tok }); }catch(e){}
+    const wasUser = !!window.__uwUser || !!uaMe(); window.__uwUser = false;
     uaClearOthers('none'); ls.set('mcsAuth', null); ls.set('mcsGuest', null);
     try{ uaSync(); h2Sync(); cdBar(); mpRender(); }catch(e){}
-    setTimeout(() => uaLogin(), 250);
+    setTimeout(() => { try{ (wasUser ? uaWelcome : uaLogin)(); }catch(e){ uaLogin(); } }, 250);
   };
   window.uaDoSignup = async function(){
     const name = ($('uaName').value || '').trim(), mobile = ($('uaMob').value || '').trim(), pw = ($('uaPw2').value || '').trim();
@@ -16512,9 +16576,9 @@ body.d2 #homeAds .ad-ribbon{display:none}
     const a = uaMe(); if(!a) return; if(!confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return;
     api({ op:'logout', tok: a.tok }); mcsLogoutAll(true);
   };
-  function uaDrop(){ ls.set('mcsAuth', null); uaSync(); uaLogin('دوبارہ لاگ اِن کریں'); }
+  function uaDrop(){ ls.set('mcsAuth', null); uaSync(); uaEnter('دوبارہ لاگ اِن کریں'); }
   /* Guest روک: ہر «کام» سے پہلے */
-  window.uaGuard = function(next, msg){ if(uaOk()) return true; uaPending = next || null; uaLogin(msg || 'یہ کام کرنے کے لیے پہلے Sign In یا Sign Up کریں — Guest صرف دیکھ سکتا ہے'); return false; };
+  window.uaGuard = function(next, msg){ if(uaOk()) return true; uaPending = next || null; uaEnter(msg || 'یہ کام کرنے کے لیے پہلے Sign In یا Sign Up کریں — Guest صرف دیکھ سکتا ہے'); return false; };
   const GUARD = ['mpStartNew', 'd2AddOpen', 'pickAddCategory', 'openServiceForm', 'openDoctorForm', 'agOpen', 'agEarnOpen', 'pfEditOpen', 'pfClaimMine', 'pfClaimPlain', 'svcRegClaim', 'mpSubscribe', 'adRequestOpen', 'toggleAddStrip', 'mpNewMore', 'saveService', 'saveDoctor', 'pfSave', 'agPinLogin'];
   function wrapAll(){
     GUARD.forEach(n => { const f = window[n]; if(typeof f !== 'function' || f.__ua) return;
@@ -16526,6 +16590,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     try{
       const a = uaMe(), t = $('h2Type');
       if(t && a && !staff() && /Normal/.test(t.textContent)){ t.textContent = '👤 ' + String(a.user.name || '').split(' ')[0]; t.classList.add('on'); const o = $('h2Out'); if(o) o.style.display = ''; }
+      try{ if(a && !staff()){ const o3 = $('h2Out'); if(o3) o3.style.display = ''; } }catch(e){}
       let box = $('uaCpBox'); const host = $('cpAcctType');
       if(host){ if(!box){ box = document.createElement('div'); box.id = 'uaCpBox'; host.insertAdjacentElement('afterend', box); }
         box.innerHTML = a ? `🔐 <b>${esc(a.user.name)}</b> — ${esc(mcsSidFmt(a.user.sid || a.user.id))}<br><button style="background:#1d4ed8;color:#fff" onclick="uaAccount()">👤 میرا اکاؤنٹ</button><button style="background:#6366f1;color:#fff" onclick="fedListOpen()">📨 میرے درج کیے ہوئے</button><button style="background:#fee2e2;color:#b91c1c" onclick="uaLogout()">لاگ آؤٹ</button>`
@@ -16842,7 +16907,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function boot(){
     wrapAll(); hook(); uaSync();
     ls.set('mcsGuest', null);
-    if(!uaOk()) setTimeout(() => { if(!uaOk()) uaLogin(); }, 600);
+    if(!uaOk()) setTimeout(() => { if(!uaOk()) uaEnter(); }, 600);
     setTimeout(recheck, 4000);
     setTimeout(() => { try{ if(uaMe() && invGet()) fedApplyPending(); else if(!uaMe() && invGet() && !staff()) uaInviteView(); else if(agtGet() && !agentOn() && !staff()) uaAgtView(); }catch(e){} }, 5000);
     document.addEventListener('keydown', e => { if(e.key === 'Escape' && $('uaOv').classList.contains('on') && (uaMe() || staff())) uaHide(); });
@@ -20944,6 +21009,7 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   if(typeof _logout === 'function'){
     window.mcsLogoutAll = async function(skip){
       try{ if(skip !== true && !confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return; }catch(e){}
+      try{ window.__uwUser = !!(typeof uaMe === 'function' && uaMe()); }catch(e){}
       LS.set(OUT, '1');
       try{ closeModal('portalModal'); }catch(e){}
       try{ if(typeof ADMIN_LAST_KEY !== 'undefined') LS.set(ADMIN_LAST_KEY, null); if(typeof ADMIN_EMAIL_KEY !== 'undefined') LS.set(ADMIN_EMAIL_KEY, null); }catch(e){}
