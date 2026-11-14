@@ -4383,10 +4383,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA420";
+const APP_VERSION = "MCS1411SA421";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA421": "🪪 شناختی کارڈ اور میعاد کے ڈبے ایک لائن میں برابر • 🔵 رجسٹریشن کے سب مرحلوں کا پس منظر ایک ہی نیلا",
   "MCS1411SA420": "🪪 شناختی کارڈ نمبر کے ساتھ ہی ایک لائن میں میعاد (DD/MM/YYYY، سلیش خود لگتا ہے) • ❌ «ایڈمن کو منظوری کے لیے بھیجا» والے سب جملے ختم • 🧾 Google Play کی اصل خریداری کے بعد آرڈر نمبر (GPA…) ایپ میں پیسٹ کرنا لازمی — تبھی فارم رجسٹرڈ، مکمل اور مبارکباد",
   "MCS1411SA419": "💳 Google Play: خریداری کی «acknowledge» اب ایپ خود کرتی ہے (ورنہ گوگل 3 دن میں سبسکرپشن کینسل کر دیتا ہے) — پرانی خریداریاں بھی اگلی بار ایپ کھلنے پر • ادائیگی کے فوراً بعد وزرڈ کا کارڈ سرور پر پہنچتا ہے تاکہ منظور / عوامی ہو سکے • کارڈ پر «پچھلے ۱ دن» والی کٹی عبارت درست۔",
   "MCS1411SA418": "🛠️ رجسٹریشن ویزرڈ نیچے کھسک کر اوپر ہوم کی فہرست نظر آنے والا مسئلہ: ویزرڈ اب پوری اسکرین پر پکا جما رہتا ہے، کھلا ہو تو پیچھے ہوم اور نیچے کی پٹی چھپ جاتی ہے، اور ڈبہ ہٹے تو خود واپس اوپر آ جاتا ہے۔",
@@ -23048,6 +23049,10 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
 /* MCS1411SA417: سکرول اور ٹچ پکا — ویزرڈ اپنا ہی سکرول رکھتا ہے، پیچھے ہوم کا ٹچ نہیں آتا */
 #wzOv{overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;overflow-anchor:none;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 #wzOv button,#wzOv label,#wzOv select,#wzOv input,#wzOv textarea{touch-action:manipulation}
+/* MCS1411SA421 (مالک کا حکم): پورا رجسٹریشن فارم، سب مرحلے ایک ہی نیلے رنگ میں (باقی شروع والے فارموں جیسا) */
+#wzOv{background:#bfdbfe!important}
+#wzOv .wzCard,#wzOv .wzCard:has(>.wzOk){background:#dbeafe!important;border-color:#043464!important}
+#wzOv .wzNote{background:#eff6ff!important}
 #wzOv #wzPlans{min-height:300px}
 #wzOv #wzFlash{display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:12px;right:12px;max-width:456px;margin:0 auto;z-index:50;background:#d92d20;color:#fff;border-radius:10px;padding:11px 14px;font:700 15px/1.8 "Jameel Noori Nastaleeq","JameelNoori",MCSDigits,serif;direction:rtl;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #wzOv #wzFlash.ok{background:#04641c}
@@ -23314,7 +23319,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
       <div style="text-align:center">${stChip(st)}</div>
       <div style="background:#e8f2ff;border-radius:12px;padding:8px 10px;margin-top:8px;text-align:center;font-weight:800;color:#0b2f8f">Make Your Business Public<div class="u" style="font-size:17px">اپنا کاروبار سب کے لیے ظاہر کریں</div></div>
       <ul class="wzBen"><li>Public Business Listing <span class="u">/ عوامی کاروباری فہرست</span></li><li>Appear in Category &amp; Area Searches <span class="u">/ کیٹگری اور علاقے کی تلاش میں</span></li><li>Get More Customers <span class="u">/ مزید گاہک</span></li></ul>
-      <div class="wzRow" style="align-items:flex-start;gap:8px"><div style="flex:1.65;min-width:0">${LBL('CNIC Number', 'شناختی کارڈ نمبر', 1)}<input class="wzI" id="wzCnic" inputmode="numeric" dir="ltr" maxlength="15" placeholder="XXXXX-XXXXXXX-X" value="${esc(p.cnic)}" oninput="wzCnicF(this)" style="font-size:15px;padding-left:8px;padding-right:8px"></div><div style="flex:1;min-width:0">${LBL('Expiry · DD/MM/YYYY', 'میعاد', 1)}<input class="wzI" id="wzExp" type="text" inputmode="numeric" dir="ltr" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY" value="${esc(p.expTxt || wzExpDisp(p.exp))}" oninput="wzExpF(this)" style="font-size:15px;padding-left:8px;padding-right:8px"></div></div>
+      <div style="display:grid;grid-template-columns:1.45fr 1fr;column-gap:8px;align-items:end">${LBL('CNIC Number', 'شناختی کارڈ نمبر', 1)}<label class="wzL" style="white-space:nowrap;font-size:12.5px"><span>Expiry <b dir="ltr" style="font-weight:700">DD/MM/YYYY</b> <em>*</em></span></label><input class="wzI" id="wzCnic" inputmode="numeric" dir="ltr" maxlength="15" placeholder="XXXXX-XXXXXXX-X" value="${esc(p.cnic)}" oninput="wzCnicF(this)" style="font-size:15px;padding-left:8px;padding-right:8px"><input class="wzI" id="wzExp" type="text" inputmode="numeric" dir="ltr" maxlength="10" autocomplete="off" placeholder="DD/MM/YYYY" value="${esc(p.expTxt || wzExpDisp(p.exp))}" oninput="wzExpF(this)" style="font-size:15px;padding-left:8px;padding-right:8px"></div>
       ${LBL('Email Address', 'ای میل ایڈریس', 1)}<div class="wzRow"><input class="wzI" id="wzEm" type="email" dir="ltr" placeholder="Enter email" value="${esc(p.email)}" oninput="wzP()"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 96px;font-size:13px" onclick="wzGoogle()">Google</button></div><div id="wzGBox"></div>
       ${LBL('Referral Code', 'ریفرل کوڈ')}<select class="wzI" id="wzRef" onchange="wzP()"><option value="">Select Referral Code — فہرست سے ایجنٹ چنیں</option></select><div id="wzRefNm" class="u" style="font-size:14px;color:#047857;font-weight:700;margin:3px 2px"></div>
       ${LBL('Payment Method', 'ادائیگی کا طریقہ', 1)}<div class="wzPlay"><span class="gp">${typeof MCS_GP_SVG === 'string' ? MCS_GP_SVG : '▶'}</span><span>Google Play Billing<small class="u" style="display:block;font-weight:400">گوگل پلے کے ذریعے ادائیگی</small></span></div>
