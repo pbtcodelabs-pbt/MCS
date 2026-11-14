@@ -3461,10 +3461,10 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
       </div>
       <div class="cls-box" id="svcCls2">
         <div class="field"><label class="req">③ ذیلی قسم / ٹائٹل <small>Subtype — ایک سے زیادہ چن سکتے ہیں (پہلا کارڈ پر آئے گا)</small></label><div class="cls-chips" id="svcSubs"></div>
-          <div class="cls-row"><input type="text" id="svcSubIn" maxlength="60" placeholder="فہرست میں نہ ہو تو نیا ٹائٹل لکھ کر ➕ دبائیں — سب کی فہرست میں شامل ہوگا" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();clsSubCustom();}" onblur="clsSubCustom()"><button type="button" onclick="clsSubCustom()">➕</button></div></div>
+          <div class="cls-row"><input type="text" id="svcSubIn" maxlength="60" placeholder="فہرست میں نہ ہو تو نیا ٹائٹل لکھیں اور کی بورڈ کا «ہو گیا» دبائیں" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();clsSubCustom(true);}" onblur="clsSubCustom(false)"></div></div>
         <div class="field"><label>④ مصنوعات اور خدمات <small>Products &amp; Services — ایک ایک کر کے لکھیں</small></label>
           <div class="cls-chips" id="svcProds"></div>
-          <div class="cls-row"><input type="text" id="svcProdIn" maxlength="60" placeholder="مثلاً Burger، Shawarma، چائے" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();clsProdAdd();}"><button type="button" onclick="clsProdAdd()">➕</button></div>
+          <div class="cls-row"><input type="text" id="svcProdIn" maxlength="60" placeholder="مثلاً Burger، Shawarma، چائے — لکھیں اور «ہو گیا» دبائیں" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();clsProdAdd(true);}" onblur="clsProdAdd(false)"></div>
         </div>
         <div class="field"><label>⑤ وابستہ ادارہ / برانڈ <small>Associated Organization</small></label><div class="field-with-add"><select id="svcOrg"></select><button class="add-circle" type="button" onclick="promptAddOption('org','svcOrg')">+</button></div></div>
       </div>
@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA402";
+const APP_VERSION = "MCS1411SA408";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA403": "⚡ Paid card now goes live from the server (works for every phone) • co-developers can see the «New businesses for review» list and open chat / call / WhatsApp • old registered cards pick up the shop photo automatically (no re-upload) • professional (doctor etc.) cards use the new registered-card design",
   "MCS1411SA402": "✅ Paid card goes public at once (no waiting for admin) • developer list is now «New businesses waiting for your review» with 💬 Chat with owner / 📞 Call / WhatsApp • registered card redesigned: agent badge, round selfie, dates, call + WhatsApp on the left, name and offers in the middle, shop photo on the right",
   "MCS1411SA401": "🔖 Home header: version number now on a clear white badge, bigger • «New update is coming» bar now shows the new version number at the top",
   "MCS1411SA400": "🛡️ Registration wizard step 4: Selfie + CNIC front/back upload boxes inside the wizard, «Add Request for MCS Agent» sends it, pending screen, then «Congratulations! You are now an MCS Agent» with badge and referral code • step 3: «Payment Method — Google Play Billing» row; «Payment Successful! Awaiting Admin Approval» until the admin approves, then «Subscription Approved! Your Business is Now Public!» • «Your Business Card is Created! (Private)» shown after step 2",
@@ -5417,8 +5418,18 @@ function mcsPlayGo(){
 }
 function mcsPlayOk(){ return typeof window.getDigitalGoodsService === 'function'; }
 async function mcsPlaySvc(){ return await window.getDigitalGoodsService('https://play.google.com/billing'); }
+/* MCS1411SA403: کارڈ کا Firestore پتہ (col + id) — سرور Play کی تصدیق کے بعد خود approved:true لکھتا ہے */
+function mcsFsOf(rk){
+  if(!rk) return null;
+  try{
+    const a = (store.services || []).find(r => r && r.fsId && pfKeyOf(r, 'service') === rk); if(a) return {col:'services', id:a.fsId};
+    const d = (store.doctors || []).find(r => r && r.fsId && pfKeyOf(r, 'doctor') === rk); if(d) return {col:'doctors', id:d.fsId};
+  }catch(e){}
+  return null;
+}
 async function mcsPlayVerify(token, sku, rk){
-  const r = await fetch(PF_API + '/mcsbuy', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({purchaseToken: token, sku, rec: rk || ''})});
+  const fs = mcsFsOf(rk);
+  const r = await fetch(PF_API + '/mcsbuy', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({purchaseToken: token, sku, rec: rk || '', fs: fs || undefined})});
   return await r.json();
 }
 function mcsPlayApply(j, sku){
@@ -5430,7 +5441,10 @@ function mcsPlayApply(j, sku){
     const a = pfAct[j.rec];
     if(a){ if(j.subid) a.subid = j.subid; else if(!a.subid && sku){ const u = ((typeof uaMe === 'function' && uaMe()) || {}).user || {}; const base = u.sid && window.mcsSidFmt ? window.mcsSidFmt(u.sid) : ''; if(base) a.subid = base + 'M' + (MCS_PLAY_SKUS.indexOf(sku) + 1); } }
   }catch(e){}
-  if(ch){ saveStore(); try{ mpRender(); hlRenderSoon(); }catch(e){} }
+  try{   /* MCS1411SA403: سرور نے approved:true لکھ دیا ہو تو فون پر بھی فوراً */
+    if(j.approved){ const r0 = (store.services || []).concat(store.doctors || []).find(r => r && (pfKeyOf(r, 'service') === j.rec || pfKeyOf(r, 'doctor') === j.rec)); if(r0 && r0.approved !== true){ r0.approved = true; ch = true; } }
+  }catch(e){}
+  if(ch){ saveStore(); try{ mpRender(); hlRenderSoon(); }catch(e){} try{ renderServiceList('list'); }catch(e){} }
   return true;
 }
 async function mcsPlayBuy(rk){
@@ -5935,7 +5949,7 @@ function dupMap(){
   const n = (store.services || []).length + (store.doctors || []).length, now = Date.now();
   if(_dupC.m && _dupC.n === n && now - _dupC.t < 1500) return _dupC.m;
   const has = {}, old = new Set(), all = [];
-  const add = (k, r) => { if(!r) return; const d = String(r.whatsapp || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10); if(d.length < 10) return; const m = /^MCS-/i.test(String(shortRecordId(k, r) || '')); all.push([d, r, m]); if(m) has[d] = 1; };
+  const add = (k, r) => { if(!r) return; const d = String(r.whatsapp || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10); if(d.length < 10) return; let m = false; try{ m = /^MCS\d/i.test(String(shortRecordId(k, r) || '')) && !!pfActive(r); }catch(e){}   /* MCS1411SA408: نئی ID میں ڈیش نہیں (MCS002M1) تھا اس لیے پرانا کارڈ کبھی چھپتا ہی نہیں تھا؛ اب پیکج لے کر لائیو ہونے والا MCS کارڈ ہی اصل */ all.push([d, r, m]); if(m) has[d] = 1; };
   (store.services || []).forEach(r => add('service', r)); (store.doctors || []).forEach(r => add('doctor', r));
   all.forEach(a => { if(has[a[0]] && !a[2]) old.add(a[1]); });
   _dupC = { t: now, n, m: old }; return old;
@@ -7457,7 +7471,7 @@ function saveDoctor(approve){
   saveStore();
   renderDoctorList('list');
   /* MCS11OCTSU0913AM: شیئر والا سوال ختم — نیا اندراج محفوظ ہو کر فارم اگلے اندراج کے لیے تیار */
-  if(!editingDoctorId){ nextEntryReady('doc'); openAfterSave('doctor', data, 'doc'); return; }
+  if(!editingDoctorId){ entryDoneGoHome('doc', 'doctor', data); return; }
   closeModal('doctorFormModal');
   showToast('محفوظ ہو گیا ✓');
   openAfterSave('doctor', store.doctors.find(x=>x.id===editingDoctorId), null);
@@ -7548,7 +7562,8 @@ function mcsSubFmt(v){   /* MCS1411SA396: MCS00101 → MCS001M1، MCS00102 → M
 function shortRecordId(kind, item){
   /* MCS1111WE312 (مالک کا حکم): سسٹم ID — سبسکرپشن ہو تو MCS-001-01، ورنہ MCS-001؛ پرانے فیڈ کارڈ پرانی قسم وار ID پر جب تک «Replace» نہ دبے */
   try{ const rk = pfKeyOf(item, kind), p = rk && typeof pfAct !== 'undefined' && pfAct && pfAct[rk]; if(p && p.subid) return mcsSubFmt(p.subid); if(p && p.sid) return String(p.sid).replace(/[\s-]/g,''); }catch(e){}   /* MCS1211TH348: MCS00101 — کہیں ڈیش نہیں */
-  /* MCS1211TH351: کارڈ پر لکھی پرانی more.sid نہیں — ID صرف سرور (رجسٹرڈ کاروبار) سے */
+  /* MCS1411SA407 (مالک کا حکم): سائن اپ پر ملا ایم سی ایس نمبر سادہ کارڈ پر بھی — صرف خالص «MCS + ہندسے» (کوئی پرانی / لمبی ID نہیں)؛ رجسٹریشن کے بعد MCS001M1 اوپر والے حصے سے آتا ہے */
+  try{ const v = item && item.more && item.more.sid; if(v){ const f = (typeof mcsSidFmt === 'function' ? mcsSidFmt(v) : String(v)).replace(/[\s-]/g,'').toUpperCase(); if(/^MCS\d+$/.test(f)) return f; } }catch(e){}
   return '';
 }
 
@@ -9688,15 +9703,25 @@ function clsRenderSubs(){ const box = clsEl('svcSubs'); if(!box) return;
 /* MCS1211TH377: چنا ہوا ٹائٹل فوراً «قسم» (svcType) میں — دیکھیں / Save خالی نہ سمجھیں */
 function clsSyncType(){ const st = clsEl('svcType'); if(!st) return; if(currentServiceCategory === 'emergencyNumbers' || currentServiceCategory === 'govOffices') return; const prim = clsSubs.length ? (clsTitleUr(clsSubs[0]) || clsSubs[0]) : ''; if(!prim) return; if(!Array.from(st.options).some(o=>o.value === prim)) st.add(new Option(prim, prim)); if(st.value !== prim){ st.value = prim; try{ st.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){} } }
 function clsSubTog(v){ const k = String(v).toLowerCase(); const i = clsSubs.findIndex(x=>String(x).toLowerCase() === k); if(i < 0) clsSubs.push(v); else clsSubs.splice(i, 1); clsRenderSubs(); }
-function clsSubCustom(){ const inp = clsEl('svcSubIn'); if(!inp) return; const v = inp.value.trim().slice(0, 60).replace(/\|/g, ' '); if(!v) return;
-  { const pt = (clsEl('svcPType') || {}).value, mc = (clsEl('svcMCat') || {}).value, cc = CLS_CATS[pt + '|' + mc];   /* MCS1211TH370: نیا ٹائٹل سب کی فہرست میں بھی */
-    if(cc && !cc.titles.some(t=>t.en.toLowerCase() === v.toLowerCase() || (t.ur || '').toLowerCase() === v.toLowerCase())){ store.clsTit = store.clsTit || []; store.clsTit.push(pt + '|' + mc + '|' + v + '|'); try{ saveStore(); clsSyncCfg(); clsRebuild(); }catch(e){} } }
-  if(clsSubs.length < 30 && !clsHasSub(v)) clsSubs.push(v); inp.value = ''; clsRenderSubs(); }
+/* اسکرول کی جگہ یاد رکھ کر واپس لگانا — فارم اوپر نہ اچھلے */
+function clsKeepScroll(fn){ let sc = null, top = 0, el = clsEl('svcSubIn') || clsEl('svcProdIn');
+  for(let p = el; p && p !== document.body; p = p.parentElement){ const cs = getComputedStyle(p); if(/(auto|scroll)/.test(cs.overflowY) && p.scrollHeight > p.clientHeight){ sc = p; break; } }
+  if(sc) top = sc.scrollTop; const wy = window.scrollY;
+  try{ fn(); }finally{ const back = ()=>{ if(sc) sc.scrollTop = top; if(window.scrollY !== wy) window.scrollTo(0, wy); }; back(); requestAnimationFrame(back); setTimeout(back, 150); } }
+function clsSubCustom(keepFocus){ const inp = clsEl('svcSubIn'); if(!inp) return; const v = inp.value.trim().slice(0, 60).replace(/\|/g, ' '); if(!v) return;
+  clsKeepScroll(()=>{
+    if(clsSubs.length < 30 && !clsHasSub(v)) clsSubs.push(v); inp.value = ''; clsRenderSubs(); });
+  /* نیا ٹائٹل سب کی فہرست میں — بھاری کام بعد میں، فارم کو چھیڑے بغیر */
+  setTimeout(()=>{ try{ const pt = (clsEl('svcPType') || {}).value, mc = (clsEl('svcMCat') || {}).value, cc = CLS_CATS[pt + '|' + mc];
+    if(cc && !cc.titles.some(t=>t.en.toLowerCase() === v.toLowerCase() || (t.ur || '').toLowerCase() === v.toLowerCase())){ store.clsTit = store.clsTit || []; store.clsTit.push(pt + '|' + mc + '|' + v + '|'); saveStore(); clsSyncCfg(); clsRebuild(); } }catch(e){} }, 400);
+  if(keepFocus === true){ try{ inp.focus({preventScroll:true}); }catch(e){} } }
 function clsRenderProds(){ const box = clsEl('svcProds'); if(!box) return;
   box.innerHTML = clsProds.map((v, i)=>`<span class="cls-chip pr">${escapeHtml(v)} <i onclick="clsProdDel(${i})">✖</i></span>`).join(''); }
-function clsProdAdd(){ const inp = clsEl('svcProdIn'); if(!inp) return;
-  inp.value.split(/[،,\n;؛]+/).map(x=>x.trim()).filter(Boolean).forEach(p=>{ const k = p.toLowerCase(); if(clsProds.length < 40 && !clsProds.some(x=>x.toLowerCase() === k)) clsProds.push(p.slice(0, 60)); });
-  inp.value = ''; clsRenderProds(); }
+function clsProdAdd(keepFocus){ const inp = clsEl('svcProdIn'); if(!inp) return; if(!inp.value.trim()) return;
+  clsKeepScroll(()=>{
+    inp.value.split(/[،,\n;؛]+/).map(x=>x.trim()).filter(Boolean).forEach(p=>{ const k = p.toLowerCase(); if(clsProds.length < 40 && !clsProds.some(x=>x.toLowerCase() === k)) clsProds.push(p.slice(0, 60)); });
+    inp.value = ''; clsRenderProds(); });
+  if(keepFocus === true){ try{ inp.focus({preventScroll:true}); }catch(e){} } }
 function clsProdDel(i){ clsProds.splice(i, 1); clsRenderProds(); }
 function clsFill(m){
   m = m || {}; clsRebuild();
@@ -10233,7 +10258,7 @@ function saveService(approve){
   saveStore();
   renderServiceList('list');
   /* MCS11OCTSU0913AM: شیئر والا سوال ختم — شیئر کے لیے کارڈ کا اپنا بٹن ہے۔ فارم اگلے اندراج کے لیے تیار */
-  if(!editingServiceId){ nextEntryReady('svc'); openAfterSave('service', data, 'svc'); return; }
+  if(!editingServiceId){ entryDoneGoHome('svc', 'service', data); return; }
   closeModal('serviceFormModal');
   showToast(movedTo ? ('محفوظ ہو گیا ✓ — کیٹگری: ' + CATEGORY_META[movedTo].ur) : 'محفوظ ہو گیا ✓');
   if(svcStage==='reg' && !isAdminSignedIn){ const _rs = store.services.find(x=>x.id===editingServiceId); setTimeout(()=>fpNextStep('service', _rs), 500); }   /* MCS0811SU245: اگلا مرحلہ فوراً */
@@ -13382,10 +13407,10 @@ async function cdLogin(){
   try{ const j = await (await fetch(AG_API + '/codev', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: ph, pin})})).json();
     if(!j || !j.ok){ msg.textContent = '❌ نمبر یا PIN درست نہیں'; return; }
     localStorage.setItem('mcsCodev', JSON.stringify({phone: '92' + ph.slice(-10), pin, name: j.name, at: Date.now()}));
-    closeModal('agModal'); closeModal('controlPanelModal'); cdBar(); mpRender(); hlRenderSoon(); showToast('👥 خوش آمدید ' + j.name + ' — جانچ موڈ کھل گیا', 4000);
+    closeModal('agModal'); closeModal('controlPanelModal'); cdBar(); mpRender(); hlRenderSoon(); try{ mrqLoad(true); }catch(e){} showToast('👥 خوش آمدید ' + j.name + ' — جانچ موڈ کھل گیا', 4000);
   }catch(e){ msg.textContent = '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'; }
 }
-function cdLogout(){ if(!confirm('جانچ موڈ بند کریں؟')) return; localStorage.removeItem('mcsCodev'); cdBar(); mpRender(); hlRenderSoon(); }
+function cdLogout(){ if(!confirm('جانچ موڈ بند کریں؟')) return; localStorage.removeItem('mcsCodev'); try{ MRQ = []; _mrqAt = 0; pendingHomeListRender(); }catch(e){} cdBar(); mpRender(); hlRenderSoon(); }
 /* ہر 12 گھنٹے میں ایک بار: مالک نے ہٹا دیا ہو تو جانچ موڈ خود بند */
 async function cdRecheck(){
   const m = codevMe(); if(!m || !m.phone || Date.now() - (m.at||0) < 12*36e5) return;
@@ -13958,6 +13983,16 @@ function afterSaveGo(action){
   if(action==='next' && st.pre){
     setTimeout(()=>{ const ph = document.getElementById(st.pre+'Whatsapp'); if(ph) ph.focus(); }, 150);
   }
+}
+/* MCS1411SA405 (مالک کا حکم): نیا ریکارڈ محفوظ ہوتے ہی فارم مکمل بند، خانے صاف، ہوم پیج۔ اگلا اندراج صرف ➕ دبا کر نئے خالی فارم میں */
+function entryDoneGoHome(pre, kind, data){
+  const mid = pre==='doc' ? 'doctorFormModal' : 'serviceFormModal';
+  try{ nextEntryReady(pre); }catch(e){}           /* خانے اور پرانا مسودہ صاف */
+  try{ closeEntryForm(mid); }catch(e){}
+  try{ goHome(); }catch(e){}
+  setTimeout(()=>{ try{ draftClear(pre); }catch(e){} }, 700);
+  setTimeout(()=>{ try{ showToast('محفوظ ہو گیا ✓', 2200); }catch(e){} }, 150);
+  setTimeout(()=>{ try{ openAfterSave(kind, data, null); }catch(e){} }, 500);   /* چھوٹا پاپ اپ: بھیجیں / شیئر — «اگلا اندراج» کا بٹن چھپا */
 }
 function nextEntryReady(pre){
   fhLoad(pre, null);   /* MCS2310FR041: اگلا نیا ریکارڈ — سب خانے پھر کھلے */
@@ -21166,12 +21201,17 @@ html body select.rpk-sel[dir=ltr], html body select.rpk-sel[dir=ltr] option, htm
 <script>
 /* ===== MCS1111WE330 (مالک کا حکم): ممبرشپ / رجسٹریشن کی درخواستیں — ڈویلپر کے ہوم پر خود پٹی + پورا منظوری صفحہ ===== */
 let MRQ = [], _mrqAt = 0, _mrqBusy = false;
+/* MCS1411SA403: کو-ڈویلپر (موبائل + PIN) بھی فہرست دیکھے؛ صرف دیکھنا / رابطہ — منظوری، پیغام، مسترد صرف مالک */
+const mrqIsDev = () => (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn);
+const mrqIsCd = () => { try{ return !mrqIsDev() && typeof codevOn === 'function' && codevOn(); }catch(e){ return false; } };
+const mrqCan = () => mrqIsDev() || mrqIsCd();
+function mrqCdBlock(){ if(!mrqIsCd()) return false; showToast('👥 جانچ موڈ — منظوری / پیغام صرف مالک کر سکتا ہے۔ آپ چیٹ، کال اور واٹس ایپ کر سکتے ہیں', 4500); return true; }
 function mrqSend(rk, data){ try{ fetch(PF_API + '/preq', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({op:'add', rec: rk, data})}).catch(()=>{}); }catch(e){} }
 async function mrqLoad(force){
-  if(typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn || _mrqBusy) return;
+  if(!mrqCan() || _mrqBusy) return;
   if(!force && Date.now() - _mrqAt < 80000) return;
   _mrqBusy = true;
-  try{ const hdr = await vfAdminHdr(); const j = await (await fetch(PF_API + '/preq', {method:'POST', headers: hdr, body: JSON.stringify({op:'list'})})).json(); if(j && j.ok){ MRQ = j.list || []; _mrqAt = Date.now(); try{ pendingHomeListRender(); }catch(e){} } }catch(e){}
+  try{ const cd = mrqIsCd() ? codevMe() : null; const hdr = cd ? {'Content-Type':'text/plain'} : await vfAdminHdr(); const bd = cd ? {op:'list', as:'cd', phone: cd.phone, pin: cd.pin} : {op:'list'}; const j = await (await fetch(PF_API + '/preq', {method:'POST', headers: hdr, body: JSON.stringify(bd)})).json(); if(j && j.ok){ MRQ = j.list || []; _mrqAt = Date.now(); try{ pendingHomeListRender(); }catch(e){} } }catch(e){}
   _mrqBusy = false;
 }
 const mrqOpenList = () => MRQ.filter(x => x.st === 'new' || x.st === 'pend' || x.st === 'info');
@@ -21181,7 +21221,7 @@ const mrqOpenList = () => MRQ.filter(x => x.st === 'new' || x.st === 'pend' || x
     try{ _old && _old(); }catch(e){}
     const box = document.getElementById('pendingHomeList'); if(!box) return;
     let s = document.getElementById('mrqStrip');
-    const L = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? mrqOpenList() : [];
+    const L = mrqCan() ? mrqOpenList() : [];
     if(!L.length){ if(s) s.remove(); return; }
     const nw = L.filter(x => x.st === 'new').length;
     if(!s){ s = document.createElement('button'); s.type = 'button'; s.id = 'mrqStrip'; s.className = 'mrq-strip'; s.onclick = () => mrqOpen(); }
@@ -21202,9 +21242,9 @@ function mrqOpen(){
       ${row('🏷️ Category', E(d.cat))}${row('📍 Place', E([d.area, d.city].filter(Boolean).join(', ')))}${row('🤝 Brought by', E(d.ref ? refN(d.ref) + (d.refName ? ' — ' + d.refName : '') : 'PBT (came by self)'))}${row('⭐ Membership now', mem)}
       ${d.text ? `<div class="mrq-tx" dir="auto">📝 ${E(d.text)}</div>` : ''}${x.note ? `<div class="mrq-nt" dir="auto">💬 Your last message: ${E(x.note)}</div>` : ''}
       ${x.st === 'done' || x.st === 'rej' ? '' : `<div class="mrq-b">
-        <button type="button" class="ok" onclick="mrqApprove(${i})">✅ Reviewed — Done / جائزہ مکمل</button>
+        ${mrqIsCd() ? '' : `<button type="button" class="ok" onclick="mrqApprove(${i})">✅ Reviewed — Done / جائزہ مکمل</button>
         <button type="button" class="in" onclick="mrqInfo(${i})">❓ Ask more details</button>
-        <button type="button" class="pd" onclick="mrqSet(${i}, 'pend')">⏸️ Review later</button>
+        <button type="button" class="pd" onclick="mrqSet(${i}, 'pend')">⏸️ Review later</button>`}
         <button type="button" class="ch" onclick="mrqChat(${i})">💬 Chat with owner</button>
         <button type="button" class="vw" onclick="mrqView(${i})">👁️ View / ✏️ Edit form</button>
         ${ph ? `<a class="ca" href="tel:0${ph}">📞 Call</a><a class="wa" target="_blank" rel="noopener" href="https://wa.me/92${ph}">💬 WhatsApp</a>` : ''}</div>`}
@@ -21214,15 +21254,17 @@ function mrqOpen(){
     <button type="button" class="btn block secondary" style="margin:0 0 8px" onclick="mrqLoad(true).then(mrqOpen)">🔄 Refresh</button>
     ${L.length ? L.map((x, i) => card(x, i)).join('') : '<div class="cp-hint" style="text-align:center">✅ No request is waiting right now</div>'}
     ${done.length ? `<details class="mrq-old"><summary>Done in last 3 days (${done.length})</summary>${done.map((x, j) => card(x, L.length + j)).join('')}</details>` : ''}
-    ${(() => { let pf = []; try{ pf = pfPendList(); }catch(e){} return pf.length ? `<div class="ag-hd" style="margin-top:10px">⏳ Shopkeeper-made, waiting (${pf.length})</div>` + pf.map(x => x.rec ? `<button type="button" class="mp-more" onclick="closeModal('agModal');pfOpen('${x.kind}','${escapeAttr(x.rec.id)}')">🏪 ${E(x.rec.nameUr || x.rec.name || '')} — open, then ✅ approve</button>` : `<div class="cp-hint" dir="ltr">${E(x.rk)}</div>`).join('') : ''; })()}`);
+    ${(() => { let pf = []; try{ if(!mrqIsCd()) pf = pfPendList(); }catch(e){} return pf.length ? `<div class="ag-hd" style="margin-top:10px">⏳ Shopkeeper-made, waiting (${pf.length})</div>` + pf.map(x => x.rec ? `<button type="button" class="mp-more" onclick="closeModal('agModal');pfOpen('${x.kind}','${escapeAttr(x.rec.id)}')">🏪 ${E(x.rec.nameUr || x.rec.name || '')} — open, then ✅ approve</button>` : `<div class="cp-hint" dir="ltr">${E(x.rk)}</div>`).join('') : ''; })()}`);
 }
 async function mrqSet(i, st, note){
+  if(mrqCdBlock()) return false;
   const x = (window._mrqShown || [])[i]; if(!x) return false;
   try{ const hdr = await vfAdminHdr(); const j = await (await fetch(PF_API + '/preq', {method:'POST', headers: hdr, body: JSON.stringify({op:'set', rec: x.rec, st, note: note || ''})})).json(); if(!j || !j.ok) throw 0;
     x.st = st; x.note = note || ''; x.upd = Date.now(); showToast(st === 'pend' ? '⏸️ Kept pending' : st === 'info' ? '❓ Message saved — shopkeeper will see it in the app' : st === 'rej' ? '❌ Marked not approved' : '✅ Done'); try{ pendingHomeListRender(); }catch(e){} mrqOpen(); return true; }
   catch(e){ showToast('⚠️ Could not save — check internet / developer login'); return false; }
 }
 async function mrqInfo(i){
+  if(mrqCdBlock()) return;
   const x = (window._mrqShown || [])[i]; if(!x) return; const d = x.data || {};
   const msg = prompt('What more details do you need? (the shopkeeper sees this message in the app)', 'السلام علیکم! «' + (d.prof || '') + '» کی ممبرشپ کے لیے براہِ کرم دکان کی تصویر اور پورا پتہ بھیج دیں۔'); if(!msg || !msg.trim()) return;
   if(!(await mrqSet(i, 'info', msg.trim()))) return;
@@ -21249,7 +21291,8 @@ function mrqView(i){
   if(!f) return showToast('This business card is not on this phone yet — search it by mobile number');
   closeModal('agModal'); pfOpen(f[0], f[1].id);
 }
-async function mrqApprove(i){   /* MCS1411SA397: منظوری = فارم کا جائزہ؛ مدت ادائیگی (Google Play) سے بنتی ہے، یہاں سے کوئی سال نہیں دیا جاتا */
+async function mrqApprove(i){
+  if(mrqCdBlock()) return;   /* MCS1411SA397: منظوری = فارم کا جائزہ؛ مدت ادائیگی (Google Play) سے بنتی ہے، یہاں سے کوئی سال نہیں دیا جاتا */
   const x = (window._mrqShown || [])[i]; if(!x) return; const d = x.data || {};
   const chk = []; try{ const rec = store.services.find(r => pfKeyOf(r, 'service') === x.rec) || store.doctors.find(r => pfKeyOf(r, 'doctor') === x.rec); if(rec){
     const own = (rec.more && rec.more.ptype) ? '' : '⚠️ Profile type missing'; if(own) chk.push(own);
@@ -21260,7 +21303,7 @@ async function mrqApprove(i){   /* MCS1411SA397: منظوری = فارم کا ج
 }
 /* دکاندار کے فون پر: ڈویلپر کا جواب (مزید تفصیل / منظور نہیں) */
 async function mrqMine(){
-  try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return; if(Date.now() - (+localStorage.getItem('mcsRqChk') || 0) < 30 * 60000) return; localStorage.setItem('mcsRqChk', Date.now()); }catch(e){ return; }
+  try{ if(mrqCan()) return; if(Date.now() - (+localStorage.getItem('mcsRqChk') || 0) < 30 * 60000) return; localStorage.setItem('mcsRqChk', Date.now()); }catch(e){ return; }
   let L = []; try{ L = (typeof mpListReal === 'function' ? mpListReal() : mpList()).slice(0, 5); }catch(e){}
   for(const it of L){ const rk = it && it.p && it.p.rk; if(!rk) continue;
     try{ const j = await (await fetch(PF_API + '/preq', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({op:'mine', rec: rk})})).json();
@@ -22485,14 +22528,14 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     memAfterReg(kind || 'service', rec); }, 50); };
   /* MCS1311FR388: رجسٹریشن محفوظ — دو بالکل الگ ڈبے: اوپر «منظوری کے لیے ڈویلپر کو»، دور نیچے الگ «Google Play ممبرشپ» */
   window.memAfterReg = function(kind, rec){
+    /* MCS1411SA406 (مالک کا حکم): پیکج کے بغیر رجسٹریشن مکمل نہیں۔ ڈویلپر کی منظوری ختم — پلے سٹور کی خریداری ہی منظوری ہے۔
+       خریداری تک مکمل کارڈ صرف مالک / ڈویلپر / کو-ڈویلپر / ایجنٹ کو نظر آتا ہے۔ */
     const rk = rkOf(kind, rec); window._marArgs = [kind, rec];
-    agModal(`<div style="text-align:center;font-size:46px">✅</div><div class="ag-hd" style="text-align:center">Registration saved <small>${E(rec.nameUr || rec.name || '')}</small></div>
-      <div class="mem-pk" style="background:#eff6ff;border-color:#1d4ed8"><div class="n" style="color:#1e3a8a">📨 Approval</div>
-        <button type="button" class="mem-play" style="background:linear-gradient(#2563eb,#1d4ed8);box-shadow:0 4px 0 #1e3a8a;margin-top:8px" onclick="memAutoSend(window._marArgs[0], window._marArgs[1])">📨 Send to developer for approval</button></div>
-      <div style="height:42px"></div>
+    agModal(`<div style="text-align:center;font-size:46px">📝</div><div class="ag-hd" style="text-align:center">رجسٹریشن بھر دی گئی <small>${E(rec.nameUr || rec.name || '')}</small></div>
+      <div class="cp-hint" style="margin:8px 0;text-align:center">رجسٹریشن <b>مکمل</b> تب ہوگی جب آپ گوگل پلے سے پیکج لیں گے۔ پیکج لیتے ہی آپ کا کارڈ سب کو نظر آنا شروع ہو جائے گا۔<br>تب تک مکمل کارڈ صرف آپ کو نظر آئے گا۔</div>
       <div class="mem-pk"><div class="n">⭐ Google Play Membership</div><small>1 year</small>
-        <button type="button" class="mem-play" style="margin-top:8px" onclick="memFlowRk('${E(rk)}')">▶️ Get membership — Google Play</button></div>
-      <button type="button" class="mem-alt" onclick="closeModal('agModal')">Later</button>`);
+        <button type="button" class="mem-play" style="margin-top:8px" onclick="memFlowRk('${E(rk)}')">▶️ پیکج لیں — Google Play</button></div>
+      <button type="button" class="mem-alt" onclick="closeModal('agModal')">ابھی نہیں — کارڈ ابھی صرف مجھے نظر آئے گا</button>`);
   };
   window.memFlowRk = function(rk, noPlay){
     const x = mpList().find(y => y.p.rk === rk) || mpList()[0]; if(!x) return;
@@ -23121,41 +23164,97 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
 .doc-card.rc .rc-ft{display:flex;justify-content:flex-end;margin-top:3px;direction:ltr}
 .doc-card.rc .rc-id{font:700 11px Consolas,monospace;color:#475569}
 </style>
-<script id="mcsRC402js">
+<script id="mcsRC403js">
+/* MCS1411SA403: رجسٹرڈ کارڈ کا نیا ڈیزائن — بزنس (svcCardHtml) اور پروفیشنل (docCardHtml) دونوں پر۔
+   پرانے کارڈ جن پر more.shop نہیں: سرور پر محفوظ دکان کی تصویر (slot 0) سے چھوٹی تھمب ایک بار خود بنتی ہے۔ */
 (function(){
-  const o = window.svcCardHtml; if(typeof o !== 'function' || o._rc) return;
+  const oS = window.svcCardHtml, oD = window.docCardHtml;
+  if(typeof oS !== 'function' || (oS._rc && (typeof oD !== 'function' || oD._rc))) return;
   const fmt = t => t ? new Date(t).toLocaleDateString('en-GB') : '';
   const ICO_CALL = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>';
   const ICO_WA = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>';
   const E = s => escapeHtml(s == null ? '' : String(s));
-  function rc(s, meta){
-    meta = CATEGORY_META[s.category] || meta || {};
+  const lsG = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
+  const lsS = (k, v) => { try{ localStorage.setItem(k, v); }catch(e){} };
+
+  /* ---------- دکان کی تھمب: فون کی مقامی کیش (ہر فون پر، چاہے سرور پر more.shop نہ ہو) ---------- */
+  const TH_KEY = 'mcsShopTh', TRY_KEY = 'mcsShopTry';
+  let TH = {}, TRY = {}; try{ TH = JSON.parse(lsG(TH_KEY) || '{}') || {}; }catch(e){} try{ TRY = JSON.parse(lsG(TRY_KEY) || '{}') || {}; }catch(e){}
+  function thSet(k, v){ TH[k] = v; const ks = Object.keys(TH); if(ks.length > 80){ delete TH[ks[0]]; } lsS(TH_KEY, JSON.stringify(TH)); }
+  function trySet(k, ms){ TRY[k] = Date.now() + ms; lsS(TRY_KEY, JSON.stringify(TRY)); }
+  const Q = [], seen = {}; let run = 0, budget = 60;   /* ایک سیشن میں زیادہ سے زیادہ 60 کوششیں */
+  function want(kind, rec, key){
+    if(!key || seen[key] || budget <= 0) return; seen[key] = 1;
+    if((TRY[key] || 0) > Date.now()) return;
+    Q.push({kind, rec, key}); setTimeout(pump, 600);
+  }
+  async function pump(){
+    if(run || !Q.length) return; run = 1;
+    const it = Q.shift();
+    try{ await work(it); }catch(e){}
+    run = 0; setTimeout(pump, 500);
+  }
+  async function work(it){
+    if(navigator.onLine === false){ delete seen[it.key]; return; }
+    budget--;
+    let p = null; try{ p = await pfGet(it.key); }catch(e){ trySet(it.key, 30 * 60e3); return; }
+    const x = p && (p.imgs || []).find(i => String(i.id).split('_').pop() === '0');
+    if(!x){ trySet(it.key, 7 * 864e5); return; }   /* سرور پر دکان کی تصویر ہی نہیں — ہفتہ بھر نہیں دیکھتے */
+    const full = await pfImg(x.id, x.ts); if(!full){ trySet(it.key, 60 * 60e3); return; }
+    let th = ''; try{ th = await pfShopThumb(full); }catch(e){}
+    if(!th){ trySet(it.key, 60 * 60e3); return; }
+    thSet(it.key, th); trySet(it.key, 30 * 864e5);
+    /* مالک / ایڈمن کے فون سے: ایک بار more.shop میں بھی لکھ دیں تاکہ سب فونوں پر پہنچے */
+    try{
+      const r = it.rec, mine = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || pfOwnsStrict(r);
+      if(mine && r && !(r.more && r.more.shop)){ r.more = r.more || {}; r.more.shop = th; saveStore(); pushMoreToFirebase(it.kind === 'doctor' ? 'doctors' : 'services', r.fsId || r.id, r.more); }
+    }catch(e){}
+    try{ document.querySelectorAll('.doc-card.rc[data-rk="' + it.key + '"] .rc-ph').forEach(el => { el.style.backgroundImage = 'url(' + th + ')'; el.textContent = ''; }); }catch(e){}
+  }
+
+  /* ---------- مشترکہ کارڈ: kind = 'service' | 'doctor' ---------- */
+  function rc(kind, s, meta, mode){
+    const doc = kind === 'doctor';
+    meta = (!doc && CATEGORY_META[s.category]) || meta || {};
+    const emoji = doc ? '🩺' : (meta.emoji || '🏪');
     const num = normalizePkNumber(s.whatsapp || ''), digits = num.replace(/[^0-9]/g, ''), intl = '92' + digits.replace(/^0/, '');
-    const m = s.more || {}, ow = splitOwnerIntro(s.intro), key = pfKeyOf(s, 'service'), a = (typeof pfAct !== 'undefined' && pfAct[key]) || {};
-    let info = null; try{ info = apInfo({kind: 'service', rec: s}); }catch(e){}
+    const m = s.more || {}, ow = doc ? {owner: ''} : splitOwnerIntro(s.intro), key = pfKeyOf(s, kind), a = (typeof pfAct !== 'undefined' && pfAct[key]) || {};
+    let info = null; try{ info = apInfo({kind, rec: s}); }catch(e){}
     const until = (info && info.until > Date.now() ? info.until : a.until) || 0, since = a.since || (info && info.since) || 0;
     const left = until ? Math.max(1, Math.ceil((until - Date.now()) / 864e5)) : 0;
-    const prods = Array.isArray(m.prods) && m.prods.length ? m.prods : (m.services ? String(m.services).split(/[،,]/).map(x => x.trim()).filter(Boolean) : []);
+    const prods = doc ? [] : (Array.isArray(m.prods) && m.prods.length ? m.prods : (m.services ? String(m.services).split(/[،,]/).map(x => x.trim()).filter(Boolean) : []));
     const addr = [s.address, s.area, s.city].filter(Boolean).map(E).join('، ');
-    const rid = shortRecordId('service', s) || '';
+    const rid = shortRecordId(kind, s) || '';
     const mine = (isAdminSignedIn || pfOwnsStrict(s));
-    return `<div class="doc-card rc pf-gold"${s.id ? ` onclick="pfCardTap(event,'service','${escapeAttr(s.id)}')"` : ''}>${dupBadge('service', s)}${ewRib('service', s)}
+    const nameUr = s.nameUr || s.name || '';
+    const thumb = m.shop || TH[key] || '';
+    if(!thumb) want(kind, s, key);
+    const subL = doc ? [s.specialty, s.hospital].filter(Boolean).map(E).join(' • ') : '';
+    const typ = doc ? '' : (isBlankVal(s.type) ? '' : s.type);
+    const intro = doc && s.intro ? String(s.intro).slice(0, 110) : '';
+    const sid = s.id ? escapeAttr(s.id) : '';
+    const act = (doc && mode !== 'list') ? '' : (mine
+      ? `<button onclick="event.stopPropagation();cardEdit('${kind}','${sid}')" aria-label="ترمیم">✏️</button>`
+      : `<button class="a-reqadmin" onclick="event.stopPropagation();openReportChoice('${kind}','${sid}')" aria-label="رابطہ">📩</button>`);
+    return `<div class="doc-card rc pf-gold" data-rk="${escapeAttr(key)}"${s.id ? ` onclick="pfCardTap(event,'${kind}','${sid}')"` : ''}>${dupBadge(kind, s)}${ewRib(kind, s)}
       <div class="rc-grid">
-        <div class="rc-l">${agBadgeHtml('service', s)}
-          <div class="rc-dp">${m.selfie ? `<img src="${escapeAttr(m.selfie)}" alt="">` : (meta.emoji || '🏪')}</div>
-          <div class="rc-reg"><b>✓ رجسٹرڈ بزنس</b>${since ? `<span>رجسٹر: <bdi dir="ltr">${fmt(since)}</bdi></span>` : ''}${until ? `<span>ختم: <bdi dir="ltr">${fmt(until)}</bdi></span><span class="d">${left} دن باقی</span>` : ''}</div>
+        <div class="rc-l">${agBadgeHtml(kind, s)}
+          <div class="rc-dp">${m.selfie ? `<img src="${escapeAttr(m.selfie)}" alt="">` : emoji}</div>
+          <div class="rc-reg"><b>✓ رجسٹرڈ ${doc ? 'پروفیشنل' : 'بزنس'}</b>${since ? `<span>رجسٹر: <bdi dir="ltr">${fmt(since)}</bdi></span>` : ''}${until ? `<span>ختم: <bdi dir="ltr">${fmt(until)}</bdi></span><span class="d">${left} دن باقی</span>` : ''}</div>
           ${digits ? `<div class="rc-acts"><a class="c" href="tel:${digits}" aria-label="کال">${ICO_CALL}</a><a class="w" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ">${ICO_WA}</a></div>` : ''}
         </div>
         <div class="rc-m">
-          <div class="rc-name">${E(s.nameUr)}${newBadge(s)}</div>${s.nameEn ? `<div class="rc-en">${E(s.nameEn)}</div>` : ''}
+          <div class="rc-name">${E(nameUr)}${newBadge(s)}</div>${s.nameEn ? `<div class="rc-en">${E(s.nameEn)}</div>` : ''}
           ${ow.owner ? `<div class="rc-ow">👤 ${E(ow.owner)}</div>` : ''}
-          ${isBlankVal(s.type) ? '' : `<div class="rc-ty">${E(s.type)}</div>`}
+          ${typ ? `<div class="rc-ty">${E(typ)}</div>` : ''}
+          ${subL ? `<div class="rc-ty">${subL}</div>` : ''}
           ${prods.length ? `<div class="rc-pr">🛒 ${prods.slice(0, 6).map(E).join(' • ')}</div>` : ''}
+          ${intro ? `<div class="rc-pr">${E(intro)}</div>` : ''}
           ${addr ? `<div class="rc-ad">📍 ${addr}</div>` : ''}
         </div>
         <div class="rc-r">
-          <div class="rc-ph"${m.shop ? ` style="background-image:url(${escapeAttr(m.shop)})"` : ''}>${m.shop ? '' : (meta.emoji || '🏪')}</div>
-          <div class="rc-ic">${favBtnHtml('service', s.id)}<button class="a-share" onclick="event.stopPropagation();shareProfileCardById('service','${escapeAttr(s.id)}')" aria-label="شیئر">📤</button>${mine ? `<button onclick="event.stopPropagation();cardEdit('service','${escapeAttr(s.id)}')" aria-label="ترمیم">✏️</button>` : `<button class="a-reqadmin" onclick="event.stopPropagation();openReportChoice('service','${escapeAttr(s.id)}')" aria-label="رابطہ">📩</button>`}</div>
+          <div class="rc-ph"${thumb ? ` style="background-image:url(${escapeAttr(thumb)})"` : ''}>${thumb ? '' : emoji}</div>
+          <div class="rc-ic">${favBtnHtml(kind, s.id)}<button class="a-share" onclick="event.stopPropagation();shareProfileCardById('${kind}','${sid}')" aria-label="شیئر">📤</button>${act}</div>
         </div>
       </div>
       <div class="rc-ft"><span class="rc-id">${E(rid.toUpperCase())}</span></div>
@@ -23164,10 +23263,19 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
   window.svcCardHtml = function(s, meta){
     let live = false;
     try{ live = !!(s && s.id && typeof pfActive === 'function' && pfActive(s) && s.category !== UNASSIGNED_KEY && s.category !== 'emergencyNumbers' && s.category !== 'govOffices'); }catch(e){}
-    if(live){ try{ return rc(s, meta); }catch(e){} }
-    return o.apply(this, arguments);
+    if(live){ try{ return rc('service', s, meta); }catch(e){ console.warn('rc svc', e); } }
+    return oS.apply(this, arguments);
   };
   window.svcCardHtml._rc = 1;
+  if(typeof oD === 'function'){
+    window.docCardHtml = function(d, mode){
+      let live = false;
+      try{ live = !!(d && d.id && typeof pfActive === 'function' && pfActive(d)); }catch(e){}
+      if(live){ try{ return rc('doctor', d, null, mode); }catch(e){ console.warn('rc doc', e); } }
+      return oD.apply(this, arguments);
+    };
+    window.docCardHtml._rc = 1;
+  }
 })();
 </script>
 
