@@ -4386,10 +4386,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA396";
+const APP_VERSION = "MCS1411SA398";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA398": "📝 «Complete registration» on your own card now opens the new clean registration wizard (it used to open the old form) • Subtype / Products boxes: no ＋ button — what you type is kept at once and added when you press Enter, leave the box, or Save",
+  "MCS1411SA397": "✅ Registered-business tag: small, bottom-left corner, own green; shows expiry date + remaining days only (no «3 of 4», no trial days) • Developer no longer gives a year — membership starts only from Google Play payment • Admin approval is now a review: see the full form, fix mistakes, then approve",
   "MCS1411SA396": "🧾 Registration wizard redesigned: clean flat form (no 3D / capsule / extra colours) • after the free card is saved, Google Play plans open at once — only the eligible plan is open, the rest locked • after payment the card is registered and shown with its number • subscription number now MCS001M1, MCS001M2, MCS001M3 …",
   "MCS1311FR395": "🛠️ Form: Subtype / Title typed in the box now counts and is added automatically (no more red box when you did not press ➕)",
   "MCS1311FR394": "🏪 My Portal: fixed the broken half-width layout (Registration Steps button now sits inside the page) • 💳 Package plans: friendlier message when Google Play does not return prices",
@@ -4867,9 +4869,9 @@ function pfTag(kind, rec){
   const trial = info.mode === 'free';
   const left = Math.max(1, Math.ceil((info.until - Date.now())/864e5));
   const title = kind === 'doctor' ? 'رجسٹرڈ پروفیشن' : 'رجسٹرڈ بزنس';
-  const total = Math.max(365, left);
-  const sub = trial ? `ٹرائل — ${left} دن باقی` : (info.until ? `<span>${total} میں سے ${left} دن باقی</span><span dir=\"ltr\">${new Date(info.until).toLocaleDateString('en-GB')}</span>` : 'سبسکرپشن فعال');
-  return `<button type="button" class="pf-tag ${trial ? 'trial' : 'paid'}" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')"><b>${trial ? '🎁' : '✅'} ${title}</b><small>${sub}</small></button>`;
+  /* MCS1411SA397: صرف ختم ہونے کی تاریخ اور باقی دن — «N میں سے» نہیں */
+  const sub = trial ? `ٹرائل — ${left} دن باقی` : (info.until ? `<span dir="ltr">${new Date(info.until).toLocaleDateString('en-GB')}</span><span>${left} دن باقی</span>` : 'سبسکرپشن فعال');
+  return `<button type="button" class="pf-tag ${trial ? 'trial' : 'paid'}" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')"><b>${trial ? '' : '✓ '}${title}</b><small>${sub}</small></button>`;
 }
 function pfBtn(kind, rec){ return pfTag(kind, rec); }
 function pfRecById(kind, id){ return kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id); }
@@ -4939,7 +4941,7 @@ function pfHtml(c){
     + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ ممبرشپ فعال — ${left} دن باقی` : '⚠️ ممبرشپ کی مدت ختم — جاری رکھنے کے لیے تفصیل بھیجیں'}</div>` : ''}
         ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں — 7 دن مفت'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
         ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">${mcsPlayOk() ? '⭐ ممبرشپ ایک سال کے لیے جاری رکھیں — Google Play' : '📨 ممبرشپ جاری رکھیں — تفصیل ڈویلپر کو بھیجیں'}</button>` : ''}
-        ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('year')">➕ ایک سال بڑھائیں</button><button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ ممبرشپ ختم کریں</button>` : '') : ''}
+        ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ ممبرشپ ختم کریں</button>` : '') : ''}
         ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove('${escapeAttr(c.rk)}')">✖ اس فون کی «میرا کاروبار / پروفیشن» سے ہٹائیں</button>` : ''}</div>` : '')
     + (!owner && !adm && !codevOn() ? `<button type="button" class="pf-mine" onclick="pfClaimMine()">👤 یہ میرا کاروبار ہے — «میرا کاروبار / پروفیشن» میں جوڑیں</button>` : '');
 }
@@ -4964,6 +4966,7 @@ function pfRender(){
   body.querySelectorAll('img[data-pfimg]').forEach(async im=>{ const src = await pfImg(im.dataset.pfimg, im.dataset.ts); if(src) im.src = src; });
 }
 async function pfAdmin(act){
+  if(act === 'year'){ showToast('ایک سال دینے کا نظام ختم — ممبرشپ صرف گوگل پلے کی ادائیگی سے شروع ہوتی ہے'); return; }
   const c = pfCur; if(!c) return;
   let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ showToast('ایڈمن لاگ ان درکار ہے'); return; }
   try{
@@ -5257,7 +5260,7 @@ function pfOneHtml(c, x){
       ${st ? `<div class="pf1-st"><span>👀 ${st.view}</span><span>📞 ${st.call}</span><span>💬 ${st.wa}</span><small>${st.days} دن</small></div>` : ''}
       ${left != null ? `<div class="pf1-st"><span>${left > 0 ? '⭐ ممبرشپ فعال — ' + left + ' دن باقی' : '⚠️ مدت ختم'}</span></div>` : ''}
       <div class="pf1-st"><span dir="ltr">🆔 ${E(c.rk || '')}</span></div>
-      <div class="pf1-act"><button type="button" onclick="pfEditOpen()">✏️ ایڈٹ</button><button type="button" onclick="fpOpen('${c.kind}','${A(c.rec.id)}')">📄 مکمل پروفائل</button>${adm && c.prof ? `<button type="button" onclick="pfAdmin('year')">➕ ایک سال</button>` : ''}</div>`
+      <div class="pf1-act"><button type="button" onclick="pfEditOpen()">✏️ ایڈٹ</button><button type="button" onclick="fpOpen('${c.kind}','${A(c.rec.id)}')">📄 مکمل پروفائل</button></div>`
     : `<div class="pf1-st"><span>🆔 ●●●●●●●</span><span>📞 ●●●</span><span>👀 ●●●</span></div><div class="pf1-st"><span>⭐ ممبرشپ ●●●●●● دن</span></div>`;
   return `<div class="pf1">
     <div class="pf1-hero">${shopImg ? `<img class="pf1-shop" data-pfimg="${A(shopImg.id)}" data-ts="${shopImg.ts}" alt="">` : (showPriv ? `<div class="pf1-shop ph add" onclick="pfHeroAdd(0)"><span class="pf-plus">＋</span><em>یہاں دکان کی تصویر لگانے کے لیے ٹچ کریں</em></div>` : `<div class="pf1-shop ph">${cm.emoji}</div>`)}
@@ -17664,7 +17667,6 @@ function bzFill(){
       if(bzTab === 'ag') btn = `<button type="button" class="y" onclick="bzDo(${i},'ag')">🤝 اسے ایجنٹ بنائیں</button>`;
       else {
         if(x.st === 'basic') btn += `<button type="button" class="p" onclick="bzDo(${i},'reg')">📝 رجسٹریشن مکمل کریں</button>`;
-        if(x.st !== 'basic') btn += role === 'dev' ? `<button type="button" class="y" onclick="bzDo(${i},'year')">⭐ ${x.st === 'live' ? 'ایک سال اور' : 'ایک سال ممبرشپ دیں'}</button>` : (x.st === 'reg' ? `<button type="button" class="y" onclick="bzDo(${i},'yreq')">⭐ ایک سال ممبرشپ — ڈویلپر کو بھیجیں</button>` : '');
         btn += `<button type="button" class="g" onclick="bzDo(${i},'inv')">📨 دکاندار کا لاگ اِن میسج</button>`;
         btn += `<button type="button" onclick="fpOpen('${x.kind}','${escapeAttr(x.rec.id)}')">📄 مکمل پروفائل</button>`;
       }
@@ -17678,6 +17680,7 @@ function bzSetRef(kind, rec){
     if(kind !== 'doctor') agRefPost(rec); }catch(e){}
 }
 function bzDo(i, what){
+  if(what === 'year' || what === 'yreq'){ showToast('ایک سال دینے کا نظام ختم — ممبرشپ صرف گوگل پلے کی ادائیگی سے شروع ہوتی ہے'); return; }
   const x = bzRows[i]; if(!x) return; const rec = x.rec, kind = x.kind;
   if(what === 'reg'){
     closeModal('agModal'); try{ closeModal('portalModal'); }catch(e){}
@@ -17695,6 +17698,7 @@ function bzDo(i, what){
   if(what === 'ag') return bzAgent(x);
 }
 async function bzGiveYear(x){
+  showToast('ایک سال دینے کا نظام ختم — ممبرشپ صرف گوگل پلے کی ادائیگی سے شروع ہوتی ہے'); return;
   if(!isAdminSignedIn){ showToast('پہلے ایڈمن لاگ اِن کریں'); return; }
   const rec = x.rec, kind = x.kind, nm = rec.nameUr || rec.name || '';
   let rk = ''; try{ rk = pfKeyOf(rec, kind); }catch(e){}
@@ -17726,6 +17730,7 @@ async function bzGiveYear(x){
   }catch(e){ agModal(`<div class="ag-st">⚠️ ممبرشپ جاری نہیں ہوئی — ${escapeHtml(e.message === 'login' ? 'ایڈمن لاگ اِن دوبارہ کریں' : (e.message || ''))}</div><button type="button" class="btn block secondary" onclick="bzListOpen()">← واپس</button>`); }
 }
 function bzYearReq(x){
+  showToast('ایک سال دینے کا نظام ختم — ممبرشپ صرف گوگل پلے کی ادائیگی سے شروع ہوتی ہے'); return;
   const rec = x.rec, kind = x.kind; let rk = ''; try{ rk = pfKeyOf(rec, kind); }catch(e){}
   let cat = ''; try{ cat = ubCatMeta(kind === 'doctor' ? 'doctor' : rec.category).ur || ''; }catch(e){}
   const pn = (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), ph = rec.whatsapp || rec.phone || '', who = bzRole() === 'codev' ? '👥 کو-ڈویلپر' : '🤝 ایجنٹ';
@@ -18291,7 +18296,6 @@ function bzCardsHtml(L, from){
       <small>📍 ${E([r.area, r.city, r.district].filter(v => v && !(typeof isBlankVal === 'function' && isBlankVal(v))).join('، ') || '—')}</small>
       <span class="bz-bd ${x.st}">${stL[x.st]}</span>${days ? ` <span class="bz-bd ${inf.left > 15 ? 'live' : 'reg'}">${days}</span>` : ''}${r.more && r.more.ref ? ` <span class="bz-bd" style="background:#ecfeff;color:#155e75">🤝 <bdi dir="ltr">${E(r.more.ref)}</bdi></span>` : ''}</div></div>
       <div class="r">${live ? '' : `<button type="button" class="p" onclick="bzGo(${i})">⭐ ${x.st === 'basic' ? 'رجسٹریشن + ممبرشپ مکمل کریں' : 'ممبرشپ مکمل کریں'}</button>`}
-        ${bzRole() === 'dev' && x.st !== 'basic' ? `<button type="button" class="g" onclick="bzWorkAdd(bzCards[${i}]);bzRows=bzCards;bzDo(${i},'year')">⭐ ${x.st === 'live' ? 'ایک سال اور' : 'ایک سال دیں'}</button>` : ''}
         <button type="button" onclick="bzRows=bzCards;bzDo(${i},'inv')">📨 لاگ اِن میسج</button>
         ${ph ? `<a href="tel:0${bzDigits(ph).slice(-10)}">📞</a>` : ''}
         ${from === 'work' ? `<button type="button" class="x" onclick="bzWorkDel('${x.kind}', ${JSON.stringify(String(r.id)).replace(/"/g, '&quot;')});bzWorkOpen()" title="فہرست سے ہٹائیں">✖ ہٹائیں</button>` : ''}</div></div>`; }).join('');
@@ -21189,11 +21193,11 @@ function mrqOpen(){
       ${row('🏷️ Category', E(d.cat))}${row('📍 Place', E([d.area, d.city].filter(Boolean).join(', ')))}${row('🤝 Brought by', E(d.ref ? refN(d.ref) + (d.refName ? ' — ' + d.refName : '') : 'PBT (came by self)'))}${row('⭐ Membership now', mem)}
       ${d.text ? `<div class="mrq-tx" dir="auto">📝 ${E(d.text)}</div>` : ''}${x.note ? `<div class="mrq-nt" dir="auto">💬 Your last message: ${E(x.note)}</div>` : ''}
       ${x.st === 'done' || x.st === 'rej' ? '' : `<div class="mrq-b">
-        <button type="button" class="ok" onclick="mrqApprove(${i})">✅ Approve — 1 year</button>
+        <button type="button" class="ok" onclick="mrqApprove(${i})">✅ Reviewed — Approve</button>
         <button type="button" class="in" onclick="mrqInfo(${i})">❓ Ask more details</button>
         <button type="button" class="pd" onclick="mrqSet(${i}, 'pend')">⏸️ Keep pending</button>
         <button type="button" class="no" onclick="mrqReject(${i})">❌ Not now</button>
-        <button type="button" class="vw" onclick="mrqView(${i})">👁️ View business</button>
+        <button type="button" class="vw" onclick="mrqView(${i})">👁️ View / ✏️ Edit form</button>
         ${ph ? `<a class="wa" target="_blank" rel="noopener" href="https://wa.me/92${ph}">💬 WhatsApp</a>` : ''}</div>`}
     </div>`; };
   window._mrqShown = L.concat(done);
@@ -21222,21 +21226,14 @@ function mrqView(i){
   if(!f) return showToast('This business card is not on this phone yet — search it by mobile number');
   closeModal('agModal'); pfOpen(f[0], f[1].id);
 }
-async function mrqApprove(i){
+async function mrqApprove(i){   /* MCS1411SA397: منظوری = فارم کا جائزہ؛ مدت ادائیگی (Google Play) سے بنتی ہے، یہاں سے کوئی سال نہیں دیا جاتا */
   const x = (window._mrqShown || [])[i]; if(!x) return; const d = x.data || {};
-  if(!x.has) return alert('⚠️ This membership is not on the server yet.\nAsk the shopkeeper to open «⭐ Membership» in the app first (or use 🏪 Business hub → ⭐ give 1 year).');
-  const until = mpYearUntil(x.since, x.until);
-  if(!confirm('Approve 1-year membership?\n\n🏪 ' + (d.prof || '') + '\n👤 ' + (d.name || '') + '\n📱 ' + (d.mobile || '') + '\n✉️ ' + (d.gmail || '') + '\n📅 till ' + new Date(until).toLocaleDateString('en-GB'))) return;
-  if(!(await yearPwOk(d.name || d.prof || ''))) return;
-  let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ return showToast('Developer login needed'); }
-  try{
-    if(x.pend){ await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: x.rec, act: 'approve'})}); }
-    const j = await (await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: x.rec, act: 'until', until})})).json(); if(!j || !j.ok) throw 0;
-    if(pfAct[x.rec]){ pfAct[x.rec].until = until; delete pfAct[x.rec].pend; } try{ localStorage.setItem('mcsPfList', JSON.stringify(pfAct)); }catch(e){}
-    x.until = until; x.pend = 0; await mrqSet(i, 'done', 'منظور — ایک سال کی ممبرشپ فعال');
-    try{ hlRenderSoon(); }catch(e){}
-    setTimeout(() => { try{ memDoneShow({name: d.name || '', prof: d.prof || '', phone: d.mobile || '', until}); }catch(e){} }, 400);
-  }catch(e){ showToast('⚠️ Could not approve — check internet / developer login'); }
+  const chk = []; try{ const rec = store.services.find(r => pfKeyOf(r, 'service') === x.rec) || store.doctors.find(r => pfKeyOf(r, 'doctor') === x.rec); if(rec){
+    const own = (rec.more && rec.more.ptype) ? '' : '⚠️ Profile type missing'; if(own) chk.push(own);
+    if(!(rec.nameUr || rec.name)) chk.push('⚠️ Business name missing'); if(!rec.city) chk.push('⚠️ City missing'); if(!rec.address) chk.push('⚠️ Address missing'); } }catch(e){}
+  if(!confirm('Have you reviewed the full form (name, district / province, city, address, category) and found it correct?\n\n🏪 ' + (d.prof || '') + '\n👤 ' + (d.name || '') + '\n📱 ' + (d.mobile || '') + '\n📍 ' + [d.area, d.city].filter(Boolean).join(', ') + (chk.length ? '\n\n' + chk.join('\n') : '') + '\n\nApprove?')) return;
+  await mrqSet(i, 'done', 'منظور — آپ کا فارم جانچ لیا گیا');
+  try{ hlRenderSoon(); }catch(e){}
 }
 /* دکاندار کے فون پر: ڈویلپر کا جواب (مزید تفصیل / منظور نہیں) */
 async function mrqMine(){
@@ -21544,9 +21541,8 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     const dev = role() === 'dev'; window._pkLast = { kind: 'service', rec };
     agModal(`<div class="ag-hd">✅ رجسٹریشن محفوظ <small>${esc(rec.nameUr || rec.name || '')}</small></div>
       <div class="ag-ok">👤 ${esc(c.name)} • 🆔 ${esc(c.sid)}<br>📱 <bdi dir="ltr">0${esc(d10(c.mobile))}</bdi>${c.district ? ' • 📍 ' + esc(c.district) : ''}</div>
-      <div class="cp-hint" style="margin:8px 0">اگلا قدم: <b>ایک سال کی ممبرشپ</b> — ${dev ? 'آپ خود دیں' : 'منظوری کے لیے ڈویلپر کو بھیجیں'}۔ منظوری کے بعد کوئی کوڈ نہیں بنتا — کاروبار خود رجسٹر ہو جاتا ہے؛ وہ بندہ اپنی ID / موبائل اور 6 ہندسوں کے PIN سے لاگ اِن کرے تو اسے مبارکباد کا کارڈ اور اپنا کاروباری کارڈ مل جائے گا۔</div>
-      ${dev ? `<button type="button" class="btn block ag-send" onclick="closeModal('agModal');bzGiveYear(window._pkLast)">⭐ ایک سال کی ممبرشپ دیں</button>`
-            : `<button type="button" class="btn block ag-send" onclick="bzYearReq(window._pkLast)">📨 ایک سال کی منظوری کے لیے ڈویلپر کو بھیجیں</button>`}
+      <div class="cp-hint" style="margin:8px 0">اگلا قدم: <b>ممبرشپ</b> — دکاندار گوگل پلے سے ادائیگی کرے گا تو کاروبار خود رجسٹر ہو جائے گا؛ ایڈمن فارم دیکھ کر منظوری دے گا۔ منظوری کے بعد کوئی کوڈ نہیں بنتا — کاروبار خود رجسٹر ہو جاتا ہے؛ وہ بندہ اپنی ID / موبائل اور 6 ہندسوں کے PIN سے لاگ اِن کرے تو اسے مبارکباد کا کارڈ اور اپنا کاروباری کارڈ مل جائے گا۔</div>
+
       <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agModal')">بعد میں</button>`);
   };
   const _fp = window.fpNextStep;
@@ -22592,6 +22588,16 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
 html body .doc-card .doc-foot .doc-recid.on{display:block !important;position:absolute !important;right:9px !important;bottom:4px !important;left:auto !important;margin:0 !important;padding:1px 7px !important;z-index:5 !important;direction:ltr !important;unicode-bidi:isolate !important;font:800 11px/1.35 Arial,Helvetica,sans-serif !important;letter-spacing:.6px !important;color:#fff7d6 !important;background:rgba(0,0,0,.38) !important;border-radius:8px !important;opacity:1 !important;white-space:nowrap !important;pointer-events:none}
 html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px !important;box-sizing:border-box}
 </style>
+<style id="mcsTag397css">
+/* MCS1411SA397 (مالک کا حکم): رجسٹرڈ ٹیگ — چھوٹا، نیچے بائیں کونے میں، کارڈ سے ذرا مختلف سبز؛ اوپر کی جگہ خالی */
+html body html body .doc-card > .pf-tag,html body html body .ub-row > .pf-tag{position:absolute !important;top:auto !important;bottom:5px !important;left:6px !important;right:auto !important;width:88px !important;min-width:0 !important;max-width:88px !important;max-height:52px !important;padding:2px 4px !important;border:0 !important;border-radius:6px !important;box-shadow:none !important;background:#1f7a4d !important;color:#fff !important;text-align:center !important;z-index:4 !important}
+html body html body .doc-card > .pf-tag.trial,html body html body .ub-row > .pf-tag.trial{background:#b45309 !important}
+html body html body .doc-card > .pf-tag b,html body html body .ub-row > .pf-tag b{font-size:calc(9px*var(--pfk,1)) !important;font-weight:700 !important}
+html body html body .doc-card > .pf-tag small,html body html body .ub-row > .pf-tag small{font-size:calc(8px*var(--pfk,1)) !important;font-weight:500 !important}
+html body html body .doc-card:has(> .pf-tag) > .doc-toprow{padding-left:0 !important}
+html body html body .doc-card:has(> .pf-tag) .doc-foot .doc-address{padding-left:96px !important;box-sizing:border-box}
+html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !important}
+</style>
 <style id="mcsWiz388css">
 /* MCS1411SA396: سادہ، صاف، بین الاقوامی معیار کا فارم — ایک ہی رنگ، کوئی سایہ / گریڈینٹ / کیپسول نہیں */
 #wzOv{position:fixed;inset:0;z-index:2147483100;display:none;overflow:auto;background:#f5f7fa;font-family:MCSDigits,"Segoe UI",Roboto,Arial,sans-serif;color:#111827}
@@ -22787,8 +22793,8 @@ html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px
       ${LBL('Profile Type', 'پروفائل ٹائپ', 1)}<select class="wzI" id="wzPt" onchange="wzC('pt')"><option value="">Select Profile Type — منتخب کریں</option>${PT().map(t => `<option value="${esc(t[0])}" ${c.ptype === t[0] ? 'selected' : ''}>${esc(t[2] + ' — ' + t[1].replace(/^\S+\s/, ''))}</option>`).join('')}</select>
       ${LBL('Profile Category', 'پروفائل کیٹگری', 1)}<select class="wzI" id="wzMc" onchange="wzC('mc')"><option value="">Select Category — شعبہ منتخب کریں</option>${cats.map(x => `<option value="${esc(x.en)}" ${c.mcat === x.en ? 'selected' : ''}>${esc(x.en + ' — ' + x.ur)}</option>`).join('')}</select>
       ${LBL('Profile SubType(s) — multi-select', 'پروفائل سب ٹائپ (ایک سے زیادہ)', 1)}<div class="wzChips" id="wzSubs">${subList.length ? subList.map(v => { const on = (c.subs || []).some(x => String(x).toLowerCase() === v.toLowerCase()), ur = (function(){ try{ return clsTitleUr(v); }catch(e){ return ''; } })(); return `<button type="button" class="wzChip${on ? ' on' : ''}" data-v="${esc(v)}" onclick="wzSub(this.dataset.v)">${on ? '✔ ' : ''}${esc(v)}${ur ? ' <span class="u">' + esc(ur) + '</span>' : ''}</button>`; }).join('') : '<small class="u" style="color:#64748b">پہلے ٹائپ اور کیٹگری منتخب کریں</small>'}</div>
-      <div class="wzRow" style="margin-top:6px"><input class="wzI" id="wzSubIn" placeholder="Other / دیگر — add your own"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 74px" onclick="wzSubAdd()">＋ Add</button></div>
-      ${LBL('Products &amp; Services (multiple)', 'مصنوعات و خدمات (ایک سے زیادہ)')}<div class="wzRow"><input class="wzI" id="wzPrIn" placeholder="Enter products and services — ایک ایک لکھ کر ＋ دبائیں"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 74px" onclick="wzProdAdd()">＋ Add</button></div>
+      <div style="margin-top:6px"><input class="wzI" id="wzSubIn" placeholder="Other / دیگر — type and press Enter" value="${esc(c.subRaw)}" oninput="wzRaw()" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();wzSubAdd()}" onblur="wzBlur(event,'sub')"></div>
+      ${LBL('Products &amp; Services (multiple)', 'مصنوعات و خدمات (ایک سے زیادہ)')}<div><input class="wzI" id="wzPrIn" placeholder="Enter products and services — لکھیں، Enter دبائیں یا اگلے خانے پر جائیں" value="${esc(c.prRaw)}" oninput="wzRaw()" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();wzProdAdd()}" onblur="wzBlur(event,'prod')"></div>
       <div class="wzChips">${(c.prods || []).map((v, i) => `<span class="wzChip on">${esc(v)}<i onclick="wzProdDel(${i})">✖</i></span>`).join('')}</div>
       ${LBL('Associated Organization / Brand', 'متعلقہ ادارہ / برانڈ')}<select class="wzI" id="wzOrg" onchange="wzC('org')"><option value="">${esc((typeof CLS_NOORG !== 'undefined' ? CLS_NOORG : 'Independent'))}</option>${orgs.map(v => `<option value="${esc(v)}" ${c.org === v ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>
       ${LBL('Business Name (English)', 'کاروبار کا نام (انگریزی)')}<input class="wzI" id="wzNEn" dir="ltr" placeholder="Enter business name" value="${esc(c.nameEn)}" oninput="wzC('t')">
@@ -22809,13 +22815,19 @@ html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px
     if($('wzNEn')) c.nameEn = g('wzNEn'); if($('wzNUr')) c.nameUr = g('wzNUr'); if($('wzCity')) c.city = g('wzCity'); if($('wzAddr')) c.addr = g('wzAddr');
     save(); };
   window.wzSub = function(v){ const k = String(v).toLowerCase(), i = (S.c.subs || []).findIndex(x => String(x).toLowerCase() === k); if(i < 0) S.c.subs.push(v); else S.c.subs.splice(i, 1); wzC('t'); s2(); };
-  window.wzSubAdd = function(){ const i = $('wzSubIn'), v = ((i && i.value) || '').trim().slice(0, 60).replace(/\|/g, ' '); if(!v) return; if(!(S.c.subs || []).some(x => String(x).toLowerCase() === v.toLowerCase()) && S.c.subs.length < 30) S.c.subs.push(v); wzC('t'); s2(); };
-  window.wzProdAdd = function(){ const i = $('wzPrIn'); if(!i) return; i.value.split(/[،,\n;؛]+/).map(x => x.trim()).filter(Boolean).forEach(p => { if(S.c.prods.length < 40 && !S.c.prods.some(x => x.toLowerCase() === p.toLowerCase())) S.c.prods.push(p.slice(0, 60)); }); wzC('t'); s2(); };
+  window.wzRaw = function(){ if($('wzSubIn')) S.c.subRaw = $('wzSubIn').value; if($('wzPrIn')) S.c.prRaw = $('wzPrIn').value; save(); };
+  window.wzBlur = function(e, w){ const i = $(w === 'sub' ? 'wzSubIn' : 'wzPrIn'); if(!i || !i.value.trim()) return; const id = e && e.relatedTarget && e.relatedTarget.id; (w === 'sub' ? wzSubAdd : wzProdAdd)(); if(id && $(id)) try{ $(id).focus(); }catch(_){} };
+  function wzCommitQuiet(){ const c = S.c; const a = $('wzSubIn'), b = $('wzPrIn');
+    const sv = ((a && a.value) || c.subRaw || '').trim().slice(0, 60).replace(/\|/g, ' '); if(sv && !(c.subs || []).some(x => String(x).toLowerCase() === sv.toLowerCase()) && c.subs.length < 30) c.subs.push(sv);
+    String((b && b.value) || c.prRaw || '').split(/[،,\n;؛]+/).map(x => x.trim()).filter(Boolean).forEach(q => { if(c.prods.length < 40 && !c.prods.some(x => x.toLowerCase() === q.toLowerCase())) c.prods.push(q.slice(0, 60)); });
+    c.subRaw = ''; c.prRaw = ''; if(a) a.value = ''; if(b) b.value = ''; save(); }
+  window.wzSubAdd = function(){ S.c.subRaw = ''; const i = $('wzSubIn'), v = ((i && i.value) || '').trim().slice(0, 60).replace(/\|/g, ' '); if(!v) return; if(!(S.c.subs || []).some(x => String(x).toLowerCase() === v.toLowerCase()) && S.c.subs.length < 30) S.c.subs.push(v); wzC('t'); s2(); };
+  window.wzProdAdd = function(){ const i = $('wzPrIn'); if(!i) return; S.c.prRaw = ''; i.value.split(/[،,\n;؛]+/).map(x => x.trim()).filter(Boolean).forEach(p => { if(S.c.prods.length < 40 && !S.c.prods.some(x => x.toLowerCase() === p.toLowerCase())) S.c.prods.push(p.slice(0, 60)); }); wzC('t'); s2(); };
   window.wzProdDel = function(i){ S.c.prods.splice(i, 1); wzC('t'); s2(); };
   function chk2(){ const c = S.c;
     if(!c.ptype) return 'پروفائل ٹائپ منتخب کریں'; if(!c.mcat) return 'پروفائل کیٹگری منتخب کریں'; if(!(c.subs || []).length) return 'کم از کم ایک سب ٹائپ منتخب کریں';
     if(!(c.nameUr || '').trim()) return 'کاروبار کا نام اردو میں لکھیں'; if(!(c.city || '').trim()) return 'شہر / علاقہ لکھیں'; if(!(c.addr || '').trim()) return 'مکمل پتہ لکھیں'; return ''; }
-  window.wzPreview = function(){ wzC('t'); const m = chk2(); if(m) return err(m); const c = S.c, pt = PT().find(t => t[0] === c.ptype);
+  window.wzPreview = function(){ wzC('t'); wzCommitQuiet(); const m = chk2(); if(m) return err(m); const c = S.c, pt = PT().find(t => t[0] === c.ptype);
     const box = document.createElement('div'); box.id = 'wzPv'; box.style.cssText = 'position:fixed;inset:0;z-index:2147483200;background:rgba(15,23,42,.55);display:grid;place-items:center;padding:14px';
     box.innerHTML = `<div class="wzCard" style="max-width:420px;width:100%;max-height:88vh;overflow:auto"><div class="wzHd"><b>Preview — <span class="u">پیش نظارہ</span></b></div><div class="wzPrev u" style="direction:rtl;text-align:right">
       <div style="font-size:20px;font-weight:800">🏪 ${esc(c.nameUr)}</div>${c.nameEn ? `<div dir="ltr" style="text-align:left">${esc(c.nameEn)}</div>` : ''}
@@ -22823,7 +22835,7 @@ html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px
       <button class="wzBtn bB" onclick="document.getElementById('wzPv').remove()">✏️ Edit — درست کریں</button></div>`;
     document.body.appendChild(box); };
   window.wzDo2 = function(){
-    if(busy) return; wzC('t'); const m = chk2(); if(m) return err(m);
+    if(busy) return; wzC('t'); wzCommitQuiet(); const m = chk2(); if(m) return err(m);
     const rec = myCard(); if(!rec) return err('آپ کا کارڈ نہیں ملا — دوبارہ لاگ اِن کریں');
     busy = true; const c = S.c;
     try{
@@ -22954,6 +22966,10 @@ html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px
     const o = window.uaSignup;
     window.uaSignup = function(pre){ if(pre && pre.gtoken && typeof o === 'function') return o.apply(this, arguments);
       try{ uaHide(); }catch(e){} S.step = 1; save(); mcsWizOpen(1); };
+    const rc = window.svcRegClick;   /* MCS1411SA398: اپنے کارڈ پر «رجسٹریشن مکمل کریں» = نیا ویزرڈ */
+    if(typeof rc === 'function') window.svcRegClick = function(id){
+      try{ const r = (store.services || []).find(x => x.id === id); if(r && me() && pfAcctOwns(r)){ try{ closeModal('agModal'); }catch(e){} mcsWizOpen(((r.more || {}).ptype) ? 3 : 2); return; } }catch(e){}
+      return rc.apply(this, arguments); };
     const pm = window.mpoOpen;
     if(typeof pm === 'function') window.mpoOpen = function(){ const r = pm.apply(this, arguments);
       try{ const box = document.querySelector('#myPortalModal .mx-in') || document.querySelector('#myPortalModal .modal-box'); if(box && !box.querySelector('.wzEnt') && me()){
