@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA398";
+const APP_VERSION = "MCS1411SA399";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA399": "🗑️ Registration wizard: «Delete this business card» button in steps 2 and 3 (works while the card is still in progress; a paid card goes to the developer as a delete request) • the wizard now picks the most complete card of your mobile number instead of the first one",
   "MCS1411SA398": "📝 «Complete registration» on your own card now opens the new clean registration wizard (it used to open the old form) • Subtype / Products boxes: no ＋ button — what you type is kept at once and added when you press Enter, leave the box, or Save",
   "MCS1411SA397": "✅ Registered-business tag: small, bottom-left corner, own green; shows expiry date + remaining days only (no «3 of 4», no trial days) • Developer no longer gives a year — membership starts only from Google Play payment • Admin approval is now a review: see the full form, fix mistakes, then approve",
   "MCS1411SA396": "🧾 Registration wizard redesigned: clean flat form (no 3D / capsule / extra colours) • after the free card is saved, Google Play plans open at once — only the eligible plan is open, the rest locked • after payment the card is registered and shown with its number • subscription number now MCS001M1, MCS001M2, MCS001M3 …",
@@ -22693,7 +22694,9 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
   const me = () => { try{ return (typeof uaMe === 'function' && uaMe()) || null; }catch(e){ return null; } };
   const sidNow = () => { const m = me(); const u = m && m.user; const s = (u && (u.sid || u.id)) || S.sid || ''; return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : s) : ''; };
   const myCard = () => { try{ const mob = d10((me() && me().user && me().user.mobile) || S.a.mobile); if(!mob) return null;
-    return (store.services || []).find(x => d10(x.whatsapp) === mob) || null; }catch(e){ return null; } };
+    const L = (store.services || []).filter(x => d10(x.whatsapp) === mob); if(!L.length) return null;
+    L.sort((a, b) => (((b.more || {}).ptype ? 1 : 0) - ((a.more || {}).ptype ? 1 : 0)) || ((b.updatedAt || 0) - (a.updatedAt || 0)));   /* MCS1411SA399: سب سے مکمل / تازہ کارڈ */
+    return L[0]; }catch(e){ return null; } };
   const provOf = d => { try{ return Object.keys(DISTRICTS).find(p => (DISTRICTS[p] || []).includes(d)) || ''; }catch(e){ return ''; } };
   const enOf = x => { try{ return (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; }catch(e){ return ''; } };
   const distAll = () => { const T = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && T.add(x))); }catch(e){} return Array.from(T).sort((a, b) => (enOf(a) || a).localeCompare(enOf(b) || b, 'en')); };
@@ -22805,7 +22808,8 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
       <div class="wzErr u" id="wzErr"></div>
       <button class="wzBtn bW" onclick="wzPreview()">👁️ Preview<small class="u">پہلے دیکھیں</small></button>
       <button class="wzBtn bG" id="wzSave2" onclick="wzDo2()">Create Business Card — FREE<small class="u">بزنس کارڈ بنائیں — مفت (محفوظ کریں)</small></button>
-      <button class="wzBtn bW" onclick="wzGo(1)" style="margin-top:6px">← Back</button></div>`);
+      <button class="wzBtn bW" onclick="wzGo(1)" style="margin-top:6px">← Back</button>
+      ${rec ? `<button class="wzBtn bW" onclick="wzDel()" style="color:#b42318;border-color:#fda29b">🗑️ Delete this business card<small class="u">یہ بزنس کارڈ حذف کریں</small></button>` : ''}</div>`);
   }
   window.wzC = function(w){
     const c = S.c, g = i => ($(i) || {}).value || '';
@@ -22879,6 +22883,7 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
       ${st === 'pend' ? `<div class="wzGreen u">✅ ادائیگی ہو چکی / درخواست بھیجی جا چکی — ایڈمن کی منظوری کا انتظار ہے۔</div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
       ${st === 'act' ? `<div class="wzGreen u">🎉 سبسکرپشن منظور — اب آپ کا کاروبار سب کو نظر آ رہا ہے۔</div><button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>` : ''}
       <div id="wzAlt"></div>
+      ${st !== 'act' ? `<button class="wzBtn bW" onclick="wzDel()" style="color:#b42318;border-color:#fda29b;margin-top:6px">🗑️ Delete this business card<small class="u">یہ بزنس کارڈ حذف کریں</small></button>` : ''}
       <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button>${st !== 'act' ? `<button class="wzBtn bW" onclick="wzGo(4)" style="margin-top:6px">Skip — Agent step later · <span class="u">ایجنٹ والا مرحلہ بعد میں</span></button>` : ''}</div>`);
     wzRefInit(); const n = $('wzRef'); if(n && p.ref) n.value = p.ref; wzRefNm(); if(st === 'none') plansLoad();
   }
@@ -22902,6 +22907,26 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
       <button class="wzBtn bW" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button></div>`);
     if(!sub && (tries || 0) < 5) setTimeout(() => { if(S.step === 3 && $('wzW')){ try{ mcsPlaySync(true); }catch(e){} const r2 = myCard(); if(r2) ok3(r2, (tries || 0) + 1); } }, 4000);
   }
+  window.wzDel = async function(){   /* MCS1411SA399 (مالک کا حکم): بنتے ہوئے کارڈ کو حذف کرنے کا بٹن */
+    const rec = myCard(); if(!rec) return err('کارڈ نہیں ملا');
+    const nm = rec.nameUr || rec.name || '';
+    if(pfActive(rec)){ try{ cardDel('service', rec.id); }catch(e){} return; }   /* ادائیگی والا کارڈ: ڈویلپر کو درخواست */
+    if(isAdminSignedIn && rec.fsId){ try{ await deleteService(rec.id); }catch(e){} setTimeout(() => { S.c = {subs: [], prods: []}; save(); try{ if(!myCard() && me()) uaAutoCard(me().user); }catch(e){} S.step = 2; save(); draw(); }, 900); return; }
+    if(rec.fsId){ try{ requestAdminAction('service', rec.id, 'del'); }catch(e){} return; }   /* سرور پر جا چکا کارڈ: ڈویلپر کی منظوری */
+    if(!confirm('«' + nm + '» کا یہ بزنس کارڈ حذف کریں؟\nیہ واپس نہیں آئے گا۔')) return;
+    try{
+      store.services = (store.services || []).filter(x => x.id !== rec.id);
+      try{ const a = JSON.parse(lsG('mcsMyBasic') || '[]').filter(x => x !== rec.id); lsS('mcsMyBasic', JSON.stringify(a)); }catch(e){}
+      store.myProfiles = mpAll().filter(x => x.id !== rec.id);
+      if(Array.isArray(store.favs)) store.favs = store.favs.filter(f => f !== 'service:' + rec.id);
+      saveStore();
+    }catch(e){ return err('حذف نہیں ہو سکا — دوبارہ کوشش کریں'); }
+    S.c = {subs: [], prods: []}; S.p = {}; save();
+    try{ if(me()) uaAutoCard(me().user); }catch(e){}
+    try{ renderServiceList('list'); mpRender(); hlRenderSoon(); }catch(e){}
+    try{ showToast('🗑️ کارڈ حذف ہو گیا'); }catch(e){}
+    S.step = 2; save(); draw();
+  };
   window.wzCnicF = function(el){ const d = dg(el.value).replace(/\D/g, '').slice(0, 13); el.value = d.length > 12 ? d.slice(0, 5) + '-' + d.slice(5, 12) + '-' + d.slice(12) : d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d; wzP(); };
   window.wzP = function(){ const g = i => ($(i) || {}).value || ''; S.p.cnic = g('wzCnic'); S.p.exp = g('wzExp'); S.p.email = g('wzEm'); S.p.ref = g('wzRef'); save(); wzRefNm(); };
   function wzRefInit(){   /* سب مجاز ایجنٹس کی فہرست — موجودہ ریفرل نظام (rpkFill) سے */
