@@ -4386,10 +4386,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1311FR395";
+const APP_VERSION = "MCS1411SA396";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA396": "🧾 Registration wizard redesigned: clean flat form (no 3D / capsule / extra colours) • after the free card is saved, Google Play plans open at once — only the eligible plan is open, the rest locked • after payment the card is registered and shown with its number • subscription number now MCS001M1, MCS001M2, MCS001M3 …",
   "MCS1311FR395": "🛠️ Form: Subtype / Title typed in the box now counts and is added automatically (no more red box when you did not press ➕)",
   "MCS1311FR394": "🏪 My Portal: fixed the broken half-width layout (Registration Steps button now sits inside the page) • 💳 Package plans: friendlier message when Google Play does not return prices",
   "MCS1311FR393": "💳 Package capsules: smaller and compact, brighter prettier colours (locked ones keep their colour, just a 🔒 badge)",
@@ -5378,7 +5379,7 @@ const MCS_PLAY_CLR = {mcs_mem_default:['#ffe36e','#f5a000','#fff6c8','#b86e00'],
 /* MCS1311FR390: قیمت صاف — «PKR 1000.000000» کی جگہ «PKR 1000» */
 function mcsPlayPrice(p){ const m = /^\s*([A-Za-z]{3})\s+(-?[\d.,]+)\s*$/.exec(p || ''); if(!m) return p || '—'; const n = parseFloat(m[2].replace(/,/g, '')); if(!isFinite(n)) return p; return m[1].toUpperCase() + ' ' + (Math.abs(n - Math.round(n)) < 0.005 ? String(Math.round(n)) : n.toFixed(2)); }
 (function(){ const o = document.getElementById('mpcCss'); if(o) o.remove(); const st = document.createElement('style'); st.id = 'mpcCss';
-  st.textContent = '.mpc{position:relative;overflow:hidden;border-radius:26px;padding:9px 12px 10px;margin:0 8px 13px;color:#fff;background:linear-gradient(180deg,var(--c0) 0%,var(--c1) 100%);border:2.5px solid var(--bd);box-shadow:0 0 0 1.5px var(--dk),0 5px 0 var(--dk),0 9px 12px rgba(0,0,0,.22),inset 0 2px 0 rgba(255,255,255,.6),inset 0 -5px 9px rgba(0,0,0,.12)}.mpc:before{content:"";position:absolute;left:6%;right:6%;top:2px;height:38%;border-radius:22px 22px 60% 60%/22px 22px 16px 16px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0));pointer-events:none}.mpc>*{position:relative}.mpc.on{box-shadow:0 0 0 1.5px var(--dk),0 5px 0 var(--dk),0 0 20px 3px var(--c0),0 10px 14px rgba(0,0,0,.28),inset 0 2px 0 rgba(255,255,255,.7),inset 0 -5px 9px rgba(0,0,0,.1)}.mpc.lk{filter:saturate(.9) brightness(.97)}.mpc-t{display:flex;align-items:center;gap:9px}.mpc-bd{flex:0 0 auto;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;background:rgba(255,255,255,.95);box-shadow:0 2px 0 rgba(0,0,0,.25)}.mpc-bd.l{background:rgba(20,30,50,.6)}.mpc-l{flex:1;min-width:0}.mpc-l b{display:block;font-size:16px;font-weight:900;line-height:1.25;text-shadow:0 1px 0 rgba(0,0,0,.3)}.mpc-l small{display:block;opacity:.92;font-size:10.5px;margin-top:1px}.mpc-r{text-align:center;flex-shrink:0}.mpc-p{display:inline-block;background:linear-gradient(180deg,#fff,#f1f5f9);color:#111827;font-weight:900;font-size:14.5px;border-radius:20px;padding:4px 11px;box-shadow:0 3px 0 rgba(0,0,0,.22)}.mpc-r small{display:block;font-size:10px;margin-top:3px;opacity:.95}.mpc-w{display:inline-block;background:rgba(255,255,255,.92);color:#334155;border-radius:14px;padding:4px 10px;font-size:11.5px;font-weight:800;box-shadow:0 2px 0 rgba(0,0,0,.2)}.mpc-a{margin-top:8px}.mpc-btn{width:100%;border:0;border-radius:22px;padding:8px;background:linear-gradient(180deg,#fff,#f1f5f9);font-weight:900;font-size:15px;box-shadow:0 4px 0 rgba(0,0,0,.25);cursor:pointer}.mpc-btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.25)}.mpg-t{display:flex;align-items:center;justify-content:center;gap:9px}.mpg-t svg{width:28px;height:28px}';
+  st.textContent = '.mpc{position:relative;border-radius:8px;padding:10px 12px;margin:0 8px 8px;color:#111827;background:#fff;border:1px solid #d0d5dd}.mpc.on{border:2px solid #1d4ed8}.mpc.lk{background:#f8fafc;color:#6b7280}.mpc.done{background:#f0fdf4;border-color:#86efac}.mpc-t{display:flex;align-items:center;gap:10px}.mpc-bd{flex:0 0 auto;width:28px;text-align:center;font-size:16px}.mpc-l{flex:1;min-width:0}.mpc-l b{display:block;font-size:15px;font-weight:700}.mpc-l small{display:block;color:#6b7280;font-size:11px;margin-top:1px}.mpc-r{text-align:right;flex-shrink:0}.mpc-p{font-weight:700;font-size:15px}.mpc-r small{display:block;font-size:11px;color:#6b7280}.mpc-w{font-size:12px;color:#6b7280}.mpc-a{margin-top:8px}.mpc-btn{width:100%;border:0;border-radius:8px;padding:10px;background:#1d4ed8;color:#fff!important;font-weight:700;font-size:15px;cursor:pointer}.mpg-t{display:flex;align-items:center;justify-content:center;gap:9px}.mpg-t svg{width:26px;height:26px}';
   document.head.appendChild(st); })();
 function mcsPlayPer(p){ return /^P1Y$/i.test(p) ? ' / سال' : /^P1M$/i.test(p) ? ' / ماہ' : (p ? ' / ' + escapeHtml(p) : ''); }
 const MCS_GP_SVG = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#00a0ff" d="M6 4L26 24 6 44Q4 43 4 40V8Q4 5 6 4z"/><path fill="#00e07a" d="M6 4L32 18.4 26 24z"/><path fill="#ffd500" d="M32 18.4L42 24 32 29.6 26 24z"/><path fill="#ff3a44" d="M26 24L32 29.6 6 44z"/></svg>';
@@ -5409,11 +5410,15 @@ async function mcsPlayVerify(token, sku, rk){
   const r = await fetch(PF_API + '/mcsbuy', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({purchaseToken: token, sku, rec: rk || ''})});
   return await r.json();
 }
-function mcsPlayApply(j){
+function mcsPlayApply(j, sku){
   if(!j || !j.ok || !j.rec) return false;
   let ch = false;
   mpAll().forEach(p=>{ if(p.rk === j.rec && j.until && j.until !== p.until){ p.until = j.until; ch = true; } });
   if(j.until){ pfAct[j.rec] = Object.assign({}, pfAct[j.rec] || {}, {until: j.until}); }
+  try{   /* MCS1411SA396: سرور کا نمبر ترجیح؛ نہ ملے تو MCS001M{پلان نمبر} */
+    const a = pfAct[j.rec];
+    if(a){ if(j.subid) a.subid = j.subid; else if(!a.subid && sku){ const u = ((typeof uaMe === 'function' && uaMe()) || {}).user || {}; const base = u.sid && window.mcsSidFmt ? window.mcsSidFmt(u.sid) : ''; if(base) a.subid = base + 'M' + (MCS_PLAY_SKUS.indexOf(sku) + 1); } }
+  }catch(e){}
   if(ch){ saveStore(); try{ mpRender(); hlRenderSoon(); }catch(e){} }
   return true;
 }
@@ -5434,7 +5439,7 @@ async function mcsPlayBuy(rk){
     showToast('⏳ ادائیگی ہو گئی — ممبرشپ چالو ہو رہی ہے…', 4000);
     let j = null;
     for(let i = 0; i < 3 && !(j && j.ok); i++){ try{ j = await mcsPlayVerify(token, sku, rk); }catch(e){} if(!(j && j.ok)) await new Promise(r => setTimeout(r, 2000)); }
-    if(j && j.ok){ mcsPlayApply(j); alert('✅ ممبرشپ ایک سال کے لیے جاری ہو گئی — شکریہ!'); }
+    if(j && j.ok){ mcsPlayApply(j, sku); alert('✅ ممبرشپ ایک سال کے لیے جاری ہو گئی — شکریہ!'); }
     else { localStorage.setItem('mcsPlayPending', JSON.stringify({token, sku, rk, at: Date.now()})); alert('✅ ادائیگی ہو گئی۔ ممبرشپ چند منٹ میں خود چالو ہو جائے گی (انٹرنیٹ ٹھیک ہوتے ہی)۔'); }
   }catch(e){ if(!e || e.name !== 'AbortError') alert('❌ خریداری مکمل نہیں ہوئی — دوبارہ کوشش کریں۔'); }
 }
@@ -5446,7 +5451,7 @@ async function mcsPlaySync(force){
   if(!force && Date.now() - last < 6 * 3600e3) return;
   try{
     const svc = await mcsPlaySvc(); const list = ((await svc.listPurchases()) || []).filter(x => MCS_PLAY_SKUS.includes(x.itemId));
-    for(const x of list){ try{ mcsPlayApply(await mcsPlayVerify(x.purchaseToken, x.itemId, '')); }catch(e){} }
+    for(const x of list){ try{ mcsPlayApply(await mcsPlayVerify(x.purchaseToken, x.itemId, ''), x.itemId); }catch(e){} }
     localStorage.setItem('mcsPlaySyncAt', String(Date.now()));
   }catch(e){}
 }
@@ -7524,9 +7529,14 @@ function legacyRecordId(kind, item){
   const tail = (digits.slice(-5) || '00000').padStart(5,'0');
   return categoryCode(kind, item.category) + '-' + tail;
 }
+function mcsSubFmt(v){   /* MCS1411SA396: MCS00101 → MCS001M1، MCS00102 → MCS001M2 */
+  v = String(v == null ? '' : v).replace(/[\s-]/g, '').toUpperCase();
+  const m = /^(MCS\d{3,}?)(\d{2})$/.exec(v);
+  return m ? m[1] + 'M' + parseInt(m[2], 10) : v;
+}
 function shortRecordId(kind, item){
   /* MCS1111WE312 (مالک کا حکم): سسٹم ID — سبسکرپشن ہو تو MCS-001-01، ورنہ MCS-001؛ پرانے فیڈ کارڈ پرانی قسم وار ID پر جب تک «Replace» نہ دبے */
-  try{ const rk = pfKeyOf(item, kind), p = rk && typeof pfAct !== 'undefined' && pfAct && pfAct[rk]; if(p && p.subid) return String(p.subid).replace(/[\s-]/g,''); if(p && p.sid) return String(p.sid).replace(/[\s-]/g,''); }catch(e){}   /* MCS1211TH348: MCS00101 — کہیں ڈیش نہیں */
+  try{ const rk = pfKeyOf(item, kind), p = rk && typeof pfAct !== 'undefined' && pfAct && pfAct[rk]; if(p && p.subid) return mcsSubFmt(p.subid); if(p && p.sid) return String(p.sid).replace(/[\s-]/g,''); }catch(e){}   /* MCS1211TH348: MCS00101 — کہیں ڈیش نہیں */
   /* MCS1211TH351: کارڈ پر لکھی پرانی more.sid نہیں — ID صرف سرور (رجسٹرڈ کاروبار) سے */
   return '';
 }
@@ -21369,7 +21379,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     let recs = []; try{ recs = [].concat(store.services || [], store.doctors || []); }catch(e){}
     try{ JSON.parse(localStorage.getItem('mcsRegList') || '[]').forEach(x => { if(!x || !x.sid) return;
       const raw = String(x.sid).trim(); let sid;
-      if(/^(DEV|CODEV)$/i.test(raw)) sid = raw.toUpperCase(); else if(/^AG-?\d+$/i.test(raw)) sid = raw.toUpperCase().replace(/^AG-?/, 'AG-'); else if(/^MCS[\s-]*\d+$/i.test(raw)) sid = String(x.subid || raw).replace(/[\s-]/g, '').toUpperCase(); else return;
+      if(/^(DEV|CODEV)$/i.test(raw)) sid = raw.toUpperCase(); else if(/^AG-?\d+$/i.test(raw)) sid = raw.toUpperCase().replace(/^AG-?/, 'AG-'); else if(/^MCS[\s-]*\d+$/i.test(raw)) sid = mcsSubFmt(x.subid || raw); else return;
       const key = sid + '|' + d10(x.mobile); if(seen[key]) return; seen[key] = 1;
       const o = { sid, key, name: pickF(x, ['name']), mobile: pickF(x, ['mobile']), district: pickF(x, ['district']), kind: x.kind || '', done: x.kind === 'reg' };
       if(!o.name || !o.district){ const k = d10(o.mobile), r = k && recs.find(z => z && d10(z.whatsapp) === k && (z.nameUr || z.name)); if(r){ if(!o.name) o.name = r.nameUr || r.name; if(!o.district && r.district) o.district = r.district; } }
@@ -21964,7 +21974,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
       if(!j || !j.ok) return err('⚠️ نہیں ہوا: ' + ((j && j.reason) || '') + (j && j.reason === 'admin_only' ? ' — پہلے ڈویلپر لاگ اِن کریں' : ''));
       try{ localStorage.setItem('mcsSidReset351', String(Date.now())); localStorage.removeItem('mcsRegList'); }catch(e){}
       try{ closeModal('agModal'); }catch(e){}
-      showToast('✅ MCS IDs: ' + j.list.map(x => x.subid.replace(/-/g, '')).join('، ') + ((j.agents || []).length ? ' • ایجنٹ: ' + j.agents.map(a => a.code + ' ' + (a.name || '')).join('، ') : ''), 9000);
+      showToast('✅ MCS IDs: ' + j.list.map(x => mcsSubFmt(x.subid)).join('، ') + ((j.agents || []).length ? ' • ایجنٹ: ' + j.agents.map(a => a.code + ' ' + (a.name || '')).join('، ') : ''), 9000);
       try{ if(typeof agKnownLoad === 'function') agKnownLoad(); }catch(e){}
       try{ if(typeof pfLoadList === 'function') pfLoadList(); }catch(e){}
     }catch(e){ err('📶 انٹرنیٹ نہیں'); }
@@ -22583,60 +22593,74 @@ html body .doc-card .doc-foot .doc-recid.on{display:block !important;position:ab
 html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px !important;box-sizing:border-box}
 </style>
 <style id="mcsWiz388css">
-/* MCS1311FR388: رجسٹریشن ویزرڈ — ایک وقت میں ایک اسکرین، چار مرحلے */
-#wzOv{position:fixed;inset:0;z-index:2147483100;display:none;overflow:auto;background:linear-gradient(180deg,#eef4ff,#f7fbff 40%,#eefaf1);font-family:MCSDigits,"Segoe UI",Roboto,Arial,sans-serif;color:#0f1f45}
+/* MCS1411SA396: سادہ، صاف، بین الاقوامی معیار کا فارم — ایک ہی رنگ، کوئی سایہ / گریڈینٹ / کیپسول نہیں */
+#wzOv{position:fixed;inset:0;z-index:2147483100;display:none;overflow:auto;background:#f5f7fa;font-family:MCSDigits,"Segoe UI",Roboto,Arial,sans-serif;color:#111827}
 #wzOv.on{display:block}
-#wzOv .wzW{max-width:440px;margin:0 auto;padding:10px 14px 60px}
+#wzOv .wzW{max-width:480px;margin:0 auto;padding:12px 14px 60px}
 #wzOv .u{font-family:"Jameel Noori Nastaleeq","JameelNoori",MCSDigits,serif;direction:rtl}
-#wzOv .wzTop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
-#wzOv .wzTitle{background:#0b3b8f;color:#fff;border-radius:14px;padding:6px 12px;font-weight:800;font-size:15px;line-height:1.5;flex:1;text-align:center}
-#wzOv .wzTitle small{display:block;font-weight:600;font-size:13px;opacity:.95}
-#wzOv .wzX{width:38px;height:38px;border-radius:50%;border:0;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.18);font-size:18px}
-#wzOv .wzPg{display:flex;align-items:flex-start;justify-content:space-between;margin:8px 2px 12px}
-#wzOv .wzPg div{flex:1;text-align:center;font-size:10.5px;font-weight:700;color:#64748b;position:relative}
-#wzOv .wzPg div i{display:grid;place-items:center;width:30px;height:30px;margin:0 auto 3px;border-radius:50%;background:#e2e8f0;color:#475569;font-style:normal;font-weight:900;font-size:15px;position:relative;z-index:2}
-#wzOv .wzPg div:not(:last-child):after{content:"";position:absolute;top:14px;left:calc(50% + 17px);right:calc(-50% + 17px);height:3px;background:#e2e8f0;z-index:1}
-#wzOv .wzPg div.on i{background:#0b3b8f;color:#fff;box-shadow:0 0 0 4px rgba(11,59,143,.15)}
-#wzOv .wzPg div.ok i{background:#16a34a;color:#fff}
-#wzOv .wzPg div.ok:not(:last-child):after{background:#16a34a}
-#wzOv .wzCard{background:#fff;border:1px solid #dbe5f6;border-radius:20px;padding:14px 13px 16px;box-shadow:0 12px 34px rgba(15,31,69,.10)}
-#wzOv .wzHd{text-align:center;margin:0 0 10px}
-#wzOv .wzHd i{display:grid;place-items:center;width:52px;height:52px;margin:0 auto 4px;border-radius:50%;background:#e8f0ff;font-style:normal;font-size:26px}
-#wzOv .wzHd b{display:block;font-size:19px;color:#0b2f8f}
-#wzOv .wzHd span{display:block;font-size:17px;color:#1e3a8a}
-#wzOv label.wzL{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:9px 2px 3px;font-weight:800;font-size:13.5px;color:#0b2f6b}
-#wzOv label.wzL .u{font-size:15px;font-weight:700;color:#1e3a8a}
-#wzOv label.wzL em{color:#dc2626;font-style:normal}
-#wzOv .wzI,#wzOv select.wzI,#wzOv textarea.wzI{width:100%;box-sizing:border-box;min-height:46px;border:1.5px solid #cbd5e1;border-radius:12px;padding:8px 11px;font-size:16px;background:#fff;color:#0f1f45;font-family:inherit;font-weight:600}
-#wzOv .wzI:focus{outline:0;border-color:#1546c0;box-shadow:0 0 0 4px rgba(21,70,192,.12)}
-#wzOv .wzI[readonly]{background:#f1f5f9;color:#475569}
+#wzOv .wzTop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+#wzOv .wzTitle{color:#111827;font-weight:700;font-size:17px;line-height:1.5;flex:1;text-align:left}
+#wzOv .wzTitle small{display:block;font-weight:400;font-size:15px;color:#4b5563;text-align:right}
+#wzOv .wzX{width:36px;height:36px;border-radius:6px;border:1px solid #d0d5dd;background:#fff;font-size:16px;color:#374151}
+#wzOv .wzPg{display:flex;align-items:flex-start;justify-content:space-between;margin:6px 0 14px}
+#wzOv .wzPg div{flex:1;text-align:center;font-size:11px;color:#6b7280;position:relative}
+#wzOv .wzPg div i{display:grid;place-items:center;width:26px;height:26px;margin:0 auto 4px;border-radius:50%;background:#fff;border:1.5px solid #d0d5dd;color:#6b7280;font-style:normal;font-weight:600;font-size:13px;position:relative;z-index:2}
+#wzOv .wzPg div:not(:last-child):after{content:"";position:absolute;top:12px;left:calc(50% + 15px);right:calc(-50% + 15px);height:2px;background:#d0d5dd;z-index:1}
+#wzOv .wzPg div.on{color:#111827;font-weight:600}
+#wzOv .wzPg div.on i{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+#wzOv .wzPg div.ok i{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+#wzOv .wzPg div.ok:not(:last-child):after{background:#1d4ed8}
+#wzOv .wzCard{background:#fff;border:1px solid #e4e7ec;border-radius:8px;padding:16px 14px 18px}
+#wzOv .wzHd{text-align:left;margin:0 0 6px;padding-bottom:10px;border-bottom:1px solid #e4e7ec}
+#wzOv .wzHd i{display:none}
+#wzOv .wzHd b{display:block;font-size:18px;font-weight:700;color:#111827}
+#wzOv .wzHd span{display:block;font-size:16px;color:#4b5563;text-align:right}
+#wzOv label.wzL{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:14px 0 4px;font-weight:600;font-size:13.5px;color:#374151}
+#wzOv label.wzL .u{font-size:15px;font-weight:400;color:#4b5563}
+#wzOv label.wzL em{color:#d92d20;font-style:normal}
+#wzOv .wzI,#wzOv select.wzI,#wzOv textarea.wzI{width:100%;box-sizing:border-box;min-height:44px;border:1px solid #d0d5dd;border-radius:6px;padding:8px 11px;font-size:16px;background:#fff;color:#111827;font-family:inherit;font-weight:400}
+#wzOv .wzI:focus{outline:0;border-color:#1d4ed8;box-shadow:0 0 0 3px rgba(29,78,216,.12)}
+#wzOv .wzI[readonly]{background:#f2f4f7;color:#667085}
 #wzOv textarea.wzI{min-height:70px}
-#wzOv .wzChk{display:flex;gap:9px;align-items:center;margin:8px 2px;font-size:14px;font-weight:700}
-#wzOv .wzChk input{width:20px;height:20px;accent-color:#16a34a}
-#wzOv .wzBtn{width:100%;min-height:50px;border:0;border-radius:14px;font-size:16.5px;font-weight:800;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;cursor:pointer;font-family:inherit}
-#wzOv .wzBtn small{display:block;width:100%;font-size:13px;font-weight:600;opacity:.95}
-#wzOv .wzBtn:disabled{opacity:.55}
-#wzOv .bG{background:linear-gradient(180deg,#22c55e,#0f7a35);color:#fff;box-shadow:0 4px 0 #0b5e29}
-#wzOv .bB{background:linear-gradient(180deg,#2563eb,#0b2f8f);color:#fff;box-shadow:0 4px 0 #0a2775}
-#wzOv .bW{background:#fff;color:#0b2f8f;border:1.5px solid #9db4e8}
-#wzOv .wzErr{min-height:18px;color:#b91c1c;font-weight:800;font-size:14px;text-align:center;margin-top:8px;direction:rtl}
+#wzOv .wzChk{display:flex;gap:9px;align-items:center;margin:12px 0 4px;font-size:14px}
+#wzOv .wzChk input{width:18px;height:18px;accent-color:#1d4ed8}
+#wzOv .wzBtn{width:100%;min-height:46px;border:1px solid transparent;border-radius:6px;font-size:16px;font-weight:600;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:2px 8px;flex-wrap:wrap;cursor:pointer;font-family:inherit}
+#wzOv .wzBtn small{display:block;width:100%;font-size:14px;font-weight:400;opacity:.95}
+#wzOv .wzBtn:disabled{opacity:.5}
+#wzOv .bG,#wzOv .bB{background:#1d4ed8;color:#fff}
+#wzOv .bW{background:#fff;color:#1d4ed8;border-color:#d0d5dd}
+#wzOv .wzErr{min-height:18px;color:#d92d20;font-weight:600;font-size:14px;text-align:center;margin-top:10px;direction:rtl}
 #wzOv .wzChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-#wzOv .wzChip{border:1.5px solid #9db4e8;background:#f5f8ff;border-radius:999px;padding:6px 11px;font-size:14px;font-weight:700;color:#0b2f8f}
-#wzOv .wzChip.on{background:#0b3b8f;color:#fff;border-color:#0b3b8f}
-#wzOv .wzChip i{font-style:normal;margin-inline-start:6px;opacity:.85}
+#wzOv .wzChip{border:1px solid #d0d5dd;background:#fff;border-radius:6px;padding:6px 10px;font-size:14px;color:#374151}
+#wzOv .wzChip.on{background:#eff4ff;color:#1d4ed8;border-color:#1d4ed8}
+#wzOv .wzChip i{font-style:normal;margin-inline-start:6px;opacity:.7}
 #wzOv .wzRow{display:flex;gap:8px}#wzOv .wzRow>*{flex:1}
 #wzOv .wzOk{text-align:center;padding:10px 4px}
-#wzOv .wzOk .big{font-size:54px}
-#wzOv .wzId{display:inline-block;font:900 32px "Segoe UI",Consolas,monospace;letter-spacing:2px;color:#0b1f4d;background:#eff6ff;border:2px dashed #1d4ed8;border-radius:14px;padding:6px 16px;margin:6px 0}
-#wzOv .wzNote{background:#fffbeb;border:1px solid #f59e0b;color:#78350f;border-radius:12px;padding:8px 10px;font-weight:700;font-size:14px;line-height:1.9;margin-top:10px}
-#wzOv .wzGreen{background:#f0fdf4;border:1px solid #86efac;color:#14532d;border-radius:12px;padding:8px 10px;font-weight:700;font-size:14px;line-height:1.9;margin-top:10px}
-#wzOv .wzSt{display:inline-block;border-radius:999px;padding:3px 12px;font-weight:800;font-size:13px}
-#wzOv .st-pend{background:#fef3c7;color:#92400e}#wzOv .st-ok{background:#dcfce7;color:#166534}#wzOv .st-rej{background:#fee2e2;color:#991b1b}#wzOv .st-act{background:#dbeafe;color:#1e40af}#wzOv .st-none{background:#e2e8f0;color:#475569}
-#wzOv .wzBen{list-style:none;margin:6px 0 0;padding:8px 10px;background:#eef6ff;border-radius:12px}
-#wzOv .wzBen li{padding:3px 0;font-size:14px;font-weight:700}#wzOv .wzBen li:before{content:"✔";color:#16a34a;margin-inline-end:7px;font-weight:900}
-#wzOv .wzPlay{display:flex;align-items:center;gap:10px;border:1.5px solid #cbd5e1;border-radius:12px;padding:9px 11px;background:#f8fafc;font-weight:800}
-#wzOv .wzPrev{border:2px solid #16a34a;border-radius:14px;background:#f0fdf4;padding:10px;margin-top:8px}
+#wzOv .wzOk .big{font-size:40px;color:#1d4ed8;line-height:1.2}
+#wzOv .wzOk b{font-size:19px!important;color:#111827!important}
+#wzOv .wzOk .u{font-size:18px!important;color:#4b5563!important}
+#wzOv .wzId{display:inline-block;font:700 26px "Segoe UI",Consolas,monospace;letter-spacing:1px;color:#111827;background:#f2f4f7;border:1px solid #d0d5dd;border-radius:6px;padding:6px 14px;margin:8px 0 4px}
+#wzOv .wzNote{background:#f9fafb;border:1px solid #e4e7ec;color:#374151;border-radius:6px;padding:9px 11px;font-size:14px;line-height:1.9;margin-top:12px}
+#wzOv .wzGreen{background:#f9fafb;border:1px solid #e4e7ec;border-left:3px solid #1d4ed8;color:#111827;border-radius:6px;padding:9px 11px;font-size:14px;line-height:1.9;margin-top:12px}
+#wzOv .wzSt{display:inline-block;border-radius:4px;padding:3px 9px;font-weight:600;font-size:12.5px;background:#f2f4f7;color:#475467}
+#wzOv .st-pend{background:#fff6e5;color:#93370d}#wzOv .st-ok,#wzOv .st-act{background:#eaf4ff;color:#175cd3}#wzOv .st-rej{background:#fef3f2;color:#b42318}#wzOv .st-none{background:#f2f4f7;color:#475467}
+#wzOv .wzBen{list-style:none;margin:10px 0 0;padding:0}
+#wzOv .wzBen li{padding:3px 0;font-size:14px}#wzOv .wzBen li:before{content:"✓";color:#1d4ed8;margin-inline-end:8px;font-weight:700}
+#wzOv .wzPlay{display:flex;align-items:center;gap:10px;border:1px solid #d0d5dd;border-radius:6px;padding:9px 11px;background:#fff;font-weight:600}
+#wzOv .wzPrev{border:1px solid #d0d5dd;border-radius:6px;background:#fff;padding:10px;margin-top:8px}
 #wzOv .wzPrev div{padding:2px 0;font-size:14.5px}
+#wzOv .wzSec{font-weight:700;font-size:15px;margin:20px 0 6px;padding-top:12px;border-top:1px solid #e4e7ec;display:flex;justify-content:space-between;gap:8px}
+#wzOv .wzSec .u{font-weight:400;font-size:16px;color:#4b5563}
+#wzOv .wzPl{display:flex;align-items:center;gap:10px;border:1px solid #d0d5dd;border-radius:6px;padding:10px 12px;margin-top:8px;background:#fff}
+#wzOv .wzPl.on{border:2px solid #1d4ed8;padding:9px 11px}
+#wzOv .wzPl.lk{background:#f9fafb;color:#98a2b3}
+#wzOv .wzPl .n{flex:1;min-width:0}#wzOv .wzPl .n b{display:block;font-size:15px}#wzOv .wzPl .n small{font-size:12px;color:#667085}
+#wzOv .wzPl .pr{font-weight:700;font-size:14.5px;white-space:nowrap;direction:ltr}
+#wzOv .wzPl .tg{font-size:12.5px;white-space:nowrap}
+#wzOv .wzPl button{border:0;border-radius:6px;background:#1d4ed8;color:#fff;font-weight:600;font-size:14px;padding:9px 12px;cursor:pointer;font-family:inherit}
+#wzOv .wzMini{position:relative;border:1px solid #d0d5dd;border-radius:6px;background:#fff;padding:12px 12px 30px;margin-top:12px;text-align:right}
+#wzOv .wzMini .nm{font-size:20px;font-weight:700}#wzOv .wzMini div{padding:1px 0;font-size:14.5px;color:#374151}
+#wzOv .wzMini .mid{position:absolute;right:10px;bottom:7px;font:700 12px "Segoe UI",Consolas,monospace;color:#111827;direction:ltr}
 </style>
 <div id="wzOv" data-noen aria-modal="true" role="dialog"><div class="wzW" id="wzW"></div></div>
 <script id="mcsWiz388">
@@ -22812,7 +22836,7 @@ html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px
       try{ mpAdd('service', rec, true); }catch(e){}
       try{ renderServiceList('list'); mpRender(); }catch(e){}
     }catch(e){ busy = false; return err('محفوظ نہیں ہو سکا — دوبارہ کوشش کریں'); }
-    busy = false; ok2(rec);
+    busy = false; S.step = 3; save(); draw(); try{ showToast('✓ کارڈ محفوظ — اب پلان منتخب کریں'); }catch(e){}
   };
   function ok2(rec){
     const sid = sidNow();
@@ -22837,15 +22861,34 @@ html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px
       ${LBL('CNIC Expiry Date', 'شناختی کارڈ کی میعاد', 1)}<input class="wzI" id="wzExp" type="date" value="${esc(p.exp)}" onchange="wzP()">
       ${LBL('Email Address', 'ای میل ایڈریس', 1)}<div class="wzRow"><input class="wzI" id="wzEm" type="email" dir="ltr" placeholder="Enter email" value="${esc(p.email)}" oninput="wzP()"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 96px;font-size:13px" onclick="wzGoogle()">Google</button></div><div id="wzGBox"></div>
       ${LBL('Referral Code', 'ریفرل کوڈ')}<select class="wzI" id="wzRef" onchange="wzP()"><option value="">Select Referral Code — فہرست سے ایجنٹ چنیں</option></select><div id="wzRefNm" class="u" style="font-size:14px;color:#047857;font-weight:700;margin:3px 2px"></div>
-      ${LBL('Payment Method', 'ادائیگی کا طریقہ', 1)}<div class="wzPlay"><span style="font-size:26px">▶️</span><div>Google Play Billing<div class="u" style="font-size:14px;font-weight:600">گوگل پلے کے ذریعے ادائیگی</div></div></div>
+      ${st === 'none' ? `<div class="wzSec"><span>Choose Your Plan</span><span class="u">اپنا پلان منتخب کریں</span></div><div id="wzPlans"><div class="wzNote u">⏳ Google Play سے پلان آ رہے ہیں…</div></div>` : ''}
       <div class="wzNote u">⚠️ ادائیگی کے بعد بھی کاروبار فوراً سب کو نظر نہیں آتا — ایڈمن کی منظوری لازمی ہے۔<br><span dir="ltr" style="font-family:inherit">Payment → Admin Approval → Public Activation</span></div>
       <div class="wzErr u" id="wzErr"></div>
-      ${st === 'none' ? `<button class="wzBtn bG" id="wzPay" onclick="wzDo3()">Proceed to Payment<small class="u">ادائیگی کے لیے آگے بڑھیں</small></button>` : ''}
       ${st === 'pend' ? `<div class="wzGreen u">✅ ادائیگی ہو چکی / درخواست بھیجی جا چکی — ایڈمن کی منظوری کا انتظار ہے۔</div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
       ${st === 'act' ? `<div class="wzGreen u">🎉 سبسکرپشن منظور — اب آپ کا کاروبار سب کو نظر آ رہا ہے۔</div><button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>` : ''}
       <div id="wzAlt"></div>
       <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button>${st !== 'act' ? `<button class="wzBtn bW" onclick="wzGo(4)" style="margin-top:6px">Skip — Agent step later · <span class="u">ایجنٹ والا مرحلہ بعد میں</span></button>` : ''}</div>`);
-    wzRefInit(); const n = $('wzRef'); if(n && p.ref) n.value = p.ref; wzRefNm();
+    wzRefInit(); const n = $('wzRef'); if(n && p.ref) n.value = p.ref; wzRefNm(); if(st === 'none') plansLoad();
+  }
+  async function plansLoad(){   /* MCS1411SA396: Play کے پلان — صرف اگلا اہل پلان کھلا، باقی مقفل */
+    let det = null, owned = [];
+    try{ det = await mcsPlayDetails(); }catch(e){}
+    if(mcsPlayOk()){ try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(x => x.itemId); }catch(e){} }
+    const box = $('wzPlans'); if(!box) return;
+    const next = MCS_PLAY_SKUS.find(k => !owned.includes(k));
+    box.innerHTML = MCS_PLAY_SKUS.map((k, i) => { const d = det && det[k], own = owned.includes(k), on = k === next;
+      const pr = d ? esc(mcsPlayPrice(d.p)) + (typeof mcsPlayPer === 'function' ? mcsPlayPer(d.per) : '') : '';
+      return `<div class="wzPl ${own ? 'ok' : on ? 'on' : 'lk'}"><div class="n"><b>Plan M${i + 1}</b><small dir="ltr">${k}</small></div>${pr ? `<span class="pr">${pr}</span>` : ''}${own ? '<span class="tg">✓ Purchased · <span class="u">خرید لیا</span></span>' : on ? '<button type="button" id="wzPay" onclick="wzDo3()">Subscribe <span class="u">سبسکرائب</span></button>' : '<span class="tg">🔒 Locked · <span class="u">مقفل</span></span>'}</div>`; }).join('')
+      + (!mcsPlayOk() ? '<div class="wzNote u">اس فون پر Google Play ادائیگی نہیں کھلی (ایپ Play Store سے انسٹال ہونی چاہیے) — دبانے پر تصدیق کے لیے تفصیل بھیجنے کا راستہ آئے گا۔</div>' : (det ? '' : '<div class="wzNote u">قیمت Play سے نہیں آئی — انٹرنیٹ / ٹیسٹر Gmail چیک کریں۔</div>'));
+  }
+  function ok3(rec, tries){
+    const sub = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || '', m = rec.more || {};
+    frame(`<div class="wzCard"><div class="wzOk"><div class="big">✓</div><b>Registration Complete</b><div class="u">آپ کا کاروبار رجسٹر ہو گیا</div></div>
+      <div class="wzMini"><div class="nm u">${esc(rec.nameUr || rec.name || '')}</div>${rec.nameEn ? `<div dir="ltr" style="text-align:left">${esc(rec.nameEn)}</div>` : ''}<div class="u">${esc((m.subs || []).join('، '))}</div><div class="u">${esc(rec.city || '')}${rec.address ? ' — ' + esc(rec.address) : ''}</div><span class="mid">${esc(sub || '…')}</span></div>
+      ${sub ? '' : '<div class="wzNote u">ادائیگی مل گئی — سرور سے MCS نمبر آ رہا ہے، چند لمحوں میں کارڈ پر لگ جائے گا۔</div>'}
+      <button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>
+      <button class="wzBtn bW" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button></div>`);
+    if(!sub && (tries || 0) < 5) setTimeout(() => { if(S.step === 3 && $('wzW')){ try{ mcsPlaySync(true); }catch(e){} const r2 = myCard(); if(r2) ok3(r2, (tries || 0) + 1); } }, 4000);
   }
   window.wzCnicF = function(el){ const d = dg(el.value).replace(/\D/g, '').slice(0, 13); el.value = d.length > 12 ? d.slice(0, 5) + '-' + d.slice(5, 12) + '-' + d.slice(12) : d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d; wzP(); };
   window.wzP = function(){ const g = i => ($(i) || {}).value || ''; S.p.cnic = g('wzCnic'); S.p.exp = g('wzExp'); S.p.email = g('wzEm'); S.p.ref = g('wzRef'); save(); wzRefNm(); };
@@ -22881,7 +22924,9 @@ html body .doc-card .doc-foot:has(.doc-recid.on) .doc-address{padding-right:86px
         if(paid){ try{ memAutoSend('service', rec, true); }catch(e){} S.p.paid = Date.now(); save(); }   /* ادائیگی ← منظوری کی درخواست ایڈمن کو */
       } else { altPath(rec); }
     }catch(e){ err('ادائیگی مکمل نہیں ہوئی — دوبارہ کوشش کریں'); }
-    busy = false; if(b) b.disabled = false; if(S.step === 3 && statusOf(rec) !== 'none' && !$('wzAlt').innerHTML) s3();
+    busy = false; if(b) b.disabled = false;
+    try{ const rk2 = pfKeyOf(rec, 'service'), e2 = mpAll().find(x => x.rk === rk2); if(S.step === 3 && ((e2 && (e2.until || 0) > Date.now()) || (S.p.paid && Date.now() - S.p.paid < 90000))){ ok3(myCard() || rec); return; } }catch(e){}
+    if(S.step === 3 && statusOf(rec) !== 'none' && !$('wzAlt').innerHTML) s3();
   };
   window.wzResend = function(){ const rec = myCard(); if(rec) try{ memAutoSend('service', rec); }catch(e){} };
   function altPath(rec){   /* جو بندہ Google Play سے ادائیگی نہیں کر سکتا — صرف اکاؤنٹ کی تفصیل تصدیق کے لیے */
