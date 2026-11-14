@@ -2675,7 +2675,7 @@ body.cdOn{padding-top:30px}
   + '.aupd-wait .aw-t{font-size:15px;font-weight:800;line-height:1.5}.aupd-wait .aw-s{font-size:12px;opacity:.9;line-height:1.6}'
   + '.aupd-wait .aw-v{display:none;margin-top:4px;font-size:12px;line-height:1.6}.aupd-wait .aw-v.on{display:block}'
   + '.aupd-wait .aw-v .vv{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;direction:ltr;unicode-bidi:isolate}'
-  + '.aupd-wait .aw-v .vo{opacity:.75;text-decoration:line-through}.aupd-wait .aw-v .vn{background:#fde68a;color:#0d3b66;border-radius:8px;padding:0 7px;font-weight:800}'
+  + '.aupd-wait .aw-v .vo{opacity:.75;text-decoration:line-through}.aupd-wait .aw-v .vn{background:#fff;color:#0d3b66;border-radius:8px;padding:1px 9px;font-weight:900;font-size:15px}.aupd-wait .aw-v{font-size:14px}'
   + '.aupd-wait .aw-v .vt{display:block;margin-top:3px;padding:4px 8px;border-radius:9px;background:rgba(255,255,255,.14);font-weight:700;max-height:22vh;overflow:auto;overflow-wrap:anywhere}'
   + '.aupd-wait .aw-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:repeating-linear-gradient(-45deg,#fde68a 0 10px,#f59e0b 10px 20px);background-size:28px 28px;animation:aupdMove .7s linear infinite}'
   + '.aupd-glass{width:22px;height:30px;flex:0 0 auto;animation:aupdFlip 2.4s ease-in-out infinite}'
@@ -2737,7 +2737,7 @@ body.cdOn{padding-top:30px}
         note=note.replace(/\\n/g,' ').replace(/\\(["'\\])/g,'$1');
         box.innerHTML='<span class="vv">'+(oldV?'<span class="vo">'+esc(oldV)+'</span> → ':'')+'<span class="vn">'+esc(nv)+'</span></span>'
           +(note?'<span class="vt">🛠️ '+esc(note)+'</span>':'');
-        box.classList.add('on'); self._peekV=nv; self._peekNote=note;
+        box.classList.add('on'); self._peekV=nv; self._peekNote=note; try{ var tt=w.querySelector('.aw-t'); if(tt) tt.textContent=T.wait.replace(/…$/,'')+' — '+nv; }catch(e){}
       }).catch(function(){});
     },
     hideWaiting: function(){
@@ -4386,10 +4386,13 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA399";
+const APP_VERSION = "MCS1411SA402";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1411SA402": "✅ Paid card goes public at once (no waiting for admin) • developer list is now «New businesses waiting for your review» with 💬 Chat with owner / 📞 Call / WhatsApp • registered card redesigned: agent badge, round selfie, dates, call + WhatsApp on the left, name and offers in the middle, shop photo on the right",
+  "MCS1411SA401": "🔖 Home header: version number now on a clear white badge, bigger • «New update is coming» bar now shows the new version number at the top",
+  "MCS1411SA400": "🛡️ Registration wizard step 4: Selfie + CNIC front/back upload boxes inside the wizard, «Add Request for MCS Agent» sends it, pending screen, then «Congratulations! You are now an MCS Agent» with badge and referral code • step 3: «Payment Method — Google Play Billing» row; «Payment Successful! Awaiting Admin Approval» until the admin approves, then «Subscription Approved! Your Business is Now Public!» • «Your Business Card is Created! (Private)» shown after step 2",
   "MCS1411SA399": "🗑️ Registration wizard: «Delete this business card» button in steps 2 and 3 (works while the card is still in progress; a paid card goes to the developer as a delete request) • the wizard now picks the most complete card of your mobile number instead of the first one",
   "MCS1411SA398": "📝 «Complete registration» on your own card now opens the new clean registration wizard (it used to open the old form) • Subtype / Products boxes: no ＋ button — what you type is kept at once and added when you press Enter, leave the box, or Save",
   "MCS1411SA397": "✅ Registered-business tag: small, bottom-left corner, own green; shows expiry date + remaining days only (no «3 of 4», no trial days) • Developer no longer gives a year — membership starts only from Google Play payment • Admin approval is now a review: see the full form, fix mistakes, then approve",
@@ -5135,13 +5138,13 @@ async function phDone(){
     else{
       let d = out.toDataURL('image/jpeg', .8);
       for(const [sz, q] of [[1000,.7],[900,.62],[800,.55]]){ if(d.length <= 420000) break; const o2 = document.createElement('canvas'); o2.width = Math.round(out.width * sz / 1000); o2.height = Math.round(out.height * sz / 1000); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', q); }
-      const St = pfEd[pre]; if(!St) return; St.imgs[0] = {src:d, changed:true}; delete St.del[0]; pfSlotsRender(pre);
+      const St = pfEd[pre]; if(!St) return; St.imgs[0] = {src:d, changed:true}; delete St.del[0]; try{ St.shopThumb = await pfShopThumb(d); St.shopThumbChanged = true; }catch(e){} pfSlotsRender(pre);
     }
     showToast('✅ تصویر لگ گئی');
   }catch(e){ showToast('تصویر نہیں لگی — دوبارہ کوشش کریں'); }
 }
 function pfPickSlot(pre, i){ pfPickPre = pre; pfEd[pre].slot = i; phChoose(); }
-function pfDelSlot(pre, i){ pfEd[pre].imgs[i] = null; pfEd[pre].del[i] = 1; if(i === 1){ pfEd[pre].thumb = ''; pfEd[pre].thumbChanged = true; } pfSlotsRender(pre); }
+function pfDelSlot(pre, i){ pfEd[pre].imgs[i] = null; pfEd[pre].del[i] = 1; if(i === 0){ pfEd[pre].shopThumb = ''; pfEd[pre].shopThumbChanged = true; } if(i === 1){ pfEd[pre].thumb = ''; pfEd[pre].thumbChanged = true; } pfSlotsRender(pre); }
 async function pfImgPicked(inp){
   const f = inp.files && inp.files[0]; inp.value = ''; if(!f) return; if(!pfEd[pfPickPre]) return;
   window._ptSR = ''; window._phAg = false; phFromFile(f, 'shop');   /* MCS0711SA201: پہلے کاٹیں / سنواریں، پھر لگے */
@@ -5152,6 +5155,9 @@ function pfSquare(src, size, q){
     const s0 = Math.min(im.width, im.height), sx = (im.width - s0)/2, sy = (im.height - s0) * (im.height > im.width ? .25 : .5);
     const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0,0,size,size); x.drawImage(im, sx, sy, s0, s0, 0, 0, size, size);
     res(c.toDataURL('image/jpeg', q)); }; im.onerror = ()=>rej(new Error('img')); im.src = src; });
+}
+function pfShopThumb(src){   /* کارڈ کے لیے دکان کی چھوٹی تصویر 240×180 */
+  return new Promise((res, rej)=>{ const im = new Image(); im.onload = ()=>{ const W = 240, H = 180, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0,0,W,H); const k = Math.max(W/im.width, H/im.height), w = im.width*k, h = im.height*k; x.drawImage(im, (W-w)/2, (H-h)/2, w, h); res(c.toDataURL('image/jpeg', .6)); }; im.onerror = ()=>rej(new Error('img')); im.src = src; });
 }
 function pfFileUrl(f){ return new Promise((res, rej)=>{ const r = new FileReader(); r.onload = ()=>res(r.result); r.onerror = ()=>rej(new Error('read')); r.readAsDataURL(f); }); }
 async function pfSetSelfie(pre, srcAny){
@@ -5192,6 +5198,7 @@ async function pfSubmit(kind, rec, pre){
   if(!OWN_REF_RX.test(data.ref) && data.ref !== oldRef){ try{ fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: data.ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(kind==='doctor' ? 'doctor' : rec.category)||{}).ur||'', city: rec.city||''})}).then(x=>x.json()).then(x=>{ if(x && x.ok === false && x.reason === 'bad_code') showToast('⚠️ ریفرل کوڈ «' + data.ref + '» نہیں ملا — درست کوڈ لکھیں یا خالی چھوڑیں', 5000); }).catch(()=>{}); }catch(e){} }
   if(pfAct[rk]) pfAct[rk].ts = j.ts; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
   try{ const S = pfEd[pre]; if(S && S.thumbChanged){ rec.more = rec.more || {}; if(S.thumb) rec.more.selfie = S.thumb; else delete rec.more.selfie; S.thumbChanged = false; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); } }catch(e){}   /* MCS0711SA194 */
+  try{ const S = pfEd[pre]; if(S && S.shopThumbChanged){ rec.more = rec.more || {}; if(S.shopThumb) rec.more.shop = S.shopThumb; else delete rec.more.shop; S.shopThumbChanged = false; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); } }catch(e){}   /* MCS1411SA402: کارڈ پر دکان کی تصویر */
   return {ok:true};
 }
 
@@ -12371,6 +12378,7 @@ function startPendingApprovalsListener(){
     const unsub = FB.onSnapshot(pendingQ, (snap)=>{
       pendingByCollection[col] = snap.docs.map(d=>({fsId:d.id, _col:col, ...d.data()})).filter(x=>!(x.stage === 'basic' && x.category === 'cat_unassigned'));   /* MCS1211TH376: سائن اپ کا سادہ کارڈ منظوری میں نہیں — صرف رجسٹریشن */
       const before = new Set(pendingApprovals.map(x=>x.fsId));
+      try{ if(isAdminSignedIn) pendingByCollection[col].forEach(d=>{ const k = pfKeyOf(d, col === 'doctors' ? 'doctor' : 'service'), a = pfAct && pfAct[k]; if(a && (a.until||0) > Date.now() && !d._auto){ d._auto = 1; FB.updateDoc(FB.doc(FB.db, col, d.fsId), {approved:true}).catch(()=>{}); } }); }catch(e){}   /* MCS1411SA402: ادا شدہ = خود منظور */
       pendingApprovals = [...pendingByCollection.doctors, ...pendingByCollection.services];
       /* MCS2310FR041: نیا ریکارڈ آتے ہی ایڈمن کو فوراً خبر — ٹوسٹ، تھرتھراہٹ، ٹن */
       const fresh = pendingSeenOnce[col] ? snap.docChanges().filter(c=>c.type==='added' && !before.has(c.doc.id)) : [];
@@ -21177,7 +21185,7 @@ const mrqOpenList = () => MRQ.filter(x => x.st === 'new' || x.st === 'pend' || x
     if(!L.length){ if(s) s.remove(); return; }
     const nw = L.filter(x => x.st === 'new').length;
     if(!s){ s = document.createElement('button'); s.type = 'button'; s.id = 'mrqStrip'; s.className = 'mrq-strip'; s.onclick = () => mrqOpen(); }
-    s.innerHTML = `<span class="mrq-ic">🏪</span><span class="mrq-t"><b>${L.length} membership request${L.length > 1 ? 's' : ''} waiting for your approval</b><small>${nw ? nw + ' new • ' : ''}${L.slice(0, 3).map(x => escapeHtml((x.data && (x.data.prof || x.data.name)) || x.rec)).join(' • ')}</small></span><span class="mrq-go">Open ›</span>`;
+    s.innerHTML = `<span class="mrq-ic">🏪</span><span class="mrq-t"><b>🆕 ${L.length} new business${L.length > 1 ? 'es' : ''} waiting for your review — نئے بزنس آپ کے جائزے کے منتظر ہیں</b><small>${nw ? nw + ' new • ' : ''}${L.slice(0, 3).map(x => escapeHtml((x.data && (x.data.prof || x.data.name)) || x.rec)).join(' • ')}</small></span><span class="mrq-go">Review ›</span>`;
     box.style.display = 'flex'; if(box.firstChild !== s) box.insertBefore(s, box.firstChild);
   };
 })();
@@ -21194,15 +21202,15 @@ function mrqOpen(){
       ${row('🏷️ Category', E(d.cat))}${row('📍 Place', E([d.area, d.city].filter(Boolean).join(', ')))}${row('🤝 Brought by', E(d.ref ? refN(d.ref) + (d.refName ? ' — ' + d.refName : '') : 'PBT (came by self)'))}${row('⭐ Membership now', mem)}
       ${d.text ? `<div class="mrq-tx" dir="auto">📝 ${E(d.text)}</div>` : ''}${x.note ? `<div class="mrq-nt" dir="auto">💬 Your last message: ${E(x.note)}</div>` : ''}
       ${x.st === 'done' || x.st === 'rej' ? '' : `<div class="mrq-b">
-        <button type="button" class="ok" onclick="mrqApprove(${i})">✅ Reviewed — Approve</button>
+        <button type="button" class="ok" onclick="mrqApprove(${i})">✅ Reviewed — Done / جائزہ مکمل</button>
         <button type="button" class="in" onclick="mrqInfo(${i})">❓ Ask more details</button>
-        <button type="button" class="pd" onclick="mrqSet(${i}, 'pend')">⏸️ Keep pending</button>
-        <button type="button" class="no" onclick="mrqReject(${i})">❌ Not now</button>
+        <button type="button" class="pd" onclick="mrqSet(${i}, 'pend')">⏸️ Review later</button>
+        <button type="button" class="ch" onclick="mrqChat(${i})">💬 Chat with owner</button>
         <button type="button" class="vw" onclick="mrqView(${i})">👁️ View / ✏️ Edit form</button>
-        ${ph ? `<a class="wa" target="_blank" rel="noopener" href="https://wa.me/92${ph}">💬 WhatsApp</a>` : ''}</div>`}
+        ${ph ? `<a class="ca" href="tel:0${ph}">📞 Call</a><a class="wa" target="_blank" rel="noopener" href="https://wa.me/92${ph}">💬 WhatsApp</a>` : ''}</div>`}
     </div>`; };
   window._mrqShown = L.concat(done);
-  agModal(`<div class="ag-hd">🏪 Membership requests <small>(${L.length} waiting)</small></div>
+  agModal(`<div class="ag-hd">🏪 New businesses — review <small>نئے بزنس جائزے کے لیے (${L.length})</small></div>
     <button type="button" class="btn block secondary" style="margin:0 0 8px" onclick="mrqLoad(true).then(mrqOpen)">🔄 Refresh</button>
     ${L.length ? L.map((x, i) => card(x, i)).join('') : '<div class="cp-hint" style="text-align:center">✅ No request is waiting right now</div>'}
     ${done.length ? `<details class="mrq-old"><summary>Done in last 3 days (${done.length})</summary>${done.map((x, j) => card(x, L.length + j)).join('')}</details>` : ''}
@@ -21221,6 +21229,20 @@ async function mrqInfo(i){
   const ph = String(d.mobile || '').replace(/\D/g, '').slice(-10); if(ph.length === 10 && confirm('Also send this message on WhatsApp to 0' + ph + '?')) window.open('https://wa.me/92' + ph + '?text=' + encodeURIComponent(msg.trim() + '\n\n— My City Shines'), '_blank');
 }
 async function mrqReject(i){ const msg = prompt('Reason (the shopkeeper sees it in the app):', 'ابھی منظور نہیں — تفصیل نامکمل ہے۔'); if(msg === null) return; mrqSet(i, 'rej', msg.trim()); }
+async function mrqChat(i){   /* MCS1411SA402: جائزے کے دوران مالک سے چیٹ — نام کے ساتھ چیٹ کھلے، اوپر کال / واٹس ایپ */
+  const x = (window._mrqShown || [])[i]; if(!x) return; const d = x.data || {};
+  const ph = String(d.mobile || '').replace(/\D/g, '').slice(-10); if(ph.length !== 10) return showToast('موبائل نمبر نہیں ملا');
+  const nm = d.prof || '';
+  try{ closeModal('agModal'); }catch(e){}
+  mcTh = null; mcBox('<div class="mc-hd"><button type="button" onclick="mcClose()">→</button><b>💬 ' + escapeHtml(nm) + '</b><button type="button" onclick="mcClose()">×</button></div><div class="mc-empty">⏳</div>');
+  let r; try{ const pn = {}; pn[ph] = '🏪 ' + nm; r = await mcCall({op:'find', text: ph, phones: ph, pn}); }catch(e){ r = null; }
+  if(!r || !r.ok || !(r.list || []).length){ try{ mcClose(); }catch(e){} return showToast('اس مالک کا چیٹ اکاؤنٹ نہیں ملا — کال / واٹس ایپ استعمال کریں'); }
+  Object.assign(mcAvs, r.avs || {}); mcFind = r.list; mcGoObj(r.list[0]);
+  const pre = 'السلام علیکم! «' + nm + '» کے رجسٹریشن جائزے کے دوران ایک بات: ';
+  const dec = () => { try{ const h = document.querySelector('#mcModal .mc-hd'); if(h && !h.querySelector('.mrq-hc')){ const w = document.createElement('span'); w.className = 'mrq-hc'; w.style.cssText = 'display:flex;gap:6px;direction:ltr'; w.innerHTML = '<a href="tel:0' + ph + '" style="text-decoration:none;font-size:20px">📞</a><a href="https://wa.me/92' + ph + '" target="_blank" rel="noopener" style="text-decoration:none;font-size:20px">💬</a>'; const b = h.querySelector('b'); if(b) b.after(w); }
+    const t = document.getElementById('mcT'); if(t && !t.value && !t.dataset.pre){ t.dataset.pre = 1; t.value = pre; try{ mcSndIcon(); }catch(e){} } }catch(e){} };
+  [500, 1500, 3000].forEach(ms => setTimeout(dec, ms));
+}
 function mrqView(i){
   const x = (window._mrqShown || [])[i]; if(!x) return; let f = null;
   try{ const s1 = store.services.find(r => pfKeyOf(r, 'service') === x.rec); if(s1) f = ['service', s1]; else { const d1 = store.doctors.find(r => pfKeyOf(r, 'doctor') === x.rec); if(d1) f = ['doctor', d1]; } }catch(e){}
@@ -21232,8 +21254,8 @@ async function mrqApprove(i){   /* MCS1411SA397: منظوری = فارم کا ج
   const chk = []; try{ const rec = store.services.find(r => pfKeyOf(r, 'service') === x.rec) || store.doctors.find(r => pfKeyOf(r, 'doctor') === x.rec); if(rec){
     const own = (rec.more && rec.more.ptype) ? '' : '⚠️ Profile type missing'; if(own) chk.push(own);
     if(!(rec.nameUr || rec.name)) chk.push('⚠️ Business name missing'); if(!rec.city) chk.push('⚠️ City missing'); if(!rec.address) chk.push('⚠️ Address missing'); } }catch(e){}
-  if(!confirm('Have you reviewed the full form (name, district / province, city, address, category) and found it correct?\n\n🏪 ' + (d.prof || '') + '\n👤 ' + (d.name || '') + '\n📱 ' + (d.mobile || '') + '\n📍 ' + [d.area, d.city].filter(Boolean).join(', ') + (chk.length ? '\n\n' + chk.join('\n') : '') + '\n\nApprove?')) return;
-  await mrqSet(i, 'done', 'منظور — آپ کا فارم جانچ لیا گیا');
+  if(!confirm('Mark this business as reviewed? (It is already live — if something needs a change, use Chat / Call first.)\n\n🏪 ' + (d.prof || '') + '\n👤 ' + (d.name || '') + '\n📱 ' + (d.mobile || '') + '\n📍 ' + [d.area, d.city].filter(Boolean).join(', ') + (chk.length ? '\n\n' + chk.join('\n') : '') + '\n\nReviewed?')) return;
+  await mrqSet(i, 'done', 'آپ کا فارم جانچ لیا گیا — شکریہ');
   try{ hlRenderSoon(); }catch(e){}
 }
 /* دکاندار کے فون پر: ڈویلپر کا جواب (مزید تفصیل / منظور نہیں) */
@@ -21276,7 +21298,7 @@ setTimeout(() => { mrqLoad(true); mrqMine(); }, 4000);
 .mrq-nt{background:#eff6ff;color:#1e3a8a}
 .mrq-b{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
 .mrq-b button,.mrq-b a{border:0;border-radius:10px;padding:9px 6px;font-weight:800;font-size:13.5px;cursor:pointer;text-align:center;text-decoration:none}
-.mrq-b .ok{background:#059669;color:#fff;grid-column:1/-1;font-size:15px}.mrq-b .in{background:#2563eb;color:#fff}.mrq-b .pd{background:#e2e8f0;color:#334155}.mrq-b .no{background:#fee2e2;color:#991b1b}.mrq-b .vw{background:#f1f5f9;color:#0f172a}.mrq-b .wa{background:#22c55e;color:#fff}
+.mrq-b .ok{background:#059669;color:#fff;grid-column:1/-1;font-size:15px}.mrq-b .in{background:#2563eb;color:#fff}.mrq-b .pd{background:#e2e8f0;color:#334155}.mrq-b .no{background:#fee2e2;color:#991b1b}.mrq-b .vw{background:#f1f5f9;color:#0f172a}.mrq-b .wa{background:#22c55e;color:#fff}.mrq-b .ch{background:#1a73e8;color:#fff}.mrq-b .ca{background:#0f766e;color:#fff}
 .mrq-old summary{cursor:pointer;font-weight:800;color:#475569;margin:6px 0}
 </style>
 
@@ -22143,7 +22165,8 @@ html #screen-home #hdr2.h229 .h2-title{font:900 italic 4.2cqw/1 'Segoe UI',Selaw
 html #screen-home #hdr2.h229 .h2-title i{color:#fde047 !important}
 html #screen-home #hdr2.h229 .x-id{display:flex;gap:1.2cqw;align-items:center;font:700 1.75cqw/1.1 'Segoe UI',Selawik,Arial,sans-serif !important;color:#e6fffa !important;white-space:nowrap}
 html #screen-home #hdr2.h229 .x-id b{color:#fde047 !important}
-html #screen-home #hdr2.h229 .h2-ver{display:inline !important;font:inherit !important;color:inherit !important;margin:0 !important;padding:0 !important;background:none !important}
+html #screen-home #hdr2.h229 .h2-ver{display:inline-block !important;font:800 2.3cqw/1.2 'Segoe UI',Arial,sans-serif !important;color:#0f172a !important;margin:0 !important;padding:.5cqw 1.6cqw !important;background:#fff !important;border-radius:1.4cqw !important;letter-spacing:.3px !important;box-shadow:0 1px 3px rgba(0,0,0,.35) !important;white-space:nowrap !important;overflow:visible !important;max-width:none !important}
+html #screen-home #hdr2.h229 .x-id{overflow:visible !important;flex-wrap:wrap !important;row-gap:1cqw !important}
 html #screen-home #hdr2.h229 .h2-acct{display:flex !important;gap:1cqw !important;align-items:center;margin:0 !important;flex-wrap:nowrap}
 html #screen-home #hdr2.h229 .h2-type,html #screen-home #hdr2.h229 .h2-out{font:800 1.75cqw/1 'Segoe UI',Selawik,Arial,sans-serif !important;padding:.75cqw 1.5cqw !important;border-radius:99cqw !important;white-space:nowrap;box-shadow:0 .25cqw .5cqw rgba(0,0,0,.3) !important;height:auto !important;min-height:0 !important}
 html #screen-home #hdr2.h229 .h2-type{background:linear-gradient(#22c55e,#15803d) !important;color:#fff !important;border:.2cqw solid rgba(255,255,255,.7) !important}
@@ -22653,6 +22676,12 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
 #wzOv .st-pend{background:#fff6e5;color:#93370d}#wzOv .st-ok,#wzOv .st-act{background:#eaf4ff;color:#175cd3}#wzOv .st-rej{background:#fef3f2;color:#b42318}#wzOv .st-none{background:#f2f4f7;color:#475467}
 #wzOv .wzBen{list-style:none;margin:10px 0 0;padding:0}
 #wzOv .wzBen li{padding:3px 0;font-size:14px}#wzOv .wzBen li:before{content:"✓";color:#1d4ed8;margin-inline-end:8px;font-weight:700}
+body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-index:2147483400 !important}
+#wzOv .wzPlay .gp,#wzOv .wzPlay svg{width:28px;height:28px;display:inline-block;flex:0 0 28px}
+#wzOv .wzDoc{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:8px 10px;border:1px solid #e4e7ec;border-radius:6px;background:#fff}
+#wzOv .wzDoc .t{flex:1;min-width:0}#wzOv .wzDoc .t b{display:block;font-size:14px}#wzOv .wzDoc .t b em{color:#d92d20;font-style:normal}#wzOv .wzDoc .t .u{font-size:14px;color:#4b5563;display:block}
+#wzOv .wzUp{flex:0 0 96px;height:64px;border:1.5px dashed #1d4ed8;border-radius:6px;background:#eff4ff center/cover no-repeat;color:#1d4ed8;font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;overflow:hidden}
+#wzOv .wzUp small{display:block;font-weight:400;font-size:13px}#wzOv .wzUp.has{border-style:solid;color:transparent}#wzOv .wzUp.has span{display:none}
 #wzOv .wzPlay{display:flex;align-items:center;gap:10px;border:1px solid #d0d5dd;border-radius:6px;padding:9px 11px;background:#fff;font-weight:600}
 #wzOv .wzPrev{border:1px solid #d0d5dd;border-radius:6px;background:#fff;padding:10px;margin-top:8px}
 #wzOv .wzPrev div{padding:2px 0;font-size:14.5px}
@@ -22701,7 +22730,7 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
   const enOf = x => { try{ return (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; }catch(e){ return ''; } };
   const distAll = () => { const T = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && T.add(x))); }catch(e){} return Array.from(T).sort((a, b) => (enOf(a) || a).localeCompare(enOf(b) || b, 'en')); };
   const statusOf = rec => {   /* ادائیگی / منظوری کی حالت — فون پر موجود معلومات سے */
-    try{ if(rec && typeof pfActive === 'function' && pfActive(rec)) return 'act';
+    try{ if(rec && typeof pfActive === 'function' && pfActive(rec)) return 'act';   /* MCS1411SA402: ادائیگی ہوتے ہی کارڈ منظور / عوامی — ایڈمن کا جائزہ بعد میں */
       const rk = rec && pfKeyOf(rec, 'service'); const m = JSON.parse(lsG('mcsMemSent') || '{}');
       if((rk && m[rk]) || lsG('mcsPlayPending')) return 'pend'; }catch(e){}
     return 'none'; };
@@ -22716,13 +22745,13 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
     $('wzOv').scrollTop = 0;
   }
   const err = m => { const e = $('wzErr'); if(e) e.textContent = m || ''; };
-  window.mcsWizClose = function(){ const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; };
+  window.mcsWizClose = function(){ const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('wz-on'); };
   window.mcsWizOpen = function(step){
     const m = me(); if(m && !S.sid) S.sid = (m.user.sid || m.user.id || '');
     let st = step || S.step || 1;
     if(!m && st > 1) st = 1;                 /* اکاؤنٹ کے بغیر آگے نہیں */
     if(m && st === 1 && !step) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* لاگ اِن ہے تو اکاؤنٹ والا مرحلہ مکمل */
-    S.step = st; save(); $('wzOv').classList.add('on'); document.body.style.overflow = 'hidden'; draw();
+    S.step = st; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; draw();
   };
   const draw = () => { ({1: s1, 2: s2, 3: s3, 4: s4})[S.step](); };
   window.wzGo = function(n){ if(n > 1 && !me()){ S.step = 1; save(); return draw(); } S.step = n; save(); draw(); };
@@ -22852,7 +22881,7 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
       try{ mpAdd('service', rec, true); }catch(e){}
       try{ renderServiceList('list'); mpRender(); }catch(e){}
     }catch(e){ busy = false; return err('محفوظ نہیں ہو سکا — دوبارہ کوشش کریں'); }
-    busy = false; S.step = 3; save(); draw(); try{ showToast('✓ کارڈ محفوظ — اب پلان منتخب کریں'); }catch(e){}
+    busy = false; S.step = 3; S.cardNew = 1; save(); draw(); try{ showToast('✓ کارڈ محفوظ — اب پلان منتخب کریں'); }catch(e){}
   };
   function ok2(rec){
     const sid = sidNow();
@@ -22869,7 +22898,9 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
     if(!rec || !(rec.more || {}).ptype){ S.step = 2; save(); return s2(); }
     if(!p.email) p.email = ((rec.more || {}).email) || (me() && me().user && me().user.email) || '';
     if(!p.ref) p.ref = (rec.more || {}).ref || '';
-    frame(`<div class="wzCard"><div class="wzHd"><i>💳</i><b>Get Paid Subscription</b><span class="u">پیڈ سبسکرپشن حاصل کریں</span></div>
+    const newBan = S.cardNew ? `<div class="wzCard wzDone" style="margin-bottom:10px;text-align:center"><div class="wzOk" style="padding:4px"><div class="big" style="font-size:30px">✅</div><b>Your Business Card is Created!</b><div class="u">آپ کا بزنس کارڈ بن گیا!</div><div style="margin-top:6px"><span class="wzSt st-none">🔒 Private – Not Publicly Listed · <span class="u">فی الحال نجی — عوامی فہرست میں نہیں</span></span></div></div></div>` : '';
+    if(S.cardNew){ S.cardNew = 0; save(); }
+    frame(newBan + `<div class="wzCard"><div class="wzHd"><i>💳</i><b>Get Paid Subscription</b><span class="u">پیڈ سبسکرپشن حاصل کریں</span></div>
       <div style="text-align:center">${stChip(st)}</div>
       <div style="background:#e8f2ff;border-radius:12px;padding:8px 10px;margin-top:8px;text-align:center;font-weight:800;color:#0b2f8f">Make Your Business Public<div class="u" style="font-size:17px">اپنا کاروبار سب کے لیے ظاہر کریں</div></div>
       <ul class="wzBen"><li>Public Business Listing <span class="u">/ عوامی کاروباری فہرست</span></li><li>Appear in Category &amp; Area Searches <span class="u">/ کیٹگری اور علاقے کی تلاش میں</span></li><li>Get More Customers <span class="u">/ مزید گاہک</span></li></ul>
@@ -22877,11 +22908,12 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
       ${LBL('CNIC Expiry Date', 'شناختی کارڈ کی میعاد', 1)}<input class="wzI" id="wzExp" type="date" value="${esc(p.exp)}" onchange="wzP()">
       ${LBL('Email Address', 'ای میل ایڈریس', 1)}<div class="wzRow"><input class="wzI" id="wzEm" type="email" dir="ltr" placeholder="Enter email" value="${esc(p.email)}" oninput="wzP()"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 96px;font-size:13px" onclick="wzGoogle()">Google</button></div><div id="wzGBox"></div>
       ${LBL('Referral Code', 'ریفرل کوڈ')}<select class="wzI" id="wzRef" onchange="wzP()"><option value="">Select Referral Code — فہرست سے ایجنٹ چنیں</option></select><div id="wzRefNm" class="u" style="font-size:14px;color:#047857;font-weight:700;margin:3px 2px"></div>
+      ${LBL('Payment Method', 'ادائیگی کا طریقہ', 1)}<div class="wzPlay"><span class="gp">${typeof MCS_GP_SVG === 'string' ? MCS_GP_SVG : '▶'}</span><span>Google Play Billing<small class="u" style="display:block;font-weight:400">گوگل پلے کے ذریعے ادائیگی</small></span></div>
       ${st === 'none' ? `<div class="wzSec"><span>Choose Your Plan</span><span class="u">اپنا پلان منتخب کریں</span></div><div id="wzPlans"><div class="wzNote u">⏳ Google Play سے پلان آ رہے ہیں…</div></div>` : ''}
-      <div class="wzNote u">⚠️ ادائیگی کے بعد بھی کاروبار فوراً سب کو نظر نہیں آتا — ایڈمن کی منظوری لازمی ہے۔<br><span dir="ltr" style="font-family:inherit">Payment → Admin Approval → Public Activation</span></div>
+      <div class="wzNote u">✅ ادائیگی ہوتے ہی کاروبار فوراً سب کو نظر آنے لگتا ہے — ایڈمن بعد میں آپ کا فارم جائزہ لیتے ہیں، کوئی مسئلہ ہوا تو آپ سے رابطہ کریں گے۔<br><span dir="ltr" style="font-family:inherit">Payment → Public at once → Admin review afterwards</span></div>
       <div class="wzErr u" id="wzErr"></div>
-      ${st === 'pend' ? `<div class="wzGreen u">✅ ادائیگی ہو چکی / درخواست بھیجی جا چکی — ایڈمن کی منظوری کا انتظار ہے۔</div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
-      ${st === 'act' ? `<div class="wzGreen u">🎉 سبسکرپشن منظور — اب آپ کا کاروبار سب کو نظر آ رہا ہے۔</div><button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>` : ''}
+      ${st === 'pend' ? `<div class="wzGreen"><b>⏳ Payment received — verification in progress</b><div class="u">ادائیگی موصول — تصدیق ہو رہی ہے۔ تصدیق ہوتے ہی کاروبار عوامی ہو جائے گا۔</div></div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
+      ${st === 'act' ? `<div class="wzGreen"><b>🎉 Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! اب آپ کا کاروبار عوام کے لیے ظاہر ہے۔</div></div><button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>` : ''}
       <div id="wzAlt"></div>
       ${st !== 'act' ? `<button class="wzBtn bW" onclick="wzDel()" style="color:#b42318;border-color:#fda29b;margin-top:6px">🗑️ Delete this business card<small class="u">یہ بزنس کارڈ حذف کریں</small></button>` : ''}
       <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button>${st !== 'act' ? `<button class="wzBtn bW" onclick="wzGo(4)" style="margin-top:6px">Skip — Agent step later · <span class="u">ایجنٹ والا مرحلہ بعد میں</span></button>` : ''}</div>`);
@@ -22900,7 +22932,7 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
   }
   function ok3(rec, tries){
     const sub = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || '', m = rec.more || {};
-    frame(`<div class="wzCard"><div class="wzOk"><div class="big">✓</div><b>Registration Complete</b><div class="u">آپ کا کاروبار رجسٹر ہو گیا</div></div>
+    frame(`<div class="wzCard"><div class="wzOk"><div class="big">✓</div><b>Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! آپ کا کاروبار اب عوام کے لیے ظاہر ہے۔</div></div>
       <div class="wzMini"><div class="nm u">${esc(rec.nameUr || rec.name || '')}</div>${rec.nameEn ? `<div dir="ltr" style="text-align:left">${esc(rec.nameEn)}</div>` : ''}<div class="u">${esc((m.subs || []).join('، '))}</div><div class="u">${esc(rec.city || '')}${rec.address ? ' — ' + esc(rec.address) : ''}</div><span class="mid">${esc(sub || '…')}</span></div>
       ${sub ? '' : '<div class="wzNote u">ادائیگی مل گئی — سرور سے MCS نمبر آ رہا ہے، چند لمحوں میں کارڈ پر لگ جائے گا۔</div>'}
       <button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>
@@ -22958,13 +22990,17 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
       if(typeof mcsPlayOk === 'function' && mcsPlayOk()){
         await mcsPlayBuy(rk);     /* Google Play ادائیگی + سرور سے تصدیق (پرانا نظام) */
         const paid = !!(lsG('mcsPlayPending')) || (function(){ try{ const e = mpAll().find(x => x.rk === rk); return !!(e && (e.until || 0) > Date.now()); }catch(_){ return false; } })();
-        if(paid){ try{ memAutoSend('service', rec, true); }catch(e){} S.p.paid = Date.now(); save(); }   /* ادائیگی ← منظوری کی درخواست ایڈمن کو */
+        if(paid){ try{ memAutoSend('service', rec, true); }catch(e){} S.p.paid = Date.now(); save(); await wzGoLive(rec); }   /* ادائیگی ← منظوری کی درخواست ایڈمن کو */
       } else { altPath(rec); }
     }catch(e){ err('ادائیگی مکمل نہیں ہوئی — دوبارہ کوشش کریں'); }
     busy = false; if(b) b.disabled = false;
     try{ const rk2 = pfKeyOf(rec, 'service'), e2 = mpAll().find(x => x.rk === rk2); if(S.step === 3 && ((e2 && (e2.until || 0) > Date.now()) || (S.p.paid && Date.now() - S.p.paid < 90000))){ ok3(myCard() || rec); return; } }catch(e){}
     if(S.step === 3 && statusOf(rec) !== 'none' && !$('wzAlt').innerHTML) s3();
   };
+  async function wzGoLive(rec){   /* ادائیگی ہوتے ہی منظور: فون پر فوراً، اور سرور پر (اجازت ہو تو) */
+    try{ rec.approved = true; saveStore(); }catch(e){}
+    try{ const FB = window.MCSFirebase; if(FB && FB.updateDoc && rec.fsId) await FB.updateDoc(FB.doc(FB.db, 'services', rec.fsId), {approved: true}); }catch(e){}
+    try{ renderServiceList('list'); mpRender(); }catch(e){} }
   window.wzResend = function(){ const rec = myCard(); if(rec) try{ memAutoSend('service', rec); }catch(e){} };
   function altPath(rec){   /* جو بندہ Google Play سے ادائیگی نہیں کر سکتا — صرف اکاؤنٹ کی تفصیل تصدیق کے لیے */
     const a = $('wzAlt'); if(!a) return;
@@ -22973,18 +23009,67 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
   window.wzSendVer = function(){ const rec = myCard(); if(!rec) return; try{ saveP(rec); memAutoSend('service', rec); S.p.sentVer = Date.now(); save(); }catch(e){} };
 
   /* ================= مرحلہ ۴: MCS ایجنٹ (اختیاری) ================= */
+  function agState(){   /* ایجنٹ: none / pend / ok */
+    let am = null; try{ am = typeof agMe === 'function' ? agMe() : null; }catch(e){}
+    const mine = d10((me() && me().user && me().user.mobile) || S.a.mobile);
+    if(!am || !am.phone || (mine && d10(am.phone) !== mine)) return {k: 'none'};
+    return am.code ? {k: 'ok', am} : {k: 'pend', am}; }
+  const AGBADGE = '<svg viewBox="0 0 120 140" width="96" height="112" aria-hidden="true"><defs><linearGradient id="wzBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f6fe0"/><stop offset="1" stop-color="#0b3b8f"/></linearGradient></defs><path d="M60 4 L112 24 V68 C112 100 90 123 60 136 C30 123 8 100 8 68 V24 Z" fill="url(#wzBg)" stroke="#d4a017" stroke-width="6"/><text x="60" y="62" text-anchor="middle" font-family="Segoe UI,Arial" font-weight="800" font-size="26" fill="#fff">MCS</text><text x="60" y="88" text-anchor="middle" font-family="Segoe UI,Arial" font-weight="700" font-size="14" fill="#ffd34d" letter-spacing="1">AGENT</text></svg>';
+  const DOCS = [['selfie', 'Selfie Photo', 'سیلفی تصویر'], ['front', 'CNIC Front Photo', 'شناختی کارڈ کی سامنے کی تصویر'], ['back', 'CNIC Back Photo', 'شناختی کارڈ کی پشت کی تصویر']];
   function s4(){
-    const rec = myCard(), st = statusOf(rec), okAgent = st === 'act', isAg = (function(){ try{ return typeof agMe === 'function' && !!(agMe() && agMe().code); }catch(e){ return false; } })();
-    frame(`<div class="wzCard"><div class="wzHd"><i>🛡️</i><b>Apply to Be an MCS Agent</b><span class="u">ایم سی ایس ایجنٹ بننے کے لیے درخواست دیں</span></div>
-      <div class="${okAgent ? 'wzGreen' : 'wzNote'}">${okAgent ? '✅' : '🔒'} <b>Eligibility:</b> At least one paid and Admin-approved subscription is required.<div class="u">اہلیت: کم از کم ایک ادا شدہ اور ایڈمن سے منظور شدہ سبسکرپشن لازمی ہے۔</div></div>
-      <div style="margin-top:8px;font-weight:800;text-align:center" class="u">درکار دستاویزات: سیلفی • شناختی کارڈ سامنے • شناختی کارڈ پیچھے</div>
-      ${isAg ? `<div class="wzGreen u">🎉 مبارک ہو! آپ MCS ایجنٹ ہیں۔ کمیشن اور کمائی صرف الگ MCS-Agent ایپ میں دیکھی جاتی ہے۔</div>` : ''}
-      <div class="wzErr u" id="wzErr"></div>
-      <button class="wzBtn bG" ${okAgent && !isAg ? '' : 'disabled'} onclick="wzDo4()">Add Request for MCS Agent<small class="u">ایم سی ایس ایجنٹ کے لیے درخواست بھیجیں</small></button>
-      <div class="wzNote u" style="background:#eff6ff;border-color:#93c5fd;color:#1e3a8a">ایجنٹ کی درخواست ایڈمن کی الگ منظوری سے چلتی ہے۔ منظوری کے بعد ہی ایجنٹ ID، بیج اور ریفرل فہرست میں نام آتا ہے۔</div>
+    const rec = myCard(), st = statusOf(rec), okAgent = st === 'act', ag = agState(), p = S.p;
+    const cnicOk = dg(p.cnic).replace(/\D/g, '').length === 13;
+    let body;
+    if(ag.k === 'ok'){
+      body = `<div class="wzOk"><div style="display:grid;place-items:center">${AGBADGE}</div><b>Congratulations! You are now an MCS Agent.</b><div class="u">مبارک ہو! آپ اب ایم سی ایس ایجنٹ ہیں۔</div>
+        <div class="wzId" dir="ltr" onclick="try{agCopy('${esc(ag.am.code)}')}catch(e){}">${esc(ag.am.code)}</div><div style="font-weight:700">Referral Code — <span class="u">آپ کا ریفرل کوڈ (دبا کر کاپی کریں)</span></div></div>
+        <div class="wzNote u">کمیشن اور کمائی صرف الگ MCS-Agent ایپ میں دیکھی جاتی ہے۔</div>`;
+    } else if(ag.k === 'pend'){
+      body = `<div class="wzOk"><div class="big">⏳</div><b>Request Sent — Awaiting Admin Approval</b><div class="u">درخواست بھیج دی گئی — ایڈمن کی منظوری کا انتظار ہے۔</div></div>
+        <div class="wzNote u">منظوری کے بعد ہی ایجنٹ ID، بیج اور ریفرل کوڈ ملے گا۔</div>
+        <button class="wzBtn bW" onclick="wzAgCheck()">🔄 Check Status<small class="u">حالت دیکھیں</small></button>`;
+    } else {
+      body = `<div class="${okAgent ? 'wzGreen' : 'wzNote'}">${okAgent ? '✅' : '🔒'} <b>Eligibility:</b> At least one paid and Admin-approved subscription is required.<div class="u">اہلیت: کم از کم ایک ادا شدہ اور ایڈمن سے منظور شدہ سبسکرپشن لازمی ہے۔</div></div>
+        <div class="wzSec"><span>Upload Your Documents</span><span class="u">اپنے دستاویزات اپ لوڈ کریں</span></div>
+        ${DOCS.map(d => `<div class="wzDoc"><div class="t"><b>${d[1]} <em>*</em></b><span class="u">${d[2]}</span></div>${d[0] === 'selfie'
+          ? `<div class="wzUp" id="agP_selfie" onclick="agSelfieAsk()"><span>📷 Upload<small class="u">اپ لوڈ</small></span></div>`
+          : `<label class="wzUp" id="agP_${d[0]}"><input type="file" accept="image/*" hidden onchange="agPick(this,'${d[0]}')"><span>📷 Upload<small class="u">اپ لوڈ</small></span></label>`}</div>`).join('')}
+        ${cnicOk ? '' : `${LBL('CNIC Number', 'قومی شناختی کارڈ نمبر', 1)}<input class="wzI" id="wzCnic4" inputmode="numeric" dir="ltr" maxlength="15" placeholder="XXXXX-XXXXXXX-X" value="${esc(p.cnic)}" oninput="wzCnicF(this)">`}
+        <div class="wzErr u" id="wzErr"></div>
+        <button class="wzBtn bG" id="wzSave4" ${okAgent ? '' : 'disabled'} onclick="wzDo4()">Add Request for MCS Agent<small class="u">ایم سی ایس ایجنٹ کے لیے درخواست بھیجیں</small></button>
+        <div class="wzNote u" style="background:#eff6ff;border-color:#93c5fd;color:#1e3a8a">ایجنٹ کی درخواست ایڈمن کی الگ منظوری سے چلتی ہے۔ تصویریں صرف MCS انتظامیہ دیکھتی ہے۔</div>`;
+    }
+    frame(`<div class="wzCard"><div class="wzHd"><i>🛡️</i><b>Apply to Be an MCS Agent</b><span class="u">ایم سی ایس ایجنٹ بننے کے لیے درخواست دیں</span></div>${body}
       <button class="wzBtn bW" onclick="wzGo(3)" style="margin-top:6px">← Back</button><button class="wzBtn bW" onclick="mcsWizClose()" style="margin-top:6px">Finish — مکمل</button></div>`);
+    try{ ['front', 'back', 'selfie'].forEach(k => { if(typeof agImgs !== 'undefined' && agImgs[k]) agShowPic(k); }); }catch(e){}
+    if(ag.k === 'pend') wzAgCheck(true);
   }
-  window.wzDo4 = function(){ if(statusOf(myCard()) !== 'act') return err('پہلے منظور شدہ سبسکرپشن لازمی ہے'); mcsWizClose(); try{ agForm(); }catch(e){ try{ showToast('ایجنٹ فارم نہیں کھلا'); }catch(_){} } };
+  window.wzAgCheck = async function(quiet){
+    const ag = agState(); if(ag.k !== 'pend') return;
+    try{ const r = await (await fetch(AG_API + '/agstatus', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: ag.am.phone, dev: (typeof agDev === 'function' ? agDev() : '')})})).json();
+      if(r && r.ok && r.status === 'approved' && r.code){ const m0 = agMe(); m0.code = r.code; lsS('mcsAgent', JSON.stringify(m0)); if(S.step === 4) s4(); return; }
+      if(r && r.ok && r.status === 'rejected'){ lsS('mcsAgent', null); if(S.step === 4){ s4(); err('❌ آپ کی درخواست منظور نہیں ہوئی' + (r.note ? ' — ' + r.note : '') + ' — دوبارہ درخواست دے سکتے ہیں'); } return; }
+      if(!quiet) try{ showToast('⏳ ابھی منظوری باقی ہے'); }catch(e){}
+    }catch(e){ if(!quiet) try{ showToast('📶 انٹرنیٹ نہیں'); }catch(_){} } };
+  const AGERR = {not_paid:'ایجنٹ بننے کے لیے پہلے ادا شدہ اور منظور شدہ سبسکرپشن لازمی ہے', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'ضروری خانے بھریں', cnic_staff:'یہ شناختی کارڈ ڈویلپر / کو-ڈویلپر کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی اور ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ'};
+  window.wzDo4 = async function(){
+    if(busy) return; try{ if(typeof codevBlock === 'function' && codevBlock()) return; }catch(e){}
+    const rec = myCard(); if(!rec || statusOf(rec) !== 'act') return err('پہلے منظور شدہ سبسکرپشن لازمی ہے');
+    const c4 = $('wzCnic4'); if(c4) S.p.cnic = c4.value; save();
+    const cnic = dg(S.p.cnic).replace(/\D/g, ''), a = S.a, u = (me() && me().user) || {};
+    const name = (a.name || u.name || '').trim(), mob = d10(u.mobile || a.mobile), city = (rec.city || a.dist || '').trim();
+    if(!name || mob.length < 10 || !city) return err('اکاؤنٹ کا نام، موبائل اور شہر مکمل نہیں — مرحلہ ۱ اور ۲ دیکھیں');
+    if(cnic.length !== 13) return err('شناختی کارڈ کے پورے ۱۳ ہندسے لکھیں');
+    for(const d of DOCS) if(!agImgs[d[0]]) return err('«' + d[1] + '» والی تصویر لگائیں');
+    busy = true; err(''); const btn = $('wzSave4'); if(btn) btn.disabled = true;
+    try{
+      const r = await (await fetch(AG_API + '/agapply', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({name, father:'', cnic, phone:'0' + mob, wa:'', email:(S.p.email || (rec.more || {}).email || ''), city, address: rec.address || '', exp:'', biz: rec.nameUr || rec.name || '', bizRk: pfKeyOf(rec, 'service'), dev: (typeof agDev === 'function' ? agDev() : ''), img: agImgs})})).json();
+      if(!r || !r.ok){ busy = false; if(btn) btn.disabled = false; return err(AGERR[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں'); }
+      lsS('mcsAgent', JSON.stringify({phone: '92' + mob, name, at: Date.now()}));
+      ['front', 'back', 'selfie'].forEach(k => delete agImgs[k]);
+      busy = false; S.agSent = Date.now(); save(); s4();
+    }catch(e){ busy = false; if(btn) btn.disabled = false; err('📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
+  };
 
   /* ---------- داخلے کے راستے ---------- */
   document.addEventListener('DOMContentLoaded', () => {
@@ -23003,6 +23088,86 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
         const n = box.querySelector('.mx-big') || box.querySelector('.mpo-note'); if(n) n.insertAdjacentElement('afterend', b); else box.appendChild(b); } }catch(e){}   /* MCS1311FR394: نئے My Portal میں بٹن صفحے کے اندر (پہلے ڈبے کے باہر لگ کر آدھا صفحہ دبا دیتا تھا) */
       return r; };
   });
+})();
+</script>
+
+<style id="mcsRC402">
+/* MCS1411SA402 (مالک کا حکم): رجسٹرڈ بزنس کارڈ — بائیں: MCS Agent بیج ← مالک کی گول سیلفی ← رجسٹر / ختم / دن باقی ← کال + واٹس ایپ؛ درمیان: نام، جگہ، پیشکش؛ دائیں: دکان کی تصویر */
+html body .doc-card.rc{display:block !important;height:auto !important;min-height:0 !important;max-height:none !important;margin:0 auto 8px !important;width:94% !important;max-width:390px !important;padding:8px 8px 5px !important;background:linear-gradient(180deg,#fffdf5,#fff3d1) !important;color:#1f2937 !important;overflow:hidden !important;position:relative}
+.doc-card.rc .rc-grid{display:grid;grid-template-columns:86px minmax(0,1fr) 98px;gap:8px;direction:ltr;align-items:stretch}
+.doc-card.rc .rc-l{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !important;top:auto !important;width:40px !important;height:40px !important;margin:0 !important}
+.doc-card.rc .rc-dp{width:62px;height:62px;border-radius:50%;overflow:hidden;border:2.5px solid #d4a017;background:#fff;display:grid;place-items:center;font-size:28px;flex:none}
+.doc-card.rc .rc-dp img{width:100%;height:100%;object-fit:cover;display:block}
+.doc-card.rc .rc-reg{width:100%;box-sizing:border-box;text-align:center;background:#ecfdf5;border:1px solid #16a34a;border-radius:8px;padding:3px 3px;color:#14532d;font:600 10px/1.4 'Segoe UI',Arial,sans-serif;direction:rtl}
+.doc-card.rc .rc-reg b{display:block;font-size:10.5px;font-weight:800}
+.doc-card.rc .rc-reg span{display:block;white-space:nowrap}
+.doc-card.rc .rc-reg .d{font-weight:900;color:#b45309;font-size:11px}
+.doc-card.rc .rc-acts{display:flex;gap:7px;justify-content:center}
+.doc-card.rc .rc-acts a{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none}
+.doc-card.rc .rc-acts .c{background:#2563eb}.doc-card.rc .rc-acts .w{background:#16a34a}
+.doc-card.rc .rc-acts svg{width:18px;height:18px}
+.doc-card.rc .rc-m{direction:rtl;text-align:center;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px;overflow:hidden}
+.doc-card.rc .rc-name{font-size:18px;font-weight:800;line-height:1.4;color:#111827}
+.doc-card.rc .rc-en{font:700 12px/1.3 'Segoe UI',Arial,sans-serif;direction:ltr;color:#475569}
+.doc-card.rc .rc-ow{font-size:13px;color:#0f766e;font-weight:700}
+.doc-card.rc .rc-ty{font-size:13px;font-weight:700;color:#92400e}
+.doc-card.rc .rc-pr{font-size:12.5px;color:#374151;line-height:1.6}
+.doc-card.rc .rc-ad{font-size:12px;color:#475569;line-height:1.5}
+.doc-card.rc .rc-r{display:flex;flex-direction:column;gap:5px;min-width:0}
+.doc-card.rc .rc-ph{flex:1;min-height:104px;border-radius:12px;background:#fde68a center/cover no-repeat;display:grid;place-items:center;font-size:40px;border:1.5px solid #d4a017}
+.doc-card.rc .rc-ic{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.doc-card.rc .rc-ic button,.doc-card.rc .rc-ic a{width:28px !important;height:28px !important;min-width:28px !important;padding:0 !important}
+.doc-card.rc .rc-ft{display:flex;justify-content:flex-end;margin-top:3px;direction:ltr}
+.doc-card.rc .rc-id{font:700 11px Consolas,monospace;color:#475569}
+</style>
+<script id="mcsRC402js">
+(function(){
+  const o = window.svcCardHtml; if(typeof o !== 'function' || o._rc) return;
+  const fmt = t => t ? new Date(t).toLocaleDateString('en-GB') : '';
+  const ICO_CALL = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>';
+  const ICO_WA = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>';
+  const E = s => escapeHtml(s == null ? '' : String(s));
+  function rc(s, meta){
+    meta = CATEGORY_META[s.category] || meta || {};
+    const num = normalizePkNumber(s.whatsapp || ''), digits = num.replace(/[^0-9]/g, ''), intl = '92' + digits.replace(/^0/, '');
+    const m = s.more || {}, ow = splitOwnerIntro(s.intro), key = pfKeyOf(s, 'service'), a = (typeof pfAct !== 'undefined' && pfAct[key]) || {};
+    let info = null; try{ info = apInfo({kind: 'service', rec: s}); }catch(e){}
+    const until = (info && info.until > Date.now() ? info.until : a.until) || 0, since = a.since || (info && info.since) || 0;
+    const left = until ? Math.max(1, Math.ceil((until - Date.now()) / 864e5)) : 0;
+    const prods = Array.isArray(m.prods) && m.prods.length ? m.prods : (m.services ? String(m.services).split(/[،,]/).map(x => x.trim()).filter(Boolean) : []);
+    const addr = [s.address, s.area, s.city].filter(Boolean).map(E).join('، ');
+    const rid = shortRecordId('service', s) || '';
+    const mine = (isAdminSignedIn || pfOwnsStrict(s));
+    return `<div class="doc-card rc pf-gold"${s.id ? ` onclick="pfCardTap(event,'service','${escapeAttr(s.id)}')"` : ''}>${dupBadge('service', s)}${ewRib('service', s)}
+      <div class="rc-grid">
+        <div class="rc-l">${agBadgeHtml('service', s)}
+          <div class="rc-dp">${m.selfie ? `<img src="${escapeAttr(m.selfie)}" alt="">` : (meta.emoji || '🏪')}</div>
+          <div class="rc-reg"><b>✓ رجسٹرڈ بزنس</b>${since ? `<span>رجسٹر: <bdi dir="ltr">${fmt(since)}</bdi></span>` : ''}${until ? `<span>ختم: <bdi dir="ltr">${fmt(until)}</bdi></span><span class="d">${left} دن باقی</span>` : ''}</div>
+          ${digits ? `<div class="rc-acts"><a class="c" href="tel:${digits}" aria-label="کال">${ICO_CALL}</a><a class="w" href="https://wa.me/${intl}" target="_blank" aria-label="واٹس ایپ">${ICO_WA}</a></div>` : ''}
+        </div>
+        <div class="rc-m">
+          <div class="rc-name">${E(s.nameUr)}${newBadge(s)}</div>${s.nameEn ? `<div class="rc-en">${E(s.nameEn)}</div>` : ''}
+          ${ow.owner ? `<div class="rc-ow">👤 ${E(ow.owner)}</div>` : ''}
+          ${isBlankVal(s.type) ? '' : `<div class="rc-ty">${E(s.type)}</div>`}
+          ${prods.length ? `<div class="rc-pr">🛒 ${prods.slice(0, 6).map(E).join(' • ')}</div>` : ''}
+          ${addr ? `<div class="rc-ad">📍 ${addr}</div>` : ''}
+        </div>
+        <div class="rc-r">
+          <div class="rc-ph"${m.shop ? ` style="background-image:url(${escapeAttr(m.shop)})"` : ''}>${m.shop ? '' : (meta.emoji || '🏪')}</div>
+          <div class="rc-ic">${favBtnHtml('service', s.id)}<button class="a-share" onclick="event.stopPropagation();shareProfileCardById('service','${escapeAttr(s.id)}')" aria-label="شیئر">📤</button>${mine ? `<button onclick="event.stopPropagation();cardEdit('service','${escapeAttr(s.id)}')" aria-label="ترمیم">✏️</button>` : `<button class="a-reqadmin" onclick="event.stopPropagation();openReportChoice('service','${escapeAttr(s.id)}')" aria-label="رابطہ">📩</button>`}</div>
+        </div>
+      </div>
+      <div class="rc-ft"><span class="rc-id">${E(rid.toUpperCase())}</span></div>
+    </div>`;
+  }
+  window.svcCardHtml = function(s, meta){
+    let live = false;
+    try{ live = !!(s && s.id && typeof pfActive === 'function' && pfActive(s) && s.category !== UNASSIGNED_KEY && s.category !== 'emergencyNumbers' && s.category !== 'govOffices'); }catch(e){}
+    if(live){ try{ return rc(s, meta); }catch(e){} }
+    return o.apply(this, arguments);
+  };
+  window.svcCardHtml._rc = 1;
 })();
 </script>
 
