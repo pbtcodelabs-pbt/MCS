@@ -53,11 +53,10 @@ jobs:
           if [ -n "$ZIP" ] && [ -f "$ZIP" ]; then
             if unzip -l "$ZIP" | awk '{print $4}' | grep -qx 'index.html'; then
               echo "Using $ZIP"
-              unzip -o "$ZIP" index.html -d .
-              if unzip -l "$ZIP" | awk '{print $4}' | grep -qx 'sw.js'; then
-                unzip -o "$ZIP" sw.js -d .
-              fi
-              git add index.html sw.js
+              # HD1511SU097: زپ میں جو فائلیں ہیں صرف وہی بدلیں (server/ اور .github/ کبھی نہیں)
+              unzip -Z1 "$ZIP" | grep -v '/$' | grep -Ev '^(server/|\.github/|\.\./|/)' | grep -v '\.\.' > /tmp/zfiles.txt || true
+              while IFS= read -r m; do unzip -o "$ZIP" "$m" -d . ; git add -- "$m"; done < /tmp/zfiles.txt
+              git add index.html
               MSG="Auto-update from $ZIP"
             else
               echo "::warning::'$ZIP' has no index.html inside - nothing changed. Deleting it."
