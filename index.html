@@ -4425,11 +4425,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU454";
+const APP_VERSION = "MCS1511SU455";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1511SU454": "⛔ One business per person for now: a mobile number that already has a registered business cannot get a second one — not by the owner, admin or agent (admins and agents still see Add New for other people's businesses)",
+  "MCS1511SU455": "⭐ Only one Google Play package is shown now — «Membership — 1 year» (the other four boxes are hidden for now)",
+    "MCS1511SU454": "⛔ One business per person for now: a mobile number that already has a registered business cannot get a second one — not by the owner, admin or agent (admins and agents still see Add New for other people's businesses)",
     "MCS1511SU453": "🪪 Every CNIC field now has a CNIC Expiry Date — an expired CNIC turns red and the form cannot be saved • ⎋ Log Out moved to the bottom of My Account (removed from the top bar)",
     "MCS1511SU452": "🌟 Standard flow: big Welcome screen after sign-up • one business per account (Add New hidden once you have one) • membership only through Google Play — no admin approval for businesses; buying = live at once • bottom bar closes any open form first • tap a locked box to edit it",
     "MCS1511SU451": "🪪 Welcome back screen and the login page now show your MCS ID with your name and mobile number",
@@ -5501,12 +5502,12 @@ async function mcsPlayPackages(){
   const det = await mcsPlayDetails(); let owned = [];
   if(mcsPlayOk()){ try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(x => x.itemId); }catch(e){} }
   const next = MCS_PLAY_SKUS.find(k => !owned.includes(k));   /* MCS1311FR391: صرف اگلا پیکج کھلا؛ لیا ہوا اور باقی بند */
-  const rows = MCS_PLAY_SKUS.map((k, i)=>{ const d = det && det[k];
+  const rows = [MCS_PLAY_SKUS.find(k => owned.includes(k)) || next || MCS_PLAY_SKUS[0]].map((k, i)=>{ const d = det && det[k];   /* MCS1511SU455: صرف ایک پیکج دکھے */
     const c = MCS_PLAY_CLR[k] || ['#94a3b8', '#475569', '#e2e8f0', '#1e293b'], pr = d ? mcsPlayPrice(d.p) : '';
     const own = owned.includes(k), isNext = k === next;
     const bd = own ? '<span class="mpc-bd">✅</span>' : isNext ? '' : '<span class="mpc-bd l">🔒</span>';
     const act = isNext ? `<div class="mpc-a"><button type="button" class="mpc-btn" style="color:${c[3]}" onclick="mcsPlayGo()">سبسکرائب کریں</button></div>` : '';
-    return `<div class="mpc ${own ? 'done' : isNext ? 'on' : 'lk'}" style="--c0:${c[0]};--c1:${c[1]};--bd:${c[2]};--dk:${c[3]}"><div class="mpc-t">${bd}<div class="mpc-l"><b>${i === 0 ? '⭐ ' : ''}${escapeHtml(MCS_PLAY_NAMES[k] || k)}</b><small dir="ltr">${k}</small></div><div class="mpc-r">${d ? `<span class="mpc-p" dir="ltr">${escapeHtml(pr)}</span><small>${mcsPlayPer(d.per)}</small>` : '<span class="mpc-w">قیمت Play سے نہیں آئی</span>'}</div></div>${act}</div>`; }).join('');
+    return `<div class="mpc ${own ? 'done' : isNext ? 'on' : 'lk'}" style="--c0:${c[0]};--c1:${c[1]};--bd:${c[2]};--dk:${c[3]}"><div class="mpc-t">${bd}<div class="mpc-l"><b>⭐ Membership — 1 year</b><small dir="ltr">${k}</small></div><div class="mpc-r">${d ? `<span class="mpc-p" dir="ltr">${escapeHtml(pr)}</span><small>${mcsPlayPer(d.per)}</small>` : '<span class="mpc-w">قیمت Play سے نہیں آئی</span>'}</div></div>${act}</div>`; }).join('');
   agModal(`<div class="ag-hd"><div class="mpg-t">${MCS_GP_SVG}<span>Google Play پیکج پلانز</span></div></div>${rows}${det ? '' : `<div class="cp-hint" dir="auto" style="font-size:12.5px;line-height:1.9;margin:4px 8px">ℹ️ اس فون پر Google Play سے پیکج کی قیمت نہیں آئی۔ عام وجوہات: ایپ Play Store (ٹیسٹ لنک) سے انسٹال نہ ہو؛ فون میں وہ Gmail نہ ہو جو Play Console میں ٹیسٹر ہے؛ یا Play Console میں سبسکرپشن کی ID (اوپر لکھی) Active نہ ہو۔<br><small style="opacity:.75">${escapeHtml(mcsPlayDiag || '—')}</small></div>`}`);
 }
 /* MCS1311FR391: سبسکرائب کریں — کاروبار چن کر وہی ممبرشپ کا راستہ؛ SKU خود اگلا خالی (mcsPlayBuy) */
@@ -13800,11 +13801,11 @@ function cdReport(){
   if(typeof openHelpDesk === 'function') openHelpDesk();
 }
 function cdLoginOpen(){
-  agModal(`<div class="ag-hd">👥 ایڈمن لاگ اِن <small>Admin test mode</small></div>
-    <div class="cp-hint">صرف وہی جنہیں مالک (پی بی ٹی کوڈ لیبز) نے موبائل نمبر اور PIN دیا ہو۔ اس موڈ میں ایپ کی ہر چیز کھول کر دیکھ سکتے ہیں، مگر کچھ محفوظ، منظور یا بھیجا نہیں ہوتا — آپ کا ہر مسئلہ / تجویز ہیلپ ڈیسک سے مالک کے پاس جاتی ہے۔</div>
+  agModal(`<div class="ag-hd">👥 Admin 2 Login</div>
+    <div class="cp-hint">Only for the Admin 2 mobile number. The 6-digit PIN is given by Admin 1 (Developer panel → 👥 Admin 2 → 🔄 New PIN).</div>
     <div class="ag-f"><label>📱 موبائل نمبر</label><input id="cdPh" inputmode="tel" dir="ltr" placeholder="03xx xxxxxxx"><label>🔑 PIN</label><input id="cdPin" inputmode="numeric" dir="ltr" maxlength="6"></div>
     <div id="cdMsg" class="cp-hint" style="text-align:center"></div>
-    <button type="button" class="btn block" onclick="cdLogin()">✅ جانچ موڈ کھولیں</button>`);
+    <button type="button" class="btn block" onclick="cdLogin()">✅ Log in as Admin 2</button>`);
 }
 async function cdLogin(){
   const ph = document.getElementById('cdPh').value.replace(/\D/g,''), pin = document.getElementById('cdPin').value.replace(/\D/g,''), msg = document.getElementById('cdMsg');
@@ -23057,11 +23058,11 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
     const r = x.rec, left = mpLeftOf(x.p);
     agModal(`<div class="ag-hd">⭐ One-year membership</div>
       <div class="cp-hint">✅ Business: <b data-noen="1">${E(r.nameUr || r.name || '')}</b>${slotName(x) ? ' — ' + E(slotName(x)) : ''}${left > 0 ? `<br>Your remaining ${left} day${left > 1 ? 's' : ''} will be added on top.` : ''}</div>
-      <div class="mem-pk"><div class="n" id="memPkN">⏳ Google Play پیکج…</div><div class="p" id="memPkP">—</div><small>Paid through Google Play — renews every year; cancel any time in the Play Store</small></div>
+      <div class="mem-pk"><div class="n" id="memPkN">⏳ Membership…</div><div class="p" id="memPkP">—</div><small>Paid through Google Play — renews every year; cancel any time in the Play Store</small></div>
       <button type="button" class="mem-play" onclick="mcsPlayBuy('${E(x.p.rk)}')">▶️ Get membership on Google Play</button>`);   /* MCS1211TH380: Play کے ساتھ کوئی متبادل بٹن نہیں */
     (async () => { try{ const det = await mcsPlayDetails(); let owned = []; try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(y => y.itemId); }catch(_){}
       const k = MCS_PLAY_SKUS.find(z => !owned.includes(z)), d = det && k && det[k], n = document.getElementById('memPkN'), pp = document.getElementById('memPkP');
-      if(n) n.textContent = k ? '📦 پیکج: ' + (MCS_PLAY_NAMES[k] || k) + ' (' + (MCS_PLAY_SKUS.indexOf(k) + 1) + ' / 5)' : '⚠️ اس گوگل اکاؤنٹ پر 5 ممبرشپس پہلے سے فعال ہیں';
+      if(n) n.textContent = k ? '⭐ Membership — 1 year' : '✅ This Google account already has an active membership';   /* MCS1511SU455 */
       if(pp) pp.textContent = d && d.p ? mcsPlayPrice(d.p).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') + (/^P1Y$/i.test(d.per || '') ? ' / year' : '') : (k ? '—' : ''); }catch(e){} })();
   };
   window.memCode = function(rk){
@@ -23793,9 +23794,9 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     if(mcsPlayOk()){ try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(x => x.itemId); }catch(e){} }
     const box = $('wzPlans'); if(!box) return;
     const next = MCS_PLAY_SKUS.find(k => !owned.includes(k));
-    box.innerHTML = MCS_PLAY_SKUS.map((k, i) => { const d = det && det[k], own = owned.includes(k), on = k === next;
+    box.innerHTML = [MCS_PLAY_SKUS.find(k => owned.includes(k)) || next || MCS_PLAY_SKUS[0]].map((k, i) => { const d = det && det[k], own = owned.includes(k), on = k === next;   /* MCS1511SU455 */
       const pr = d ? esc(mcsPlayPrice(d.p)) + (typeof mcsPlayPer === 'function' ? mcsPlayPer(d.per) : '') : '';
-      return `<div class="wzPl ${own ? 'ok' : on ? 'on' : 'lk'}"><div class="n"><b>Plan M${i + 1}</b><small dir="ltr">${k}</small></div>${pr ? `<span class="pr">${pr}</span>` : ''}${own ? '<span class="tg">✓ Purchased · <span class="u">خرید لیا</span></span>' : on ? '<button type="button" id="wzPay" onclick="wzDo3()">Subscribe <span class="u">سبسکرائب</span></button>' : '<span class="tg">🔒 Locked · <span class="u">مقفل</span></span>'}</div>`; }).join('')
+      return `<div class="wzPl ${own ? 'ok' : on ? 'on' : 'lk'}"><div class="n"><b>Membership — 1 year</b><small dir="ltr">${k}</small></div>${pr ? `<span class="pr">${pr}</span>` : ''}${own ? '<span class="tg">✓ Purchased · <span class="u">خرید لیا</span></span>' : on ? '<button type="button" id="wzPay" onclick="wzDo3()">Subscribe <span class="u">سبسکرائب</span></button>' : '<span class="tg">🔒 Locked · <span class="u">مقفل</span></span>'}</div>`; }).join('')
       + (!mcsPlayOk() ? '<div class="wzNote u">اس فون پر Google Play ادائیگی نہیں کھلی (ایپ Play Store سے انسٹال ہونی چاہیے) — دبانے پر تصدیق کے لیے تفصیل بھیجنے کا راستہ آئے گا۔</div>' : (det ? '' : '<div class="wzNote u">قیمت Play سے نہیں آئی — انٹرنیٹ / ٹیسٹر Gmail چیک کریں۔</div>'));
   }
   function ok3(rec, tries){
