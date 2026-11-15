@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU440";
+const APP_VERSION = "MCS1511SU441";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU441": "🪪 Registered businesses look the same everywhere (search and lists too) • 🟢 Live / days left in English • agent form labels not doubled",
   "MCS1511SU440": "🎉 Google Play purchase = business live at once + congratulations (how many people can see you) • 🔓 owner / admin edit without PIN, saved boxes locked until ✏️ Edit • 🤝 Earn with MCS: MCS ID fills business, CNIC and expiry • 🧭 wizard: 4 steps + green status • agent code box removed from login",
   "MCS1511SU439": "🧹 No more doubles on cards — city, area, address and type show only once (e.g. «Fateh Pur, Fateh Pur» → «Fateh Pur»)",
   "MCS1511SU438": "🆔 Your account ID is now always refreshed from the server by your mobile number (old ID like MCS008 is replaced at once)",
@@ -4954,8 +4955,8 @@ function pfTag(kind, rec){
   /* MCS1411SA397: صرف ختم ہونے کی تاریخ اور باقی دن — «N میں سے» نہیں */
   /* MCS1411SA412 (مالک کا حکم): بڑا «رجسٹرڈ بزنس» بیج ختم — چھوٹا ایک لائن کا «لائیو — آخری تاریخ • باقی دن» */
   const dt = info.until ? new Date(info.until).toLocaleDateString('en-GB') : '';
-  const sub = trial ? `${left} دن باقی` : (dt ? `<bdi dir="ltr">${dt}</bdi> تک • ${left} دن باقی` : 'فعال');
-  return `<button type="button" class="pf-tag pf-mini ${trial ? 'trial' : 'paid'}" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')"><b>${trial ? '🟠 ٹرائل' : '🟢 لائیو'}</b><small>${sub}</small></button>`;
+  const sub = trial ? `${left} days left` : (dt ? `until <bdi dir="ltr">${dt}</bdi> • ${left} days left` : 'Active');   /* MCS1511SU441: انگلش */
+  return `<button type="button" class="pf-tag pf-mini ${trial ? 'trial' : 'paid'}" dir="ltr" onclick="event.stopPropagation();pfOpen('${kind}','${escapeAttr(rec.id)}')"><b>${trial ? '🟠 Trial' : '🟢 Live'}</b><small>${sub}</small></button>`;
 }
 function pfBtn(kind, rec){ return pfTag(kind, rec); }
 function pfRecById(kind, id){ return kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id); }
@@ -13188,7 +13189,7 @@ function agEarnOpen(){
 function agFullForm(){
   /* MCS1511SU430 (مالک کا حکم): فارم کے سب سے اوپر MCS ID کی پکی ڈراپ ڈاؤن (لکھنے کی گنجائش نہیں)؛ چنتے ہی اس کا نام، موبائل، ضلع آ جائے اور باقی فارم کھل جائے؛ آخر میں ریفرل کوڈ بھی فہرست سے (نام کے ساتھ) */
   const cities = [...new Set((store.services||[]).map(r=>r.city).filter(c=>c && !isBlankVal(c)))].slice(0, 400).map(c=>`<option value="${escapeAttr(c)}">`).join('');
-  const F = (id, ic, en, ur, attrs, val) => `<div class="agx-f"><label class="agx-l" for="${id}">${ic} ${en} <span>${ur}</span> <i>*</i></label><input id="${id}" ${attrs||''} value="${escapeAttr(val||'')}"></div>`;
+  const F = (id, ic, en, ur, attrs, val) => `<div class="agx-f"><label class="agx-l" for="${id}">${ic} ${en} <i>*</i></label><input id="${id}" ${attrs||''} value="${escapeAttr(val||'')}"></div>`;
   const staffF = isAdminSignedIn; window._agxRk = ''; window._agxBiz = ''; window._agxSid = '';
   agModal(`<div class="ag-hd">🤝 MCS Agent Registration Form <small>First choose your MCS ID</small></div>
     <div class="ag-f agx">
@@ -24259,5 +24260,18 @@ html body .ur-cap{display:none !important}
 #wzW .wzStat>div.ok{border-color:#22c55e;background:#f0fdf4}
 #wzW .wzStat>div.ok i{background:#16a34a;color:#fff}
 </style>
+<script id="mcsUnify441">
+/* MCS1511SU441 (مالک کی تصویریں): «Businesses» کی فہرست / تلاش میں رجسٹرڈ کاروبار پرانے سبز ڈیزائن میں تھے — اب ہر جگہ وہی نیا رجسٹرڈ کارڈ (rc: MCS بیج، گول ڈی پی، میعاد، دکان کی تصویر) */
+(function(){
+  const o = window.userResultCard; if(typeof o !== 'function') return;
+  window.userResultCard = userResultCard = function(item){
+    try{
+      if(item && item.id){ const doc = item.kind === 'doctor'; const r = doc ? (store.doctors || []).find(x => x.id === item.id) : (store.services || []).find(x => x.id === item.id);
+        if(r && typeof pfActive === 'function' && pfActive(r)){ if(doc && typeof docCardHtml === 'function' && docCardHtml._rc) return docCardHtml(r, 'list'); if(!doc && typeof svcCardHtml === 'function' && svcCardHtml._rc) return svcCardHtml(r); } }
+    }catch(e){}
+    return o.apply(this, arguments);
+  };
+})();
+</script>
 </body>
 </html>
