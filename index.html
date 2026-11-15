@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+<script id="mcsMo448">
+/* MCS1511SU448: رجسٹریشن ویزرڈ کے اندر کی ہر تبدیلی پر باقی ایپ کے بھاری MutationObserver دوڑتے تھے (پورے صفحے کی اسکین) — اب ویزرڈ کے اندرونی بدلاؤ پر وہ سوتے رہتے ہیں */
+(function(){ var MO = window.MutationObserver; if(!MO || MO.__wz448) return;
+  function W(cb){ return new MO(function(recs, obs){ try{ var b = document.body; if(b && b.classList.contains('wz-on')){ var ov = document.getElementById('wzOv'); if(ov){ var all = true; for(var i = 0; i < recs.length; i++){ if(!ov.contains(recs[i].target)){ all = false; break; } } if(all) return; } } }catch(e){} return cb.call(this, recs, obs); }); }
+  W.prototype = MO.prototype; W.__wz448 = 1; window.MutationObserver = W; })();
+</script>
 <style id="mcsEnUi">
 /* MCS1111WE310: انگلش لکھائی — فارم کے خانے کے نام کے نیچے چھوٹا اردو */
 /* ریکارڈ (اردو یا انگلش) اپنی سمت میں */
@@ -4419,7 +4425,7 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU447";
+const APP_VERSION = "MCS1511SU449";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
@@ -23336,7 +23342,34 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
 #wzOv #wzFlash{display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:12px;right:12px;max-width:456px;margin:0 auto;z-index:50;background:#d92d20;color:#fff;border-radius:10px;padding:11px 14px;font:700 15px/1.8 "Jameel Noori Nastaleeq","JameelNoori",MCSDigits,serif;direction:rtl;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #wzOv #wzFlash.ok{background:#04641c}
 #wzOv{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;max-height:none!important;transform:none!important}
-body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA418: ویزرڈ کھلا ہو تو پیچھے ہوم کی فہرست نظر ہی نہ آئے */
+body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: ویزرڈ کھلا ہو تو پیچھے ہوم کی فہرست نظر ہی نہ آئے */
+</style>
+<style id="mcsWiz448css">
+/* MCS1511SU448 */
+#wzOv .wzIdBar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #043464;border-radius:10px;padding:7px 12px;margin:0 0 8px;cursor:pointer}
+#wzOv .wzIdBar .k{font:700 11px "Segoe UI",Arial,sans-serif;color:#64748b}
+#wzOv .wzIdBar b{font:800 18px "Segoe UI",Consolas,monospace;color:#043464;letter-spacing:.5px}
+#wzOv .wzIdBar .n{font-size:13px;color:#334155;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+#wzOv .wzIdBar .h{font-size:14px;color:#0362b4;white-space:nowrap}
+#wzOv .wzDd{margin-top:2px}
+#wzOv .wzDdBtn{width:100%;min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #ccc;border-radius:6px;background:#fff;padding:8px 11px;font-size:15.5px;font-family:inherit;color:#111;text-align:left}
+#wzOv .wzDdBtn i{font-style:normal;color:#043464}
+#wzOv .wzDdList{border:1px solid #0362b4;border-radius:8px;background:#fff;margin-top:4px;padding:8px}
+#wzOv .wzDdQ{min-height:40px;margin-bottom:6px}
+#wzOv .wzDdRows{max-height:270px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:1px solid #e4e7ec;border-radius:6px}
+#wzOv .wzDdRow{display:flex;align-items:center;gap:10px;padding:11px 10px;border-bottom:1px solid #eef0f3;font-size:15px;cursor:pointer}
+#wzOv .wzDdRow:last-child{border-bottom:0}
+#wzOv .wzDdRow input{width:22px;height:22px;flex:0 0 22px;accent-color:#04641c}
+#wzOv .wzDdRow .en{flex:1;min-width:0;direction:ltr;text-align:left}
+#wzOv .wzDdRow .u{font-size:16px;color:#043464;white-space:nowrap}
+#wzOv .wzDdEmpty{padding:14px;text-align:center;color:#64748b}
+#wzOv .wzDdDone{margin-top:8px;min-height:44px}
+#wzOv .wzDdRows{max-height:min(55vh,430px)}
+#wzOv .wzDdPlus{width:100%;margin-top:8px;min-height:46px;border:1.5px dashed #04641c;background:#e4f4e4;color:#04641c;border-radius:8px;font-weight:700;font-size:15px;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+#wzOv .wzDdHint{margin-top:8px;color:#04641c;font-weight:700;text-align:center;font-size:14.5px}
+#wzOv .wzDdRow.hit{background:#fffbe6}
+#wzOv #wzPv{position:fixed;left:0;right:0;top:0;bottom:0;z-index:40;background:rgba(15,23,42,.55);display:grid;place-items:center;padding:14px}
+#wzOv #wzPv .wzCard{max-width:420px;width:100%;max-height:88vh;overflow:auto;background:#fff!important}
 </style>
 <div id="wzOv" data-noen aria-modal="true" role="dialog"><div class="wzW" id="wzW"></div></div>
 
@@ -23388,16 +23421,21 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   let S = (function(){ try{ return JSON.parse(lsG('mcsWiz388') || 'null') || {}; }catch(e){ return {}; } })();
   S.step = S.step || 1; S.a = S.a || {}; S.c = S.c || {subs: [], prods: []}; S.p = S.p || {};
   const save = () => lsS('mcsWiz388', JSON.stringify(S));
-  let busy = false;
+  let busy = false, wzDirty = 0, ddOpen = false;
   let wzG = null;   /* MCS1511SU445: Google سے تصدیق شدہ {token, gmail, name} — صرف میموری میں */
 
   /* ---------- مددگار ---------- */
   const me = () => { try{ return (typeof uaMe === 'function' && uaMe()) || null; }catch(e){ return null; } };
   const sidNow = () => { const m = me(); const u = m && m.user; const s = (u && (u.sid || u.id)) || S.sid || ''; return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : s) : ''; };
-  const myCard = () => { try{ const mob = d10((me() && me().user && me().user.mobile) || S.a.mobile); if(!mob) return null;
+  const myCard0 = () => { try{ const mob = d10((me() && me().user && me().user.mobile) || S.a.mobile); if(!mob) return null;
     const L = (store.services || []).filter(x => d10(x.whatsapp) === mob); if(!L.length) return null;
     L.sort((a, b) => (((b.more || {}).ptype ? 1 : 0) - ((a.more || {}).ptype ? 1 : 0)) || ((b.updatedAt || 0) - (a.updatedAt || 0)));   /* MCS1411SA399: سب سے مکمل / تازہ کارڈ */
     return L[0]; }catch(e){ return null; } };
+  let _mcK = '', _mcT = 0, _mcV = null;   /* MCS1511SU448: ہر ڈرائنگ میں دسیوں بار ہزاروں ریکارڈ چھانتا تھا — اب مختصر یادداشت */
+  const myCard = () => { try{ const k = d10((me() && me().user && me().user.mobile) || S.a.mobile) + '|' + (store.services || []).length; if(k === _mcK && Date.now() - _mcT < 400) return _mcV; _mcV = myCard0(); _mcK = k; _mcT = Date.now(); return _mcV; }catch(e){ return myCard0(); } };
+  const ensureCard = () => { let c = myCard(); if(c) return c;   /* MCS1511SU448: کارڈ فون میں نہ ہو تو (سرور ہم وقتی میں ہٹ گیا ہو) اکاؤنٹ سے وہیں بنا لو — «کارڈ نہیں ملا» کی اصل وجہ */
+    try{ const m = me(), u = m && m.user; if(u && (u.mobile || S.a.mobile)){ uaAutoCard(Object.assign({}, u, { name: u.name || S.a.name || '', mobile: u.mobile || S.a.mobile, district: u.district || S.a.dist || '', sid: u.sid || u.id || S.sid || '' })); } }catch(e){}
+    _mcT = 0; return myCard(); };
   const provOf = d => { try{ return Object.keys(DISTRICTS).find(p => (DISTRICTS[p] || []).includes(d)) || ''; }catch(e){ return ''; } };
   const enOf = x => { try{ return (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; }catch(e){ return ''; } };
   const distAll = () => { const T = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && T.add(x))); }catch(e){} return Array.from(T).sort((a, b) => (enOf(a) || a).localeCompare(enOf(b) || b, 'en')); };
@@ -23424,6 +23462,11 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   const STEPS = [['Create Account', 'اکاؤنٹ بنائیں'], ['Create Business Card', 'بزنس کارڈ بنائیں'], ['Get Paid Subscription', 'پیڈ سبسکرپشن حاصل کریں'], ['Be an MCS Agent', 'ایم سی ایس ایجنٹ بنیں']];   /* MCS1511SU440: تصویر جیسے چار مرحلے — چوتھا Earn with MCS فارم کھولتا ہے */   /* MCS1511SU427 (مالک کا حکم): ایجنٹ کا فارم رجسٹریشن سے الگ — «Earn with MCS / MCS Agent» سے کھلے */
   const FLOW = [['👤', 'Create Account', 'اکاؤنٹ بنائیں', ''], ['🪪', 'Create Business Card', 'بزنس کارڈ بنائیں', '(Free / مفت)'], ['▶', 'Get Paid Subscription', 'پیڈ سبسکرپشن', '(Google Play)'], ['✅', 'Live Instantly', 'فوراً لائیو', '(Admin review later / جائزہ بعد میں)'], ['🤝', 'Be an MCS Agent', 'ایجنٹ بنیں', '(Earn with MCS)']];
   let lastStep = 0;   /* MCS1411SA409: اسی مرحلے کی دوبارہ ڈرائنگ پر سکرول اور خانہ وہیں رہے (پہلے ہر بار اوپر کود جاتا تھا) */
+  const idBar = () => { try{ const id = me() ? sidNow() : ''; if(!id) return ''; const u = (me().user) || {};
+    return `<div class="wzIdBar" onclick="wzIdTap()"><span class="k">MCS ID</span><b dir="ltr">${esc(id)}</b><span class="n">${esc(u.name || '')}</span><span class="h u">دبائیں ⧉</span></div>`; }catch(e){ return ''; } };
+  window.wzIdTap = function(){   /* MCS1511SU448 (مالک کا حکم): سب سے اوپر MCS ID — دبانے پر کاپی اور اکاؤنٹ والا صفحہ */
+    const id = sidNow(); try{ navigator.clipboard.writeText(id).then(() => flash('📋 ' + id + ' کاپی ہو گیا', 1)); }catch(e){}
+    if(S.step !== 1) wzGo(1); };
   function frame(inner){
     const ov = $('wzOv'), keepY = (ov && lastStep === S.step) ? ov.scrollTop : 0;
     const ae = document.activeElement, host = $('wzW');
@@ -23435,7 +23478,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     const STS = [[!!me(), 'Account Created Successfully!', 'آپ کا اکاؤنٹ کامیابی سے بن گیا!'], [!!myCard(), 'Your Business Card is Created!', 'آپ کا بزنس کارڈ بن گیا! (نجی)'], [liveOk, 'Payment Successful — Business Live!', 'ادائیگی کامیاب — کاروبار لائیو!'], [liveOk, 'Your Business is Now Public!', 'اب آپ کا کاروبار عوام کے لیے ظاہر ہے'], [agOk, 'You are now an MCS Agent', 'آپ ایم سی ایس ایجنٹ ہیں']];
     const stStrip = `<div class="wzStat">${STS.map(x => `<div class="${x[0] ? 'ok' : ''}"><i>${x[0] ? '✓' : '○'}</i><b>${x[1]}</b><span class="u">${x[2]}</span></div>`).join('')}</div>`;
     const flow = FLOW.map(f => `<div class="it"><i>${f[0]}</i>${f[1]}<span class="u">${f[2]}</span>${f[3] ? `<em>${f[3]}</em>` : ''}</div>`).join('');
-    host.innerHTML = `<div class="wzHero"><div class="wzLogo"><span class="bl">🏙️</span><span><b>My City Shines</b><small>(MCS)</small></span></div><div class="wzGuide">Step by Step Guide<small class="u">مرحلہ وار رہنمائی</small></div></div>
+    host.innerHTML = idBar() + `<div class="wzHero"><div class="wzLogo"><span class="bl">🏙️</span><span><b>My City Shines</b><small>(MCS)</small></span></div><div class="wzGuide">Step by Step Guide<small class="u">مرحلہ وار رہنمائی</small></div></div>
       <div class="wzTop"><div class="wzTitle">Registration &amp; Activation Process<small class="u">رجسٹریشن اور ایکٹیویشن کا مکمل عمل</small></div><button class="wzX" onclick="mcsWizClose()" title="Close">✕</button></div>
       <div class="wzSteps">${pg}</div>${inner}`;   /* MCS1511SU447: نیچے والی دوہری پٹی اور «Complete Process Flow» ختم — اوپر کی ایک ہی پٹی */
     lastStep = S.step; if(ov) ov.scrollTop = keepY;
@@ -23449,12 +23492,12 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     try{ n.scrollIntoView({block: 'center'}); }catch(e){} }
   let guardT = 0;
   function wzGuard(on){   /* MCS1411SA418: ویزرڈ کا ڈبہ کبھی اسکرین سے نیچے نہ کھسکے — کھسکے تو خود اوپر پورا کھینچ لے */
-    clearInterval(guardT); if(!on) return;
+    clearInterval(guardT); return;   /* MCS1511SU448: ہر ۰.۴ سیکنڈ کی جانچ ہٹا دی — سکرول میں اٹکاؤ دیتی تھی */
     guardT = setInterval(() => { try{ const o = $('wzOv'); if(!o || !o.classList.contains('on')){ clearInterval(guardT); return; }
       const r = o.getBoundingClientRect(), vh = window.innerHeight || document.documentElement.clientHeight;
       if(Math.abs(r.top) > 1 || r.height < vh - 2 || Math.abs(r.left) > 1){ o.style.top = '0'; o.style.left = '0'; o.style.height = '100%'; window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
     }catch(e){} }, 400); }
-  window.mcsWizClose = function(){ wzGuard(0); const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('wz-on'); };
+  window.mcsWizClose = function(){ wzGuard(0); const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('wz-on'); if(wzDirty){ wzDirty = 0; setTimeout(() => { try{ renderServiceList('list'); mpRender(); }catch(e){} }, 80); } };
   window.mcsWizOpen = function(step){
     const m = me(); if(m && !S.sid) S.sid = (m.user.sid || m.user.id || '');
     let st = step || S.step || 1;
@@ -23577,6 +23620,35 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   /* ================= مرحلہ ۲: مفت بزنس کارڈ (نجی) ================= */
   const PT = () => (typeof CLS_PTYPES !== 'undefined' ? CLS_PTYPES : []);
   const catsFor = pt => { try{ return clsCatsFor(pt); }catch(e){ return []; } };
+  const subUr = v => { try{ return clsTitleUr(v); }catch(e){ return ''; } };
+  const isOn = v => (S.c.subs || []).some(x => String(x).toLowerCase() === String(v).toLowerCase());
+  const az = (a, b) => String(a).localeCompare(String(b), 'en', {sensitivity: 'base'});
+  function subAll(){ const cats = catsFor(S.c.ptype), cur = (cats.find(x => x.en === S.c.mcat) || {titles: []}); const L = cur.titles.map(t => t.en);
+    (S.c.subs || []).forEach(v => { if(!L.some(x => x.toLowerCase() === String(v).toLowerCase())) L.push(v); }); return L.sort(az); }
+  function subRowsHtml(){ const L = subAll(); if(!L.length) return '<div class="wzDdEmpty u">پہلے کیٹگری اور ٹائپ منتخب کریں</div>';
+    return L.map(v => `<label class="wzDdRow" data-q="${esc(String(v).toLowerCase() + ' ' + subUr(v))}"><input type="checkbox" data-v="${esc(v)}" ${isOn(v) ? 'checked' : ''} onchange="wzSubChk(this)"><span class="en">${esc(v)}</span><span class="u">${esc(subUr(v))}</span></label>`).join(''); }
+  function subChipsHtml(){ const a = (S.c.subs || []).slice().sort(az); return a.length ? a.map(v => `<span class="wzChip on">${esc(v)}<i data-v="${esc(v)}" onclick="wzSub(this.dataset.v)">✖</i></span>`).join('') : '<small class="u" style="color:#64748b">ابھی کچھ منتخب نہیں</small>'; }
+  const subLbl = () => { const n = (S.c.subs || []).length; return n ? '✔ ' + n + ' selected — منتخب' : 'Select SubType(s) — منتخب کریں'; };
+  function prChipsHtml(){ return (S.c.prods || []).map((v, i) => `<span class="wzChip on">${esc(v)}<i onclick="wzProdDel(${i})">✖</i></span>`).join(''); }
+  window.wzSubRefresh = function(rows){ const ch = $('wzSubChips'), lb = $('wzDdLbl'); if(ch) ch.innerHTML = subChipsHtml(); if(lb) lb.textContent = subLbl();
+    const r = $('wzDdRows'); if(!r) return; if(rows){ const y = r.scrollTop; r.innerHTML = subRowsHtml(); r.scrollTop = y; } else r.querySelectorAll('input').forEach(i => { i.checked = isOn(i.dataset.v); }); };
+  window.wzPrRefresh = function(){ const c = $('wzPrChips'); if(c) c.innerHTML = prChipsHtml(); };
+  window.wzDdToggle = function(){ ddOpen = !ddOpen; const l = $('wzDdList'), a = $('wzDdAr'); if(l) l.style.display = ddOpen ? 'block' : 'none'; if(a) a.textContent = ddOpen ? '▴' : '▾'; };
+  function addRowHtml(q){ q = String(q || '').trim(); if(!S.c.mcat) return '<div class="wzDdHint u" style="color:#b42318">پہلے اوپر پروفائل ٹائپ منتخب کریں</div>';
+    if(!q) return '<button type="button" class="wzDdPlus" onclick="wzDdFocus()">➕ <span class="u">فہرست میں نہیں ملا؟ اوپر لکھیں، پھر یہاں + دبائیں</span></button>';
+    const ex = subAll().find(x => String(x).toLowerCase() === q.toLowerCase() || subUr(x) === q);
+    if(ex) return `<div class="wzDdHint u">✔ «${esc(ex)}» پہلے سے فہرست میں موجود ہے</div><button type="button" class="wzDdPlus" data-v="${esc(ex)}" onclick="wzSubPick(this.dataset.v)">☑️ <span class="u">یہی چنیں</span></button>`;
+    return `<button type="button" class="wzDdPlus" data-v="${esc(q)}" onclick="wzSubNew(this.dataset.v)">➕ <span class="u">«${esc(q)}» نیا شامل کریں اور چنیں</span></button>`; }
+  const ddClear = () => { const i = $('wzDdQ'); if(i) i.value = ''; wzDdFilter(''); };
+  window.wzDdFocus = function(){ const i = $('wzDdQ'); if(i) i.focus(); };
+  window.wzSubPick = function(v){ if(!isOn(v) && (S.c.subs || []).length < 30) S.c.subs.push(v); wzC('t'); ddClear(); wzSubRefresh(false); };
+  window.wzSubNew = function(v){   /* MCS1511SU449 (مالک کا حکم): فہرست میں نہ ملے تو «+» — فوراً چنا بھی جائے اور سب کی فہرست میں آئندہ کے لیے بھی محفوظ (پرانا clsTit نظام: فون + Firestore) */
+    v = String(v || '').replace(/\|/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60); if(!v) return; const c = S.c; if(!c.ptype || !c.mcat) return err('پہلے پروفائل ٹائپ منتخب کریں');
+    const ex = subAll().find(x => String(x).toLowerCase() === v.toLowerCase()); const nm = ex || v;
+    if(!ex){ try{ store.clsTit = store.clsTit || []; store.clsTit.push(c.ptype + '|' + c.mcat + '|' + v + '|'); clsRebuild(); }catch(e){} setTimeout(() => { try{ saveStore(); clsSyncCfg(); }catch(e){} }, 200); }
+    if(!isOn(nm) && (c.subs || []).length < 30) c.subs.push(nm); wzC('t'); ddClear(); wzSubRefresh(true); flash('✔ ' + nm + (ex ? '' : ' — فہرست میں شامل ہو گیا'), 1); };
+  window.wzDdEnter = function(){ const i = $('wzDdQ'), q = ((i && i.value) || '').trim(); if(!q) return; const ex = subAll().find(x => String(x).toLowerCase() === q.toLowerCase() || subUr(x) === q); if(ex) wzSubPick(ex); else wzSubNew(q); };
+  window.wzDdFilter = function(q){ q = String(q || '').trim().toLowerCase(); document.querySelectorAll('#wzDdRows .wzDdRow').forEach(r => { const hit = !q || (r.dataset.q || '').indexOf(q) >= 0; r.style.display = hit ? '' : 'none'; r.classList.toggle('hit', !!q && hit); }); const a = $('wzDdAdd'); if(a) a.innerHTML = addRowHtml(q); };
   function s2(){
     const c = S.c, rec = myCard(), m = (rec && rec.more) || {};
     if(rec && !c.init){ c.init = 1; c.nameUr = c.nameUr || rec.nameUr || ''; c.nameEn = c.nameEn || rec.nameEn || ''; c.ptype = c.ptype || m.ptype || ''; c.mcat = c.mcat || m.mcat || ''; if(!(c.subs || []).length && Array.isArray(m.subs)) c.subs = m.subs.slice(); if(!(c.prods || []).length && Array.isArray(m.prods)) c.prods = m.prods.slice(); c.org = c.org || m.org || ''; c.city = c.city || rec.city || ''; c.addr = c.addr || rec.address || ''; save(); }
@@ -23588,10 +23660,10 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     frame(`<div class="wzCard"><div class="wzHd"><i>🪪</i><b>Create Your Business Card</b><span class="u">اپنا بزنس کارڈ بنائیں</span></div>
       ${LBL('Profile Category', 'پروفائل کیٹگری', 1)}<select class="wzI" id="wzPt" onchange="wzC('pt')"><option value="">Select Category — کیٹگری منتخب کریں</option>${PT().map(t => `<option value="${esc(t[0])}" ${c.ptype === t[0] ? 'selected' : ''}>${esc(t[2] + ' — ' + t[1].replace(/^\S+\s/, ''))}</option>`).join('')}</select>
       ${LBL('Profile Type', 'پروفائل ٹائپ', 1)}<select class="wzI" id="wzMc" onchange="wzC('mc')"><option value="">Select Profile Type — پروفائل ٹائپ منتخب کریں</option>${cats.map(x => `<option value="${esc(x.en)}" ${c.mcat === x.en ? 'selected' : ''}>${esc(x.en + ' — ' + x.ur)}</option>`).join('')}</select>
-      ${LBL('Profile SubType(s) — multi-select', 'پروفائل سب ٹائپ (ایک سے زیادہ)', 1)}<div class="wzChips" id="wzSubs">${subList.length ? subList.map(v => { const on = (c.subs || []).some(x => String(x).toLowerCase() === v.toLowerCase()), ur = (function(){ try{ return clsTitleUr(v); }catch(e){ return ''; } })(); return `<button type="button" class="wzChip${on ? ' on' : ''}" data-v="${esc(v)}" onclick="wzSub(this.dataset.v)">${on ? '✔ ' : ''}${esc(v)}${ur ? ' <span class="u">' + esc(ur) + '</span>' : ''}</button>`; }).join('') : '<small class="u" style="color:#64748b">پہلے ٹائپ اور کیٹگری منتخب کریں</small>'}</div>
-      <div style="margin-top:6px"><input class="wzI" id="wzSubIn" placeholder="Other / دیگر — type and press Enter" value="${esc(c.subRaw)}" oninput="wzRaw()" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();wzSubAdd()}" onblur="wzBlur(event,'sub')"></div>
+      ${LBL('Profile SubType(s) — multi-select', 'پروفائل سب ٹائپ (ایک سے زیادہ)', 1)}<div class="wzDd"><button type="button" class="wzDdBtn" onclick="wzDdToggle()"><span id="wzDdLbl">${subLbl()}</span><i id="wzDdAr">${ddOpen ? '▴' : '▾'}</i></button><div class="wzDdList" id="wzDdList" style="display:${ddOpen ? 'block' : 'none'}"><input class="wzI wzDdQ" id="wzDdQ" placeholder="لکھیں — تلاش / نیا شامل کریں (Search or add)" oninput="wzDdFilter(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();wzDdEnter()}" autocomplete="off"><div class="wzDdRows" id="wzDdRows">${subRowsHtml()}</div><div id="wzDdAdd">${addRowHtml('')}</div><button type="button" class="wzBtn bB wzDdDone" onclick="wzDdToggle()">Done — مکمل</button></div></div>
+      <div class="wzChips" id="wzSubChips">${subChipsHtml()}</div>
       ${LBL('Products &amp; Services (multiple)', 'مصنوعات و خدمات (ایک سے زیادہ)')}<div><input class="wzI" id="wzPrIn" placeholder="Enter products and services — لکھیں، Enter دبائیں یا اگلے خانے پر جائیں" value="${esc(c.prRaw)}" oninput="wzRaw()" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();wzProdAdd()}" onblur="wzBlur(event,'prod')"></div>
-      <div class="wzChips">${(c.prods || []).map((v, i) => `<span class="wzChip on">${esc(v)}<i onclick="wzProdDel(${i})">✖</i></span>`).join('')}</div>
+      <div class="wzChips" id="wzPrChips">${prChipsHtml()}</div>
       ${LBL('Associated Organization / Brand', 'متعلقہ ادارہ / برانڈ')}<select class="wzI" id="wzOrg" onchange="wzC('org')"><option value="">${esc((typeof CLS_NOORG !== 'undefined' ? CLS_NOORG : 'Independent'))}</option>${orgs.map(v => `<option value="${esc(v)}" ${c.org === v ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>
       ${LBL('Business Name (English)', 'کاروبار کا نام (انگریزی)')}<input class="wzI" id="wzNEn" dir="ltr" placeholder="Enter business name" value="${esc(c.nameEn)}" oninput="wzC('t')">
       ${LBL('Business Name (Urdu)', 'کاروبار کا نام (اردو)', 1)}<input class="wzI u" id="wzNUr" placeholder="کاروبار کا نام درج کریں" value="${esc(c.nameUr)}" oninput="wzC('t')" style="font-size:19px">
@@ -23611,41 +23683,43 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     if(w === 'org'){ c.org = g('wzOrg'); }
     if($('wzNEn')) c.nameEn = g('wzNEn'); if($('wzNUr')) c.nameUr = g('wzNUr'); if($('wzCity')) c.city = g('wzCity'); if($('wzAddr')) c.addr = g('wzAddr');
     save(); };
-  window.wzSub = function(v){ const k = String(v).toLowerCase(), i = (S.c.subs || []).findIndex(x => String(x).toLowerCase() === k); if(i < 0) S.c.subs.push(v); else S.c.subs.splice(i, 1); wzC('t'); s2(); };
+  window.wzSub = function(v){ const k = String(v).toLowerCase(), i = (S.c.subs || []).findIndex(x => String(x).toLowerCase() === k); if(i < 0) S.c.subs.push(v); else S.c.subs.splice(i, 1); wzC('t'); wzSubRefresh(false); };   /* MCS1511SU448: پورا صفحہ دوبارہ نہیں بنتا — صرف ڈبہ */
+  window.wzSubChk = function(el){ wzSub(el.dataset.v); };
   window.wzRaw = function(){ if($('wzSubIn')) S.c.subRaw = $('wzSubIn').value; if($('wzPrIn')) S.c.prRaw = $('wzPrIn').value; save(); };
-  window.wzBlur = function(e, w){ const i = $(w === 'sub' ? 'wzSubIn' : 'wzPrIn'); if(!i || !i.value.trim()) return; const id = e && e.relatedTarget && e.relatedTarget.id; (w === 'sub' ? wzSubAdd : wzProdAdd)(); if(id && $(id)) try{ $(id).focus(); }catch(_){} };
+  window.wzBlur = function(e, w){ const i = $(w === 'sub' ? 'wzSubIn' : 'wzPrIn'); if(!i || !i.value.trim()) return; (w === 'sub' ? wzSubAdd : wzProdAdd)(); };
   function wzCommitQuiet(){ const c = S.c; const a = $('wzSubIn'), b = $('wzPrIn');
     const sv = ((a && a.value) || c.subRaw || '').trim().slice(0, 60).replace(/\|/g, ' '); if(sv && !(c.subs || []).some(x => String(x).toLowerCase() === sv.toLowerCase()) && c.subs.length < 30) c.subs.push(sv);
     String((b && b.value) || c.prRaw || '').split(/[،,\n;؛]+/).map(x => x.trim()).filter(Boolean).forEach(q => { if(c.prods.length < 40 && !c.prods.some(x => x.toLowerCase() === q.toLowerCase())) c.prods.push(q.slice(0, 60)); });
-    c.subRaw = ''; c.prRaw = ''; if(a) a.value = ''; if(b) b.value = ''; save(); }
-  window.wzSubAdd = function(){ S.c.subRaw = ''; const i = $('wzSubIn'), v = ((i && i.value) || '').trim().slice(0, 60).replace(/\|/g, ' '); if(!v) return; if(!(S.c.subs || []).some(x => String(x).toLowerCase() === v.toLowerCase()) && S.c.subs.length < 30) S.c.subs.push(v); wzC('t'); s2(); };
-  window.wzProdAdd = function(){ const i = $('wzPrIn'); if(!i) return; S.c.prRaw = ''; i.value.split(/[،,\n;؛]+/).map(x => x.trim()).filter(Boolean).forEach(p => { if(S.c.prods.length < 40 && !S.c.prods.some(x => x.toLowerCase() === p.toLowerCase())) S.c.prods.push(p.slice(0, 60)); }); wzC('t'); s2(); };
-  window.wzProdDel = function(i){ S.c.prods.splice(i, 1); wzC('t'); s2(); };
+    c.subRaw = ''; c.prRaw = ''; if(a) a.value = ''; if(b) b.value = ''; save(); try{ wzSubRefresh(true); wzPrRefresh(); }catch(e){} }
+  window.wzSubAdd = function(){ const i = $('wzSubIn'); S.c.subRaw = ''; const v = ((i && i.value) || '').trim().slice(0, 60).replace(/\|/g, ' '); if(i) i.value = ''; if(!v) return; if(!isOn(v) && S.c.subs.length < 30) S.c.subs.push(v); wzC('t'); wzSubRefresh(true); };
+  window.wzProdAdd = function(){ const i = $('wzPrIn'); if(!i) return; S.c.prRaw = ''; const t = i.value; i.value = ''; t.split(/[،,\n;؛]+/).map(x => x.trim()).filter(Boolean).forEach(p => { if(S.c.prods.length < 40 && !S.c.prods.some(x => x.toLowerCase() === p.toLowerCase())) S.c.prods.push(p.slice(0, 60)); }); wzC('t'); wzPrRefresh(); };
+  window.wzProdDel = function(i){ S.c.prods.splice(i, 1); wzC('t'); wzPrRefresh(); };
   function chk2(){ const c = S.c;
     if(!c.ptype) return 'پروفائل کیٹگری منتخب کریں'; if(!c.mcat) return 'پروفائل ٹائپ منتخب کریں'; if(!(c.subs || []).length) return 'کم از کم ایک سب ٹائپ منتخب کریں';
     if(!(c.nameUr || '').trim()) return 'کاروبار کا نام اردو میں لکھیں'; if(!(c.city || '').trim()) return 'شہر / علاقہ لکھیں'; if(!(c.addr || '').trim()) return 'مکمل پتہ لکھیں'; return ''; }
   window.wzPreview = function(){ wzC('t'); wzCommitQuiet(); const m = chk2(); if(m) return err(m); const c = S.c, pt = PT().find(t => t[0] === c.ptype);
-    const box = document.createElement('div'); box.id = 'wzPv'; box.style.cssText = 'position:fixed;inset:0;z-index:2147483200;background:rgba(15,23,42,.55);display:grid;place-items:center;padding:14px';
-    box.innerHTML = `<div class="wzCard" style="max-width:420px;width:100%;max-height:88vh;overflow:auto"><div class="wzHd"><b>Preview — <span class="u">پیش نظارہ</span></b></div><div class="wzPrev u" style="direction:rtl;text-align:right">
+    const old = $('wzPv'); if(old) old.remove();
+    const box = document.createElement('div'); box.id = 'wzPv';   /* MCS1511SU448: پیش نظارہ اب ویزرڈ کے اندر — پہلے باہر لگنے سے اس کا ڈیزائن نہیں ملتا تھا اور لکھائی فارم پر چڑھ جاتی تھی */
+    box.innerHTML = `<div class="wzCard"><div class="wzHd"><b>Preview</b><span class="u">پیش نظارہ</span></div><div class="wzPrev u" style="direction:rtl;text-align:right">
       <div style="font-size:20px;font-weight:800">🏪 ${esc(c.nameUr)}</div>${c.nameEn ? `<div dir="ltr" style="text-align:left">${esc(c.nameEn)}</div>` : ''}
-      <div>📂 ${esc(pt ? pt[1] : '')} › ${esc(c.mcat)}</div><div>🏷️ ${esc((c.subs || []).join('، '))}</div>${(c.prods || []).length ? `<div>🛒 ${esc(c.prods.join('، '))}</div>` : ''}${c.org ? `<div>🤝 ${esc(c.org)}</div>` : ''}<div>📍 ${esc(c.city)} — ${esc(c.addr)}</div><div style="margin-top:6px"><span class="wzSt st-none">🔒 Private — نجی</span></div></div>
-      <button class="wzBtn bB" onclick="document.getElementById('wzPv').remove()">✏️ Edit — درست کریں</button></div>`;
-    document.body.appendChild(box); };
+      <div>📂 ${esc(pt ? pt[1].replace(/^\S+\s/, '') : '')} › ${esc(c.mcat)}</div><div>🏷️ ${esc((c.subs || []).join('، '))}</div>${(c.prods || []).length ? `<div>🛒 ${esc(c.prods.join('، '))}</div>` : ''}${c.org ? `<div>🤝 ${esc(c.org)}</div>` : ''}<div>📍 ${esc(c.city)} — ${esc(c.addr)}</div><div style="margin-top:6px"><span class="wzSt st-none">🔒 Private — نجی</span></div></div>
+      <button class="wzBtn bG" onclick="wzDo2()">✅ Create Business Card<small class="u">بزنس کارڈ بنائیں</small></button>
+      <button class="wzBtn bW" onclick="document.getElementById('wzPv').remove()">✏️ Edit — درست کریں</button></div>`;
+    const host = $('wzOv'); (host || document.body).appendChild(box); };
   window.wzDo2 = function(){
     if(busy) return; wzC('t'); wzCommitQuiet(); const m = chk2(); if(m) return err(m);
-    const rec = myCard(); if(!rec) return err('آپ کا کارڈ نہیں ملا — دوبارہ لاگ اِن کریں');
-    busy = true; const c = S.c;
+    const pv = $('wzPv'); if(pv) pv.remove();
+    const rec = ensureCard(); if(!rec) return err('اکاؤنٹ کی معلومات نہیں ملیں — اوپر اپنی MCS ID دبا کر دیکھیں، نہ ہو تو ایک بار لاگ اِن کریں');
+    const c = S.c;
     try{
       rec.nameUr = c.nameUr.trim(); rec.nameEn = (c.nameEn || '').trim(); if(rec.nameEn.replace(/\s+/g, '').toLowerCase() === rec.nameUr.replace(/\s+/g, '').toLowerCase()) rec.nameEn = ''; rec.city = c.city.trim(); rec.address = c.addr.trim();
       rec.more = rec.more || {}; const mm = rec.more; mm.ptype = c.ptype; mm.mcat = c.mcat; mm.subs = c.subs.slice(); mm.prods = c.prods.slice(); mm.services = c.prods.join('، '); if(c.org) mm.org = c.org; else delete mm.org;
-      const prim = c.subs.length ? ((function(){ try{ return clsTitleUr(c.subs[0]); }catch(e){ return ''; } })() || c.subs[0]) : ''; if(prim) rec.type = prim;
+      const prim = c.subs.length ? (subUr(c.subs[0]) || c.subs[0]) : ''; if(prim) rec.type = prim;
       rec.updatedAt = Date.now(); rec.stage = rec.stage || 'basic';
-      try{ svcMyBasicAdd(rec.id); }catch(e){}
-      saveStore();
-      try{ mpAdd('service', rec, true); }catch(e){}
-      try{ renderServiceList('list'); mpRender(); }catch(e){}
-    }catch(e){ busy = false; return err('محفوظ نہیں ہو سکا — دوبارہ کوشش کریں'); }
-    busy = false; S.step = 3; S.cardNew = 1; S.edit2 = 0; save(); draw(); try{ showToast('✓ کارڈ محفوظ — اب پلان منتخب کریں'); }catch(e){}
+    }catch(e){ return err('محفوظ نہیں ہو سکا — دوبارہ کوشش کریں'); }
+    S.step = 3; S.cardNew = 1; S.edit2 = 0; save(); draw(); try{ showToast('✓ کارڈ محفوظ — اب پلان منتخب کریں'); }catch(e){}   /* MCS1511SU448: اگلا صفحہ فوراً؛ بھاری محفوظ کاری (پورا ڈیٹا لکھنا) پیچھے */
+    wzDirty = 1;
+    setTimeout(() => { try{ svcMyBasicAdd(rec.id); }catch(e){} try{ saveStore(); }catch(e){} try{ mpAdd('service', rec, true); }catch(e){} }, 150);
   };
   function ok2(rec){
     const sid = sidNow();
@@ -23752,7 +23826,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     saveStore(); }
   window.wzDo3 = async function(){
     if(busy) return; wzP(); const m = chk3(); if(m){ wzBad(); return err(m); }
-    const rec = myCard(); if(!rec) return err('آپ کا کارڈ نہیں ملا'); busy = true; const b = $('wzPay'); if(b) b.disabled = true; err(''); flash('⏳ Google Play کھل رہا ہے…', 1);
+    const rec = ensureCard(); if(!rec) return err('اکاؤنٹ کی معلومات نہیں ملیں — اوپر اپنی MCS ID دبا کر دیکھیں'); busy = true; const b = $('wzPay'); if(b) b.disabled = true; err(''); flash('⏳ Google Play کھل رہا ہے…', 1);
     try{ saveP(rec); try{ mpAdd('service', rec, true); }catch(e){}
       const rk = pfKeyOf(rec, 'service');
       if(typeof mcsPlayOk === 'function' && mcsPlayOk()){
