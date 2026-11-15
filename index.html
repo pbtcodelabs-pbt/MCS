@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU427";
+const APP_VERSION = "MCS1511SU430";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU430": "🤝 ایجنٹ فارم: سب سے اوپر MCS ID کی ڈراپ ڈاؤن (نام، موبائل، ضلع خود آتے ہیں، باقی فارم اس کے بعد کھلتا ہے) • آخر میں ریفرل کوڈ فہرست سے • ID بغیر ڈیش: MCS001، MCS001M1، AG001 • DEV / CODEV کی جگہ ایڈمن 1 / ایڈمن 2 (ADMIN1 / ADMIN2) • ایڈمن 1 = AG001، ایڈمن 2 = AG002 • ایڈمن کے کاروبار بھی ادائیگی سے",
   "MCS1511SU427": "💳 رجسٹریشن / سبسکرپشن درست: ٹیسٹ خریداری قبول (سیل نہیں) + ایڈمن کا 🧪 ٹیسٹ رجسٹریشن بٹن، ریڈیم کوڈ (90 دن) اس کاروبار سے جڑ جاتا ہے، ادائیگی کے بعد منظوری کا انتظار نہیں؛ ایجنٹ کا فارم رجسٹریشن سے الگ (Earn with MCS)",
   "MCS1511SU426": "🏪 My Business card redesigned: owner photo, English + big Urdu name, type, address, business photo, status, call / WhatsApp and days left",
   "MCS1511SU425": "🧊 ہوم پیج ساکن: اشتہار بدلنے یا وقت گزرنے سے اب باقی ہوم اوپر نیچے نہیں ہلتا — صرف اشتہار چلتا ہے",
@@ -5071,7 +5072,7 @@ function pfFieldsRead(pre){
   const v = id=>((document.getElementById(pre + id)||{}).value||'').trim();
   const items = Array.from(document.querySelectorAll('#' + pre + 'Items .pf-irow')).map(r=>{ const i = r.querySelectorAll('input'); return {n:i[0].value.trim(), p:i[1].value.trim()}; }).filter(x=>x.n);
   const data = {about:v('About'), hours:v('Hours'), off:v('Off'), items};
-  if(pre === 'pfE' && v('Ref')) data.ref = OWN_REF_RX.test(v('Ref').replace(/\s+/g,'')) ? refN(v('Ref')) : (agNormCode(v('Ref')) || v('Ref'));   /* MCS0511TH158: DEV ایڈمن / CODEV ایڈمن */
+  if(pre === 'pfE' && v('Ref')) data.ref = OWN_REF_RX.test(v('Ref').replace(/\s+/g,'')) ? refN(v('Ref')) : (agNormCode(v('Ref')) || v('Ref'));   /* MCS0511TH158: ADMIN1 ایڈمن / ADMIN2 ایڈمن */
   if(pre === 'pfE' && data.ref){ try{ const n1 = rpkNameOf(data.ref); if(n1) data.refName = n1; }catch(e){} }   /* MCS1011TU280 */
   const S = pfEd[pre] || {imgs:[], del:{}};
   const imgs = {}; S.imgs.forEach((x,i)=>{ if(x && x.changed) imgs[i] = x.src; }); Object.keys(S.del||{}).forEach(i=>{ if(!S.imgs[i]) imgs[i] = null; });
@@ -7632,7 +7633,7 @@ function saveDoctor(approve){
     data.approved = !!isAdminSignedIn; // MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور؛ باقی سب ایڈمن کی منظوری کے بعد
     store.doctors.push(data);
     syncDoctorCreateToFirebase(data);
-    if(codevOn()){ const _c = codevMe() || {}; data.more = {ref:'CODEV', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}; setTimeout(()=>pushMoreToFirebase('doctors', data.fsId || data.id, data.more), 2500);  } else if(pbStampRef(data)){ setTimeout(()=>{ try{ pushMoreToFirebase('doctors', data.fsId || data.id, data.more); }catch(e){} }, 2500); }
+    if(codevOn()){ const _c = codevMe() || {}; data.more = {ref:'ADMIN2', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)}; setTimeout(()=>pushMoreToFirebase('doctors', data.fsId || data.id, data.more), 2500);  } else if(pbStampRef(data)){ setTimeout(()=>{ try{ pushMoreToFirebase('doctors', data.fsId || data.id, data.more); }catch(e){} }, 2500); }
     try{ mpAfterSave('doctor', data); }catch(e){}
   }
   saveStore();
@@ -10091,15 +10092,15 @@ function refChipHtml(rec){
     if(!(isAdminSignedIn || codevOn())) return '';
     const c = refN((rec && rec.more && rec.more.ref) || ''); if(!c) return '';
     let lb = '';
-    if(c === 'DEV') lb = '👨‍💻 ایڈمن خود لایا (DEV)';
-    else if(c === 'CODEV') lb = '👥 ایڈمن لایا (CODEV)';
+    if(c === 'ADMIN1') lb = '👨‍💻 ایڈمن خود لایا (ADMIN1)';
+    else if(c === 'ADMIN2') lb = '👥 ایڈمن لایا (ADMIN2)';
     else if(c === 'PBT') lb = '🏢 خود آیا (PBT)';
     else { const a = (agList||[]).find(x=>x && (x.code === c || x.bizRk === c)); lb = '🤝 ریفرل: ' + (a ? escapeHtml(a.name) + ' ' : (rec.more.refName ? escapeHtml(rec.more.refName) + ' ' : '')) + '<bdi dir="ltr">' + escapeHtml(a && a.code || c) + '</bdi>'; }
     return `<button type="button" class="ref-chip" onclick="event.stopPropagation();refInfoOpen('${escapeAttr(c)}')">${lb}</button>`;
   }catch(e){ return ''; }
 }
 async function refInfoOpen(c){
-  c = refN(c); if(OWN_REF_RX.test(c)){ showToast(c === 'DEV' ? '👨‍💻 یہ کاروبار ایڈمن خود لایا — حصہ ایڈمن کا' : c === 'CODEV' ? '👥 یہ کاروبار ایڈمن لایا' : '🏢 کسی ایجنٹ کا ریفرل نہیں — خود آیا', 4500); return; }
+  c = refN(c); if(OWN_REF_RX.test(c)){ showToast(c === 'ADMIN1' ? '👨‍💻 یہ کاروبار ایڈمن خود لایا — حصہ ایڈمن کا' : c === 'ADMIN2' ? '👥 یہ کاروبار ایڈمن لایا' : '🏢 کسی ایجنٹ کا ریفرل نہیں — خود آیا', 4500); return; }
   if(!(agList||[]).length && isAdminSignedIn){ try{ await agKnownLoad(); }catch(e){} }
   const a = (agList||[]).find(x=>x && (x.code === c || x.bizRk === c)), code = a && a.code || c;
   const recs = (store.services||[]).concat(store.doctors||[]).filter(x=>x && x.more && (x.more.ref === code || x.more.ref === c));
@@ -10415,7 +10416,7 @@ function saveService(approve){
     data.createdAt = Date.now();
     data.updatedAt = Date.now();
     data.approved = !!isAdminSignedIn;   /* MCS510MO008: ایڈمن کا اپنا اندراج فوراً منظور */
-    if(codevOn()){ const _c = codevMe() || {}; data.more = Object.assign({}, data.more || {}, {ref:'CODEV', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)});  } else { pbStampRef(data); }
+    if(codevOn()){ const _c = codevMe() || {}; data.more = Object.assign({}, data.more || {}, {ref:'ADMIN2', cdBy: (_c.name || '') + ' 0' + String(_c.phone || '').slice(2)});  } else { pbStampRef(data); }
     store.services.push(data);
     if(data.stage==='basic') svcMyBasicAdd(data.id);
     syncServiceCreateToFirebase(data);
@@ -12680,7 +12681,7 @@ function updatePendingHomeIndicator(){
   }
   pendingHomeListRender();
 }
-function psIsCd(d){ try{ const m = d && d.more || {}; return refN(m.ref) === 'CODEV' || !!m.cdBy || !!(d && d.cdBy); }catch(e){ return false; } }
+function psIsCd(d){ try{ const m = d && d.more || {}; return refN(m.ref) === 'ADMIN2' || !!m.cdBy || !!(d && d.cdBy); }catch(e){ return false; } }
 function psIsCdAg(a){ return !!(a && (a.cd || a.cdBy || a.by || a.proposedBy || a.cphone || a.proposer)); }
 function psStrip(ic, title, list, cdList, name, go, all){
   if(!list.length) return '';
@@ -12768,17 +12769,17 @@ function setFormMode(mid){
 const AG_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
 /* MCS0511TH134: ریفرل نمبر = ایجنٹ کی اپنی کاروبار ID (p3001234567_xxxx) — یا ایجنٹ کا موبائل نمبر بھی لکھا جا سکتا ہے (سرور خود ایجنٹ ڈھونڈ لیتا ہے)؛ پرانا MCS-AG-0001 بھی چلتا ہے */
 
-/* MCS0811SU232 (مالک کا حکم): نئے اندراج پر ریفرل کوڈ خود لگے — ایڈمن DEV، ایجنٹ اپنا کوڈ، ایڈمن CODEV، باقی سب PBT (کمپنی) */
+/* MCS0811SU232 (مالک کا حکم): نئے اندراج پر ریفرل کوڈ خود لگے — ایڈمن ADMIN1، ایجنٹ اپنا کوڈ، ایڈمن ADMIN2، باقی سب PBT (کمپنی) */
 function pbDefaultRef(){
-  try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'DEV'; }catch(e){}
+  try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'ADMIN1'; }catch(e){}
   try{ const a = agMe(); if(a && a.code) return a.code; }catch(e){}
   return 'PBT';
 }
 function pbStampRef(data){ try{ if(codevOn()) return false; if(data.more && data.more.ref) return false; data.more = Object.assign({}, data.more || {}, {ref: pbDefaultRef()}); return true; }catch(e){ return false; } }
-/* MCS1111WE329 (مالک کا حکم): ایڈمن = DEV، ایڈمن = CODEV (پرانا DEV / CODEV بھی مانا جاتا ہے) */
-function refN(v){ const c = String(v || '').trim().toUpperCase().replace(/\s+/g, ''), m = /^MCS-?0*([12])$/.exec(c); return c === 'PBT-D' || (m && m[1] === '1') ? 'DEV' : c === 'PBT-C' || (m && m[1] === '2') ? 'CODEV' : c; }   /* MCS1411SA414: MCS001 = ایڈمن (DEV)، MCS002 = کو ڈویلپر (CODEV) */
-const OWN_REF_RX = /^(PBT|PBT-[DC]|DEV|CODEV)$/i;
-function agNormCode(v){ const t = String(v||'').trim().replace(/\s+/g,''); const m2 = /^([A-Za-z]{2})[-.]?0*(\d{1,5})$/.exec(t); if(m2) return m2[1].toUpperCase() + '-' + m2[2].padStart(3,'0');   /* MCS0511TH142: ms1 / MS 001 → MS-001 */
+/* MCS1111WE329 (مالک کا حکم): ایڈمن = ADMIN1، ایڈمن = ADMIN2 (پرانا ADMIN1 / ADMIN2 بھی مانا جاتا ہے) */
+function refN(v){ const raw = String(v || '').trim().toUpperCase().replace(/\s+/g, ''), c = raw.replace(/[_-]+/g, ''), m = /^MCS0*([12])$/.exec(c); return (c === 'PBTD' || c === 'DEV' || c === 'ADMIN1' || (m && m[1] === '1')) ? 'ADMIN1' : (c === 'PBTC' || c === 'CODEV' || c === 'ADMIN2' || (m && m[1] === '2')) ? 'ADMIN2' : raw; }   /* MCS1511SU430 (مالک کا حکم): DEV / CODEV ختم — ایڈمن 1 = ADMIN1 (MCS001)، ایڈمن 2 = ADMIN2 (MCS002)؛ پرانا لکھا بھی مانا جاتا ہے */
+const OWN_REF_RX = /^(PBT|PBT-[DC]|ADMIN1|ADMIN2|DEV|CODEV)$/i;
+function agNormCode(v){ const t = String(v||'').trim().replace(/\s+/g,''); const m2 = /^([A-Za-z]{2})[-.]?0*(\d{1,5})$/.exec(t); if(m2) return m2[1].toUpperCase() + m2[2].padStart(3,'0');   /* MCS1511SU430: ms1 / AG 1 → AG001 (ڈیش نہیں) */
   { const c13 = t.replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g,''); if(c13.length === 13) return c13.slice(0,5) + '-' + c13.slice(5,12) + '-' + c13.slice(12); }   /* MCS0511TH144: ایجنٹ کا شناختی کارڈ نمبر بھی */ if(/^p\d{10}_[a-z0-9]{2,12}$/i.test(t)) return t.toLowerCase(); const d = t.replace(/\D/g,''); if(d.length >= 10) return '0' + d.slice(-10); if(/^MCS-?AG/i.test(t) && d) return 'MCS-AG-' + String(parseInt(d,10)).padStart(4,'0'); return t; }
 function agRefPost(rec){
   try{ const ref = rec && rec.more && rec.more.ref; if(!ref || OWN_REF_RX.test(String(ref).replace(/\s+/g,''))) return; const rk = pfKeyOf(rec, 'service'); if(!rk) return;
@@ -13093,36 +13094,73 @@ function agEarnOpen(){
   agFullForm();
 }
 function agFullForm(){
-  const u = (typeof uaMe === 'function' && uaMe() && uaMe().user) || {}, mine = (()=>{ try{ return mpListReal(); }catch(e){ return []; } })(), r0 = (mine[0] && mine[0].rec) || {};
-  const ph = String(u.mobile || u.phone || '').replace(/\D/g,''), ph0 = ph ? '0' + ph.replace(/^0/,'').replace(/^92/,'').slice(-10) : '';
-  const city = r0.city && !isBlankVal(r0.city) ? r0.city : '';
+  /* MCS1511SU430 (مالک کا حکم): فارم کے سب سے اوپر MCS ID کی پکی ڈراپ ڈاؤن (لکھنے کی گنجائش نہیں)؛ چنتے ہی اس کا نام، موبائل، ضلع آ جائے اور باقی فارم کھل جائے؛ آخر میں ریفرل کوڈ بھی فہرست سے (نام کے ساتھ) */
   const cities = [...new Set((store.services||[]).map(r=>r.city).filter(c=>c && !isBlankVal(c)))].slice(0, 400).map(c=>`<option value="${escapeAttr(c)}">`).join('');
   const F = (id, ic, en, ur, attrs, val) => `<div class="agx-f"><label class="agx-l" for="${id}">${ic} ${en} <span>${ur}</span> <i>*</i></label><input id="${id}" ${attrs||''} value="${escapeAttr(val||'')}"></div>`;
-  const staffF = isAdminSignedIn || codevOn(); window._agxRk = ''; window._agxBiz = '';
-  agModal(`<div class="ag-hd">🤝 MCS Agent Registration Form <small>MCS ایجنٹ رجسٹریشن فارم — ${staffF ? 'کاروبار سے بھریں، باقی لکھیں، ایجنٹ بنائیں' : 'سب خانے لازمی'}</small></div>
-    ${staffF ? `<div class="agx-staff"><button type="button" class="btn block" onclick="agxFindToggle()">🔍 Add from Business — کاروبار سے بھریں</button>
-      <div id="agxFind" hidden><div class="ac-find"><input id="agxQ" type="search" autocomplete="off" placeholder="موبائل نمبر یا دکان / مالک کا نام" oninput="acSearch('agx')"></div><div id="agxRes" class="ac-res"></div></div>
-      <div id="agxSel" class="ac-sel" hidden></div></div>` : ''}
+  const staffF = isAdminSignedIn; window._agxRk = ''; window._agxBiz = ''; window._agxSid = '';
+  agModal(`<div class="ag-hd">🤝 MCS Agent Registration Form <small>MCS ایجنٹ رجسٹریشن فارم — پہلے اپنی MCS ID چنیں</small></div>
     <div class="ag-f agx">
-      ${F('agxName','👤','Full Name','پورا نام','maxlength="80" autocomplete="name"', u.name)}
-      ${F('agxFather','👨','Father Name','والد کا نام','maxlength="80"')}
-      ${F('agxPhone','📱','Mobile / WhatsApp','موبائل / واٹس ایپ','inputmode="tel" dir="ltr" maxlength="16" placeholder="03001234567"', ph0)}
-      ${F('agxEmail','✉️','Email Address','ای میل','type="email" dir="ltr" maxlength="80" placeholder="name@gmail.com"', u.email)}
-      ${F('agxCnic','🪪','CNIC Number','شناختی کارڈ نمبر','inputmode="numeric" dir="ltr" maxlength="15" placeholder="00000-0000000-0" oninput="agCnicFmt(this)"')}
-      ${F('agxAddr','🏠','Complete Address','مکمل پتہ','maxlength="200"')}
-      ${F('agxCity','🏙️','City / District','شہر / ضلع','maxlength="60" list="agxCityList"', city)}<datalist id="agxCityList">${cities}</datalist>
-      <div class="agx-w"><label class="agx-l">📷 Photos <span>تصویریں</span> <i>*</i> <small>دبائیں — کیمرہ / گیلری</small></label>
-      <div class="ag-pics">
-        <div class="ag-pic" id="agP_selfie" onclick="agSelfieAsk()"><span>🤳<b>Selfie<br>سیلفی</b></span></div>
-        <label class="ag-pic" id="agP_front"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'front')"><span>🪪<b>CNIC Front<br>کارڈ سامنے</b></span></label>
-        <label class="ag-pic" id="agP_back"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'back')"><span>🪪<b>CNIC Back<br>کارڈ پیچھے</b></span></label>
-      </div></div>
-      <div class="ag-err" id="agErr"></div>
-      ${staffF ? `<button type="button" class="btn block ag-send" id="agSendBtn" onclick="agxStaffSend()">✅ ${isAdminSignedIn ? 'ایجنٹ بنائیں — فوراً منظور' : 'مالک کی منظوری کے لیے بھیجیں'}</button><div class="cp-hint" style="text-align:center">📷 تصویریں اختیاری — ایجنٹ بعد میں اپنے فون سے بھی لگا سکتا ہے</div>` : `<button type="button" class="btn block ag-send" id="agSendBtn" onclick="agFullSend()">📨 Add Request for MCS Agent <small style="display:block;font-size:12px">ایجنٹ کی درخواست بھیجیں</small></button>`}
-      <div class="cp-hint" style="text-align:center">🔒 آپ کا شناختی کارڈ اور تصویریں صرف MCS انتظامیہ دیکھتی ہے۔ منظوری کے بعد آپ کو ریفرل کوڈ اور ایجنٹ ID ملے گی۔</div>
-      <button type="button" class="link-btn ag-have" onclick="agPinLogin()">🔑 میں پہلے سے ایجنٹ ہوں — موبائل اور PIN لکھیں</button>
+      <div class="agx-f"><label class="agx-l" for="agxSid">🆔 MCS ID <span>اپنی MCS آئی ڈی چنیں</span> <i>*</i></label>
+        <select id="agxSid" dir="ltr" style="width:100%;padding:10px;font-size:15px;border-radius:10px" onchange="agxSidPick(this.value)"><option value="">⏳ فہرست آ رہی ہے…</option></select></div>
+      <div id="agxInfo" class="ac-sel" hidden></div>
+      <div id="agxRest" hidden>
+        ${F('agxName','👤','Full Name','پورا نام','maxlength="80" readonly')}
+        ${F('agxFather','👨','Father Name','والد کا نام','maxlength="80"')}
+        ${F('agxPhone','📱','Mobile / WhatsApp','موبائل / واٹس ایپ','inputmode="tel" dir="ltr" maxlength="16" readonly')}
+        ${F('agxEmail','✉️','Email Address','ای میل','type="email" dir="ltr" maxlength="80" placeholder="name@gmail.com"')}
+        ${F('agxCnic','🪪','CNIC Number','شناختی کارڈ نمبر','inputmode="numeric" dir="ltr" maxlength="15" placeholder="00000-0000000-0" oninput="agCnicFmt(this)"')}
+        ${F('agxAddr','🏠','Complete Address','مکمل پتہ','maxlength="200"')}
+        ${F('agxCity','🏙️','City / District','ضلع','maxlength="60" readonly')}
+        <div class="agx-w"><label class="agx-l">📷 Photos <span>تصویریں</span> <i>*</i> <small>دبائیں — کیمرہ / گیلری</small></label>
+        <div class="ag-pics">
+          <div class="ag-pic" id="agP_selfie" onclick="agSelfieAsk()"><span>🤳<b>Selfie<br>سیلفی</b></span></div>
+          <label class="ag-pic" id="agP_front"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'front')"><span>🪪<b>CNIC Front<br>کارڈ سامنے</b></span></label>
+          <label class="ag-pic" id="agP_back"><input type="file" accept="image/*" capture="environment" onchange="agPick(this,'back')"><span>🪪<b>CNIC Back<br>کارڈ پیچھے</b></span></label>
+        </div></div>
+        <div class="agx-f"><label class="agx-l" for="agxRef">🤝 Referral Code <span>ریفرل کوڈ — فہرست سے چنیں (خالی = کمپنی)</span></label><input id="agxRef"><div id="agxRefOk" class="cp-hint"></div></div>
+        <div class="ag-err" id="agErr"></div>
+        ${staffF ? `<button type="button" class="btn block ag-send" id="agSendBtn" onclick="agxStaffSend()">✅ ایجنٹ بنائیں — فوراً منظور</button><div class="cp-hint" style="text-align:center">📷 تصویریں اختیاری — ایجنٹ بعد میں اپنے فون سے بھی لگا سکتا ہے</div>` : `<button type="button" class="btn block ag-send" id="agSendBtn" onclick="agFullSend()">📨 Add Request for MCS Agent <small style="display:block;font-size:12px">ایجنٹ کی درخواست بھیجیں</small></button>`}
+        <div class="cp-hint" style="text-align:center">🔒 آپ کا شناختی کارڈ اور تصویریں صرف MCS انتظامیہ دیکھتی ہے۔ منظوری کے بعد آپ کو ریفرل کوڈ اور ایجنٹ ID (AG001 جیسی) ملے گی۔</div>
+        <button type="button" class="link-btn ag-have" onclick="agPinLogin()">🔑 میں پہلے سے ایجنٹ ہوں — موبائل اور PIN لکھیں</button>
+      </div>
     </div>`);
   ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); });
+  try{ rpkPrep('agxRef'); }catch(e){}
+  agxSidLoad(staffF);
+}
+const agxD10 = x => String(x || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10);
+function agxEntry(x){
+  const sid = String((x && (x.sid || x.mcsId)) || '').replace(/[\s-]/g, '').toUpperCase(); if(!/^MCS\d{3,}$/.test(sid)) return null;
+  const m = agxD10(x.mobile || x.phone); return {sid, name: String(x.name || '').trim(), mobile: m ? '0' + m : '', district: String(x.district || '').trim()};
+}
+function agxSidDraw(){
+  const sel = document.getElementById('agxSid'); if(!sel) return; const keep = sel.value, L = window._agxList || [];
+  const pad = (c) => (String(c) + '\u00A0'.repeat(8)).slice(0, 8);
+  sel.innerHTML = '<option value="">' + (L.length ? '— اپنی MCS ID چنیں —' : '⚠️ کوئی MCS ID نہیں ملی') + '</option>' + L.map(e => `<option value="${escapeAttr(e.sid)}">${escapeHtml(pad(e.sid))} · ${escapeHtml(e.name || '—')} · ${escapeHtml(e.mobile || '')}</option>`).join('');
+  if(keep && L.some(e => e.sid === keep)) sel.value = keep;
+  sel.setAttribute('dir', 'ltr'); sel.style.fontVariantNumeric = 'tabular-nums';
+}
+async function agxSidLoad(staff){
+  const map = {}; const add = x => { const e = agxEntry(x); if(e) map[e.sid] = Object.assign(map[e.sid] || {}, e); };
+  try{ const u = (typeof uaMe === 'function' && uaMe() && uaMe().user) || null; if(u) add(u); }catch(e){}
+  if(staff){ try{ (JSON.parse(localStorage.getItem('mcsRegList') || '[]') || []).forEach(add); }catch(e){} }
+  const draw = () => { window._agxList = Object.values(map).sort((a, b) => a.sid.localeCompare(b.sid, 'en', {numeric:true})); agxSidDraw(); };
+  draw();
+  if(!staff) return;
+  try{
+    const hdr = await vfAdminHdr(), r = await (await fetch(AG_API + '/mcsauth', {method:'POST', headers: hdr, body: JSON.stringify({op:'reglist'})})).json();
+    if(r && r.ok && Array.isArray(r.list)){ try{ localStorage.setItem('mcsRegList', JSON.stringify(r.list.slice(0, 5000))); }catch(e){} r.list.forEach(add); draw(); }
+  }catch(e){}
+}
+function agxSidPick(sid){
+  const rest = document.getElementById('agxRest'), info = document.getElementById('agxInfo'); window._agxSid = sid || '';
+  const e = (window._agxList || []).find(x => x.sid === sid);
+  const set = (i, v) => { const el = document.getElementById(i); if(el) el.value = v || ''; };
+  if(!e){ if(rest) rest.hidden = true; if(info) info.hidden = true; return; }
+  set('agxName', e.name); set('agxPhone', e.mobile); set('agxCity', e.district);
+  if(info){ info.hidden = false; info.innerHTML = '✅ <b dir="ltr">' + escapeHtml(e.sid) + '</b><br>👤 ' + escapeHtml(e.name || '—') + '<br>📱 <bdi dir="ltr">' + escapeHtml(e.mobile || '—') + '</bdi><br>📍 ' + escapeHtml(e.district || '—'); }
+  if(rest) rest.hidden = false;
+  const f = document.getElementById('agxFather'); if(f && !f.value) setTimeout(() => f.focus(), 50);
 }
 function agEarnRetry(){ try{ if(mpList().length && !codevOn()){ agForm(); return; } }catch(e){} agFullForm(); }
 function agxFindToggle(){ const f = document.getElementById('agxFind'); if(!f) return; f.hidden = !f.hidden; if(!f.hidden) setTimeout(()=>{ const q = document.getElementById('agxQ'); if(q) q.focus(); }, 50); }
@@ -13152,12 +13190,13 @@ async function agxStaffSend(){
   const v = id => (document.getElementById(id).value||'').trim(), err = (t, id) => { document.getElementById('agErr').textContent = t; if(id){ const el = document.getElementById(id); if(el){ el.classList.add('agx-bad'); el.focus(); } } };
   document.querySelectorAll('.agx .agx-bad').forEach(x=>x.classList.remove('agx-bad'));
   const phone = acDigits(v('agxPhone')), cnic = acDigits(v('agxCnic'));
+  if(!window._agxSid) return err('⚠️ پہلے اوپر سے MCS ID چنیں', 'agxSid');
   if(v('agxName').length < 2) return err('⚠️ نام لکھیں', 'agxName');
   if(phone.slice(-10).length !== 10) return err('⚠️ موبائل نمبر لکھیں', 'agxPhone');
   if(cnic.length !== 13) return err('⚠️ شناختی کارڈ کے 13 ہندسے لکھیں', 'agxCnic');
-  const c = {name: v('agxName'), phone: '0' + phone.slice(-10), code: window._agxRk || '', biz: window._agxBiz || '', city: v('agxCity'), cnic, father: v('agxFather'), address: v('agxAddr'), email: v('agxEmail'), wa: '0' + phone.slice(-10), img: Object.assign({}, agImgs)};
+  const c = {name: v('agxName'), phone: '0' + phone.slice(-10), code: window._agxRk || '', biz: window._agxBiz || '', city: v('agxCity'), cnic, father: v('agxFather'), address: v('agxAddr'), email: v('agxEmail'), wa: '0' + phone.slice(-10), ref: v('agxRef'), mcsId: window._agxSid || '', img: Object.assign({}, agImgs)};
   const btn = document.getElementById('agSendBtn'), lbl = btn.innerHTML; btn.disabled = true; btn.textContent = '⏳ …';
-  const R = {no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس موبائل نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار پہلے سے کسی ایجنٹ کا ہے', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے', bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں', missing:'نام اور موبائل لکھیں' + (codevOn() && !isAdminSignedIn ? '، اور «کاروبار سے بھریں» سے کاروبار چنیں' : ''), login:'ایڈمن لاگ اِن دوبارہ کریں'};
+  const R = {no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس موبائل نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار پہلے سے کسی ایجنٹ کا ہے', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے', bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں', missing:'نام اور موبائل لکھیں' + (codevOn() && !isAdminSignedIn ? '، اور «کاروبار سے بھریں» سے کاروبار چنیں' : ''), login:'ایڈمن لاگ اِن دوبارہ کریں'};
   try{
     if(!isAdminSignedIn){ const cdv = codevMe(); const r = await (await fetch(AG_API + '/agpropose', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({cphone: cdv.phone, cpin: cdv.pin, c})})).json();
       if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + (R[r && r.reason] || 'نہیں گیا') + (r && r.other ? ' (' + r.other + ')' : '')); }
@@ -13173,6 +13212,7 @@ async function agFullSend(){
   const v = id => (document.getElementById(id).value||'').trim(), err = (t, id) => { document.getElementById('agErr').textContent = t; if(id){ const el = document.getElementById(id); if(el){ el.classList.add('agx-bad'); el.focus(); } } return false; };
   document.querySelectorAll('.agx .agx-bad').forEach(x=>x.classList.remove('agx-bad'));
   const phone = v('agxPhone').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g,''), cnic = v('agxCnic').replace(/\D/g,'');
+  if(!window._agxSid) return err('⚠️ پہلے اوپر سے MCS ID چنیں', 'agxSid');
   if(v('agxName').length < 3) return err('⚠️ Full Name — پورا نام لکھیں', 'agxName');
   if(v('agxFather').length < 3) return err('⚠️ Father Name — والد کا نام لکھیں', 'agxFather');
   if(!/^(0?3\d{9}|923\d{9})$/.test(phone)) return err('⚠️ Mobile — درست موبائل نمبر لکھیں (03001234567)', 'agxPhone');
@@ -13183,8 +13223,8 @@ async function agFullSend(){
   for(const [k, t] of [['selfie','Selfie — سیلفی'],['front','CNIC Front — کارڈ سامنے'],['back','CNIC Back — کارڈ پیچھے']]) if(!agImgs[k]) return err('⚠️ ' + t + ' والی تصویر لگائیں');
   err(''); const btn = document.getElementById('agSendBtn'), lbl = btn.innerHTML; btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہے…';
   try{
-    const r = await (await fetch(AG_API + '/agapply', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({full: 1, name: v('agxName'), father: v('agxFather'), cnic, phone, wa: phone, email: v('agxEmail'), city: v('agxCity'), address: v('agxAddr'), exp: '', biz: '', bizRk: '', dev: agDev(), img: agImgs})})).json();
-    if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + ({pending:'آپ کی ایک درخواست پہلے سے منظوری کے انتظار میں ہے — نئی درخواست نہیں جا سکتی', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کے نام ہے', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'سب خانے بھریں'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
+    const r = await (await fetch(AG_API + '/agapply', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({full: 1, name: v('agxName'), father: v('agxFather'), cnic, phone, wa: phone, email: v('agxEmail'), city: v('agxCity'), address: v('agxAddr'), exp: '', biz: '', bizRk: '', ref: v('agxRef'), mcsId: window._agxSid || '', dev: agDev(), img: agImgs})})).json();
+    if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + ({pending:'آپ کی ایک درخواست پہلے سے منظوری کے انتظار میں ہے — نئی درخواست نہیں جا سکتی', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کے نام ہے', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'سب خانے بھریں'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
     const p92 = '92' + phone.replace(/^0/,'').replace(/^92/,'').slice(-10);
     localStorage.setItem('mcsAgent', JSON.stringify({phone: p92, name: v('agxName'), at: Date.now()}));
     ['front','back','selfie'].forEach(k=> delete agImgs[k]);
@@ -13293,17 +13333,17 @@ async function devAgentsOpen(){
     <button type="button" class="btn block ag-send" style="margin:4px 0 8px" onclick="agPickOpen()">➕ نیا ایجنٹ بنائیں (کاروبار چن کر)</button>
     <input type="search" class="ag-q" placeholder="🔍 نام، نمبر، کوڈ، شہر…" oninput="dgFilter(this.value)"><div id="dgList">${dgRows()}</div>`);
 }
-/* میرے رجسٹرڈ بزنس — ایڈمن نے خود لائے (DEV)، ممبرشپ / دن */
+/* میرے رجسٹرڈ بزنس — ایڈمن نے خود لائے (ADMIN1)، ممبرشپ / دن */
 async function devBizOpen(){
   agModal('<div class="ag-st">⏳ لوڈ ہو رہا ہے…</div>'); try{ await pfLoadList(); }catch(e){}
-  const rows = apRecs('DEV').map(x=>({...x, info: apInfo(x)})); rows.sort((a,b)=>{ const k = x => x.info.left == null ? 9e9 : x.info.left; return k(a) - k(b); }); apRows = rows;
+  const rows = apRecs('ADMIN1').map(x=>({...x, info: apInfo(x)})); rows.sort((a,b)=>{ const k = x => x.info.left == null ? 9e9 : x.info.left; return k(a) - k(b); }); apRows = rows;
   const cnt = f => rows.filter(f).length, E = escapeHtml;
-  agModal(`<div class="ag-hd">🏪 میرے رجسٹرڈ بزنس <small>ایڈمن نے خود درج کیے (DEV)</small></div>
+  agModal(`<div class="ag-hd">🏪 میرے رجسٹرڈ بزنس <small>ایڈمن نے خود درج کیے (ADMIN1)</small></div>
     <div class="ap-st"><div><b>${rows.length}</b>کل</div><div><b>${cnt(x=>x.info.mode==='paid' && x.info.left>0)}</b>سالانہ فعال</div><div><b>${cnt(x=>x.info.mode==='free' && x.info.left>0)}</b>مفت موڈ</div><div><b>${cnt(x=>(x.info.mode==='paid'||x.info.mode==='free') && x.info.left<=0)}</b>ختم</div></div>
     ${rows.length ? rows.map((x,i)=>{ const r = x.rec, st = apStatus(x.info), ph = String(r.whatsapp||r.phone||'').replace(/\D/g,'').slice(-10);
       return `<div class="pt-card"><b>${E(r.nameUr||r.name||'')}</b> <small>${x.kind==='doctor' ? '👔 پروفیشن' : '🏪 کاروبار'} · ${E([r.area, r.city].filter(Boolean).join('، '))}</small><div><span class="ap-bd ${st[0]}">${st[1]}</span></div>
         <div class="r"><button type="button" class="p" onclick="closeModal('agModal');pfOpen('${x.kind}','${escapeAttr(r.id)}')">👁️ دیکھیں</button>${ph ? `<a href="tel:0${ph}" class="p" style="text-decoration:none;padding:6px 12px;border-radius:10px">📞 کال</a><button type="button" onclick="apRenewMsg(${i})">💬 ممبرشپ پیغام</button>` : ''}</div></div>`; }).join('')
-      : '<div class="cp-hint" style="text-align:center">ابھی کوئی نہیں۔ فارم میں «👨‍💻 ایڈمن نے خود لایا — DEV» دبا کر درج کریں تو یہاں آئیں گے۔</div>'}`);
+      : '<div class="cp-hint" style="text-align:center">ابھی کوئی نہیں۔ فارم میں «👨‍💻 ایڈمن نے خود لایا — ADMIN1» دبا کر درج کریں تو یہاں آئیں گے۔</div>'}`);
 }
 /* ➕ ایجنٹ بنائیں: پہلے سب کاروبار کھلیں، ایک چنیں، پھر صرف شناختی کارڈ */
 let agPkQ = '';
@@ -13404,15 +13444,15 @@ function vlRender(){
 function agCopy(c){ const ok = ()=>showToast('📋 ' + c + ' کاپی ہو گیا'); try{ navigator.clipboard.writeText(c).then(ok, ()=>{ prompt('کاپی کریں', c); }); }catch(e){ prompt('کاپی کریں', c); } }
 /* MCS0511TH135: «ایجنٹ کا ریفرل نمبر» خانے میں 📋 پیسٹ — ہاتھ سے لکھنے کی غلطی نہیں */
 async function refPaste(){ const i = document.getElementById('svcRef'); try{ const t = (await navigator.clipboard.readText() || '').trim(); if(t){ i.value = agNormCode(t); showToast('📥 پیسٹ ہو گیا'); refResolve(); return; } }catch(e){} i.focus(); showToast('خانے میں انگلی رکھ کر «Paste» دبائیں'); }
-/* MCS0511TH164 (ہیلپ ڈیسک #105، مالک کا حکم): ایڈمن اپنا ریفرل کوڈ ایک دبانے سے — DEV / CODEV (لکھنا / کاپی پیسٹ نہیں) */
+/* MCS0511TH164 (ہیلپ ڈیسک #105، مالک کا حکم): ایڈمن اپنا ریفرل کوڈ ایک دبانے سے — ADMIN1 / ADMIN2 (لکھنا / کاپی پیسٹ نہیں) */
 function refSelfFill(){
   document.querySelectorAll('.ref-self').forEach(box=>{
     const b = [];
-    if(isAdminSignedIn) b.push('<button type="button" data-c="DEV">👨‍💻 ایڈمن نے خود لایا — DEV</button>');
-    if(typeof codevOn === 'function' && codevOn()) b.push('<button type="button" class="cd" data-c="CODEV">👥 ایڈمن نے خود لایا — CODEV</button>');
+    if(isAdminSignedIn) b.push('<button type="button" data-c="ADMIN1">👨‍💻 ایڈمن نے خود لایا — ADMIN1</button>');
+    if(typeof codevOn === 'function' && codevOn()) b.push('<button type="button" class="cd" data-c="ADMIN2">👥 ایڈمن نے خود لایا — ADMIN2</button>');
     box.innerHTML = b.join('');
     box.onclick = e=>{ const x = e.target.closest('[data-c]'); if(!x) return; const i = document.getElementById(box.dataset.for); if(!i) return; i.value = x.dataset.c; i.dispatchEvent(new Event('input', {bubbles:true}));
-      const ok = document.getElementById(box.dataset.for + 'Ok'); if(ok){ ok.textContent = '✅ ' + (x.dataset.c === 'DEV' ? 'ایڈمن' : 'ایڈمن') + ' کا اپنا کوڈ (' + x.dataset.c + ') لگ گیا'; ok.style.color = '#047857'; }
+      const ok = document.getElementById(box.dataset.for + 'Ok'); if(ok){ ok.textContent = '✅ ' + (x.dataset.c === 'ADMIN1' ? 'ایڈمن' : 'ایڈمن') + ' کا اپنا کوڈ (' + x.dataset.c + ') لگ گیا'; ok.style.color = '#047857'; }
       showToast('✅ ' + x.dataset.c + ' لگ گیا'); };
   });
 }
@@ -13560,7 +13600,7 @@ async function agSend(){
   err(''); const btn = document.getElementById('agSendBtn'); btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہے…';
   try{
     const r = await (await fetch(AG_API + '/agapply', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({name: v('agName'), father: v('agFather'), cnic, phone, wa: v('agWa'), email: v('agEmail'), city: v('agCity'), address: v('agAddr'), exp: v('agExp'), biz: rec.nameUr||rec.name||'', bizRk: bi ? (bi.p.rk || pfKeyOf(rec, bi.p.kind)) : '', dev: agDev(), img: agImgs})})).json();
-    if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 درخواست بھیجیں'; return err('⚠️ ' + ({not_paid:'ایجنٹ بننے کے لیے پہلے اوپر چنی ہوئی اپنی ممبرشپ ایک سال کے لیے جاری کروائیں («📨 ایک سال کے لیے جاری رکھیں»)', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'ضروری خانے بھریں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی اور ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
+    if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 درخواست بھیجیں'; return err('⚠️ ' + ({not_paid:'ایجنٹ بننے کے لیے پہلے اوپر چنی ہوئی اپنی ممبرشپ ایک سال کے لیے جاری کروائیں («📨 ایک سال کے لیے جاری رکھیں»)', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'ضروری خانے بھریں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی اور ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
     const p92 = '92' + phone.replace(/^0/,'').replace(/^92/,'').slice(-10);
     localStorage.setItem('mcsAgent', JSON.stringify({phone: p92, name: v('agName'), at: Date.now()}));
     ['front','back','selfie'].forEach(k=> delete agImgs[k]);
@@ -13717,7 +13757,7 @@ async function agDocsSend(){
   for(const [k, t] of [['front','کارڈ سامنے'],['back','کارڈ پیچھے'],['selfie','سیلفی']]) if(!agImgs[k]) return err('⚠️ «' + t + '» والی تصویر لگائیں');
   const btn = document.getElementById('agSendBtn'); btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہیں…';
   try{ const r = await (await fetch(AG_API + '/agdocs', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: me.phone, pin: me.pin, dev: agDev(), cnic, father: (document.getElementById('agFather').value||'').trim(), img: agImgs})})).json();
-    if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; return err('⚠️ ' + ({login:'دوبارہ «میں پہلے سے ایجنٹ ہوں» سے موبائل اور PIN لکھیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر درست نہیں — دوبارہ لگائیں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ کسی اور ایجنٹ کا ہے'}[r && r.reason] || 'نہیں گیا — دوبارہ کوشش کریں')); }
+    if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; return err('⚠️ ' + ({login:'دوبارہ «میں پہلے سے ایجنٹ ہوں» سے موبائل اور PIN لکھیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر درست نہیں — دوبارہ لگائیں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ کسی اور ایجنٹ کا ہے'}[r && r.reason] || 'نہیں گیا — دوبارہ کوشش کریں')); }
     agDocsMark(true); ['front','back','selfie'].forEach(k=> delete agImgs[k]); showToast('✅ تصویریں پہنچ گئیں — شکریہ', 3500); agOpen();
   }catch(x){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; err('📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
 }
@@ -13794,34 +13834,28 @@ function agCreatedShow(a){ try{ agList = agList.filter(x=>x.id!==a.id); agList.p
       <a class="btn block" style="text-align:center;margin-top:8px" target="_blank" rel="noopener" href="https://wa.me/${escapeAttr(a.phone)}?text=${encodeURIComponent(msg)}">💬 ایجنٹ کو واٹس ایپ پر بھیجیں</a>
       <button type="button" class="btn block secondary" style="margin-top:6px" onclick="devAgentsOpen()">↩️ میرے رجسٹرڈ ایجنٹس</button>`);
 }
-/* MCS1211TH341 (مالک کا حکم): ایڈمن کے شناختی کارڈ پر ایجنٹ نہیں بن سکتا — ان کا اپنا DEV / CODEV کوڈ ہی ریفرل ہے؛ اسی کارڈ پر اپنا کاروبار بن سکتا ہے */
-const AG_GUARD_DEV = '🚫 اس شناختی کارڈ پر آپ ایڈمن کا ریفرل کوڈ (DEV) پہلے سے محفوظ ہے — الگ ایجنٹ کوڈ نہیں بن سکتا۔ اپنا ایڈمن کوڈ ہی ریفرل کوڈ کے طور پر استعمال کریں۔ (اسی شناختی کارڈ پر اپنا کاروبار بنانے کی اجازت ہے)';
-const AG_GUARD_CD = '🚫 اس شناختی کارڈ پر ایڈمن کا ریفرل کوڈ (CODEV) پہلے سے محفوظ ہے — الگ ایجنٹ کوڈ نہیں بن سکتا۔ ایڈمن والا کوڈ ہی ریفرل کوڈ کے طور پر استعمال کریں۔ (اسی شناختی کارڈ پر اپنا کاروبار بنانے کی اجازت ہے)';
+/* MCS1211TH341 (مالک کا حکم): ایڈمن کے شناختی کارڈ پر ایجنٹ نہیں بن سکتا — ان کا اپنا ADMIN1 / ADMIN2 کوڈ ہی ریفرل ہے؛ اسی کارڈ پر اپنا کاروبار بن سکتا ہے */
+const AG_GUARD_DEV = '🚫 اس شناختی کارڈ پر آپ ایڈمن کا ریفرل کوڈ (ADMIN1) پہلے سے محفوظ ہے — الگ ایجنٹ کوڈ نہیں بن سکتا۔ اپنا ایڈمن کوڈ ہی ریفرل کوڈ کے طور پر استعمال کریں۔ (اسی شناختی کارڈ پر اپنا کاروبار بنانے کی اجازت ہے)';
+const AG_GUARD_CD = '🚫 اس شناختی کارڈ پر ایڈمن کا ریفرل کوڈ (ADMIN2) پہلے سے محفوظ ہے — الگ ایجنٹ کوڈ نہیں بن سکتا۔ ایڈمن والا کوڈ ہی ریفرل کوڈ کے طور پر استعمال کریں۔ (اسی شناختی کارڈ پر اپنا کاروبار بنانے کی اجازت ہے)';
 const agGDig = x => String(x || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '');
 function agGuardGet(){ try{ return JSON.parse(localStorage.getItem('mcsGuardCnic') || '{}') || {}; }catch(e){ return {}; } }
 function agGuardSet(o){ try{ localStorage.setItem('mcsGuardCnic', JSON.stringify(o)); }catch(e){} }
 function agGuardSaveDev(){
   const cur = agGuardGet(), v = prompt('ایڈمن کا اپنا شناختی کارڈ نمبر (13 ہندسے) — خالی چھوڑ کر OK دبائیں تو ہٹ جائے گا:', cur.dev || ''); if(v === null) return;
   const d = agGDig(v); if(d && d.length !== 13){ showToast('⚠️ شناختی کارڈ کے پورے 13 ہندسے لکھیں'); return; }
-  cur.dev = d; agGuardSet(cur); try{ if(isAdminSignedIn) vfAdminHdr().then(h => fetch(PF_API + '/mcsauth', { method: 'POST', headers: h, body: JSON.stringify({ op: 'staffcnic', who: 'DEV', cnic: d }) })).then(r => r.json()).then(j => { if(!j || !j.ok) showToast('⚠️ سرور پر محفوظ نہیں ہوا' + (j && j.reason === 'cnic_used' ? ' — یہ شناختی کارڈ ' + j.other + ' کا ہے' : '')); }).catch(() => {}); }catch(e){}   /* MCS1211TH347: سرور پر بھی — اس کارڈ پر کسی فون سے ایجنٹ کوڈ نہیں بنتا */
+  cur.dev = d; agGuardSet(cur); try{ if(isAdminSignedIn) vfAdminHdr().then(h => fetch(PF_API + '/mcsauth', { method: 'POST', headers: h, body: JSON.stringify({ op: 'staffcnic', who: 'ADMIN1', cnic: d }) })).then(r => r.json()).then(j => { if(!j || !j.ok) showToast('⚠️ سرور پر محفوظ نہیں ہوا' + (j && j.reason === 'cnic_used' ? ' — یہ شناختی کارڈ ' + j.other + ' کا ہے' : '')); }).catch(() => {}); }catch(e){}   /* MCS1211TH347: سرور پر بھی — اس کارڈ پر کسی فون سے ایجنٹ کوڈ نہیں بنتا */
   showToast(d ? '✅ ایڈمن کا شناختی کارڈ محفوظ — اس پر ایجنٹ کوڈ نہیں بنے گا' : 'ہٹا دیا گیا'); try{ agAdminRender(); }catch(e){}
 }
-/* MCS1211TH348 (مالک کا حکم): ایڈمن کا شناختی کارڈ = CODEV — سرور پر (staffcnic)، اس پر کسی فون سے ایجنٹ کوڈ نہیں */
+/* MCS1211TH348 (مالک کا حکم): ایڈمن کا شناختی کارڈ = ADMIN2 — سرور پر (staffcnic)، اس پر کسی فون سے ایجنٹ کوڈ نہیں */
 function agGuardSaveCd(){
   const cur = agGuardGet(), v = prompt('ایڈمن کا شناختی کارڈ نمبر (13 ہندسے) — خالی چھوڑ کر OK دبائیں تو ہٹ جائے گا:', cur.cdOwn || ''); if(v === null) return;
   const d = agGDig(v); if(d && d.length !== 13){ showToast('⚠️ شناختی کارڈ کے پورے 13 ہندسے لکھیں'); return; }
-  vfAdminHdr().then(h => fetch(PF_API + '/mcsauth', { method: 'POST', headers: h, body: JSON.stringify({ op: 'staffcnic', who: 'CODEV', cnic: d }) })).then(r => r.json()).then(j => {
-    if(j && j.ok){ cur.cdOwn = d; agGuardSet(cur); showToast(d ? '✅ ایڈمن کا شناختی کارڈ سرور پر محفوظ (CODEV) — اس پر ایجنٹ کوڈ نہیں بنے گا' : 'ہٹا دیا گیا'); try{ agAdminRender(); }catch(e){} }
+  vfAdminHdr().then(h => fetch(PF_API + '/mcsauth', { method: 'POST', headers: h, body: JSON.stringify({ op: 'staffcnic', who: 'ADMIN2', cnic: d }) })).then(r => r.json()).then(j => {
+    if(j && j.ok){ cur.cdOwn = d; agGuardSet(cur); showToast(d ? '✅ ایڈمن کا شناختی کارڈ سرور پر محفوظ (ADMIN2) — اس پر ایجنٹ کوڈ نہیں بنے گا' : 'ہٹا دیا گیا'); try{ agAdminRender(); }catch(e){} }
     else showToast('⚠️ محفوظ نہیں ہوا' + (j && j.reason === 'cnic_used' ? ' — یہ شناختی کارڈ ' + j.other + ' کا ہے' : j && j.reason === 'admin_only' ? ' — پہلے ایڈمن لاگ اِن کریں' : ''));
   }).catch(() => showToast('📶 انٹرنیٹ نہیں'));
 }
-async function agGuardCheck(cnic){
-  const d = agGDig(cnic); if(d.length !== 13) return '';
-  const g = agGuardGet(); if(g.dev && g.dev === d) return AG_GUARD_DEV; if(g.cdOwn && g.cdOwn === d) return AG_GUARD_CD;
-  let cds = g.cd || {};
-  if(isAdminSignedIn){ try{ const j = await Promise.race([cdAdminCall({op:'list'}), new Promise(r => setTimeout(() => r(null), 6000))]); if(j && j.ok && Array.isArray(j.list)){ cds = {}; j.list.forEach(c => { const k = agGDig(c && c.cnic); if(k.length === 13) cds[k] = c.name || '1'; }); g.cd = cds; agGuardSet(g); } }catch(e){} }
-  return cds[d] !== undefined ? AG_GUARD_CD : '';
-}
+async function agGuardCheck(cnic){ return ''; }   /* MCS1511SU430 (مالک کا حکم): ایڈمن 1 / ایڈمن 2 بھی ایجنٹ بن سکتے ہیں — AG001 / AG002 */
 async function agCreateGo(){
   const v = id => (document.getElementById(id).value||'').trim(), e = document.getElementById('acErr');
   const cdv = !isAdminSignedIn && codevOn() ? codevMe() : null;   /* MCS0511TH139: ایڈمن بھی بنا سکے — مگر مالک کی منظوری کے لیے (⏳) */
@@ -13832,12 +13866,12 @@ async function agCreateGo(){
   if(!c.name || c.phone.length < 10 || (c.code && !/^p\d{10}/.test(c.code)) || (cdv && !c.code)){ e.textContent = '⚠️ اوپر تلاش سے کاروبار چنیں، یا نام اور موبائل لکھیں'; return; }
   e.textContent = '⏳ …';
   if(cdv){ try{ const r = await (await fetch(AG_API + '/agpropose', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({cphone: cdv.phone, cpin: cdv.pin, c})})).json();
-      if(!r || !r.ok){ e.textContent = '⚠️ ' + ({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', login:'ایڈمن لاگ اِن دوبارہ کریں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں گیا'); return; }
+      if(!r || !r.ok){ e.textContent = '⚠️ ' + ({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', login:'ایڈمن لاگ اِن دوبارہ کریں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں گیا'); return; }
       agModal(`<div class="ag-hd">⏳ منظوری کے لیے بھیج دیا</div><div class="ag-wait">${escapeHtml(c.name)} — مالک (پی بی ٹی کوڈ لیبز) کی منظوری کے بعد ایجنٹ بنے گا۔ منظوری پر PIN مالک خود ایجنٹ کو بھیجیں گے۔</div>`); }
     catch(x){ e.textContent = '📶 انٹرنیٹ نہیں'; } return; }
   try{ const r = await agAdminCall({op:'create', c});
     if(r && !r.ok && (r.reason === 'exists' || r.reason === 'code_taken')) agKnownAdd(c.phone, r.reason === 'code_taken' ? c.code : '', 'approved');
-    if(!r || !r.ok){ e.textContent = '⚠️ ' + ({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', missing:'خانے بھریں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں بنا'); return; }
+    if(!r || !r.ok){ e.textContent = '⚠️ ' + ({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار ID کسی اور ایجنٹ کی ہے', missing:'خانے بھریں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'}[r && r.reason] || 'نہیں بنا'); return; }
     agCreatedShow(r.agent);
   }catch(x){ e.textContent = '⚠️ پہلے ایڈمن لاگ اِن کریں / انٹرنیٹ دیکھیں'; }
 }
@@ -13908,7 +13942,7 @@ async function agWaFinish(rec, o){
     await fetch(PF_API + '/padmin', {method:'POST', headers: hdr, body: JSON.stringify({rec: rk, act:'until', until})});
     if(pfAct[rk]) pfAct[rk].until = until; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
     const r = await agAdminCall({op:'create', c:{name: o.name, phone: o.phone, code: rk, city: o.city, biz: rec.nameUr || o.biz, cnic: o.cnic || ''}});
-    if(!r || !r.ok) throw new Error(({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار کسی اور ایجنٹ کا ہے', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ DEV / CODEV ہی استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'})[r && r.reason] || 'ایجنٹ نہیں بنا');
+    if(!r || !r.ok) throw new Error(({no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار کسی اور ایجنٹ کا ہے', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ' + (r && r.other ? ' (' + r.other + ')' : ''), bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں'})[r && r.reason] || 'ایجنٹ نہیں بنا');
     const a = r.agent, msg = 'السلام علیکم ' + a.name + '\nمبارک ہو! آپ کا کاروبار «' + (rec.nameUr||'') + '» My City Shines پر درج ہو گیا اور آپ MCS ایجنٹ بن گئے ہیں 🤝\nآپ کا ریفرل کوڈ: ' + a.code + '\n🔑 PIN: ' + a.pin + '\n\nایپ انسٹال کریں ← «🤝 MCS ایجنٹ بنیں» ← «🔑 میں پہلے سے ایجنٹ ہوں» ← اپنا موبائل نمبر اور یہ PIN لکھیں، پھر اپنے شناختی کارڈ کی دونوں طرف کی تصویر اور سیلفی لگا دیں۔';
     agModal(`<div class="ag-hd">✅ سب بن گیا</div><div class="ag-ok">🏪 ${escapeHtml(rec.nameUr||'')}<br>👤 ${escapeHtml(a.name)} — ایجنٹ</div>
       <div class="cp-hint" style="text-align:center">⭐ ممبرشپ ایک سال کے لیے جاری</div>
@@ -13928,7 +13962,7 @@ function agAdminRender(){
   const L = agList.filter(a=> a.status === agTab && (!q || [a.name, a.father, a.cnic, a.phone, '0'+String(a.phone||'').slice(2), a.code, a.city, a.biz].join(' ').toLowerCase().replace(/[\s-]/g,'').includes(q)));
   const E = s => escapeHtml(s||'');
   agModal(`<div class="ag-hd">🤝 ایجنٹ اور ریفرل کوڈ</div>
-    ${isAdminSignedIn ? `<button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveDev()">🪪 ایڈمن کا شناختی کارڈ ${agGuardGet().dev ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'} <small>(اس پر ایجنٹ کوڈ نہیں بنے گا)</small></button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveCd()">🪪 ایڈمن کا شناختی کارڈ (CODEV) ${agGuardGet().cdOwn ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'}</button>` : ''}
+    ${isAdminSignedIn ? `<button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveDev()">🪪 ایڈمن کا شناختی کارڈ ${agGuardGet().dev ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'} <small>(اس پر ایجنٹ کوڈ نہیں بنے گا)</small></button><button type="button" class="btn block secondary" style="margin:0 0 6px;font-size:13px" onclick="agGuardSaveCd()">🪪 ایڈمن کا شناختی کارڈ (ADMIN2) ${agGuardGet().cdOwn ? '✅ محفوظ' : '⚠️ ابھی درج نہیں'}</button>` : ''}
     <button type="button" class="btn block ag-send" style="margin:4px 0 6px" onclick="agWaOpen()">📋 واٹس ایپ فارم سے نیا ایجنٹ <small>(کاروبار + ایک سال + ایجنٹ ایک ساتھ)</small></button>
     <button type="button" class="btn block secondary" style="margin:0 0 8px" onclick="agCreateOpen()">➕ خود ایجنٹ بنائیں (کاروبار پہلے سے جڑا ہو)</button>
     <div class="ag-tabs">${[['pending','⏳ نئی درخواستیں'],['approved','✅ ایجنٹ / کوڈ'],['rejected','❌ رد']].map(([k,t])=>`<button type="button" class="${agTab===k?'on':''}" onclick="agTab='${k}';agAdminRender()">${t} <b>${n(k)}</b></button>`).join('')}</div>
@@ -13944,7 +13978,7 @@ function agAdminRender(){
         <div class="ag-btns">
           ${a.status !== 'approved' ? `<button type="button" class="ok" onclick="agAct('${escapeAttr(a.id)}','approve')">✅ منظور + کوڈ</button>` : `<button type="button" onclick="agCopy('${escapeAttr(a.code)}')">📋 کوڈ</button><button type="button" onclick="agSendCode('${escapeAttr(a.id)}')">💬 تیار میسج بھیجیں</button>`}
           ${a.status !== 'rejected' ? `<button type="button" class="no" onclick="agAct('${escapeAttr(a.id)}','reject')">❌ رد</button>` : ''}
-          ${(a.status === 'approved' && a.code && !/^AG-\d+$/.test(a.code)) ? `<button type="button" class="ok" onclick="agRecode('${escapeAttr(a.id)}')">🔁 Replace old ID → AG system ID</button>` : ''}
+          ${(a.status === 'approved' && a.code && !/^AG\d+$/.test(a.code)) ? `<button type="button" class="ok" onclick="agRecode('${escapeAttr(a.id)}')">🔁 Replace old ID → AG system ID</button>` : ''}
           <button type="button" onclick="fpOpenAgent('${escapeAttr(a.id)}')">📄 مکمل پروفائل</button>
           <button type="button" class="no" onclick="agAct('${escapeAttr(a.id)}','delete')">🗑️</button>
         </div></div>`; }).join('') : '<div class="cp-hint" style="text-align:center">یہاں ابھی کچھ نہیں</div>'}`);
@@ -16871,8 +16905,8 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
   /* MCS0811SU217: دعوتی میسج — ایپ کا لنک، ضلع، فیڈ کرنے والے کا ریفرل کوڈ؛ پاس ورڈ نہیں (نیا بندہ ایپ میں خود بنائے گا) */
   function fedRef(){
     try{
-      if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return { code:'DEV', who:'ایڈمن', ag:'' };
-      if(typeof codevOn === 'function' && codevOn()) return { code:'CODEV', who:'ایڈمن', ag:'' };
+      if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return { code:'ADMIN1', who:'ایڈمن', ag:'' };
+      if(typeof codevOn === 'function' && codevOn()) return { code:'ADMIN2', who:'ایڈمن', ag:'' };
       const a = agMe(); if(a && (a.code || a.phone)){ const c = a.code || agRefNo(a.phone); return { code:c, who:'ایجنٹ', ag:c }; }
       const me = (uaMe() || {}).user || {}; let own = ''; try{ const L = mpListReal(); own = (L[0] && L[0].p && L[0].p.rk) || ''; }catch(e){}
       return { code: own || agRefNo(me.mobile) || me.id || '', who:'', ag:'', own:1 };
@@ -16934,7 +16968,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     if(!f){ f = { id: c.id, fsId: c.fsId, kind: c.kind, ts: Date.now() }; fedAll().push(f); }
     Object.assign(f, { ownerName: n, mobile: m, gmail: mail, nm, city, agent, ref: R.code, who: R.who, dist: rec.district || '', by: me.id || '' }); saveStore();
     /* MCS0611FR172: ایجنٹ نے فیڈ کیا تو اس کا ریفرل کوڈ اس کاروبار کے ریکارڈ میں خود لگ جائے (خالی ہو تو) */
-    try{ if(R.code){ const col = c.kind === 'doctor' ? 'doctors' : 'services'; rec.more = rec.more || {}; const key = R.own ? 'fedBy' : 'ref'; if(!rec.more[key]){ rec.more[key] = R.code; saveStore(); pushMoreToFirebase(col, rec.fsId || rec.id, rec.more); } } }catch(e){}   /* MCS0811SU217: ایڈمن DEV / ایڈمن CODEV / ایجنٹ کا کوڈ / عام یوزر کا اپنا کوڈ */
+    try{ if(R.code){ const col = c.kind === 'doctor' ? 'doctors' : 'services'; rec.more = rec.more || {}; const key = R.own ? 'fedBy' : 'ref'; if(!rec.more[key]){ rec.more[key] = R.code; saveStore(); pushMoreToFirebase(col, rec.fsId || rec.id, rec.more); } } }catch(e){}   /* MCS0811SU217: ایڈمن ADMIN1 / ایڈمن ADMIN2 / ایجنٹ کا کوڈ / عام یوزر کا اپنا کوڈ */
     if(fedApproved(rec)) return fedShow(fedAll().indexOf(f));
     agModal(`<div class="ag-hd">⏳ منظوری کے لیے بھیج دیا گیا</div><div class="ag-wait">«${escapeHtml(nm)}» ایڈمن کی منظوری کا انتظار کر رہا ہے۔<br>منظور ہوتے ہی <b>📨 میرے درج کیے ہوئے</b> میں تیار میسج بن جائے گا اور آپ کو اطلاع بھی ملے گی۔</div>
       <button type="button" class="btn block" onclick="fedListOpen()">📨 میرے درج کیے ہوئے</button>`);
@@ -17484,7 +17518,7 @@ function prepTajranList(LIST, title){
    MCS0811SU232 (مالک کا حکم)
    1) سیلفی پکی محفوظ: IndexedDB (بڑی جگہ) + localStorage — ایڈمن / ایجنٹ / بزنس / یوزر سب کے لیے
    2) 🏆 کارکردگی رپورٹ: پورے صفحے پر پراگریس بارز — ریفرل کوڈ سے فیڈ ہوئے کاروبار / پروفیشن کے حساب سے اوپر سے نیچے
-      ایجنٹ (اپنا کوڈ) • ایڈمن (CODEV + اپنا نمبر) • ایڈمن (DEV) • کمپنی (PBT — جس پر کوئی کوڈ نہ لگا ہو)
+      ایجنٹ (اپنا کوڈ) • ایڈمن (ADMIN2 + اپنا نمبر) • ایڈمن (ADMIN1) • کمپنی (PBT — جس پر کوئی کوڈ نہ لگا ہو)
    ⚠️ پلے اسٹور: کہیں رقم / کمیشن نہیں — صرف کاروبار کی گنتی
    ===================================================================== */
 (function(){
@@ -17568,7 +17602,7 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
   const nf = n => { try{ return typeof urduDigits === 'function' ? urduDigits(String(n)) : String(n); }catch(e){ return String(n); } };
 
   /* کس ریفرل کوڈ سے کتنے کاروبار / پروفیشن (store.services + store.doctors) */
-  /* رجسٹرڈ ممبرشپ والے کاروبار کا ریفرل پروفائل (سرور) میں بھی لکھا جاتا ہے — وہاں سے پڑھیں (ایڈمن نے فارم میں DEV لکھا ہو تو وہی چلے) */
+  /* رجسٹرڈ ممبرشپ والے کاروبار کا ریفرل پروفائل (سرور) میں بھی لکھا جاتا ہے — وہاں سے پڑھیں (ایڈمن نے فارم میں ADMIN1 لکھا ہو تو وہی چلے) */
   async function pbProfRefs(){
     const cache = window._pbPR = window._pbPR || {}, now = Date.now(), keys = [];
     const consider = (arr, kind) => (arr || []).forEach(r=>{ if(!r || r.source === 'import') return; let rk = ''; try{ rk = pfKeyOf(r, kind); }catch(e){} if(!rk || !pfAct[rk]) return; const c = cache[rk]; if(c && now - c.t < 300000) return; if(keys.indexOf(rk) < 0) keys.push(rk); });
@@ -17588,13 +17622,13 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
       if(r.source === 'import'){ return; }                               /* امپورٹ شدہ فہرست — ریفرل سے فیڈ نہیں ہوئی */
       const m = r.more || {}; let raw = String(m.ref || '').trim(), pr = '';
       try{ const rk = pfKeyOf(r, kind); pr = (rk && PR[rk]) ? String(PR[rk]).trim() : ''; }catch(e){}
-      const pu = up(pr);
-      if(pr && !m.refSel && (!raw || pu === 'DEV' || pu === 'CODEV')) raw = pr;      /* پروفائل میں ایڈمن کا صاف کوڈ ہو تو وہی */
-      const u = up(raw);
+      const pu = up(refN(pr));
+      if(pr && !m.refSel && (!raw || pu === 'ADMIN1' || pu === 'ADMIN2')) raw = pr;      /* پروفائل میں ایڈمن کا صاف کوڈ ہو تو وہی */
+      const u = up(refN(raw));
       if(!raw && !m.cdBy && !m.fedBy){ skipped++; return; }                /* کوئی ریفرل کوڈ نہیں — گنتی میں نہیں */
       const isPend = pend || r.approved === false;
-      if(u === 'DEV'){ add('DEV', r, isPend); return; }
-      if(u === 'CODEV' || m.cdBy){ add('CODEV:' + ph10(m.cdBy), r, isPend); return; }
+      if(u === 'ADMIN1'){ add('ADMIN1', r, isPend); return; }
+      if(u === 'ADMIN2' || m.cdBy){ add('ADMIN2:' + ph10(m.cdBy), r, isPend); return; }
       if(!raw || u === 'PBT'){ add('PBT', r, isPend); return; }
       add('A:' + agNormCode(raw), r, isPend);
     });
@@ -17620,17 +17654,17 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
     });
     /* ایڈمن: فہرست (ایڈمن) + ریکارڈ سے ملنے والے */
     const seen = {};
-    cd.forEach(c=>{ const p = ph10(c.phone), k = grab(T, 'CODEV:' + p); seen[p] = 1; rows.push({type: 'c', img: c.selfie || '', name: c.name || 'ایڈمن', city: c.city || '', code: 'CODEV', phone: ph0(c.phone), n: k.n, act: k.act, pend: k.pend, last: k.last}); });
-    Object.keys(T).filter(k=>k.indexOf('CODEV:') === 0).forEach(k=>{
+    cd.forEach(c=>{ const p = ph10(c.phone), k = grab(T, 'ADMIN2:' + p); seen[p] = 1; rows.push({type: 'c', img: c.selfie || '', name: c.name || 'ایڈمن', city: c.city || '', code: 'ADMIN2', phone: ph0(c.phone), n: k.n, act: k.act, pend: k.pend, last: k.last}); });
+    Object.keys(T).filter(k=>k.indexOf('ADMIN2:') === 0).forEach(k=>{
       const p = k.slice(6); if(p && seen[p]) return; const t = T[k];
       let nm = ''; try{ const rec = [].concat(store.services || [], store.doctors || []).find(r=> r && r.more && r.more.cdBy && ph10(r.more.cdBy) === p); nm = rec ? String(rec.more.cdBy).replace(/[\d\s+\-]+$/g, '').trim() : ''; }catch(e){}
-      rows.push({type: 'c', name: nm || 'ایڈمن — نام درج نہیں', city: '', code: 'CODEV', phone: p ? '0' + p : '', n: t.n, act: t.act, pend: t.pend, last: t.last});
+      rows.push({type: 'c', name: nm || 'ایڈمن — نام درج نہیں', city: '', code: 'ADMIN2', phone: p ? '0' + p : '', n: t.n, act: t.act, pend: t.pend, last: t.last});
     });
     /* ایڈمن */
-    const dp = (typeof ptDevProf === 'function' ? ptDevProf() : {}) || {}, dk = grab(T, 'DEV');
+    const dp = (typeof ptDevProf === 'function' ? ptDevProf() : {}) || {}, dk = grab(T, 'ADMIN1');
     const devName = (!dp.name || /pbt\s*codelabs/i.test(dp.name)) ? 'عبدالحفیظ' : dp.name;   /* ایڈمن کا اپنا نام، کمپنی کا نام نہیں */
     let devImg = ''; try{ devImg = ptSelfieGet('dev'); }catch(e){}
-    rows.push({type: 'd', img: devImg, name: devName, city: dp.city || '', code: 'DEV', phone: dp.phone || '', n: dk.n, act: dk.act, pend: dk.pend, last: dk.last});
+    rows.push({type: 'd', img: devImg, name: devName, city: dp.city || '', code: 'ADMIN1', phone: dp.phone || '', n: dk.n, act: dk.act, pend: dk.pend, last: dk.last});
     /* کمپنی */
     const ck = grab(T, 'PBT');
     rows.push({type: 'k', name: 'پی بی ٹی کمپنی', city: '', code: 'PBT', phone: '', n: ck.n, act: ck.act, pend: ck.pend, last: ck.last});
@@ -17960,7 +17994,7 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
 </style>
 <script>
 function bzRole(){ try{ if(isAdminSignedIn) return 'dev'; if(typeof codevOn === 'function' && codevOn()) return 'codev'; const a = agMe(); if(a && (a.code || a.pin)) return 'agent'; }catch(e){} return ''; }
-function bzRef(){ try{ const r = bzRole(); if(r === 'dev') return 'DEV'; if(r === 'codev') return 'CODEV'; return (agMe() || {}).code || ''; }catch(e){ return ''; } }
+function bzRef(){ try{ const r = bzRole(); if(r === 'dev') return 'ADMIN1'; if(r === 'codev') return 'ADMIN2'; return (agMe() || {}).code || ''; }catch(e){ return ''; } }
 function bzHubOpen(){
   const r = bzRole(); if(!r){ showToast('یہ حصہ ایڈمن / ایجنٹ کے لیے ہے'); return; }
   const ref = bzRef();
@@ -19446,11 +19480,11 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
       var rf = sec('🔗', isDoc ? 'ریفرل — پروفیشن کس نے رجسٹر کیا' : 'ریفرل — بزنس کس نے رجسٹر کیا');
       var L = (typeof agList !== 'undefined' && agList) || [];
       var code = refN(more.ref), pcode = refN(d.ref), uc = code.toUpperCase();
-      if(pcode && !more.refSel && (!code || uc === 'DEV' || uc === 'CODEV')){ code = pcode; uc = code.toUpperCase(); }
+      if(pcode && !more.refSel && (!code || uc === 'ADMIN1' || uc === 'ADMIN2')){ code = pcode; uc = code.toUpperCase(); }
       var byCode = function(c){ return L.find(function(x){ return x && c && (x.code === c || x.bizRk === c); }) || null; };
       var ph0 = function(p){ var x = l10(p); return x ? '0' + x : ''; };
-      if(uc === 'DEV'){ R(rf, 'کس کے ریفرل سے', '👨‍💻 ایڈمن نے خود رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'DEV', true); }
-      else if(uc === 'CODEV' || more.cdBy){ R(rf, 'کس کے ریفرل سے', '👥 ایڈمن نے رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'CODEV', true); R(rf, 'ایڈمن (نام / موبائل)', more.cdBy, true); }
+      if(uc === 'ADMIN1'){ R(rf, 'کس کے ریفرل سے', '👨‍💻 ایڈمن نے خود رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'ADMIN1', true); }
+      else if(uc === 'ADMIN2' || more.cdBy){ R(rf, 'کس کے ریفرل سے', '👥 ایڈمن نے رجسٹر کیا'); R(rf, 'ریفرل کوڈ', 'ADMIN2', true); R(rf, 'ایڈمن (نام / موبائل)', more.cdBy, true); }
       else if(!code || uc === 'PBT'){ R(rf, 'کس کے ریفرل سے', '🏢 خود آیا — کسی ایجنٹ کے ریفرل کے بغیر'); R(rf, 'ریفرل کوڈ', 'PBT', true); }
       else {
         var ra = byCode(code);
@@ -19993,7 +20027,7 @@ function rpkPeople(){
 }
 function rpkNameOf(code){
   code = refN(code); if(!code) return '';
-  if(code === 'DEV') return 'ایڈمن (مالک)'; if(code === 'CODEV') return 'کو ڈویلپر'; if(code === 'PBT') return '';
+  if(code === 'ADMIN1') return 'Admin 1'; if(code === 'ADMIN2') return 'Admin 2'; if(code === 'PBT') return '';
   const p = rpkPeople().find(x=>x.c === code); return p ? p.n : '';
 }
 function rpkSorted(){
@@ -20003,20 +20037,20 @@ function rpkSorted(){
   return {en, ur};
 }
 function rpkAddOpt(sel, v){ const o = document.createElement('option'); o.value = v; o.textContent = '⚠️ ' + v + ' — فہرست میں نہیں (پرانا / غلط) — صحیح ایجنٹ چنیں'; o.style.color = '#b91c1c'; sel.appendChild(o); }
-function rpkSetVal(sel, v){ v = refN(v == null ? '' : v); if(v && /^AG-/i.test(v)) v = v.toUpperCase(); if(v && !Array.from(sel.options).some(o=>o.value === v)) rpkAddOpt(sel, v); rpkSelVal().set.call(sel, v); }
-function rpkFill(sel){   /* MCS1111WE329 (مالک کا حکم): اوپر DEV / CODEV / PBT، پھر ایجنٹ AG-001، AG-002… کوڈ کی ترتیب سے، انگلش، برابر */
+function rpkSetVal(sel, v){ v = refN(v == null ? '' : v); if(v && /^AG-?/i.test(v)) v = v.toUpperCase(); if(v && !Array.from(sel.options).some(o=>o.value === v)) rpkAddOpt(sel, v); rpkSelVal().set.call(sel, v); }
+function rpkFill(sel){   /* MCS1111WE329 (مالک کا حکم): اوپر ADMIN1 / ADMIN2 / PBT، پھر ایجنٹ AG-001، AG-002… کوڈ کی ترتیب سے، انگلش، برابر */
   const keep = rpkSelVal().get.call(sel), adm = !!isAdminSignedIn; let cd = false; try{ cd = codevOn(); }catch(e){}
   const pad = c => (String(c) + '\u00A0'.repeat(8)).slice(0, 8);
   const S = rpkSorted(), all = [].concat(S.en || [], S.ur || []).filter(p => p && p.c);
   const num = c => { const m = /(\d+)\s*$/.exec(String(c)); return m ? +m[1] : 1e9; };
-  all.sort((x, y) => { const ax = /^AG-/i.test(x.c) ? 0 : 1, ay = /^AG-/i.test(y.c) ? 0 : 1; return (ax - ay) || String(x.c).replace(/\d+$/, '').localeCompare(String(y.c).replace(/\d+$/, ''), 'en') || (num(x.c) - num(y.c)); });
+  all.sort((x, y) => { const ax = /^AG-?\d/i.test(x.c) ? 0 : 1, ay = /^AG-?\d/i.test(y.c) ? 0 : 1; return (ax - ay) || String(x.c).replace(/\d+$/, '').localeCompare(String(y.c).replace(/\d+$/, ''), 'en') || (num(x.c) - num(y.c)); });
   const opt = p => `<option value="${escapeAttr(p.c)}" data-n="${escapeAttr(p.n)}" data-noen="1">${escapeHtml(pad(p.c))} · ${escapeHtml(p.n || '—')}</option>`;
   let h = '<option value="">— فہرست سے چنیں —</option><optgroup label="Admin">';
-  h += `<option value="DEV" data-n="ایڈمن (مالک)" data-noen="1">${pad('MCS001')} · ایڈمن (مالک)</option><option value="CODEV" data-n="کو ڈویلپر" data-noen="1">${pad('MCS002')} · کو ڈویلپر</option></optgroup><optgroup label="Company">`;
+  h += `<option value="ADMIN1" data-n="Admin 1" data-noen="1">${pad('MCS001')} · Admin 1</option><option value="ADMIN2" data-n="Admin 2" data-noen="1">${pad('MCS002')} · Admin 2</option></optgroup><optgroup label="Company">`;
   h += '<optgroup label="Company">';
   h += `<option value="PBT">${pad('PBT')} · Company — Piary Bhai Traders</option></optgroup>`;
   if(all.length) h += '<optgroup label="Agents">' + all.map(opt).join('') + '</optgroup>';
-  sel.innerHTML = h; sel.setAttribute('dir', 'ltr'); sel.style.fontVariantNumeric = 'tabular-nums'; rpkSetVal(sel, keep || (adm && sel.id === 'svcRef' ? 'DEV' : ''));   /* MCS1411SA414: ایڈمن بزنس فیڈ کرے تو MCS001 پہلے سے */
+  sel.innerHTML = h; sel.setAttribute('dir', 'ltr'); sel.style.fontVariantNumeric = 'tabular-nums'; rpkSetVal(sel, keep || (adm && sel.id === 'svcRef' ? 'ADMIN1' : ''));   /* MCS1411SA414: ایڈمن بزنس فیڈ کرے تو MCS001 پہلے سے */
 }
 function rpkPrep(id){
   /* MCS1411SA414 (مالک کا حکم): ریفرل ہر کسی کے لیے صرف فہرست سے چننا — ہاتھ سے لکھنا بند */
@@ -20027,7 +20061,7 @@ function rpkPrep(id){
     el.parentNode.replaceChild(sel, el);
     const D = rpkSelVal();
     Object.defineProperty(sel, 'value', {configurable:true, get(){ return D.get.call(sel); }, set(v){ rpkSetVal(sel, v); }});
-    sel.addEventListener('change', ()=>{ const ok = document.getElementById(id + 'Ok'); if(ok){ const c = sel.value, n = rpkNameOf(c); ok.textContent = c ? '✅ ' + (n ? n + ' — ' : '') + (c === 'DEV' ? 'MCS001' : c === 'CODEV' ? 'MCS002' : c) : ''; ok.style.color = '#047857'; } });
+    sel.addEventListener('change', ()=>{ const ok = document.getElementById(id + 'Ok'); if(ok){ const c = sel.value, n = rpkNameOf(c); ok.textContent = c ? '✅ ' + (n ? n + ' — ' : '') + (c === 'ADMIN1' ? 'MCS001' : c === 'ADMIN2' ? 'MCS002' : c) : ''; ok.style.color = '#047857'; } });
     const fld = sel.closest('.field'); if(fld){ fld.querySelectorAll('.ref-paste').forEach(b=>{ b.style.display = 'none'; }); }
     rpkFill(sel); rpkSetVal(sel, old); el = sel;
   } else rpkFill(el);
@@ -21730,12 +21764,12 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   /* MCS1211TH344 (مالک کا حکم): 4 ہندسوں کے کوڈ کی جگہ «ID کی ڈراپ ڈاؤن فہرست» — ID چھوتے ہی نام، موبائل، ضلع فارم میں آ جاتے ہیں */
   /* MCS1211TH345 (مالک کا حکم): ID کی فہرست میں ہر ID کے ساتھ اسی بندے کا نام (جس نے سائن اپ کیا) + موبائل + ضلع؛ چنتے ہی نام، موبائل، ضلع فارم میں خود لگ جاتے ہیں */
   const pickF = (o, keys) => { for(const k of keys){ const v = o && o[k]; if(v != null && String(v).trim()) return String(v).trim(); } return ''; };
-  function entries(){   /* MCS1211TH351 (مالک کا حکم): صرف سرور کی فہرست — DEV، CODEV، ایجنٹ (AG-…)، رجسٹرڈ کاروبار (MCS00101…)؛ عام سائن اپ نہیں */
+  function entries(){   /* MCS1211TH351 (مالک کا حکم): صرف سرور کی فہرست — ADMIN1، ADMIN2، ایجنٹ (AG-…)، رجسٹرڈ کاروبار (MCS00101…)؛ عام سائن اپ نہیں */
     const L = [], seen = {};
     let recs = []; try{ recs = [].concat(store.services || [], store.doctors || []); }catch(e){}
     try{ JSON.parse(localStorage.getItem('mcsRegList') || '[]').forEach(x => { if(!x || !x.sid) return;
       const raw = String(x.sid).trim(); let sid;
-      if(/^(DEV|CODEV)$/i.test(raw)) sid = raw.toUpperCase(); else if(/^AG-?\d+$/i.test(raw)) sid = raw.toUpperCase().replace(/^AG-?/, 'AG-'); else if(/^MCS[\s-]*\d+$/i.test(raw)) sid = mcsSubFmt(x.subid || raw); else return;
+      if(/^(ADMIN1|ADMIN2|DEV|CODEV)$/i.test(raw)) sid = refN(raw); else if(/^AG-?\d+$/i.test(raw)) sid = raw.toUpperCase().replace(/^AG-?/, 'AG'); else if(/^MCS[\s-]*\d+$/i.test(raw)) sid = mcsSubFmt(x.subid || raw); else return;
       const key = sid + '|' + d10(x.mobile); if(seen[key]) return; seen[key] = 1;
       const o = { sid, key, name: pickF(x, ['name']), mobile: pickF(x, ['mobile']), district: pickF(x, ['district']), kind: x.kind || '', done: x.kind === 'reg' };
       if(!o.name || !o.district){ const k = d10(o.mobile), r = k && recs.find(z => z && d10(z.whatsapp) === k && (z.nameUr || z.name)); if(r){ if(!o.name) o.name = r.nameUr || r.name; if(!o.district && r.district) o.district = r.district; } }
@@ -22315,7 +22349,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
       <select id="sidR${i}" style="width:100%;min-height:40px;margin-top:4px;border-radius:10px">${pick[i].length ? '' : '<option value="">⚠️ نہیں ملا — نیچے نمبر لکھیں</option>'}${pick[i].map(r => `<option value="${E(d10(r.whatsapp))}|${E(r.nameUr || r.name || '')}">${E(r.nameUr || r.name || '')} — 0${E(d10(r.whatsapp))}${live(r) ? ' ✅' : ''}</option>`).join('')}</select>
       <input id="sidM${i}" inputmode="tel" dir="ltr" placeholder="یا موبائل نمبر 03xxxxxxxxx" style="width:100%;min-height:38px;margin-top:4px;border-radius:10px;box-sizing:border-box"></div>`;
     agModal(`<div class="ag-hd">🆔 MCS IDs — صرف رجسٹرڈ کاروبار <small>Only paid / registered businesses get an MCS ID</small></div>
-      <div class="cp-hint">انہی تین کو ID ملے گی؛ باقی سب کی MCS ID ختم۔ ساتھ سب ایجنٹ ترتیب سے AG-001، AG-002… (پہلا حبیب شہباز)۔ DEV / CODEV / PBT صرف ریفرل۔ آگے جو کاروبار رجسٹر (ایک سال) ہوگا اسے خود اگلی ID۔</div>
+      <div class="cp-hint">انہی تین کو ID ملے گی؛ باقی سب کی MCS ID ختم۔ ساتھ سب ایجنٹ ترتیب سے AG-001، AG-002… (پہلا حبیب شہباز)۔ ADMIN1 / ADMIN2 / PBT صرف ریفرل۔ آگے جو کاروبار رجسٹر (ایک سال) ہوگا اسے خود اگلی ID۔</div>
       ${WANT.map(row).join('')}<div class="ag-err" id="sidErr"></div>
       <button type="button" class="btn block" onclick="sidResetGo()">✅ یہی تین — MCS ID لگائیں</button>`);
   };
@@ -22374,7 +22408,7 @@ setTimeout(function(){ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdmin
   };
 })();
 </script>
-<!-- MCS1211TH355 (مالک کا حکم): ریفرل کوڈ کی فہرست صاف — فون کی بنی بنائی فہرست نہیں؛ چھوٹا ڈبہ، ہر لائن: کوڈ · نام (DEV Admin، CODEV Admin، PBT Company، AG001 نام)، ایک ٹچ = چنا گیا -->
+<!-- MCS1211TH355 (مالک کا حکم): ریفرل کوڈ کی فہرست صاف — فون کی بنی بنائی فہرست نہیں؛ چھوٹا ڈبہ، ہر لائن: کوڈ · نام (ADMIN1 Admin، ADMIN2 Admin، PBT Company، AG001 نام)، ایک ٹچ = چنا گیا -->
 <style id="mcsRpk355">
 .rpk-sel.rpk-hide{display:none!important}
 .rpk-btn{width:100%;min-height:44px;display:flex;align-items:center;gap:10px;border:2px solid #c9971c;border-radius:14px;background:#fff;color:#0b2545;font:inherit;font-weight:800;font-size:15px;padding:4px 12px;cursor:pointer;direction:ltr;text-align:left}
@@ -22394,7 +22428,7 @@ setTimeout(function(){ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdmin
 <script id="mcsRpk355js">
 (function(){
   'use strict';
-  const LBL = { DEV: 'Admin', CODEV: 'Admin', PBT: 'Company' };
+  const LBL = { ADMIN1: 'Admin', ADMIN2: 'Admin', PBT: 'Company' };
   const show = c => String(c || '').replace(/^AG-(\d+)$/, 'AG$1');
   function items(sel){ return Array.from(sel.options).filter(o => o.value).map(o => {
     const c = o.value, n = LBL[c] || o.getAttribute('data-n') || String(o.textContent || '').split('·').slice(1).join('·').trim();
@@ -22796,7 +22830,7 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
   window.bzYearReq = bzYearReq = function(x){
     const rec = x.rec, kind = x.kind || 'service'; let rk = ''; try{ rk = pfKeyOf(rec, kind); }catch(e){}
     let cat = ''; try{ cat = ubCatMeta(kind === 'doctor' ? 'doctor' : rec.category).ur || ''; }catch(e){}
-    const who = roleNow() === 'codev' ? 'CODEV' : 'AGENT', ref = (rec.more && rec.more.ref) || (typeof bzRef === 'function' ? bzRef() : '');
+    const who = roleNow() === 'codev' ? 'ADMIN2' : 'AGENT', ref = (rec.more && rec.more.ref) || (typeof bzRef === 'function' ? bzRef() : '');
     try{ if(typeof bzSetRef === 'function') bzSetRef(kind, rec); }catch(e){}
     try{ if(rk) mrqSend(rk, {by: who, fsId: rec.fsId || rec.id, col: kind === 'doctor' ? 'doctors' : 'services', name: (typeof bzOwner === 'function' ? bzOwner(x) : '') || rec.nameUr || '', mobile: rec.whatsapp || '', prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', district: rec.district || '', ref, refName: (typeof rpkNameOf === 'function' && ref) ? (rpkNameOf(ref) || '') : '', sid: (rec.more && rec.more.sid) || '', uid: (typeof agDev === 'function' ? agDev() : ''), kind, text: ''}); }catch(e){}
     agModal(`<div style="text-align:center;font-size:50px">✅</div><div class="ag-hd" style="text-align:center">منظوری کے لیے ایڈمن کو پہنچ گیا <small>Sent to admin for approval</small></div>
