@@ -4425,11 +4425,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU452";
+const APP_VERSION = "MCS1511SU453";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1511SU452": "🌟 Standard flow: big Welcome screen after sign-up • one business per account (Add New hidden once you have one) • membership only through Google Play — no admin approval for businesses; buying = live at once • bottom bar closes any open form first • tap a locked box to edit it",
+  "MCS1511SU453": "🪪 Every CNIC field now has a CNIC Expiry Date — an expired CNIC turns red and the form cannot be saved • ⎋ Log Out moved to the bottom of My Account (removed from the top bar)",
+    "MCS1511SU452": "🌟 Standard flow: big Welcome screen after sign-up • one business per account (Add New hidden once you have one) • membership only through Google Play — no admin approval for businesses; buying = live at once • bottom bar closes any open form first • tap a locked box to edit it",
     "MCS1511SU451": "🪪 Welcome back screen and the login page now show your MCS ID with your name and mobile number",
     "MCS1511SU450": "🔐 Login fixed: PIN is now required (also with Google) — mobile + PIN always works; an account without a PIN gets the PIN screen right after Google login • a phone that already has an account shows «Welcome back — Log In», not the sign-up form • 🔎 search MCS001 (with or without space) finds the card • membership number per business: first business = M1 • Play payment of an old card moves to your current card • no «send again» box on an approved business • DP shown once • price PKR 1,000 / year • English fixed",
     "MCS1511SU447": "🧭 Registration steps: one strip only (duplicate boxes removed) • a finished step turns green with a big ✓ and opens its done-page, never the old form again • steps open in order (locked until the one before is done) • Create Account page never reopens once the account exists",
@@ -20596,6 +20597,8 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
       + (me.code ? row('🤝', 'Referral &amp; Agent', ID, 'agOpen', 'c3', 'ریفرل کوڈ: ' + esc(me.code)) : '')   /* MCS1411SA423: Earn with MCS صرف ہوم پر */
       + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
       + '</div>';
+    /* MCS1511SU453 (مالک کا حکم): لاگ آؤٹ صرف یہاں — My Account کا آخری بٹن (سر والا سرخ Log Out ختم) */
+    h += (ua || rl) ? '<button type="button" class="mx-out" onclick="mxGo(\'' + ID + '\',\'h2Logout\')">⎋ Log Out</button>' : '<button type="button" class="mx-out in" onclick="mxGo(\'' + ID + '\',\'uaLogin\')">🔐 Log In</button>';
     h += '<div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
     shell(ID, h);
   };
@@ -24650,6 +24653,64 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
   /* (5) لاک ڈبے کا خانہ دبائیں = ڈبہ کھلے */
   document.addEventListener('click', e => { const x = e.target.closest && e.target.closest('.locked .cbx-in input, .locked .cbx-in textarea, .locked .cbx-in select'); if(!x) return;
     const b = x.closest('.locked'), ed = b && b.querySelector('.cbx-edit'); if(ed){ ed.click(); setTimeout(() => { try{ x.focus(); }catch(_){} }, 60); } }, true);
+})();
+</script>
+
+<style id="mcsC453css">
+/* MCS1511SU453 (مالک کا حکم) */
+html body #h2Out, html body .h2-out { display: none !important; }   /* سر والا سرخ Log Out ختم — صرف My Account میں */
+.mx-out { display: block; width: calc(100% - 4px); margin: 14px 2px 4px; padding: 14px; border-radius: 16px; border: 2px solid #ef4444; background: #fff5f5; color: #b91c1c; font: 900 18px 'Segoe UI', Selawik, Arial, sans-serif; cursor: pointer; }
+.mx-out.in { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
+.cnx-wrap { margin-top: 8px; }
+.cnx-wrap label { display: block; font-weight: 800; font-size: 14px; margin-bottom: 4px; }
+.cnx-wrap input { width: 100%; box-sizing: border-box; min-height: 42px; border: 2px solid #cbd5e1; border-radius: 12px; padding: 8px 10px; font: 700 16px Arial, sans-serif; }
+.cnx-wrap.bad input, input.cnx-bad { border-color: #dc2626 !important; background: #fef2f2 !important; color: #b91c1c !important; }
+.cnx-msg { display: none; margin-top: 5px; color: #b91c1c; font-weight: 800; font-size: 13.5px; }
+.cnx-wrap.bad .cnx-msg { display: block; }
+</style>
+<script id="mcsC453">
+/* MCS1511SU453 (مالک کا حکم): ہر شناختی کارڈ خانے کے ساتھ «CNIC Expiry» خانہ — تاریخ گزر چکی ہو تو خانہ سرخ + «This CNIC expired on …»
+   اور اسی فارم کا محفوظ / بھیجیں بٹن رک جاتا ہے۔ نادرا سے میعاد خود لانا ممکن نہیں (کوئی کھلا ذریعہ نہیں) — بندہ کارڈ پر لکھی تاریخ لکھتا ہے۔
+   جن فارموں میں پہلے سے میعاد ہے (wzExp، agExp، agxExp) وہاں نیا خانہ نہیں، صرف وہی سرخ جانچ۔ */
+(function(){
+  const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+  function parse(v){ v = String(v || '').trim(); if(!v) return null; let m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(v); if(m) return new Date(+m[1], +m[2] - 1, +m[3]);
+    m = /^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/.exec(v); if(m) return new Date(+m[3], +m[2] - 1, +m[1]); return null; }
+  const fmt = d => d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  function check(inp){ const w = inp.closest('.cnx-wrap'), d = parse(inp.value), bad = !!(d && d < today());
+    inp.classList.toggle('cnx-bad', bad); inp.dataset.cnx = bad ? 'bad' : (d ? 'ok' : '');
+    if(w){ w.classList.toggle('bad', bad); const m = w.querySelector('.cnx-msg'); if(m) m.textContent = bad ? '❌ This CNIC expired on ' + fmt(d) + ' — please enter a valid (unexpired) CNIC' : ''; }
+    else { let m = inp.parentNode && inp.parentNode.querySelector('.cnx-msg.own'); if(!m && inp.parentNode){ m = document.createElement('div'); m.className = 'cnx-msg own'; inp.insertAdjacentElement('afterend', m); }
+      if(m){ m.style.display = bad ? 'block' : 'none'; m.textContent = bad ? '❌ This CNIC expired on ' + fmt(d) + ' — please enter a valid (unexpired) CNIC' : ''; } }
+    return !bad; }
+  window.mcsCnicExpOk = check;
+  const OWN = { wzCnic: 'wzExp', agCnic: 'agExp', agxCnic: 'agxExp' };
+  function scan(){
+    document.querySelectorAll('input[id$="Cnic"], input[id$="CNIC"]').forEach(c => {
+      if(c.dataset.x453) return; c.dataset.x453 = '1';
+      const ex = document.getElementById(OWN[c.id] || '') || document.getElementById(c.id.replace(/Cnic$|CNIC$/, 'Exp'));
+      if(ex){ ex.addEventListener('input', () => check(ex)); ex.addEventListener('change', () => check(ex)); check(ex); return; }
+      const w = document.createElement('div'); w.className = 'cnx-wrap';
+      const id = c.id.replace(/Cnic$|CNIC$/, '') + 'CnicExp';
+      w.innerHTML = '<label for="' + id + '">CNIC Expiry Date <span style="color:#dc2626">*</span></label><input type="date" id="' + id + '" class="cnx-in"><div class="cnx-msg"></div>';
+      c.insertAdjacentElement('afterend', w);
+      const e = w.querySelector('input'); try{ const k = 'mcsCnx_' + c.id, v = localStorage.getItem(k); if(v) e.value = v; e.addEventListener('change', () => { try{ localStorage.setItem(k, e.value); }catch(_){} }); }catch(_){}
+      e.addEventListener('input', () => check(e)); e.addEventListener('change', () => check(e)); check(e);
+    });
+  }
+  setInterval(scan, 1200); setTimeout(scan, 300);
+  /* اسی فارم میں ختم شدہ کارڈ ہو تو محفوظ / بھیجیں رکے */
+  const SAVE = /save|submit|send|create|register|request|محفوظ|بھیج|بنائیں|درج|جمع/i;
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest && ev.target.closest('button, .btn, [onclick]'); if(!b) return;
+    const t = (b.textContent || '') + ' ' + (b.className || ''); if(!SAVE.test(t) || /cnx|close|cancel|✕|edit/i.test(b.className || '')) return;
+    const scope = b.closest('.modal-overlay, #wzOv, form, .modal, .ag-box') || document;
+    const bad = [...scope.querySelectorAll('input.cnx-bad')].find(x => x.offsetParent || x.getClientRects().length);
+    if(!bad) return;
+    ev.preventDefault(); ev.stopImmediatePropagation();
+    try{ bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); bad.focus(); }catch(_){}
+    try{ showToast('❌ CNIC expired — enter a valid CNIC'); }catch(_){}
+  }, true);
 })();
 </script>
 
