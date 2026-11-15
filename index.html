@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU431";
+const APP_VERSION = "MCS1511SU432";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU432": "🛒 Google Play خریداری ہوتے ہی خود تصدیق — آرڈر نمبر پیسٹ نہیں؛ «خریداری مکمل نہیں ہوئی» کی جگہ اصل وجہ، اور ادائیگی ہو چکی ہو تو خود مکمل",
   "MCS1511SU431": "🆔 ایڈمن 1 کی ID MCS008 سے ہٹ کر MCS001 (ایڈمن 2 = MCS002) — سرور خود درست کرتا ہے؛ ایپ اب نیا ورژن کھلتے ہی اپنی ID سرور سے تازہ کر لیتی ہے",
   "MCS1511SU430": "🤝 ایجنٹ فارم: سب سے اوپر MCS ID کی ڈراپ ڈاؤن (نام، موبائل، ضلع خود آتے ہیں، باقی فارم اس کے بعد کھلتا ہے) • آخر میں ریفرل کوڈ فہرست سے • ID بغیر ڈیش: MCS001، MCS001M1، AG001 • DEV / CODEV کی جگہ ایڈمن 1 / ایڈمن 2 (ADMIN1 / ADMIN2) • ایڈمن 1 = AG001، ایڈمن 2 = AG002 • ایڈمن کے کاروبار بھی ادائیگی سے",
   "MCS1511SU427": "💳 رجسٹریشن / سبسکرپشن درست: ٹیسٹ خریداری قبول (سیل نہیں) + ایڈمن کا 🧪 ٹیسٹ رجسٹریشن بٹن، ریڈیم کوڈ (90 دن) اس کاروبار سے جڑ جاتا ہے، ادائیگی کے بعد منظوری کا انتظار نہیں؛ ایجنٹ کا فارم رجسٹریشن سے الگ (Earn with MCS)",
@@ -5591,46 +5592,74 @@ function mcsPlayApply(j, sku){
 }
 /* MCS1511SU427 (مالک کا حکم): ریڈیم کوڈ (90 دن) — Play Store میں کوڈ لگانے سے سبسکرپشن گوگل اکاؤنٹ پر آ جاتی ہے مگر کسی کاروبار سے نہیں جڑتی۔ یہاں ایسی «لاوارث» سبسکرپشن ملے تو نئی خریداری کی جگہ اسے اسی کاروبار سے جوڑتے ہیں (آرڈر نمبر پیسٹ ← سرور تصدیق ← مدت) */
 async function mcsPlayProbe(token){ try{ const r = await fetch(PF_API + '/mcsbuy', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({purchaseToken: token, probe: 1})}); return await r.json(); }catch(e){ return null; } }
+/* MCS1511SU432 (مالک کا حکم — «خریداری مکمل نہیں ہوئی» ختم): ادائیگی ہوتے ہی سرور تصدیق + acknowledge (آرڈر نمبر سرور خود گوگل سے لیتا ہے — پیسٹ نہیں)؛
+   ادائیگی کے بعد کوئی خرابی آئے تو Play کی فہرست سے خریداری ڈھونڈ کر خود مکمل؛ تصدیق رکے تو پیچھے بار بار (mcsPlayPending) */
+async function mcsPlayFinish(token, sku, rk){
+  try{ await mcsEnsureCloud(rk); }catch(e){}
+  let j = null;
+  for(let i = 0; i < 4 && !(j && (j.ok || j.error)); i++){ try{ j = await mcsPlayVerify(token, sku, rk); }catch(e){} if(!(j && (j.ok || j.error))) await new Promise(r => setTimeout(r, 1500 * (i + 1))); }
+  mcsPlayAck(token);
+  if(j && j.ok){
+    try{ localStorage.removeItem('mcsGpaHold'); localStorage.removeItem('mcsPlayPending'); }catch(e){}
+    try{ mcsPlayApply(j, sku); }catch(e){} try{ await mcsGoLive(rk); }catch(e){}
+    try{ closeModal('agModal'); }catch(e){} try{ if(window.wzOk3 && document.getElementById('wzW')) wzOk3(); }catch(e){}
+    showToast(j.test ? '🧪 Test purchase — business active' : '🎉 مبارک ہو! ممبرشپ مکمل — کاروبار فعال', 6000);
+    return true;
+  }
+  try{ localStorage.setItem('mcsPlayPending', JSON.stringify({token, sku, rk, at: Date.now()})); localStorage.removeItem('mcsGpaHold'); }catch(e){}
+  try{ closeModal('agModal'); }catch(e){}
+  alert('✅ ادائیگی ہو گئی۔\n⏳ سرور کی تصدیق ابھی باقی ہے' + (j && j.error ? ' (' + j.error + ')' : ' (انٹرنیٹ)') + ' — ایپ خود دوبارہ کوشش کرتی رہے گی، دوبارہ خریداری نہ کریں۔');
+  setTimeout(() => { try{ mcsPlaySync(true); }catch(e){} }, 20000);
+  return false;
+}
 async function mcsPlayBuy(rk){
   if(codevBlock()) return;
   if(!mcsPlayOk()){ alert('یہ خریداری صرف پلے اسٹور سے انسٹال ایپ میں ہوتی ہے۔'); return; }
-  if(mcsGpaHeld(null, rk)){ mcsGpaAsk(); return; }   /* پہلی خریداری کا آرڈر نمبر باقی ہے — دوسری بار خریداری نہیں */
+  const hold = mcsGpaHoldGet(); if(hold && hold.token && hold.rk === rk){ await mcsPlayFinish(hold.token, hold.sku, rk); return; }   /* پرانی رکی ہوئی خریداری — اب خود مکمل */
+  const pend = (() => { try{ return JSON.parse(localStorage.getItem('mcsPlayPending') || 'null'); }catch(e){ return null; } })();
+  if(pend && pend.token && pend.rk === rk){ await mcsPlayFinish(pend.token, pend.sku, rk); return; }
   let owned = [], ownedL = [];
   try{ const svc = await mcsPlaySvc(); ownedL = ((await svc.listPurchases()) || []); owned = ownedL.map(x => x.itemId); }catch(e){}
   try{
     for(const x of ownedL){ if(!x || !MCS_PLAY_SKUS.includes(x.itemId) || !x.purchaseToken) continue;
       const pj = await mcsPlayProbe(x.purchaseToken);
-      if(pj && pj.ok && pj.linked === false){
-        try{ localStorage.setItem('mcsGpaHold', JSON.stringify({token: x.purchaseToken, sku: x.itemId, rk, at: Date.now()})); }catch(e){}
-        try{ await mcsEnsureCloud(rk); }catch(e){}
-        closeModal('agModal'); showToast('🎁 Play Store میں آپ کی پہلے سے لی ہوئی سبسکرپشن (ریڈیم کوڈ) ملی — آرڈر نمبر (GPA…) پیسٹ کر کے اسے اس کاروبار سے جوڑیں', 7000);
-        setTimeout(() => { try{ mcsGpaAsk(); }catch(e){} }, 400); return; } }
+      if(pj && pj.ok && pj.linked === false){ showToast('🎁 Play Store میں پہلے سے لی ہوئی ممبرشپ ملی — اسی کاروبار سے جوڑ رہے ہیں…', 5000); await mcsPlayFinish(x.purchaseToken, x.itemId, rk); return; } }
   }catch(e){}
   const sku = MCS_PLAY_SKUS.find(k => !owned.includes(k));
   if(!sku){ alert('⚠️ اس گوگل اکاؤنٹ پر 5 ممبرشپس پہلے سے فعال ہیں — زیادہ سے زیادہ یہی۔ نئی ممبرشپ کسی دوسرے گوگل اکاؤنٹ سے لیں، یا Help Desk پر بتائیں۔'); return; }
+  let token = '';
   try{
     const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }]);
     const res = await req.show();
-    const token = res.details && res.details.purchaseToken;
-    await res.complete('success');
-    if(!token) throw new Error('no_token');
-    closeModal('agModal');
-    /* MCS1411SA420 (مالک کا حکم): خریداری ہوتے ہی کارڈ لائیو نہیں — پہلے Google Play کا آرڈر نمبر (GPA…) ایپ میں پیسٹ ہو، تب ہی فارم رجسٹرڈ */
-    try{ localStorage.setItem('mcsGpaHold', JSON.stringify({token, sku, rk, at: Date.now()})); }catch(e){}
-    try{ await mcsEnsureCloud(rk); }catch(e){}
-    showToast('✅ ادائیگی ہو گئی — اب Google Play کا آرڈر نمبر (GPA…) پیسٹ کریں', 6000);
-    setTimeout(() => { try{ mcsGpaAsk(); }catch(e){} }, 400);
-  }catch(e){ if(!e || e.name !== 'AbortError') alert('❌ خریداری مکمل نہیں ہوئی — دوبارہ کوشش کریں۔'); }
+    token = res.details && res.details.purchaseToken;
+    try{ await res.complete('success'); }catch(e){}
+  }catch(e){
+    if(e && e.name === 'AbortError'){   /* منسوخ — مگر کبھی ادائیگی ہو کر بھی AbortError آتا ہے: فہرست دیکھیں */
+      token = await mcsPlayFindNew(sku, owned); if(!token) return;
+    } else {
+      token = await mcsPlayFindNew(sku, owned);
+      if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
+    }
+  }
+  if(!token){ token = await mcsPlayFindNew(sku, owned); if(!token){ alert('❌ خریداری کا ٹوکن نہیں ملا — دوبارہ دبائیں۔'); return; } }
+  await mcsPlayFinish(token, sku, rk);
+}
+async function mcsPlayFindNew(sku, owned){   /* خریداری کے بعد Play کی فہرست — نئی (پہلے نہ والی) ممبرشپ کا ٹوکن */
+  for(let i = 0; i < 3; i++){
+    try{ const svc = await mcsPlaySvc(); const L = (await svc.listPurchases()) || []; const x = L.find(p => p && p.itemId === sku && p.purchaseToken && !(owned || []).includes(p.itemId)); if(x) return x.purchaseToken; }catch(e){}
+    await new Promise(r => setTimeout(r, 1200));
+  }
+  return '';
 }
 /* ایپ کھلنے پر: رکی ہوئی خریداری + اس گوگل اکاؤنٹ کی سب ممبرشپس کی تازہ مدت (تجدید، نیا فون) — 6 گھنٹے میں ایک بار */
 async function mcsPlaySync(force){
   if(!mcsPlayOk()) return;
-  try{ const pd = JSON.parse(localStorage.getItem('mcsPlayPending') || 'null'); if(pd && pd.token){ const j = await mcsPlayVerify(pd.token, pd.sku, pd.rk); if(j && j.ok){ mcsPlayApply(j); mcsPlayAck(pd.token); localStorage.removeItem('mcsPlayPending'); } } }catch(e){}
+  try{ for(const k of ['mcsPlayPending', 'mcsGpaHold']){ const pd = JSON.parse(localStorage.getItem(k) || 'null'); if(pd && pd.token){ try{ await mcsEnsureCloud(pd.rk); }catch(e){} const j = await mcsPlayVerify(pd.token, pd.sku, pd.rk); mcsPlayAck(pd.token); if(j && j.ok){ mcsPlayApply(j, pd.sku); try{ await mcsGoLive(pd.rk); }catch(e){} localStorage.removeItem(k); } } }   /* MCS1511SU432: پرانا GPA انتظار بھی خود مکمل */ }catch(e){}
   const last = +localStorage.getItem('mcsPlaySyncAt') || 0;
   if(!force && Date.now() - last < 6 * 3600e3) return;
   try{
     const svc = await mcsPlaySvc(); const list = ((await svc.listPurchases()) || []).filter(x => MCS_PLAY_SKUS.includes(x.itemId));
-    for(const x of list){ if(mcsGpaHeld(x.purchaseToken)) continue; try{ const jj = await mcsPlayVerify(x.purchaseToken, x.itemId, ''); mcsPlayApply(jj, x.itemId); if(jj && jj.ok) mcsPlayAck(x.purchaseToken); }catch(e){} }
+    for(const x of list){ try{ const jj = await mcsPlayVerify(x.purchaseToken, x.itemId, ''); mcsPlayApply(jj, x.itemId); if(jj && jj.ok) mcsPlayAck(x.purchaseToken); }catch(e){} }
     localStorage.setItem('mcsPlaySyncAt', String(Date.now()));
   }catch(e){}
 }
@@ -16871,8 +16900,8 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     try{ const c0 = window.cpAcctSync; if(typeof c0 === 'function' && !c0.__ua){ window.cpAcctSync = function(){ const r = c0.apply(this, arguments); uaSync(); return r; }; window.cpAcctSync.__ua = 1; } }catch(e){}
     /* MCS0711SA194: h2Type کلک ختم */
   }
-  async function recheck(){ const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU431'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
-    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU431'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
+  async function recheck(){ const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU432'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
+    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU432'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ایڈمن کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
@@ -23447,11 +23476,11 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
       ${LBL('Referral Code', 'ریفرل کوڈ')}<select class="wzI" id="wzRef" onchange="wzP()"><option value="">Select Referral Code — فہرست سے ایجنٹ چنیں</option></select><div id="wzRefNm" class="u" style="font-size:14px;color:#047857;font-weight:700;margin:3px 2px"></div>
       ${LBL('Payment Method', 'ادائیگی کا طریقہ', 1)}<div class="wzPlay"><span class="gp">${typeof MCS_GP_SVG === 'string' ? MCS_GP_SVG : '▶'}</span><span>Google Play Billing<small class="u" style="display:block;font-weight:400">گوگل پلے کے ذریعے ادائیگی</small></span></div>
       ${st === 'none' ? `<div class="wzSec"><span>Choose Your Plan</span><span class="u">اپنا پلان منتخب کریں</span></div><div id="wzPlans"><div class="wzNote u">⏳ Google Play سے پلان آ رہے ہیں…</div></div>` : ''}
-      <div class="wzNote u">✅ Google Play سے اصل خریداری کے بعد اس کا آرڈر نمبر (GPA…) یہاں پیسٹ کریں — تب فارم رجسٹرڈ ہو کر سب کو نظر آئے گا۔ ٹیسٹ خریداری قبول نہیں۔<br><span dir="ltr" style="font-family:inherit">Real purchase → paste Order No. → Registered</span></div>
+      <div class="wzNote u">✅ Google Play سے خریداری ہوتے ہی تصدیق خود — کچھ پیسٹ نہیں کرنا۔<br><span dir="ltr" style="font-family:inherit">Buy on Google Play → verified automatically → Registered</span></div>
       <div class="wzErr u" id="wzErr"></div>
       ${st === 'pend' ? `<div class="wzGreen"><b>⏳ Payment received — verification in progress</b><div class="u">ادائیگی موصول — تصدیق ہو رہی ہے۔ تصدیق ہوتے ہی کاروبار عوامی ہو جائے گا۔</div></div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
       ${st === 'act' ? `<div class="wzGreen"><b>🎉 Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! اب آپ کا کاروبار عوام کے لیے ظاہر ہے۔</div></div><button class="wzBtn bG" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button>` : ''}
-      ${(function(){ try{ return mcsGpaHeld(null, pfKeyOf(rec, 'service')) ? `<div class="wzGreen"><b>⏳ Payment done — paste the Google Play Order Number</b><div class="u">ادائیگی ہو گئی — فارم مکمل کرنے کے لیے آرڈر نمبر (GPA…) پیسٹ کریں۔</div></div><button class="wzBtn bB" onclick="mcsGpaAsk()">🧾 Paste Order Number<small class="u">گوگل پلے آرڈر نمبر پیسٹ کریں</small></button>` : ''; }catch(e){ return ''; } })()}
+      ${(function(){ try{ return mcsGpaHeld(null, pfKeyOf(rec, 'service')) ? `<div class="wzGreen"><b>⏳ Payment done — finishing verification</b><div class="u">ادائیگی ہو گئی — تصدیق مکمل کریں۔</div></div><button class="wzBtn bB" onclick="mcsPlayBuy(pfKeyOf(myCard(), 'service'))">✅ Finish verification<small class="u">تصدیق مکمل کریں</small></button>` : ''; }catch(e){ return ''; } })()}
       ${isAdminSignedIn ? `<button class="wzBtn bW" onclick="mcsAdminTest(pfKeyOf(myCard(), 'service'))">🧪 Test Registration (no payment)<small class="u">ٹیسٹ رجسٹریشن — بغیر ادائیگی، صرف ایڈمن</small></button>` : ''}
       <div id="wzAlt"></div>
       ${st !== 'act' ? `<button class="wzBtn bW" onclick="wzDel()" style="color:#b42318;border-color:#fda29b;margin-top:6px">🗑️ Delete this business card<small class="u">یہ بزنس کارڈ حذف کریں</small></button>` : ''}
