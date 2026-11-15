@@ -4425,11 +4425,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU453";
+const APP_VERSION = "MCS1511SU454";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1511SU453": "🪪 Every CNIC field now has a CNIC Expiry Date — an expired CNIC turns red and the form cannot be saved • ⎋ Log Out moved to the bottom of My Account (removed from the top bar)",
+  "MCS1511SU454": "⛔ One business per person for now: a mobile number that already has a registered business cannot get a second one — not by the owner, admin or agent (admins and agents still see Add New for other people's businesses)",
+    "MCS1511SU453": "🪪 Every CNIC field now has a CNIC Expiry Date — an expired CNIC turns red and the form cannot be saved • ⎋ Log Out moved to the bottom of My Account (removed from the top bar)",
     "MCS1511SU452": "🌟 Standard flow: big Welcome screen after sign-up • one business per account (Add New hidden once you have one) • membership only through Google Play — no admin approval for businesses; buying = live at once • bottom bar closes any open form first • tap a locked box to edit it",
     "MCS1511SU451": "🪪 Welcome back screen and the login page now show your MCS ID with your name and mobile number",
     "MCS1511SU450": "🔐 Login fixed: PIN is now required (also with Google) — mobile + PIN always works; an account without a PIN gets the PIN screen right after Google login • a phone that already has an account shows «Welcome back — Log In», not the sign-up form • 🔎 search MCS001 (with or without space) finds the card • membership number per business: first business = M1 • Play payment of an old card moves to your current card • no «send again» box on an approved business • DP shown once • price PKR 1,000 / year • English fixed",
@@ -4989,6 +4990,7 @@ async function pfEnsureKey(kind, rec){
     if(!j.pend && j.until && j.until <= Date.now() + 5*60e3) setTimeout(()=>alert('⭐ یہ آپ کا اگلا کاروبار / پروفیشن ہے — 7 دن مفت صرف پہلے پر ہوتے ہیں۔\nسادہ کارڈ ہمیشہ مفت دکھتا رہے گا۔ ⭐ پوری ممبرشپ (تفصیل، ریٹ، تصویریں) سب کو دکھانے کے لیے «📨 ایک سال کے لیے جاری رکھیں» دبائیں۔'), 600);
     return {key:j.key}; }
   if(j.error === 'taken'){ e.taken = true; saveStore(); throw new Error('taken'); }
+  if(j.error === 'one_biz'){ try{ alert('⛔ One business per person — this mobile number already has an active business.'); }catch(_){} throw new Error('one_biz'); }   /* MCS1511SU454 */
   throw new Error(j.error || 'net');
 }
 const pfImgCache = {};
@@ -24711,6 +24713,44 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
     try{ bad.scrollIntoView({ block: 'center', behavior: 'smooth' }); bad.focus(); }catch(_){}
     try{ showToast('❌ CNIC expired — enter a valid CNIC'); }catch(_){}
   }, true);
+})();
+</script>
+
+<script id="mcsOne454">
+/* MCS1511SU454 (مالک کا حکم — «فی الحال ایک بندہ ایک کاروبار»): ایڈمن 1 / ایڈمن 2 / ایجنٹ کے پاس «Add New» رہتا ہے (دوسروں کے کاروبار درج کرنے کو)،
+   مگر جس موبائل نمبر کا ایک کاروبار رجسٹر ہو چکا (stage registered / ممبرشپ / فعال) اس نمبر پر نیا کاروبار کوئی بھی نہیں بنا سکتا — نہ وہ خود، نہ ایڈمن، نہ ایجنٹ۔
+   صرف نیا اندراج روکا جاتا ہے؛ اسی کاروبار کی ترمیم / رجسٹریشن ویسی۔ ایمرجنسی / سرکاری نمبر اس سے باہر۔ پانچ ممبرشپ والا نظام اندر محفوظ — کھولنا ہو تو یہ اسکرپٹ ہٹا دیں۔ */
+(function(){
+  const d10 = v => String(v || '').replace(/\D/g, '').slice(-10);
+  const regd = r => { try{ if(!r) return false; if(r.stage === 'registered') return true; if(typeof pfActive === 'function' && pfActive(r)) return true; const m = r.more || {}; return !!(m.subid || m.ptype); }catch(e){ return false; } };
+  window.mcsBizOfMobile = function(mob, exceptId){
+    const k = d10(mob); if(k.length !== 10) return null;
+    const all = [].concat((store.services || []).map(r => ['service', r]), (store.doctors || []).map(r => ['doctor', r]));
+    const hit = all.find(([kd, r]) => r && r.id !== exceptId && r.category !== 'emergencyNumbers' && r.category !== 'govOffices'
+      && [r.whatsapp, r.phone, r.mobile, r.more && r.more.wa2].some(x => d10(x) === k) && regd(r));
+    return hit ? { kind: hit[0], rec: hit[1] } : null;
+  };
+  function stop(hit){
+    const r = hit.rec, nm = r.nameUr || r.nameEn || r.name || '';
+    try{ agModal(`<div style="text-align:center;font-size:46px">⛔</div><div class="ag-hd" style="text-align:center">One business per person</div>
+      <div class="cp-hint" style="text-align:center;margin:8px 0">This mobile number already has a registered business:<br><b data-noen="1" style="font-size:18px">${escapeHtml(nm)}</b><br>A second business on the same number is not allowed for now.</div>
+      <button type="button" class="btn block" onclick="closeModal('agModal');try{pfOpen('${hit.kind}','${escapeAttr(r.id)}')}catch(e){}">🏪 Open that business</button>
+      <button type="button" class="mem-alt" onclick="closeModal('agModal')">OK</button>`); }catch(e){ try{ showToast('⛔ This mobile number already has a business'); }catch(_){} }
+  }
+  const wrap = (fn, field, idVar, col) => { const o = window[fn]; if(typeof o !== 'function' || o.__one454) return;
+    window[fn] = function(){
+      try{
+        const editing = (idVar === 'svc' ? (typeof editingServiceId !== 'undefined' && editingServiceId) : (typeof editingDoctorId !== 'undefined' && editingDoctorId));
+        const pend = typeof pendingFormCtx !== 'undefined' && pendingFormCtx && pendingFormCtx.col === col;
+        const cat = typeof currentServiceCategory !== 'undefined' ? currentServiceCategory : '';
+        if(!editing && !pend && !(idVar === 'svc' && (cat === 'emergencyNumbers' || cat === 'govOffices'))){
+          const el = document.getElementById(field), hit = el && mcsBizOfMobile(el.value);
+          if(hit){ stop(hit); return; }
+        }
+      }catch(e){}
+      return o.apply(this, arguments); }; window[fn].__one454 = 1; };
+  const all = () => { wrap('saveService', 'svcWhatsapp', 'svc', 'services'); wrap('saveDoctor', 'docWhatsapp', 'doc', 'doctors'); };
+  all(); setInterval(all, 1500);   /* بعد میں کوئی اور لپیٹ دے (uaGuard وغیرہ) تو پھر سب سے باہر یہ روک */
 })();
 </script>
 
