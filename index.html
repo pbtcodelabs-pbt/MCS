@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU444";
+const APP_VERSION = "MCS1511SU445";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU445": "🔐 Continue with Google on Login and Create Account (name + Gmail come automatically; add mobile + district; PIN optional with Google) • 🧹 \"account already exists\" on a number that has no account is fixed • 🗑️ Delete account / Remove ID also clears the old MCS ID (e.g. MCS008) and its card from this phone • 🔎 search MCS001M1 style IDs",
   "MCS1511SU444": "🔐 Admin Portal ← More ← «نمبروں کے بزنس»: now also finds the sign-up ACCOUNT by mobile number or MCS ID (e.g. 03336793793 / MCS008) and can delete it fully so the number can be used again",
   "MCS1511SU443": "🗑️ Admin delete is instant — after the admin password the card disappears at once (no refresh / reopen needed)",
   "MCS1511SU442": "🪪 All registered cards the same size — MCS badge, round selfie, expiry and ID on the left; English + Urdu name, type, address and all buttons in the middle; shop photo on the right • Registered / Agents buttons at the top",
@@ -6826,12 +6827,15 @@ function favRecords(){
 function mcsIdQ(qRaw){
   let s = String(qRaw||'').replace(/[۰-۹]/g, c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g, c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)).trim();
   s = s.replace(/^(ا?یم|ام)[\s\-_]*سی[\s\-_]*ا?یس/, 'mcs');   /* «ایم سی ایس 003» اردو میں لکھیں تو بھی */
+  { const mm = /^mcs[\s\-_]*(\d{1,5})[\s\-_]*m[\s\-_]*(\d{1,3})$/i.exec(s); if(mm) return mm[1].padStart(3, '0') + 'm' + parseInt(mm[2], 10); }   /* MCS1511SU445: MCS001M1 */
   if(!/^mcs[\s\-_]*[0-9][0-9\s\-_]*$/i.test(s)) return null;   /* /i — MCS / mcs / Mcs سب برابر */
   const dg = s.replace(/\D/g,'');
   return dg.length > 8 ? null : dg;
 }
 function mcsIdHit(kind, rec, dg){
   const id = idKey(shortRecordId(kind, rec)); if(!id) return false;
+  if(/m/.test(dg)) return id === 'mcs' + dg;   /* MCS001M1 = وہی ایک ممبرشپ */
+  if(/^\d{5}$/.test(dg) && id === 'mcs' + dg.slice(0, 3) + 'm' + parseInt(dg.slice(3), 10)) return true;   /* پرانا انداز MCS00101 */
   const k = 'mcs' + dg;
   if(dg.length >= 3) return id === k || (id.length === k.length + 2 && id.startsWith(k));   /* MCS005 = اکاؤنٹ کے سب کاروبار، MCS00501 = صرف وہی ایک */
   const pk = 'mcs' + dg.padStart(3, '0');
@@ -16724,14 +16728,15 @@ body.d2 #homeAds .ad-ribbon{display:none}
       ${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}
       ${field('uaId', 'user', 'Mobile No. / Account ID (MCS001)', { ac:'username' })}
       ${field('uaPw', 'lock', 'PIN / Password', { type:'password', ac:'current-password' })}
-      
       <div class="uaRow" style="justify-content:space-between;display:flex;align-items:center"><span></span><a onclick="uaForgot()">Forgot PIN?</a></div>
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bB" onclick="uaDoLogin()">${IC.login}LOGIN</button>
       <button class="uaBtn bO" onclick="uaExit()">${IC.exit}EXIT</button>
       <button class="uaBtn bG" onclick="uaSignup()">${IC.add}CREATE NEW ACCOUNT</button>
+      <div class="uaSub" style="margin:10px 0 6px">— or —</div><div id="uaGBox" style="display:flex;justify-content:center;min-height:44px"></div>
       ${pkLoginBox()}</div>`);   /* MCS1511SU440 (مالک کا حکم): «ایجنٹ سے ملا کوڈ» ختم — رجسٹریشن اب گوگل پلے خریداری سے مکمل ہوتی ہے */
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); });
+    gBtn('uaGBox', 'continue_with');   /* MCS1511SU445: Continue with Google */
   };
   /* MCS1411SA411: لاگ آؤٹ کے بعد "خوش آمدید" صفحہ — اپنا MCS نمبر نظر آئے اور صرف 6 ہندسوں کا PIN مانگے (سائن اپ صفحہ دوبارہ نہ کھلے) */
   function uwMyPk(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); return o && o.sid ? o : null; }catch(e){ return null; } }
@@ -16772,7 +16777,10 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bB" onclick="uaWelcomeGo()">${IC.login}LOGIN</button>
       <div class="uwLinks"><a onclick="uaForgot()">Forgot PIN?</a><a onclick="uaLogin()">Other account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>
+      <div id="uaGBoxW" style="display:flex;justify-content:center;min-height:44px;margin-top:12px"></div>
+      <div class="uwLinks" style="justify-content:center"><a onclick="uaForgetPk()">🗑 Remove this ID from this phone / <span data-noen>یہ ID فون سے ہٹائیں</span></a></div>
     </div>`);
+    gBtn('uaGBoxW', 'continue_with');
     setTimeout(() => { try{ const p = $('uwPin'); if(p) p.focus(); }catch(e){} }, 250);
   };
   window.uaEnter = function(msg){ try{ if(uwMyPk()) return uaWelcome(msg); }catch(e){} return uaLogin(msg); };
@@ -16798,18 +16806,20 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
   /* MCS1211TH333 (مالک کا حکم): سائن اپ میں ضلع لازمی — انگریزی A→Z، ساتھ اردو */
   const distSel = () => { let cur = ''; try{ cur = (typeof hcGet === 'function' ? hcGet() : '') || ''; }catch(e){} const S = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && S.add(x))); }catch(e){} const EN = x => (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; const L = Array.from(S).sort((a, b) => (EN(a) || 'zz' + a).localeCompare(EN(b) || 'zz' + b, 'en')); return '<option value="">Select your District — اپنا ضلع چنیں</option>' + L.map(x => '<option value="' + esc(x) + '"' + (x === cur ? ' selected' : '') + '>' + esc(EN(x) ? EN(x) + ' — ' + x : x) + '</option>').join(''); };
   const distOpts = cur => { const S = new Set(); try{ Object.values(DISTRICTS).forEach(a => (a || []).forEach(x => x && S.add(x))); }catch(e){} const EN = x => (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; const L = Array.from(S).sort((a, b) => { const ea = EN(a), eb = EN(b); if(ea && eb) return ea.localeCompare(eb, 'en'); if(ea) return -1; if(eb) return 1; return a.localeCompare(b, 'ur'); }); if(cur && !S.has(cur)) L.unshift(cur); return '<option value="">ضلع منتخب کریں — Select District</option>' + L.map(x => '<option value="' + esc(x) + '"' + (EN(x) ? ' data-en="' + esc(EN(x)) + '"' : '') + (x === cur ? ' selected' : '') + '>' + esc(x) + '</option>').join(''); };   /* MCS1111WE307: انگریزی A→Z + اردو نوری نستعلیق، کیپسول ڈراپ ڈاؤن */
-  window.uaSignup = function(pre){   /* MCS1111WE312 (مالک کا حکم): صرف نام، موبائل، PIN + شرائط ✓ — Gmail / ای میل / ضلع نہیں؛ بنتے ہی اندر */
+  window.uaSignup = function(pre){ const G = !!(pre && pre.gtoken);   /* MCS1111WE312 (مالک کا حکم): صرف نام، موبائل، PIN + شرائط ✓ — Gmail / ای میل / ضلع نہیں؛ بنتے ہی اندر */
     show(`${head()}<div class="uaCard">
-      <div class="uaHd"><i>${IC.add}</i><h2>Sign Up</h2></div><div class="uaSub">Create a new account to join My City Shines</div>
+      <div class="uaHd"><i>${IC.add}</i><h2>Sign Up</h2></div><div class="uaSub">${G ? 'Google verified — add your mobile number and district' : 'Create a new account to join My City Shines'}</div>
+      ${G ? `<div class="uaInfo" dir="ltr" style="margin-bottom:8px">🟢 ${esc(pre.gmail || '')}</div>` : `<div id="uaGBoxS" style="display:flex;justify-content:center;min-height:44px;margin-bottom:4px"></div><div class="uaSub" style="margin:2px 0 8px">— or sign up with mobile —</div>`}
       ${field('uaName', 'user', 'Full Name', { rq:1, ac:'name', v: pre && pre.name })}
       ${field('uaMob', 'phone', 'Mobile Number (e.g. 03XXXXXXXXX)', { rq:1, im:'tel', ac:'tel' })}
       <label class="uaF" data-noen>${IC.pin}<select id="uaDist" style="flex:1;border:0;outline:0;background:transparent;font-size:15px;padding:0 8px;min-width:0;font-family:inherit;color:#0f1f45">${distSel()}</select><span class="rq">*</span></label>
-      ${field('uaPw2', 'lock', 'Create 6-digit PIN', { type:'password', rq:1, im:'numeric', ac:'new-password' })}
+      ${field('uaPw2', 'lock', G ? 'Create 6-digit PIN (optional)' : 'Create 6-digit PIN', { type:'password', rq: G ? 0 : 1, im:'numeric', ac:'new-password' })}
       <label class="uaChk"><input type="checkbox" id="uaAgree"><span>I agree to the <a href="privacy.html#terms" target="_blank">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank">Privacy Policy</a></span></label>
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bG" onclick="uaDoSignup()">${IC.add}SIGN UP</button>
       <div class="uaFoot">Already have an account? &nbsp;<a onclick="uaLogin()" style="text-decoration:underline">LOGIN</a></div></div>`);
-    gPend = null;
+    gPend = G ? pre : null;
+    if(!G) gBtn('uaGBoxS', 'signup_with');
     const pw = $('uaPw2'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoSignup(); });
   };
   /* MCS0811SU217: ایک ہی لاگ اِن — موبائل/ای میل + پاس ورڈ/PIN سے رول خود پہچانا جاتا ہے: ایڈمن ← ایڈمن ← ایجنٹ ← عام یوزر */
@@ -16858,9 +16868,10 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     if(mobile.replace(/\D/g, '').length < 10) return setErr('mobile');
     const dist = (($('uaDist') || {}).value || '').trim();
     if(!dist) return setErr('city');
-    if(!/^\d{6}$/.test(pw.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)))) return setErr('pw6');
+    const GT = gPend && gPend.gtoken ? gPend.gtoken : '';   /* MCS1511SU445: Google سے ہو تو PIN اختیاری */
+    if(!(GT && !pw) && !/^\d{6}$/.test(pw.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)))) return setErr('pw6');
     if(!$('uaAgree').checked){ $('uaErr').textContent = 'Please tick Terms & Conditions and Privacy Policy'; return; }
-    busy(1); setErr(''); const r = await api({ op:'signup', name, mobile, email:'', pw: pw.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)), city: dist, district: dist }); busy(0);
+    busy(1); setErr(''); const r = await api({ op:'signup', name, mobile, email:'', gtoken: GT || undefined, pw: pw.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)), city: dist, district: dist }); busy(0);
     if(!r.ok) return setErr(r.reason);
     try{ localStorage.setItem('mcsHomeCity', dist); localStorage.removeItem('mcsCityPick'); }catch(e){}
     done(r, '✅ Account created — your Account ID: ' + mcsSidFmt(r.user.sid || r.user.id));
@@ -16908,6 +16919,20 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     if(r.reason === 'new') return uaSignup({ gtoken: cred, gmail: r.gmail, name });
     setErr(r.reason);
   };
+  /* MCS1511SU445 (مالک کا حکم — «MCS008 سے جان نہیں چھوٹ رہی»): فون میں بچی پرانی ID (Welcome Back) اور اسی ID کا خود بنا سادہ کارڈ صاف */
+  window.uaForgetPk = function(noLogin, sid0){
+    try{
+      const o = JSON.parse(ls.get('mcsMyPk') || 'null'), norm = v => String(v || '').replace(/[\s-]/g, '').toUpperCase();
+      const ids = [norm(o && o.sid), norm(sid0)].filter(Boolean);
+      ls.set('mcsMyPk', null);
+      if(ids.length && typeof store !== 'undefined'){
+        const gone = x => x && x.category === UNASSIGNED_KEY && (x.localOnly || !x.fsId) && x.more && ids.indexOf(norm(x.more.sid)) >= 0;
+        store.services = (store.services || []).filter(x => !gone(x));
+        try{ saveStore(); renderServiceList('list'); mpRender(); }catch(e){}
+      }
+    }catch(e){}
+    if(!noLogin){ try{ uaLogin(); }catch(e){} }
+  };
   window.uaGuest = function(){ ls.set('mcsGuest', '1'); uaHide(); try{ showToast('👀 Guest — آپ سب دیکھ اور تلاش کر سکتے ہیں؛ کاروبار جوڑنے کے لیے سائن اِن کریں'); }catch(e){} uaSync(); };
   window.uaExit = function(){ try{ window.close(); }catch(e){} setTimeout(() => { try{ showToast('ایپ بند کرنے کے لیے فون کا «پیچھے» بٹن دبائیں'); }catch(e){} }, 300); };
   window.uaForgot = function(){
@@ -16953,7 +16978,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     let old = ''; if(a.user.hasPw){ old = prompt('تصدیق کے لیے اپنا پاس ورڈ لکھیں (Google سے ابھی لاگ اِن ہوئے ہوں تو خالی چھوڑیں):') ; if(old === null) return; }
     const r = await api({ op:'delete', tok: a.tok, old });
     if(!r.ok){ if(r.reason === 'session') return uaDrop(); return setErr(r.reason); }
-    ls.set('mcsAuth', null); uaHide(); try{ showToast('🗑️ اکاؤنٹ حذف ہو گیا'); }catch(e){} uaSync();
+    ls.set('mcsAuth', null); try{ uaForgetPk(true, a.user.sid || a.user.id); }catch(e){} uaHide(); try{ showToast('🗑️ اکاؤنٹ حذف ہو گیا'); }catch(e){} uaSync();
   };
   window.uaLogout = async function(){
     const a = uaMe(); if(!a) return; if(!confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return;
@@ -23362,6 +23387,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   S.step = S.step || 1; S.a = S.a || {}; S.c = S.c || {subs: [], prods: []}; S.p = S.p || {};
   const save = () => lsS('mcsWiz388', JSON.stringify(S));
   let busy = false;
+  let wzG = null;   /* MCS1511SU445: Google سے تصدیق شدہ {token, gmail, name} — صرف میموری میں */
 
   /* ---------- مددگار ---------- */
   const me = () => { try{ return (typeof uaMe === 'function' && uaMe()) || null; }catch(e){ return null; } };
@@ -23432,6 +23458,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   function s1(){
     const a = S.a, ds = distAll();
     frame(`<div class="wzCard"><div class="wzHd"><i>👤</i><b>Create Your Account</b><span class="u">اپنا اکاؤنٹ بنائیں</span></div>
+      ${wzG ? `<div class="wzGreen" dir="ltr" style="margin:8px 0">🟢 Google: <b>${esc(wzG.gmail)}</b><br><small class="u" dir="rtl">گوگل سے تصدیق ہو گئی — نام درست کریں، موبائل نمبر اور ضلع لکھیں۔ PIN اختیاری ہے۔</small> <a href="#" onclick="event.preventDefault();wzGNo()" style="color:#b42318;font-weight:700">✖</a></div>` : `<div id="wzGBox" style="display:flex;justify-content:center;min-height:44px;margin:8px 0 2px"></div><div style="text-align:center;font-weight:700;color:#64748b;margin:2px 0 6px">— or / <span class="u">یا</span> —</div>`}
       ${LBL('Full Name', 'مکمل نام', 1)}<input class="wzI" id="wzName" autocomplete="name" placeholder="Enter your full name" value="${esc(a.name)}" oninput="wzKeep()">
       ${LBL('Mobile No.', 'موبائل نمبر', 1)}<input class="wzI" id="wzMob" inputmode="tel" dir="ltr" placeholder="03XX XXXXXXX" maxlength="13" value="${esc(a.mobile)}" oninput="wzKeep()">
       ${LBL('WhatsApp No. (Optional)', 'واٹس ایپ نمبر (اختیاری)')}<input class="wzI" id="wzWa" inputmode="tel" dir="ltr" maxlength="13" value="${esc(a.same ? a.mobile : a.wa)}" ${a.same ? 'readonly' : ''} oninput="wzKeep()">
@@ -23439,12 +23466,25 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
       ${LBL('Email (Optional)', 'ای میل (اختیاری)')}<input class="wzI" id="wzMail" type="email" dir="ltr" placeholder="example@email.com" value="${esc(a.email)}" oninput="wzKeep()">
       ${LBL('District', 'ضلع', 1)}<select class="wzI" id="wzDist" onchange="wzKeep();wzProv()"><option value="">Select District — ضلع منتخب کریں</option>${ds.map(x => `<option value="${esc(x)}" ${a.dist === x ? 'selected' : ''}>${esc(enOf(x) ? enOf(x) + ' — ' + x : x)}</option>`).join('')}</select>
       <div class="wzRow"><div>${LBL('Country (Auto)', 'ملک (خودکار)')}<input class="wzI" id="wzCtry" readonly value="Pakistan — پاکستان"></div><div>${LBL('Province (Auto)', 'صوبہ (خودکار)')}<input class="wzI" id="wzProv" readonly value="${esc(provOf(a.dist))}"></div></div>
-      ${LBL('Password (6 digits)', 'پاس ورڈ (۶ ہندسے)', 1)}<div style="position:relative"><input class="wzI" id="wzPw" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" value="" autocomplete="new-password"><button type="button" onclick="wzEye()" style="position:absolute;top:6px;right:8px;border:0;background:none;font-size:20px">👁️</button></div>
+      ${wzG ? LBL('PIN (6 digits) — Optional', 'PIN (۶ ہندسے) — اختیاری') : LBL('Password (6 digits)', 'پاس ورڈ (۶ ہندسے)', 1)}<div style="position:relative"><input class="wzI" id="wzPw" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" value="" autocomplete="new-password"><button type="button" onclick="wzEye()" style="position:absolute;top:6px;right:8px;border:0;background:none;font-size:20px">👁️</button></div>
       <label class="wzChk"><input type="checkbox" id="wzAgree"><span>I agree to the <a href="privacy.html#terms" target="_blank">Terms</a> &amp; <a href="privacy.html" target="_blank">Privacy Policy</a></span></label>
       <div class="wzErr u" id="wzErr"></div>
       <button class="wzBtn bG" id="wzSave1" onclick="wzDo1()">Create Account<small class="u">اکاؤنٹ بنائیں</small></button>
       <div style="text-align:center;margin-top:10px;font-weight:700">Already registered? <a href="#" onclick="event.preventDefault();mcsWizClose();try{uaLogin()}catch(e){}" style="color:#1546c0">Log In</a></div></div>`);
+    if(!wzG) wzGBtn();
   }
+  /* MCS1511SU445 (مالک کا حکم): Continue with Google — نام + Gmail خود آ جائے؛ موبائل، ضلع لکھیں؛ PIN اختیاری */
+  function wzGBtn(){
+    setTimeout(async () => {
+      const box = $('wzGBox'); if(!box) return;
+      try{
+        if(!window.google || !google.accounts){ await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://accounts.google.com/gsi/client'; sc.async = true; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); }); }
+        google.accounts.id.initialize({ client_id: '954131537356-2be2rne30mje71l9qibosblvj3j0eqoj.apps.googleusercontent.com', callback: async r => { try{ await window.uaGoogle(r.credential); }catch(e){} try{ if(me()) mcsWizClose(); }catch(e){} }, auto_select: false, cancel_on_tap_outside: true, ux_mode: 'popup' });
+        box.innerHTML = ''; google.accounts.id.renderButton(box, { theme:'outline', size:'large', text:'continue_with', shape:'rectangular', logo_alignment:'center', width: Math.min(360, box.clientWidth || 320) });
+      }catch(e){ box.innerHTML = '<div style="color:#64748b;font-size:13px">Google ابھی نہیں کھل سکا — انٹرنیٹ چیک کریں</div>'; }
+    }, 30);
+  }
+  window.wzGNo = function(){ wzG = null; s1(); };
   window.wzKeep = function(){ const g = i => ($(i) || {}).value; const a = S.a;
     if($('wzName')) a.name = g('wzName'); if($('wzMob')) a.mobile = g('wzMob'); if($('wzMail')) a.email = g('wzMail'); if($('wzDist')) a.dist = g('wzDist');
     if($('wzSame') && $('wzSame').checked){ a.same = 1; a.wa = a.mobile; if($('wzWa')) $('wzWa').value = a.mobile; } else { a.same = 0; if($('wzWa')) a.wa = g('wzWa'); }
@@ -23452,19 +23492,21 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   window.wzSame = function(){ const on = $('wzSame').checked; $('wzWa').readOnly = on; wzKeep(); };
   window.wzProv = function(){ const p = $('wzProv'); if(p) p.value = provOf(($('wzDist') || {}).value); };
   window.wzEye = function(){ const i = $('wzPw'); if(i) i.type = i.type === 'password' ? 'text' : 'password'; };
-  const AERR = { mobile_taken:'اس موبائل نمبر سے پہلے ہی اکاؤنٹ بنا ہوا ہے — LOGIN کریں', email_taken:'اس ای میل سے پہلے ہی اکاؤنٹ ہے', net:'انٹرنیٹ نہیں — انٹرنیٹ چلا کر دوبارہ کوشش کریں', wait:'کئی بار غلط کوشش — کچھ دیر بعد کریں' };
+  const AERR = { mobile_taken:'اس موبائل نمبر سے پہلے ہی اکاؤنٹ بنا ہوا ہے — LOGIN کریں', email_taken:'اس ای میل سے پہلے ہی اکاؤنٹ ہے', gmail_taken:'اس Gmail سے پہلے ہی اکاؤنٹ ہے — LOGIN میں Continue with Google دبائیں', google:'Google سے تصدیق نہیں ہو سکی — دوبارہ Continue with Google دبائیں', net:'انٹرنیٹ نہیں — انٹرنیٹ چلا کر دوبارہ کوشش کریں', wait:'کئی بار غلط کوشش — کچھ دیر بعد کریں' };
   window.wzDo1 = async function(){
     if(busy) return; wzKeep(); const a = S.a, mob = dg(a.mobile).replace(/\D/g, ''), pw = dg($('wzPw').value).trim();
     if((a.name || '').trim().length < 2) return err('پورا نام لکھیں — Full name required');
     if(mob.length < 10 || mob.length > 11) return err('درست موبائل نمبر لکھیں (03XXXXXXXXX)');
     if(!a.dist) return err('اپنا ضلع منتخب کریں — District required');
-    if(!/^\d{6}$/.test(pw)) return err('پاس ورڈ ٹھیک ۶ ہندسوں کا ہو — Password must be 6 digits');
+    if(!(wzG && !pw) && !/^\d{6}$/.test(pw)) return err('پاس ورڈ ٹھیک ۶ ہندسوں کا ہو — Password must be 6 digits');
     if(a.email && !/^\S+@\S+\.\S+$/.test(a.email.trim())) return err('ای میل درست نہیں');
     if(!$('wzAgree').checked) return err('شرائط اور پرائیویسی پالیسی پر ٹک لگائیں');
     busy = true; $('wzSave1').disabled = true; err('');
-    let r; try{ const x = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dev: (typeof agDev === 'function' ? agDev() : ''), op:'signup', name: a.name.trim(), mobile: mob, email: (a.email || '').trim(), pw, city: a.dist, district: a.dist})}); r = await x.json(); }catch(e){ r = {ok:false, reason:'net'}; }
+    let r; try{ const x = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dev: (typeof agDev === 'function' ? agDev() : ''), op:'signup', name: a.name.trim(), mobile: mob, email: (a.email || '').trim(), gtoken: wzG ? wzG.token : undefined, pw, city: a.dist, district: a.dist})}); r = await x.json(); }catch(e){ r = {ok:false, reason:'net'}; }
     busy = false; $('wzSave1').disabled = false;
+    if(r && r.reason === 'google'){ wzG = null; s1(); return err(AERR.google); }
     if(!r || !r.ok) return err(AERR[r && r.reason] || ('خرابی: ' + ((r && r.reason) || 'net')));
+    wzG = null;
     { const D = window.uaDur || lsS; D('mcsAuth', JSON.stringify({tok: r.tok, user: r.user, at: Date.now()})); lsS('mcsGuest', null);
     try{ D('mcsMyPk', JSON.stringify({sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now()})); }catch(e){} }   /* MCS1411SA422 */
     try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}
@@ -23751,7 +23793,8 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   /* ---------- داخلے کے راستے ---------- */
   document.addEventListener('DOMContentLoaded', () => {
     const o = window.uaSignup;
-    window.uaSignup = function(pre){ if(pre && pre.gtoken && typeof o === 'function') return o.apply(this, arguments);
+    window.uaSignup = function(pre){
+      if(pre && pre.gtoken){ wzG = { token: pre.gtoken, gmail: pre.gmail || '', name: pre.name || '' }; if(!S.a.name && wzG.name) S.a.name = wzG.name; }   /* MCS1511SU445: Google سے آیا نیا بندہ بھی اسی ویزرڈ میں */
       try{ uaHide(); }catch(e){} S.step = 1; save(); mcsWizOpen(1); };
     const rc = window.svcRegClick;   /* MCS1411SA398: اپنے کارڈ پر «رجسٹریشن مکمل کریں» = نیا ویزرڈ */
     if(typeof rc === 'function') window.svcRegClick = function(id){
