@@ -3549,7 +3549,7 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
     </details>
     <!-- MCS0311TU125: ⭐ ممبرشپ — اسی ریکارڈ کا دوسرا حصہ (الگ انٹری نہیں)؛ بھرنے کے دن سے 7 دن مفت، پھر سبسکرپشن -->
     <details class="fm-more fm-pf" id="svcPfBox">
-      <summary>⭐ میرا کاروبار / پروفیشن — پوری تفصیل <small>7 دن مفت — تفصیل، ریٹ، اوقات، تصویریں</small></summary>
+      <summary>⭐ میرا کاروبار / پروفیشن — پوری تفصیل <small>تفصیل، ریٹ، اوقات، تصویریں</small></summary>
       <div class="fm-more-note">اوپر والے خانے (سادہ کارڈ) <b>ہمیشہ مفت</b>۔ یہ حصہ بھریں تو 7 دن آپ کی پوری تفصیل سب کو دکھے گی — پھر جاری رکھنے کے لیے «📨 تفصیل ایڈمن کو بھیجیں»؛ جاری نہ ہو تو پوری تفصیل چھپ جائے گی، مٹے گی نہیں، اور سادہ کارڈ چلتا رہے گا۔</div>
       <div id="svcPfFields"></div>
     </details>
@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU426";
+const APP_VERSION = "MCS1511SU427";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU427": "💳 رجسٹریشن / سبسکرپشن درست: ٹیسٹ خریداری قبول (سیل نہیں) + ایڈمن کا 🧪 ٹیسٹ رجسٹریشن بٹن، ریڈیم کوڈ (90 دن) اس کاروبار سے جڑ جاتا ہے، ادائیگی کے بعد منظوری کا انتظار نہیں؛ ایجنٹ کا فارم رجسٹریشن سے الگ (Earn with MCS)",
   "MCS1511SU426": "🏪 My Business card redesigned: owner photo, English + big Urdu name, type, address, business photo, status, call / WhatsApp and days left",
   "MCS1511SU425": "🧊 ہوم پیج ساکن: اشتہار بدلنے یا وقت گزرنے سے اب باقی ہوم اوپر نیچے نہیں ہلتا — صرف اشتہار چلتا ہے",
   "MCS1411SA424": "🧹 ہوم کا اوپر والا حصہ سیٹ: MCS کی ڈبل ID ختم (ایک ہی ID)، Log Out بٹن اب قبلے کے نیچے نہیں چھپتا • 📞 ایڈمن پورٹل ← مزید ← «نمبروں کے بزنس»: تینوں نمبروں کے سب بزنس نظر آتے ہیں اور وہیں سے ڈیلیٹ ہو سکتے ہیں",
@@ -4997,7 +4998,7 @@ function pfHtml(c){
     + ((owner || adm || live) ? `<div class="pf-own" style="gap:6px">${(owner || adm) ? `<button type="button" class="pf-edit" onclick="fpOpen('${c.kind}','${escapeAttr(c.rec.id)}')">📄 مکمل پروفائل — ایک صفحہ (پرنٹ / شیئر)</button>` : ''}<button type="button" class="pf-edit" style="background:linear-gradient(135deg,#f7dd9c,#d4a017);color:#3a2600" onclick="fpOpen('${c.kind}','${escapeAttr(c.rec.id)}').then(function(){fpPromoOpen()})">📣 بزنس پروفائل شیئر کریں</button></div>` : '')
     + ((owner || adm) ? (()=>{ let mid = ''; try{ mid = shortRecordId(c.kind === 'doctor' ? 'doctor' : 'service', r); }catch(e){} if(!mid && owner){ try{ const u = (uaMe() || {}).user || {}; if(u.sid) mid = mcsSidFmt(u.sid); }catch(e){} } return mid ? `<div class="pf-id">🆔 MCS ID: <b dir="ltr">${escapeHtml(mid)}</b><button type="button" onclick="agCopy('${escapeAttr(mid)}')">📋 Copy</button></div>` : ''; })() : '')   /* MCS1211TH384: پرانی p… ID نہیں — صرف MCS ID */
     + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ ممبرشپ فعال — ${left} دن باقی` : '⚠️ ممبرشپ کی مدت ختم — جاری رکھنے کے لیے تفصیل بھیجیں'}</div>` : ''}
-        ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں — 7 دن مفت'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
+        ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
         ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">${mcsPlayOk() ? '⭐ ممبرشپ ایک سال کے لیے جاری رکھیں — Google Play' : '📨 ممبرشپ جاری رکھیں — تفصیل ایڈمن کو بھیجیں'}</button>` : ''}
         ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ ممبرشپ ختم کریں</button>` : '') : ''}
         ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove('${escapeAttr(c.rk)}')">✖ اس فون کی «میرا کاروبار / پروفیشن» سے ہٹائیں</button>` : ''}</div>` : '')
@@ -5412,7 +5413,7 @@ function mpAdd(kind, rec, silent){
     list.push({kind, id:rec.id, fsId:rec.fsId||'', rk: pfKeyOf(rec, kind)});
   }
   saveStore(); try{ ccApplyCity(true); ccCityWeather(); }catch(e){} mpRender(); hlRenderSoon();
-  if(!silent) showToast('👤 «میرا کاروبار / پروفیشن» میں شامل — ⭐ پوری تفصیل بھریں تو 7 دن مفت', 3500);
+  if(!silent) showToast('👤 «میرا کاروبار / پروفیشن» میں شامل — کاروبار سب کو دکھانے کے لیے ممبرشپ (Google Play) لیں', 4500);
 }
 function mpSet(kind, rec){ mpAdd(kind, rec); }
 let mpWant = false, mpAskItem = null;
@@ -5520,16 +5521,29 @@ async function mcsGpaOk(){
   if(used[gpa] && used[gpa] !== h.rk) return bad('⚠️ یہ آرڈر نمبر پہلے کسی اور کارڈ پر لگ چکا ہے');
   if(bt) bt.disabled = true; if(er) er.textContent = '⏳ تصدیق ہو رہی ہے…';
   let j = null;
-  for(let i = 0; i < 3 && !(j && j.ok); i++){ try{ j = await mcsPlayVerify(h.token, h.sku, h.rk, gpa); }catch(e){} if(!(j && j.ok)) await new Promise(r => setTimeout(r, 1500)); }
-  if(!(j && j.ok)) return bad('📶 تصدیق نہیں ہو سکی — انٹرنیٹ چیک کر کے دوبارہ دبائیں');
-  if(j.test || j.testPurchase || j.purchaseType === 0 || j.purchaseType === '0') return bad('⛔ یہ ٹیسٹ خریداری ہے — اصل ادائیگی کے بغیر فارم رجسٹرڈ نہیں ہوتا');
+  for(let i = 0; i < 3 && !(j && (j.ok || j.error)); i++){ try{ j = await mcsPlayVerify(h.token, h.sku, h.rk, gpa); }catch(e){} if(!(j && (j.ok || j.error))) await new Promise(r => setTimeout(r, 1500)); }   /* MCS1511SU427: سرور کا واضح جواب (ٹیسٹ / غلط نمبر…) ملے تو دوبارہ کوشش نہیں */
+  if(!j) return bad('📶 تصدیق نہیں ہو سکی — انٹرنیٹ چیک کر کے دوبارہ دبائیں');
+  if(j.error === 'test_purchase') return bad('⛔ ٹیسٹ خریداری ابھی بند ہے (سرور پر ALLOW_TEST=0)');   /* MCS1511SU427: ٹیسٹ عام طور پر قبول — مدت ملتی ہے، سیل / کمیشن نہیں */
+  if(!j.ok){ const E = {gpa_mismatch:'⚠️ یہ آرڈر نمبر اس خریداری کا نہیں — Play Store ← Payments & subscriptions ← Budget & history سے صحیح نمبر دیکھیں', gpa_used:'⚠️ یہ آرڈر نمبر پہلے کسی اور کاروبار پر لگ چکا ہے', bad_gpa:'⚠️ آرڈر نمبر درست نہیں — GPA.1234-5678-9012-34567 جیسا ہوتا ہے', pending:'⏳ ادائیگی ابھی مکمل نہیں ہوئی — گوگل کی تصدیق کے بعد دوبارہ کوشش کریں', expired:'⚠️ یہ سبسکرپشن ختم ہو چکی ہے', promo_off:'⚠️ ریڈیم کوڈ ابھی بند ہیں', gpa_needed:'⚠️ آرڈر نمبر لازمی ہے', no_prof:'⚠️ اس کاروبار کی ممبرشپ سرور پر نہیں بنی — ایپ دوبارہ کھول کر کوشش کریں', no_rec:'⚠️ کاروبار نہیں ملا — دوبارہ کوشش کریں'}; return bad(E[j.error] || '📶 تصدیق نہیں ہو سکی — انٹرنیٹ چیک کر کے دوبارہ دبائیں'); }
   used[gpa] = h.rk; try{ localStorage.setItem('mcsGpaUsed', JSON.stringify(used)); localStorage.removeItem('mcsGpaHold'); }catch(e){}
   try{ const r0 = (store.services || []).find(r => r && pfKeyOf(r, 'service') === h.rk); if(r0){ r0.more = r0.more || {}; r0.more.gpa = gpa; saveStore(); const FB = window.MCSFirebase; if(FB && FB.setDoc) FB.setDoc(FB.doc(FB.db, 'regPrivate', r0.fsId || r0.id), {gpa, ts: Date.now()}, {merge: true}).catch(() => {}); } }catch(e){}
   try{ mcsPlayApply(j, h.sku); mcsPlayAck(h.token); }catch(e){}
   try{ await mcsGoLive(h.rk); }catch(e){}
   closeModal('agModal');
   try{ if(window.wzOk3 && document.getElementById('wzW')) wzOk3(); }catch(e){}
-  showToast('🎉 مبارک ہو! آپ کا فارم رجسٹرڈ اور مکمل ہو گیا', 6000);
+  showToast(j.test ? '🧪 ٹیسٹ رجسٹریشن مکمل — کاروبار فعال (یہ سیل / کمیشن میں نہیں گنی جائے گی)' : '🎉 مبارک ہو! آپ کا فارم رجسٹرڈ اور مکمل ہو گیا', 6000);
+}
+/* MCS1511SU427 (مالک کا حکم): 🧪 ایڈمن کا ٹیسٹ رجسٹریشن بٹن — گوگل پلے، پیکج اور پیسے کے بغیر؛ کاروبار فعال، سیل / کمیشن نہیں */
+async function mcsAdminTest(rk){
+  if(!isAdminSignedIn || !rk) return;
+  const d = prompt('🧪 ٹیسٹ رجسٹریشن — کتنے دن فعال رہے؟ (1 سے 90)', '7'); if(!d) return;
+  let hdr; try{ hdr = await vfAdminHdr(); }catch(e){ showToast('ایڈمن لاگ ان درکار ہے'); return; }
+  try{ await mcsEnsureCloud(rk); }catch(e){}
+  let j = null; try{ j = await (await fetch(PF_API + '/mcsbuy', {method:'POST', headers: hdr, body: JSON.stringify({adminTest: 1, rec: rk, days: parseInt(d, 10) || 7, fs: mcsFsOf(rk) || undefined})})).json(); }catch(e){}
+  if(!j || !j.ok){ alert('❌ ٹیسٹ رجسٹریشن نہیں ہوئی: ' + ((j && j.error) || 'انٹرنیٹ')); return; }
+  try{ mcsPlayApply(j, 'mcs_mem_default'); }catch(e){} try{ await mcsGoLive(rk); }catch(e){}
+  closeModal('agModal'); showToast('🧪 ٹیسٹ رجسٹریشن مکمل — ' + (parseInt(d, 10) || 7) + ' دن، سیل / کمیشن نہیں', 6000);
+  try{ if(window.wzOk3 && document.getElementById('wzW')) wzOk3(); }catch(e){}
 }
 async function mcsPlayVerify(token, sku, rk, gpa){
   const fs = mcsFsOf(rk);
@@ -5573,12 +5587,23 @@ function mcsPlayApply(j, sku){
   if(ch){ saveStore(); try{ mpRender(); hlRenderSoon(); }catch(e){} try{ renderServiceList('list'); }catch(e){} }
   return true;
 }
+/* MCS1511SU427 (مالک کا حکم): ریڈیم کوڈ (90 دن) — Play Store میں کوڈ لگانے سے سبسکرپشن گوگل اکاؤنٹ پر آ جاتی ہے مگر کسی کاروبار سے نہیں جڑتی۔ یہاں ایسی «لاوارث» سبسکرپشن ملے تو نئی خریداری کی جگہ اسے اسی کاروبار سے جوڑتے ہیں (آرڈر نمبر پیسٹ ← سرور تصدیق ← مدت) */
+async function mcsPlayProbe(token){ try{ const r = await fetch(PF_API + '/mcsbuy', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({purchaseToken: token, probe: 1})}); return await r.json(); }catch(e){ return null; } }
 async function mcsPlayBuy(rk){
   if(codevBlock()) return;
   if(!mcsPlayOk()){ alert('یہ خریداری صرف پلے اسٹور سے انسٹال ایپ میں ہوتی ہے۔'); return; }
   if(mcsGpaHeld(null, rk)){ mcsGpaAsk(); return; }   /* پہلی خریداری کا آرڈر نمبر باقی ہے — دوسری بار خریداری نہیں */
-  let owned = [];
-  try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(x => x.itemId); }catch(e){}
+  let owned = [], ownedL = [];
+  try{ const svc = await mcsPlaySvc(); ownedL = ((await svc.listPurchases()) || []); owned = ownedL.map(x => x.itemId); }catch(e){}
+  try{
+    for(const x of ownedL){ if(!x || !MCS_PLAY_SKUS.includes(x.itemId) || !x.purchaseToken) continue;
+      const pj = await mcsPlayProbe(x.purchaseToken);
+      if(pj && pj.ok && pj.linked === false){
+        try{ localStorage.setItem('mcsGpaHold', JSON.stringify({token: x.purchaseToken, sku: x.itemId, rk, at: Date.now()})); }catch(e){}
+        try{ await mcsEnsureCloud(rk); }catch(e){}
+        closeModal('agModal'); showToast('🎁 Play Store میں آپ کی پہلے سے لی ہوئی سبسکرپشن (ریڈیم کوڈ) ملی — آرڈر نمبر (GPA…) پیسٹ کر کے اسے اس کاروبار سے جوڑیں', 7000);
+        setTimeout(() => { try{ mcsGpaAsk(); }catch(e){} }, 400); return; } }
+  }catch(e){}
   const sku = MCS_PLAY_SKUS.find(k => !owned.includes(k));
   if(!sku){ alert('⚠️ اس گوگل اکاؤنٹ پر 5 ممبرشپس پہلے سے فعال ہیں — زیادہ سے زیادہ یہی۔ نئی ممبرشپ کسی دوسرے گوگل اکاؤنٹ سے لیں، یا Help Desk پر بتائیں۔'); return; }
   try{
@@ -5619,6 +5644,7 @@ function mpSubscribe(rk, noPlay){
       <button type="button" class="btn block" onclick="mcsPlayBuy('${escapeAttr(x.p.rk)}')">▶️ Google Play سے جاری کریں</button>
       <button type="button" class="link-btn" style="width:100%" onclick="mcsPlayPackages()">💳 سب پیکج اور قیمتیں دیکھیں</button>
       <div class="cp-hint" style="text-align:center">ادائیگی Google Play کے ذریعے — ہر سال خود تجدید، جب چاہیں Play Store سے بند کریں۔</div>
+      ${isAdminSignedIn ? `<button type="button" class="btn block secondary" onclick="mcsAdminTest('${escapeAttr(x.p.rk)}')">🧪 ٹیسٹ رجسٹریشن — بغیر ادائیگی (صرف ایڈمن)</button>` : ''}
       <button type="button" class="mp-more" onclick="mpSubscribe('${escapeAttr(x.p.rk)}', true)">📨 اکاؤنٹ کی تفصیل ایڈمن کو بھیجیں <small>Send account details to admin</small></button>`);
     (async()=>{ const e = document.getElementById('mpPlayPrice'); try{ const det = await mcsPlayDetails(); let owned = []; try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).map(y => y.itemId); }catch(_){} const k = MCS_PLAY_SKUS.find(z => !owned.includes(z)), d = det && k && det[k]; if(e) e.innerHTML = d && d.p ? '💰 قیمت: <span dir="ltr">' + escapeHtml(d.p) + '</span>' + mcsPlayPer(d.per) : '💰 قیمت Google Play کی خریداری والی سکرین پر دکھے گی'; }catch(_){ if(e) e.textContent = ''; } })();
     return;
@@ -23023,7 +23049,7 @@ body.wz-on .modal-overlay{z-index:2147483300 !important}body.wz-on .toast{z-inde
 #wzOv .wzTitle{color:#fff;text-align:center;font:700 17px/1.35 "Segoe UI",Arial,sans-serif;flex:none}
 #wzOv .wzTitle small{color:#dbe8ff;text-align:center;font-size:16px}
 #wzOv .wzX{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.14);color:#fff;font-size:14px}
-#wzOv .wzSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:0 0 12px}
+#wzOv .wzSteps{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:0 0 12px}
 #wzOv .wzS4{background:#8fa9cf;color:#fff;border-radius:12px;padding:6px 3px;text-align:center;font:600 10px/1.25 "Segoe UI",Arial,sans-serif;min-height:64px}
 #wzOv .wzS4 i{display:grid;place-items:center;width:24px;height:24px;margin:0 auto 3px;border-radius:50%;background:#fff;color:#0a2d63;font:800 13px "Segoe UI",Arial,sans-serif}
 #wzOv .wzS4 .u{display:block;font-size:12.5px;line-height:1.5}
@@ -23190,8 +23216,8 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   const stChip = k => `<span class="wzSt ${STX[k][0]}">${STX[k][1]} · <span class="u">${STX[k][2]}</span></span>`;
 
   /* ---------- ڈھانچہ: عنوان + 4 مرحلوں کی پٹی ---------- */
-  const STEPS = [['Create Account', 'اکاؤنٹ بنائیں'], ['Create Business Card', 'بزنس کارڈ بنائیں'], ['Get Paid Subscription', 'پیڈ سبسکرپشن حاصل کریں'], ['Be an MCS Agent', 'ایم سی ایس ایجنٹ بنیں']];
-  const FLOW = [['👤', 'Create Account', 'اکاؤنٹ بنائیں', ''], ['🪪', 'Create Business Card', 'بزنس کارڈ بنائیں', '(Free / مفت)'], ['▶', 'Get Paid Subscription', 'پیڈ سبسکرپشن', '(Google Play)'], ['✅', 'Live Instantly', 'فوراً لائیو', '(Admin review later / جائزہ بعد میں)'], ['🛡️', 'Be an MCS Agent', 'ایم سی ایس ایجنٹ', '(After Approval / بعد منظوری)']];
+  const STEPS = [['Create Account', 'اکاؤنٹ بنائیں'], ['Create Business Card', 'بزنس کارڈ بنائیں'], ['Get Paid Subscription', 'پیڈ سبسکرپشن حاصل کریں']];   /* MCS1511SU427 (مالک کا حکم): ایجنٹ کا فارم رجسٹریشن سے الگ — «Earn with MCS / MCS Agent» سے کھلے */
+  const FLOW = [['👤', 'Create Account', 'اکاؤنٹ بنائیں', ''], ['🪪', 'Create Business Card', 'بزنس کارڈ بنائیں', '(Free / مفت)'], ['▶', 'Get Paid Subscription', 'پیڈ سبسکرپشن', '(Google Play)'], ['✅', 'Live Instantly', 'فوراً لائیو', '(Admin review later / جائزہ بعد میں)']];
   let lastStep = 0;   /* MCS1411SA409: اسی مرحلے کی دوبارہ ڈرائنگ پر سکرول اور خانہ وہیں رہے (پہلے ہر بار اوپر کود جاتا تھا) */
   function frame(inner){
     const ov = $('wzOv'), keepY = (ov && lastStep === S.step) ? ov.scrollTop : 0;
@@ -23228,8 +23254,9 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     if(m && st === 1 && !step) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* لاگ اِن ہے تو اکاؤنٹ والا مرحلہ مکمل */
     S.step = st; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
   };
-  const draw = () => { ({1: s1, 2: s2, 3: s3, 4: s4})[S.step](); };
-  window.wzGo = function(n){ if(n > 1 && !me()){ S.step = 1; save(); return draw(); } S.step = n; save(); draw(); };
+  const draw = () => { if(S.step > 3) S.step = 3; ({1: s1, 2: s2, 3: s3})[S.step](); };   /* MCS1511SU427: پرانا محفوظ «مرحلہ 4» ہو تو بھی 3 پر */
+  window.wzGo = function(n){ if(n > 3){ mcsWizClose(); try{ agEarnOpen(); }catch(e){} return; }   /* MCS1511SU427: ایجنٹ کا فارم الگ — سیدھا MCS Agent فارم */
+    if(n > 1 && !me()){ S.step = 1; save(); return draw(); } S.step = n; save(); draw(); };
 
   /* ================= مرحلہ ۱: اکاؤنٹ ================= */
   function s1(){
@@ -23387,11 +23414,12 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
       <div class="wzNote u">✅ Google Play سے اصل خریداری کے بعد اس کا آرڈر نمبر (GPA…) یہاں پیسٹ کریں — تب فارم رجسٹرڈ ہو کر سب کو نظر آئے گا۔ ٹیسٹ خریداری قبول نہیں۔<br><span dir="ltr" style="font-family:inherit">Real purchase → paste Order No. → Registered</span></div>
       <div class="wzErr u" id="wzErr"></div>
       ${st === 'pend' ? `<div class="wzGreen"><b>⏳ Payment received — verification in progress</b><div class="u">ادائیگی موصول — تصدیق ہو رہی ہے۔ تصدیق ہوتے ہی کاروبار عوامی ہو جائے گا۔</div></div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
-      ${st === 'act' ? `<div class="wzGreen"><b>🎉 Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! اب آپ کا کاروبار عوام کے لیے ظاہر ہے۔</div></div><button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>` : ''}
+      ${st === 'act' ? `<div class="wzGreen"><b>🎉 Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! اب آپ کا کاروبار عوام کے لیے ظاہر ہے۔</div></div><button class="wzBtn bG" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button>` : ''}
       ${(function(){ try{ return mcsGpaHeld(null, pfKeyOf(rec, 'service')) ? `<div class="wzGreen"><b>⏳ Payment done — paste the Google Play Order Number</b><div class="u">ادائیگی ہو گئی — فارم مکمل کرنے کے لیے آرڈر نمبر (GPA…) پیسٹ کریں۔</div></div><button class="wzBtn bB" onclick="mcsGpaAsk()">🧾 Paste Order Number<small class="u">گوگل پلے آرڈر نمبر پیسٹ کریں</small></button>` : ''; }catch(e){ return ''; } })()}
+      ${isAdminSignedIn ? `<button class="wzBtn bW" onclick="mcsAdminTest(pfKeyOf(myCard(), 'service'))">🧪 Test Registration (no payment)<small class="u">ٹیسٹ رجسٹریشن — بغیر ادائیگی، صرف ایڈمن</small></button>` : ''}
       <div id="wzAlt"></div>
       ${st !== 'act' ? `<button class="wzBtn bW" onclick="wzDel()" style="color:#b42318;border-color:#fda29b;margin-top:6px">🗑️ Delete this business card<small class="u">یہ بزنس کارڈ حذف کریں</small></button>` : ''}
-      <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button>${st !== 'act' ? `<button class="wzBtn bW" onclick="wzGo(4)" style="margin-top:6px">Skip — Agent step later · <span class="u">ایجنٹ والا مرحلہ بعد میں</span></button>` : ''}</div>`);
+      <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button></div>`);
     wzRefInit(); const n = $('wzRef'); if(n && p.ref) n.value = p.ref; wzRefNm(); if(st === 'none') plansLoad();
   }
   async function plansLoad(){   /* MCS1411SA396: Play کے پلان — صرف اگلا اہل پلان کھلا، باقی مقفل */
@@ -23410,8 +23438,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     frame(`<div class="wzCard"><div class="wzOk"><div class="big">✓</div><b>🎉 Congratulations! Registration Complete</b><div class="u">مبارک ہو! آپ کا فارم رجسٹرڈ اور مکمل ہو گیا — کاروبار اب سب کو نظر آ رہا ہے۔</div></div>
       <div class="wzMini"><div class="nm u">${esc(rec.nameUr || rec.name || '')}</div>${rec.nameEn ? `<div dir="ltr" style="text-align:left">${esc(rec.nameEn)}</div>` : ''}<div class="u">${esc((m.subs || []).join('، '))}</div><div class="u">${esc(rec.city || '')}${rec.address ? ' — ' + esc(rec.address) : ''}</div><span class="mid">${esc(sub || '…')}</span></div>
       ${sub ? '' : '<div class="wzNote u">ادائیگی مل گئی — سرور سے MCS نمبر آ رہا ہے، چند لمحوں میں کارڈ پر لگ جائے گا۔</div>'}
-      <button class="wzBtn bG" onclick="wzGo(4)">Next: Be an MCS Agent<small class="u">اگلا: ایجنٹ بنیں (اختیاری)</small></button>
-      <button class="wzBtn bW" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button></div>`);
+      <button class="wzBtn bG" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button></div>`);
     if(!sub && (tries || 0) < 5) setTimeout(() => { if(S.step === 3 && $('wzW')){ try{ mcsPlaySync(true); }catch(e){} const r2 = myCard(); if(r2) ok3(r2, (tries || 0) + 1); } }, 4000);
   }
   window.wzOk3 = function(){ const r = myCard(); if(r) ok3(r); };
