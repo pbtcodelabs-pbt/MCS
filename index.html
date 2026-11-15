@@ -4383,10 +4383,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1411SA424";
+const APP_VERSION = "MCS1511SU425";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU425": "🧊 ہوم پیج ساکن: اشتہار بدلنے یا وقت گزرنے سے اب باقی ہوم اوپر نیچے نہیں ہلتا — صرف اشتہار چلتا ہے",
   "MCS1411SA424": "🧹 ہوم کا اوپر والا حصہ سیٹ: MCS کی ڈبل ID ختم (ایک ہی ID)، Log Out بٹن اب قبلے کے نیچے نہیں چھپتا • 📞 ایڈمن پورٹل ← مزید ← «نمبروں کے بزنس»: تینوں نمبروں کے سب بزنس نظر آتے ہیں اور وہیں سے ڈیلیٹ ہو سکتے ہیں",
   "MCS1411SA423": "🧹 ڈبل فنکشنز صاف: Help صرف Settings میں، Earn / Log Out / Add New / اشتہار صرف ہوم پر، Notifications / Privacy / پیکج صرف Settings میں، اپنی معلومات صرف My Account میں؛ My Portal اور My Account کے اوپر دہرا ٹائٹل ہٹا",
   "MCS1411SA422": "🔐 ایک بار لاگ اِن ہونے کے بعد لاگ اِن صفحہ بار بار نہیں آئے گا — جب تک آپ خود «لاگ آؤٹ» نہ کریں • لاگ اِن فون میں زیادہ پکا محفوظ (میموری بھر جائے تب بھی)",
@@ -17253,6 +17254,7 @@ body:has(#screen-home.active){position:relative;touch-action:pan-x;}
       var nav=document.querySelector('.bnav');
       var navTop = nav ? nav.getBoundingClientRect().top : window.innerHeight-76;
       var avail = Math.max(200, navTop - 2);
+      var pz = parseFloat(sc.style.zoom) || 1;   /* MCS1511SU425: پچھلا زوم یاد */
       sc.style.zoom=''; sc.style.minHeight='0';
       var z=1;
       var ch=function(){ var top=sc.getBoundingClientRect().top, mx=top; for(var k=0;k<sc.children.length;k++){ var r=sc.children[k].getBoundingClientRect(); if(r.height>0 && r.bottom>mx) mx=r.bottom; } return mx-top+4; };
@@ -17263,6 +17265,7 @@ body:has(#screen-home.active){position:relative;touch-action:pan-x;}
         sc.style.zoom=z.toFixed(3);
         if(z<=.5) break;
       }
+      if(z < 1 && Math.abs(z - pz) < 0.02){ z = pz; sc.style.zoom = pz.toFixed(3); }   /* MCS1511SU425: معمولی فرق پر ہوم نہ ہلے */
       sc.style.minHeight='0';
       document.documentElement.classList.toggle('home-fit', z<1);
     }catch(e){} finally{ busy=false; }
@@ -17272,7 +17275,7 @@ body:has(#screen-home.active){position:relative;touch-action:pan-x;}
   window.addEventListener('resize',q); window.addEventListener('orientationchange',q);
   window.addEventListener('load',function(){ q(); setTimeout(q,800); setTimeout(q,2500); });
   document.addEventListener('click',function(){ setTimeout(q,120); },true);
-  setInterval(function(){ if(!document.hidden) q(); },1500);
+  setInterval(function(){ if(!document.hidden) q(); },10000);
   var oz=window.applyZoom; if(typeof oz==='function'){ window.applyZoom=function(){ var r=oz.apply(this,arguments); q(); return r; }; }
 })();
 </script>
@@ -21060,8 +21063,8 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   window.addEventListener('resize', () => later(150));
   window.addEventListener('load', () => { later(300); setTimeout(run, 1500); setTimeout(run, 4000); });
   try{ document.fonts && document.fonts.ready.then(() => later(100)); }catch(e){}
-  try{ new MutationObserver(() => later(250)).observe(document.body, {childList:true, subtree:true, characterData:true}); }catch(e){}
-  setInterval(run, 3000);
+  try{ new MutationObserver(recs => { /* MCS1511SU425: اشتہار کی تبدیلی سے ہوم ہلنا نہیں چاہیے */ if(recs.every(r => { const t = r.target && (r.target.nodeType === 1 ? r.target : r.target.parentElement); return t && t.closest && t.closest('#homeAds'); })) return; later(250); }).observe(document.body, {childList:true, subtree:true, characterData:true}); }catch(e){}
+  setInterval(run, 15000);
 })();
 </script>
 <script id="mcsPfFit320js">
@@ -23867,5 +23870,12 @@ html #screen-home #hdr2.h229 .h2-out{flex:0 0 auto}
   };
 })();
 </script>
+<style id="mcs1511css">
+/* MCS1511SU425: ہوم ساکن — اشتہار کے علاوہ کچھ نہیں ہلتا */
+html,body{overscroll-behavior:none !important}
+body:has(#screen-home.active){overflow:hidden !important}
+#screen-home.active{overflow:hidden;overscroll-behavior:none}
+#screen-home #homeAds{contain:layout style}
+</style>
 </body>
 </html>
