@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU442";
+const APP_VERSION = "MCS1511SU443";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU443": "🗑️ Admin delete is instant — after the admin password the card disappears at once (no refresh / reopen needed)",
   "MCS1511SU442": "🪪 All registered cards the same size — MCS badge, round selfie, expiry and ID on the left; English + Urdu name, type, address and all buttons in the middle; shop photo on the right • Registered / Agents buttons at the top",
   "MCS1511SU441": "🪪 Registered businesses look the same everywhere (search and lists too) • 🟢 Live / days left in English • agent form labels not doubled",
   "MCS1511SU440": "🎉 Google Play purchase = business live at once + congratulations (how many people can see you) • 🔓 owner / admin edit without PIN, saved boxes locked until ✏️ Edit • 🤝 Earn with MCS: MCS ID fills business, CNIC and expiry • 🧭 wizard: 4 steps + green status • agent code box removed from login",
@@ -24305,5 +24306,30 @@ html body .doc-card.rc .rc-ft,html body .doc-card.rc .rc-adm{display:none !impor
 html body .doc-card.rc > .st-line{position:absolute !important;left:8px;right:8px;bottom:5px;height:22px;line-height:22px !important;margin:0 !important;padding:0 8px !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-size:11.5px !important;border-radius:8px}
 @media (max-width:400px){ html body .doc-card.rc .rc-grid{grid-template-columns:78px minmax(0,1fr) 76px !important;gap:6px !important} html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:26px !important;height:26px !important;min-width:26px !important;font-size:12px !important} html body .doc-card.rc .rc-btns>a svg{width:14px;height:14px} html body .doc-card.rc .rc-dp{width:66px !important;height:66px !important;min-height:66px !important} }
 </style>
+<script id="mcsDel443">
+/* MCS1511SU443 (مالک کا حکم — «ایڈمن حذف کرے تو فوراً»): پہلے حذف سے پہلے سرور پر «اسی نمبر کے دہرے» ڈھونڈے جاتے (سست سوال)، پھر حذف، پھر فہرست تازہ —
+   اس لیے کارڈ دیر تک رہتا اور ایپ بند / کھول کر غائب ہوتا۔ اب: ایڈمن پاس ورڈ ✓ → اسی لمحے فون سے ہٹ (فہرست تازہ) + فائربیس کا اپنا ڈاکیومنٹ فوراً حذف
+   (فائربیس کا کیش بھی فوراً)، دہروں کی تلاش / ممبرشپ کی صفائی پیچھے؛ ناکام ہو تو ریکارڈ واپس + پیغام۔ ایڈمن کے سوا کوئی حذف نہیں کر سکتا */
+(function(){
+  const fast = (col, kind) => async function(id){
+    const arr = col === 'doctors' ? 'doctors' : 'services';
+    const item = (store[arr] || []).find(x => x.id === id); if(!item) return;
+    if(!(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) && !(typeof admUi === 'function' && admUi())){ showToast('🔒 Only admin can delete'); return; }
+    if(!(await askAdminPassword(`«${item.nameUr || item.name || ''}» ${item.whatsapp ? '(\u2066' + item.whatsapp + '\u2069) ' : ''}— will be deleted forever.`))) return;
+    const keep = store[arr].slice(), favs = Array.isArray(store.favs) ? store.favs.slice() : null;
+    store[arr] = store[arr].filter(x => x.id !== id);
+    if(Array.isArray(store.favs)) store.favs = store.favs.filter(f => f !== kind + ':' + id);
+    saveStore();
+    try{ document.querySelectorAll('.doc-card,.ub-row,.hl-cap').forEach(c => { const oc = c.getAttribute('onclick') || ''; if(oc.includes("'" + id + "'")) c.remove(); }); }catch(e){}
+    try{ renderServiceList('list'); }catch(e){} try{ afterRecordDeleted(); }catch(e){} try{ mpRender(); hlRenderSoon(); }catch(e){}
+    showToast('🗑️ Deleted');
+    try{ const FB = window.MCSFirebase; if(FB && item.fsId) FB.deleteDoc(FB.doc(FB.db, col, item.fsId)).catch(() => {}); }catch(e){}
+    let ok = false; try{ ok = await deleteFromFirebase(col, item); }catch(e){}
+    if(!ok){ store[arr] = keep; if(favs) store.favs = favs; saveStore(); try{ renderServiceList('list'); afterRecordDeleted(); }catch(e){} showToast('⚠️ Not deleted on the server — record restored. Check internet and try again.', 5000); }
+  };
+  window.deleteService = deleteService = fast('services', 'service');
+  window.deleteDoctor = deleteDoctor = fast('doctors', 'doctor');
+})();
+</script>
 </body>
 </html>
