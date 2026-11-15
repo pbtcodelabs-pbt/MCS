@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU437";
+const APP_VERSION = "MCS1511SU438";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU438": "🆔 Your account ID is now always refreshed from the server by your mobile number (old ID like MCS008 is replaced at once)",
   "MCS1511SU437": "🔒 Shop records (name, type, owner, address) are never translated — shown exactly as written, in Urdu or English",
   "MCS1511SU436": "🇬🇧 Long messages in English too — Play package help, order number, share / invite messages, agent and admin notes",
   "MCS1511SU435": "🇬🇧 App in English — about 1,400 more screens, buttons, messages and lists translated (shop records stay as written)",
@@ -16919,7 +16920,18 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     try{ const c0 = window.cpAcctSync; if(typeof c0 === 'function' && !c0.__ua){ window.cpAcctSync = function(){ const r = c0.apply(this, arguments); uaSync(); return r; }; window.cpAcctSync.__ua = 1; } }catch(e){}
     /* MCS0711SA194: h2Type کلک ختم */
   }
-  async function recheck(){ const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU433'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
+  /* MCS1511SU438 (مالک کا حکم — «اب بھی MCS008»): لاگ اِن کا پرانا ٹوکن ہو تو `me` ناکام اور پرانی ID ہی رہتی — اب ہر بار ایپ کھلنے پر موبائل نمبر سے سرور کی اصل ID (/mcssid، کھلا) — مختلف ہو تو فوراً بدل دیں */
+  async function sidFix(){
+    try{ const a = uaMe(); const u = a && a.user; if(!u || !u.mobile) return;
+      const r = await fetch(PF_API + '/mcssid', { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ mob: u.mobile }) }); const j = await r.json();
+      const sid = j && j.ok && j.sid ? String(j.sid) : ''; if(!sid || sid === u.sid) return;
+      u.mcsId = sid; if(!/^ADMIN/.test(String(u.sid || ''))) u.sid = sid; ls.set('mcsAuth', JSON.stringify(a));
+      try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null') || {}; o.sid = u.sid; o.name = o.name || u.name; o.at = Date.now(); ls.set('mcsMyPk', JSON.stringify(o)); }catch(e){}
+      try{ uaSync(); h2Sync(); }catch(e){}
+    }catch(e){}
+  }
+  window.mcsSidFix = sidFix;
+  async function recheck(){ setTimeout(sidFix, 2500); const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU433'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
     if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU433'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
