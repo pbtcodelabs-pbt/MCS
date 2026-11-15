@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU443";
+const APP_VERSION = "MCS1511SU444";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU444": "🔐 Admin Portal ← More ← «نمبروں کے بزنس»: now also finds the sign-up ACCOUNT by mobile number or MCS ID (e.g. 03336793793 / MCS008) and can delete it fully so the number can be used again",
   "MCS1511SU443": "🗑️ Admin delete is instant — after the admin password the card disappears at once (no refresh / reopen needed)",
   "MCS1511SU442": "🪪 All registered cards the same size — MCS badge, round selfie, expiry and ID on the left; English + Urdu name, type, address and all buttons in the middle; shop photo on the right • Registered / Agents buttons at the top",
   "MCS1511SU441": "🪪 Registered businesses look the same everywhere (search and lists too) • 🟢 Live / days left in English • agent form labels not doubled",
@@ -24018,9 +24019,14 @@ html #screen-home #hdr2.h229 .h2-out{flex:0 0 auto}
   var res = [];          /* [{num, rows:[{col, rec, via}]}] */
   var extra = [];        /* اس فون کے «میرا کاروبار» جو کسی نمبر میں نہیں آئے */
   var all = [];          /* حذف کے لیے ایک ہی فہرست: all[i] = {col, rec} */
+  var accs = [], accOrph = [], accMsg = '', accIds = [];   /* MCS1511SU444: سرور کے سائن اپ اکاؤنٹ */
   function getNums(){ try{ var j = JSON.parse(localStorage.getItem(KEY) || 'null'); if(Array.isArray(j) && j.length) return j; }catch(e){} return DEF.slice(); }
   function setNums(a){ try{ localStorage.setItem(KEY, JSON.stringify(a)); }catch(e){} }
   function parseNums(t){ var out = [], seen = {}; String(t || '').split(/[\n,;،\s]+/).forEach(function(x){ var d = d10(x); if(d && !seen[d]){ seen[d] = 1; out.push('0' + d); } }); return out; }
+  function parseIds(t){ var out = [], seen = {}; String(t || '').split(/[\n,;،\s]+/).forEach(function(x){ var m = /^mcs[\s\-_]*0*(\d{1,6})$/i.exec(String(x).trim()); if(!m) return; var n = m[1]; while(n.length < 3) n = '0' + n; var id = 'MCS' + n; if(!seen[id]){ seen[id] = 1; out.push(id); } }); return out; }
+  function sidBase(s){ var d = String(s || '').replace(/\D/g, ''); return d; }
+  async function accCall(body){ var h = await vfAdminHdr(); return await (await fetch(AG_API + '/mcsauth', {method: 'POST', headers: h, body: JSON.stringify(body)})).json(); }
+  async function accSearch(nums, ids){ accs = []; accOrph = []; accMsg = ''; var q = nums.concat(ids); if(!q.length) return; try{ var r = await accCall({op: 'acctadm', q: q}); if(r && r.ok){ accs = r.list || []; accOrph = r.orphans || []; } else accMsg = (r && r.reason === 'admin_only') ? 'ایڈمن لاگ اِن دوبارہ کریں' : 'سرور سے اکاؤنٹ نہیں ملے'; }catch(e){ accMsg = 'ایڈمن لاگ اِن / انٹرنیٹ دیکھیں'; } }
   function phonesOf(rec){
     var out = [];
     var add = function(k, v){ if((typeof v === 'string' || typeof v === 'number') && KEYRX.test(k)){ var d = d10(v); if(d) out.push(d); } };
@@ -24038,8 +24044,8 @@ html #screen-home #hdr2.h229 .h2-out{flex:0 0 auto}
     catch(e){ var vs = variants(n10); for(var i = 0; i < vs.length; i++){ try{ take(await FB.getDocs(FB.query(FB.collection(FB.db, col), FB.where('whatsapp', '==', vs[i])))); }catch(_){} } }
     return out;
   }
-  async function search(nums){
-    res = []; extra = []; all = [];
+  async function search(nums, ids){
+    res = []; extra = []; all = []; ids = ids || [];
     var cols = [['services', function(){ return (typeof store !== 'undefined' && store.services) || []; }], ['doctors', function(){ return (typeof store !== 'undefined' && store.doctors) || []; }]];
     var shown = {};
     for(var k = 0; k < nums.length; k++){
@@ -24054,6 +24060,9 @@ html #screen-home #hdr2.h229 .h2-out{flex:0 0 auto}
       rows.forEach(function(r){ shown[keyOf(r.col, r.rec)] = 1; });
       res.push({num: nums[k], rows: rows});
     }
+    ids.forEach(function(id){ var base = sidBase(id), rows = [], got = {};
+      cols.forEach(function(cc){ cc[1]().forEach(function(rec){ if(!rec || !rec.more || !rec.more.sid) return; var s = sidBase(rec.more.sid); if(!(s === base || (s.length >= 5 && s.slice(0, -2) === base))) return; var kk = keyOf(cc[0], rec); if(got[kk]) return; got[kk] = 1; rows.push({col: cc[0], rec: rec}); }); });
+      rows.forEach(function(r){ shown[keyOf(r.col, r.rec)] = 1; }); res.push({num: id, rows: rows}); });
     try{ (typeof mpListReal === 'function' ? mpListReal() : []).forEach(function(x){ var col = x.p.kind === 'doctor' ? 'doctors' : 'services'; if(!shown[keyOf(col, x.rec)]) extra.push({col: col, rec: x.rec}); }); }catch(e){}
   }
   function owner(rec){ try{ return typeof splitOwnerIntro === 'function' ? (splitOwnerIntro(rec.intro).owner || '') : ''; }catch(e){ return ''; } }
@@ -24067,6 +24076,21 @@ html #screen-home #hdr2.h229 .h2-out{flex:0 0 auto}
       + '<small dir="ltr">📱 ' + E(rec.whatsapp || '') + '</small>'
       + '<div class="r">' + (local ? '<button type="button" onclick="pnView(' + i + ')">👁️ دیکھیں</button>' : '') + '<button type="button" class="d" onclick="pnDel(' + i + ')">🗑️ ڈیلیٹ</button></div></div>';
   }
+  function accCard(a, i){
+    var mob = a.mobile ? '0' + String(a.mobile).slice(2) : '';
+    return '<div class="pn-c"><b>' + E(a.name || '(بغیر نام)') + '</b> <small>🔐 سائن اپ اکاؤنٹ' + (a.soft ? ' · <span style="color:#b45309">(پہلے ڈیلیٹ نشان لگا تھا، چابی باقی)</span>' : '') + '</small><br>'
+      + '<small dir="ltr">📱 ' + E(mob) + (a.sid ? ' · 🆔 ' + E(a.sid) : ' · 🆔 —') + '</small><br>'
+      + '<small dir="ltr">' + (a.gmail ? '✉️ ' + E(a.gmail) + ' · Google' : (a.email ? '✉️ ' + E(a.email) : '')) + (a.hasPw ? ' · 🔑 PIN ہے' : ' · 🔑 PIN نہیں') + '</small>'
+      + '<div class="r"><button type="button" class="d" onclick="pnAccDel(' + i + ')">🗑️ یہ اکاؤنٹ مکمل صاف کریں</button></div></div>';
+  }
+  function accHtml(){
+    var h = '<div class="pn-h" style="background:#7c3aed"><span>🔐 سرور کے سائن اپ اکاؤنٹ</span><b>' + (accs.length + accOrph.length) + '</b></div>';
+    if(accMsg) h += '<div class="pn-none" style="color:#b91c1c">⚠️ ' + E(accMsg) + '</div>';
+    else if(!accs.length && !accOrph.length) h += '<div class="pn-none">ان نمبر / ID کا کوئی سائن اپ اکاؤنٹ سرور پر نہیں ✓</div>';
+    h += accs.map(accCard).join('');
+    h += accOrph.map(function(o, i){ return '<div class="pn-c"><b>ٹوٹی ہوئی چابی</b> <small>(اکاؤنٹ نہیں، مگر نمبر کو «پہلے سے بنا ہے» بنا رہی ہے)</small><br><small dir="ltr">' + E(o.k) + '</small><div class="r"><button type="button" class="d" onclick="pnOrphDel(' + i + ')">🗑️ چابی صاف کریں</button></div></div>'; }).join('');
+    return h;
+  }
   function render(msg){
     all = [];
     var nums = getNums(), tot = res.reduce(function(a, g){ return a + g.rows.length; }, 0);
@@ -24074,6 +24098,9 @@ html #screen-home #hdr2.h229 .h2-out{flex:0 0 auto}
       + '<textarea id="pnQ" class="pn-q" dir="ltr" placeholder="ہر لائن میں ایک نمبر">' + E(nums.join('\n')) + '</textarea>'
       + '<button type="button" class="btn block ag-send" onclick="pnGo()">🔍 تلاش کریں</button>'
       + (msg ? '<div class="cp-hint" style="text-align:center;margin-top:6px">' + msg + '</div>' : '');
+    if(res.length || accs.length || accOrph.length || accMsg){
+      h += accHtml();
+    }
     if(res.length){
       h += '<div class="cp-hint" style="text-align:center;margin-top:6px">کل <b>' + tot + '</b> بزنس ملے</div>';
       res.forEach(function(g){ h += '<div class="pn-h"><span dir="ltr">📱 ' + E(g.num) + '</span><b>' + g.rows.length + '</b></div>' + (g.rows.length ? g.rows.map(card).join('') : '<div class="pn-none">اس نمبر کے ساتھ کوئی بزنس نہیں ملا ✓</div>'); });
@@ -24082,14 +24109,28 @@ html #screen-home #hdr2.h229 .h2-out{flex:0 0 auto}
     agModal(h);
   }
   window.pnGo = async function(){
-    var q = document.getElementById('pnQ'), nums = q ? parseNums(q.value) : getNums();
-    if(!nums.length){ showToast('کوئی درست نمبر نہیں'); return; }
-    setNums(nums); render('⏳ تلاش ہو رہی ہے…'); try{ await search(nums); }catch(e){ render('⚠️ ' + E(e.message || 'خرابی')); return; } render('');
+    var q = document.getElementById('pnQ'), raw = q ? q.value : getNums().join('\n'), nums = parseNums(raw), ids = parseIds(raw);
+    if(!nums.length && !ids.length){ showToast('کوئی درست نمبر یا MCS ID نہیں'); return; }
+    setNums(nums.concat(ids)); render('⏳ تلاش ہو رہی ہے…'); try{ await search(nums, ids); await accSearch(nums, ids); }catch(e){ render('⚠️ ' + E(e.message || 'خرابی')); return; } render('');
   };
   window.pnOpen = function(){
     var ok = false; try{ ok = isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice()); }catch(e){}
     if(!ok){ showToast('پہلے ایڈمن لاگ ان کریں'); return; }
     res = []; extra = []; render(''); window.pnGo();
+  };
+  window.pnAccDel = async function(i){
+    var a = accs[i]; if(!a) return; var mob = a.mobile ? '0' + String(a.mobile).slice(2) : '';
+    var okp = false; try{ okp = await askAdminPassword('اکاؤنٹ «' + (a.name || '') + '» (\u2066' + mob + '\u2069' + (a.sid ? ' · ' + a.sid : '') + ') ہمیشہ کے لیے صاف ہو جائے گا — نمبر دوبارہ نئے سرے سے بن سکے گا۔ بزنس / ممبرشپ کو کچھ نہیں ہوگا۔'); }catch(e){}
+    if(!okp) return;
+    try{ var r = await accCall({op: 'acctadm', del: true, uid: a.uid, mob: a.mobile}); if(!r || !r.ok){ showToast('⚠️ صاف نہیں ہوا — ایڈمن لاگ اِن / انٹرنیٹ دیکھیں'); return; }
+      accs.splice(i, 1); render(''); showToast('🗑️ اکاؤنٹ صاف' + (r.sidGone ? ' · ' + r.sidGone + ' آزاد' : '')); }catch(e){ showToast('⚠️ ' + (e.message || 'خرابی')); }
+  };
+  window.pnOrphDel = async function(i){
+    var o = accOrph[i]; if(!o) return;
+    var okp = false; try{ okp = await askAdminPassword('ٹوٹی ہوئی چابی ' + o.k + ' صاف کریں؟'); }catch(e){}
+    if(!okp) return;
+    try{ var r = await accCall({op: 'acctadm', del: true, k: o.k, mob: o.mob || ''}); if(!r || !r.ok){ showToast('⚠️ صاف نہیں ہوا'); return; }
+      accOrph.splice(i, 1); render(''); showToast('🗑️ چابی صاف'); }catch(e){ showToast('⚠️ ' + (e.message || 'خرابی')); }
   };
   window.pnView = function(i){ var r = all[i]; if(!r) return; try{ closeModal('agModal'); pfOpen(r.col === 'doctors' ? 'doctor' : 'service', r.rec.id); }catch(e){ showToast('⚠️ ' + (e.message || '')); } };
   window.pnDel = async function(i){
