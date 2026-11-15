@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU445";
+const APP_VERSION = "MCS1511SU446";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU446": "🧹 Create Account: if the server says the number already has an account, the admin gets the exact account found (name / ID / Gmail) with one tap to clear it and create the new one — and if nothing is found the screen says so",
   "MCS1511SU445": "🔐 Continue with Google on Login and Create Account (name + Gmail come automatically; add mobile + district; PIN optional with Google) • 🧹 \"account already exists\" on a number that has no account is fixed • 🗑️ Delete account / Remove ID also clears the old MCS ID (e.g. MCS008) and its card from this phone • 🔎 search MCS001M1 style IDs",
   "MCS1511SU444": "🔐 Admin Portal ← More ← «نمبروں کے بزنس»: now also finds the sign-up ACCOUNT by mobile number or MCS ID (e.g. 03336793793 / MCS008) and can delete it fully so the number can be used again",
   "MCS1511SU443": "🗑️ Admin delete is instant — after the admin password the card disappears at once (no refresh / reopen needed)",
@@ -23485,6 +23486,28 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     }, 30);
   }
   window.wzGNo = function(){ wzG = null; s1(); };
+  /* MCS1511SU446 (مالک کا حکم — «اکاؤنٹ ہے کہاں؟»): نمبر «لیا ہوا» نکلے تو ایڈمن کو وہی اکاؤنٹ دکھائیں اور ایک ٹچ پر صاف کر کے نیا بنائیں */
+  async function wzTaken(mob){
+    try{
+      if(typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn){ err('اس نمبر پر سرور میں اکاؤنٹ موجود ہے۔ پہلے ایڈمن (ای میل + پاس ورڈ) سے لاگ اِن کریں، پھر یہی Create Account دوبارہ دبائیں — یہیں سے پرانا اکاؤنٹ صاف ہو جائے گا۔'); return true; }
+      const h = await vfAdminHdr();
+      const call = async body => (await fetch(AG_API + '/mcsauth', {method:'POST', headers:h, body: JSON.stringify(body)})).json();
+      const f = await call({op:'acctadm', q:[mob]});
+      if(!f || !f.ok){ err('ایڈمن جانچ نہیں ہو سکی — ایڈمن لاگ اِن دوبارہ کریں'); return true; }
+      const list = f.list || [], orph = f.orphans || [];
+      if(!list.length && !orph.length){ err('سرور کہتا ہے نمبر لیا ہوا ہے مگر کوئی اکاؤنٹ یا چابی نہیں ملی — یقینی بنائیں کہ نئی worker.js Cloudflare پر ڈیپلائے ہو چکی ہے'); return true; }
+      const a = list[0];
+      const txt = a ? ('اکاؤنٹ ملا: ' + (a.name || '') + ' · ' + (a.sid || a.uid) + (a.gmail ? ' · ' + a.gmail : '') + (a.soft ? ' (حذف شدہ)' : '') + '\n\nاسے مکمل صاف کر کے نیا اکاؤنٹ بنائیں؟') : ('ٹوٹی ہوئی چابی ملی: ' + orph[0].k + '\n\nصاف کر کے نیا اکاؤنٹ بنائیں؟');
+      if(!confirm(txt)){ err('صاف نہیں کیا گیا'); return true; }
+      let okp = true; try{ okp = await askAdminPassword('نمبر ' + mob + ' کا پرانا اکاؤنٹ صاف ہوگا — بزنس / ممبرشپ کو کچھ نہیں ہوگا۔'); }catch(e){}
+      if(!okp) return true;
+      for(const x of list) await call({op:'acctadm', del:true, uid:x.uid, mob:x.mobile || ('92' + String(mob).slice(-10))});
+      for(const o of orph) await call({op:'acctadm', del:true, k:o.k, mob:o.mob || ''});
+      err('🗑️ پرانا اکاؤنٹ صاف — نیا بن رہا ہے');
+      setTimeout(() => { try{ wzDo1(); }catch(e){} }, 300);
+      return true;
+    }catch(e){ err('خرابی: ' + (e.message || 'ایڈمن لاگ اِن')); return true; }
+  }
   window.wzKeep = function(){ const g = i => ($(i) || {}).value; const a = S.a;
     if($('wzName')) a.name = g('wzName'); if($('wzMob')) a.mobile = g('wzMob'); if($('wzMail')) a.email = g('wzMail'); if($('wzDist')) a.dist = g('wzDist');
     if($('wzSame') && $('wzSame').checked){ a.same = 1; a.wa = a.mobile; if($('wzWa')) $('wzWa').value = a.mobile; } else { a.same = 0; if($('wzWa')) a.wa = g('wzWa'); }
@@ -23505,6 +23528,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     let r; try{ const x = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({dev: (typeof agDev === 'function' ? agDev() : ''), op:'signup', name: a.name.trim(), mobile: mob, email: (a.email || '').trim(), gtoken: wzG ? wzG.token : undefined, pw, city: a.dist, district: a.dist})}); r = await x.json(); }catch(e){ r = {ok:false, reason:'net'}; }
     busy = false; $('wzSave1').disabled = false;
     if(r && r.reason === 'google'){ wzG = null; s1(); return err(AERR.google); }
+    if(r && r.reason === 'mobile_taken' && await wzTaken(mob)) return;   /* MCS1511SU446 */
     if(!r || !r.ok) return err(AERR[r && r.reason] || ('خرابی: ' + ((r && r.reason) || 'net')));
     wzG = null;
     { const D = window.uaDur || lsS; D('mcsAuth', JSON.stringify({tok: r.tok, user: r.user, at: Date.now()})); lsS('mcsGuest', null);
