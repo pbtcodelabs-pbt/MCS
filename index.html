@@ -4425,11 +4425,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU451";
+const APP_VERSION = "MCS1511SU452";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1511SU451": "🪪 Welcome back screen and the login page now show your MCS ID with your name and mobile number",
+  "MCS1511SU452": "🌟 Standard flow: big Welcome screen after sign-up • one business per account (Add New hidden once you have one) • membership only through Google Play — no admin approval for businesses; buying = live at once • bottom bar closes any open form first • tap a locked box to edit it",
+    "MCS1511SU451": "🪪 Welcome back screen and the login page now show your MCS ID with your name and mobile number",
     "MCS1511SU450": "🔐 Login fixed: PIN is now required (also with Google) — mobile + PIN always works; an account without a PIN gets the PIN screen right after Google login • a phone that already has an account shows «Welcome back — Log In», not the sign-up form • 🔎 search MCS001 (with or without space) finds the card • membership number per business: first business = M1 • Play payment of an old card moves to your current card • no «send again» box on an approved business • DP shown once • price PKR 1,000 / year • English fixed",
     "MCS1511SU447": "🧭 Registration steps: one strip only (duplicate boxes removed) • a finished step turns green with a big ✓ and opens its done-page, never the old form again • steps open in order (locked until the one before is done) • Create Account page never reopens once the account exists",
   "MCS1511SU446": "🧹 Create Account: if the server says the number already has an account, the admin gets the exact account found (name / ID / Gmail) with one tap to clear it and create the new one — and if nothing is found the screen says so",
@@ -5025,7 +5026,7 @@ function pfHtml(c){
   const pend = !!p.pend;
   if(live || agIsRec(c.kind, c.rec)) return pfOneHtml(c, {r, cm, own, p, d, more, owner, adm, phones, loc, mapUrl, left, st, shopImg});
   return (pend && (owner || adm) ? `<div class="pf-lock" style="background:#fffbeb;border-color:#f59e0b">⏳ ${adm ? 'یہ کاروبار / پروفیشن دکاندار نے خود جوڑا ہے — آپ کی منظوری کا انتظار۔ منظور کریں تو 7 دن مفت شروع اور سب کو نظر آئے گی۔' : 'نیچے «✏️ تفصیل سنواریں» سے تفصیل، ریٹ، اوقات پوری بھریں۔'}${adm ? `<div style="display:flex;gap:6px;margin-top:8px"><button type="button" class="pf-adm" style="background:#16a34a;color:#fff" onclick="pfAdmin('approve')">✅ منظور — 7 دن شروع</button><button type="button" class="pf-adm red" onclick="pfAdmin('reject')">❌ ابھی نہیں</button></div>` : ''}</div>` : '')
-    + (owner && !live && p.until && !pend ? `<div class="pf-lock">🔒 آپ کی پوری تفصیل لوگوں سے چھپی ہوئی ہے — لوگوں کو صرف سادہ کارڈ دکھ رہا ہے۔<br><b>تفصیل ایڈمن کو بھیجیں — جاری ہوتے ہی فوراً دوبارہ چالو</b> (سب کچھ محفوظ ہے)<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">📨 ممبرشپ جاری رکھیں — تفصیل ایڈمن کو بھیجیں</button></div>` : '')
+    + (owner && !live && p.until && !pend ? `<div class="pf-lock">🔒 Your full profile is hidden — people see only the simple card.<br><b>Renew on Google Play — it goes live again at once</b> (everything is saved)<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">⭐ Renew membership — Google Play</button></div>` : '')
     + gal + `<div class="pf-top">${sfThumb ? `<span class="pf-ic sf"><img src="${escapeAttr(sfThumb)}" alt=""></span>` : `<span class="pf-ic">${cm.emoji}</span>`}<div><div class="pf-nm">${escapeHtml(r.nameUr||r.name||'')}${live ? '<span class="pf-star">⭐ نمایاں</span>' : ''}</div>
       <div class="pf-sub">${escapeHtml([own.owner ? '👤 ' + own.owner : '', cm.ur].filter(Boolean).join(' • '))}${r.nameEn ? `<br><span style="font-family:MCSDigits,Arial;direction:ltr">${escapeHtml(r.nameEn)}</span>` : ''}</div></div></div>`
     + (st ? `<div class="pf-stats"><div><b>${st.view}</b><small>👀 دیکھا</small></div><div><b>${st.call}</b><small>📞 کالیں</small></div><div><b>${st.wa}</b><small>💬 واٹس ایپ</small></div><span data-noen dir="ltr" style="display:block;text-align:center">Last ${st.days} day(s) — from app</span></div>` : '')
@@ -5039,7 +5040,7 @@ function pfHtml(c){
     + ((owner || adm) ? (()=>{ let mid = ''; try{ mid = shortRecordId(c.kind === 'doctor' ? 'doctor' : 'service', r); }catch(e){} if(!mid && owner){ try{ const u = (uaMe() || {}).user || {}; if(u.sid) mid = mcsSidFmt(u.sid); }catch(e){} } return mid ? `<div class="pf-id">🆔 MCS ID: <b dir="ltr">${escapeHtml(mid)}</b><button type="button" onclick="agCopy('${escapeAttr(mid)}')">📋 Copy</button></div>` : ''; })() : '')   /* MCS1211TH384: پرانی p… ID نہیں — صرف MCS ID */
     + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ ممبرشپ فعال — ${left} دن باقی` : '⚠️ ممبرشپ کی مدت ختم — جاری رکھنے کے لیے تفصیل بھیجیں'}</div>` : ''}
         ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
-        ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">${mcsPlayOk() ? '⭐ ممبرشپ ایک سال کے لیے جاری رکھیں — Google Play' : '📨 ممبرشپ جاری رکھیں — تفصیل ایڈمن کو بھیجیں'}</button>` : ''}
+        ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">⭐ Renew membership for 1 year — Google Play</button>` : ''}
         ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ ممبرشپ ختم کریں</button>` : '') : ''}
         ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove('${escapeAttr(c.rk)}')">✖ اس فون کی «میرا کاروبار / پروفیشن» سے ہٹائیں</button>` : ''}</div>` : '')
     + (!owner && !adm && !codevOn() ? `<button type="button" class="pf-mine" onclick="pfClaimMine()">👤 یہ میرا کاروبار ہے — «میرا کاروبار / پروفیشن» میں جوڑیں</button>` : '');
@@ -5645,7 +5646,8 @@ function mcsCongrats(rk, j){
   const sid = (j && (j.subid || j.sid)) ? String(j.subid || j.sid).replace(/-/g, '') : '';
   const f = n => Number(n || 0).toLocaleString('en-US');
   agModal(`<div style="text-align:center;font-size:54px;line-height:1.1">🎉</div>
-    <div class="ag-hd" style="text-align:center">Congratulations! Your business is LIVE</div>
+    <div class="ag-hd" style="text-align:center">Congratulations! Your business is now LIVE</div>
+    <div style="text-align:center;font-weight:700;color:#334155;margin:0 0 6px">Your business now shines across your city — welcome to the new horizons of digital business.</div>
     <div style="text-align:center;font-size:20px;font-weight:800;color:#0f766e;margin:2px 0 8px" data-noen>${escapeHtml(r0.nameUr || r0.nameEn || r0.name || '')}</div>
     <div style="margin:8px 0;padding:12px;border-radius:16px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #10b981;text-align:center">
       <div style="font:900 28px Arial,sans-serif;color:#065f46">${f(biz)} <small style="font-size:14px">businesses</small> + ${f(pro)} <small style="font-size:14px">professionals</small></div>
@@ -6959,7 +6961,7 @@ function userResultCard(item){
         const _live = pfActive(_r);
         /* ② رجسٹریشن مکمل → صرف «ممبرشپ مکمل کریں» */
         if(_r.stage==='registered' && !_live){
-          if(_mine) return _fps + (_fps.includes('منظوری') ? `<button type="button" class="svc-mem-btn fp-wait" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⏳ تفصیل بھیج دی — منظوری کا انتظار</button>` : `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⭐ ممبرشپ مکمل کریں</button>`);
+          if(_mine) return _fps + (false ? `<button type="button" class="svc-mem-btn fp-wait" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⏳ تفصیل بھیج دی — منظوری کا انتظار</button>` : `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();svcMemOpen('${_eid}')">⭐ ممبرشپ مکمل کریں</button>`);
           return (isAdminSignedIn || agOwnsRec(_r)) ? _fps + `<button type="button" class="svc-mem-btn" onclick="event.stopPropagation();pfOpen('service','${_eid}')">⭐ ممبرشپ مکمل کریں</button>` : '';
         }
         /* ③ ایک سال کی ممبرشپ ہو گئی → پوری تفصیل کا بٹن، اور مالک کو بائیں طرف ربن */
@@ -18145,7 +18147,7 @@ html.mcs-dark #pbPage .pb-av{background:#334155;border-color:#475569}
       const h = f.apply(this, arguments); if(!h) return h;
       const k = kindOf(arguments), rec = k.rec; if(!rec) return h;
       let out = h;
-      if(rec.stage === 'registered' && !pfActive(rec) && sentOf(k.kind, rec)) out = out.replace(/class="svc-mem-btn"/, 'class="svc-mem-btn fp-wait"').replace('⭐ ممبرشپ مکمل کریں', '⏳ تفصیل بھیج دی — منظوری کا انتظار');
+      if(false) out = out.replace(/class="svc-mem-btn"/, 'class="svc-mem-btn fp-wait"').replace('⭐ ممبرشپ مکمل کریں', '⏳ تفصیل بھیج دی — منظوری کا انتظار');
       return window.fpCardSteps(k.kind, rec) + out;
     };
   }
@@ -24561,5 +24563,95 @@ html body .doc-card.rc > .st-line{position:absolute !important;left:8px;right:8p
   window.deleteDoctor = deleteDoctor = fast('doctors', 'doctor');
 })();
 </script>
+<style id="mcsStd452css">
+/* MCS1511SU452 (مالک کا حکم — «معیاری بین الاقوامی ایپس جیسا راستہ») */
+html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .mpx-add { display: none !important; }
+.mem-conf { display: none !important; }   /* «منظوری کے لیے بھیجیں / send again» — کاروبار کی کوئی ایڈمن منظوری نہیں */
+#mcsWelcome { position: fixed; inset: 0; z-index: 2147483000; display: none; align-items: center; justify-content: center; padding: 18px;
+  background: radial-gradient(circle at 30% 20%, #1e5bb8 0%, #0b2f6b 55%, #061a3d 100%); color: #fff; }
+#mcsWelcome.on { display: flex; }
+#mcsWelcome .wb { width: min(440px, 100%); text-align: center; }
+#mcsWelcome .lg { width: 96px; height: 96px; border-radius: 24px; background: #fff; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+#mcsWelcome .mr { font: 800 22px/1.3 'Segoe UI', Selawik, Arial, sans-serif; margin-top: 18px; color: #fde68a; }
+#mcsWelcome .wt { font: 900 44px/1.1 'Segoe UI', Selawik, Arial, sans-serif; margin: 6px 0 4px; letter-spacing: .5px; }
+#mcsWelcome .id { display: inline-block; font: 800 16px Arial, sans-serif; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 5px 14px; margin: 6px 0 14px; }
+#mcsWelcome .tx { font: 600 18px/1.6 'Segoe UI', Selawik, Arial, sans-serif; color: #e0ecff; margin: 0 4px 22px; }
+#mcsWelcome .tx b { color: #fff; }
+#mcsWelcome .go { width: 100%; border: 0; border-radius: 18px; padding: 16px; font: 900 22px 'Segoe UI', Arial, sans-serif; color: #0b2f6b;
+  background: linear-gradient(180deg, #fde68a, #f59e0b); box-shadow: 0 8px 0 #b45309, 0 14px 24px rgba(0,0,0,.35); cursor: pointer; }
+#mcsWelcome .go:active { transform: translateY(4px); box-shadow: 0 4px 0 #b45309; }
+</style>
+<div id="mcsWelcome" role="dialog" aria-modal="true"><div class="wb">
+  <img class="lg" src="icons/icon-192.png" alt="">
+  <div class="mr" id="mcsWelName" data-noen="1"></div>
+  <div class="wt">Welcome</div>
+  <div class="id" id="mcsWelId" dir="ltr"></div>
+  <div class="tx">Now press <b>Enter</b> to explore the new horizons of <b>digital business</b> and the celebrated <b>professionals</b> of your shining city.</div>
+  <button type="button" class="go" onclick="mcsWelcomeGo()">Enter ➜</button>
+</div></div>
+<script id="mcsStd452">
+/* MCS1511SU452 (مالک کا حکم — معیاری راستہ):
+   (1) سائن اپ ہوتے ہی بڑا «Welcome» صفحہ (نام + MCS ID) → Enter = ہوم۔
+   (2) عام صارف کا ایک ہی کاروبار — ہو تو «Add New» غائب (body.mcs1biz)؛ ایڈمن / Admin 2 / ایجنٹ پر نہیں (وہ دوسروں کے کاروبار درج کرتے ہیں)۔ پانچ Play پیکج ویسے۔
+   (3) کاروبار کی ایڈمن منظوری کہیں نہیں — «تفصیل ایڈمن کو / منظوری کے لیے بھیجیں» کے سب راستے سیدھے Google Play خریداری (memFlowRk)؛ خریداری = فوراً لائیو۔ منظوری صرف ایجنٹ کی۔
+   (4) نیچے کی پٹی کا کوئی بٹن دبائیں تو کھلا فارم / پاپ اپ / ویزرڈ پہلے بند (نیچے فارم اور اوپر ہوم ایک ساتھ نہیں)۔
+   (5) لاک ڈبے کا خانہ دبائیں تو ڈبہ خود کھل جائے (کرسر آئے)۔ */
+(function(){
+  const staff = () => { try{ return !!(typeof bzRole === 'function' && bzRole()); }catch(e){ return false; } };
+  const mine = () => { try{ return typeof mpListReal === 'function' ? mpListReal() : []; }catch(e){ return []; } };
+  const oneBiz = () => !staff() && mine().length >= 1;
+  function mark(){ try{ document.body.classList.toggle('mcs1biz', oneBiz()); }catch(e){} }
+  setInterval(mark, 2500); setTimeout(mark, 600);
+  const toPortal = () => { try{ showToast('✅ One business per account — here is yours'); }catch(e){} try{ const x = mine()[0]; if(x && typeof pfOpen === 'function') return pfOpen(x.p.kind === 'doctor' ? 'doctor' : 'service', x.rec.id); }catch(e){} try{ mpoOpen(); }catch(e){} };
+  ['d2AddOpen', 'mpNewMore', 'mpStartNew', 'toggleAddStrip'].forEach(n => { const o = window[n]; if(typeof o !== 'function') return;
+    window[n] = function(){ if(oneBiz()) return toPortal(); return o.apply(this, arguments); }; });
+
+  /* (3) کاروبار کی ممبرشپ = صرف Google Play */
+  const buy = rk => { if(!rk){ const x = mine()[0]; rk = x && x.p.rk; } if(!rk) return;
+    if(typeof mcsPlayOk === 'function' && !mcsPlayOk()){ try{ agModal(`<div style="text-align:center;font-size:46px">⭐</div><div class="ag-hd" style="text-align:center">Membership is bought on Google Play</div><div class="cp-hint" style="text-align:center;margin:8px 0">Open <b>My City Shines</b> installed from the <b>Google Play Store</b> on your phone and tap «Get membership». Your business goes live at once — no waiting, no approval.</div><button type="button" class="mem-alt" onclick="closeModal('agModal')">OK</button>`); }catch(e){} return; }
+    try{ memFlowRk(rk); }catch(e){} };
+  const rkOfRec = (kind, rec) => { try{ return pfKeyOf(rec, kind || 'service'); }catch(e){ return ''; } };
+  const oSub = window.mpSubscribe;
+  window.mpSubscribe = function(rk){ if(staff()) return oSub && oSub.apply(this, arguments); return buy(rk); };
+  const oMem = window.svcMemOpen;
+  window.svcMemOpen = function(id, kind){ if(staff()) return oMem && oMem.apply(this, arguments);
+    kind = kind || 'service'; const r = ((kind === 'doctor' ? store.doctors : store.services) || []).find(x => x.id === id); if(!r) return;
+    try{ if(!mpEntry(r)) mpAdd(kind, r, true); }catch(e){} return buy(rkOfRec(kind, r)); };
+  const oAuto = window.memAutoSend;
+  window.memAutoSend = function(kind, rec, quiet){ if(staff()) return oAuto && oAuto.apply(this, arguments); if(quiet) return; return buy(rkOfRec(kind, rec)); };
+
+  /* (1) Welcome */
+  window.mcsWelcome = function(u){
+    u = u || ((typeof uaMe === 'function' && uaMe()) || {}).user || {}; const w = document.getElementById('mcsWelcome'); if(!w) return;
+    const nm = String(u.name || '').trim();
+    document.getElementById('mcsWelName').textContent = nm ? 'Mr. ' + nm : '';
+    const sid = u.sid || u.id || ''; document.getElementById('mcsWelId').textContent = sid ? '🆔 ' + (typeof mcsSidFmt === 'function' ? mcsSidFmt(sid) : sid) : '';
+    document.getElementById('mcsWelId').style.display = sid ? '' : 'none';
+    w.classList.add('on');
+  };
+  window.mcsWelcomeGo = function(){ const w = document.getElementById('mcsWelcome'); if(w) w.classList.remove('on');
+    try{ if(typeof mcsWizClose === 'function') mcsWizClose(); }catch(e){} try{ uaHide(); }catch(e){}
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    try{ goScreen('home'); }catch(e){} try{ window.scrollTo(0, 0); }catch(e){} };
+  const oPk = window.uaPkView;
+  if(typeof oPk === 'function') window.uaPkView = function(u, fresh){ if(fresh) return setTimeout(() => mcsWelcome(u), 50); return oPk.apply(this, arguments); };
+  /* ویزرڈ سے سائن اپ: اکاؤنٹ بنتے ہی (پہلی بار) — mcsAuth نیا آیا اور پہلے نہیں تھا */
+  let had = false; try{ had = !!JSON.parse(localStorage.getItem('mcsAuth') || 'null'); }catch(e){}
+  setInterval(() => { let a = null; try{ a = JSON.parse(localStorage.getItem('mcsAuth') || 'null'); }catch(e){}
+    if(a && !had){ had = true; const fresh = a.at && Date.now() - a.at < 20000 && a.user && Date.now() - (a.user.ts || 0) < 120000; if(fresh) mcsWelcome(a.user); }
+    else if(!a) had = false; }, 1000);
+
+  /* (4) نیچے کی پٹی: پہلے سب کھلا بند */
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.bnav button, [id^="d2n"]'); if(!b) return;
+    try{ if(typeof mcsWizClose === 'function') mcsWizClose(); }catch(_){}
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    try{ document.body.style.overflow = ''; }catch(_){} }, true);
+
+  /* (5) لاک ڈبے کا خانہ دبائیں = ڈبہ کھلے */
+  document.addEventListener('click', e => { const x = e.target.closest && e.target.closest('.locked .cbx-in input, .locked .cbx-in textarea, .locked .cbx-in select'); if(!x) return;
+    const b = x.closest('.locked'), ed = b && b.querySelector('.cbx-edit'); if(ed){ ed.click(); setTimeout(() => { try{ x.focus(); }catch(_){} }, 60); } }, true);
+})();
+</script>
+
 </body>
 </html>
