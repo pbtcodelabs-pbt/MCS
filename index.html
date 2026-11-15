@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU432";
+const APP_VERSION = "MCS1511SU433";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU433": "🧘 ہوم اب نہیں ہلتا — اشتہار کا ڈبہ پکی اونچائی، نقطے چوڑے نہیں ہوتے، میرا کاروبار / تشہیر کے ڈبے بلا وجہ دوبارہ نہیں بنتے؛ ایپ کھلتے ہی ID سرور سے تازہ (MCS001)",
   "MCS1511SU432": "🛒 Google Play خریداری ہوتے ہی خود تصدیق — آرڈر نمبر پیسٹ نہیں؛ «خریداری مکمل نہیں ہوئی» کی جگہ اصل وجہ، اور ادائیگی ہو چکی ہو تو خود مکمل",
   "MCS1511SU431": "🆔 ایڈمن 1 کی ID MCS008 سے ہٹ کر MCS001 (ایڈمن 2 = MCS002) — سرور خود درست کرتا ہے؛ ایپ اب نیا ورژن کھلتے ہی اپنی ID سرور سے تازہ کر لیتی ہے",
   "MCS1511SU430": "🤝 ایجنٹ فارم: سب سے اوپر MCS ID کی ڈراپ ڈاؤن (نام، موبائل، ضلع خود آتے ہیں، باقی فارم اس کے بعد کھلتا ہے) • آخر میں ریفرل کوڈ فہرست سے • ID بغیر ڈیش: MCS001، MCS001M1، AG001 • DEV / CODEV کی جگہ ایڈمن 1 / ایڈمن 2 (ADMIN1 / ADMIN2) • ایڈمن 1 = AG001، ایڈمن 2 = AG002 • ایڈمن کے کاروبار بھی ادائیگی سے",
@@ -16900,8 +16901,8 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     try{ const c0 = window.cpAcctSync; if(typeof c0 === 'function' && !c0.__ua){ window.cpAcctSync = function(){ const r = c0.apply(this, arguments); uaSync(); return r; }; window.cpAcctSync.__ua = 1; } }catch(e){}
     /* MCS0711SA194: h2Type کلک ختم */
   }
-  async function recheck(){ const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU432'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
-    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU432'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
+  async function recheck(){ const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU433'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
+    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU433'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ایڈمن کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
@@ -24019,5 +24020,25 @@ body:has(#screen-home.active){overflow:hidden !important}
 #screen-home.active{overflow:hidden;overscroll-behavior:none}
 #screen-home #homeAds{contain:layout style}
 </style>
+<style id="mcsSteady433">
+/* MCS1511SU433 (مالک کا حکم — «ہوم کانپتا ہے، گولیاں چوڑی ہوتی ہیں»): اشتہار کی نقطے والی گولیاں چوڑی نہیں ہوتیں — صرف رنگ بدلتا ہے؛ اشتہار کا ڈبہ پکی اونچائی */
+html body #homeAds .ad-dots i,html body #homeAds .ad-dots i.on{width:7px !important;height:7px !important;border-radius:50% !important;flex:0 0 7px;transition:background .3s !important}
+html body #homeAds .ad-dots i.on{background:#e9a23b !important;box-shadow:0 0 0 2px rgba(233,162,59,.35)}
+html body.d2 #screen-home #homeAds{height:150px !important;min-height:150px !important;max-height:150px !important;overflow:hidden !important;aspect-ratio:auto !important}
+html body #homeAds .ad-card[class*="fx-"]{animation-name:adk_fade !important;animation-duration:.6s !important}   /* اشتہار اوپر نیچے / دائیں بائیں نہیں اڑتا — صرف آہستہ بدلتا ہے */
+html body #screen-home #mpBar,html body #screen-home #bizPromo,html body #screen-home #d2Prays{overflow-anchor:none}
+</style>
+<script id="mcsSteady433js">
+/* MCS1511SU433: ہوم کے ڈبے (میرا کاروبار، تشہیر، فہرست، نماز) بار بار ہوبہو وہی HTML دوبارہ لکھے جاتے تھے — ہر بار تصویریں غائب ہو کر واپس آتیں اور ڈبہ چھوٹا بڑا ہوتا (ہوم ہلتا)۔
+   اب وہی HTML دوبارہ آئے تو کچھ نہیں بدلا جاتا؛ مختلف ہو تو پہلے جیسا لکھا جاتا ہے */
+(function(){
+  var d = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML'); if(!d || !d.set) return;
+  function guard(id){ var el = document.getElementById(id); if(!el || el.__st433) return; el.__st433 = 1; var last = null;
+    Object.defineProperty(el, 'innerHTML', { configurable: true, get: function(){ return d.get.call(this); }, set: function(v){ v = String(v); if(v === last && this.childNodes.length) return; last = v; d.set.call(this, v); } }); }
+  function all(){ ['mpBar', 'bizPromo', 'homeList', 'd2PrayList', 'd2Prays'].forEach(guard); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', all); else all();
+  setTimeout(all, 3000);
+})();
+</script>
 </body>
 </html>
