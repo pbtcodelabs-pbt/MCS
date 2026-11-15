@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU446";
+const APP_VERSION = "MCS1511SU447";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU447": "🧭 Registration steps: one strip only (duplicate boxes removed) • a finished step turns green with a big ✓ and opens its done-page, never the old form again • steps open in order (locked until the one before is done) • Create Account page never reopens once the account exists",
   "MCS1511SU446": "🧹 Create Account: if the server says the number already has an account, the admin gets the exact account found (name / ID / Gmail) with one tap to clear it and create the new one — and if nothing is found the screen says so",
   "MCS1511SU445": "🔐 Continue with Google on Login and Create Account (name + Gmail come automatically; add mobile + district; PIN optional with Google) • 🧹 \"account already exists\" on a number that has no account is fixed • 🗑️ Delete account / Remove ID also clears the old MCS ID (e.g. MCS008) and its card from this phone • 🔎 search MCS001M1 style IDs",
   "MCS1511SU444": "🔐 Admin Portal ← More ← «نمبروں کے بزنس»: now also finds the sign-up ACCOUNT by mobile number or MCS ID (e.g. 03336793793 / MCS008) and can delete it fully so the number can be used again",
@@ -23408,6 +23409,17 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
   const STX = { none:['st-none', 'Not started', 'شروع نہیں ہوا'], pend:['st-pend', 'Payment verifying', 'ادائیگی کی تصدیق ہو رہی ہے'], act:['st-act', 'Active — Public', 'فعال — سب کو نظر آ رہا ہے'], ok:['st-ok', 'Approved', 'منظور'], rej:['st-rej', 'Rejected', 'مسترد'] };
   const stChip = k => `<span class="wzSt ${STX[k][0]}">${STX[k][1]} · <span class="u">${STX[k][2]}</span></span>`;
 
+  /* MCS1511SU447 (مالک کا حکم): ہر مرحلے کی اصل حالت — مکمل ہو تو سبز بڑا ✓، اگلا تبھی کھلے جب پچھلا مکمل ہو */
+  const doneOf = n => { try{
+    if(n === 1) return !!me();
+    if(n === 2){ const c = myCard(); return !!(c && (c.more || {}).ptype); }
+    if(n === 3){ const c = myCard(); return !!(c && typeof pfActive === 'function' && pfActive(c)); }
+    if(n === 4){ const g = typeof agMe === 'function' && agMe(); return !!(g && (g.code || g.pin)); }
+  }catch(e){} return false; };
+  const canGo = n => n === 1 || (n === 4 ? doneOf(2) : doneOf(n - 1));   /* ایجنٹ کے لیے کارڈ بن چکا ہو */
+  (function(){ if(document.getElementById('wz447css')) return; const st = document.createElement('style'); st.id = 'wz447css';
+    st.textContent = '#wzOv .wzS4{cursor:pointer}#wzOv .wzS4.ok{background:#04641c}#wzOv .wzS4.ok i{width:34px;height:34px;font-size:22px;background:#fff;border-color:#fff;color:#04641c}#wzOv .wzS4.lock{opacity:.55}';
+    document.head.appendChild(st); })();
   /* ---------- ڈھانچہ: عنوان + 4 مرحلوں کی پٹی ---------- */
   const STEPS = [['Create Account', 'اکاؤنٹ بنائیں'], ['Create Business Card', 'بزنس کارڈ بنائیں'], ['Get Paid Subscription', 'پیڈ سبسکرپشن حاصل کریں'], ['Be an MCS Agent', 'ایم سی ایس ایجنٹ بنیں']];   /* MCS1511SU440: تصویر جیسے چار مرحلے — چوتھا Earn with MCS فارم کھولتا ہے */   /* MCS1511SU427 (مالک کا حکم): ایجنٹ کا فارم رجسٹریشن سے الگ — «Earn with MCS / MCS Agent» سے کھلے */
   const FLOW = [['👤', 'Create Account', 'اکاؤنٹ بنائیں', ''], ['🪪', 'Create Business Card', 'بزنس کارڈ بنائیں', '(Free / مفت)'], ['▶', 'Get Paid Subscription', 'پیڈ سبسکرپشن', '(Google Play)'], ['✅', 'Live Instantly', 'فوراً لائیو', '(Admin review later / جائزہ بعد میں)'], ['🤝', 'Be an MCS Agent', 'ایجنٹ بنیں', '(Earn with MCS)']];
@@ -23416,8 +23428,8 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     const ov = $('wzOv'), keepY = (ov && lastStep === S.step) ? ov.scrollTop : 0;
     const ae = document.activeElement, host = $('wzW');
     const aid = (ae && ae.id && host && host.contains(ae)) ? ae.id : '', sel = (aid && ae.selectionStart != null) ? [ae.selectionStart, ae.selectionEnd] : null;
-    const pg = STEPS.map((s, i) => { const n = i + 1, cls = S.step === n ? 'on' : (S.step > n ? 'ok' : '');
-      return `<div class="wzS4 ${cls}"${(S.step > n || n === 4) ? ` onclick="wzGo(${n})"` : ''}><i>${S.step > n ? '✓' : n}</i>${s[0]}<span class="u">${s[1]}</span></div>`; }).join('');
+    const pg = STEPS.map((s, i) => { const n = i + 1, dn = doneOf(n), ok = canGo(n), cls = (dn ? 'ok ' : '') + (S.step === n ? 'on ' : '') + (ok ? '' : 'lock');
+      return `<div class="wzS4 ${cls}" onclick="wzGo(${n})"><i>${dn ? '✓' : (ok ? n : '🔒')}</i>${s[0]}<span class="u">${s[1]}</span></div>`; }).join('');   /* MCS1511SU447: اصل حالت — مکمل = سبز ✓، پچھلا مکمل نہ ہو = 🔒 */
     /* MCS1511SU440: تصویر کی سبز ✅ پٹی — ہر مرحلے کی اصل حالت */
     let liveOk = false, agOk = false; try{ const cd = myCard(); liveOk = !!(cd && typeof pfActive === 'function' && pfActive(cd)); }catch(e){} try{ const g = typeof agMe === 'function' && agMe(); agOk = !!(g && (g.code || g.pin)); }catch(e){}
     const STS = [[!!me(), 'Account Created Successfully!', 'آپ کا اکاؤنٹ کامیابی سے بن گیا!'], [!!myCard(), 'Your Business Card is Created!', 'آپ کا بزنس کارڈ بن گیا! (نجی)'], [liveOk, 'Payment Successful — Business Live!', 'ادائیگی کامیاب — کاروبار لائیو!'], [liveOk, 'Your Business is Now Public!', 'اب آپ کا کاروبار عوام کے لیے ظاہر ہے'], [agOk, 'You are now an MCS Agent', 'آپ ایم سی ایس ایجنٹ ہیں']];
@@ -23425,8 +23437,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     const flow = FLOW.map(f => `<div class="it"><i>${f[0]}</i>${f[1]}<span class="u">${f[2]}</span>${f[3] ? `<em>${f[3]}</em>` : ''}</div>`).join('');
     host.innerHTML = `<div class="wzHero"><div class="wzLogo"><span class="bl">🏙️</span><span><b>My City Shines</b><small>(MCS)</small></span></div><div class="wzGuide">Step by Step Guide<small class="u">مرحلہ وار رہنمائی</small></div></div>
       <div class="wzTop"><div class="wzTitle">Registration &amp; Activation Process<small class="u">رجسٹریشن اور ایکٹیویشن کا مکمل عمل</small></div><button class="wzX" onclick="mcsWizClose()" title="Close">✕</button></div>
-      <div class="wzSteps">${pg}</div>${inner}${stStrip}
-      <div class="wzFlow"><h4>Complete Process Flow <span class="u">مکمل عمل کی ترتیب وار خلاصہ</span></h4><div class="row">${flow}</div></div>`;
+      <div class="wzSteps">${pg}</div>${inner}`;   /* MCS1511SU447: نیچے والی دوہری پٹی اور «Complete Process Flow» ختم — اوپر کی ایک ہی پٹی */
     lastStep = S.step; if(ov) ov.scrollTop = keepY;
     if(aid){ const n = $(aid); if(n){ try{ n.focus({preventScroll: true}); if(sel && n.setSelectionRange) n.setSelectionRange(sel[0], sel[1]); }catch(e){} } }
   }
@@ -23448,12 +23459,27 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
     const m = me(); if(m && !S.sid) S.sid = (m.user.sid || m.user.id || '');
     let st = step || S.step || 1;
     if(!m && st > 1) st = 1;                 /* اکاؤنٹ کے بغیر آگے نہیں */
-    if(m && st === 1 && !step) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* لاگ اِن ہے تو اکاؤنٹ والا مرحلہ مکمل */
+    if(m && st === 1) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* MCS1511SU447: لاگ اِن ہے تو اکاؤنٹ بنانے کا صفحہ کبھی دوبارہ نہیں کھلتا */
     S.step = st; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
   };
-  const draw = () => { if(S.step > 3) S.step = 3; ({1: s1, 2: s2, 3: s3})[S.step](); };   /* MCS1511SU427: پرانا محفوظ «مرحلہ 4» ہو تو بھی 3 پر */
-  window.wzGo = function(n){ if(n > 3){ mcsWizClose(); try{ agEarnOpen(); }catch(e){} return; }   /* MCS1511SU427: ایجنٹ کا فارم الگ — سیدھا MCS Agent فارم */
-    if(n > 1 && !me()){ S.step = 1; save(); return draw(); } S.step = n; save(); draw(); };
+  const draw = () => { if(S.step > 3) S.step = 3;
+    if(S.step === 1 && doneOf(1)) return s1done();                         /* MCS1511SU447: مکمل مرحلہ = «مکمل» صفحہ، پرانا فارم نہیں */
+    if(S.step === 2 && doneOf(2) && !S.edit2) return ok2(myCard());
+    ({1: s1, 2: s2, 3: s3})[S.step](); };
+  function nextStepOf(){ return !doneOf(2) ? 2 : (!doneOf(3) ? 3 : 4); }
+  function s1done(){
+    const m = me(), u = (m && m.user) || {}, nx = nextStepOf();
+    frame(`<div class="wzCard"><div class="wzOk"><div class="big">✅</div><b style="font-size:20px;color:#166534">Account Created Successfully!</b><div class="u" style="font-size:19px;color:#166534">آپ کا اکاؤنٹ بن چکا ہے</div>
+      <div class="wzId" dir="ltr">${esc(sidNow())}</div><div style="font-weight:700">Account ID — <span class="u">آپ کی پکی ID</span></div>
+      ${u.name ? `<div style="margin-top:6px;font-weight:700">${esc(u.name)}${u.mobile ? ' · ' + esc(u.mobile) : ''}</div>` : ''}</div>
+      <button class="wzBtn bG" onclick="wzGo(${nx})">Next: ${esc(STEPS[nx - 1][0])}<small class="u">اگلا: ${esc(STEPS[nx - 1][1])}</small></button></div>`);
+  }
+  window.wzEdit2 = function(){ S.edit2 = 1; save(); draw(); };   /* MCS1511SU427: پرانا محفوظ «مرحلہ 4» ہو تو بھی 3 پر */
+  window.wzGo = function(n){
+    if(!canGo(n)){ if(n > 1 && !me()){ S.step = 1; save(); return draw(); } try{ flash('پہلے مرحلہ ' + (n === 4 ? 2 : n - 1) + ' مکمل کریں — Complete step ' + (n === 4 ? 2 : n - 1) + ' first'); }catch(e){} return; }   /* MCS1511SU447: ترتیب وار */
+    if(n > 3){ mcsWizClose(); try{ agEarnOpen(); }catch(e){} return; }   /* MCS1511SU427: ایجنٹ کا فارم الگ — سیدھا MCS Agent فارم */
+    if(n !== 2 && S.edit2){ S.edit2 = 0; save(); }
+    S.step = n; save(); draw(); };
 
   /* ================= مرحلہ ۱: اکاؤنٹ ================= */
   function s1(){
@@ -23619,7 +23645,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
       try{ mpAdd('service', rec, true); }catch(e){}
       try{ renderServiceList('list'); mpRender(); }catch(e){}
     }catch(e){ busy = false; return err('محفوظ نہیں ہو سکا — دوبارہ کوشش کریں'); }
-    busy = false; S.step = 3; S.cardNew = 1; save(); draw(); try{ showToast('✓ کارڈ محفوظ — اب پلان منتخب کریں'); }catch(e){}
+    busy = false; S.step = 3; S.cardNew = 1; S.edit2 = 0; save(); draw(); try{ showToast('✓ کارڈ محفوظ — اب پلان منتخب کریں'); }catch(e){}
   };
   function ok2(rec){
     const sid = sidNow();
@@ -23627,7 +23653,7 @@ body.wz-on .screen,body.wz-on .bnav{visibility:hidden!important}   /* MCS1411SA4
       <div class="wzId" dir="ltr">${esc(sid)}</div><div style="font-weight:700">Card ID (permanent) — <span class="u">کارڈ کی ایک ہی پکی ID</span></div>
       <div style="margin-top:8px"><span class="wzSt st-none">🔒 Private – Not Publicly Listed · <span class="u">فی الحال نجی — عوامی فہرست میں نہیں</span></span></div></div>
       <button class="wzBtn bG" onclick="wzGo(3)">Next: Get Paid Subscription<small class="u">اگلا: پیڈ سبسکرپشن</small></button>
-      <button class="wzBtn bW" onclick="wzGo(2)">✏️ Edit card — کارڈ میں ترمیم</button></div>`);
+      <button class="wzBtn bW" onclick="wzEdit2()">✏️ Edit card — کارڈ میں ترمیم</button></div>`);
   }
 
   /* ================= مرحلہ ۳: پیڈ سبسکرپشن (Google Play) ================= */
