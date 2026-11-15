@@ -4425,10 +4425,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU460";
+const APP_VERSION = "MCS1511SU461";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU461": "🎟️ New: 90-day one-time membership on Google Play — promo codes work without any card.",
   "MCS1511SU460": "👑 Admin 1: Admins & Permissions, Share Rates, Approvals and Reports now open from My Account.",
   "MCS1511SU460": "👥 Admin 2: buttons now follow the permissions given by Admin 1 (Add business, Agents, Chats, Portal, Help Desk).",
   "MCS1511SU457": "👥 Admin 2 is back: Imran logs in with mobile + PIN (My Account → Admin 2 Login) and can add businesses like Admin 1 — final approvals, deleting and company money stay with Admin 1 • 📊 Accounts Portal inside the app (My Account) for Admin 1, Admin 2 and agents • an admin who is also an agent fills AG001 / AG002 as referral; empty referral = PBT",
@@ -24792,5 +24793,53 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
 })();
 </script>
 
+<script id="mcsOnce461">
+/* MCS1511SU461 (مالک کا حکم): Google Play One-time product «90 دن کی ممبرشپ» (mcs_mem_90d) — اس کے پرومو کوڈ پر کارڈ نہیں مانگا جاتا
+   (سبسکرپشن کے کوڈ پر گوگل کارڈ لازمی مانگتا ہے)۔ ممبرشپ پاپ اپ میں سالانہ بٹن کے نیچے دوسرا بٹن؛ سرور (AIO worker mcsBuyOnce) تصدیق → 90 دن جمع → consume۔
+   پرومو کوڈ = مفت (فروخت / کمیشن نہیں)۔ کوڈ لگانے کا راستہ: یہ بٹن ← گوگل کا صفحہ ← ادائیگی کا طریقہ ← Redeem code۔ */
+(function(){
+  const SKU = 'mcs_mem_90d'; window.MCS_ONCE_SKU = SKU;
+  let price = '';
+  async function loadPrice(){ if(price || !mcsPlayOk()) return price; try{ const svc = await mcsPlaySvc(); const d = await svc.getDetails([SKU]); if(d && d[0] && d[0].price) price = mcsPlayPrice(d[0].price.currency + ' ' + d[0].price.value).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'); }catch(e){} return price; }
+  window.mcsPlayBuyOnce = async function(rk){
+    if(typeof codevBlock === 'function' && codevBlock()) return;
+    if(!mcsPlayOk()){ alert('This purchase works only in the app installed from the Play Store.'); return; }
+    let owned = [];
+    try{ const svc = await mcsPlaySvc(); owned = ((await svc.listPurchases()) || []).filter(x => x && x.itemId === SKU && x.purchaseToken); }catch(e){}
+    for(const x of owned){ try{ const pj = await mcsPlayProbe(x.purchaseToken); if(pj && pj.ok && pj.linked === false){ showToast('🎟️ Finishing your earlier 90-day purchase…', 4000); await mcsPlayFinish(x.purchaseToken, SKU, rk); return; } }catch(e){} }
+    let token = '';
+    try{
+      const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: SKU } }]);
+      const res = await req.show(); token = res.details && res.details.purchaseToken; try{ await res.complete('success'); }catch(e){}
+    }catch(e){
+      for(let i = 0; i < 3 && !token; i++){ try{ const svc = await mcsPlaySvc(); const L = (await svc.listPurchases()) || []; const x = L.find(p => p && p.itemId === SKU && p.purchaseToken && !owned.some(o => o.purchaseToken === p.purchaseToken)); if(x) token = x.purchaseToken; }catch(_){} if(!token) await new Promise(r => setTimeout(r, 1200)); }
+      if(!token){ if(!(e && e.name === 'AbortError')) alert('❌ Google Play did not complete the purchase.\n' + ((e && (e.name + ' — ' + (e.message || ''))) || '')); return; }
+    }
+    if(!token){ alert('❌ No purchase token — please tap again.'); return; }
+    await mcsPlayFinish(token, SKU, rk);
+  };
+  const oc = window.mcsCongrats;
+  if(typeof oc === 'function') window.mcsCongrats = function(rk, j){ const r = oc.apply(this, arguments); try{ if(j && j.once){ const m = document.getElementById('agModal'); if(m) m.querySelectorAll('div').forEach(d => { if(d.children.length <= 2 && /One-year membership/.test(d.innerHTML)) d.innerHTML = d.innerHTML.replace('One-year membership', (j.days || 90) + '-day membership'); }); } }catch(e){} return r; };
+  const of = window.memFlowRk;
+  if(typeof of === 'function') window.memFlowRk = function(rk, noPlay){
+    const r = of.apply(this, arguments);
+    try{
+      const m = document.getElementById('agModal'), b = m && m.querySelector('.mem-play'); if(!b || m.querySelector('.mem-once')) return r;
+      const x = (typeof mpList === 'function' ? mpList() : []).find(y => y.p.rk === rk) || (mpList() || [])[0]; const k = x ? x.p.rk : rk;
+      const w = document.createElement('div'); w.className = 'mem-once';
+      w.innerHTML = `<div class="mo-or">— or —</div><div class="mo-box"><b>🎟️ 90 days — one-time</b> <span class="mo-p" id="moP"></span><small>No auto-renew. Have a <b>promo code</b>? Tap below → on the Google Play screen tap the payment method → <b>Redeem code</b>.</small>
+        <button type="button" class="mo-btn" onclick="mcsPlayBuyOnce('${String(k).replace(/[^a-zA-Z0-9_]/g, '')}')">🎟️ Get 90 days on Google Play</button></div>`;
+      b.after(w); loadPrice().then(p => { const e = document.getElementById('moP'); if(e && p) e.textContent = p; });
+    }catch(e){}
+    return r;
+  };
+})();
+</script>
+<style id="mcsOnce461css">
+.mem-once .mo-or{text-align:center;color:#64748b;font-size:13px;margin:10px 0 6px}
+.mem-once .mo-box{border:2px dashed #f59e0b;background:#fffbeb;border-radius:16px;padding:10px 12px;display:grid;gap:6px;text-align:center}
+.mem-once .mo-box b{color:#92400e}.mem-once .mo-p{font-weight:900;color:#92400e}.mem-once small{color:#78350f;line-height:1.45}
+.mem-once .mo-btn{background:#f59e0b;color:#fff;border:0;border-radius:14px;padding:12px;font-weight:900;font-size:16px;width:100%;cursor:pointer}
+</style>
 </body>
 </html>
