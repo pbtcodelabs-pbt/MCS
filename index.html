@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU430";
+const APP_VERSION = "MCS1511SU431";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU431": "🆔 ایڈمن 1 کی ID MCS008 سے ہٹ کر MCS001 (ایڈمن 2 = MCS002) — سرور خود درست کرتا ہے؛ ایپ اب نیا ورژن کھلتے ہی اپنی ID سرور سے تازہ کر لیتی ہے",
   "MCS1511SU430": "🤝 ایجنٹ فارم: سب سے اوپر MCS ID کی ڈراپ ڈاؤن (نام، موبائل، ضلع خود آتے ہیں، باقی فارم اس کے بعد کھلتا ہے) • آخر میں ریفرل کوڈ فہرست سے • ID بغیر ڈیش: MCS001، MCS001M1، AG001 • DEV / CODEV کی جگہ ایڈمن 1 / ایڈمن 2 (ADMIN1 / ADMIN2) • ایڈمن 1 = AG001، ایڈمن 2 = AG002 • ایڈمن کے کاروبار بھی ادائیگی سے",
   "MCS1511SU427": "💳 رجسٹریشن / سبسکرپشن درست: ٹیسٹ خریداری قبول (سیل نہیں) + ایڈمن کا 🧪 ٹیسٹ رجسٹریشن بٹن، ریڈیم کوڈ (90 دن) اس کاروبار سے جڑ جاتا ہے، ادائیگی کے بعد منظوری کا انتظار نہیں؛ ایجنٹ کا فارم رجسٹریشن سے الگ (Earn with MCS)",
   "MCS1511SU426": "🏪 My Business card redesigned: owner photo, English + big Urdu name, type, address, business photo, status, call / WhatsApp and days left",
@@ -16870,7 +16871,8 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     try{ const c0 = window.cpAcctSync; if(typeof c0 === 'function' && !c0.__ua){ window.cpAcctSync = function(){ const r = c0.apply(this, arguments); uaSync(); return r; }; window.cpAcctSync.__ua = 1; } }catch(e){}
     /* MCS0711SA194: h2Type کلک ختم */
   }
-  async function recheck(){ const a = uaMe(); if(!a || (a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
+  async function recheck(){ const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU431'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
+    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU431'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ایڈمن کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
