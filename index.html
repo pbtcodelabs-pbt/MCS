@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU438";
+const APP_VERSION = "MCS1511SU439";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU439": "🧹 No more doubles on cards — city, area, address and type show only once (e.g. «Fateh Pur, Fateh Pur» → «Fateh Pur»)",
   "MCS1511SU438": "🆔 Your account ID is now always refreshed from the server by your mobile number (old ID like MCS008 is replaced at once)",
   "MCS1511SU437": "🔒 Shop records (name, type, owner, address) are never translated — shown exactly as written, in Urdu or English",
   "MCS1511SU436": "🇬🇧 Long messages in English too — Play package help, order number, share / invite messages, agent and admin notes",
@@ -4877,6 +4878,20 @@ async function mcsSha256(t){ const b = await crypto.subtle.digest('SHA-256', new
 /* ===== MCS0311TU125: ممبرشپ — ایک ریکارڈ، دو حصے: سادہ کارڈ ہمیشہ مفت؛ «⭐ ممبرشپ» (تفصیل، ریٹ، اوقات، تصویریں) 7 دن مفت پھر سبسکرپشن
    ممبرشپ کی پہچان = فون + کاروبار کی قسم (ایک نمبر کی کئی دکانیں، ہر ایک کی الگ ممبرشپ)؛ سرور /pclaim /pget /psave /pimg /plist /padmin ===== */
 const PF_API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
+/* MCS1511SU439 (مالک کا حکم — «فتح پور، فتح پور / کپڑوں کی دکان دو بار»): پتہ، علاقہ، شہر، قسم وغیرہ جوڑتے وقت ایک جیسی چیز ایک ہی بار —
+   خالی / «—» ہٹیں، ہوبہو دہرا ہٹے، اور جو حصہ کسی دوسرے حصے کے اندر پہلے سے لکھا ہو وہ بھی (مثلاً پتہ «مین بازار فتح پور» + شہر «فتح پور» → ایک بار) */
+function mcsUniq(arr){
+  const N = v => String(v == null ? '' : v).replace(/[\s،,.\-–—•|]+/g, ' ').replace(/[ىي]/g, 'ی').replace(/[كک]/g, 'ک').replace(/ۃ|ة/g, 'ہ').trim().toLowerCase();
+  const L = (arr || []).map(v => [v, N(v)]).filter(x => x[1] && x[1] !== '—' && x[1] !== '-');
+  const out = [];
+  L.forEach((x, i) => {
+    if(out.some(o => o[1] === x[1])) return;
+    if(L.some((y, j) => j !== i && y[1] !== x[1] && y[1].length > x[1].length && (' ' + y[1] + ' ').includes(' ' + x[1] + ' '))) return;
+    out.push(x);
+  });
+  return out.map(x => x[0]);
+}
+
 const MP_FREE_DAYS = 7;   /* MCS0711SA202 (مالک کا حکم): مفت ٹرائل صرف 7 دن (پہلے 15) */
 const MP_TRIAL_MAX = 17;  /* پرانے 15 دن والے ٹرائل بھی ٹرائل ہی پہچانے جائیں */
 /* ٹرائل کے دن سبسکرپشن میں جمع نہیں ہوتے: ٹرائل ہو تو ایک سال آج سے؛ سالانہ کی تجدید پر باقی دن جمع */
@@ -4987,7 +5002,7 @@ function pfHtml(c){
   const num = normalizePkNumber(r.whatsapp||'');
   const phones = [num, more.wa2].concat(d.phones||[]).filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i);
   const prow = ph=>{ const dd = String(ph).replace(/[^0-9]/g,''); return `<div class="pf-row"><span>${escapeHtml(ph)}</span><a class="c" href="tel:${dd}">📞 کال</a><a href="https://wa.me/92${dd.replace(/^0/,'')}" target="_blank" rel="noopener">💬 واٹس ایپ</a></div>`; };
-  const loc = [d.addr || r.address, r.area, r.city].filter(Boolean).join('، ');
+  const loc = mcsUniq(mcsUniq([d.addr || r.address, r.area, r.city])).filter(Boolean).join('، ');
   const mapUrl = mcsMapUrl(more, d, '', '');   /* MCS1511SU434 */
   const left = p.until && !p.pend ? Math.ceil((p.until - Date.now())/864e5) : null;
   const st = c.stats;
@@ -5859,7 +5874,7 @@ function mpRender(){
     /* MCS0811SU243 (ہیلپ ڈیسک #131، محمد عمران کا ڈیزائن): افقی بینر — دائیں تصویر + Active، درمیان نام / قسم / پتہ / مدت، بائیں واٹس ایپ + کال */
     /* MCS1511SU426 (ہیلپ ڈیسک #236، محمد عمران کا ڈیزائن، مالک کی منظوری): بینر — بائیں گول مالک کی DP، درمیان انگلش نام (موٹا) + اردو نام (بہت بڑا، کشیدہ) + قسم + پتہ،
        دائیں چوکور کاروبار کی تصویر + Active / Expired، نیچے کال / واٹس ایپ (بغیر ڈبے) اور «N Days Left | Expiry Date» درمیان میں */
-    const _wa = String(r.whatsapp||'').replace(/\D/g,''), _addr = [r.address, r.area, r.city, r.district].filter(Boolean).filter((x, k, A) => A.indexOf(x) === k).join('، ');
+    const _wa = String(r.whatsapp||'').replace(/\D/g,''), _addr = mcsUniq([r.address, r.area, r.city, r.district]).filter(Boolean).filter((x, k, A) => A.indexOf(x) === k).join('، ');
     const _type = [r.type, cm.ur].filter(Boolean)[0] || '';
     const _dp = rec.more && rec.more.selfie ? `<img src="${escapeAttr(rec.more.selfie)}" alt="">` : `<span class="b236-ini">${escapeHtml(((r.nameEn || r.nameUr || r.name || '?').trim()[0] || '?').toUpperCase())}</span>`;
     return `<div class="mpx-card b236" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}')">
@@ -8365,7 +8380,7 @@ async function buildShareCanvas(kind, item, opts){
   const m = kind==='doctor' ? {emoji:'🩺', ur:'ڈاکٹر'} : (CATEGORY_META[rec.category]||{});
   const own = kind==='doctor' ? {owner:'', rest:rec.intro||''} : splitOwnerIntro(rec.intro);
   const sub = kind==='doctor' ? [rec.specialty, rec.hospital].filter(Boolean).join(' • ') || (rec.dept||'') : (isBlankVal(rec.type) ? '' : rec.type);
-  const loc = [rec.address, rec.area, rec.city].filter(Boolean).join('، ');
+  const loc = mcsUniq([rec.address, rec.area, rec.city]).filter(Boolean).join('، ');
   const num = normalizePkNumber(rec.whatsapp||'') || '—';
   const congrats = '🎉 مبارک ہو! ' + (kind==='doctor' ? 'یہ ریکارڈ' : 'یہ دکان') + ' اب My City Shines ایپ پر لائیو ہے۔ آپ بھی اپنے شہر کے اس آن لائن ڈیجیٹل سرکل کا حصہ بنیں اور ایپ ڈاؤن لوڈ کریں!';
   /* پہلے پیمائش، پھر اونچائی */
@@ -9096,7 +9111,7 @@ function docCardHtml(d, mode){
       </div>
       ${d.intro ? `<div class="doc-intro">${introIcon(d.intro)} ${escapeHtml(d.intro)}</div>` : ``}
       <div class="doc-foot">
-        ${([d.address,d.area,d.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[d.address,d.area,d.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
+        ${(mcsUniq([d.address,d.area,d.city]).filter(Boolean).length) ? `<div class="doc-address">📍 ${mcsUniq([d.address,d.area,d.city]).filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
         <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('doctor',d))) ? ' on' : ''}">${shortRecordId('doctor',d) ? escapeHtml(shortRecordId('doctor',d).toUpperCase()) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('doctor',d))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('doctor','${escapeAttr(d.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
       </div>
       ${cardStageBtn('doctor', d)}
@@ -10608,7 +10623,7 @@ function svcCardHtml(s, meta){
       </div>
       ${(splitOwnerIntro(s.intro).rest && !svcHideIntro('service', s.id)) ? `<div class="doc-intro">💬 ${escapeHtml(splitOwnerIntro(s.intro).rest)}</div>` : ``}
       <div class="doc-foot">
-        ${([s.address,s.area,s.city].filter(Boolean).length) ? `<div class="doc-address">📍 ${[s.address,s.area,s.city].filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
+        ${(mcsUniq([s.address,s.area,s.city]).filter(Boolean).length) ? `<div class="doc-address">📍 ${mcsUniq([s.address,s.area,s.city]).filter(Boolean).map(escapeHtml).join('، ')}</div>` : `<div class="doc-address"></div>`}
         <div class="doc-recid${(isAdminSignedIn || /^MCS-?\d/.test(shortRecordId('service',s))) ? ' on' : ''}">${shortRecordId('service',s) ? escapeHtml(shortRecordId('service',s).toUpperCase()) : ''}${(isAdminSignedIn && !/^MCS-?\d/.test(shortRecordId('service',s))) ? ` <button class="sid-rep" onclick="event.stopPropagation();sidReplace('service','${escapeAttr(s.id)}')">🔁 MCS ID دیں</button>` : ''}</div>
       </div>
       ${cardStageBtn('service', s)}
@@ -10930,7 +10945,7 @@ function unOptsHtml(q){
 function unSumHtml(id){
   const r = (store.services || []).find(x => x.id === id); if(!r) return '';
   const E = escapeHtml, on = splitOwnerIntro(r.intro), ph = String(r.whatsapp || r.phone || '').replace(/\D/g, '').slice(-10);
-  const line = [on.owner ? '👤 ' + on.owner : '', ph ? '📞 0' + ph : '', r.type ? '🏷️ ' + r.type : '', [r.address, r.area, r.city].filter(Boolean).length ? '📍 ' + [r.address, r.area, r.city].filter(Boolean).join('، ') : '', on.rest ? '📝 ' + on.rest : ''].filter(Boolean);
+  const line = [on.owner ? '👤 ' + on.owner : '', ph ? '📞 0' + ph : '', r.type ? '🏷️ ' + r.type : '', mcsUniq([r.address, r.area, r.city]).filter(Boolean).length ? '📍 ' + mcsUniq([r.address, r.area, r.city]).filter(Boolean).join('، ') : '', on.rest ? '📝 ' + on.rest : ''].filter(Boolean);
   return `<div class="un-sum"><b>${E(r.nameUr || r.name || '')}</b>${r.nameEn ? `<div dir="ltr" style="font-size:13px;color:#64748b">${E(r.nameEn)}</div>` : ''}${line.map(t => `<div>${E(t)}</div>`).join('')}</div>`;
 }
 function unSelHtml(){
@@ -15833,7 +15848,7 @@ function adFromRecord(kind, id){
   set('adLine', rest ? (rest.length > 70 ? rest.slice(0, 68) + '…' : rest) : [m.ur, sub].filter(Boolean).join(' • '));
   set('adDesc', [rest, sub && !rest.includes(sub) ? sub : ''].filter(Boolean).join('\n'));
   set('adPhone', num); set('adContacts', num ? (own.owner ? own.owner + ': ' : '') + '‎' + num : '');
-  set('adAddr', [rec.address, rec.area, rec.city].filter(Boolean).join('، '));
+  set('adAddr', mcsUniq([rec.address, rec.area, rec.city]).filter(Boolean).join('، '));
   set('adKind', m.ur || ''); set('adRec', adRecKey(kind, id)); set('adOwner', own.owner || ''); adRecIc = m.emoji || (kind==='doctor' ? '🩺' : '');
   adStDraft = adStDefault(); adStRender();
   document.getElementById('adSaveBtn').textContent = '✅ اشتہار لگائیں';
@@ -19836,7 +19851,7 @@ html body,html body *:not(svg):not(path):not(text){font-family:MCSEn,'Jameel Noo
     var cm = {}; try{ cm = ubCatMeta(isDoc ? 'doctor' : rec.category) || {}; }catch(e){}
     var own = isDoc ? {owner: '', rest: rec.intro || ''} : splitOwnerIntro(rec.intro);
     var name = rec.nameUr || rec.name || '', num = pk(rec.whatsapp), wa2 = more.wa2 || '';
-    var loc = [d.addr || rec.address, rec.area, rec.city].filter(function(v){ return !blank(v); }).join('، ');
+    var loc = mcsUniq(mcsUniq([d.addr || rec.address, rec.area, rec.city])).filter(function(v){ return !blank(v); }).join('، ');
     var about = d.about || [own.rest, more.services].filter(Boolean).join(' ');
     var items = (d.items || []).slice(0, 14), sub = isDoc ? [rec.specialty, rec.hospital].filter(Boolean).join(' • ') : (blank(rec.type) ? '' : rec.type);
     var hours = [d.hours, d.off ? 'چھٹی: ' + d.off : ''].filter(Boolean).join(' • ');
@@ -20569,7 +20584,7 @@ function fpMiniOpen(kind, rec){
   try{ own = kind === 'doctor' ? '' : (splitOwnerIntro(rec.intro).owner || ''); }catch(e){}
   var shop = rec.nameUr || rec.name || '', nm = kind === 'doctor' ? (rec.nameUr || rec.name || '') : own;
   var ph = String(rec.whatsapp || rec.phone || '');
-  var ad = [rec.address, rec.area, rec.city].filter(function(v){ return v && !(typeof isBlankVal === 'function' && isBlankVal(v)); }).join('، ');
+  var ad = mcsUniq([rec.address, rec.area, rec.city]).filter(function(v){ return v && !(typeof isBlankVal === 'function' && isBlankVal(v)); }).join('، ');
   var row = function(ic, k, v){ return '<div class="fpm-r"><span>' + ic + ' ' + k + '</span><b dir="auto">' + E(v || '—') + '</b></div>'; };
   var can = ''; try{ can = cardStageBtn(kind, rec) || ''; }catch(e){}
   var eid = escapeAttr(rec.id);
@@ -21469,7 +21484,7 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
   window.mcsRegMessage = function(rec){
     var u = null; try{ u = (uaMe() || {}).user || null; }catch(e){}
     var sid = mcsSidFmt((rec.more && rec.more.sid) || (u && (u.sid || u.id)) || '');
-    var lines = ['MCS-REG', 'ID: ' + sid, 'Name: ' + ((u && u.name) || rec.owner || rec.nameUr || ''), 'Mobile: ' + (rec.whatsapp || (u && u.mobile) || ''), 'Shop: ' + (rec.nameUr || rec.nameEn || ''), 'Address: ' + [rec.address, rec.area, rec.city].filter(Boolean).join('، ')];
+    var lines = ['MCS-REG', 'ID: ' + sid, 'Name: ' + ((u && u.name) || rec.owner || rec.nameUr || ''), 'Mobile: ' + (rec.whatsapp || (u && u.mobile) || ''), 'Shop: ' + (rec.nameUr || rec.nameEn || ''), 'Address: ' + mcsUniq([rec.address, rec.area, rec.city]).filter(Boolean).join('، ')];
     return lines.join('\n') + '\n\nMy City Shines — رجسٹریشن مکمل کرنے کے لیے یہ پورا پیغام ایپ میں «Paste basic information» میں پیسٹ کریں۔';
   };
   window.mcsSendToAgent = function(id){
@@ -23783,7 +23798,7 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
     const until = (info && info.until > Date.now() ? info.until : a.until) || 0, since = a.since || (info && info.since) || 0;
     const left = until ? Math.max(1, Math.ceil((until - Date.now()) / 864e5)) : 0;
     const prods = doc ? [] : (Array.isArray(m.prods) && m.prods.length ? m.prods : (m.services ? String(m.services).split(/[،,]/).map(x => x.trim()).filter(Boolean) : []));
-    const addr = [s.address, s.area, s.city].filter(Boolean).map(E).join('، ');
+    const addr = mcsUniq([s.address, s.area, s.city]).filter(Boolean).map(E).join('، ');
     const rid = shortRecordId(kind, s) || '';
     const mine = ((isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice() && !window.__noAdmBtn)) || pfOwnsStrict(s));
     const nameUr = s.nameUr || s.name || '';
@@ -24119,5 +24134,49 @@ html body .doc-card.rc .rc-ft .rc-id{font-weight:800}
 /* MCS1511SU434 (مالک کا حکم — «ایپ کا ہر کام انگلش، چھوٹی چھوٹی اردو نہیں»): فارم کے لیبل کے نیچے کی چھوٹی اردو بند */
 html body .ur-cap{display:none !important}
 </style>
+<script id="mcsDedupe439">
+/* MCS1511SU439 (مالک کا حکم — فول پروف، ہر کارڈ / صفحے پر): ریکارڈ کی ہر لائن میں «،» یا «•» سے جڑے حصے ایک ہی بار (mcsUniq)،
+   اور ایک ہی کارڈ میں قسم / ذیلی قسم / مصنوعات کی وہ لائن چھپ جاتی ہے جو کسی اور لائن میں ہوبہو پہلے سے لکھی ہو۔ محفوظ ڈیٹا نہیں بدلتا — صرف دکھانا */
+(function(){
+  const LINE = '.rc-ad,.rc-ty,.rc-pr,.rc-ow,.doc-address,.doc-sub,.doc-owner,.b236-addr,.b236-type,.hl-tx small,.pf1-sub,.pf1-cap b,.ub-sub';
+  const CARD = '.doc-card,.mpx-card,.hl-cap,.ub-row,.pf1-hero,.pf1-grid';
+  const N = v => String(v || '').replace(/^[^\u0600-\u06FFA-Za-z0-9]+/, '').replace(/[\s،,.\-–—•|]+/g, ' ').trim().toLowerCase();
+  function fixLine(el){
+    if(el.dataset.dd439 === el.textContent) return;
+    for(const tn of Array.from(el.childNodes)){
+      if(tn.nodeType !== 3) continue; const v = tn.nodeValue; const sep = v.includes(' • ') ? ' • ' : (v.includes('، ') ? '، ' : (v.includes(', ') ? ', ' : ''));
+      if(!sep) continue; const lead = (v.match(/^\s*[^\u0600-\u06FFA-Za-z0-9]*/) || [''])[0];
+      const parts = v.slice(lead.length).split(sep), u = mcsUniq(parts);
+      if(u.length < parts.length) tn.nodeValue = lead + u.join(sep);
+    }
+    el.dataset.dd439 = el.textContent;
+  }
+  function fixCard(c){
+    const seen = []; c.querySelectorAll('.rc-ty,.rc-pr,.doc-sub,.b236-type,.rc-ow').forEach(el => {
+      const t = N(el.textContent); if(!t) return;
+      if(seen.some(s => s === t)){ el.style.display = 'none'; return; } seen.push(t);
+    });
+  }
+  let tm = 0;
+  function run(){ tm = 0; try{ if(typeof mcsUniq !== 'function') return; document.querySelectorAll(LINE).forEach(fixLine); document.querySelectorAll(CARD).forEach(fixCard); }catch(e){} }
+  const kick = () => { if(!tm) tm = setTimeout(run, 120); };
+  try{ new MutationObserver(kick).observe(document.documentElement, { childList: true, subtree: true }); }catch(e){}
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+})();
+</script>
+<script id="mcsLocClean439">
+/* MCS1511SU439: محفوظ ہوتے وقت بھی — علاقہ = شہر ہو تو علاقہ خالی، پتہ = شہر / علاقہ ہو تو پتہ خالی (اسی ایک جگہ کا نام دو بار نہ جائے) */
+(function(){
+  const N = v => String(v || '').replace(/[\s،,.\-–—]+/g, ' ').trim().toLowerCase();
+  window.mcsCleanLoc = function(r){ try{ if(!r) return r; const c = N(r.city), a = N(r.area), d = N(r.address);
+    if(a && c && a === c) r.area = ''; const a2 = N(r.area);
+    if(d && ((c && d === c) || (a2 && d === a2))) r.address = '';
+  }catch(e){} return r; };
+  ['syncServiceCreateToFirebase', 'syncServiceUpdateToFirebase', 'syncDoctorCreateToFirebase', 'syncDoctorUpdateToFirebase'].forEach(n => {
+    const o = window[n]; if(typeof o !== 'function' || o.__lc) return;
+    const w = function(rec){ try{ mcsCleanLoc(rec); }catch(e){} return o.apply(this, arguments); }; w.__lc = 1; window[n] = w;
+  });
+})();
+</script>
 </body>
 </html>
