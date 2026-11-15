@@ -4425,11 +4425,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU450";
+const APP_VERSION = "MCS1511SU451";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1511SU450": "🔐 Login fixed: PIN is now required (also with Google) — mobile + PIN always works; an account without a PIN gets the PIN screen right after Google login • a phone that already has an account shows «Welcome back — Log In», not the sign-up form • 🔎 search MCS001 (with or without space) finds the card • membership number per business: first business = M1 • Play payment of an old card moves to your current card • no «send again» box on an approved business • DP shown once • price PKR 1,000 / year • English fixed",
+  "MCS1511SU451": "🪪 Welcome back screen and the login page now show your MCS ID with your name and mobile number",
+    "MCS1511SU450": "🔐 Login fixed: PIN is now required (also with Google) — mobile + PIN always works; an account without a PIN gets the PIN screen right after Google login • a phone that already has an account shows «Welcome back — Log In», not the sign-up form • 🔎 search MCS001 (with or without space) finds the card • membership number per business: first business = M1 • Play payment of an old card moves to your current card • no «send again» box on an approved business • DP shown once • price PKR 1,000 / year • English fixed",
     "MCS1511SU447": "🧭 Registration steps: one strip only (duplicate boxes removed) • a finished step turns green with a big ✓ and opens its done-page, never the old form again • steps open in order (locked until the one before is done) • Create Account page never reopens once the account exists",
   "MCS1511SU446": "🧹 Create Account: if the server says the number already has an account, the admin gets the exact account found (name / ID / Gmail) with one tap to clear it and create the new one — and if nothing is found the screen says so",
   "MCS1511SU445": "🔐 Continue with Google on Login and Create Account (name + Gmail come automatically; add mobile + district; PIN optional with Google) • 🧹 \"account already exists\" on a number that has no account is fixed • 🗑️ Delete account / Remove ID also clears the old MCS ID (e.g. MCS008) and its card from this phone • 🔎 search MCS001M1 style IDs",
@@ -16717,7 +16718,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function busy(b){ document.querySelectorAll('#uaOv .uaBtn').forEach(x => x.disabled = !!b); }
   function done(r, msg){
     const next = uaPending; uaPending = null;
-    ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); ls.set('mcsGuest', null); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){}
+    ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); ls.set('mcsGuest', null); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){}
     ls.set('mcsAuthTmp', null); ls.set('mcsLoggedOut', null); try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}   /* MCS1411SA422: اب لاگ اِن ہمیشہ قائم، صرف خود لاگ آؤٹ سے جائے گا */
     uaHide(); try{ showToast(msg || ('✅ خوش آمدید، ' + (r.user && r.user.name || ''))); }catch(e){}
     uaSync();
@@ -16903,7 +16904,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
   window.uaPkView = function(u, fresh){
     u = u || ((uaMe() || {}).user) || {}; if(!(u.sid || u.id)) return;
     const sid = mcsSidFmt(u.sid || u.id);
-    try{ ls.set('mcsMyPk', JSON.stringify({ sid: u.sid || u.id, pk: u.pk || '', name: u.name, at: Date.now() })); }catch(e){}
+    try{ ls.set('mcsMyPk', JSON.stringify({ sid: u.sid || u.id, pk: u.pk || '', name: u.name, mobile: u.mobile || '', at: Date.now() })); }catch(e){}
     /* MCS1211TH344 (مالک کا حکم): 4 ہندسوں کا کوڈ ختم — صرف اکاؤنٹ ID (MCS001 …، بغیر ڈیش / وقفہ)؛ ایجنٹ اپنے فون کی فہرست سے یہی ID چنے گا */
     const msg = 'My City Shines — رجسٹریشن\n👤 ' + (u.name || '') + '\n🆔 Account ID: ' + sid + '\n\nبرائے مہربانی میری رجسٹریشن مکمل کر دیں۔';
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>✅</i><h2 style="font-size:22px">${fresh ? 'Account Created' : 'My Account ID'}</h2></div><div class="uaSub">${fresh ? 'آپ کا اکاؤنٹ بن گیا — ' : ''}${esc(u.name || '')}</div>
@@ -16914,7 +16915,9 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     window._uaPkMsg = msg;
   };
   window.uaPkCopy = function(){ const t = window._uaPkMsg || ''; try{ navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){ prompt('کاپی کریں', t); } };
-  function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.sid) return ''; return `<div class="uaPkTiny" dir="ltr"><span onclick="uaPkCopyMini()">🔒 ${esc(mcsSidFmt(o.sid))}</span><button type="button" onclick="uaPkCopyMini()" title="Copy">⧉</button></div>`; }catch(e){ return ''; } }   /* MCS1211TH341: لاگ اِن صفحے پر چھوٹی سی ID+کوڈ نیچے بائیں، ساتھ باریک کاپی بٹن */
+  try{ const o = JSON.parse(localStorage.getItem('mcsMyPk') || 'null'), au = JSON.parse(localStorage.getItem('mcsAuth') || 'null'); if(o && au && au.user && (!o.mobile || !o.name)){ o.mobile = o.mobile || au.user.mobile || ''; o.name = o.name || au.user.name || ''; localStorage.setItem('mcsMyPk', JSON.stringify(o)); } }catch(e){}
+window.mcsMobFmt = function(m){ const d = String(m || '').replace(/\D/g, '').replace(/^92(?=3\d{9}$)/, '0'); return /^03\d{9}$/.test(d) ? d.slice(0, 4) + '-' + d.slice(4) : String(m || ''); };   /* MCS1511SU451 */
+function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); if(!o || !o.sid) return ''; return `<div class="uaPkTiny" dir="ltr"><span onclick="uaPkCopyMini()">🔒 ${esc(mcsSidFmt(o.sid))}${o.name ? ' · <b data-noen="1">' + esc(o.name) + '</b>' : ''}${o.mobile ? ' · ' + esc(mcsMobFmt(o.mobile)) : ''}</span><button type="button" onclick="uaPkCopyMini()" title="Copy">⧉</button></div>`; }catch(e){ return ''; } }   /* MCS1211TH341: لاگ اِن صفحے پر چھوٹی سی ID+کوڈ نیچے بائیں، ساتھ باریک کاپی بٹن */
   window.uaPkCopyMini = function(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); const t = 'My City Shines — Account ID: ' + mcsSidFmt(o.sid); navigator.clipboard.writeText(t).then(() => showToast('📋 کاپی ہو گیا')); }catch(e){} };
   window.uaAutoCard = function(u){
     if(!u || !u.mobile || typeof store === 'undefined') return;
@@ -17043,7 +17046,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
   }
   window.mcsSidFix = sidFix;
   async function recheck(){ setTimeout(sidFix, 2500); const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU433'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
-    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU433'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
+    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU433'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ایڈمن کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
@@ -23522,6 +23525,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     if(S.step === 1 && !S.newAcct && !me()){ let pk = null; try{ pk = JSON.parse(localStorage.getItem('mcsMyPk') || 'null'); }catch(e){}   /* MCS1511SU450: اس فون پر اکاؤنٹ بن چکا — نیا فارم نہیں، صرف لاگ اِن */
       if(pk && pk.sid) return frame(`<div class="wzCard" style="text-align:center"><div class="wzHd"><i>🔐</i><b>Welcome back</b><span class="u">خوش آمدید — آپ کا اکاؤنٹ بن چکا ہے</span></div>
         <div style="font:900 28px Arial;letter-spacing:1px;margin:10px 0;color:#0b3d91">${esc(mcsSidFmt(pk.sid))}</div>
+        ${pk.name ? `<div data-noen="1" style="font-size:20px;font-weight:800;color:#0f172a">${esc(pk.name)}</div>` : ''}${pk.mobile ? `<div dir="ltr" style="font:700 18px Arial;color:#334155;margin-bottom:8px">📱 ${esc(mcsMobFmt(pk.mobile))}</div>` : ''}
         <button class="wzBtn bG" onclick="mcsWizClose();try{uaLogin()}catch(e){}">Log In — mobile + PIN or Google<small class="u">لاگ اِن کریں</small></button>
         <div style="margin-top:12px;font-size:13px"><a href="#" onclick="event.preventDefault();window.wzNewAcct()" style="color:#64748b">Not your account? Create a new one</a></div></div>`); }
     if(S.step === 2 && doneOf(2) && !S.edit2) return ok2(myCard());
