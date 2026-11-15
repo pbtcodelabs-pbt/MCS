@@ -4419,10 +4419,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU441";
+const APP_VERSION = "MCS1511SU442";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU442": "🪪 All registered cards the same size — MCS badge, round selfie, expiry and ID on the left; English + Urdu name, type, address and all buttons in the middle; shop photo on the right • Registered / Agents buttons at the top",
   "MCS1511SU441": "🪪 Registered businesses look the same everywhere (search and lists too) • 🟢 Live / days left in English • agent form labels not doubled",
   "MCS1511SU440": "🎉 Google Play purchase = business live at once + congratulations (how many people can see you) • 🔓 owner / admin edit without PIN, saved boxes locked until ✏️ Edit • 🤝 Earn with MCS: MCS ID fills business, CNIC and expiry • 🧭 wizard: 4 steps + green status • agent code box removed from login",
   "MCS1511SU439": "🧹 No more doubles on cards — city, area, address and type show only once (e.g. «Fateh Pur, Fateh Pur» → «Fateh Pur»)",
@@ -6767,9 +6768,10 @@ function catColsInit(){
     if(prev && (prev.classList.contains('cols-pick') || prev.classList.contains('cat-style-pick') || prev.classList.contains('adm-catbar') || prev.classList.contains('cat-flt-res'))) return;
     const grp = g.closest('#screen-business-categories') ? 'business' : 'professional';
     /* MCS1810SU013: بکھرے فلٹر ایک چھوٹی پٹی میں، اوپر کیٹگری تلاش */
-    g.insertAdjacentHTML('beforebegin', catToolsHtml() +
+    /* MCS1511SU442 (مالک کا حکم): «Registered business / MCS Agents» سب سے اوپر — تلاش کے نتیجے انہیں نیچے نہ دھکیلیں */
+    g.insertAdjacentHTML('beforebegin', `<div class="flt-bar" data-for="cat-${grp}"><button type="button" data-f="reg" onclick="catTabSet('${grp}','reg')">✅ ${grp==='business' ? 'رجسٹرڈ بزنس' : 'رجسٹرڈ پروفیشن'}</button><button type="button" data-f="agent" onclick="catTabSet('${grp}','agent')">🤝 ایم سی ایس ایجنٹس</button></div>` +
+      catToolsHtml() +
       `<div class="adm-only adm-catbar"><button type="button" onclick="quickAddCategory('${grp}')">➕ نئی کیٹگری یہاں بنائیں</button></div>` +
-      `<div class="flt-bar" data-for="cat-${grp}"><button type="button" data-f="reg" onclick="catTabSet('${grp}','reg')">✅ ${grp==='business' ? 'رجسٹرڈ بزنس' : 'رجسٹرڈ پروفیشن'}</button><button type="button" data-f="agent" onclick="catTabSet('${grp}','agent')">🤝 ایم سی ایس ایجنٹس</button></div>` +
       `<div class="cat-flt-res" id="catFltRes_${grp}" style="display:none"></div>`);
   });
   catStyleApply();
@@ -23873,25 +23875,22 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
     const live = `<span class="rc-live${trial ? ' tr' : ''}">${trial ? '🟠 ٹرائل' : '🟢 لائیو'}${until ? (trial ? ` • <b>${left}</b> دن باقی` : ` • <bdi dir="ltr">${fmt(until)}</bdi> تک • <b>${left}</b> دن باقی`) : ''}</span>`;
     return `<div class="doc-card rc pf-gold" data-rk="${escapeAttr(key)}"${s.id ? ` onclick="pfCardTap(event,'${kind}','${sid}')"` : ''}>${dupBadge(kind, s)}${ewRib(kind, s)}
       <div class="rc-grid">
-        <div class="rc-l">${agBadgeHtml(kind, s)}<span class="rc-mcs">MCS</span>
+        <div class="rc-l"><span class="rc-mcs">MCS</span>
           <div class="rc-dp">${m.selfie ? `<img src="${escapeAttr(m.selfie)}" alt="">` : emoji}</div>
           ${until ? `<div class="rc-exp${trial ? ' tr' : ''}"><small>${trial ? 'Trial' : 'Expiry'}</small><b dir="ltr">${fmt(until)}</b><i>${left} days left</i></div>` : ''}
+          ${rid ? `<span class="rc-id">${E(rid.toUpperCase())}</span>` : ''}
         </div>
         <div class="rc-m">
-          <div class="rc-name">${E(nameUr)}${newBadge(s)}</div>${!mcsNameDup(s.nameEn, nameUr) ? `<div class="rc-en">${E(s.nameEn)}</div>` : ''}
-          ${(ow.owner && !mcsOwnDup(ow.owner, nameUr, s.nameEn)) ? `<div class="rc-ow">👤 ${E(ow.owner)}</div>` : ''}
-          ${typ ? `<div class="rc-ty">${E(typ)}</div>` : ''}
-          ${subL ? `<div class="rc-ty">${subL}</div>` : ''}
-          ${prods.length ? `<div class="rc-pr">🛒 ${prods.slice(0, 6).map(E).join(' • ')}</div>` : ''}
-          ${intro ? `<div class="rc-pr">${E(intro)}</div>` : ''}
+          ${s.nameEn && !mcsNameDup(s.nameEn, nameUr) ? `<div class="rc-en">${E(s.nameEn)}</div>` : ''}
+          <div class="rc-name">${E(nameUr)}${newBadge(s)}</div>
+          ${typ ? `<div class="rc-ty">${E(typ)}</div>` : (subL ? `<div class="rc-ty">${subL}</div>` : '')}
           ${addr ? `<div class="rc-ad">📍 ${addr}</div>` : ''}
+          <div class="rc-btns">${digits ? `<a class="c" href="tel:${digits}" aria-label="Call">${ICO_CALL}</a><a class="w" href="https://wa.me/${intl}" target="_blank" aria-label="WhatsApp">${ICO_WA}</a>` : ''}${favBtnHtml(kind, s.id)}<button class="a-share" onclick="event.stopPropagation();shareProfileCardById('${kind}','${sid}')" aria-label="Share">📤</button>${adm ? `<button type="button" class="ed" onclick="event.stopPropagation();cardEdit('${kind}','${sid}')" aria-label="Edit">✏️</button><button type="button" class="dl" onclick="event.stopPropagation();cardDel('${kind}','${sid}')" aria-label="Delete">🗑️</button>` : (mine ? `<button type="button" class="ed" onclick="event.stopPropagation();cardEdit('${kind}','${sid}')" aria-label="Edit">✏️</button>` : `<button class="a-reqadmin" onclick="event.stopPropagation();openReportChoice('${kind}','${sid}')" aria-label="Edit request">📩</button>`)}</div>
         </div>
         <div class="rc-r">
           <div class="rc-ph"${thumb ? ` style="background-image:url(${escapeAttr(thumb)})"` : ''}>${thumb ? '' : emoji}</div>
         </div>
       </div>
-      ${admBar}
-      <div class="rc-ft">${digits ? `<span class="rc-acts"><a class="c" href="tel:${digits}" aria-label="Call">${ICO_CALL}</a><a class="w" href="https://wa.me/${intl}" target="_blank" aria-label="WhatsApp">${ICO_WA}</a></span>` : ''}<span class="rc-ic">${favBtnHtml(kind, s.id)}<button class="a-share" onclick="event.stopPropagation();shareProfileCardById('${kind}','${sid}')" aria-label="Share">📤</button>${act}</span><span class="rc-id">${E(rid.toUpperCase())}</span></div>
     </div>`;
   }
   window.svcCardHtml = function(s, meta){
@@ -24273,5 +24272,38 @@ html body .ur-cap{display:none !important}
   };
 })();
 </script>
+<style id="mcsCard442">
+/* MCS1511SU442 (مالک کا حکم — «سب کارڈ برابر، کچھ نہ کٹے»): رجسٹرڈ کارڈ پکی اونچائی، پوری چوڑائی؛ بائیں: سنہری MCS، بیچ میں گول سیلفی، میعاد، ID؛
+   درمیان: انگلش نام، اردو کشیدہ نام، قسم، پتہ (ایک لائن)، سب بٹن؛ دائیں: دکان کی تصویر۔ «App contacts» لائن نیچے پکی جگہ پر */
+html body .doc-card.rc{width:100% !important;max-width:560px !important;height:236px !important;min-height:236px !important;max-height:236px !important;box-sizing:border-box !important;padding:8px 8px 30px !important;position:relative !important;overflow:hidden !important;margin-inline:auto !important}
+html body .doc-card.rc .rc-grid{display:grid !important;grid-template-columns:86px minmax(0,1fr) 92px !important;gap:8px !important;height:196px !important;align-items:stretch !important;direction:ltr !important}
+html body .doc-card.rc .rc-l{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:flex-start !important;gap:3px !important;min-width:0}
+html body .doc-card.rc .rc-l .agb,html body .doc-card.rc .rc-l [class*="ag-badge"]{display:none !important}
+html body .doc-card.rc .rc-mcs{display:inline-block !important;font:900 11px/1 'Segoe UI',Selawik,Arial,sans-serif;letter-spacing:1px;color:#0f1f45;background:linear-gradient(135deg,#fde68a,#f59e0b);border:1.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.25);border-radius:999px;padding:3px 10px}
+html body .doc-card.rc .rc-dp{width:72px !important;height:72px !important;min-height:72px !important;border-radius:50% !important;overflow:hidden !important;display:flex !important;align-items:center;justify-content:center;font-size:30px;margin:0 auto !important}
+html body .doc-card.rc .rc-dp img{width:100% !important;height:100% !important;object-fit:cover !important;border-radius:50%}
+html body .doc-card.rc .rc-exp{display:flex !important;flex-direction:column;align-items:center;line-height:1.15;text-align:center;font-family:'Segoe UI',Selawik,Arial,sans-serif !important}
+html body .doc-card.rc .rc-exp small{font-size:9px;color:#64748b;font-weight:800;text-transform:uppercase}
+html body .doc-card.rc .rc-exp b{font-size:11px;color:#0f1f45;font-weight:800;white-space:nowrap}
+html body .doc-card.rc .rc-exp i{font-style:normal;font-size:10px;font-weight:800;color:#15803d;background:#dcfce7;border-radius:999px;padding:1px 6px;margin-top:2px;white-space:nowrap}
+html body .doc-card.rc .rc-exp.tr i{color:#c2410c;background:#ffedd5}
+html body .doc-card.rc .rc-l .rc-id{font:800 10px/1.2 'Segoe UI',Selawik,Arial,sans-serif !important;color:#0f1f45;white-space:nowrap;margin-top:1px}
+html body .doc-card.rc .rc-m{display:flex !important;flex-direction:column !important;gap:2px !important;min-width:0 !important;overflow:hidden !important;text-align:center !important}
+html body .doc-card.rc .rc-en{font:800 13.5px/1.25 'Segoe UI',Selawik,Arial,sans-serif !important;color:#334155 !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr}
+html body .doc-card.rc .rc-name{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif !important;font-size:19px !important;line-height:1.75 !important;color:#0f1f45 !important;display:-webkit-box !important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden !important;direction:rtl;max-height:67px}
+html body .doc-card.rc .rc-ty{font-size:14px !important;line-height:1.7 !important;color:#9a3412 !important;font-weight:700;display:-webkit-box !important;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden !important;direction:rtl}
+html body .doc-card.rc .rc-ad{font-size:12.5px !important;line-height:1.7 !important;color:#475569 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;direction:rtl}
+html body .doc-card.rc .rc-ow,html body .doc-card.rc .rc-pr{display:none !important}
+html body .doc-card.rc .rc-btns{margin-top:auto !important;display:flex !important;gap:4px !important;justify-content:center !important;flex-wrap:wrap !important;direction:ltr;row-gap:4px}
+html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:30px !important;height:30px !important;min-width:30px !important;border-radius:50% !important;padding:0 !important;display:flex !important;align-items:center;justify-content:center;font-size:14px !important;border:0;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+html body .doc-card.rc .rc-btns>a.c{background:#2563eb !important;color:#fff} html body .doc-card.rc .rc-btns>a.w{background:#16a34a !important;color:#fff}
+html body .doc-card.rc .rc-btns>a svg{width:16px;height:16px}
+html body .doc-card.rc .rc-btns .dl{background:#fee2e2 !important} html body .doc-card.rc .rc-btns .ed{background:#e0f2fe !important}
+html body .doc-card.rc .rc-r{display:flex !important;height:100% !important}
+html body .doc-card.rc .rc-ph{flex:1 1 auto !important;width:100% !important;height:100% !important;min-height:0 !important;border-radius:14px !important;background-size:cover !important;background-position:center !important;display:flex;align-items:center;justify-content:center;font-size:30px}
+html body .doc-card.rc .rc-ft,html body .doc-card.rc .rc-adm{display:none !important}
+html body .doc-card.rc > .st-line{position:absolute !important;left:8px;right:8px;bottom:5px;height:22px;line-height:22px !important;margin:0 !important;padding:0 8px !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;font-size:11.5px !important;border-radius:8px}
+@media (max-width:400px){ html body .doc-card.rc .rc-grid{grid-template-columns:78px minmax(0,1fr) 76px !important;gap:6px !important} html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:26px !important;height:26px !important;min-width:26px !important;font-size:12px !important} html body .doc-card.rc .rc-btns>a svg{width:14px;height:14px} html body .doc-card.rc .rc-dp{width:66px !important;height:66px !important;min-height:66px !important} }
+</style>
 </body>
 </html>
