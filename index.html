@@ -4425,10 +4425,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU457";
+const APP_VERSION = "MCS1511SU460";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1511SU460": "👑 Admin 1: Admins & Permissions, Share Rates, Approvals and Reports now open from My Account.",
+  "MCS1511SU460": "👥 Admin 2: buttons now follow the permissions given by Admin 1 (Add business, Agents, Chats, Portal, Help Desk).",
   "MCS1511SU457": "👥 Admin 2 is back: Imran logs in with mobile + PIN (My Account → Admin 2 Login) and can add businesses like Admin 1 — final approvals, deleting and company money stay with Admin 1 • 📊 Accounts Portal inside the app (My Account) for Admin 1, Admin 2 and agents • an admin who is also an agent fills AG001 / AG002 as referral; empty referral = PBT",
     "MCS1511SU455": "⭐ Only one Google Play package is shown now — «Membership — 1 year» (the other four boxes are hidden for now)",
     "MCS1511SU454": "⛔ One business per person for now: a mobile number that already has a registered business cannot get a second one — not by the owner, admin or agent (admins and agents still see Add New for other people's businesses)",
@@ -13790,12 +13792,20 @@ function codevDemo(){
   const r = (store.services||[]).find(x=>x && x.whatsapp && x.nameUr && x.category !== 'emergencyNumbers' && x.category !== 'govOffices');
   return r ? [{p:{kind:'service', id:r.id, fsId:r.fsId||'', rk: pfKeyOf(r, 'service'), demo:true}, rec:r}] : [];
 }
+/* MCS1511SU459 (مالک کا حکم): ایڈمن 2 کے بٹن اجازت کے حساب سے — biz / agents / chat / help / accounts (سرور /codev کا perms) */
+function cdCan(k){ try{ if(!codevOn()) return true; const m = codevMe(); return !(m && m.perms && !m.perms[k]); }catch(e){ return true; } }
 function cdBar(){
   let b = document.getElementById('cdBar'); const m = codevMe();
   if(!codevOn()){ if(b) b.remove(); document.body.classList.remove('cdOn'); return; }
   if(!b){ b = document.createElement('div'); b.id = 'cdBar'; document.body.appendChild(b); }
   document.body.classList.add('cdOn');
-  b.innerHTML = `<span>👥 Admin 2 — <b data-noen="1">${escapeHtml(m.name||'')}</b></span><button type="button" onclick="d2AddOpen()">➕ Add business</button><button type="button" onclick="mcsPortalOpen()">📊 My Portal</button><button type="button" onclick="cdReport()">❓ Help Desk</button><button type="button" class="x" onclick="cdLogout()">✖</button>`;
+  b.innerHTML = `<span>👥 Admin 2 — <b data-noen="1">${escapeHtml(m.name||'')}</b></span>`
+    + (cdCan('biz') ? `<button type="button" onclick="d2AddOpen()">➕ Add business</button>` : '')
+    + (cdCan('agents') ? `<button type="button" onclick="agEarnOpen()">🤝 Agents</button>` : '')
+    + (cdCan('chat') ? `<button type="button" onclick="mcOpen()">💬 Chats</button>` : '')
+    + (cdCan('accounts') ? `<button type="button" onclick="mcsPortalOpen()">📊 My Portal</button>` : '')
+    + (cdCan('help') ? `<button type="button" onclick="cdReport()">❓ Help Desk</button>` : '')
+    + `<button type="button" class="x" onclick="cdLogout()">✖</button>`;
 }
 function cdReport(){
   const m = codevMe() || {}; const text = '👥 ایڈمن (' + (m.name||'') + ', 0' + String(m.phone||'').slice(2) + ') — جانچ میں:\n';
@@ -13815,16 +13825,16 @@ async function cdLogin(){
   msg.textContent = '⏳ …';
   try{ const j = await (await fetch(AG_API + '/codev', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: ph, pin})})).json();
     if(!j || !j.ok){ msg.textContent = '❌ نمبر یا PIN درست نہیں'; return; }
-    localStorage.setItem('mcsCodev', JSON.stringify({phone: '92' + ph.slice(-10), pin, name: j.name, at: Date.now()}));
+    localStorage.setItem('mcsCodev', JSON.stringify({phone: '92' + ph.slice(-10), pin, name: j.name, perms: j.perms || null, at: Date.now()}));
     closeModal('agModal'); closeModal('controlPanelModal'); cdBar(); mpRender(); hlRenderSoon(); try{ mrqLoad(true); }catch(e){} showToast('👥 Welcome ' + j.name + ' — Admin 2', 4000);
   }catch(e){ msg.textContent = '📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'; }
 }
 function cdLogout(){ if(!confirm('Log out of Admin 2?')) return; localStorage.removeItem('mcsCodev'); try{ MRQ = []; _mrqAt = 0; pendingHomeListRender(); }catch(e){} cdBar(); mpRender(); hlRenderSoon(); }
 /* ہر 12 گھنٹے میں ایک بار: مالک نے ہٹا دیا ہو تو جانچ موڈ خود بند */
 async function cdRecheck(){
-  const m = codevMe(); if(!m || !m.phone || Date.now() - (m.at||0) < 12*36e5) return;
+  const m = codevMe(); if(!m || !m.phone || (m.perms && Date.now() - (m.at||0) < 12*36e5)) return;
   try{ const j = await (await fetch(AG_API + '/codev', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: m.phone, pin: m.pin})})).json();
-    if(j && j.ok){ m.at = Date.now(); m.name = j.name; localStorage.setItem('mcsCodev', JSON.stringify(m)); try{ if(j.selfie === false){ const sv = ptSelfieGet('codev'); if(sv) cdSendSelfie(sv); } }catch(e){} }
+    if(j && j.ok){ m.at = Date.now(); m.name = j.name; m.perms = j.perms || m.perms || null; localStorage.setItem('mcsCodev', JSON.stringify(m)); try{ cdBar(); }catch(e){} try{ if(j.selfie === false){ const sv = ptSelfieGet('codev'); if(sv) cdSendSelfie(sv); } }catch(e){} }
     else if(j && j.reason === 'login'){ localStorage.removeItem('mcsCodev'); cdBar(); mpRender(); }
   }catch(e){}
 }
@@ -20601,7 +20611,8 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
       + L.map(function(x, i){ try{ if(fpIsBasic(x.p.kind, x.rec)) return ''; var r = recOf(x); }catch(e){ return ''; } return '<button type="button" class="mx-li" onclick="mxGo(\'' + ID + '\',\'mxFp\',' + i + ')"><i class="c3">📄</i><span>My Profile<small>' + esc(r.nameUr || r.name || '') + '</small></span></button>'; }).join('')
       + (rl === 'agent' ? row('🤝', 'Agent Portal', ID, 'mxAgentOld', 'c3', 'ایجنٹ پورٹل — رجسٹریشن، کاروبار') : '')
       + (me.code ? row('🤝', 'Referral &amp; Agent', ID, 'agOpen', 'c3', 'ریفرل کوڈ: ' + esc(me.code)) : '')   /* MCS1411SA423: Earn with MCS صرف ہوم پر */
-      + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn()) || (me && (me.code || me.pin)) ? row('📊', 'Accounts Portal', ID, 'mcsPortalOpen', 'c3', 'حساب، کاروبار، ایجنٹ، ادائیگیاں') : '')   /* MCS1511SU457 */
+      + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn() && cdCan('accounts')) || (me && (me.code || me.pin)) ? row('📊', 'Accounts Portal', ID, 'mcsPortalOpen', 'c3', 'حساب، کاروبار، ایجنٹ، ادائیگیاں') : '')   /* MCS1511SU457 */
+      + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? row('👥', 'Admins & Permissions', ID, 'mcsAdmins', 'c4', 'ایڈمن بنائیں، اجازتیں دیں') + row('⚖️', 'Share Rates', ID, 'mcsRates', 'c3', 'تقسیم کی شرحیں — صرف آگے کی فروخت پر') + row('🛡️', 'Approvals', ID, 'mcsPend', 'c4', 'ایڈمن 2 کی درخواستیں: منظور / رد') + row('📊', 'Reports', ID, 'mcsReports', 'c3', 'ایجنٹ وار، ٹرائل، حساب کی جانچ') : '')   /* MCS1511SU460 */
       + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? row('👥', 'Admin 2 — PIN', ID, 'cdAdminOpen', 'c4', 'عمران بھائی کا PIN بنائیں / بھیجیں') : (typeof codevOn === 'function' && codevOn()) ? row('👥', 'Admin 2 — Log out', ID, 'cdLogout', 'c4', 'ایڈمن 2 سے باہر') : (/3138469706$/.test(String(u.mobile || '').replace(/\D/g, '')) ? row('👥', 'Admin 2 Login', ID, 'cdLoginOpen', 'c4', 'ایڈمن 2 — موبائل + PIN') : ''))
       + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
       + '</div>';
@@ -24765,15 +24776,17 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
 /* MCS1511SU457 (مالک کا حکم): حساب کا پورٹل اب MCS ایپ کے اندر — ایڈمن 1 (#admin)، ایڈمن 2 (#codev)، ایجنٹ (#agent)؛ وہی MCS Agent پورٹل (../agent/) پورے صفحے میں، اسی ویب سائٹ پر (لاگ اِن یاد رہتا ہے)۔
    ایڈمن 2 کو کمپنی کا حساب نہیں — صرف اپنا حصہ، اپنے لائے کاروبار، ادائیگیاں (پورٹل AGP1511SU037)؛ حساب کی ہر بات سرور (/fin2) پر، ایپ کچھ نہیں گنتی۔ عام صارف کو یہ بٹن نظر ہی نہیں آتا۔ */
 (function(){
-  window.mcsPortalOpen = function(){
+  window.mcsPortalOpen = function(go){
     let hash = '', t = '📊 Accounts Portal';
-    try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){ hash = '#admin'; t = '📊 Admin 1 — Accounts Portal'; } else if(typeof codevOn === 'function' && codevOn()){ hash = '#codev'; t = '📊 Admin 2 — My Portal'; } else { const a = typeof agMe === 'function' && agMe(); if(a && (a.code || a.pin)){ hash = '#agent'; t = '📊 Agent — My Portal'; } } }catch(e){}
+    try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){ hash = '#admin'; t = '📊 Admin 1 — Accounts Portal'; if(typeof go === 'string' && /^(admins|rates|pend|reports)$/.test(go)){ hash += '?go=' + go; t = ({admins: '👥 Admins & Permissions', rates: '⚖️ Share Rates', pend: '🛡️ Approvals', reports: '📊 Reports'})[go]; } } else if(typeof codevOn === 'function' && codevOn()){ hash = '#codev'; t = '📊 Admin 2 — My Portal'; } else { const a = typeof agMe === 'function' && agMe(); if(a && (a.code || a.pin)){ hash = '#agent'; t = '📊 Agent — My Portal'; } } }catch(e){}
     if(!hash){ try{ showToast('This portal is only for admins and agents'); }catch(e){} return; }
     const o = document.getElementById('mcsPortalOv'), f = document.getElementById('mcsPortalFr');
     document.getElementById('mcsPortalT').textContent = t;
     f.src = '../agent/' + hash; o.classList.add('on'); try{ document.body.style.overflow = 'hidden'; }catch(e){}
     try{ history.pushState({mcsPortal: 1}, ''); }catch(e){}
   };
+  /* MCS1511SU460 (مالک کا حکم): ایڈمن 1 کے لیے My Account سے سیدھا راستہ — وہی پورٹل صفحہ (iframe ../agent/#admin) */
+  window.mcsAdmins = () => mcsPortalOpen('admins'); window.mcsRates = () => mcsPortalOpen('rates'); window.mcsPend = () => mcsPortalOpen('pend'); window.mcsReports = () => mcsPortalOpen('reports');
   window.mcsPortalClose = function(){ const o = document.getElementById('mcsPortalOv'); if(!o || !o.classList.contains('on')) return; o.classList.remove('on'); try{ document.getElementById('mcsPortalFr').src = 'about:blank'; document.body.style.overflow = ''; }catch(e){} };
   window.addEventListener('popstate', () => { const o = document.getElementById('mcsPortalOv'); if(o && o.classList.contains('on')) mcsPortalClose(); });
 })();
