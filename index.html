@@ -4424,10 +4424,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO475";
+const APP_VERSION = "MCS1611MO476";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO476": "Continue with Google: if this Gmail is not linked yet, log in once with mobile + PIN and it links to your account — no more sign-up page.",
   "MCS1611MO475": "Home header: digital time moved below the bigger analog clock; left and right header items neatly aligned.",
   "MCS1611MO474": "Home header: the Qibla compass is replaced by a large analog clock (white dial, maroon ring, Arial digits, red seconds hand).",
   "MCS1611MO473": "Google Play subscription fixed: payment request now sends the required total, and a clear message explains when the app is not installed from the Play Store.",
@@ -16756,7 +16757,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
       const box = $(boxId); if(!box) return;
       try{
         if(!window.google || !google.accounts){ await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://accounts.google.com/gsi/client'; sc.async = true; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); }); }
-        google.accounts.id.initialize({ client_id: GCID, callback: r => uaGoogle(r.credential), auto_select: false, cancel_on_tap_outside: true, ux_mode: 'popup' });
+        let lh = ''; try{ lh = localStorage.getItem('mcsLastG') || ''; }catch(e){}   /* MCS1611MO476: پچھلا Gmail سب سے پہلے */
+        google.accounts.id.initialize(Object.assign({ client_id: GCID, callback: r => uaGoogle(r.credential), auto_select: false, cancel_on_tap_outside: true, ux_mode: 'popup' }, lh ? { login_hint: lh } : {}));
         box.innerHTML = ''; google.accounts.id.renderButton(box, { theme:'outline', size:'large', text, shape:'rectangular', logo_alignment:'center', width: Math.min(360, box.clientWidth || 320) });
       }catch(e){ box.innerHTML = '<div style="color:#64748b;font-size:13px">Google ابھی نہیں کھل سکا — انٹرنیٹ چیک کریں</div>'; }
     }, 30);
@@ -16958,11 +16960,36 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     if(window.__uaInvMode) return uaInvGoogle(cred);
     let name = ''; try{ name = JSON.parse(decodeURIComponent(escape(atob(cred.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))).name || ''; }catch(e){}
     busy(1); setErr(''); const r = await api({ op:'google', gtoken: cred }); busy(0);
-    if(r.ok){ done(r);   /* MCS1511SU450: PIN نہیں تو فوراً بنوائیں — آگے موبائل + PIN سے لاگ اِن */
+    if(r.ok){ try{ const em = JSON.parse(decodeURIComponent(escape(atob(cred.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))).email; if(em) localStorage.setItem('mcsLastG', em); }catch(e){} done(r);   /* MCS1511SU450: PIN نہیں تو فوراً بنوائیں — آگے موبائل + PIN سے لاگ اِن */
       if(r.user && !r.user.hasPw) setTimeout(() => { try{ uaPwForm(); showToast('🔑 Set your 6-digit PIN — next time: mobile + PIN'); }catch(e){} }, 1200);
       return; }
-    if(r.reason === 'new') return uaSignup({ gtoken: cred, gmail: r.gmail, name });
+    if(r.reason === 'new') return uaGLink(cred, r.gmail, name);   /* MCS1611MO476: سیدھا سائن اپ نہیں — پہلے پوچھیں کہ اکاؤنٹ پہلے سے ہے؟ */
     setErr(r.reason);
+  };
+  /* MCS1611MO476 (مالک کا حکم — «اکاؤنٹ رجسٹرڈ ہے پھر سائن اپ کا صفحہ کیوں؟»): Google کا Gmail کسی اکاؤنٹ سے جڑا نہیں —
+     موبائل + PIN ایک بار → Gmail اسی اکاؤنٹ سے ہمیشہ کے لیے (سرور `glink`)؛ اگلی بار Continue with Google سیدھا اندر۔ نیا ہو تو ہی سائن اپ */
+  window.uaGLink = function(cred, gmail, name){
+    show(`${head()}<div class="uaCard uaLg">
+      <div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>
+      <div class="uaMsg" style="line-height:1.6"><span dir="ltr" style="display:block;text-align:left">✅ Google: <b>${esc(gmail || '')}</b><br>This Gmail is not linked to your account yet. Enter your <b>mobile number + PIN</b> once — after that, <b>Continue with Google</b> opens your account directly.</span><u data-noen style="display:block;text-decoration:none;direction:rtl;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:15px;line-height:1.9;margin-top:4px">یہ Gmail ابھی آپ کے اکاؤنٹ سے نہیں جڑا — ایک بار موبائل نمبر اور PIN لکھیں، پھر ہمیشہ Google سے سیدھا اندر۔</u></div>
+      ${field('uaId', 'user', 'Mobile Number (03XXXXXXXXX)', { ac:'username', im:'tel' })}
+      ${field('uaPw', 'lock', '6-digit PIN', { type:'password', ac:'current-password', im:'numeric' })}
+      <div class="uaErr" id="uaErr"></div>
+      <button class="uaBtn bB" id="uaGLinkGo">${IC.login}LOGIN & LINK GMAIL</button>
+      <div class="uaRow" style="justify-content:space-between;display:flex;align-items:center;margin-top:8px"><a onclick="uaForgot()">Forgot PIN?</a><a id="uaGLinkNew">New here? Create account</a></div>
+    </div>`);
+    const go = async () => {
+      const id = ($('uaId').value || '').trim(), pw = ($('uaPw').value || '').replace(/\D/g, '');
+      if(!id || pw.length < 5){ setErr('login'); return; }
+      busy(1); setErr(''); let r = null; try{ r = await api({ op:'login', id, pw, gtoken: cred }); }catch(e){} busy(0);
+      if(!r || !r.ok) return setErr((r && r.reason) || 'net');
+      uaClearOthers('user'); done(r); try{ if(r.glink === gmail) localStorage.setItem('mcsLastG', gmail); }catch(e){}
+      setTimeout(() => { try{ showToast(r.glink === gmail ? '✅ Gmail linked — next time just tap Continue with Google' : (r.glink === 'gmail_taken' ? '⚠️ This Gmail belongs to another account — use mobile + PIN' : '✅ Logged in')); }catch(e){} }, 900);
+    };
+    $('uaGLinkGo').onclick = go;
+    $('uaPw').addEventListener('keydown', e => { if(e.key === 'Enter') go(); });
+    $('uaGLinkNew').onclick = () => uaSignup({ gtoken: cred, gmail, name });
+    setTimeout(() => { try{ $('uaId').focus(); }catch(e){} }, 250);
   };
   /* MCS1511SU445 (مالک کا حکم — «MCS008 سے جان نہیں چھوٹ رہی»): فون میں بچی پرانی ID (Welcome Back) اور اسی ID کا خود بنا سادہ کارڈ صاف */
   window.uaForgetPk = function(noLogin, sid0){
