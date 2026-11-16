@@ -4424,10 +4424,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO478";
+const APP_VERSION = "MCS1611MO479";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO479": "After subscription the card/subscription steps are locked; the MCS Agent step glows. City question popup removed. Home header no longer shakes.",
   "MCS1611MO478": "Subscription step: no confusing text — Google Play button if not bought; spinner with timer only while a real purchase is verifying.",
   "MCS1611MO477": "Login: on your own phone just type your mobile number OR your 6-digit PIN — it opens by itself, no button. Continue with Google stays below.",
   "MCS1611MO476": "Continue with Google: if this Gmail is not linked yet, log in once with mobile + PIN and it links to your account — no more sign-up page.",
@@ -13552,7 +13553,7 @@ function hcCheck(){
   const ua = document.getElementById('uaOv'); if(ua && ua.classList.contains('on')) return false;   /* لاگ اِن کا صفحہ کھلا ہو تو بعد میں */
   if(document.body.classList.contains('wz-on')) return false;   /* MCS1511SU440: رجسٹریشن ویزرڈ کھلا ہو تو شہر کا سوال نہیں (ضلع ویزرڈ میں) */
   try{ const a = typeof uaMe === 'function' && uaMe(); const dz = a && a.user && a.user.district; if(dz){ localStorage.setItem('mcsHomeCity', dz); return true; } }catch(e){}   /* اکاؤنٹ کا ضلع = شہر */
-  hcOpen(); return true;
+  return true;   /* MCS1611MO479 (مالک کا حکم): «آپ کا شہر کون سا ہے؟» خود کبھی نہیں کھلتا — شہر سر کے سنہری بٹن سے بدلیں */
 }
 document.addEventListener('DOMContentLoaded', ()=>{ let n = 0; const t = setInterval(()=>{ try{ if(hcCheck() || ++n > 40) clearInterval(t); }catch(e){ clearInterval(t); } }, 3000); });
 
@@ -21386,15 +21387,13 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
 /* MCS1111WE319 (مالک کا حکم): کوئی چیز کٹے نہیں — ہر لکھائی اپنے ڈبے میں ناپ کر فِٹ (جتنی بڑی ہو سکے، تنگ ہو تو خود چھوٹی) */
 (function(){
   const T = [
-    ['.h2-d > div', null, 8],
     ['.qt .qt-t b', '.qt', 8],
     ['.hm3 b', '.hm-t, .sr-ht', 8],
     ['.d2-pt b', '.d2-pt', 8],
     ['.d2-p small', '.d2-p', 7],
     ['.d2-p small i', '.d2-p', 7],
     ['.d2-p b', '.d2-p', 7],
-    ['.d2-p b em', '.d2-p', 6],
-    ['.h2 .cc-city b', '#h2CitySlot', 9]
+    ['.d2-p b em', '.d2-p', 6]   /* MCS1611MO479: سر (.h2-d، شہر) اب ناپ تول سے باہر — ہلنا بند */
   ];
   const avail = (c, self) => { const cs = getComputedStyle(c); return c.clientWidth - (self ? 0 : (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0)); };
   const need = el => { const w0 = el.style.width, m0 = el.style.maxWidth; el.style.width = 'min-content'; el.style.maxWidth = 'none'; const w = el.getBoundingClientRect().width; el.style.width = w0; el.style.maxWidth = m0; return w; };
@@ -21986,7 +21985,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   }
   function run(){
     tmr = null; root = root || document.getElementById('screen-home'); if(!root || busy) return;
-    var list = root.querySelectorAll('*:not([data-fs]):not(script):not(style):not(svg *)'); if(!list.length) return;
+    var list = root.querySelectorAll('*:not([data-fs]):not(script):not(style):not(svg *):not(#hdr2):not(#hdr2 *)');   /* MCS1611MO479: سر اپنے cqw سائز سے — ناپ تول نہیں (ہلنا بند) */ if(!list.length) return;
     busy = true;
     var H = document.documentElement; H.classList.remove('fs225');
     var vals = []; for(var i = 0; i < list.length; i++){ var fs = parseFloat(getComputedStyle(list[i]).fontSize) || 0; vals.push(Math.round(fs * 2) / 2); }
@@ -21998,7 +21997,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   function init(){
     root = document.getElementById('screen-home'); if(!root) return;
     run();
-    try{ new MutationObserver(function(ms){ if(busy) return; for(var i = 0; i < ms.length; i++){ if(ms[i].addedNodes && ms[i].addedNodes.length){ kick(); return; } } }).observe(root, { childList: true, subtree: true }); }catch(e){}
+    try{ new MutationObserver(function(ms){ if(busy) return; for(var i = 0; i < ms.length; i++){ if(ms[i].addedNodes && ms[i].addedNodes.length && !(ms[i].target.closest && ms[i].target.closest('#hdr2'))){ kick(); return; } } }).observe(root, { childList: true, subtree: true }); }catch(e){}
     try{ document.fonts && document.fonts.ready && document.fonts.ready.then(function(){ document.querySelectorAll('#screen-home [data-fs]').forEach(function(e){ e.removeAttribute('data-fs'); }); run(); }); }catch(e){}
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
@@ -23607,7 +23606,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   }catch(e){} return false; };
   const canGo = n => n === 1 || (n === 4 ? doneOf(2) : doneOf(n - 1));   /* ایجنٹ کے لیے کارڈ بن چکا ہو */
   (function(){ if(document.getElementById('wz447css')) return; const st = document.createElement('style'); st.id = 'wz447css';
-    st.textContent = '#wzOv .wzS4{cursor:pointer}#wzOv .wzS4.ok{background:#04641c}#wzOv .wzS4.ok i{width:34px;height:34px;font-size:22px;background:#fff;border-color:#fff;color:#04641c}#wzOv .wzS4.lock{opacity:.55}';
+    st.textContent = '#wzOv .wzS4{cursor:pointer}#wzOv .wzS4.ok{background:#04641c}#wzOv .wzS4.ok i{width:34px;height:34px;font-size:22px;background:#fff;border-color:#fff;color:#04641c}#wzOv .wzS4.lock{opacity:.55}#wzOv .wzS4.fixd{cursor:default}#wzOv .wzS4.glow{animation:wzGlow 1.3s ease-in-out infinite;background:#b45309;color:#fff}#wzOv .wzS4.glow i{background:#fde68a;color:#7c2d12;border-color:#fde68a}@keyframes wzGlow{0%,100%{box-shadow:0 0 0 0 rgba(250,204,21,.0)}50%{box-shadow:0 0 0 6px rgba(250,204,21,.55),0 0 18px rgba(250,204,21,.8)}}#wzOv .wzBig4{animation:wzGlow 1.3s ease-in-out infinite}';
     document.head.appendChild(st); })();
   /* ---------- ڈھانچہ: عنوان + 4 مرحلوں کی پٹی ---------- */
   const STEPS = [['Create Account', 'اکاؤنٹ بنائیں'], ['Create Business Card', 'بزنس کارڈ بنائیں'], ['Get Paid Subscription', 'پیڈ سبسکرپشن حاصل کریں'], ['Be an MCS Agent', 'ایم سی ایس ایجنٹ بنیں']];   /* MCS1511SU440: تصویر جیسے چار مرحلے — چوتھا Earn with MCS فارم کھولتا ہے */   /* MCS1511SU427 (مالک کا حکم): ایجنٹ کا فارم رجسٹریشن سے الگ — «Earn with MCS / MCS Agent» سے کھلے */
@@ -23622,7 +23621,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     const ov = $('wzOv'), keepY = (ov && lastStep === S.step) ? ov.scrollTop : 0;
     const ae = document.activeElement, host = $('wzW');
     const aid = (ae && ae.id && host && host.contains(ae)) ? ae.id : '', sel = (aid && ae.selectionStart != null) ? [ae.selectionStart, ae.selectionEnd] : null;
-    const pg = STEPS.map((s, i) => { const n = i + 1, dn = doneOf(n), ok = canGo(n), cls = (dn ? 'ok ' : '') + (S.step === n ? 'on ' : '') + (ok ? '' : 'lock');
+    const live3 = doneOf(3); const pg = STEPS.map((s, i) => { const n = i + 1, dn = doneOf(n), ok = canGo(n), cls = (dn ? 'ok ' : '') + (S.step === n && !(live3 && n < 4) ? 'on ' : '') + (ok ? '' : 'lock') + (live3 && n < 4 ? ' fixd' : '') + (live3 && n === 4 && !dn ? ' glow' : '');   /* MCS1611MO479: لائیو کے بعد 1–3 پکے بند، 4 چمکتا */
       return `<div class="wzS4 ${cls}" onclick="wzGo(${n})"><i>${dn ? '✓' : (ok ? n : '🔒')}</i>${s[0]}<span class="u">${s[1]}</span></div>`; }).join('');   /* MCS1511SU447: اصل حالت — مکمل = سبز ✓، پچھلا مکمل نہ ہو = 🔒 */
     /* MCS1511SU440: تصویر کی سبز ✅ پٹی — ہر مرحلے کی اصل حالت */
     let liveOk = false, agOk = false; try{ const cd = myCard(); liveOk = !!(cd && typeof pfActive === 'function' && pfActive(cd)); }catch(e){} try{ const g = typeof agMe === 'function' && agMe(); agOk = !!(g && (g.code || g.pin)); }catch(e){}
@@ -23656,7 +23655,14 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     if(m && st === 1) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* MCS1511SU447: لاگ اِن ہے تو اکاؤنٹ بنانے کا صفحہ کبھی دوبارہ نہیں کھلتا */
     S.step = st; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
   };
+  function sLive(){   /* MCS1611MO479 (مالک کا حکم): سبسکرپشن مکمل — صرف خلاصہ، کوئی خانہ / ترمیم نہیں؛ اگلا: ایجنٹ (چمکتا بٹن) */
+    const ag = doneOf(4);
+    frame(`<div class="wzCard" style="text-align:center"><div class="wzOk"><div class="big">✅</div><b class="u" style="font-size:22px;color:#166534">آپ کا کاروبار لائیو ہے</b><div class="wzId" dir="ltr">${esc(sidNow())}</div></div>
+      ${ag ? `<div class="wzGreen u" style="font-size:18px">🤝 آپ ایم سی ایس ایجنٹ ہیں</div><button class="wzBtn bG" onclick="mcsWizClose()"><span class="u">بند کریں</span></button>`
+        : `<button class="wzBtn bG wzBig4" onclick="wzGo(4)" style="background:#b45309">🤝 Be an MCS Agent<small class="u">ایم سی ایس ایجنٹ بنیں — یہاں دبائیں</small></button>`}</div>`);
+  }
   const draw = () => { if(S.step > 3) S.step = 3;
+    if(S.step > 1 && doneOf(3)) return sLive();
     if(S.step === 1 && doneOf(1)) return s1done();                         /* MCS1511SU447: مکمل مرحلہ = «مکمل» صفحہ، پرانا فارم نہیں */
     if(S.step === 1 && !S.newAcct && !me()){ let pk = null; try{ pk = JSON.parse(localStorage.getItem('mcsMyPk') || 'null'); }catch(e){}   /* MCS1511SU450: اس فون پر اکاؤنٹ بن چکا — نیا فارم نہیں، صرف لاگ اِن */
       if(pk && pk.sid) return frame(`<div class="wzCard" style="text-align:center"><div class="wzHd"><i>🔐</i><b>Welcome back</b><span class="u">خوش آمدید — آپ کا اکاؤنٹ بن چکا ہے</span></div>
@@ -23675,9 +23681,10 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       <button class="wzBtn bG" onclick="wzGo(${nx})">Next: ${esc(STEPS[nx - 1][0])}<small class="u">اگلا: ${esc(STEPS[nx - 1][1])}</small></button></div>`);
   }
   window.wzNewAcct = function(){ S.newAcct = 1; save(); draw(); };
-  window.wzEdit2 = function(){ S.edit2 = 1; save(); draw(); };   /* MCS1511SU427: پرانا محفوظ «مرحلہ 4» ہو تو بھی 3 پر */
+  window.wzEdit2 = function(){ if(doneOf(3)) return; S.edit2 = 1; save(); draw(); };   /* MCS1511SU427: پرانا محفوظ «مرحلہ 4» ہو تو بھی 3 پر */
   window.wzGo = function(n){
     if(!canGo(n)){ if(n > 1 && !me()){ S.step = 1; save(); return draw(); } try{ flash('پہلے مرحلہ ' + (n === 4 ? 2 : n - 1) + ' مکمل کریں — Complete step ' + (n === 4 ? 2 : n - 1) + ' first'); }catch(e){} return; }   /* MCS1511SU447: ترتیب وار */
+    if(n > 1 && n < 4 && doneOf(3)){ try{ flash('✅ یہ مرحلہ مکمل ہو چکا — آپ کا کاروبار لائیو ہے', 1); }catch(e){} return; }   /* MCS1611MO479: لائیو کے بعد کارڈ / سبسکرپشن کا صفحہ دوبارہ نہیں کھلتا */
     if(n > 3){ mcsWizClose(); try{ agEarnOpen(); }catch(e){} return; }   /* MCS1511SU427: ایجنٹ کا فارم الگ — سیدھا MCS Agent فارم */
     if(n !== 2 && S.edit2){ S.edit2 = 0; save(); }
     S.step = n; save(); draw(); };
