@@ -4425,10 +4425,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO483";
+const APP_VERSION = "MCS1611MO484";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO484": "One developer password for all apps — open this app's developer panel straight from the Help Desk",
   "MCS1611MO483": "CNIC front/back photos now keep the whole card (no cropping, less compression). Lock removed from the registered business page. Agent form: your own MCS ID is picked automatically and the form opens directly; old saved form / photos no longer reappear after sending.",
   "MCS1611MO482": "After subscription the card/subscription steps are locked; the MCS Agent step glows. City question popup removed. Home header no longer shakes.",
   "MCS1611MO478": "Subscription step: no confusing text — Google Play button if not bought; spinner with timer only while a real purchase is verifying.",
@@ -25130,5 +25131,17 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
 #svOv .sv-x{position:absolute;top:-12px;right:-6px;width:34px;height:34px;border-radius:50%;border:0;background:#fff;font-weight:900;font-size:16px;z-index:2}
 </style>
 
+<script>
+/* 🔐 PBT-DEVHUB (مالک کا حکم، 16 نومبر 2026): ہیلپ ڈیسک «🔐 سب ڈویلپر پینل» سے سیدھا یہاں کا ڈویلپر پینل (`?devpanel=1`)
+   + ایک مشترکہ پاس ورڈ: ہیلپ ڈیسک اسی ویب سائٹ پر `pbt_devpass_v1` = SHA-256('PBTDEV|' + پاس ورڈ) رکھتا ہے — یہ پینل اسے بھی مانتا ہے (`pbtHubPwOk`)۔ */
+window.pbtHubPwOk = async function(p){
+  try{ const h = (function(){ try{ const f = document.createElement('iframe'); f.style.display = 'none'; document.documentElement.appendChild(f); const v = f.contentWindow.localStorage.getItem('pbt_devpass_v1'); f.remove(); return v; }catch(e){ return null; } })() || localStorage.getItem('pbt_devpass_v1');   /* ایپ کا اپنا نام والا خانہ نہیں — سیدھا ویب سائٹ کا */ if(!h || !p) return false;
+    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('PBTDEV|' + String(p).trim()));
+    return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('') === h; }catch(e){ return false; }
+};
+(function(){ try{ if(!/[?&]devpanel=1\b/.test(location.search)) return;
+  window.addEventListener('load', () => setTimeout(() => { try{ if(window.isAdminSignedIn || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn)) openDevPanel(); else openControlPanel(); }catch(e){} }, 6000));
+}catch(e){} })();
+</script>
 </body>
 </html>
