@@ -3366,7 +3366,7 @@ body .doc-card .doc-side .a-fav,body .doc-card .doc-side .a-reqadmin{font-size:1
 .pt-f input{width:100%;box-sizing:border-box;margin:3px 0 6px;padding:9px;border:1.5px solid #cbd5e1;border-radius:10px;font-family:inherit}
 .ag-badge{position:absolute;top:-9px;left:10px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;background:linear-gradient(145deg,#2dd4bf,#0f766e);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:3}.ag-badge.wait{background:linear-gradient(145deg,#fbbf24,#d97706)}
 .doc-card:has(.ag-badge){position:relative;box-shadow:0 0 0 2px #2dd4bf,0 3px 10px rgba(15,118,110,.35)}.doc-card:has(.ag-badge.wait){box-shadow:0 0 0 2px #fbbf24,0 3px 10px rgba(217,119,6,.3)}
-.ag-pic#agP_selfie{border-radius:50%}.agc-box{max-width:520px}.agc-cv{display:block;margin:6px auto;max-width:100%;border:2px solid #0d9488;border-radius:10px;background:#fff;touch-action:none}.agc-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;font-weight:700}.agc-row input[type=range]{flex:1}.agc-row button{border:none;border-radius:10px;background:#e2e8f0;padding:8px 12px;font-family:inherit;font-weight:800}.ag-pic.has span{background:rgba(255,255,255,.85);border-radius:8px;padding:2px 4px;font-size:14px}
+.ag-pic#agP_selfie{border-radius:50%}.agc-box{max-width:520px}.agc-cv{display:block;margin:6px auto;max-width:100%;border:2px solid #0d9488;border-radius:10px;background:#fff;touch-action:none}.agc-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;font-weight:700}.agc-row input[type=range]{flex:1}.agc-row button{border:none;border-radius:10px;background:#e2e8f0;padding:8px 12px;font-family:inherit;font-weight:800}.ag-pic.has span{display:none!important}
 .ag-agree{display:flex!important;gap:8px;align-items:flex-start;font-weight:600!important;font-size:12.5px!important;line-height:1.8;margin-top:10px!important}.ag-agree input{width:auto!important;margin-top:6px}
 .ag-err{color:#dc2626;font-weight:800;min-height:1.4em;margin:6px 0}
 .ag-st,.ag-wait,.ag-ok,.ag-no,.ag-need{font-weight:800;font-size:15px;line-height:1.9;margin:8px 0;text-align:center}.ag-ok{color:#15803d}.ag-no{color:#b91c1c}.ag-wait{color:#b45309}
@@ -4424,11 +4424,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO479";
+const APP_VERSION = "MCS1611MO481";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1611MO479": "After subscription the card/subscription steps are locked; the MCS Agent step glows. City question popup removed. Home header no longer shakes.",
+  "MCS1611MO481": "After subscription the card/subscription steps are locked; the MCS Agent step glows. City question popup removed. Home header no longer shakes.",
   "MCS1611MO478": "Subscription step: no confusing text — Google Play button if not bought; spinner with timer only while a real purchase is verifying.",
   "MCS1611MO477": "Login: on your own phone just type your mobile number OR your 6-digit PIN — it opens by itself, no button. Continue with Google stays below.",
   "MCS1611MO476": "Continue with Google: if this Gmail is not linked yet, log in once with mobile + PIN and it links to your account — no more sign-up page.",
@@ -5251,7 +5251,7 @@ async function phDone(){
   phShape(out);
   const pre = pfPickPre; closeModal('phCropModal');
   if(sf && window._ptSR){ const sm = document.createElement('canvas'); sm.width = sm.height = 360; sm.getContext('2d').drawImage(out, 0, 0, 360, 360); ptSelfieSaved(sm.toDataURL('image/jpeg', .85)); return; }
-  if(sf && window._phAg){ window._phAg = false; agImgs.selfie = out.toDataURL('image/jpeg', .85); agShowPic('selfie'); selfieSaveLocal(agImgs.selfie); showToast('✅ سیلفی لگ گئی'); return; }
+  if(sf && window._phAg){ window._phAg = false; agImgs.selfie = out.toDataURL('image/jpeg', .85); agShowPic('selfie'); agImgSave('selfie'); selfieSaveLocal(agImgs.selfie); try{ document.getElementById('phCropModal').innerHTML = ''; PH.img = null; }catch(e){} showToast('✅ سیلفی لگ گئی'); return; }
   try{
     if(sf){ await pfSetSelfie(pre, out.toDataURL('image/jpeg', .85)); }
     else{
@@ -13231,6 +13231,10 @@ function agEarnOpen(){
   if(a && a.phone && !isAdminSignedIn && !codevOn()){ agOpen(); return; }   /* MCS0911MO266: ایڈمن کو ہمیشہ فارم (کسی اور کو ایجنٹ بنانے کے لیے)؛ پہلے سے درخواست / ایجنٹ — حالت (Pending / Approved / Rejected) */
   agFullForm();
 }
+/* مقامی شہر: جو بھی لکھا جائے فون میں پکا محفوظ؛ اگلی بار فہرست میں آئے گا، نیا بھی لکھ سکتے ہیں */
+function agCityList(){ let a = []; try{ a = JSON.parse(localStorage.getItem('mcsAgCities') || '[]') || []; }catch(e){} return Array.isArray(a) ? a : []; }
+function agCityRemember(v){ v = String(v || '').trim().replace(/\s+/g, ' '); if(v.length < 2) return; try{ const a = agCityList().filter(x => x !== v); a.unshift(v); localStorage.setItem('mcsAgCities', JSON.stringify(a.slice(0, 300))); const dl = document.getElementById('agxCityList'); if(dl) dl.innerHTML = agCityOpts(); }catch(e){} }
+function agCityOpts(){ const seen = {}, out = []; const add = c => { c = String(c || '').trim(); if(c && !seen[c] && !isBlankVal(c)){ seen[c] = 1; out.push(c); } }; agCityList().forEach(add); try{ (store.services || []).forEach(r => add(r.city)); (store.doctors || []).forEach(r => add(r.city)); }catch(e){} return out.slice(0, 500).map(c => `<option value="${escapeAttr(c)}">`).join(''); }
 function agFullForm(){
   /* MCS1511SU430 (مالک کا حکم): فارم کے سب سے اوپر MCS ID کی پکی ڈراپ ڈاؤن (لکھنے کی گنجائش نہیں)؛ چنتے ہی اس کا نام، موبائل، ضلع آ جائے اور باقی فارم کھل جائے؛ آخر میں ریفرل کوڈ بھی فہرست سے (نام کے ساتھ) */
   const cities = [...new Set((store.services||[]).map(r=>r.city).filter(c=>c && !isBlankVal(c)))].slice(0, 400).map(c=>`<option value="${escapeAttr(c)}">`).join('');
@@ -13249,7 +13253,7 @@ function agFullForm(){
         ${F('agxCnic','🪪','CNIC Number','شناختی کارڈ نمبر','inputmode="numeric" dir="ltr" maxlength="15" placeholder="00000-0000000-0" oninput="agCnicFmt(this)"')}
         <div class="agx-f"><label class="agx-l" for="agxExp">📅 CNIC Expiry <i>*</i></label><input id="agxExp" type="date" dir="ltr"></div>
         ${F('agxAddr','🏠','Complete Address','مکمل پتہ','maxlength="200"')}
-        ${F('agxCity','🏙️','City / District','ضلع','maxlength="60" readonly')}
+        <div class="agx-f"><label class="agx-l" for="agxCity">🏙️ Local City <i>*</i> <span>مقامی شہر</span></label><input id="agxCity" list="agxCityList" maxlength="60" autocomplete="off" placeholder="فہرست سے چنیں یا نیا شہر لکھیں" onchange="agCityRemember(this.value)"><datalist id="agxCityList">${agCityOpts()}</datalist></div>
         <div class="agx-w"><label class="agx-l">📷 Photos <span>تصویریں</span> <i>*</i> <small>دبائیں — کیمرہ / گیلری</small></label>
         <div class="ag-pics">
           <div class="ag-pic" id="agP_selfie" onclick="agSelfieAsk()"><span>🤳<b>Selfie<br>سیلفی</b></span></div>
@@ -13263,7 +13267,7 @@ function agFullForm(){
         <button type="button" class="link-btn ag-have" onclick="agPinLogin()">🔑 میں پہلے سے ایجنٹ ہوں — موبائل اور PIN لکھیں</button>
       </div>
     </div>`);
-  ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); });
+  ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); }); agImgRestore();
   try{ rpkPrep('agxRef'); }catch(e){}
   agxSidLoad(staffF);
 }
@@ -13296,7 +13300,7 @@ function agxSidPick(sid){
   const e = (window._agxList || []).find(x => x.sid === sid);
   const set = (i, v) => { const el = document.getElementById(i); if(el) el.value = v || ''; };
   if(!e){ if(rest) rest.hidden = true; if(info) info.hidden = true; return; }
-  set('agxName', e.name); set('agxPhone', e.mobile); set('agxCity', e.district);
+  set('agxName', e.name); set('agxPhone', e.mobile); { const lc = agCityList()[0]; if(lc) set('agxCity', lc); }
   if(info){ info.hidden = false; info.innerHTML = '✅ <b dir="ltr">' + escapeHtml(e.sid) + '</b><br>👤 ' + escapeHtml(e.name || '—') + '<br>📱 <bdi dir="ltr">' + escapeHtml(e.mobile || '—') + '</bdi><br>📍 ' + escapeHtml(e.district || '—'); }
   if(rest) rest.hidden = false;
   /* MCS1511SU440 (مالک کا حکم): MCS ID چنتے ہی اسی موبائل کا رجسٹرڈ کاروبار — ای میل، پتہ، کاروبار؛ اور رجسٹریشن میں دیا شناختی کارڈ + میعاد خود */
@@ -13307,6 +13311,7 @@ function agxSidPick(sid){
     const put = (i, v) => { const el = document.getElementById(i); if(el && v && !el.value) el.value = v; };
     put('agxEmail', mm.email); put('agxAddr', mcsUniq([mm.address || rec.address, rec.area, rec.city]).filter(x => x && !isBlankVal(x)).join('، '));
     window._agxRk = pfKeyOf(rec, kind); window._agxBiz = rec.nameUr || rec.name || '';
+    { const ci0 = document.getElementById('agxCity'); if(ci0 && rec.city && !isBlankVal(rec.city) && !ci0.value) ci0.value = rec.city; }
     if(info) info.innerHTML += '<br>🏪 ' + escapeHtml(window._agxBiz);
     let cn = '', ex = '';
     try{ const FB = window.MCSFirebase; if(FB && FB.getDoc){ const sn = await Promise.race([FB.getDoc(FB.doc(FB.db, 'regPrivate', rec.fsId || rec.id)), new Promise(r => setTimeout(() => r(null), 6000))]); if(sn && sn.exists && sn.exists()){ const d = sn.data() || {}; cn = d.cnic || ''; ex = d.cnicExp || ''; } } }catch(_){}
@@ -13330,7 +13335,7 @@ async function agxPick(kind, id){
   let owner = ''; try{ owner = kind==='doctor' ? (rec.nameUr || rec.name || '') : (splitOwnerIntro(rec.intro).owner || rec.nameUr || ''); }catch(e){ owner = rec.nameUr || ''; }
   const ph = acDigits(rec.whatsapp || rec.phone).slice(-10), m = rec.more || {};
   const set = (i, v) => { const e = document.getElementById(i); if(e && v) e.value = v; };
-  set('agxName', owner); set('agxPhone', ph ? '0' + ph : ''); set('agxEmail', m.email || ''); set('agxCity', isBlankVal(rec.city) ? '' : rec.city);
+  set('agxName', owner); set('agxPhone', ph ? '0' + ph : ''); set('agxEmail', m.email || ''); set('agxCity', isBlankVal(rec.city) ? (agCityList()[0] || '') : rec.city);
   set('agxAddr', [m.address || rec.address, rec.area].filter(x=>x && !isBlankVal(x)).join('، '));
   window._agxRk = pfKeyOf(rec, kind); window._agxBiz = rec.nameUr || rec.name || '';
   const f = document.getElementById('agxFind'); if(f) f.hidden = true;
@@ -13349,6 +13354,7 @@ async function agxStaffSend(){
   if(phone.slice(-10).length !== 10) return err('⚠️ موبائل نمبر لکھیں', 'agxPhone');
   if(cnic.length !== 13) return err('⚠️ شناختی کارڈ کے 13 ہندسے لکھیں', 'agxCnic');
   const c = {name: v('agxName'), phone: '0' + phone.slice(-10), code: window._agxRk || '', biz: window._agxBiz || '', city: v('agxCity'), cnic, father: v('agxFather'), address: v('agxAddr'), email: v('agxEmail'), wa: '0' + phone.slice(-10), ref: v('agxRef'), mcsId: window._agxSid || '', img: Object.assign({}, agImgs)};
+  agCityRemember(v('agxCity'));
   const btn = document.getElementById('agSendBtn'), lbl = btn.innerHTML; btn.disabled = true; btn.textContent = '⏳ …';
   const R = {no_biz:'Only someone with a linked business (membership) can become an agent — register the business first', exists:'اس موبائل نمبر کا ایجنٹ پہلے سے ہے', code_taken:'یہ کاروبار پہلے سے کسی ایجنٹ کا ہے', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کا ہے', bad_cnic:'شناختی کارڈ نمبر (13 ہندسے) لکھیں', missing:'نام اور موبائل لکھیں' + (codevOn() && !isAdminSignedIn ? '، اور «کاروبار سے بھریں» سے کاروبار چنیں' : ''), login:'ایڈمن لاگ اِن دوبارہ کریں'};
   try{
@@ -13357,7 +13363,7 @@ async function agxStaffSend(){
       agModal(`<div class="agx-done"><div class="agx-tick">⏳</div><b>منظوری کے لیے بھیج دیا</b><p>${escapeHtml(c.name)} — مالک کی منظوری پر ایجنٹ بنے گا۔</p></div>`); return; }
     const r = await agAdminCall({op:'create', c});
     if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + (R[r && r.reason] || 'نہیں بنا') + (r && r.other ? ' (' + r.other + ')' : '')); }
-    ['front','back','selfie'].forEach(k=> delete agImgs[k]);
+    ['front','back','selfie'].forEach(k=> delete agImgs[k]); agImgClear();
     agCreatedShow(r.agent);
   }catch(x){ btn.disabled = false; btn.innerHTML = lbl; err('📶 انٹرنیٹ / ایڈمن لاگ اِن دیکھیں'); }
 }
@@ -13374,15 +13380,15 @@ async function agFullSend(){
   if(cnic.length !== 13) return err('⚠️ CNIC — شناختی کارڈ کے پورے 13 ہندسے لکھیں', 'agxCnic');
   { const ex = v('agxExp'); if(!/^\d{4}-\d{2}-\d{2}$/.test(ex)) return err('⚠️ CNIC Expiry — choose the expiry date', 'agxExp'); if(new Date(ex + 'T23:59:59') < new Date()) return err('⚠️ CNIC has expired — a valid CNIC is needed', 'agxExp'); }   /* MCS1511SU440 */
   if(v('agxAddr').length < 5) return err('⚠️ Address — مکمل پتہ لکھیں', 'agxAddr');
-  if(v('agxCity').length < 2) return err('⚠️ City / District — شہر لکھیں', 'agxCity');
+  if(v('agxCity').length < 2) return err('⚠️ Local City — اپنا مقامی شہر لکھیں (یا فہرست سے چنیں)', 'agxCity');
   for(const [k, t] of [['selfie','Selfie — سیلفی'],['front','CNIC Front — کارڈ سامنے'],['back','CNIC Back — کارڈ پیچھے']]) if(!agImgs[k]) return err('⚠️ ' + t + ' والی تصویر لگائیں');
-  err(''); const btn = document.getElementById('agSendBtn'), lbl = btn.innerHTML; btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہے…';
+  err(''); agCityRemember(v('agxCity')); const btn = document.getElementById('agSendBtn'), lbl = btn.innerHTML; btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہے…';
   try{
     const r = await (await fetch(AG_API + '/agapply', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({full: 1, name: v('agxName'), father: v('agxFather'), cnic, cnicExp: v('agxExp'), phone, wa: phone, email: v('agxEmail'), city: v('agxCity'), address: v('agxAddr'), exp: '', biz: '', bizRk: '', ref: v('agxRef'), mcsId: window._agxSid || '', dev: agDev(), img: agImgs})})).json();
     if(!r || !r.ok){ btn.disabled = false; btn.innerHTML = lbl; return err('⚠️ ' + ({pending:'آپ کی ایک درخواست پہلے سے منظوری کے انتظار میں ہے — نئی درخواست نہیں جا سکتی', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی ایجنٹ کے نام ہے', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'سب خانے بھریں'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
     const p92 = '92' + phone.replace(/^0/,'').replace(/^92/,'').slice(-10);
     localStorage.setItem('mcsAgent', JSON.stringify({phone: p92, name: v('agxName'), at: Date.now()}));
-    ['front','back','selfie'].forEach(k=> delete agImgs[k]);
+    ['front','back','selfie'].forEach(k=> delete agImgs[k]); agImgClear();
     agModal(`<div class="agx-done"><div class="agx-tick">✅</div><b dir="ltr">Request Submitted!</b>
       <p dir="ltr">Your request has been received successfully. Please wait for further approval.</p>
       <p>آپ کی درخواست موصول ہو گئی ہے۔ براہِ کرم مزید منظوری کے لیے انتظار کریں۔</p>
@@ -13553,7 +13559,7 @@ function hcCheck(){
   const ua = document.getElementById('uaOv'); if(ua && ua.classList.contains('on')) return false;   /* لاگ اِن کا صفحہ کھلا ہو تو بعد میں */
   if(document.body.classList.contains('wz-on')) return false;   /* MCS1511SU440: رجسٹریشن ویزرڈ کھلا ہو تو شہر کا سوال نہیں (ضلع ویزرڈ میں) */
   try{ const a = typeof uaMe === 'function' && uaMe(); const dz = a && a.user && a.user.district; if(dz){ localStorage.setItem('mcsHomeCity', dz); return true; } }catch(e){}   /* اکاؤنٹ کا ضلع = شہر */
-  return true;   /* MCS1611MO479 (مالک کا حکم): «آپ کا شہر کون سا ہے؟» خود کبھی نہیں کھلتا — شہر سر کے سنہری بٹن سے بدلیں */
+  return true;   /* MCS1611MO481 (مالک کا حکم): «آپ کا شہر کون سا ہے؟» خود کبھی نہیں کھلتا — شہر سر کے سنہری بٹن سے بدلیں */
 }
 document.addEventListener('DOMContentLoaded', ()=>{ let n = 0; const t = setInterval(()=>{ try{ if(hcCheck() || ++n > 40) clearInterval(t); }catch(e){ clearInterval(t); } }, 3000); });
 
@@ -13628,6 +13634,11 @@ async function refResolve(){
 }
 function agShare(c){ const t = 'My City Shines — میرا ایجنٹ ریفرل کوڈ: ' + c + '\nاپنا کاروبار درج کرواتے وقت «🤝 ایجنٹ کا ریفرل کوڈ» میں یہ لکھیں۔'; if(navigator.share) navigator.share({text: t}).catch(()=>{}); else agCopy(c); }
 const agImgs = {};
+/* تصویریں (سیلفی، کارڈ سامنے/پیچھے) لگتے ہی فون میں پکی محفوظ — کیمرہ کھلنے پر ایپ ری لوڈ ہو بھی جائے تو واپس آ جائیں */
+function agIdbOpen(){ return new Promise((res, rej)=>{ try{ const r = indexedDB.open('mcsSelfieDB', 1); r.onupgradeneeded = ()=>{ r.result.createObjectStore('s'); }; r.onsuccess = ()=>res(r.result); r.onerror = ()=>rej(r.error); }catch(e){ rej(e); } }); }
+async function agImgSave(k){ try{ const v = agImgs[k]; if(!v) return; const db = await agIdbOpen(); await new Promise((res, rej)=>{ const tx = db.transaction('s', 'readwrite'); tx.objectStore('s').put(v, 'mcsAgImg_' + k); tx.oncomplete = res; tx.onerror = tx.onabort = ()=>rej(tx.error); }); db.close(); }catch(e){} }
+async function agImgRestore(){ try{ const db = await agIdbOpen(); for(const k of ['front','back','selfie']){ if(agImgs[k]) continue; const v = await new Promise(res=>{ try{ const q = db.transaction('s').objectStore('s').get('mcsAgImg_' + k); q.onsuccess = ()=>res(q.result || ''); q.onerror = ()=>res(''); }catch(e){ res(''); } }); if(v && !agImgs[k]){ agImgs[k] = v; try{ agShowPic(k); }catch(e){} } } db.close(); }catch(e){} }
+async function agImgClear(){ try{ const db = await agIdbOpen(); await new Promise(res=>{ try{ const tx = db.transaction('s', 'readwrite'), st = tx.objectStore('s'); ['front','back','selfie'].forEach(k=>st.delete('mcsAgImg_' + k)); tx.oncomplete = tx.onerror = tx.onabort = res; }catch(e){ res(); } }); db.close(); }catch(e){} }
 /* MCS0611FR170: تصویریں ایک بار پہنچ گئیں تو دوبارہ نہ مانگے (سرور کا جواب دیر سے بدلے تب بھی) */
 function agDocsDone(){ const me = agMe(); try{ const d = JSON.parse(localStorage.getItem('mcsAgDocs')||'{}'); return !!(me && me.phone && d[me.phone]); }catch(e){ return false; } }
 function agDocsMark(on){ const me = agMe(); if(!me || !me.phone) return; try{ const d = JSON.parse(localStorage.getItem('mcsAgDocs')||'{}'); if(on) d[me.phone] = Date.now(); else delete d[me.phone]; localStorage.setItem('mcsAgDocs', JSON.stringify(d)); }catch(e){} }
@@ -13677,7 +13688,7 @@ function agForm(){
       <div class="cp-hint" style="text-align:center">بھیجنے کا مطلب: یہ معلومات اور تصویریں آپ کی اپنی اور درست ہیں۔ تصویریں صرف MCS انتظامیہ دیکھتی ہے۔</div>
       <button type="button" class="link-btn ag-have" onclick="agPinLogin()">🔑 میں پہلے سے ایجنٹ ہوں — موبائل اور PIN لکھیں</button>
     </div>`);
-  ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); });
+  ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); }); agImgRestore();
 }
 /* MCS0611FR170 (مالک کا حکم): کارڈ / سیلفی لگانے سے پہلے کاٹیں، سیدھا کریں، بہتر بنائیں — چوکھٹے میں جو دکھے وہی محفوظ ہوتا ہے */
 const AGC = {img:null, k:'', W:0, H:0, q:0, fine:0, zoom:1, ox:0, oy:0, enh:true, ptr:{}, pd:0};
@@ -13690,7 +13701,7 @@ function agPick(inp, k){
   im.src = URL.createObjectURL(f);
 }
 function agCropOpen(c, k){
-  Object.assign(AGC, {img:c, k, q:0, fine:0, zoom:1, ox:0, oy:0, enh:true, ptr:{}});
+  Object.assign(AGC, {img:c, k, q:0, fine:0, zoom:1, ox:0, oy:0, enh:true, br:0, ct:0, ptr:{}});
   const card = k !== 'selfie'; AGC.W = card ? 1100 : 840; AGC.H = card ? 694 : 1050;
   let m = document.getElementById('agCropModal');
   if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'agCropModal'; document.body.appendChild(m); }
@@ -13698,6 +13709,9 @@ function agCropOpen(c, k){
     <canvas id="agcCv" class="agc-cv" width="${AGC.W/2}" height="${AGC.H/2}" style="aspect-ratio:${AGC.W}/${AGC.H};width:${card ? '100%' : '72%'}"></canvas>
     <div class="agc-row"><span>🔍</span><input type="range" id="agcZ" min="100" max="400" value="100"><button type="button" onclick="agcRot()">↻ گھمائیں</button></div>
     <div class="agc-row"><span>📐 سیدھا</span><input type="range" id="agcF" min="-100" max="100" value="0"></div>
+    <div class="agc-row"><span>☀️ روشنی</span><input type="range" id="agcB" min="-100" max="100" value="0"><b id="agcBv" dir="ltr" style="min-width:34px;text-align:center">0</b></div>
+    <div class="agc-row"><span>◐ کنٹراسٹ</span><input type="range" id="agcC" min="-100" max="100" value="0"><b id="agcCv" dir="ltr" style="min-width:34px;text-align:center">0</b></div>
+    <div class="agc-row"><button type="button" onclick="agcReset()" style="flex:1">↺ روشنی / کنٹراسٹ ری سیٹ</button></div>
     <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="agcE" checked> ✨ روشنی، کنٹراسٹ اور صفائی خود بہتر کریں</label></div>
     <button type="button" class="btn block ag-send" onclick="agcDone()">✅ یہی تصویر لگائیں</button>
     <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agCropModal')">✖ رہنے دیں</button></div>`;
@@ -13706,6 +13720,8 @@ function agCropOpen(c, k){
   document.getElementById('agcZ').oninput = e=>{ AGC.zoom = e.target.value/100; agcDraw(); };
   document.getElementById('agcF').oninput = e=>{ AGC.fine = e.target.value/10; agcDraw(); };
   document.getElementById('agcE').onchange = e=>{ AGC.enh = e.target.checked; agcDraw(); };
+  document.getElementById('agcB').oninput = e=>{ AGC.br = +e.target.value; document.getElementById('agcBv').textContent = e.target.value; agcDraw(); };
+  document.getElementById('agcC').oninput = e=>{ AGC.ct = +e.target.value; document.getElementById('agcCv').textContent = e.target.value; agcDraw(); };
   cv.onpointerdown = e=>{ cv.setPointerCapture(e.pointerId); AGC.ptr[e.pointerId] = {x:e.clientX, y:e.clientY}; AGC.pd = 0; };
   cv.onpointerup = cv.onpointercancel = e=>{ delete AGC.ptr[e.pointerId]; AGC.pd = 0; };
   cv.onpointermove = e=>{
@@ -13715,6 +13731,8 @@ function agCropOpen(c, k){
   };
   agcDraw();
 }
+function agcReset(){ AGC.br = AGC.ct = 0; ['agcB','agcC'].forEach(i=>{ const e = document.getElementById(i); if(e) e.value = 0; }); ['agcBv','agcCv'].forEach(i=>{ const e = document.getElementById(i); if(e) e.textContent = '0'; }); agcDraw(); }
+function agcAdjust(cv){ const b = (AGC.br||0) * 1.6, c = 1 + (AGC.ct||0) / 100; if(!b && c === 1) return; const ctx = cv.getContext('2d'), id = ctx.getImageData(0, 0, cv.width, cv.height), d = id.data, lut = new Uint8Array(256); for(let v = 0; v < 256; v++) lut[v] = Math.max(0, Math.min(255, (v - 128) * c + 128 + b)); for(let i = 0; i < d.length; i += 4){ d[i] = lut[d[i]]; d[i+1] = lut[d[i+1]]; d[i+2] = lut[d[i+2]]; } ctx.putImageData(id, 0, 0); }
 function agcRot(){ AGC.q = (AGC.q + 1) % 4; AGC.ox = AGC.oy = 0; agcDraw(); }
 function agcPaint(cv, W, H){
   const ctx = cv.getContext('2d'), im = AGC.img, odd = AGC.q % 2, iw = odd ? im.height : im.width, ih = odd ? im.width : im.height;
@@ -13723,7 +13741,7 @@ function agcPaint(cv, W, H){
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H); ctx.save();
   ctx.translate(W/2 + AGC.ox*W, H/2 + AGC.oy*H); ctx.rotate(rad); ctx.scale(s, s); ctx.rotate(AGC.q * Math.PI / 2); ctx.drawImage(im, -im.width/2, -im.height/2); ctx.restore();
 }
-function agcDraw(){ const cv = document.getElementById('agcCv'); if(!cv) return; agcPaint(cv, cv.width, cv.height); cv.style.filter = AGC.enh ? 'contrast(1.12) brightness(1.04)' : ''; }
+function agcDraw(){ const cv = document.getElementById('agcCv'); if(!cv) return; agcPaint(cv, cv.width, cv.height); cv.style.filter = (AGC.enh ? 'contrast(1.12) brightness(1.04) ' : '') + 'brightness(' + (1 + (AGC.br||0)/125).toFixed(3) + ') contrast(' + (1 + (AGC.ct||0)/100).toFixed(3) + ')'; }
 /* خود بہتری: روشنی پھیلاؤ (2% – 98%) + ہلکی صفائی */
 function agcEnhance(cv){
   const ctx = cv.getContext('2d'), w = cv.width, h = cv.height, id = ctx.getImageData(0, 0, w, h), d = id.data, hist = new Uint32Array(256);
@@ -13739,9 +13757,10 @@ function agcEnhance(cv){
 function agcDone(){
   const out = document.createElement('canvas'); out.width = AGC.W; out.height = AGC.H; agcPaint(out, AGC.W, AGC.H);
   if(AGC.enh){ try{ agcEnhance(out); }catch(e){} }
+  try{ agcAdjust(out); }catch(e){}
   let d = out.toDataURL('image/jpeg', .84);
   if(d.length > 600000){ const o2 = document.createElement('canvas'); o2.width = Math.round(AGC.W*.75); o2.height = Math.round(AGC.H*.75); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', .72); }
-  agImgs[AGC.k] = d; agShowPic(AGC.k); closeModal('agCropModal'); if(AGC.k === 'selfie'){ if(window._ptSR) ptSelfieSaved(d); else selfieSaveLocal(d); } showToast('✅ تصویر لگ گئی');
+  agImgs[AGC.k] = d; agShowPic(AGC.k); agImgSave(AGC.k); closeModal('agCropModal'); try{ document.getElementById('agCropModal').innerHTML = ''; AGC.img = null; }catch(e){} if(AGC.k === 'selfie'){ if(window._ptSR) ptSelfieSaved(d); else selfieSaveLocal(d); } showToast('✅ تصویر لگ گئی');
 }
 function agCnicFmt(el){ const d = el.value.replace(/[^0-9۰-۹٠-٩]/g,'').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)).slice(0,13); el.value = d.length > 12 ? d.slice(0,5)+'-'+d.slice(5,12)+'-'+d.slice(12) : d.length > 5 ? d.slice(0,5)+'-'+d.slice(5) : d; el.classList.toggle('ok', d.length === 13); }
 function agShowPic(k){ const el = document.getElementById('agP_' + k); if(el){ el.classList.add('has'); el.style.backgroundImage = 'url(' + agImgs[k] + ')'; } }
@@ -13760,7 +13779,7 @@ async function agSend(){
     if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 درخواست بھیجیں'; return err('⚠️ ' + ({not_paid:'ایجنٹ بننے کے لیے پہلے اوپر چنی ہوئی اپنی ممبرشپ ایک سال کے لیے جاری کروائیں («📨 ایک سال کے لیے جاری رکھیں»)', bad_phone:'موبائل نمبر درست نہیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر بہت بڑی / درست نہیں — دوبارہ لگائیں', missing:'ضروری خانے بھریں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ پہلے سے کسی اور ایجنٹ کا ہے — ایک شناختی کارڈ پر ایک ہی ایجنٹ'}[r && r.reason] || 'درخواست نہیں گئی — دوبارہ کوشش کریں')); }
     const p92 = '92' + phone.replace(/^0/,'').replace(/^92/,'').slice(-10);
     localStorage.setItem('mcsAgent', JSON.stringify({phone: p92, name: v('agName'), at: Date.now()}));
-    ['front','back','selfie'].forEach(k=> delete agImgs[k]);
+    ['front','back','selfie'].forEach(k=> delete agImgs[k]); agImgClear();
     agStatusView({status: 'pending', name: v('agName')});   /* MCS0811SU218: ریفرل کوڈ فارم بھرتے ہی نہیں — ایڈمن کی منظوری کے بعد ہی */
   }catch(e){ btn.disabled = false; btn.textContent = '📨 درخواست بھیجیں'; err('📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
 }
@@ -13913,7 +13932,7 @@ function agDocsForm(){
       <button type="button" class="btn block ag-send" id="agSendBtn" onclick="agDocsSend()">📨 بھیج دیں</button>
       <div class="cp-hint" style="text-align:center">تصویریں صرف MCS انتظامیہ دیکھتی ہے۔</div>
     </div>`);
-  ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); });
+  ['front','back','selfie'].forEach(k=>{ if(agImgs[k]) agShowPic(k); }); agImgRestore();
 }
 async function agDocsSend(){
   if(codevBlock()) return;
@@ -13924,7 +13943,7 @@ async function agDocsSend(){
   const btn = document.getElementById('agSendBtn'); btn.disabled = true; btn.textContent = '⏳ بھیجی جا رہی ہیں…';
   try{ const r = await (await fetch(AG_API + '/agdocs', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({phone: me.phone, pin: me.pin, dev: agDev(), cnic, father: (document.getElementById('agFather').value||'').trim(), img: agImgs})})).json();
     if(!r || !r.ok){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; return err('⚠️ ' + ({login:'دوبارہ «میں پہلے سے ایجنٹ ہوں» سے موبائل اور PIN لکھیں', bad_cnic:'شناختی کارڈ نمبر درست نہیں', bad_img:'تصویر درست نہیں — دوبارہ لگائیں', cnic_staff:'⛔ یہ شناختی کارڈ ایڈمن کا ہے — اس پر ایجنٹ کوڈ نہیں ملے گا؛ اپنا ریفرل کوڈ استعمال کریں', cnic_taken:'یہ شناختی کارڈ کسی اور ایجنٹ کا ہے'}[r && r.reason] || 'نہیں گیا — دوبارہ کوشش کریں')); }
-    agDocsMark(true); ['front','back','selfie'].forEach(k=> delete agImgs[k]); showToast('✅ تصویریں پہنچ گئیں — شکریہ', 3500); agOpen();
+    agDocsMark(true); ['front','back','selfie'].forEach(k=> delete agImgs[k]); agImgClear(); showToast('✅ تصویریں پہنچ گئیں — شکریہ', 3500); agOpen();
   }catch(x){ btn.disabled = false; btn.textContent = '📨 بھیج دیں'; err('📶 انٹرنیٹ نہیں — دوبارہ کوشش کریں'); }
 }
 /* مالک: ➕ خود ایجنٹ بنائیں */
@@ -21393,7 +21412,7 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
     ['.d2-p small', '.d2-p', 7],
     ['.d2-p small i', '.d2-p', 7],
     ['.d2-p b', '.d2-p', 7],
-    ['.d2-p b em', '.d2-p', 6]   /* MCS1611MO479: سر (.h2-d، شہر) اب ناپ تول سے باہر — ہلنا بند */
+    ['.d2-p b em', '.d2-p', 6]   /* MCS1611MO481: سر (.h2-d، شہر) اب ناپ تول سے باہر — ہلنا بند */
   ];
   const avail = (c, self) => { const cs = getComputedStyle(c); return c.clientWidth - (self ? 0 : (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0)); };
   const need = el => { const w0 = el.style.width, m0 = el.style.maxWidth; el.style.width = 'min-content'; el.style.maxWidth = 'none'; const w = el.getBoundingClientRect().width; el.style.width = w0; el.style.maxWidth = m0; return w; };
@@ -21985,7 +22004,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
   }
   function run(){
     tmr = null; root = root || document.getElementById('screen-home'); if(!root || busy) return;
-    var list = root.querySelectorAll('*:not([data-fs]):not(script):not(style):not(svg *):not(#hdr2):not(#hdr2 *)');   /* MCS1611MO479: سر اپنے cqw سائز سے — ناپ تول نہیں (ہلنا بند) */ if(!list.length) return;
+    var list = root.querySelectorAll('*:not([data-fs]):not(script):not(style):not(svg *):not(#hdr2):not(#hdr2 *)');   /* MCS1611MO481: سر اپنے cqw سائز سے — ناپ تول نہیں (ہلنا بند) */ if(!list.length) return;
     busy = true;
     var H = document.documentElement; H.classList.remove('fs225');
     var vals = []; for(var i = 0; i < list.length; i++){ var fs = parseFloat(getComputedStyle(list[i]).fontSize) || 0; vals.push(Math.round(fs * 2) / 2); }
@@ -22568,7 +22587,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
       collapseKnown(P, f); }catch(e){} }, 50); return r; }; }
   if(typeof window.agFullForm === 'function'){ const o = window.agFullForm; window.agFullForm = function(){ const r = o.apply(this, arguments);
     setTimeout(() => { try{ const f = document.querySelector('.ag-f.agx'); if(!f) return;
-      const P = [['agxName', 'نام'], ['agxPhone', 'موبائل'], ['agxEmail', 'ای میل'], ['agxCity', 'شہر']].map(([id, n]) => { const i = $(id); return { inp: i, name: n, hide: i ? [i.closest('.agx-f')] : [] }; });
+      const P = [['agxName', 'نام'], ['agxPhone', 'موبائل'], ['agxEmail', 'ای میل']].map(([id, n]) => { const i = $(id); return { inp: i, name: n, hide: i ? [i.closest('.agx-f')] : [] }; });
       collapseKnown(P, f); }catch(e){} }, 50); return r; }; }
   /* ID کی فہرست (نام، موبائل، ضلع خود) ہو تو «Paste basic information» دہرا — چھپا */
   setInterval(() => { const pk = $('pkRegBox'), on = !!(pk && vis(pk)); document.querySelectorAll('#serviceFormModal .mcsPasteBtn').forEach(b => b.classList.toggle('cbx-dup', on)); const sb = $('svcStageBar'); if(sb) sb.classList.toggle('cbx-dup', on); }, 800);
@@ -23621,7 +23640,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     const ov = $('wzOv'), keepY = (ov && lastStep === S.step) ? ov.scrollTop : 0;
     const ae = document.activeElement, host = $('wzW');
     const aid = (ae && ae.id && host && host.contains(ae)) ? ae.id : '', sel = (aid && ae.selectionStart != null) ? [ae.selectionStart, ae.selectionEnd] : null;
-    const live3 = doneOf(3); const pg = STEPS.map((s, i) => { const n = i + 1, dn = doneOf(n), ok = canGo(n), cls = (dn ? 'ok ' : '') + (S.step === n && !(live3 && n < 4) ? 'on ' : '') + (ok ? '' : 'lock') + (live3 && n < 4 ? ' fixd' : '') + (live3 && n === 4 && !dn ? ' glow' : '');   /* MCS1611MO479: لائیو کے بعد 1–3 پکے بند، 4 چمکتا */
+    const live3 = doneOf(3); const pg = STEPS.map((s, i) => { const n = i + 1, dn = doneOf(n), ok = canGo(n), cls = (dn ? 'ok ' : '') + (S.step === n && !(live3 && n < 4) ? 'on ' : '') + (ok ? '' : 'lock') + (live3 && n < 4 ? ' fixd' : '') + (live3 && n === 4 && !dn ? ' glow' : '');   /* MCS1611MO481: لائیو کے بعد 1–3 پکے بند، 4 چمکتا */
       return `<div class="wzS4 ${cls}" onclick="wzGo(${n})"><i>${dn ? '✓' : (ok ? n : '🔒')}</i>${s[0]}<span class="u">${s[1]}</span></div>`; }).join('');   /* MCS1511SU447: اصل حالت — مکمل = سبز ✓، پچھلا مکمل نہ ہو = 🔒 */
     /* MCS1511SU440: تصویر کی سبز ✅ پٹی — ہر مرحلے کی اصل حالت */
     let liveOk = false, agOk = false; try{ const cd = myCard(); liveOk = !!(cd && typeof pfActive === 'function' && pfActive(cd)); }catch(e){} try{ const g = typeof agMe === 'function' && agMe(); agOk = !!(g && (g.code || g.pin)); }catch(e){}
@@ -23655,7 +23674,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     if(m && st === 1) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* MCS1511SU447: لاگ اِن ہے تو اکاؤنٹ بنانے کا صفحہ کبھی دوبارہ نہیں کھلتا */
     S.step = st; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
   };
-  function sLive(){   /* MCS1611MO479 (مالک کا حکم): سبسکرپشن مکمل — صرف خلاصہ، کوئی خانہ / ترمیم نہیں؛ اگلا: ایجنٹ (چمکتا بٹن) */
+  function sLive(){   /* MCS1611MO481 (مالک کا حکم): سبسکرپشن مکمل — صرف خلاصہ، کوئی خانہ / ترمیم نہیں؛ اگلا: ایجنٹ (چمکتا بٹن) */
     const ag = doneOf(4);
     frame(`<div class="wzCard" style="text-align:center"><div class="wzOk"><div class="big">✅</div><b class="u" style="font-size:22px;color:#166534">آپ کا کاروبار لائیو ہے</b><div class="wzId" dir="ltr">${esc(sidNow())}</div></div>
       ${ag ? `<div class="wzGreen u" style="font-size:18px">🤝 آپ ایم سی ایس ایجنٹ ہیں</div><button class="wzBtn bG" onclick="mcsWizClose()"><span class="u">بند کریں</span></button>`
@@ -23684,7 +23703,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   window.wzEdit2 = function(){ if(doneOf(3)) return; S.edit2 = 1; save(); draw(); };   /* MCS1511SU427: پرانا محفوظ «مرحلہ 4» ہو تو بھی 3 پر */
   window.wzGo = function(n){
     if(!canGo(n)){ if(n > 1 && !me()){ S.step = 1; save(); return draw(); } try{ flash('پہلے مرحلہ ' + (n === 4 ? 2 : n - 1) + ' مکمل کریں — Complete step ' + (n === 4 ? 2 : n - 1) + ' first'); }catch(e){} return; }   /* MCS1511SU447: ترتیب وار */
-    if(n > 1 && n < 4 && doneOf(3)){ try{ flash('✅ یہ مرحلہ مکمل ہو چکا — آپ کا کاروبار لائیو ہے', 1); }catch(e){} return; }   /* MCS1611MO479: لائیو کے بعد کارڈ / سبسکرپشن کا صفحہ دوبارہ نہیں کھلتا */
+    if(n > 1 && n < 4 && doneOf(3)){ try{ flash('✅ یہ مرحلہ مکمل ہو چکا — آپ کا کاروبار لائیو ہے', 1); }catch(e){} return; }   /* MCS1611MO481: لائیو کے بعد کارڈ / سبسکرپشن کا صفحہ دوبارہ نہیں کھلتا */
     if(n > 3){ mcsWizClose(); try{ agEarnOpen(); }catch(e){} return; }   /* MCS1511SU427: ایجنٹ کا فارم الگ — سیدھا MCS Agent فارم */
     if(n !== 2 && S.edit2){ S.edit2 = 0; save(); }
     S.step = n; save(); draw(); };
