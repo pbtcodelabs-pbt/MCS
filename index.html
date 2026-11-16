@@ -4425,10 +4425,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO464";
+const APP_VERSION = "MCS1611MO465";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO465": "Home: Register your business — go LIVE opens the registration steps; no duplicate welcome after purchase.",
   "MCS1611MO464": "Create New Account now signs up right on the login page → Welcome → Enter.",
   "MCS1511SU463": "🎟️ Promo code button now also in the registration steps (step 3).",
   "MCS1511SU462": "🎟️ Promo code button — 90 days (no price shown).",
@@ -5949,7 +5950,7 @@ function mpRender(){
           ${p.until && !p.pend ? `<span class="b236-val"><i>${left != null && left > 0 ? left + ' Days Left' : 'Expired'}</i><span class="b236-sep"></span><small>Expiry Date:</small> <b dir="ltr">${fmtD(p.until)}</b></span>` : ''}
         </div></div>`
       + (p.pend ? `<div class="cp-hint" style="text-align:center">✏️ تفصیل، ریٹ، اوقات پوری بھریں</div><button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">✏️ پوری تفصیل بھریں / سنواریں</button>`
-        : left == null ? `<button type="button" class="pf-btn" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}');setTimeout(pfEditOpen,900)">⭐ پوری تفصیل بھریں — ریٹ، اوقات (7 دن مفت)</button>`
+        : left == null ? `<button type="button" class="pf-btn" data-noen onclick="event.stopPropagation();(typeof mcsWizOpen==='function')?mcsWizOpen(1):(pfOpen('${p.kind}','${escapeAttr(r.id)}'),setTimeout(pfEditOpen,900))">⭐ Register your business — go LIVE</button>`   /* MCS1611MO465: نیا صارف سیدھا رجسٹریشن کے مراحل (کارڈ → ممبرشپ) */
         : (left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(p.rk)}')">⭐ ${left > 0 ? `${left} دن باقی` : 'ممبرشپ چھپی ہوئی ہے'} — ایک سال کے لیے جاری رکھیں${left > 0 ? (mpIsTrialSpan(p.since, p.until) ? `<small>ایک سال آج سے شروع — ٹرائل کے دن شامل نہیں</small>` : `<small>باقی ${left} دن جمع ہو جائیں گے</small>`) : ''}</button>`
           : ''))
       + (p.taken ? '<div class="cp-hint" style="text-align:center">⚠️ یہ کاروبار کسی دوسرے فون سے جڑا ہے — ہم سے رابطہ کریں</div>' : '');
@@ -24822,7 +24823,7 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
     await mcsPlayFinish(token, SKU, rk);
   };
   const oc = window.mcsCongrats;
-  if(typeof oc === 'function') window.mcsCongrats = function(rk, j){ const r = oc.apply(this, arguments); try{ if(j && j.once){ const m = document.getElementById('agModal'); if(m) m.querySelectorAll('div').forEach(d => { if(d.children.length <= 2 && /One-year membership/.test(d.innerHTML)) d.innerHTML = d.innerHTML.replace('One-year membership', (j.days || 90) + '-day membership'); }); } }catch(e){} return r; };
+  if(typeof oc === 'function') window.mcsCongrats = function(rk, j){ const r = oc.apply(this, arguments); try{ if(rk){ localStorage.setItem('mcsWelcomed:' + rk, '1'); const W = JSON.parse(localStorage.getItem('mcsMemWelcome') || '{}'); W[rk] = Date.now(); localStorage.setItem('mcsMemWelcome', JSON.stringify(W)); } }catch(e){} /* MCS1611MO465: مبارکباد کے بعد دوسرا «خوش آمدید / ویلکم» پاپ اپ نہیں */ try{ if(j && j.once){ const m = document.getElementById('agModal'); if(m) m.querySelectorAll('div').forEach(d => { if(d.children.length <= 2 && /One-year membership/.test(d.innerHTML)) d.innerHTML = d.innerHTML.replace('One-year membership', (j.days || 90) + '-day membership'); }); } }catch(e){} return r; };
   const of = window.memFlowRk;
   if(typeof of === 'function') window.memFlowRk = function(rk, noPlay){
     const r = of.apply(this, arguments);
