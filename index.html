@@ -4424,10 +4424,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO472";
+const APP_VERSION = "MCS1611MO473";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO473": "Google Play subscription fixed: payment request now sends the required total, and a clear message explains when the app is not installed from the Play Store.",
   "MCS1611MO472": "Admin Test Registration button removed everywhere.",
   "MCS1611MO471": "Ads: the free 7-day introductory ad is gone — only the 15-day and 1-month ad packages remain.",
   "MCS1611MO470": "No free trial and no 90-day promo anywhere in the app: registration is one year, paid on Google Play (one package).",
@@ -5701,7 +5702,7 @@ async function mcsPlayBuy(rk){
   if(!sku){ alert('⚠️ اس گوگل اکاؤنٹ پر 5 ممبرشپس پہلے سے فعال ہیں — زیادہ سے زیادہ یہی۔ نئی ممبرشپ کسی دوسرے گوگل اکاؤنٹ سے لیں، یا Help Desk پر بتائیں۔'); return; }
   let token = '';
   try{
-    const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }]);
+    const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }], { total: { label: 'Total', amount: { currency: 'USD', value: '0' } } });   /* MCS1611MO473: details (total) لازمی ہے — گوگل کی ہدایت */
     const res = await req.show();
     token = res.details && res.details.purchaseToken;
     try{ await res.complete('success'); }catch(e){}
@@ -5710,6 +5711,10 @@ async function mcsPlayBuy(rk){
       token = await mcsPlayFindNew(sku, owned); if(!token) return;
     } else {
       token = await mcsPlayFindNew(sku, owned);
+      if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
+        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\nوجہ: یہ ایپ Play Store سے انسٹال والی نہیں ہے (براؤزر، «Add to Home Screen» یا APK فائل سے کھلی ہے)۔\n\nحل:\n1) فون سے موجودہ ایپ / شارٹ کٹ ہٹا دیں\n2) Play Store کھول کر «My City Shines» وہیں سے انسٹال کریں (ٹیسٹ لنک ہو تو اسی لنک سے، اسی Gmail میں جو ٹیسٹر ہے)\n3) Play Store ایپ اپڈیٹ ہو اور اسی Gmail سے لاگ ان ہو\n4) پھر ایپ کھول کر دوبارہ دبائیں\n\nفی الحال ایڈمن کو تفصیل بھیجنا چاہتے ہیں؟ (OK = تفصیل بھیجیں)')) mpSubscribe(rk, true);
+        return;
+      }
       if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
     }
   }
