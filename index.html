@@ -4424,10 +4424,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO477";
+const APP_VERSION = "MCS1611MO478";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO478": "Subscription step: no confusing text — Google Play button if not bought; spinner with timer only while a real purchase is verifying.",
   "MCS1611MO477": "Login: on your own phone just type your mobile number OR your 6-digit PIN — it opens by itself, no button. Continue with Google stays below.",
   "MCS1611MO476": "Continue with Google: if this Gmail is not linked yet, log in once with mobile + PIN and it links to your account — no more sign-up page.",
   "MCS1611MO475": "Home header: digital time moved below the bigger analog clock; left and right header items neatly aligned.",
@@ -23355,6 +23356,7 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
 #wzOv .wzOk .u{font-size:18px!important;color:#4b5563!important}
 #wzOv .wzId{display:inline-block;font:700 26px "Segoe UI",Consolas,monospace;letter-spacing:1px;color:#111827;background:#f2f4f7;border:1px solid #d0d5dd;border-radius:6px;padding:6px 14px;margin:8px 0 4px}
 #wzOv .wzNote{background:#f9fafb;border:1px solid #e4e7ec;color:#374151;border-radius:6px;padding:9px 11px;font-size:14px;line-height:1.9;margin-top:12px}
+#wzOv .wzSpin{width:44px;height:44px;margin:4px auto 6px;border:5px solid #bbf7d0;border-top-color:#16a34a;border-radius:50%;animation:wzSp 1s linear infinite}@keyframes wzSp{to{transform:rotate(360deg)}}
 #wzOv .wzGreen{background:#f9fafb;border:1px solid #e4e7ec;border-left:3px solid #1d4ed8;color:#111827;border-radius:6px;padding:9px 11px;font-size:14px;line-height:1.9;margin-top:12px}
 #wzOv .wzSt{display:inline-block;border-radius:4px;padding:3px 9px;font-weight:600;font-size:12.5px;background:#f2f4f7;color:#475467}
 #wzOv .st-pend{background:#fff6e5;color:#93370d}#wzOv .st-ok,#wzOv .st-act{background:#eaf4ff;color:#175cd3}#wzOv .st-rej{background:#fef3f2;color:#b42318}#wzOv .st-none{background:#f2f4f7;color:#475467}
@@ -23591,7 +23593,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   const statusOf = rec => {   /* ادائیگی / منظوری کی حالت — فون پر موجود معلومات سے */
     try{ if(rec && typeof pfActive === 'function' && pfActive(rec)) return 'act';   /* MCS1411SA402: ادائیگی ہوتے ہی کارڈ منظور / عوامی — ایڈمن کا جائزہ بعد میں */
       const rk = rec && pfKeyOf(rec, 'service'); const m = JSON.parse(lsG('mcsMemSent') || '{}');
-      if((rk && m[rk]) || lsG('mcsPlayPending')) return 'pend'; }catch(e){}
+      const pp = JSON.parse(lsG('mcsPlayPending') || 'null'); if(pp && pp.token && (!pp.rk || !rk || pp.rk === rk)) return 'pend'; }catch(e){}   /* MCS1611MO478: صرف اصل Google Play خریداری زیرِ تصدیق ہو تو — بھیجی درخواست (mcsMemSent) ادائیگی نہیں */
     return 'none'; };
   const STX = { none:['st-none', 'Not started', 'شروع نہیں ہوا'], pend:['st-pend', 'Payment verifying', 'ادائیگی کی تصدیق ہو رہی ہے'], act:['st-act', 'Active — Public', 'فعال — سب کو نظر آ رہا ہے'], ok:['st-ok', 'Approved', 'منظور'], rej:['st-rej', 'Rejected', 'مسترد'] };
   const stChip = k => `<span class="wzSt ${STX[k][0]}">${STX[k][1]} · <span class="u">${STX[k][2]}</span></span>`;
@@ -23903,15 +23905,20 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       ${LBL('Referral Code', 'ریفرل کوڈ')}<select class="wzI" id="wzRef" onchange="wzP()"><option value="">Select Referral Code — فہرست سے ایجنٹ چنیں</option></select><div id="wzRefNm" class="u" style="font-size:14px;color:#047857;font-weight:700;margin:3px 2px"></div>
       ${LBL('Payment Method', 'ادائیگی کا طریقہ', 1)}<div class="wzPlay"><span class="gp">${typeof MCS_GP_SVG === 'string' ? MCS_GP_SVG : '▶'}</span><span>Google Play Billing<small class="u" style="display:block;font-weight:400">گوگل پلے کے ذریعے ادائیگی</small></span></div>
       ${st === 'none' ? `<div class="wzSec"><span>Choose Your Plan</span><span class="u">اپنا پلان منتخب کریں</span></div><div id="wzPlans"><div class="wzNote u">⏳ Google Play سے پلان آ رہے ہیں…</div></div>` : ''}
-      <div class="wzNote u">✅ Google Play سے خریداری ہوتے ہی تصدیق خود — کچھ پیسٹ نہیں کرنا۔<br><span dir="ltr" style="font-family:inherit">Buy on Google Play → verified automatically → Registered</span></div>
       <div class="wzErr u" id="wzErr"></div>
-      ${st === 'pend' ? `<div class="wzGreen"><b>⏳ Payment received — verification in progress</b><div class="u">ادائیگی موصول — تصدیق ہو رہی ہے۔ تصدیق ہوتے ہی کاروبار عوامی ہو جائے گا۔</div></div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
+      ${st === 'pend' ? `<div class="wzGreen" style="text-align:center"><div class="wzSpin"></div><b class="u" style="font-size:18px">تصدیق ہو رہی ہے</b><div id="wzPendT" dir="ltr" style="font:800 22px/1.4 Arial,sans-serif;color:#166534">0:00</div></div>` : ''}
       ${st === 'act' ? `<div class="wzGreen"><b>🎉 Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! اب آپ کا کاروبار عوام کے لیے ظاہر ہے۔</div></div><button class="wzBtn bG" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button>` : ''}
       ${(function(){ try{ return mcsGpaHeld(null, pfKeyOf(rec, 'service')) ? `<div class="wzGreen"><b>⏳ Payment done — finishing verification</b><div class="u">ادائیگی ہو گئی — تصدیق مکمل کریں۔</div></div><button class="wzBtn bB" onclick="mcsPlayBuy(pfKeyOf(myCard(), 'service'))">✅ Finish verification<small class="u">تصدیق مکمل کریں</small></button>` : ''; }catch(e){ return ''; } })()}
       <div id="wzAlt"></div>
       ${st !== 'act' ? `<button class="wzBtn bW" onclick="wzDel()" style="color:#b42318;border-color:#fda29b;margin-top:6px">🗑️ Delete this business card<small class="u">یہ بزنس کارڈ حذف کریں</small></button>` : ''}
       <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button></div>`);
     wzRefInit(); const n = $('wzRef'); if(n && p.ref) n.value = p.ref; wzRefNm(); if(st === 'none') plansLoad();
+    /* MCS1611MO478: زیرِ تصدیق — گھومتا نشان + گزرا وقت؛ ہر 20 سیکنڈ سرور سے دوبارہ جانچ، تصدیق ہوتے ہی صفحہ خود اگلا */
+    if(st === 'pend'){ let at = Date.now(); try{ at = (JSON.parse(lsG('mcsPlayPending') || 'null') || {}).at || at; }catch(e){}
+      clearInterval(window._wzPendT); let k = 0;
+      window._wzPendT = setInterval(() => { const el = $('wzPendT'); if(!el){ clearInterval(window._wzPendT); return; }
+        const sec = Math.max(0, Math.floor((Date.now() - at) / 1000)); el.textContent = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+        if(++k % 20 === 0){ try{ if(typeof mcsPlaySync === 'function') mcsPlaySync(true); }catch(e){} try{ if(statusOf(myCard()) !== 'pend'){ clearInterval(window._wzPendT); s3(); } }catch(e){} } }, 1000); }
   }
   async function plansLoad(){   /* MCS1411SA396: Play کے پلان — صرف اگلا اہل پلان کھلا، باقی مقفل */
     let det = null, owned = [];
