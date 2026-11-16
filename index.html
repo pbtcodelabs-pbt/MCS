@@ -4425,10 +4425,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO465";
+const APP_VERSION = "MCS1611MO466";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO466": "Faster & lighter: only cards with an MCS number read live from Firebase; Firebase meter in admin panel; signup video with download & WhatsApp share.",
   "MCS1611MO465": "Home: Register your business — go LIVE opens the registration steps; no duplicate welcome after purchase.",
   "MCS1611MO464": "Create New Account now signs up right on the login page → Welcome → Enter.",
   "MCS1511SU463": "🎟️ Promo code button now also in the registration steps (step 3).",
@@ -5616,6 +5617,8 @@ async function mcsGoLive(rk){
       r0.approved = true; ch = true; try{ saveStore(); }catch(e){}
       try{ const FB = window.MCSFirebase; if(FB && FB.updateDoc && r0.fsId) await FB.updateDoc(FB.doc(FB.db, kind === 'doctor' ? 'doctors' : 'services', r0.fsId), {approved: true}); }catch(e){}
     }
+    if(r0.mcsLive !== true){ r0.mcsLive = true; ch = true; try{ saveStore(); }catch(e){}   /* MCS1611MO466: MCS نمبر لگ گیا = لائیو پڑھائی میں */
+      try{ const FB = window.MCSFirebase; if(FB && FB.updateDoc && r0.fsId) await FB.updateDoc(FB.doc(FB.db, kind === 'doctor' ? 'doctors' : 'services', r0.fsId), {mcsLive: true}); }catch(e){} }
     let sent = {}; try{ sent = JSON.parse(localStorage.getItem('mcsReviewSent') || '{}') || {}; }catch(e){}
     if(!sent[rk]){
       sent[rk] = Date.now(); try{ localStorage.setItem('mcsReviewSent', JSON.stringify(sent)); }catch(e){}
@@ -12625,7 +12628,7 @@ function initFirebaseSync(){
 
   SYNCED_COLLECTIONS.forEach(col=>{
     const colRef = FB.collection(FB.db, col);
-    const approvedQ = FB.query(colRef, FB.where('approved','==', true));
+    const approvedQ = FB.query(colRef, FB.where('approved','==', true), FB.where('mcsLive','==', true));   /* MCS1611MO466 (مالک کا حکم): صرف MCS نمبر والے کارڈ لائیو — باقی سرور کی نقل (/mcsdir) سے، فائربیس کی پڑھائی نہیں */
     FB.onSnapshot(approvedQ, {includeMetadataChanges:true}, (snap)=>{
       if(window._impBusy){ window._impSnapMissed = true; return; } /* MCS0811SU242: امپورٹ کے دوران ہر گروپ پر پوری فہرست محفوظ + اسکرین — فون اٹکتا تھا */
       const arr = localArrayFor(col);
@@ -12635,14 +12638,14 @@ function initFirebaseSync(){
         const live = new Set(snap.docs.map(d=>d.id));
         for(let i=arr.length-1;i>=0;i--){
           const x = arr[i];
-          if(x.fsId && x.approved===true && !live.has(x.fsId)) arr.splice(i,1);
+          if(x.fsId && x.approved===true && x.mcsLive===true && !live.has(x.fsId)) arr.splice(i,1);   /* MCS1611MO466: صرف لائیو والے — باقی نقل سے */
         }
       }
       snap.docChanges().forEach(change=>{
         const fsId = change.doc.id;
         if(change.type==='removed'){
           const idx = arr.findIndex(x=>x.fsId===fsId);
-          if(idx>-1) arr.splice(idx,1);
+          if(idx>-1 && arr[idx].mcsLive===true) arr.splice(idx,1);
         } else {
           const data = change.doc.data();
           let existing = arr.find(x=>x.fsId===fsId) || arr.find(x=>x.id===fsId || (data.id && x.id===data.id));
@@ -16502,7 +16505,7 @@ if('serviceWorker' in navigator){
   import {
     initializeFirestore, persistentLocalCache,
     collection, addDoc, doc, setDoc, updateDoc, deleteDoc,
-    onSnapshot, query, where, serverTimestamp, getDocs, getDoc, writeBatch
+    onSnapshot, query, where, serverTimestamp, getDocs, getDoc, writeBatch, getDocsFromServer
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
   import {
     initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, signInWithEmailAndPassword, signOut, onAuthStateChanged
@@ -16534,7 +16537,7 @@ if('serviceWorker' in navigator){
       bt.commit = () => { if(nw) cW(nw); if(nd) cD(nd); return o(); }; return bt; };
     window.MCSFirebase = {
       db, auth, collection, addDoc: aD, doc, setDoc: sD, updateDoc: uD, deleteDoc: dD,
-      onSnapshot: oS, query, where, serverTimestamp, getDocs: gDs, getDoc: gD, writeBatch: wB,
+      onSnapshot: oS, query, where, serverTimestamp, getDocs: gDs, getDoc: gD, writeBatch: wB, getDocsFromServer: async (...a) => { const x = await getDocsFromServer(...a); cR(x.size); return x; },   /* MCS1611MO466 */
       signInWithEmailAndPassword, signOut, onAuthStateChanged
     };
     window.dispatchEvent(new Event('mcs-firebase-ready'));
@@ -24845,5 +24848,187 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
 .mem-once .mo-box b{color:#92400e}.mem-once .mo-p{font-weight:900;color:#92400e}.mem-once small{color:#78350f;line-height:1.45}
 .mem-once .mo-btn{background:#f59e0b;color:#fff;border:0;border-radius:14px;padding:12px;font-weight:900;font-size:16px;width:100%;cursor:pointer}
 </style>
+<script id="mcsDir466">
+/* MCS1611MO466 (مالک کا حکم، ہیلپ ڈیسک #268):
+   (1) فائربیس کی لمٹ: صرف MCS نمبر والے کارڈ (mcsLive) لائیو پڑھے جاتے ہیں؛ باقی کارڈ سرور کی نقل (AIO worker /mcsdir، gzip) سے — ہر فون پر فائربیس کی کوئی پڑھائی نہیں۔
+       ایڈمن 1 کا فون نقل بناتا ہے (getDocsFromServer — دن میں چند بار / ایڈمن کی تبدیلی کے بعد) اور MCS نمبر والے کارڈوں پر mcsLive لگاتا ہے۔
+   (2) ایڈمن پینل (My Account پورٹل + ڈویلپر پینل) میں سب سے اوپر 🔥 Firebase میٹر — خود، بغیر بٹن، ہر منٹ تازہ۔
+   (3) سائن اپ صفحے پر «🎬 How to register» ویڈیو — ▶️ چلائیں، ⬇️ ڈاؤن لوڈ، 💬 واٹس ایپ شیئر۔ */
+(function(){
+  const API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
+  const LS = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} } };
+  const post = async (path, body, hdr) => { try{ return await (await fetch(API + path, { method: 'POST', headers: hdr || { 'Content-Type': 'text/plain' }, body: JSON.stringify(body) })).json(); }catch(e){ return null; } };
+  const admin = () => { try{ return !!isAdminSignedIn; }catch(e){ return false; } };
+  const N = n => Number(n || 0).toLocaleString('en-US');
+  const b64 = u8 => { let s = ''; for(let i = 0; i < u8.length; i += 32768) s += String.fromCharCode.apply(null, u8.subarray(i, i + 32768)); return btoa(s); };
+  async function gz(str){ const cs = new Blob([str]).stream().pipeThrough(new CompressionStream('gzip')); return b64(new Uint8Array(await new Response(cs).arrayBuffer())); }
+  async function ungz(b){ const bin = atob(b), u8 = new Uint8Array(bin.length); for(let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return await new Response(new Blob([u8]).stream().pipeThrough(new DecompressionStream('gzip'))).text(); }
+  const kindOf = col => col === 'doctors' ? 'doctor' : 'service';
+  function hasMcsNo(r, kind){ try{ const a = pfAct[pfKeyOf(r, kind)]; if(a && (a.subid || a.sid)) return true; }catch(e){} const m = (r && r.more) || {}; return !!(m.subid || m.sid); }
+  function mineIds(){ const s = new Set(); try{ mpAll().forEach(p => { if(p.id) s.add(p.id); if(p.fsId) s.add(p.fsId); }); }catch(e){} return s; }
+
+  /* ---------- نقل فون پر لگانا ---------- */
+  function dirApply(obj, v){
+    if(!obj) return 0; let ch = 0; const mine = mineIds();
+    ['services', 'doctors'].forEach(col => {
+      const list = obj[col]; if(!Array.isArray(list)) return; const arr = localArrayFor(col); const ids = new Set(list.map(x => x.fsId));
+      list.forEach(x => {
+        const ex = arr.find(y => y.fsId === x.fsId) || (x.id ? arr.find(y => y.id === x.id) : null);
+        if(ex){ if(ex.mcsLive === true) return; Object.assign(ex, x, { fsId: x.fsId, approved: true, synced: true }); }
+        else arr.push(Object.assign({}, x, { fsId: x.fsId, approved: true, synced: true, id: x.id || ('fs_' + x.fsId) }));
+        ch++;
+      });
+      for(let i = arr.length - 1; i >= 0; i--){ const y = arr[i];   /* نقل میں نہیں = سرور سے حذف ہو چکا (لائیو، اپنا اور ابھی منظوری والا کبھی نہیں) */
+        if(y.fsId && y.approved === true && y.mcsLive !== true && !ids.has(y.fsId) && !mine.has(y.id) && !mine.has(y.fsId)) { arr.splice(i, 1); ch++; } }
+    });
+    if(ch){ try{ saveStore(); }catch(e){} try{ refreshVisibleLists(); }catch(e){} try{ if(typeof updateHomeCounts === 'function') updateHomeCounts(); }catch(e){} try{ hlRenderSoon(); mpRender(); }catch(e){} }
+    if(v) LS.set('mcsDirV', String(v));
+    return ch;
+  }
+  let dirBusy = false;
+  async function dirCheck(){
+    if(dirBusy || !navigator.onLine) return; dirBusy = true;
+    try{
+      const m = await post('/mcsdir', { op: 'ver' }); if(!m || !m.ok || !m.v) return;
+      if(String(m.v) === LS.get('mcsDirV')) return;
+      const g = await post('/mcsdir', { op: 'get' }); if(!g || !g.ok || !g.data) return;
+      dirApply(JSON.parse(await ungz(g.data)), g.v);
+    }catch(e){ console.warn('dirCheck', e); } finally { dirBusy = false; }
+  }
+  window.mcsDirCheck = dirCheck;
+
+  /* ---------- ایڈمن 1: نقل بنانا + MCS نمبر والوں پر mcsLive ---------- */
+  let pubBusy = false;
+  async function dirPublish(force){
+    if(!admin() || pubBusy) return { ok: false, reason: 'busy' }; const FB = window.MCSFirebase; if(!FB || !FB.getDocsFromServer) return { ok: false, reason: 'fb' };
+    pubBusy = true; LS.set('mcsDirPubTry', String(Date.now()));
+    try{
+      const out = { services: [], doctors: [] }; let live = 0, mig = 0, n = 0;
+      for(const col of ['services', 'doctors']){
+        const snap = await FB.getDocsFromServer(FB.query(FB.collection(FB.db, col), FB.where('approved', '==', true)));
+        snap.forEach(d => { const x = d.data(); const rec = Object.assign({}, x, { fsId: d.id }); n++;
+          if(x.mcsLive === true || hasMcsNo(rec, kindOf(col))){ live++;
+            if(x.mcsLive !== true){ mig++; FB.updateDoc(FB.doc(FB.db, col, d.id), { mcsLive: true }).catch(() => {}); const L = localArrayFor(col).find(y => y.fsId === d.id); if(L) L.mcsLive = true; }
+            return; }
+          out[col].push(rec); });
+      }
+      const cnt = out.services.length + out.doctors.length; const prev = parseInt(LS.get('mcsDirN') || '0', 10);
+      if(!force && prev > 200 && cnt < prev * 0.8) return { ok: false, reason: 'shrink', cnt, prev };   /* اچانک بہت کم = کچھ غلط — نقل نہیں بدلتی */
+      const json = JSON.stringify(out, (k, v) => (v && typeof v === 'object' && typeof v.toMillis === 'function') ? v.toMillis() : v);
+      const data = await gz(json);
+      const r = await post('/mcsdir', { op: 'put', data, n: cnt }, await vfAdminHdr());
+      if(!r || !r.ok) return { ok: false, reason: (r && (r.error || r.reason)) || 'net' };
+      LS.set('mcsDirN', String(cnt)); LS.set('mcsDirPub', String(Date.now())); LS.set('mcsDirDirty', '');
+      dirApply(out, r.v);
+      return { ok: true, cnt, live, mig, kb: Math.round(data.length / 1024) };
+    }catch(e){ console.warn('dirPublish', e); return { ok: false, reason: String(e && e.code || e) }; }
+    finally { pubBusy = false; qmDraw(); }
+  }
+  window.mcsDirPublish = async function(){ const b = document.getElementById('qmPub'); if(b){ b.disabled = true; b.textContent = '⏳ Publishing…'; }
+    const r = await dirPublish(true); try{ showToast(r.ok ? `✅ Directory copy published — ${N(r.cnt)} cards (${r.kb} KB), ${N(r.live)} live` : '❌ Not published: ' + r.reason, 6000); }catch(e){} if(b){ b.disabled = false; b.textContent = '🔄 Publish copy now'; } };
+  function pubDue(){ if(!admin()) return false; const last = parseInt(LS.get('mcsDirPub') || '0', 10), tr = parseInt(LS.get('mcsDirPubTry') || '0', 10), dirty = parseInt(LS.get('mcsDirDirty') || '0', 10);
+    if(Date.now() - tr < 20 * 60e3) return false;   /* ناکام کوشش کے بعد 20 منٹ رکیں (کوٹہ ختم ہو تو بار بار نہیں) */
+    return Date.now() - last > 6 * 3600e3 || (dirty && dirty > last && Date.now() - dirty > 3 * 60e3 && Date.now() - last > 30 * 60e3); }
+  /* ایڈمن کی ہر تحریر (services / doctors) = نقل پرانی */
+  function hookWrites(){ const FB = window.MCSFirebase; if(!FB || FB._dir466) return; FB._dir466 = 1;
+    const mark = ref => { try{ if(admin() && ref && /^(services|doctors)\//.test(ref.path || '')) LS.set('mcsDirDirty', String(Date.now())); }catch(e){} };
+    ['updateDoc', 'setDoc', 'deleteDoc'].forEach(k => { const o = FB[k]; if(typeof o === 'function') FB[k] = function(ref){ mark(ref); return o.apply(this, arguments); }; }); }
+
+  /* ---------- 🔥 Firebase میٹر — ایڈمن پینل میں ہمیشہ ---------- */
+  let QM = null, QM_AT = 0;
+  async function qmLoad(fresh){
+    if(!admin()) return; if(!fresh && QM && Date.now() - QM_AT < 55e3) return qmDraw();
+    try{ const r = await post('/mcsuse', { op: 'get', fresh: !!fresh }, await vfAdminHdr()); if(r && r.ok){ QM = r; QM_AT = Date.now(); } }catch(e){}
+    qmDraw();
+  }
+  function qmHtml(){
+    const q = QM && QM.quota; const tm = d => new Date(d).toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Karachi' });
+    const pub = parseInt(LS.get('mcsDirPub') || '0', 10), dn = parseInt(LS.get('mcsDirN') || '0', 10);
+    const dirLine = `<div class="qm-f">🗂️ Cards without MCS number: <b>${dn ? N(dn) : '—'}</b> kept as a server copy (no Firebase reads) · ${pub ? 'published ' + new Date(pub).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Karachi' }) : 'not published yet'}
+      <button type="button" id="qmPub" class="qm-btn" onclick="event.stopPropagation();mcsDirPublish()">🔄 Publish copy now</button></div>`;
+    if(!q) return '<div class="qm-l">⏳ Loading Firebase usage…</div>' + dirLine;
+    const left = Math.max(0, q.resetAt - Date.now()), hh = Math.floor(left / 3600e3), mm = Math.floor(left % 3600e3 / 60e3);
+    const bar = (lb, n, max) => { const p = Math.min(100, Math.round(n / max * 100)), c = p >= 90 ? '#dc2626' : p >= 70 ? '#ea8a00' : '#16a34a';
+      return `<div class="qm-r"><span class="qm-n">${lb}</span><div class="qm-b"><i style="width:${Math.max(2, p)}%;background:${c}"></i></div><span class="qm-v">${N(n)} <small>/ ${max / 1000}k</small> <b style="color:${c}">${p}%</b></span></div>`; };
+    const st = q.live === 'quota' ? `<div class="qm-st bad">⛔ Quota FULL — app cannot load from Firebase${q.since ? ' (since ' + tm(q.since) + ')' : ''}</div>` : q.live === 'ok' ? '<div class="qm-st ok">✅ Firebase working</div>' : '<div class="qm-st">⚠️ Status unknown</div>';
+    return `${st}${bar('📖 Reads', q.r, 50000)}${bar('✏️ Writes', q.w, 20000)}${bar('🗑️ Deletes', q.d, 20000)}
+      <div class="qm-f">🔄 New quota at <b>${tm(q.resetAt)}</b> (in ${hh}h ${mm}m) · updated ${tm(QM_AT || Date.now())} · counts from app phones (approx.)</div>${dirLine}`;
+  }
+  function qmDraw(){ document.querySelectorAll('.mcsQm .qm-in').forEach(el => { el.innerHTML = qmHtml(); }); }
+  function qmCard(){ const d = document.createElement('div'); d.className = 'mcsQm'; d.innerHTML = '<div class="qm-hd">🔥 Firebase Usage — today</div><div class="qm-in">' + qmHtml() + '</div>'; d.onclick = () => qmLoad(true); return d; }
+  function qmPlace(){
+    if(!admin()) { document.querySelectorAll('.mcsQm').forEach(e => e.remove()); return; }
+    [['portalModal', '.pt-body'], ['devPanelModal', '#devPanelBody'], ['myAccountModal', '.mx-in']].forEach(([id, sel]) => {
+      const m = document.getElementById(id); if(!m || !m.classList.contains('active')) return;
+      const host = m.querySelector(sel) || m.querySelector('.modal-box'); if(!host || host.querySelector(':scope > .mcsQm')) return;
+      host.insertBefore(qmCard(), host.firstChild); qmLoad(false);
+    });
+  }
+  window.mcsQmPlace = qmPlace;
+  new MutationObserver(() => { if(qmPlace._t) return; qmPlace._t = setTimeout(() => { qmPlace._t = 0; qmPlace(); }, 150); }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+  setInterval(() => { if(document.querySelector('.mcsQm') && !document.hidden) qmLoad(false); }, 60e3);
+
+  /* ---------- 🎬 سائن اپ صفحے پر ویڈیو ---------- */
+  const VID = '../help/media/mcs-signup-ur.mp4', POST = '../help/media/mcs-signup-ur.jpg', VNAME = 'My-City-Shines-Register-Business.mp4';
+  const SHARE_TXT = '🏪 My City Shines — register your business and go LIVE\n✅ Sign up → free business card → membership\nhttps://play.google.com/store/apps/details?id=com.pbtcodelabs.mycityshines';
+  let VFILE = null;
+  function suVidPlace(){
+    const ov = document.getElementById('uaOv'); if(!ov || !ov.querySelector('#uaName')) return; const card = ov.querySelector('.uaCard'); if(!card || card.querySelector('.suVid')) return;
+    const d = document.createElement('div'); d.className = 'suVid'; d.innerHTML = `<div class="sv-t">🎬 How to register your business — watch the video</div>
+      <div class="sv-row"><button type="button" class="sv-pl" onclick="mcsSuVidPlay()"><img src="${POST}" alt=""><i>▶</i></button>
+      <div class="sv-bt"><a class="sv-b dl" href="${VID}" download="${VNAME}">⬇️ Download</a><button type="button" class="sv-b wa" id="svShare" onclick="mcsSuVidShare()">💬 WhatsApp share</button></div></div>`;
+    card.appendChild(d);
+  }
+  new MutationObserver(() => { if(suVidPlace._t) return; suVidPlace._t = setTimeout(() => { suVidPlace._t = 0; suVidPlace(); }, 120); }).observe(document.documentElement, { subtree: true, childList: true });
+  window.mcsSuVidPlay = function(){ let o = document.getElementById('svOv'); if(!o){ o = document.createElement('div'); o.id = 'svOv'; o.onclick = e => { if(e.target === o) mcsSuVidClose(); }; document.body.appendChild(o); }
+    o.innerHTML = `<div class="sv-box"><button type="button" class="sv-x" onclick="mcsSuVidClose()">✕</button><video src="${VID}" poster="${POST}" controls autoplay playsinline></video>
+      <div class="sv-bt"><a class="sv-b dl" href="${VID}" download="${VNAME}">⬇️ Download</a><button type="button" class="sv-b wa" onclick="mcsSuVidShare(this)">💬 WhatsApp share</button></div></div>`; o.classList.add('on'); };
+  window.mcsSuVidClose = function(){ const o = document.getElementById('svOv'); if(o){ o.classList.remove('on'); o.innerHTML = ''; } };
+  const waText = () => window.open('https://wa.me/?text=' + encodeURIComponent(SHARE_TXT + '\n🎬 ' + new URL(VID, location.href).href), '_blank');
+  /* فون کی شیئر کی اجازت صرف بٹن دباتے ہی — اس لیے پہلے ویڈیو لا کر یاد، پھر «Share now» (HD1611SU060 / AIO0811SU188 والا سبق) */
+  window.mcsSuVidShare = async function(btn){
+    btn = btn || document.getElementById('svShare');
+    if(VFILE){ try{ await navigator.share({ files: [VFILE], text: SHARE_TXT }); }catch(e){ if(e && e.name !== 'AbortError') waText(); } return; }
+    if(!(navigator.canShare && window.File)) return waText();
+    if(btn){ btn.disabled = true; btn.textContent = '⏳ Preparing video…'; }
+    try{ const bl = await (await fetch(VID)).blob(); const f = new File([bl], VNAME, { type: 'video/mp4' });
+      if(!navigator.canShare({ files: [f] })){ if(btn){ btn.disabled = false; btn.textContent = '💬 WhatsApp share'; } return waText(); }
+      VFILE = f; document.querySelectorAll('.sv-b.wa').forEach(b => { b.disabled = false; b.textContent = '📤 Share now ✓'; });
+    }catch(e){ if(btn){ btn.disabled = false; btn.textContent = '💬 WhatsApp share'; } waText(); }
+  };
+
+  /* ---------- شروع ---------- */
+  function boot(){ hookWrites(); setTimeout(dirCheck, 2500); setTimeout(() => { if(pubDue()) dirPublish(false); }, 25e3); }
+  if(window.MCSFirebase) boot(); else window.addEventListener('mcs-firebase-ready', boot, { once: true });
+  document.addEventListener('visibilitychange', () => { if(document.hidden) return; const t = parseInt(LS.get('mcsDirChk') || '0', 10);
+    if(Date.now() - t > 30 * 60e3){ LS.set('mcsDirChk', String(Date.now())); dirCheck(); } if(pubDue()) dirPublish(false); });
+  setInterval(() => { if(pubDue()) dirPublish(false); }, 5 * 60e3);
+})();
+</script>
+<style id="mcsDir466css">
+.mcsQm{background:#0f172a;color:#e2e8f0;border-radius:14px;padding:10px 12px;margin:0 0 10px;font:600 12.5px/1.4 'Segoe UI',Selawik,Arial,sans-serif;direction:ltr;text-align:left;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.mcsQm .qm-hd{font-weight:900;font-size:14px;margin-bottom:6px;color:#fde68a}
+.mcsQm .qm-st{font-weight:800;border-radius:8px;padding:4px 8px;margin-bottom:6px;background:#334155}.mcsQm .qm-st.ok{background:#14532d}.mcsQm .qm-st.bad{background:#7f1d1d}
+.mcsQm .qm-r{display:grid;grid-template-columns:78px 1fr auto;gap:6px;align-items:center;margin:4px 0}
+.mcsQm .qm-b{height:10px;background:#334155;border-radius:6px;overflow:hidden}.mcsQm .qm-b i{display:block;height:100%;border-radius:6px}
+.mcsQm .qm-v{font-size:12px;white-space:nowrap}.mcsQm .qm-v small{opacity:.7}
+.mcsQm .qm-f{font-size:11px;opacity:.85;margin-top:6px;line-height:1.5}.mcsQm .qm-l{opacity:.8}
+.mcsQm .qm-btn{display:block;margin-top:6px;background:#2563eb;color:#fff;border:0;border-radius:9px;padding:7px 10px;font:800 12px 'Segoe UI',Arial,sans-serif;width:100%}
+.suVid{margin-top:12px;border-top:1px dashed #cbd5e1;padding-top:10px;direction:ltr;text-align:left}
+.suVid .sv-t{font:900 13.5px 'Segoe UI',Selawik,Arial,sans-serif;color:#0b3d91;margin-bottom:7px}
+.suVid .sv-row{display:flex;gap:10px;align-items:center}
+.suVid .sv-pl{position:relative;flex:0 0 74px;height:120px;border:0;padding:0;border-radius:12px;overflow:hidden;background:#0b3d6e;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+.suVid .sv-pl img{width:100%;height:100%;object-fit:cover;display:block}.suVid .sv-pl i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:30px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.sv-bt{display:flex;flex-direction:column;gap:7px;flex:1;min-width:0}
+.sv-b{display:block;text-align:center;border:0;border-radius:11px;padding:10px 8px;font:800 14px 'Segoe UI',Selawik,Arial,sans-serif;text-decoration:none;color:#fff;cursor:pointer}
+.sv-b.dl,a.sv-b.dl,a.sv-b.dl:visited{background:#0b3d91;color:#fff !important}.sv-b.wa{background:#16a34a}.sv-b:disabled{opacity:.7}
+#svOv{position:fixed;inset:0;z-index:2147483100;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:12px}#svOv.on{display:flex}
+#svOv .sv-box{position:relative;width:min(380px,100%);background:#0f172a;border-radius:16px;padding:10px}
+#svOv video{width:100%;max-height:72vh;border-radius:10px;background:#000;display:block}
+#svOv .sv-bt{flex-direction:row;margin-top:8px}#svOv .sv-b{flex:1}
+#svOv .sv-x{position:absolute;top:-12px;right:-6px;width:34px;height:34px;border-radius:50%;border:0;background:#fff;font-weight:900;font-size:16px;z-index:2}
+</style>
+
 </body>
 </html>
