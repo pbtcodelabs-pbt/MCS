@@ -4425,10 +4425,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1511SU463";
+const APP_VERSION = "MCS1611MO464";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO464": "Create New Account now signs up right on the login page → Welcome → Enter.",
   "MCS1511SU463": "🎟️ Promo code button now also in the registration steps (step 3).",
   "MCS1511SU462": "🎟️ Promo code button — 90 days (no price shown).",
   "MCS1511SU461": "🎟️ New: 90-day one-time membership on Google Play — promo codes work without any card.",
@@ -23968,7 +23969,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     const o = window.uaSignup;
     window.uaSignup = function(pre){
       if(pre && pre.gtoken){ wzG = { token: pre.gtoken, gmail: pre.gmail || '', name: pre.name || '' }; if(!S.a.name && wzG.name) S.a.name = wzG.name; }   /* MCS1511SU445: Google سے آیا نیا بندہ بھی اسی ویزرڈ میں */
-      try{ uaHide(); }catch(e){} S.step = 1; save(); mcsWizOpen(1); };
+      return o.apply(this, arguments); };   /* MCS1611MO464 (مالک کا حکم): سائن اپ لاگ اِن صفحے پر ہی مکمل → Welcome → Enter = ہوم؛ رجسٹریشن ویزرڈ نہیں */
     const rc = window.svcRegClick;   /* MCS1411SA398: اپنے کارڈ پر «رجسٹریشن مکمل کریں» = نیا ویزرڈ */
     if(typeof rc === 'function') window.svcRegClick = function(id){
       try{ const r = (store.services || []).find(x => x.id === id); if(r && me() && pfAcctOwns(r)){ try{ closeModal('agModal'); }catch(e){} mcsWizOpen(((r.more || {}).ptype) ? 3 : 2); return; } }catch(e){}
