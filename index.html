@@ -4424,10 +4424,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO473";
+const APP_VERSION = "MCS1611MO474";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO474": "Home header: the Qibla compass is replaced by a large analog clock (white dial, maroon ring, Arial digits, red seconds hand).",
   "MCS1611MO473": "Google Play subscription fixed: payment request now sends the required total, and a clear message explains when the app is not installed from the Play Store.",
   "MCS1611MO472": "Admin Test Registration button removed everywhere.",
   "MCS1611MO471": "Ads: the free 7-day introductory ad is gone — only the 15-day and 1-month ad packages remain.",
@@ -22809,6 +22810,49 @@ html #screen-home #hdr2.h229 .h2-d #h2H{font:400 2.5cqw/1.6 'Jameel Noori Nastal
   }
   function go(){ try{ build(); }catch(e){} setInterval(function(){ try{ tick(); }catch(e){} }, 5000); }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(go, 0); }); else setTimeout(go, 0);
+})();
+</script>
+
+<style id="mcsAna474css">
+/* MCS1611MO474 (مالک کا حکم): سر کے بیچ قبلہ نما + ڈگری کی ڈبی ہٹا کر بڑا گھڑیال — سفید ڈائل، مہرون گول کنارہ، Arial ہندسے، منٹ کی لکیریں، کالی سوئیاں، سرخ سیکنڈ */
+html #screen-home #hdr2.h229 #h2QSlot{display:none !important}
+html #screen-home #hdr2.h229 .x-ana{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;margin:.8cqw 0 0}
+html #screen-home #hdr2.h229 .x-ana svg{height:100%;max-height:25cqw;width:auto;aspect-ratio:1;filter:drop-shadow(0 .5cqw 1.2cqw rgba(0,0,0,.45))}
+</style>
+<script id="mcsAna474">
+(function(){
+  var NS = 'http://www.w3.org/2000/svg';
+  function svg(){
+    var t = '<svg viewBox="0 0 200 200" xmlns="' + NS + '" role="img" aria-label="clock">'
+      + '<circle cx="100" cy="100" r="95" fill="#fff" stroke="#7f1d1d" stroke-width="8"/>'
+      + '<circle cx="100" cy="100" r="89.5" fill="none" stroke="#b45309" stroke-opacity=".35" stroke-width="1"/>';
+    for(var i = 0; i < 60; i++){
+      var big = i % 5 === 0, a = i * Math.PI / 30, r1 = big ? 75 : 81, r2 = 86;
+      t += '<line x1="' + (100 + r1 * Math.sin(a)).toFixed(2) + '" y1="' + (100 - r1 * Math.cos(a)).toFixed(2) + '" x2="' + (100 + r2 * Math.sin(a)).toFixed(2) + '" y2="' + (100 - r2 * Math.cos(a)).toFixed(2) + '" stroke="#111" stroke-width="' + (big ? 3 : 1.2) + '" stroke-linecap="round"/>';
+    }
+    for(var n = 1; n <= 12; n++){
+      var b = n * Math.PI / 6, rr = 63;
+      t += '<text x="' + (100 + rr * Math.sin(b)).toFixed(2) + '" y="' + (100 - rr * Math.cos(b) + 6.5).toFixed(2) + '" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="19" fill="#111">' + n + '</text>';
+    }
+    t += '<g id="xaH"><path d="M97 108 L98.3 52 L100 48 L101.7 52 L103 108 Z" fill="#111"/></g>'
+      + '<g id="xaM"><path d="M98 110 L99 30 L100 26 L101 30 L102 110 Z" fill="#111"/></g>'
+      + '<g id="xaS"><line x1="100" y1="122" x2="100" y2="22" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round"/><circle cx="100" cy="114" r="3.2" fill="#dc2626"/></g>'
+      + '<circle cx="100" cy="100" r="5.5" fill="#dc2626" stroke="#111" stroke-width="1.5"/></svg>';
+    return t;
+  }
+  function set(id, deg){ var g = document.getElementById(id); if(g) g.setAttribute('transform', 'rotate(' + deg.toFixed(2) + ' 100 100)'); }
+  function tick(){
+    var d = new Date(), s = d.getSeconds(), m = d.getMinutes() + s / 60, h = (d.getHours() % 12) + m / 60;
+    set('xaH', h * 30); set('xaM', m * 6); set('xaS', s * 6);
+  }
+  function build(){
+    var q = document.getElementById('h2QSlot'), h = document.getElementById('hdr2');
+    if(!q || !h || !h.classList.contains('h229')) return false;
+    if(!document.getElementById('x229ana')){ var w = document.createElement('div'); w.className = 'x-ana'; w.id = 'x229ana'; w.setAttribute('data-noen', ''); w.innerHTML = svg(); q.after(w); }
+    tick(); return true;
+  }
+  var tries = 0, t0 = setInterval(function(){ if(build() || ++tries > 40){ clearInterval(t0); } }, 250);
+  setInterval(function(){ if(!document.hidden) tick(); }, 1000);
 })();
 </script>
 <style id="mcsSec372css">
