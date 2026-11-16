@@ -4425,10 +4425,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO485";
+const APP_VERSION = "MCS1611MO486";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO486": "Registered business cards now show on every phone instantly — no waiting",
   "MCS1611MO485": "Ads fill the frame • registered card no longer goes back to «Complete registration» • your own card never disappears • Developer button on login (password only) • Admin 2 can buy own membership • Firebase meter in My Account • agent form does not ask again",
   "MCS1611MO484": "One developer password for all apps — open this app's developer panel straight from the Help Desk",
   "MCS1611MO483": "CNIC front/back photos now keep the whole card (no cropping, less compression). Lock removed from the registered business page. Agent form: your own MCS ID is picked automatically and the form opens directly; old saved form / photos no longer reappear after sending.",
@@ -10716,7 +10717,7 @@ function syncServiceCreateToFirebase(local){
     country: local.country, province: local.province, district: local.district,
     city: local.city, area: local.area,
     ...(local.stage ? {stage: local.stage} : {}),
-    approved: (local.approved===true && !!isAdminSignedIn) || local.stage === 'basic', createdAt: FB.serverTimestamp()   /* MCS1411SA414: بنیادی کارڈ فوراً سب کو */
+    approved: (local.approved===true && !!isAdminSignedIn) || local.stage === 'basic' || local.stage === 'registered', createdAt   /* MCS1611MO486: رجسٹرڈ بھی فوراً سب کو (قواعد نہ مانیں تو نیچے پرانا طریقہ) */: FB.serverTimestamp()   /* MCS1411SA414: بنیادی کارڈ فوراً سب کو */
   };
   /* MCS29SEPTU0344AM: local id ہی فائربیس کی id ہے (دیکھیں syncDoctorCreateToFirebase) */
   if(!local.fsId){ local.fsId = local.id; saveStore(); }
@@ -12663,6 +12664,24 @@ function initFirebaseSync(){
       if(currentScreen==='user-browse') renderUserSearch();
       if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list');
     }, ()=>{ /* offline/permission issue — local data still works */ });
+    /* MCS1611MO486 (مالک کا حکم — «فارم / رجسٹریشن مکمل ہوتے ہی کارڈ سب کو فوراً نظر آئے»): رجسٹرڈ کارڈ (stage = registered) بھی لائیو —
+       MCS نمبر کا انتظار نہیں، سرور کی نقل کا انتظار نہیں۔ صرف رجسٹرڈ (چند سو) پڑھے جاتے ہیں؛ ہزاروں بنیادی کارڈ پہلے کی طرح نقل سے */
+    const regQ = FB.query(colRef, FB.where('approved','==', true), FB.where('stage','==', 'registered'));
+    FB.onSnapshot(regQ, (snap)=>{
+      if(window._impBusy) return;
+      const arr = localArrayFor(col);
+      snap.docChanges().forEach(change=>{
+        const fsId = change.doc.id;
+        if(change.type==='removed'){ const idx = arr.findIndex(x=>x.fsId===fsId); if(idx>-1 && arr[idx].mcsLive!==true && arr[idx]._reg2) delete arr[idx]._reg2; return; }
+        const data = change.doc.data();
+        let existing = arr.find(x=>x.fsId===fsId) || arr.find(x=>x.id===fsId || (data.id && x.id===data.id));
+        if(existing){ if(existing.approved===false) noteApproved(existing); Object.assign(existing, data, {fsId, approved:true, synced:true, _reg2:1}); }
+        else { arr.push({...data, fsId, approved:true, synced:true, _reg2:1, id: data.id || ('fs_'+fsId)}); }
+      });
+      saveStore();
+      try{ refreshVisibleLists(); }catch(e){}
+      try{ if(typeof updateHomeCounts === 'function') updateHomeCounts(); }catch(e){}
+    }, ()=>{});
   });
 
   // Admin-added categories (see addNewCategory) sync here to every device —
@@ -24983,7 +25002,7 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
       const list = obj[col]; if(!Array.isArray(list)) return; const arr = localArrayFor(col); const ids = new Set(list.map(x => x.fsId));
       list.forEach(x => {
         const ex = arr.find(y => y.fsId === x.fsId) || (x.id ? arr.find(y => y.id === x.id) : null);
-        if(ex){ if(ex.mcsLive === true) return;
+        if(ex){ if(ex.mcsLive === true || ex._reg2) return;   /* MCS1611MO486: رجسٹرڈ کارڈ لائیو آتا ہے — پرانی نقل نہیں چھیڑتی */
           /* MCS1611MO485: اس فون پر حال ہی میں بدلا / بنایا ریکارڈ (7 دن) پرانی نقل سے نہیں بدلتا؛ رجسٹرڈ کبھی واپس «بنیادی» نہیں بنتا */
           if(ex._locAt && Date.now() - ex._locAt < 7 * 864e5) return;
           const keepStage = (ex.stage === 'registered' && x.stage !== 'registered') ? ex.stage : null;
