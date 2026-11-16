@@ -4424,10 +4424,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO476";
+const APP_VERSION = "MCS1611MO477";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1611MO477": "Login: on your own phone just type your mobile number OR your 6-digit PIN — it opens by itself, no button. Continue with Google stays below.",
   "MCS1611MO476": "Continue with Google: if this Gmail is not linked yet, log in once with mobile + PIN and it links to your account — no more sign-up page.",
   "MCS1611MO475": "Home header: digital time moved below the bigger analog clock; left and right header items neatly aligned.",
   "MCS1611MO474": "Home header: the Qibla compass is replaced by a large analog clock (white dial, maroon ring, Arial digits, red seconds hand).",
@@ -16742,7 +16743,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function done(r, msg){
     const next = uaPending; uaPending = null;
     ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); ls.set('mcsGuest', null); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){}
-    ls.set('mcsAuthTmp', null); ls.set('mcsLoggedOut', null); try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}   /* MCS1411SA422: اب لاگ اِن ہمیشہ قائم، صرف خود لاگ آؤٹ سے جائے گا */
+    ls.set('mcsAuthTmp', null); ls.set('mcsLoggedOut', null); try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}
+    try{ if(r.tok && r.user && r.user.mobile) ls.set('mcsKeep', JSON.stringify({ tok: r.tok, m: String(r.user.mobile).replace(/\D/g, '').slice(-10), at: Date.now() })); }catch(e){}   /* MCS1611MO477: اسی فون پر صرف موبائل نمبر سے دوبارہ اندر */   /* MCS1411SA422: اب لاگ اِن ہمیشہ قائم، صرف خود لاگ آؤٹ سے جائے گا */
     uaHide(); try{ showToast(msg || ('✅ خوش آمدید، ' + (r.user && r.user.name || ''))); }catch(e){}
     uaSync();
     try{ if(invGet()) setTimeout(fedApplyPending, 300); }catch(e){}
@@ -16778,7 +16780,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
       <button class="uaBtn bG" onclick="uaSignup()">${IC.add}CREATE NEW ACCOUNT</button>
       <div class="uaSub" style="margin:10px 0 6px">— or —</div><div id="uaGBox" style="display:flex;justify-content:center;min-height:44px"></div>
       ${pkLoginBox()}</div>`);   /* MCS1511SU440 (مالک کا حکم): «ایجنٹ سے ملا کوڈ» ختم — رجسٹریشن اب گوگل پلے خریداری سے مکمل ہوتی ہے */
-    const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); });
+    const pw = $('uaPw'); if(pw){ pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); }); pw.addEventListener('input', () => { if(/^\d{6}$/.test(pw.value) && ($('uaId').value || '').replace(/\D/g, '').length >= 6) uaDoLogin(); }); }   /* MCS1611MO477: 6 ہندسے مکمل ہوتے ہی خود */
     gBtn('uaGBox', 'continue_with');   /* MCS1511SU445: Continue with Google */
   };
   /* MCS1411SA411: لاگ آؤٹ کے بعد "خوش آمدید" صفحہ — اپنا MCS نمبر نظر آئے اور صرف 6 ہندسوں کا PIN مانگے (سائن اپ صفحہ دوبارہ نہ کھلے) */
@@ -16815,16 +16817,17 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
       ${o.name ? `<div class="uwName">${esc(o.name)}</div>` : ''}
       <div class="uwLbl">Your MCS Account ID<u data-noen>آپ کا MCS نمبر</u></div>
       <div class="uwId" dir="ltr">${esc(sid)}</div>
-      <div class="uwLbl">Enter your 6-digit PIN<u data-noen>اپنا 6 ہندسوں کا PIN کوڈ لکھیں</u></div>
+      <div class="uwLbl">Mobile number<u data-noen>اپنا موبائل نمبر لکھیں — لکھتے ہی اندر</u></div>
+      <div class="uwPinRow"><input id="uwMob" class="uwPin" style="letter-spacing:2px;font-size:26px" type="tel" inputmode="numeric" maxlength="13" placeholder="03XXXXXXXXX" autocomplete="tel" oninput="uaWelcomeMob(this)"></div>
+      <div class="uwLbl" style="margin-top:6px">— or 6-digit PIN —<u data-noen>یا اپنا 6 ہندسوں کا PIN لکھیں</u></div>
       <div class="uwPinRow"><input id="uwPin" class="uwPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" autocomplete="current-password" oninput="uaWelcomeIn(this)"><button type="button" class="uwEye" onclick="uaEye('uwPin', this)">👁</button></div>
       <div class="uaErr" id="uaErr"></div>
-      <button class="uaBtn bB" onclick="uaWelcomeGo()">${IC.login}LOGIN</button>
       <div class="uwLinks"><a onclick="uaForgot()">Forgot PIN?</a><a onclick="uaLogin()">Other account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>
       <div id="uaGBoxW" style="display:flex;justify-content:center;min-height:44px;margin-top:12px"></div>
       <div class="uwLinks" style="justify-content:center"><a onclick="uaForgetPk()">🗑 Remove this ID from this phone / <span data-noen>یہ ID فون سے ہٹائیں</span></a></div>
     </div>`);
     gBtn('uaGBoxW', 'continue_with');
-    setTimeout(() => { try{ const p = $('uwPin'); if(p) p.focus(); }catch(e){} }, 250);
+    setTimeout(() => { try{ const p = $('uwMob'); if(p) p.focus(); }catch(e){} }, 250);
   };
   window.uaEnter = function(msg){ try{ if(uwMyPk()) return uaWelcome(msg); }catch(e){} return uaLogin(msg); };
   window.uaWelcomeIn = function(el){
@@ -16832,6 +16835,22 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     if(el.value !== v) el.value = v;
     setErr('');
     if(v.length === 6) uaWelcomeGo();
+  };
+  /* MCS1611MO477 (مالک کا حکم): خوش آمدید صفحے پر موبائل نمبر یا PIN — کوئی ایک لکھتے ہی اندر (بٹن نہیں)؛ موبائل صرف اسی فون پر جہاں یہ اکاؤنٹ کھل چکا (`mcsKeep`) */
+  window.uaWelcomeMob = async function(el){
+    const v = String(el.value || '').replace(/[۰-۹٠-٩]/g, c => { const i = '۰۱۲۳۴۵۶۷۸۹'.indexOf(c); return String(i >= 0 ? i : '٠١٢٣٤٥٦٧٨٩'.indexOf(c)); }).replace(/[^\d+]/g, '');
+    if(el.value !== v) el.value = v;
+    setErr(''); const d = v.replace(/\D/g, '').replace(/^92/, '0');
+    if(d.length < 11) return;
+    const o = uwMyPk(); let k = null; try{ k = JSON.parse(ls.get('mcsKeep') || 'null'); }catch(e){}
+    const m10 = d.slice(-10);
+    if(!o || String(o.mobile || '').replace(/\D/g, '').slice(-10) !== m10){ $('uaErr').textContent = 'یہ نمبر اس فون والے اکاؤنٹ کا نہیں — نیچے PIN لکھیں یا «دوسرا اکاؤنٹ» دبائیں'; return; }
+    if(!k || !k.tok || k.m !== m10){ $('uaErr').textContent = 'اس فون پر صرف نمبر سے داخلہ ابھی نہیں بنا — ایک بار PIN یا Gmail سے اندر جائیں، اس کے بعد صرف نمبر کافی ہوگا'; try{ $('uwPin').focus(); }catch(e){} return; }
+    if(uwBusy) return; uwBusy = true; busy(1);
+    let r = null; try{ r = await api({ op:'me', tok: k.tok }); }catch(e){}
+    uwBusy = false; busy(0);
+    if(!r || !r.ok){ ls.set('mcsKeep', null); $('uaErr').textContent = r ? 'یاد رکھا داخلہ ختم ہو چکا — ایک بار PIN یا Gmail سے اندر جائیں' : 'انٹرنیٹ نہیں ہے'; return; }
+    uaClearOthers('user'); done({ tok: k.tok, user: r.user });
   };
   let uwBusy = false;
   window.uaWelcomeGo = async function(){
@@ -16899,7 +16918,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
   window.mcsLogoutAll = async function(skip){
     try{ if(skip !== true && !confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return; }catch(e){}
     try{ closeModal('portalModal'); }catch(e){}
-    try{ const a = uaMe(); if(a) api({ op:'logout', tok: a.tok }); }catch(e){}
+    try{ const a = uaMe(), k = JSON.parse(ls.get('mcsKeep') || 'null'); if(a && !(k && k.tok === a.tok)) api({ op:'logout', tok: a.tok }); }catch(e){}   /* MCS1611MO477: یاد رکھا فون — سیشن سرور پر رہے */
     const wasUser = !!window.__uwUser || !!uaMe(); window.__uwUser = false;
     uaClearOthers('none'); ls.set('mcsAuth', null); ls.set('mcsGuest', null);
     try{ uaSync(); h2Sync(); cdBar(); mpRender(); }catch(e){}
@@ -16988,6 +17007,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     };
     $('uaGLinkGo').onclick = go;
     $('uaPw').addEventListener('keydown', e => { if(e.key === 'Enter') go(); });
+    $('uaPw').addEventListener('input', () => { if(/^\d{6}$/.test($('uaPw').value) && ($('uaId').value || '').replace(/\D/g, '').length >= 10) go(); });
     $('uaGLinkNew').onclick = () => uaSignup({ gtoken: cred, gmail, name });
     setTimeout(() => { try{ $('uaId').focus(); }catch(e){} }, 250);
   };
@@ -16996,6 +17016,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     try{
       const o = JSON.parse(ls.get('mcsMyPk') || 'null'), norm = v => String(v || '').replace(/[\s-]/g, '').toUpperCase();
       const ids = [norm(o && o.sid), norm(sid0)].filter(Boolean);
+      try{ const k = JSON.parse(ls.get('mcsKeep') || 'null'); if(k && k.tok) api({ op:'logout', tok: k.tok }); }catch(e){} ls.set('mcsKeep', null);
       ls.set('mcsMyPk', null);
       if(ids.length && typeof store !== 'undefined'){
         const gone = x => x && x.category === UNASSIGNED_KEY && (x.localOnly || !x.fsId) && x.more && ids.indexOf(norm(x.more.sid)) >= 0;
