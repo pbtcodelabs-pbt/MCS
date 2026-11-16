@@ -4425,11 +4425,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1611MO467";
+const APP_VERSION = "MCS1611MO468";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1611MO467": "🎟️ Promo code: paste the code in the app, tap Redeem in Google Play, then Use promo code — no card needed.",
+  "MCS1611MO468": "🎟️ Promo code help text updated (Google needs a payment method on the account to show Redeem code).",
   "MCS1611MO466": "Faster & lighter: only cards with an MCS number read live from Firebase; Firebase meter in admin panel; signup video with download & WhatsApp share.",
   "MCS1611MO465": "Home: Register your business — go LIVE opens the registration steps; no duplicate welcome after purchase.",
   "MCS1611MO464": "Create New Account now signs up right on the login page → Welcome → Enter.",
@@ -23801,7 +23801,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       ${LBL('Email Address', 'ای میل ایڈریس', 1)}<div class="wzRow"><input class="wzI" id="wzEm" type="email" dir="ltr" placeholder="Enter email" value="${esc(p.email)}" oninput="wzP()"><button type="button" class="wzBtn bW" style="margin:0;min-height:46px;flex:0 0 96px;font-size:13px" onclick="wzGoogle()">Google</button></div><div id="wzGBox"></div>
       ${LBL('Referral Code', 'ریفرل کوڈ')}<select class="wzI" id="wzRef" onchange="wzP()"><option value="">Select Referral Code — فہرست سے ایجنٹ چنیں</option></select><div id="wzRefNm" class="u" style="font-size:14px;color:#047857;font-weight:700;margin:3px 2px"></div>
       ${LBL('Payment Method', 'ادائیگی کا طریقہ', 1)}<div class="wzPlay"><span class="gp">${typeof MCS_GP_SVG === 'string' ? MCS_GP_SVG : '▶'}</span><span>Google Play Billing<small class="u" style="display:block;font-weight:400">گوگل پلے کے ذریعے ادائیگی</small></span></div>
-      ${st === 'none' ? `<div class="wzSec"><span>Choose Your Plan</span><span class="u">اپنا پلان منتخب کریں</span></div><div id="wzPlans"><div class="wzNote u">⏳ Google Play سے پلان آ رہے ہیں…</div></div><div class="mem-once" style="margin-top:8px"><div class="mo-box"><b>🎟️ Have a promo code? — 90 days</b><small>1. Paste your code below → tap <b>Redeem in Google Play</b><br>2. Redeem it on that Google screen, then come back here<br>3. Tap <b>Use promo code — 90 days</b> (no card needed)</small><input id="moCodeW" class="mo-in" type="text" dir="ltr" placeholder="Promo code" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"><button type="button" class="mo-rd" onclick="mcsRedeemPlay('moCodeW')">▶️ Redeem in Google Play</button><button type="button" class="mo-btn" onclick="wzDo3('once')">🎟️ Use promo code — 90 days</button></div></div>` : ''}
+      ${st === 'none' ? `<div class="wzSec"><span>Choose Your Plan</span><span class="u">اپنا پلان منتخب کریں</span></div><div id="wzPlans"><div class="wzNote u">⏳ Google Play سے پلان آ رہے ہیں…</div></div><div class="mem-once" style="margin-top:8px"><div class="mo-box"><b>🎟️ Have a promo code? — 90 days</b><small>1. Tap the button below<br>2. On Google’s screen tap the arrow beside the payment method → <b>Redeem code</b><br><i>(no arrow, only “Add card”? add any payment method to your Google account once — nothing is charged — then try again)</i><br>3. Enter your code → 90 days active</small><button type="button" class="mo-btn" onclick="wzDo3('once')">🎟️ Use promo code — 90 days</button></div></div>` : ''}
       <div class="wzNote u">✅ Google Play سے خریداری ہوتے ہی تصدیق خود — کچھ پیسٹ نہیں کرنا۔<br><span dir="ltr" style="font-family:inherit">Buy on Google Play → verified automatically → Registered</span></div>
       <div class="wzErr u" id="wzErr"></div>
       ${st === 'pend' ? `<div class="wzGreen"><b>⏳ Payment received — verification in progress</b><div class="u">ادائیگی موصول — تصدیق ہو رہی ہے۔ تصدیق ہوتے ہی کاروبار عوامی ہو جائے گا۔</div></div><button class="wzBtn bW" onclick="wzResend()">🔁 Send request again — دوبارہ بھیجیں</button>` : ''}
@@ -24826,15 +24826,6 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
     if(!token){ alert('❌ No purchase token — please tap again.'); return; }
     await mcsPlayFinish(token, SKU, rk);
   };
-  /* MCS1611MO467 (مالک کا حکم): گوگل کی ادائیگی والی شیٹ میں اگر کارڈ نہ ہو تو «Redeem code» نظر ہی نہیں آتا — اس لیے کوڈ پہلے یہیں پیسٹ، بٹن گوگل پلے کا ریڈیم صفحہ (play.google.com/redeem) کھولتا ہے؛ کوڈ لگنے کے بعد واپس آ کر «Use promo code» دبائیں تو قیمت صفر آتی ہے، کارڈ نہیں مانگتا */
-  window.mcsRedeemPlay = function(id){
-    const el = document.getElementById(id); const c = ((el && el.value) || '').replace(/[\s-]+/g, '');
-    if(!/^[A-Za-z0-9]{8,40}$/.test(c)){ alert('Please paste your promo code in the box first.'); return; }
-    const url = 'https://play.google.com/redeem?code=' + encodeURIComponent(c);
-    try{ if(typeof showToast === 'function') showToast('Opening Google Play… redeem there, then come back and tap “Use promo code”', 5000); }catch(e){}
-    let w = null; try{ w = window.open(url, '_blank'); }catch(e){}
-    if(!w) location.href = url;
-  };
   const oc = window.mcsCongrats;
   if(typeof oc === 'function') window.mcsCongrats = function(rk, j){ const r = oc.apply(this, arguments); try{ if(rk){ localStorage.setItem('mcsWelcomed:' + rk, '1'); const W = JSON.parse(localStorage.getItem('mcsMemWelcome') || '{}'); W[rk] = Date.now(); localStorage.setItem('mcsMemWelcome', JSON.stringify(W)); } }catch(e){} /* MCS1611MO465: مبارکباد کے بعد دوسرا «خوش آمدید / ویلکم» پاپ اپ نہیں */ try{ if(j && j.once){ const m = document.getElementById('agModal'); if(m) m.querySelectorAll('div').forEach(d => { if(d.children.length <= 2 && /One-year membership/.test(d.innerHTML)) d.innerHTML = d.innerHTML.replace('One-year membership', (j.days || 90) + '-day membership'); }); } }catch(e){} return r; };
   const of = window.memFlowRk;
@@ -24844,7 +24835,8 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
       const m = document.getElementById('agModal'), b = m && m.querySelector('.mem-play'); if(!b || m.querySelector('.mem-once')) return r;
       const x = (typeof mpList === 'function' ? mpList() : []).find(y => y.p.rk === rk) || (mpList() || [])[0]; const k = x ? x.p.rk : rk;
       const w = document.createElement('div'); w.className = 'mem-once';
-      w.innerHTML = `<div class="mo-or">— or —</div><div class="mo-box"><b>🎟️ Have a promo code? — 90 days</b><small>1. Paste your code below → tap <b>Redeem in Google Play</b><br>2. Redeem it on that Google screen, then come back here<br>3. Tap <b>Use promo code — 90 days</b> (no card needed)</small><input id="moCodeM" class="mo-in" type="text" dir="ltr" placeholder="Promo code" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"><button type="button" class="mo-rd" onclick="mcsRedeemPlay('moCodeM')">▶️ Redeem in Google Play</button><button type="button" class="mo-btn" onclick="mcsPlayBuyOnce('${String(k).replace(/[^a-zA-Z0-9_]/g, '')}')">🎟️ Use promo code — 90 days</button></div>`;
+      w.innerHTML = `<div class="mo-or">— or —</div><div class="mo-box"><b>🎟️ Have a promo code? — 90 days</b><small>1. Tap the button below<br>2. On Google’s screen tap the arrow beside the payment method → <b>Redeem code</b><br><i>(no arrow, only “Add card”? add any payment method to your Google account once — nothing is charged — then try again)</i><br>3. Enter your code → 90 days active</small>
+        <button type="button" class="mo-btn" onclick="mcsPlayBuyOnce('${String(k).replace(/[^a-zA-Z0-9_]/g, '')}')">🎟️ Use promo code — 90 days</button></div>`;
       b.after(w);   /* MCS1511SU462 (مالک کا حکم): اس بٹن پر کوئی قیمت نہیں — صرف پرومو کوڈ */
     }catch(e){}
     return r;
@@ -24855,8 +24847,6 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
 .mem-once .mo-or{text-align:center;color:#64748b;font-size:13px;margin:10px 0 6px}
 .mem-once .mo-box{border:2px dashed #f59e0b;background:#fffbeb;border-radius:16px;padding:10px 12px;display:grid;gap:6px;text-align:center}
 .mem-once .mo-box b{color:#92400e}.mem-once .mo-p{font-weight:900;color:#92400e}.mem-once small{color:#78350f;line-height:1.45}
-.mem-once .mo-in{width:100%;box-sizing:border-box;border:1.5px solid #f59e0b;border-radius:12px;padding:11px;font-size:16px;text-align:center;letter-spacing:1px;background:#fff;color:#0f172a}
-.mem-once .mo-rd{background:#16a34a;color:#fff;border:0;border-radius:14px;padding:12px;font-weight:900;font-size:16px;width:100%;cursor:pointer}
 .mem-once .mo-btn{background:#f59e0b;color:#fff;border:0;border-radius:14px;padding:12px;font-weight:900;font-size:16px;width:100%;cursor:pointer}
 </style>
 <script id="mcsDir466">
