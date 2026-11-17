@@ -3017,6 +3017,35 @@ body.cdOn{padding-top:30px}
   };
 })();
 </script>
+<script id="mcsUpd509">
+/* MCS1711TU509 (مالک کا حکم — «اپڈیٹ کا کارڈ بار بار کام روکتا ہے، Admin 2 نالاں»): عام گاہک / Admin 2 کو اپڈیٹ کا کچھ نظر نہیں آتا —
+   پیچھے خاموشی سے لگتی ہے (کھلا فارم ہو تو اس کے بند ہونے کا انتظار، کوئی پردہ / کارڈ نہیں)۔ صرف Admin 1 کے فون پر: اوپر باریک پٹی 0→100٪،
+   مکمل ہو تو اوپر چھوٹی پرچی «پرانا → نیا ورژن + صرف تازہ ترین کام» (خود 10 سیکنڈ میں غائب، کام نہیں رکتا)۔ */
+(function(){ var A = window.AppUpd; if(!A || A.__509) return; A.__509 = 1;
+  var origPeek = A.peek, on = false, pct = 0, tm = 0;
+  function own(){ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){ localStorage.setItem('mcsUpdOwner', '1'); return true; } }catch(e){} try{ return localStorage.getItem('mcsUpdOwner') === '1'; }catch(e){ return false; } }
+  function E(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function css(){ if(document.getElementById('u509css')) return; var s = document.createElement('style'); s.id = 'u509css';
+    s.textContent = '#u509bar{position:fixed;left:0;top:env(safe-area-inset-top,0px);height:3px;width:0;z-index:2147483647;background:linear-gradient(90deg,#f59e0b,#fde047,#10b981);box-shadow:0 0 6px rgba(245,158,11,.8);transition:width .4s ease,opacity .6s;pointer-events:none}'
+      + '#u509bar i{position:absolute;right:4px;top:4px;font:800 10px/1 Arial,sans-serif;color:#fff;background:rgba(13,59,102,.85);padding:2px 6px;border-radius:8px;white-space:nowrap;font-style:normal}'
+      + '#u509ok{position:fixed;left:50%;top:calc(8px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:2147483647;width:min(360px,calc(100vw - 20px));background:#ecfdf5;border:2px solid #10b981;border-radius:14px;padding:8px 12px;box-shadow:0 8px 22px rgba(0,0,0,.25);font:600 13px/1.6 Arial,sans-serif;color:#065f46;cursor:pointer;animation:u509in .3s ease}'
+      + '#u509ok b{direction:ltr;unicode-bidi:isolate}#u509ok s{color:#9ca3af}#u509ok .n{display:block;color:#78350f;font-weight:700;margin-top:2px;max-height:30vh;overflow:auto;overflow-wrap:anywhere}'
+      + '@keyframes u509in{from{transform:translate(-50%,-120%)}to{transform:translate(-50%,0)}}';
+    document.head.appendChild(s); }
+  function bar(){ css(); var b = document.getElementById('u509bar'); if(!b){ b = document.createElement('div'); b.id = 'u509bar'; b.innerHTML = '<i></i>'; document.body.appendChild(b); }
+    b.style.opacity = '1'; if(!tm){ pct = Math.max(pct, 4); tm = setInterval(function(){ pct += (92 - pct) * 0.06; b.style.width = pct + '%'; var i = b.querySelector('i'); if(i) i.textContent = Math.round(pct) + '%' + (A._peekV ? ' · ' + A._peekV : ''); }, 300); } }
+  function stop(full){ if(tm){ clearInterval(tm); tm = 0; } var b = document.getElementById('u509bar'); if(!b) return; if(full){ b.style.width = '100%'; var i = b.querySelector('i'); if(i) i.textContent = '100%'; } setTimeout(function(){ b.style.opacity = '0'; setTimeout(function(){ if(b.parentNode) b.remove(); pct = 0; }, 700); }, full ? 900 : 0); }
+  A.waiting = function(){ on = true; if(!own()) return; bar();
+    if(!A._peekV){ var w = document.getElementById('aupdWait'); if(!w){ w = document.createElement('div'); w.id = 'aupdWait'; w.style.display = 'none'; w.innerHTML = '<div class="aw-t"></div><div class="aw-v"></div>'; document.body.appendChild(w); } try{ origPeek.call(A); }catch(e){} } };
+  A.hideWaiting = function(){ on = false; stop(false); };
+  A.isWaiting = function(){ return on; };
+  A.done = function(oldV, newV, note){ on = false; if(!own()){ stop(false); return; } bar(); stop(true);
+    if(!note && A._peekNote && A._peekV === newV) note = A._peekNote;
+    css(); var o = document.getElementById('u509ok'); if(o) o.remove(); o = document.createElement('div'); o.id = 'u509ok'; o.setAttribute('data-noen', '1');
+    o.innerHTML = '✅ Updated: ' + (oldV ? '<s><b>' + E(oldV) + '</b></s> → ' : '') + '<b>' + E(newV) + '</b>' + (note ? '<span class="n">🛠️ ' + E(note) + '</span>' : '');
+    o.onclick = function(){ o.remove(); }; document.body.appendChild(o); setTimeout(function(){ if(o.parentNode) o.remove(); }, 10000); };
+})();
+</script>
 <style id="ewCss">.ew-rb{position:absolute;top:0;left:0;width:60px;height:60px;padding:0;border:0;background:transparent;overflow:hidden;z-index:6;border-top-left-radius:16px;clip-path:polygon(0 0,100% 0,0 100%);cursor:pointer}.ew-rb span{position:absolute;top:11px;left:-26px;width:92px;transform:rotate(-45deg);background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#4a2c00;font:800 7.5px/13px sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.35);white-space:nowrap}.pt-prev{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fef3c7;border:1.5px solid #f59e0b;border-radius:12px;padding:6px 10px;margin-bottom:8px;font-size:12px;font-weight:700;color:#78350f}.pt-prev button{border:0;background:#f59e0b;color:#fff;border-radius:10px;padding:5px 10px;font-weight:800}</style><style id="mcsUnifyCss">
 /* MCS0811SU217: پورٹل چھوٹا، قریب قریب، صاف — 3 کالم، ٹیبز، چھوٹا ہیڈر */
 #portalModal .pt-box{max-width:480px}
@@ -4677,10 +4706,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU508";
+const APP_VERSION = "MCS1711TU509";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU509": "Updates install quietly in the background — no card for customers; only Admin 1 sees a thin progress bar and what changed",
   "MCS1711TU508": "🧪 Test activation key without dashes — same as Help Desk keys",
   "MCS1711TU507": "🧪 Admin 1 test mode: full sign-up, form, Google Play (test) and activation key as a new customer — only on this phone, nothing reaches the live app",
   "MCS1711TU506": "Forgot PIN: only mobile number + year of birth + new PIN — set at once, no Help Desk step",
@@ -16944,9 +16974,14 @@ if('serviceWorker' in navigator){
   function reloadWhenSafe(){
     if(swReloading) return;
     if(document.querySelector('.modal-overlay.active')){ updSyncShield(); setTimeout(reloadWhenSafe, 2000); return; }
+    /* MCS1711TU509: خاموش اپڈیٹ — کچھ لکھ رہے ہوں یا ابھی ابھی اسکرین چھوئی ہو تو رکیں؛ ایپ پیچھے جائے تو فوراً */
+    try{ const ae = document.activeElement, typing = ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName), busy = Date.now() - (window.__u509touch || 0) < 8000;
+      if(document.visibilityState === 'visible' && (typing || busy || document.querySelector('#wzOv,.wz-on #wzW,#uaOv.on'))){ setTimeout(reloadWhenSafe, 2000); return; } }catch(e){}
     swReloading = true;
     location.reload();
   }
+  ['pointerdown','keydown','scroll'].forEach(ev => window.addEventListener(ev, () => { window.__u509touch = Date.now(); }, {passive:true, capture:true}));
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden' && AppUpd.isWaiting()) reloadWhenSafe(); });
   navigator.serviceWorker.addEventListener('controllerchange', ()=>{
     /* پہلی انسٹال پر ری لوڈ کی ضرورت نہیں — لیکن اگر اپڈیٹ کی پٹی چل رہی ہے تو ضرور تازہ کریں، ورنہ پٹی اٹکی رہے گی */
     const barOn = AppUpd.isWaiting();
