@@ -4428,10 +4428,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU504";
+const APP_VERSION = "MCS1711TU505";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU505": "Form: sub-type list taps now select (locked box opens in place) • clean labels without blurry hints • every registered card (home + lists) in the same blue design • full business page: Edit only for admin",
   "MCS1711TU504": "📢 Ad requests: anyone can request an ad with photo and 15 / 30 days; referral fills itself; goes live after company approval",
   "MCS1711TU503": "Developer panel opens again by tapping the version 7 times (with password) — Help Desk link still works",
   "MCS1711TU503": "Owner name in English + Urdu exactly as on CNIC; completed business shows your card (edit only by button); logout always goes to the login page; admin password box no longer hides behind the login page; selfie reused",
@@ -5121,7 +5122,7 @@ function pfHtml(c){
     + ((owner || adm || live) ? `<div class="pf-own" style="gap:6px">${(owner || adm) ? `<button type="button" class="pf-edit" onclick="fpOpen('${c.kind}','${escapeAttr(c.rec.id)}')">📄 مکمل پروفائل — ایک صفحہ (پرنٹ / شیئر)</button>` : ''}<button type="button" class="pf-edit" style="background:linear-gradient(135deg,#f7dd9c,#d4a017);color:#3a2600" onclick="fpOpen('${c.kind}','${escapeAttr(c.rec.id)}').then(function(){fpPromoOpen()})">📣 بزنس پروفائل شیئر کریں</button></div>` : '')
     + ((owner || adm) ? (()=>{ let mid = ''; try{ mid = shortRecordId(c.kind === 'doctor' ? 'doctor' : 'service', r); }catch(e){} if(!mid && owner){ try{ const u = (uaMe() || {}).user || {}; if(u.sid) mid = mcsSidFmt(u.sid); }catch(e){} } return mid ? `<div class="pf-id">🆔 MCS ID: <b dir="ltr">${escapeHtml(mid)}</b><button type="button" onclick="agCopy('${escapeAttr(mid)}')">📋 Copy</button></div>` : ''; })() : '')   /* MCS1211TH384: پرانی p… ID نہیں — صرف MCS ID */
     + ((owner || adm) ? `<div class="pf-own">${left != null ? `<div class="pf-days${left <= 0 ? ' end' : ''}">${left > 0 ? `⭐ ممبرشپ فعال — ${left} دن باقی` : '⚠️ ممبرشپ کی مدت ختم — جاری رکھنے کے لیے تفصیل بھیجیں'}</div>` : ''}
-        ${(owner || adm) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
+        ${(adm || (owner && !c.prof)) ? `<button type="button" class="pf-edit" onclick="pfEditOpen()">✏️ ${c.prof ? 'تفصیل سنواریں' : 'پوری تفصیل بھریں'} — تفصیل، ریٹ، اوقات، دو تصویریں</button>` : ''}
         ${owner && left != null && left <= 15 ? `<button type="button" class="mp-sub" onclick="mpSubscribe('${escapeAttr(c.rk)}')">⭐ Renew membership for 1 year — Google Play</button>` : ''}
         ${adm ? (c.prof ? `<button type="button" class="pf-adm" onclick="pfAdmin('free')">🔓 فون سے آزاد کریں (نئے فون پر دوبارہ بنا سکے)</button><button type="button" class="pf-adm red" onclick="pfAdmin('del')">🗑️ ممبرشپ ختم کریں</button>` : '') : ''}
         ${owner ? `<button type="button" class="pf-adm red" onclick="mpRemove('${escapeAttr(c.rk)}')">✖ اس فون کی «میرا کاروبار / پروفیشن» سے ہٹائیں</button>` : ''}</div>` : '')
@@ -5447,7 +5448,7 @@ function pfOneHtml(c, x){
       ${st ? `<div class="pf1-st"><span>👀 ${st.view}</span><span>📞 ${st.call}</span><span>💬 ${st.wa}</span><small>${st.days} دن</small></div>` : ''}
       ${left != null ? `<div class="pf1-st"><span>${left > 0 ? '⭐ ممبرشپ فعال — ' + left + ' دن باقی' : '⚠️ مدت ختم'}</span></div>` : ''}
       ${(()=>{ let i = ''; try{ i = shortRecordId(c.kind, c.rec) || ''; }catch(e){} return i ? `<div class="pf1-st"><span dir="ltr">🆔 ${E(i)}</span></div>` : ''; })()}
-      <div class="pf1-act"><button type="button" onclick="pfEditOpen()">✏️ ایڈٹ</button><button type="button" onclick="fpOpen('${c.kind}','${A(c.rec.id)}')">📄 مکمل پروفائل</button></div>`
+      <div class="pf1-act">${adm ? `<button type="button" onclick="pfEditOpen()">✏️ ایڈٹ</button>` : ''}<button type="button" onclick="fpOpen('${c.kind}','${A(c.rec.id)}')">📄 مکمل پروفائل</button></div>`
     : `<div class="pf1-st"><span>🆔 ●●●●●●●</span><span>📞 ●●●</span><span>👀 ●●●</span></div><div class="pf1-st"><span>⭐ ممبرشپ ●●●●●● دن</span></div>`;
   return `<div class="pf1">
     <div class="pf1-hero">${shopImg ? `<img class="pf1-shop" data-pfimg="${A(shopImg.id)}" data-ts="${shopImg.ts}" alt="">` : (showPriv ? `<div class="pf1-shop ph add" onclick="pfHeroAdd(0)"><span class="pf-plus">＋</span><em>یہاں دکان کی تصویر لگانے کے لیے ٹچ کریں</em></div>` : `<div class="pf1-shop ph">${cm.emoji}</div>`)}
@@ -5998,6 +5999,8 @@ function mpRender(){
     const _wa = String(r.whatsapp||'').replace(/\D/g,''), _addr = mcsUniq([r.address, r.area, r.city, r.district]).filter(Boolean).filter((x, k, A) => A.indexOf(x) === k).join('، ');
     const _type = [r.type, cm.ur].filter(Boolean)[0] || '';
     const _dp = rec.more && rec.more.selfie ? `<img src="${escapeAttr(rec.more.selfie)}" alt="">` : `<span class="b236-ini">${escapeHtml(((r.nameEn || r.nameUr || r.name || '?').trim()[0] || '?').toUpperCase())}</span>`;
+    /* MCS1711TU505 (مالک کا حکم): لائیو کاروبار کا ہوم کارڈ بھی وہی نیلا ڈیزائن جو فہرست کے رجسٹرڈ کارڈ (rc) کا — سب کارڈ ایک جیسے */
+    if(live){ try{ const h = p.kind === 'doctor' ? (docCardHtml._rc ? docCardHtml(r, 'list') : '') : (svcCardHtml._rc ? svcCardHtml(r, CATEGORY_META[r.category]) : ''); if(h) return `<div class="mpx-rc">${h}</div>` + (p.taken ? '<div class="cp-hint" style="text-align:center">⚠️ یہ کاروبار کسی دوسرے فون سے جڑا ہے — ہم سے رابطہ کریں</div>' : ''); }catch(e){} }
     return `<div class="mpx-card b236" onclick="pfOpen('${p.kind}','${escapeAttr(r.id)}')">
         <div class="b236-row">
           <div class="b236-dp">${_dp}</div>
@@ -16970,6 +16973,9 @@ body.d2 #homeAds .ad-ribbon{display:none}
     google:'Google سے تصدیق نہیں ہو سکی — دوبارہ کوشش کریں', session:'دوبارہ لاگ اِن کریں', old:'موجودہ پاس ورڈ غلط ہے', net:'انٹرنیٹ نہیں — انٹرنیٹ چلا کر دوبارہ کوشش کریں'
   };
   ERR.adm = 'ایڈمن جی میل یا پاس ورڈ غلط ہے — Wrong admin Gmail or password';
+  /* MCS1711TU505 (مالک کا حکم): پیدائش کا سال — PIN بھول جائے تو موبائل + سال سے وہیں نیا PIN */
+  Object.assign(ERR, { yob:'Write your year of birth — 4 digits, e.g. 1985', nomatch:'Mobile number or year of birth does not match', noyob:'No year of birth saved on this account — use Help Desk below', old:'Current PIN (or year of birth) is wrong' });
+  window.uaYobVal = function(el){ const y = String((el && el.value) || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, ''); const n = +y, cy = new Date().getFullYear(); return y.length === 4 && n >= 1920 && n <= cy - 8 ? y : ''; };
   async function api(body){
     try{ const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ dev: (typeof agDev === 'function' ? agDev() : '') }, body)) }); return await r.json(); }
     catch(e){ return { ok:false, reason:'net' }; }
@@ -17194,6 +17200,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
       ${field('uaMob', 'phone', 'Mobile Number (e.g. 03XXXXXXXXX)', { rq:1, im:'tel', ac:'tel' })}
       <label class="uaF" data-noen>${IC.pin}<select id="uaDist" style="flex:1;border:0;outline:0;background:transparent;font-size:15px;padding:0 8px;min-width:0;font-family:inherit;color:#0f1f45">${distSel()}</select><span class="rq">*</span></label>
       ${field('uaPw2', 'lock', G ? 'Create 6-digit PIN (optional)' : 'Create 6-digit PIN', { type:'password', rq: G ? 0 : 1, im:'numeric', ac:'new-password' })}
+      ${field('uaYob', 'lock', 'Year of birth (e.g. 1985) — to reset a forgotten PIN', { rq:1, im:'numeric', ac:'bday-year' })}
       <label class="uaChk"><input type="checkbox" id="uaAgree"><span>I agree to the <a href="privacy.html#terms" target="_blank">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank">Privacy Policy</a></span></label>
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bG" onclick="uaDoSignup()">${IC.add}SIGN UP</button>
@@ -17253,8 +17260,9 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     if(!dist) return setErr('city');
     const GT = gPend && gPend.gtoken ? gPend.gtoken : '';   /* MCS1511SU445: Google سے ہو تو PIN اختیاری */
     if(!/^\d{6}$/.test(pw.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)))) return setErr('pw6');
+    const yob = uaYobVal($('uaYob')); if(!yob) return setErr('yob');   /* MCS1711TU505: پیدائش کا سال — PIN بھولنے پر خود نیا */
     if(!$('uaAgree').checked){ $('uaErr').textContent = 'Please tick Terms & Conditions and Privacy Policy'; return; }
-    busy(1); setErr(''); const r = await api({ op:'signup', name, mobile, email:'', gtoken: GT || undefined, pw: pw.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)), city: dist, district: dist }); busy(0);
+    busy(1); setErr(''); const r = await api({ op:'signup', name, mobile, email:'', gtoken: GT || undefined, pw: pw.replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)), city: dist, district: dist, yob }); busy(0);
     if(!r.ok) return setErr(r.reason);
     try{ localStorage.setItem('mcsHomeCity', dist); localStorage.removeItem('mcsCityPick'); }catch(e){}
     done(r, '✅ Account created — your Account ID: ' + mcsSidFmt(r.user.sid || r.user.id));
@@ -17351,11 +17359,38 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   window.uaExit = function(){ try{ window.close(); }catch(e){} setTimeout(() => { try{ showToast('ایپ بند کرنے کے لیے فون کا «پیچھے» بٹن دبائیں'); }catch(e){} }, 300); };
   window.uaForgot = function(){
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.lock}</i><h2 style="font-size:22px">Forgot PIN</h2></div>
-      <div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:700;line-height:1.9">Forgot your PIN? Send your mobile number on Help Desk below — a new PIN will be set for you.</div>
+      <div class="uaSub">Write your mobile number and year of birth — set a new PIN right now</div>
+      ${field('uaFMob', 'phone', 'Mobile Number (03XXXXXXXXX)', { rq:1, im:'tel', ac:'tel', v: (document.getElementById('uaId') || {}).value || '' })}
+      ${field('uaYob', 'lock', 'Year of birth (e.g. 1985)', { rq:1, im:'numeric', ac:'bday-year' })}
+      ${field('uaFNew', 'lock', 'New PIN (6 digits)', { type:'password', rq:1, im:'numeric', ac:'new-password' })}
       <div class="uaErr" id="uaErr"></div>
+      <button class="uaBtn bB" onclick="uaDoForgot()">✅ Set new PIN &amp; log in</button>
+      <div class="uaSub" style="margin-top:10px">Year of birth not saved on your account?</div>
       <button class="uaBtn bW" onclick="uaHelp()">❓ Help Desk — پاس ورڈ بھول گیا</button>
       <button class="uaBtn bO" onclick="uaLogin()">← Back to Login</button></div>`);
   };
+  window.uaDoForgot = async function(){   /* MCS1711TU505: موبائل + پیدائش کا سال → نیا PIN اور سیدھا اندر */
+    const mob = ($('uaFMob').value || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).trim(), pw = ($('uaFNew').value || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)), yob = uaYobVal($('uaYob'));
+    if(mob.replace(/\D/g, '').length < 10) return setErr('mobile'); if(!yob) return setErr('yob'); if(!/^\d{6}$/.test(pw)) return setErr('pw6');
+    busy(1); setErr(''); const r = await api({ op:'forgot', mobile: mob, yob, pw }); busy(0);
+    if(!r.ok) return setErr(r.reason);
+    uaClearOthers('user'); done(r, '✅ New PIN saved — welcome back');
+  };
+  /* MCS1711TU505: پرانے اکاؤنٹ پر پیدائش کا سال ایک بار (دن میں ایک دفعہ پوچھے، تب تک جب تک محفوظ نہ ہو) */
+  window.uaYobAsk = function(){
+    const a = uaMe(); if(!a || !a.user || a.user.hasYob !== false) return;
+    try{ const t = +(localStorage.getItem('mcsYobAskAt') || 0); if(Date.now() - t < 864e5) return; localStorage.setItem('mcsYobAskAt', String(Date.now())); }catch(e){}
+    if(typeof agModal !== 'function') return;
+    agModal(`<div class="ag-hd">🔑 Year of birth</div><div class="cp-hint">Add your year of birth once. If you ever forget your PIN, you can set a new one yourself with mobile number + year of birth.</div>
+      <div class="ag-f"><input id="uaYobQ" inputmode="numeric" maxlength="4" placeholder="e.g. 1985" style="font-size:20px;text-align:center"><div class="ag-err" id="uaYobErr"></div>
+      <button type="button" class="btn block" onclick="uaYobSave()">✅ Save</button><button type="button" class="btn block" style="background:#e2e8f0;color:#0f172a;margin-top:6px" onclick="closeModal('agModal')">Later</button></div>`);
+  };
+  window.uaYobSave = async function(){
+    const a = uaMe(), y = uaYobVal(document.getElementById('uaYobQ')), er = document.getElementById('uaYobErr'); if(!y){ if(er) er.textContent = ERR.yob; return; }
+    const r = await api({ op:'setyob', tok: a.tok, yob: y }); if(!r.ok){ if(er) er.textContent = ERR[r.reason] || ('Error: ' + r.reason); return; }
+    a.user.hasYob = true; ls.set('mcsAuth', JSON.stringify(a)); try{ closeModal('agModal'); showToast('✅ Saved'); }catch(e){}
+  };
+  setTimeout(() => { try{ uaYobAsk(); }catch(e){} }, 15000);
   window.uaHelp = function(){
     const id = (document.getElementById('uaId') || {}).value || '';
     try{ PBTHelp.open({ app:'MCS', text:'🔑 پاس ورڈ بھول گیا — اکاؤنٹ: ' + id + '\nموبائل: ', type:'ask' }); }catch(e){ try{ openHelpDesk(); }catch(_){} }
@@ -17375,16 +17410,18 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   window.uaPwForm = function(){
     const u = (uaMe() || {}).user || {};
     show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.lock}</i><h2 style="font-size:22px">PIN (6 digits)</h2></div><div class="uaSub">With this PIN you log in with your mobile number every time</div>
-      ${u.hasPw ? field('uaOld', 'lock', 'Current PIN', { type:'password', ac:'current-password' }) : ''}
-      ${field('uaNew', 'lock', 'New PIN (6 digits)', { type:'password', rq:1, ac:'new-password' })}
+      ${u.hasPw ? field('uaOld', 'lock', u.hasYob ? 'Current PIN — or leave empty and write birth year' : 'Current PIN', { type:'password', ac:'current-password', im:'numeric' }) : ''}
+      ${field('uaNew', 'lock', 'New PIN (6 digits)', { type:'password', rq:1, ac:'new-password', im:'numeric' })}
+      ${field('uaYob', 'lock', u.hasYob ? 'Year of birth (if you forgot current PIN)' : 'Year of birth (e.g. 1985) — to reset a forgotten PIN', { rq: u.hasYob ? 0 : 1, im:'numeric', ac:'bday-year' })}
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bB" onclick="uaDoPw()">✅ Save</button><button class="uaBtn bO" onclick="uaAccount()">← Back</button></div>`);
   };
   window.uaDoPw = async function(){
-    const a = uaMe(); const pw = $('uaNew').value || ''; if(pw.length < 6) return setErr('pw');
-    busy(1); const r = await api({ op:'setpw', tok: a.tok, pw, old: $('uaOld') ? $('uaOld').value : '' }); busy(0);
+    const a = uaMe(); const pw = ($('uaNew').value || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)); if(!/^\d{6}$/.test(pw)) return setErr('pw6');
+    const yob = uaYobVal($('uaYob')), u0 = (a && a.user) || {}; if(!u0.hasYob && !yob) return setErr('yob');
+    busy(1); const r = await api({ op:'setpw', tok: a.tok, pw, old: $('uaOld') ? $('uaOld').value : '', yob }); busy(0);
     if(!r.ok){ if(r.reason === 'session') return uaDrop(); return setErr(r.reason); }
-    a.user.hasPw = true; ls.set('mcsAuth', JSON.stringify(a)); try{ showToast('✅ پاس ورڈ محفوظ ہو گیا'); }catch(e){} uaAccount();
+    a.user.hasPw = true; if(yob) a.user.hasYob = true; ls.set('mcsAuth', JSON.stringify(a)); try{ showToast('✅ پاس ورڈ محفوظ ہو گیا'); }catch(e){} uaAccount();
   };
   window.uaDelete = async function(){
     const a = uaMe(); if(!a) return;
@@ -22721,7 +22758,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
 .cbx-blue .cbx-hd{color:#1d4ed8}.cbx-green .cbx-hd{color:#15803d}.cbx-red .cbx-hd{color:#b91c1c}
 .cbx-st{font-size:12px;font-weight:800;border-radius:999px;padding:0 10px;background:#fff;border:1px solid #e5e7eb;white-space:nowrap}
 .cbx.locked .cbx-st{background:#dcfce7;border-color:#86efac;color:#166534}
-.cbx.locked .cbx-in{pointer-events:none;opacity:.78;filter:saturate(.8)}
+.cbx.locked .cbx-in{opacity:.86}   /* MCS1711TU505: pointer-events:none ہٹایا — لاک ڈبے میں فہرست / چپس دبانے سے کچھ نہیں ہوتا تھا */
 .cbx-bt{display:flex;gap:6px;margin-top:8px;direction:rtl}
 .cbx-bt button{flex:1;min-width:0;min-height:42px;border-radius:12px;border:1.5px solid #c9971c;background:#fff;color:#0f1f45;font:inherit;font-weight:800;font-size:14px;cursor:pointer;padding:0 6px}
 .cbx-bt .cbx-save{background:#15803d;border-color:#15803d;color:#fff}
@@ -24574,7 +24611,7 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
   }
   window.svcCardHtml = function(s, meta){
     let live = false;
-    try{ live = !!(s && s.id && typeof pfActive === 'function' && pfActive(s) && s.category !== UNASSIGNED_KEY && s.category !== 'emergencyNumbers' && s.category !== 'govOffices'); }catch(e){}
+    try{ live = !!(s && s.id && typeof pfActive === 'function' && pfActive(s) && s.category !== 'emergencyNumbers' && s.category !== 'govOffices'); }catch(e){}
     if(live){ try{ return rc('service', s, meta); }catch(e){ console.warn('rc svc', e); } }
     return oS.apply(this, arguments);
   };
@@ -25133,8 +25170,13 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
     try{ document.body.style.overflow = ''; }catch(_){} }, true);
 
   /* (5) لاک ڈبے کا خانہ دبائیں = ڈبہ کھلے */
-  document.addEventListener('click', e => { const x = e.target.closest && e.target.closest('.locked .cbx-in input, .locked .cbx-in textarea, .locked .cbx-in select'); if(!x) return;
-    const b = x.closest('.locked'), ed = b && b.querySelector('.cbx-edit'); if(ed){ ed.click(); setTimeout(() => { try{ x.focus(); }catch(_){} }, 60); } }, true);
+  /* MCS1711TU505: لاک ڈبے میں کہیں بھی دبائیں (خانہ، فہرست، ذیلی قسم کی چپ) — ڈبہ اسی جگہ کھلے (اسکرول نہ کودے) اور وہی دبانا کام بھی کرے */
+  document.addEventListener('click', e => { const t = e.target; const inn = t && t.closest && t.closest('.cbx.locked .cbx-in'); if(!inn || t.closest('.cbx-edit')) return;
+    const b = inn.closest('.cbx.locked'), ed = b && b.querySelector('.cbx-edit'); if(!ed) return;
+    const field = t.closest('input, textarea, select'); const sc = []; for(let p = b.parentElement; p; p = p.parentElement) if(p.scrollHeight > p.clientHeight) sc.push([p, p.scrollTop]); const wy = window.scrollY;
+    ed.click(); const back = () => { sc.forEach(([p, y]) => { p.scrollTop = y; }); if(window.scrollY !== wy) window.scrollTo(0, wy); }; back(); requestAnimationFrame(back); setTimeout(back, 120);
+    if(field){ setTimeout(() => { try{ field.focus({ preventScroll: true }); }catch(_){} }, 60); return; }   /* خانہ: ڈبہ کھلا، کرسر وہیں */
+    e.preventDefault(); e.stopPropagation(); setTimeout(() => { try{ t.click(); }catch(_){} back(); }, 30);   /* چپ / بٹن: کھلنے کے بعد وہی دبانا دوبارہ */ }, true);
 })();
 </script>
 
@@ -25955,7 +25997,8 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
     const box = lb.closest('.field,.agx-f,.ag-f,.fm-row,.pf-f') || lb.parentElement; if(!box) return null;
     return box.querySelector('input:not([type=hidden]):not([type=checkbox]):not([type=file]),select,textarea');
   }
-  const empty = c => { if(!c) return false; if(c.tagName === 'SELECT') return !c.value || c.value === '__other'; const v = String(c.value || '').trim(); if(c.type === 'tel' || /whatsapp|mob|phone/i.test(c.id || '')) return v.replace(/\D/g, '').length < 10; return !v; };
+  const empty = c => { if(!c) return false; if(c.id === 'svcSubIn') return !(typeof clsSubs !== 'undefined' && clsSubs.length) && !String(c.value || '').trim(); if(c.id === 'svcProdIn') return !(typeof clsProds !== 'undefined' && clsProds.length) && !String(c.value || '').trim();   /* MCS1711TU505: ٹائٹل چپس چنے ہوں تو «?» نہیں */
+    if(c.tagName === 'SELECT') return !c.value || c.value === '__other'; const v = String(c.value || '').trim(); if(c.type === 'tel' || /whatsapp|mob|phone/i.test(c.id || '')) return v.replace(/\D/g, '').length < 10; return !v; };
   function go(c){
     if(!c) return; const box = c.closest('.field,.agx-f,.ag-f,.uaF') || c;
     try{ box.scrollIntoView({ behavior: 'smooth', block: 'center' }); }catch(e){}
@@ -26237,5 +26280,13 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
   document.addEventListener('visibilitychange', () => { if(!document.hidden) arLoad(); });
 })();
 </script>
+<style id="mcsClean505">
+/* MCS1711TU505 (مالک کا حکم): فارم صاف — لیبل پر دہری انگلش / دھندلا چھوٹا اردو ہنٹ نہیں؛ ضروری وضاحت (fm-opt) گہری اور صاف */
+:is(#serviceFormModal,#doctorFormModal,#pfEditModal,#agModal) label .ur-cap{display:none!important}
+:is(#serviceFormModal,#doctorFormModal,#pfEditModal) label > small:not(.fm-opt){display:none!important}
+:is(#serviceFormModal,#doctorFormModal,#pfEditModal,#agModal) label .fm-opt{display:block;opacity:1!important;filter:none!important;color:#7a2e0e!important;font-weight:700!important;font-size:12.5px!important;margin-top:2px}
+:is(#serviceFormModal,#doctorFormModal,#pfEditModal,#agModal) label{opacity:1!important;filter:none!important;text-shadow:none!important;color:#0b2545!important;font-weight:800!important}
+#wzOv label.wzL .u{color:#0b2545!important;font-weight:700!important;opacity:1!important;filter:none!important;text-shadow:none!important;font-size:16px!important}
+</style>
 </body>
 </html>
