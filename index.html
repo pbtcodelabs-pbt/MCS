@@ -3019,10 +3019,10 @@ body.cdOn{padding-top:30px}
 })();
 </script>
 <style id="mcsRibbon510">
-/* MCS1711TU510: ایڈمن کا سرخ ترچھا ربن (بائیں اوپر کونا) — کچھ نہیں روکتا */
-#mcsAdmRibbon{position:fixed;top:0;left:0;width:118px;height:118px;overflow:hidden;z-index:2147483600;pointer-events:none}
-#mcsAdmRibbon span{position:absolute;top:24px;left:-38px;width:170px;transform:rotate(-45deg);background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff;text-align:center;font:900 15px/30px Arial,sans-serif;letter-spacing:2px;border-top:2px solid #fecaca;border-bottom:2px solid #7f1d1d;box-shadow:0 3px 8px rgba(0,0,0,.4);text-shadow:0 1px 1px rgba(0,0,0,.4)}
-#mcsAdmRibbon.a2 span{background:linear-gradient(180deg,#22c55e,#15803d);border-top-color:#bbf7d0;border-bottom-color:#14532d;font-size:14px;letter-spacing:1px}   /* Admin 2 = سبز */
+/* MCS1711TU510/511: ایڈمن کا سرخ ترچھا ربن (دائیں اوپر کونا) — کچھ نہیں روکتا */
+#mcsAdmRibbon{position:fixed;top:0;right:0;width:92px;height:92px;overflow:hidden;z-index:2147483600;pointer-events:none}
+#mcsAdmRibbon span{position:absolute;top:17px;right:-38px;width:150px;transform:rotate(45deg);background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff;text-align:center;font:900 12.5px/26px Arial,sans-serif;letter-spacing:1px;border-top:2px solid #fecaca;border-bottom:2px solid #7f1d1d;box-shadow:0 3px 8px rgba(0,0,0,.4);text-shadow:0 1px 1px rgba(0,0,0,.4)}
+#mcsAdmRibbon.a2 span{background:linear-gradient(180deg,#22c55e,#15803d);border-top-color:#bbf7d0;border-bottom-color:#14532d}   /* Admin 2 = سبز */
 </style>
 <script id="mcsUpd509">
 /* MCS1711TU509 (مالک کا حکم — «اپڈیٹ کا کارڈ بار بار کام روکتا ہے، Admin 2 نالاں»): عام گاہک / Admin 2 کو اپڈیٹ کا کچھ نظر نہیں آتا —
@@ -4713,10 +4713,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU510";
+const APP_VERSION = "MCS1711TU511";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU511": "ADMIN 1 / ADMIN 2 ribbon moved to the right corner (nothing hidden); the small Admin label is gone when the ribbon shows",
   "MCS1711TU510": "Red ADMIN ribbon in the corner while in the admin account; change your account name in My Account (shown at the top)",
   "MCS1711TU509": "Updates install quietly in the background — no card for customers; only Admin 1 sees a thin progress bar and what changed",
   "MCS1711TU508": "🧪 Test activation key without dashes — same as Help Desk keys",
@@ -17760,8 +17761,9 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       const a = uaMe(), t = $('h2Type');
       if(t && a && !staff() && /Normal/.test(t.textContent)){ const nm = String(a.user.name || '').trim(); t.textContent = '👤 ' + (nm.length > 18 ? nm.slice(0, 17) + '…' : nm); t.setAttribute('data-noen', '1'); t.classList.add('on'); const o = $('h2Out'); if(o) o.style.display = ''; }   /* MCS1711TU510: پورا نام (اکاؤنٹ کا) — My Account ← «Change name» سے بدلتا ہے */
       try{   /* MCS1711TU510 (مالک کا حکم): ایڈمن میں ہوں تو اوپر کونے میں موٹا سرخ ترچھا ربن «ADMIN» — صاف پتہ چلے کون سا اکاؤنٹ ہے */
-        const rl = typeof ptRole === 'function' ? ptRole() : '', lab = rl === 'dev' ? 'ADMIN' : rl === 'codev' ? 'ADMIN 2' : '';
+        const rl = typeof ptRole === 'function' ? ptRole() : '', lab = rl === 'dev' ? 'ADMIN 1' : rl === 'codev' ? 'ADMIN 2' : '';
         let rb = $('mcsAdmRibbon');
+        const ht = $('h2Type'); if(ht) ht.style.display = lab ? 'none' : '';   /* MCS1711TU511: ربن ہو تو نیچے والا «Admin» دوبارہ نہیں */
         if(!lab){ if(rb) rb.remove(); }
         else { if(!rb){ rb = document.createElement('div'); rb.id = 'mcsAdmRibbon'; rb.setAttribute('aria-hidden', 'true'); rb.innerHTML = '<span></span>'; document.body.appendChild(rb); }
           const sp = rb.querySelector('span'); if(sp.textContent !== lab) sp.textContent = lab; rb.className = rl === 'codev' ? 'a2' : 'a1'; }
