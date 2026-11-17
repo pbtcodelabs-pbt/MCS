@@ -4427,10 +4427,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU493";
+const APP_VERSION = "MCS1711TU494";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU494": "Referral list: PBT on top, then AG001 Admin 1, AG002 Admin 2, AG003… with photos • agents see «Registration complete» instead of the form • one selfie used everywhere • your local city photo on login / sign-up",
   "MCS1711TU493": "New registered business card: smaller, blue design; left column MCS badge, agent AG number, selfie, expiry; shop photo as a strip on the right; buttons spaced apart",
   "MCS1711TU492": "Referral list fixed: PBT and all agents show again; removed agents' AG numbers show as «Vacant» and cannot be chosen",
   "MCS1711TU491": "Admin portal: new «Agents list» — AG number on the left, name in the middle, the agent's selfie on the right; tap a row to open that agent's portal; vacant / reserved AG numbers listed below.",
@@ -25539,6 +25540,226 @@ html body .mpx-card.b236 .b236-mid{border-color:#3b5bdb33 !important}
 html body #mpBar .mpx-card.b236 .b236-ur{color:#1e3a8a !important;-webkit-text-stroke:.5px #0f1f45 !important}
 html body .mpx-card.b236 .b236-type{background:#dbe4ff !important;border-color:#91a7ff !important}
 </style>
+
+<style id="mcsRpk494css">
+/* MCS1711TU494 (مالک کا حکم): ریفرل فہرست — سب سے اوپر PBT (کمپنی)، پھر AG001 · Admin 1 · تصویر، AG002 · Admin 2 · تصویر، AG003 · ایجنٹ · تصویر…؛ «ADMIN1 / ADMIN2» کہیں نظر نہیں؛ چننے پر تینوں چیزیں (کوڈ، نام، تصویر) خانے میں */
+html body select.rpk-sel ~ .rpk-btn{display:none !important}
+.rpk2{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:6px 12px;border:2px solid #c9971c;border-radius:14px;background:#fffdf5;font:inherit;cursor:pointer;direction:ltr;text-align:left}
+.rpk2 i.ph,#rpk2Pop .ph{flex:none;width:40px;height:40px;border-radius:50%;overflow:hidden;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-style:normal;font:800 15px Arial,sans-serif;color:#1e3a8a;border:2px solid #3b5bdb}
+.rpk2 i.ph img,#rpk2Pop .ph img{width:100%;height:100%;object-fit:cover}
+.rpk2 b,#rpk2Pop b{font:900 15px Arial,sans-serif;color:#0b2545;min-width:58px;letter-spacing:.3px}
+.rpk2 span,#rpk2Pop span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700;color:#334155}
+.rpk2 .dd{flex:none;color:#c9971c;font-size:14px}
+.rpk2 em{font-style:normal;color:#94a3b8}
+#rpk2Pop{position:fixed;inset:0;z-index:2147483200;background:rgba(11,37,69,.45);display:flex;align-items:center;justify-content:center;padding:14px}
+#rpk2Pop .box{width:100%;max-width:340px;max-height:74vh;overflow:auto;background:#fff;border:3px solid #c9971c;border-radius:20px;padding:6px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+#rpk2Pop .r{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:12px;background:transparent;padding:8px 10px;font:inherit;cursor:pointer;direction:ltr;text-align:left}
+#rpk2Pop .r+.r{border-top:1px solid #eef2f7}
+#rpk2Pop .r.on{background:#dcfce7}
+#rpk2Pop .r.co{background:#fef9c3}
+#rpk2Pop .r.vac{opacity:.75;background:repeating-linear-gradient(135deg,#fff7ed 0 10px,#ffedd5 10px 20px);cursor:not-allowed}
+#rpk2Pop .r.vac span{color:#c2410c}
+</style>
+<script id="mcsRpk494">
+(function(){
+  'use strict';
+  const E = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const num = c => { const m = /^AG-?0*(\d+)$/i.exec(String(c || '').trim()); return m ? +m[1] : 0; };
+  const agc = n => 'AG' + String(n).padStart(3, '0');
+  const ADM = [{ v: 'ADMIN1', c: 'AG001', n: 'Admin 1', p: '3206793793' }, { v: 'ADMIN2', c: 'AG002', n: 'Admin 2', p: '3138469706' }];
+  const VLBL = 'Vacant — خالی، الاٹمنٹ کے لیے دستیاب';
+  const last10 = s => String(s || '').replace(/\D/g, '').slice(-10);
+  /* تصویر: اسی بندے کے اپنے کاروبار کارڈ کی سیلفی (فون میں پہلے سے — سرور پر کوئی بوجھ نہیں) */
+  let IX = null, IXat = 0;
+  function index(){
+    if(IX && Date.now() - IXat < 15000) return IX; IX = { ph: {}, rk: {} }; IXat = Date.now();
+    try{ [['service', store.services || []], ['doctor', store.doctors || []]].forEach(([k, L]) => L.forEach(r => { const s = r && r.more && r.more.selfie; if(!s) return;
+      const p = last10(r.whatsapp); if(p && !IX.ph[p]) IX.ph[p] = s; try{ const rk = pfKeyOf(r, k); if(rk) IX.rk[rk] = s; }catch(e){} })); }catch(e){}
+    try{ const s = localStorage.getItem('mcsSelfie'), me = JSON.parse(localStorage.getItem('mcsAuth') || 'null'); const p = me && me.user && last10(me.user.mobile); if(s && p && !IX.ph[p]) IX.ph[p] = s; }catch(e){}
+    return IX;
+  }
+  function photo(p, rk){ const I = index(); return (rk && I.rk[rk]) || (p && I.ph[last10(p)]) || ''; }
+  function agents(){
+    let L = []; try{ L = (agList || []).filter(a => a && a.status === 'approved' && !a.off && num(a.code)).map(a => ({ c: agc(num(a.code)), v: a.code, n: String(a.name || '').trim(), p: a.phone || '', rk: a.bizRk || '' }));
+      if(L.length) try{ localStorage.setItem('mcsAgPick2', JSON.stringify(L)); }catch(e){} }catch(e){}
+    if(!L.length){ try{ L = JSON.parse(localStorage.getItem('mcsAgPick2') || '[]') || []; }catch(e){ L = []; }
+      if(!L.length) try{ L = (rpkPeople() || []).filter(x => num(x.c) && !x.vac).map(x => ({ c: agc(num(x.c)), v: x.c, n: x.n || '', p: '', rk: '' })); }catch(e){} }
+    try{ const me = agMe(); if(me && num(me.code) && !L.some(x => num(x.c) === num(me.code))) L.push({ c: agc(num(me.code)), v: me.code, n: me.name || '', p: me.phone || '', rk: me.bizRk || '' }); }catch(e){}
+    return L;
+  }
+  function list(){
+    const out = [{ v: 'PBT', c: 'PBT', n: 'Company — Piary Bhai Traders', co: 1 }];
+    ADM.forEach(a => out.push({ v: a.v, c: a.c, n: a.n, ph: photo(a.p) }));
+    const seen = new Set([1, 2]), rows = [];
+    agents().forEach(a => { const k = num(a.c); if(seen.has(k)) return; seen.add(k); rows.push({ v: a.v, c: a.c, n: a.n || '—', ph: photo(a.p, a.rk), k }); });
+    let V = []; try{ V = (window.mcsAgVacant ? window.mcsAgVacant() : []) || []; }catch(e){}
+    V.forEach(c => { const k = num(c); if(!k || seen.has(k)) return; seen.add(k); rows.push({ v: c, c: agc(k), n: VLBL, vac: 1, k }); });
+    rows.sort((x, y) => x.k - y.k); return out.concat(rows);
+  }
+  const ini = n => { const t = String(n || '').trim(); return t ? E(t[0].toUpperCase()) : '?'; };
+  const phHtml = x => x.co ? '<i class="ph">🏢</i>' : `<i class="ph">${x.ph ? `<img src="${E(x.ph)}" alt="">` : ini(x.vac ? '' : x.n)}</i>`;
+  function find(v){ v = String(v || ''); if(!v) return null; const L = list(), r = refN(v);
+    return L.find(x => x.v === v) || L.find(x => x.v === r) || (num(v) ? L.find(x => num(x.c) === num(v)) : null) || { v, c: v, n: '' }; }
+  /* پرانی select ویسی (value = ADMIN1 / ADMIN2 / PBT / AG… — سرور کا حساب نہیں بدلتا)؛ صرف دکھنے والا نام AG001 / AG002 */
+  const oF = window.rpkFill;
+  window.rpkFill = rpkFill = function(sel){
+    const keep = (rpkSelVal().get.call(sel)) || (isAdminSignedIn && sel.id === 'svcRef' ? 'ADMIN1' : '');
+    sel.innerHTML = '<option value="">— Choose referral code —</option>' + list().map(x => `<option value="${E(x.v)}" data-n="${E(x.n)}" data-noen="1"${x.vac ? ' disabled' : ''}>${E(x.c)} · ${E(x.n)}</option>`).join('');
+    sel.setAttribute('dir', 'ltr'); rpkSetVal(sel, keep); try{ paint(sel); }catch(e){}
+  };
+  window.rpkNameOf = rpkNameOf = function(code){ const x = find(code); return x ? (x.c === x.v ? x.n : x.c + ' · ' + x.n) : ''; };
+  function label(sel){ const x = find(sel.value); if(!x) return '<i class="ph">🤝</i><span><em>Choose referral code</em></span><b class="dd">▾</b>';
+    return phHtml(x) + `<b>${E(x.c)}</b><span dir="auto">${E(x.n)}</span><b class="dd">▾</b>`; }
+  function paint(sel){ let b = sel.parentNode && sel.parentNode.querySelector('.rpk2[data-for="' + sel.id + '"]');
+    if(!b){ b = document.createElement('button'); b.type = 'button'; b.className = 'rpk2'; b.dataset.for = sel.id; b.setAttribute('data-noen', ''); sel.insertAdjacentElement('afterend', b); b.addEventListener('click', () => open(sel)); }
+    const h = label(sel); if(b.__h !== h){ b.__h = h; b.innerHTML = h; } }
+  function open(sel){
+    let p = document.getElementById('rpk2Pop'); if(p) p.remove(); p = document.createElement('div'); p.id = 'rpk2Pop'; p.setAttribute('data-noen', '');
+    const cur = sel.value, curX = find(cur);
+    p.innerHTML = '<div class="box">' + list().map(x => `<button type="button" class="r${x.co ? ' co' : ''}${x.vac ? ' vac' : ''}${curX && x.v === curX.v ? ' on' : ''}" data-v="${E(x.v)}">${phHtml(x)}<b>${E(x.c)}</b><span dir="auto">${E(x.n)}</span></button>`).join('') + '</div>';
+    p.addEventListener('click', e => { const r = e.target.closest('.r'); if(r && r.classList.contains('vac')){ try{ showToast('🔓 ' + r.querySelector('b').textContent + ' — Vacant, not allotted yet'); }catch(_){} return; }
+      if(r){ sel.value = r.dataset.v; try{ sel.dispatchEvent(new Event('change', { bubbles: true })); sel.dispatchEvent(new Event('input', { bubbles: true })); }catch(_){} paint(sel); } p.remove(); });
+    document.body.appendChild(p);
+  }
+  setInterval(() => { document.querySelectorAll('select.rpk-sel').forEach(s => { try{ paint(s); }catch(e){} }); }, 800);
+  /* چنا ہوا کوڈ کا تصدیقی لفظ (✅ …) بھی AG001 · Admin 1 */
+  document.addEventListener('change', e => { const s = e.target; if(!s || !s.classList || !s.classList.contains('rpk-sel')) return; setTimeout(() => { const ok = document.getElementById(s.id + 'Ok'); if(ok){ const x = find(s.value); ok.textContent = x && s.value ? '✅ ' + x.c + (x.n ? ' · ' + x.n : '') : ''; } }, 0); }, true);
+  window.mcsRefLabel = v => { const x = find(v); return x ? x.c + (x.n ? ' · ' + x.n : '') : ''; };
+  try{ rpkFillAll(); }catch(e){}
+})();
+</script>
+
+<style id="mcsCity494css">
+/* MCS1711TU494 (مالک کا حکم): لاگ اِن / سائن اپ کے اوپر اپنے مقامی شہر کی بڑی تصویر (ضلع نہیں — ضلع کے نیچے چنا شہر)؛ تصویر نہ ہو تو خالی جگہ + ایڈمن کے لیے «＋ تصویر لگائیں» */
+#mcsCityBan{position:relative;width:100%;aspect-ratio:2/1;border-radius:20px;overflow:hidden;margin:0 0 8px;background:linear-gradient(135deg,#dbe4ff,#eef2ff);border:2px dashed #91a7ff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:#1e3a8a;text-align:center}
+#mcsCityBan.has{border:2px solid #3b5bdb;background:#0f1f45}
+#mcsCityBan img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#mcsCityBan .nm{position:absolute;left:0;right:0;bottom:0;padding:18px 12px 7px;background:linear-gradient(transparent,rgba(0,0,0,.65));color:#fff;font:800 17px 'Segoe UI',Selawik,Arial,sans-serif;text-align:left;direction:ltr}
+#mcsCityBan .nm small{display:block;font:600 12px 'Segoe UI',Arial,sans-serif;opacity:.85}
+#mcsCityBan .em{font-size:30px}
+#mcsCityBan .t{font:800 15px 'Segoe UI',Arial,sans-serif}
+#mcsCityBan .add{position:relative;z-index:2;border:0;border-radius:999px;background:#3b5bdb;color:#fff;font:800 14px 'Segoe UI',Arial,sans-serif;padding:8px 16px;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer}
+#mcsCityBan.has .add{position:absolute;top:8px;right:8px;padding:5px 11px;font-size:12px;background:rgba(15,31,69,.75)}
+.mcsAgDone{text-align:center;padding:4px 2px}
+.mcsAgDone .big{font-size:44px;line-height:1}
+.mcsAgDone h3{margin:6px 0 2px;font:900 19px 'Segoe UI',Selawik,Arial,sans-serif;color:#15803d}
+.mcsAgDone p{margin:8px 0;font:700 15px/1.5 'Segoe UI',Selawik,Arial,sans-serif;color:#0f1f45;direction:ltr}
+.mcsAgDone .ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:17px;line-height:2;direction:rtl;color:#1e3a8a;font-weight:400}
+.mcsAgDone .code{display:inline-block;margin:6px 0;font:900 26px Arial,sans-serif;color:#1e3a8a;background:#dbe4ff;border:2px solid #3b5bdb;border-radius:14px;padding:6px 18px;letter-spacing:1px;direction:ltr;cursor:pointer}
+</style>
+<script id="mcsCity494">
+(function(){
+  'use strict';
+  const API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
+  const E = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const LS = { g(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, s(k, v){ try{ if(v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); }catch(e){} } };
+  const post = async (path, b, h) => { const r = await fetch(API + path, { method: 'POST', headers: Object.assign({ 'Content-Type': 'text/plain' }, h || {}), body: JSON.stringify(b) }); return r.json(); };
+  const isAdm = () => { try{ return !!(isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice())); }catch(e){ return false; } };
+  const EN = x => { try{ return (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[x]) || ''; }catch(e){ return ''; } };
+  /* ===== (۱) شہر کی تصویر: ایک شہر کی ایک تصویر سرور پر (AIO worker /mcscity)، فون میں صرف اپنے شہر کی ایک نقل ===== */
+  const cityKey = (c, d) => (String(c || '').trim() + (d ? ' — ' + String(d).trim() : '')).replace(/\s+/g, ' ');
+  function myCity(){ return { c: LS.g('mcsMyCity') || '', d: LS.g('mcsMyDist') || '' }; }
+  function cache(){ try{ return JSON.parse(LS.g('mcsCityImg') || 'null'); }catch(e){ return null; } }
+  const chk = {};
+  async function fetchImg(key){
+    const c = cache(); if(c && c.k === key && chk[key] && Date.now() - chk[key] < 36e5) return c;
+    chk[key] = Date.now();
+    try{ const v = await post('/mcscity', { op: 'ver', city: key }); if(!v || !v.ok) return c && c.k === key ? c : null;
+      if(!v.v){ if(c && c.k === key) LS.s('mcsCityImg', null); return { k: key, v: 0, img: '' }; }
+      if(c && c.k === key && c.v === v.v) return c;
+      const g = await post('/mcscity', { op: 'get', city: key }); if(g && g.ok){ const o = { k: key, v: g.v, img: g.img || '' }; LS.s('mcsCityImg', JSON.stringify(o)); return o; } }catch(e){}
+    return c && c.k === key ? c : null;
+  }
+  async function paintBan(box, city, dist){
+    if(!box) return; const key = cityKey(city, dist); box.dataset.k = key;
+    const head = city ? `<div class="nm">📍 ${E(EN(city) || city)}${dist && dist !== city ? `<small>${E(EN(dist) || dist)}</small>` : ''}</div>` : '';
+    const addB = city && isAdm() ? `<button type="button" class="add" onclick="event.stopPropagation();mcsCityPhotoAdd()">＋ ${'Add photo of ' + E(EN(city) || city)}</button>` : '';
+    const c = cache(); const show = o => { if(box.dataset.k !== key) return;
+      if(o && o.img){ box.className = 'has'; box.innerHTML = `<img src="${E(o.img)}" alt="">${head}${city && isAdm() ? `<button type="button" class="add" onclick="event.stopPropagation();mcsCityPhotoAdd()">＋ Change photo</button>` : ''}`; }
+      else { box.className = ''; box.innerHTML = city ? `<span class="em">🏙️</span><span class="t">${E(EN(city) || city)}</span>${addB || '<small>City photo coming soon</small>'}` : '<span class="em">🏙️</span><span class="t">Choose your district and city</span>'; } };
+    show(c && c.k === key ? c : null);
+    if(city){ const o = await fetchImg(key); if(o) show(o); }
+  }
+  function compress(file){ return new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => { const im = new Image(); im.onload = () => {
+    const W = 1280, H = 640, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'); const r = Math.max(W / im.width, H / im.height), w = im.width * r, h = im.height * r; x.drawImage(im, (W - w) / 2, (H - h) / 2, w, h);
+    let q = .8, d = cv.toDataURL('image/jpeg', q); while(d.length > 420000 && q > .4){ q -= .1; d = cv.toDataURL('image/jpeg', q); } res(d); }; im.onerror = rej; im.src = fr.result; }; fr.onerror = rej; fr.readAsDataURL(file); }); }
+  window.mcsCityPhotoAdd = function(){
+    const box = document.getElementById('mcsCityBan'); const key = box && box.dataset.k; if(!key){ try{ showToast('📍 Choose the city first'); }catch(e){} return; }
+    const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
+    i.onchange = async () => { const f = i.files && i.files[0]; if(!f) return;
+      try{ showToast('⏳ Uploading city photo…'); const img = await compress(f); let h; try{ h = await vfAdminHdr(); }catch(e){ showToast('🔒 Log in as Admin first (Developer button) — then add the photo', 5000); return; }
+        const r = await post('/mcscity', { op: 'put', city: key, img }, h);
+        if(r && r.ok){ LS.s('mcsCityImg', JSON.stringify({ k: key, v: r.v, img })); chk[key] = Date.now(); showToast('✅ Photo saved — everyone who chooses ' + key + ' will see it', 4000); refresh(); }
+        else showToast('⚠️ Not saved: ' + ((r && (r.reason || r.error)) || 'server')); }catch(e){ showToast('⚠️ ' + (e.message || 'Not saved')); } };
+    i.click();
+  };
+  /* ===== (۲) سائن اپ: ضلع کے نیچے «مقامی شہر» (لازمی) — چنتے ہی اسی شہر کی تصویر اوپر ===== */
+  function citiesOf(dist){ const S = new Set(); try{ (ccCityList() || []).forEach(x => { if(x.district === dist && x.city) S.add(x.city); }); }catch(e){}
+    if(dist) S.add(dist); return Array.from(S).sort((a, b) => (EN(a) || a).localeCompare(EN(b) || b, 'en')); }
+  function citySel(dist, cur){ const L = citiesOf(dist);
+    return '<option value="">' + (dist ? '— Your local city / town —' : '— First choose district —') + '</option>' + L.map(c => `<option value="${E(c)}"${c === cur ? ' selected' : ''}>${E(EN(c) ? EN(c) + ' — ' + c : c)}</option>`).join('') + (dist ? '<option value="__other">✏️ Other — type name</option>' : ''); }
+  function ensureSignup(ov){
+    const ds = ov.querySelector('#uaDist'); if(!ds || ov.querySelector('#uaCity')) return;
+    const lb = ds.closest('label'); const w = document.createElement('label'); w.className = 'uaF'; w.setAttribute('data-noen', '');
+    w.innerHTML = '<span style="font-size:18px;padding-left:4px">🏙️</span><select id="uaCity" style="flex:1;border:0;outline:0;background:transparent;font-size:15px;padding:0 8px;min-width:0;font-family:inherit;color:#0f1f45"></select><span class="rq">*</span>';
+    lb.insertAdjacentElement('afterend', w);
+    const cs = w.querySelector('select'), m = myCity(); cs.innerHTML = citySel(ds.value, m.d === ds.value ? m.c : '');
+    ds.addEventListener('change', () => { cs.innerHTML = citySel(ds.value, ''); ban(); });
+    cs.addEventListener('change', () => { if(cs.value === '__other'){ const t = (prompt('Your city / town name:') || '').trim(); if(t){ const o = document.createElement('option'); o.value = t; o.textContent = t; cs.insertBefore(o, cs.lastElementChild); cs.value = t; } else cs.value = ''; } ban(); });
+  }
+  function ban(){ const ov = document.getElementById('uaOv'); if(!ov) return; let box = ov.querySelector('#mcsCityBan');
+    if(!box){ const card = ov.querySelector('.uaCard'); if(!card) return; box = document.createElement('div'); box.id = 'mcsCityBan'; box.setAttribute('data-noen', ''); card.insertAdjacentElement('beforebegin', box); }
+    const cs = ov.querySelector('#uaCity'), ds = ov.querySelector('#uaDist');
+    if(cs){ paintBan(box, cs.value && cs.value !== '__other' ? cs.value : '', ds ? ds.value : ''); return; }
+    const m = myCity(); paintBan(box, m.c || LS.g('mcsHomeCity') || '', m.c ? m.d : '');
+  }
+  function refresh(){ const box = document.getElementById('mcsCityBan'); if(box) box.removeAttribute('data-k'); ban(); }
+  let lastOv = null;
+  setInterval(() => { const ov = document.getElementById('uaOv'); if(!ov || ov.style.display === 'none'){ lastOv = null; return; }
+    try{ ensureSignup(ov); }catch(e){} const card = ov.querySelector('.uaCard'); if(card && (card !== lastOv || !ov.querySelector('#mcsCityBan'))){ lastOv = card; ban(); } }, 500);
+  const oS = window.uaDoSignup;
+  if(typeof oS === 'function') window.uaDoSignup = async function(){
+    const cs = document.getElementById('uaCity'), ds = document.getElementById('uaDist'), city = cs ? String(cs.value || '').trim() : '';
+    if(cs && (!city || city === '__other')){ const er = document.getElementById('uaErr'); if(er) er.textContent = '🏙️ Please choose your local city / town'; try{ cs.focus(); }catch(e){} return; }
+    const r = await oS.apply(this, arguments);
+    try{ if(typeof uaMe === 'function' && uaMe() && city){ LS.s('mcsMyCity', city); LS.s('mcsMyDist', ds ? ds.value : ''); LS.s('mcsHomeCity', city); try{ ccApplyCity(true); }catch(e){} } }catch(e){}
+    return r;
+  };
+  window.mcsCityBanRefresh = refresh;
+  /* ===== (۳) ایجنٹ بن چکا ہے تو «Earn with MCS» پر فارم نہیں — مکمل؛ ہر بار یہی پیغام ===== */
+  const agNum = c => { const m = /^AG-?0*(\d+)$/i.exec(String(c || '').trim()); return m ? +m[1] : 0; };
+  window.mcsAgDone = function(a){
+    a = a || (typeof agMe === 'function' ? agMe() : null) || {}; const code = agNum(a.code) ? 'AG' + String(agNum(a.code)).padStart(3, '0') : (a.code || '');
+    agModal(`<div class="mcsAgDone"><div class="big">🎉</div><h3>Registration complete</h3>
+      <p>Your business is LIVE and you are an MCS Agent${a.name ? ', ' + E(a.name) : ''}. Your registration is complete — now your real job starts!</p>
+      <p>Register more and more businesses and professionals on My City Shines — the more you bring, the more your business grows.</p>
+      <p class="ur">آپ کا کاروبار لائیو ہے اور آپ MCS ایجنٹ بن چکے ہیں — اب زیادہ سے زیادہ کاروبار اور پروفیشنل رجسٹر کروائیں تاکہ آپ کا کاروبار بڑھے۔</p>
+      ${code ? `<div class="cp-hint">Your referral code</div><div class="code" onclick="agCopy('${E(code)}')">${E(code)} 📋</div>` : ''}
+      <button type="button" class="btn block ag-send" style="margin-top:8px" onclick="closeModal('agModal');try{mpWant=true;d2AddOpen()}catch(e){}">➕ Register a new business</button>
+      ${code ? `<button type="button" class="btn block secondary" style="margin-top:6px" onclick="agShare('${E(code)}')">📤 Share referral code</button>` : ''}
+      ${isAdm() || (typeof codevOn === 'function' && codevOn()) ? `<button type="button" class="btn block secondary" style="margin-top:6px" onclick="agFullForm()">🤝 Make another person an MCS Agent</button>` : ''}
+    </div>`);
+  };
+  const oE = window.agEarnOpen;
+  window.agEarnOpen = agEarnOpen = function(){ const a = typeof agMe === 'function' ? agMe() : null; if(a && agNum(a.code)) return window.mcsAgDone(a); return oE.apply(this, arguments); };
+  const oV = window.agStatusView;
+  if(typeof oV === 'function') window.agStatusView = agStatusView = function(r){ if(r && r.status === 'approved' && agNum(r.code)){ try{ const m0 = agMe(); if(m0 && m0.code !== r.code){ m0.code = r.code; localStorage.setItem('mcsAgent', JSON.stringify(m0)); } }catch(e){} return window.mcsAgDone(Object.assign({}, agMe() || {}, r)); } return oV.apply(this, arguments); };
+  /* ===== (۴) ایک سیلفی ہر جگہ: ایجنٹ فارم میں پہلے سے لی سیلفی خود؛ ایجنٹ کی نئی سیلفی اپنے کاروبار کارڈ پر بھی ===== */
+  const savedSelfie = () => { let s = ''; try{ s = (window.sfMem && window.sfMem.mcsSelfie) || LS.g('mcsSelfie') || ''; }catch(e){}
+    if(!s) try{ (mpListReal() || []).some(x => { const v = x.rec && x.rec.more && x.rec.more.selfie; if(v && sfOwnRec(x.rec)){ s = v; return true; } }); }catch(e){} return s; };
+  const oFF = window.agFullForm;
+  if(typeof oFF === 'function') window.agFullForm = agFullForm = function(){ const r = oFF.apply(this, arguments);
+    try{ if(!isAdm() && !(typeof codevOn === 'function' && codevOn()) && !agImgs.selfie){ const s = savedSelfie(); if(s){ agImgs.selfie = s; agShowPic('selfie'); const el = document.getElementById('agP_selfie'); if(el && !el.parentNode.querySelector('.sf494')){ const n = document.createElement('div'); n.className = 'cp-hint sf494'; n.style.textAlign = 'center'; n.textContent = '✅ Your selfie is already saved — the same picture is used everywhere (tap to change)'; el.insertAdjacentElement('afterend', n); } } } }catch(e){}
+    return r; };
+  const oSL = window.selfieSaveLocal;
+  if(typeof oSL === 'function') window.selfieSaveLocal = selfieSaveLocal = async function(d){ if(isAdm() || (typeof codevOn === 'function' && codevOn())) return;   /* ایڈمن کسی اور کو ایجنٹ بنائے تو اس کی سیلفی اپنی نہ بنے */ const r = await oSL.apply(this, arguments);
+    try{ if(window._sf494Busy) return r; window._sf494Busy = 1; const th = await pfSquare(d, 120, .7);
+      (mpListReal() || []).forEach(({ p, rec }) => { if(!rec || !sfOwnRec(rec)) return; rec.more = rec.more || {}; if(rec.more.selfie === th) return; rec.more.selfie = th;
+        try{ pushMoreToFirebase(p.kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); }catch(e){} });
+      try{ saveStore(); mpRender(); }catch(e){} }catch(e){} finally{ window._sf494Busy = 0; }
+    return r; };
+})();
+</script>
 
 </body>
 </html>
