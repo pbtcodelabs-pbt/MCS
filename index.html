@@ -4427,10 +4427,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU497";
+const APP_VERSION = "MCS1711TU498";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU498": "City photo removed from the login / sign-up page — nothing is downloaded or stored on the server for it; login page is clean and light",
   "MCS1711TU497": "Admin login no longer hides behind the big login page — it opens in front • Admin tab: tap your saved Gmail, type the password, you are in • Business tab: tap your saved Gmail, type your PIN, your account opens",
   "MCS1711TU496": "Login page: choose «User / Business» or «Admin» — each role shows its own Gmail and asks its PIN / password • Admin password now opens the normal ABC keyboard (not the numbers keyboard) • PIN / password page lifts above the keyboard",
   "MCS1711TU495": "Red «?» wherever something is missing — tap it to fix right there; «＋» on empty photo places; CNIC photo can now be taken from Gallery or Camera",
@@ -25830,7 +25831,8 @@ html body select.rpk-sel ~ .rpk-btn{display:none !important}
     ds.addEventListener('change', () => { cs.innerHTML = citySel(ds.value, ''); ban(); });
     cs.addEventListener('change', () => { if(cs.value === '__other'){ const t = (prompt('Your city / town name:') || '').trim(); if(t){ const o = document.createElement('option'); o.value = t; o.textContent = t; cs.insertBefore(o, cs.lastElementChild); cs.value = t; } else cs.value = ''; } ban(); });
   }
-  function ban(){ const ov = document.getElementById('uaOv'); if(!ov) return; let box = ov.querySelector('#mcsCityBan');
+  function ban(){ /* MCS1711TU498 (مالک کا حکم): شہر کی تصویر کا نظام ختم — لاگ اِن پر کوئی تصویر نہیں، سرور سے کوئی تصویر نہیں آتی */ try{ document.querySelectorAll('#mcsCityBan').forEach(b => b.remove()); LS.s('mcsCityImg', null); }catch(e){} return;
+    const ov = document.getElementById('uaOv'); if(!ov) return; let box = ov.querySelector('#mcsCityBan');
     if(!box){ const card = ov.querySelector('.uaCard'); if(!card) return; box = document.createElement('div'); box.id = 'mcsCityBan'; box.setAttribute('data-noen', ''); card.insertAdjacentElement('beforebegin', box); }
     const cs = ov.querySelector('#uaCity'), ds = ov.querySelector('#uaDist');
     if(cs){ paintBan(box, cs.value && cs.value !== '__other' ? cs.value : '', ds ? ds.value : ''); return; }
