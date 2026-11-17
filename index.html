@@ -4428,10 +4428,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU503";
+const APP_VERSION = "MCS1711TU504";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU504": "📢 Ad requests: anyone can request an ad with photo and 15 / 30 days; referral fills itself; goes live after company approval",
   "MCS1711TU503": "Developer panel opens again by tapping the version 7 times (with password) — Help Desk link still works",
   "MCS1711TU503": "Owner name in English + Urdu exactly as on CNIC; completed business shows your card (edit only by button); logout always goes to the login page; admin password box no longer hides behind the login page; selfie reused",
   "MCS1711TU501": "🔑 Activation Key box takes the longer key with the person's name (MCS008M1HABIB-…)",
@@ -26086,6 +26087,154 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
       const M = window.sfMem || {}; let v = M.mcsSelfie || ''; try{ if(!v) v = localStorage.getItem('mcsSelfie') || ''; if(!v && typeof ptSelfieGet === 'function') v = ptSelfieGet(typeof ptRole === 'function' ? ptRole() : 'user'); }catch(e){}
       if(v && /^data:image\//.test(v)) pfSetSelfie(pre, v); }catch(e){}
     return r; };
+})();
+</script>
+<style id="mcsAd504css">
+.ar-f label{display:block;font-weight:800;margin:8px 0 3px;font-size:13.5px}
+.ar-f input,.ar-f textarea{width:100%;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:12px;padding:9px 11px;font-size:15px;font-weight:700}
+.ar-days{display:flex;gap:8px;margin-top:4px}
+.ar-days button{flex:1;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:10px 6px;font-weight:800;font-size:15px}
+.ar-days button.on{border-color:#16a34a;background:#dcfce7;color:#14532d}
+.ar-pic{display:flex;align-items:center;gap:10px;margin-top:4px}
+.ar-pic img{width:84px;height:84px;object-fit:cover;border-radius:12px;border:1.5px solid #cbd5e1}
+.ar-pic label{margin:0;flex:1;text-align:center;border:2px dashed #94a3b8;border-radius:12px;padding:12px 6px;font-weight:800;cursor:pointer}
+.ar-ref{background:#eef2ff;border:1.5px solid #c7d2fe;border-radius:12px;padding:8px 10px;margin-top:8px;font-size:13.5px;font-weight:700}
+.ar-mine{margin-top:12px;border-top:1px dashed #cbd5e1;padding-top:8px}
+.ar-it{display:flex;justify-content:space-between;gap:8px;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin-top:6px;font-size:13px}
+.ar-st{font-weight:800;white-space:nowrap;border-radius:999px;padding:3px 9px;font-size:12px}
+.ar-st.new{background:#fef3c7;color:#92400e}.ar-st.ok{background:#dcfce7;color:#166534}.ar-st.rej{background:#fee2e2;color:#991b1b}
+.ar-strip{display:flex;align-items:center;gap:10px;width:100%;border:2px solid #f59e0b;background:linear-gradient(90deg,#fef3c7,#fde68a);border-radius:16px;padding:10px 12px;font-weight:800;text-align:left;animation:arGlow 1.6s ease-in-out infinite;margin-bottom:8px}
+@keyframes arGlow{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.5)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
+.ar-strip small{display:block;font-weight:600;color:#78350f}
+.ar-card{border:1.5px solid #e2e8f0;border-radius:16px;padding:10px;margin:10px 0;background:#fff}
+.ar-card .im{width:100%;max-height:220px;object-fit:contain;border-radius:12px;background:#f1f5f9}
+.ar-card .r{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;padding:3px 0;border-bottom:1px dotted #e2e8f0}
+.ar-card .r span{color:#64748b}
+.ar-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ar-acts button,.ar-acts a{flex:1;min-width:90px;text-align:center;border:0;border-radius:12px;padding:9px 6px;font-weight:800;text-decoration:none;font-size:14px}
+.ar-acts .ok{background:#16a34a;color:#fff}.ar-acts .no{background:#dc2626;color:#fff}.ar-acts .c{background:#e2e8f0;color:#0f172a}
+.ar-chk label{display:flex;gap:8px;align-items:flex-start;font-weight:700;padding:7px 4px;border-bottom:1px dotted #e2e8f0}
+.ar-chk input{width:20px;height:20px;flex:0 0 20px}
+</style>
+<script>
+/* ===== MCS1711TU504 (مالک کا حکم): 📢 اشتہار کا نظام — کوئی بھی درخواست بنائے (دکاندار، ایجنٹ، ایڈمن 2، ایڈمن 1)، ریفرل خود، منظوری صرف ایڈمن 1 (چیک لسٹ + پاس ورڈ)؛
+   پلے اسٹور: ایپ میں کوئی قیمت / روپے / ادائیگی کا خانہ نہیں — رقم صرف MCS Agent پورٹل میں۔ سرور AIO worker /adreq ===== */
+(function(){
+  const E = s => escapeHtml(String(s == null ? '' : s));
+  let arImg = '', arDays = 15, AR = [], _arAt = 0, _arBusy = false;
+  const arPost = async (body, admin) => { const h = admin ? await vfAdminHdr() : {'Content-Type':'text/plain'}; return (await fetch(PF_API + '/adreq', {method:'POST', headers: h, body: JSON.stringify(body)})).json(); };
+  function arRef(){
+    const r = (typeof bzRole === 'function') ? bzRole() : '';
+    if(!r) return {ref: 'PBT', refName: 'Company (self)', by: 'shop'};
+    const ref = bzRef() || 'PBT';
+    const nm = r === 'dev' ? 'Admin 1' : r === 'codev' ? 'Admin 2' : ((agMe() || {}).name || 'Agent');
+    return {ref, refName: nm, by: r};
+  }
+  window.adRequestOpen = function(){
+    const x = (mpList()[0]) || null, r = x ? x.rec : {}, own = x && x.p.kind !== 'doctor' ? splitOwnerIntro(r.intro) : {owner:''};
+    const cat = x ? (x.p.kind === 'doctor' ? 'Doctor' : ((CATEGORY_META[r.category] || {}).en || ubCatMeta(r.category).ur || '')) : '';
+    const R = arRef(); arImg = ''; arDays = 15;
+    agModal(`<div class="ag-hd">📢 Advertise a business <small>اشتہار کی درخواست</small></div>
+      <div class="cp-hint">Fill the details and add a photo. The ad goes live after company approval.</div>
+      <div class="ar-f">
+        <label>🏪 Business name *</label><input id="adrShop" maxlength="80" dir="auto" value="${escapeAttr(r.nameEn || r.nameUr || r.name || '')}">
+        <label>👤 Owner name *</label><input id="adrName" maxlength="80" dir="auto" value="${escapeAttr(own.owner || '')}">
+        <label>📞 Mobile / WhatsApp *</label><input id="adrPhone" inputmode="tel" dir="ltr" maxlength="16" value="${escapeAttr(r.whatsapp || '')}">
+        <label>🗂️ Business type</label><input id="adrKind" maxlength="60" dir="auto" value="${escapeAttr(cat)}">
+        <label>📍 City / area</label><input id="adrArea" maxlength="100" dir="auto" value="${escapeAttr([r.area, r.city].filter(v => v && !isBlankVal(v)).join(', '))}">
+        <label>📝 Ad text (offer / introduction) *</label><textarea id="adrLine" rows="2" maxlength="300" dir="auto"></textarea>
+        <label>🖼️ Ad photo *</label>
+        <div class="ar-pic"><img id="adrPv" alt="" style="display:none"><label>📷 Choose photo<input type="file" accept="image/*" id="adrFile" style="display:none" onchange="adrPick(this)"></label></div>
+        <label>⏳ Duration</label>
+        <div class="ar-days"><button type="button" class="on" data-d="15" onclick="adrDays(15)">15 days</button><button type="button" data-d="30" onclick="adrDays(30)">1 month</button></div>
+        <div class="ar-ref">🤝 Referral: <b dir="ltr">${E(R.ref)}</b> — ${E(R.refName)}</div>
+        <div class="ag-err" id="adrErr"></div>
+        <button type="button" class="btn block" style="margin-top:10px" onclick="adRequestSend()">📨 Send for approval</button>
+        <div class="ar-mine" id="adrMine"></div>
+      </div>`);
+    adrMine();
+  };
+  window.adrDays = function(d){ arDays = d; document.querySelectorAll('.ar-days button').forEach(b => b.classList.toggle('on', +b.dataset.d === d)); };
+  window.adrPick = async function(inp){ const f = inp.files && inp.files[0]; if(!f) return; try{ let q = .8, m = 1200; arImg = await adCompress(f, m, q); while(arImg.length > 440000 && q > .35){ q -= .12; m = Math.round(m * .85); arImg = await adCompress(f, m, q); } const pv = document.getElementById('adrPv'); pv.src = arImg; pv.style.display = 'block'; }catch(e){ showToast('Photo could not be read'); } };
+  window.adRequestSend = async function(){
+    if(typeof codevBlock === 'function' && codevBlock()) return;
+    const v = id => (document.getElementById(id).value || '').trim(), err = t => { document.getElementById('adrErr').textContent = t; };
+    const d = {shop: v('adrShop'), name: v('adrName'), phone: v('adrPhone'), kind: v('adrKind'), area: v('adrArea'), line: v('adrLine'), days: arDays};
+    if(!d.shop || !d.name) return err('⚠️ Write the business and owner name');
+    if(d.phone.replace(/\D/g, '').length < 10) return err('⚠️ Write a correct mobile number');
+    if(!d.line) return err('⚠️ Write the ad text');
+    if(!arImg) return err('⚠️ Add a photo for the ad');
+    const R = arRef(), x = (mpList()[0]) || null;
+    Object.assign(d, {ref: R.ref, refName: R.refName, by: R.by, rec: x ? (x.p.rk || '') : '', sid: (() => { try{ return (uaMe() || {}).user.sid || ''; }catch(e){ return ''; } })()});
+    err('⏳ Sending…');
+    try{ const j = await arPost({op: 'add', uid: agDev(), data: d, img: arImg});
+      if(!j || !j.ok){ err(j && j.reason === 'wait' ? '⚠️ Please wait 2 minutes before sending another request' : '⚠️ Not sent — try again'); return; }
+      closeModal('agModal');
+      agModal(`<div class="ag-hd">⏳ Awaiting company approval</div><div class="cp-hint" style="font-size:15px">Your ad request for <b>${E(d.shop)}</b> (${d.days === 30 ? '1 month' : '15 days'}) has been sent. It will go live after approval.</div><button type="button" class="btn block" onclick="closeModal('agModal')">OK</button>`);
+    }catch(e){ err('⚠️ No internet — try again'); }
+  };
+  window.adrMine = async function(){
+    const box = document.getElementById('adrMine'); if(!box) return;
+    try{ const j = await arPost({op: 'mine', uid: agDev()}); const L = (j && j.list) || []; if(!L.length) return;
+      const st = s => s === 'ok' ? '<i class="ar-st ok">✅ Live</i>' : s === 'rej' ? '<i class="ar-st rej">❌ Not approved</i>' : '<i class="ar-st new">⏳ Awaiting approval</i>';
+      box.innerHTML = '<b>📋 My ad requests</b>' + L.map(a => `<div class="ar-it"><div><b dir="auto">${E(a.data.shop)}</b><small> · ${a.data.days === 30 ? '1 month' : '15 days'} · ${new Date(a.ts).toLocaleDateString('en-GB')}</small>${a.st === 'rej' && a.note ? `<div style="color:#991b1b">Reason: <span dir="auto">${E(a.note)}</span></div>` : ''}</div>${st(a.st)}</div>`).join('');
+    }catch(e){}
+  };
+  /* ---- ایڈمن 1: فہرست، ہوم کی پیلی پٹی، Approvals ---- */
+  const arIsDev = () => typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn;
+  const arOpen = () => AR.filter(a => a.st === 'new');
+  window.arLoad = async function(force){
+    if(!arIsDev() || _arBusy) return; if(!force && Date.now() - _arAt < 80000) return;
+    _arBusy = true; try{ const j = await arPost({op: 'list'}, true); if(j && j.ok){ AR = j.list || []; _arAt = Date.now(); try{ pendingHomeListRender(); }catch(e){} } }catch(e){} _arBusy = false;
+  };
+  const _ph = window.pendingHomeListRender;
+  window.pendingHomeListRender = function(){
+    try{ _ph && _ph(); }catch(e){}
+    const box = document.getElementById('pendingHomeList'); if(!box) return;
+    let s = document.getElementById('arStrip'); const L = arIsDev() ? arOpen() : [];
+    if(!L.length){ if(s) s.remove(); return; }
+    if(!s){ s = document.createElement('button'); s.type = 'button'; s.id = 'arStrip'; s.className = 'ar-strip'; s.onclick = () => arAdminOpen(); }
+    s.innerHTML = `<span style="font-size:26px">📢</span><span style="flex:1">${L.length} ad request${L.length > 1 ? 's' : ''} — اشتہار کی درخواستیں<small dir="auto">${L.slice(0, 3).map(a => E(a.data.shop)).join(' • ')}</small></span><span>Review ›</span>`;
+    box.style.display = 'flex'; if(box.firstChild !== s) box.insertBefore(s, box.firstChild);
+  };
+  const _ai = window.apprItems;
+  if(_ai) window.apprItems = function(){ const out = _ai.apply(this, arguments) || []; if(arIsDev()) arOpen().forEach(a => out.push({ic: '📢', kind: 'Ad request', t: a.data.shop, sub: [a.data.refName, a.data.ref].filter(Boolean).join(' · '), ts: a.ts, nw: true, go: () => arAdminOpen()})); window._apprL = out; return out; };
+  window.arAdminOpen = function(){
+    const L = arOpen(), done = AR.filter(a => a.st !== 'new');
+    const row = (k, v) => v ? `<div class="r"><span>${k}</span><b dir="auto">${v}</b></div>` : '';
+    const card = a => { const d = a.data || {}, ph = String(d.phone || '').replace(/\D/g, ''), wa = ph.replace(/^0/, '92');
+      return `<div class="ar-card">${a.hasImg ? `<img class="im" id="arIm_${a.id}" alt="">` : ''}
+        ${row('🏪 Business', E(d.shop))}${row('👤 Owner', E(d.name))}${row('📞 Phone', `<bdi dir="ltr">${E(d.phone)}</bdi>`)}${row('🗂️ Type', E(d.kind))}${row('📍 Area', E(d.area))}${row('📝 Ad text', E(d.line))}${row('⏳ Duration', d.days === 30 ? '1 month' : '15 days')}${row('🤝 Made by', `<bdi dir="ltr">${E(d.ref)}</bdi> — ${E(d.refName)}`)}${row('🕒 Sent', new Date(a.ts).toLocaleString('en-GB'))}
+        ${a.st === 'new' ? `<div class="ar-acts"><button type="button" class="ok" onclick="arApprove('${a.id}')">✅ Approve</button><button type="button" class="no" onclick="arReject('${a.id}')">❌ Reject</button><a class="c" href="tel:${ph}">📞</a><a class="c" href="https://wa.me/${wa}" target="_blank" rel="noopener">💬</a></div>` : `<div class="ar-acts"><i class="ar-st ${a.st}">${a.st === 'ok' ? '✅ Approved' : '❌ Rejected'}</i>${a.note ? ` <small dir="auto">${E(a.note)}</small>` : ''}</div>`}</div>`; };
+    agModal(`<div class="ag-hd">📢 Ad requests <small>${L.length} waiting</small></div>${L.length ? L.map(card).join('') : '<div class="cp-hint">No new ad requests</div>'}${done.length ? '<div class="cp-hint">Last 3 days</div>' + done.map(card).join('') : ''}`);
+    AR.filter(a => a.hasImg).forEach(async a => { try{ if(!a._img){ const j = await arPost({op: 'img', id: a.id}, true); a._img = (j && j.img) || ''; } const el = document.getElementById('arIm_' + a.id); if(el && a._img) el.src = a._img; }catch(e){} });
+  };
+  window.arReject = async function(id){
+    const why = (prompt('Reason for rejection (the requester will see it):') || '').trim(); if(!why){ showToast('Reason is required'); return; }
+    try{ const j = await arPost({op: 'set', id, st: 'rej', note: why}, true); if(j && j.ok){ showToast('❌ Rejected'); await arLoad(true); arAdminOpen(); } else showToast('Not saved'); }catch(e){ showToast('No internet'); }
+  };
+  window.arApprove = function(id){
+    const a = AR.find(x => x.id === id); if(!a) return; const d = a.data || {};
+    const items = ['Photo is clear and suitable', 'Ad text is correct and complete', 'Nothing immoral or misleading', 'Payment has reached the company account'];
+    agModal(`<div class="ag-hd">✅ Approve ad — <span dir="auto">${E(d.shop)}</span></div><div class="cp-hint">Tick every item:</div><div class="ar-chk">${items.map((t, i) => `<label><input type="checkbox" class="arc" id="arc${i}"> ${t}</label>`).join('')}</div><div class="ag-err" id="arcErr"></div><button type="button" class="btn block" onclick="arApproveGo('${id}')">✅ Approve — ${d.days === 30 ? '1 month' : '15 days'}</button>`);
+  };
+  window.arApproveGo = async function(id){
+    if([...document.querySelectorAll('.arc')].some(c => !c.checked)){ document.getElementById('arcErr').textContent = '⚠️ Tick all items first'; return; }
+    const a = AR.find(x => x.id === id); if(!a) return; const d = a.data || {};
+    if(!(await askAdminPassword('Approve this ad — admin password', 'Approve'))) return;
+    const FB = window.MCSFirebase; if(!FB){ showToast('Internet required'); return; }
+    try{
+      if(!a._img && a.hasImg){ const j = await arPost({op: 'img', id}, true); a._img = (j && j.img) || ''; }
+      const nid = Date.now(), item = {free: false, price: 0, id: nid, title: d.shop, line: d.line || '', kind: d.kind || '', phone: normalizePkNumber(d.phone) || d.phone, contacts: [], addr: d.area || '', owner: d.name || '', rec: d.rec || '', until: nid + (d.days === 30 ? 30 : 15) * 864e5, ref: d.ref || 'PBT', refName: d.refName || '', reqId: id};
+      if(a._img){ item.img = 'adimg_' + nid; try{ adImgCache[item.img] = a._img; }catch(e){} await FB.setDoc(FB.doc(FB.db, 'appConfig', item.img), {data: a._img, ts: Date.now()}); }
+      const list = [item].concat(adList || []); adList = list; adSaveList(list);
+      await arPost({op: 'set', id, st: 'ok', note: ''}, true);
+      closeModal('agModal'); showToast('✅ Ad is live'); await arLoad(true);
+    }catch(e){ alert('Not saved: ' + (e.code || e.message)); }
+  };
+  setInterval(() => arLoad(), 90000);
+  setTimeout(() => arLoad(true), 9000);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) arLoad(); });
 })();
 </script>
 </body>
