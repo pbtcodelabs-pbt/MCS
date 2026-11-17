@@ -1,6 +1,255 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+<meta charset="UTF-8">
+<script id="mcsTest507">
+/* MCS1711TU507 (مالک کا حکم): 🧪 ٹیسٹ موڈ — صرف Admin 1 (ڈویلپر پینل + ایڈمن پاس ورڈ)۔ اسی اصل فارم / اکاؤنٹ / ممبرشپ کا پورا راستہ «نئے گاہک» کی طرح:
+   • فون کا الگ خانہ: ہر localStorage / sessionStorage کلید `mcsT~` کے ساتھ، ہر IndexedDB نام `T507_` کے ساتھ — اصل لاگ اِن / کاروبار / ممبرشپ کو ہاتھ نہیں لگتا۔
+   • نقلی سرور: aio-pos-verify پر لکھنے والی ہر درخواست اور Firestore کی ہر تحریر فون کے اندر (پڑھنے والی ڈائریکٹری اصل سے)۔
+   • نقلی Google Play: اصل خریداری کا صفحہ نہیں کھلتا (پیلا ٹیسٹ پاپ اپ)؛ «🔑 ٹیسٹ کوڈ» اسی ٹیسٹ اکاؤنٹ کا کوڈ۔
+   • «🗑️ ٹیسٹ ختم» = سارا ٹیسٹ ڈیٹا مٹا کر اصل ایپ ویسی کی ویسی۔ عام گاہک کے لیے یہ حصہ صرف ایک کلید پڑھ کر ختم۔ */
+(function(){
+  var FLAG = 'mcsTEST507', P = 'mcsT~', IDBP = 'T507_', BIG = 120000, W = 'aio-pos-verify.pbtcodelabs.workers.dev';
+  var SP = Storage.prototype, rGet = SP.getItem, rSet = SP.setItem, rRem = SP.removeItem, rKey = SP.key;
+  var lenD = Object.getOwnPropertyDescriptor(SP, 'length');
+  var IF = window.IDBFactory && IDBFactory.prototype, rOpen = IF && IF.open, rDel = IF && IF.deleteDatabase;
+  var on = false; try{ on = rGet.call(localStorage, FLAG) === '1'; }catch(e){}
+  window.MCS_TEST = on;
+  if(!on){ try{ if(rGet.call(localStorage, 'mcsTEST507clean')){ [localStorage, sessionStorage].forEach(function(s){ var ks = []; for(var i = 0; i < s.length; i++){ var k = rKey.call(s, i); if(k && (k.indexOf('mcsT~') === 0 || k.indexOf('BmcsT~') === 0 || k === 'mcsT507boot')) ks.push(k); } ks.forEach(function(k){ rRem.call(s, k); }); }); rRem.call(localStorage, 'mcsTEST507clean'); } }catch(e){} }   /* ٹیسٹ ختم کے بعد بچی کھچی کوئی کلید */
+  window.mcsTestEnter = function(){ try{ rSet.call(localStorage, FLAG, '1'); rSet.call(localStorage, 'mcsTEST507at', String(Date.now())); }catch(e){} location.replace(location.pathname + '?t507=' + Date.now()); };
+  if(!on) return;
+
+  /* ---------- 1) فون کا الگ خانہ ---------- */
+  var RAW = {}; RAW[FLAG] = 1; RAW.mcsTEST507at = 1; RAW.pbt_devpass_v1 = 1;
+  var LS = localStorage, SS = sessionStorage, mem = {}, bigDirty = {}, bigT = 0;
+  function pk(k){ k = String(k); return RAW[k] ? k : P + k; }
+  function own(s){ var out = [], n = lenD.get.call(s); for(var i = 0; i < n; i++){ var k = rKey.call(s, i); if(k && k.indexOf(P) === 0) out.push(k.slice(P.length)); } return out; }
+  function bigIdb(cb){ try{ var q = rOpen.call(indexedDB, 'mcsTestBig507', 1); q.onupgradeneeded = function(){ q.result.createObjectStore('kv'); }; q.onsuccess = function(){ cb(q.result); }; q.onerror = function(){ cb(null); }; }catch(e){ cb(null); } }
+  function bigFlush(){ bigT = 0; var ks = Object.keys(bigDirty); bigDirty = {}; if(!ks.length) return; bigIdb(function(db){ if(!db) return; try{ var tx = db.transaction('kv', 'readwrite'), st = tx.objectStore('kv'); ks.forEach(function(k){ if(k in mem) st.put(mem[k], k); else st.delete(k); }); }catch(e){} }); }
+  function bigMark(k){ bigDirty[k] = 1; if(!bigT) bigT = setTimeout(bigFlush, 1500); }
+  SP.getItem = function(k){ if(this !== LS && this !== SS) return rGet.call(this, k); var kk = pk(k); if(this === LS && kk in mem) return mem[kk]; return rGet.call(this, kk); };
+  SP.setItem = function(k, v){ if(this !== LS && this !== SS) return rSet.call(this, k, v); if(window.__t507end) return; var kk = pk(k); v = String(v);
+    if(this === LS && kk !== String(k) && v.length > BIG){ mem[kk] = v; try{ rRem.call(LS, kk); }catch(e){} try{ rSet.call(SS, 'B' + kk, v); }catch(e){} bigMark(kk); return; }   /* بڑی چیز (ڈائریکٹری) اصل کی جگہ نہ کھائے */
+    if(this === LS && kk in mem){ delete mem[kk]; try{ rRem.call(SS, 'B' + kk); }catch(e){} bigMark(kk); }
+    return rSet.call(this, kk, v); };
+  SP.removeItem = function(k){ if(this !== LS && this !== SS) return rRem.call(this, k); var kk = pk(k); if(this === LS && kk in mem){ delete mem[kk]; try{ rRem.call(SS, 'B' + kk); }catch(e){} bigMark(kk); } return rRem.call(this, kk); };
+  SP.key = function(i){ if(this !== LS && this !== SS) return rKey.call(this, i); var a = own(this); if(this === LS) Object.keys(mem).forEach(function(k){ k = k.slice(P.length); if(a.indexOf(k) < 0) a.push(k); }); return a[i] == null ? null : a[i]; };
+  SP.clear = function(){ var self = this; own(this).forEach(function(k){ rRem.call(self, P + k); }); if(this === LS){ Object.keys(mem).forEach(function(k){ delete mem[k]; try{ rRem.call(SS, 'B' + k); }catch(e){} bigMark(k); }); } };
+  try{ Object.defineProperty(SP, 'length', { configurable: true, get: function(){ if(this !== LS && this !== SS) return lenD.get.call(this); var n = own(this).length; if(this === LS) n += Object.keys(mem).length; return n; } }); }catch(e){}
+  /* بڑی چیزیں: اسی سیشن میں sessionStorage سے؛ ایپ دوبارہ کھلے تو IndexedDB سے لا کر ایک بار ری لوڈ */
+  (function(){ var n = lenD.get.call(SS), got = 0; for(var i = 0; i < n; i++){ var k = rKey.call(SS, i); if(k && k.indexOf('B' + P) === 0){ mem[k.slice(1)] = rGet.call(SS, k); got++; } }
+    if(!got && rGet.call(SS, 'mcsT507boot') !== '1'){
+      try{ rSet.call(SS, 'mcsT507boot', '1'); }catch(e){}
+      var done = false; window.stop && window.stop();
+      bigIdb(function(db){ if(!db){ location.reload(); return; } try{ var st = db.transaction('kv').objectStore('kv'), c = st.openCursor(); c.onsuccess = function(){ var cur = c.result; if(cur){ try{ rSet.call(SS, 'B' + cur.key, cur.value); }catch(e){} cur.continue(); } else if(!done){ done = true; location.reload(); } }; c.onerror = function(){ location.reload(); }; }catch(e){ location.reload(); } });
+      setTimeout(function(){ if(!done){ done = true; location.reload(); } }, 4000);
+      window.__t507halt = 1;
+    }
+  })();
+  if(window.__t507halt) return;   /* ٹیسٹ ڈیٹا لا کر ایک بار ری لوڈ */
+  if(IF){
+    IF.open = function(n, v){ n = IDBP + n; try{ var L = JSON.parse(rGet.call(LS, 'mcsT~__idb') || '[]'); if(L.indexOf(n) < 0){ L.push(n); rSet.call(LS, 'mcsT~__idb', JSON.stringify(L)); } }catch(e){} return v === undefined ? rOpen.call(this, n) : rOpen.call(this, n, v); };
+    IF.deleteDatabase = function(n){ return rDel.call(this, IDBP + n); };
+    try{ if(IF.databases){ var rDbs = IF.databases; IF.databases = function(){ return rDbs.call(this).then(function(a){ return (a || []).filter(function(d){ return d && String(d.name).indexOf(IDBP) === 0; }).map(function(d){ return { name: d.name.slice(IDBP.length), version: d.version }; }); }); }; } }catch(e){}
+  }
+
+  /* ---------- 2) نقلی سرور (aio-pos-verify) ---------- */
+  var SRV = null;
+  function srv(){ if(SRV) return SRV; try{ SRV = JSON.parse(LS.getItem('mcsT507srv') || 'null'); }catch(e){} SRV = SRV || { u: {}, m: {}, sess: {}, prof: {}, img: {}, codes: {}, buys: {}, preq: {}, adreq: [], seq: 0, sidn: 0 }; return SRV; }
+  function save(){ try{ LS.setItem('mcsT507srv', JSON.stringify(SRV)); }catch(e){} }
+  function phone(v){ var d = String(v || '').replace(/[۰-۹]/g, function(c){ return '۰۱۲۳۴۵۶۷۸۹'.indexOf(c); }).replace(/\D/g, ''); if(d.indexOf('0092') === 0) d = d.slice(2); if(d.charAt(0) === '0') d = '92' + d.slice(1); if(d.length === 10 && d.charAt(0) === '3') d = '92' + d; return /^92\d{10}$/.test(d) ? d : ''; }
+  function rnd(n, A){ A = A || 'abcdefghjkmnpqrstuvwxyz23456789'; var s = '', r = crypto.getRandomValues(new Uint8Array(n)); for(var i = 0; i < n; i++) s += A[r[i] % A.length]; return s; }
+  function h(s){ var x = 0x811c9dc5; s = 'T507|' + s; for(var i = 0; i < s.length; i++){ x ^= s.charCodeAt(i); x = Math.imul(x, 16777619) >>> 0; } return x.toString(36); }
+  function yobV(y){ y = String(y || '').replace(/\D/g, ''); var n = +y, cy = new Date().getFullYear(); return y.length === 4 && n >= 1920 && n <= cy - 8 ? y : ''; }
+  function sidOf(mob){ var S = srv(); return S.m['s:' + mob] || ''; }
+  function sidFor(mob){ var S = srv(); if(!S.m['s:' + mob]){ S.sidn = (S.sidn || 0) + 1; S.m['s:' + mob] = 'MCS-9' + String(S.sidn).padStart(3, '0'); } return S.m['s:' + mob]; }
+  function recMob(rec){ var m = /^p(\d{10})/.exec(String(rec || '')); return m ? '92' + m[1] : ''; }
+  function out(u){ var s = sidOf(u.mobile); return { id: u.id, sid: s, mcsId: s, name: u.name, mobile: u.mobile, district: u.district || '', email: u.email || '', gmail: u.gmail || '', hasPw: !!u.pwh, hasYob: !!u.yob, ts: u.ts, pk: u.pk }; }
+  function sess(u, via){ var S = srv(), t = rnd(40, '0123456789abcdef'); S.sess[t] = { id: u.id, via: via, at: Date.now() }; return t; }
+  function bySess(tok){ var S = srv(), r = tok && S.sess[tok], u = r && S.u[r.id]; return u ? { u: u, via: r.via, at: r.at } : null; }
+  function gmailOf(jwt){ try{ var p = JSON.parse(decodeURIComponent(escape(atob(String(jwt).split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))))); return String(p.email || '').toLowerCase(); }catch(e){ return ''; } }
+  function findU(id){ var S = srv(); id = String(id || '').trim().toLowerCase(); var ks = [];
+    if(/^mcs-?\d+$/.test(id)){ var n = parseInt(id.replace(/\D/g, ''), 10); Object.keys(S.m).forEach(function(k){ if(k.indexOf('s:') === 0 && parseInt(S.m[k].replace(/\D/g, ''), 10) === n) ks.push('m:' + k.slice(2)); }); Object.keys(S.u).forEach(function(i){ if(parseInt(i.replace(/\D/g, ''), 10) === n) ks.push('i:' + i); }); }
+    if(phone(id)) ks.push('m:' + phone(id)); if(/@/.test(id)) ks.push('e:' + id, 'g:' + id);
+    for(var i = 0; i < ks.length; i++){ var u = ks[i].indexOf('i:') === 0 ? S.u[ks[i].slice(2)] : S.u[S.m[ks[i]]]; if(u) return u; } return null; }
+  function auth(b){
+    var S = srv(), op = String(b.op || ''), pw = String(b.pw || ''), now = Date.now(), pwOk = pw.length >= 5 && pw.length <= 64, s;
+    if(op === 'signup'){
+      var name = String(b.name || '').trim(), mob = phone(b.mobile), gm = b.gtoken ? gmailOf(b.gtoken) : '';
+      if(name.length < 2) return { ok: false, reason: 'name' }; if(!mob) return { ok: false, reason: 'mobile' };
+      if(b.gtoken && !gm) return { ok: false, reason: 'google' }; if(!pwOk) return { ok: false, reason: 'pw' };
+      if(S.m['m:' + mob]) return { ok: false, reason: 'mobile_taken' }; if(gm && S.m['g:' + gm]) return { ok: false, reason: 'gmail_taken' };
+      S.seq++; var u = { id: 'MCS-9' + String(100000 + S.seq), name: name, mobile: mob, district: String(b.district || ''), email: gm, gmail: gm, ts: now, yob: yobV(b.yob), pwh: h(pw), pk: String(1000 + Math.floor(Math.random() * 9000)) };
+      S.u[u.id] = u; S.m['m:' + mob] = u.id; if(gm) S.m['g:' + gm] = u.id; sidFor(mob); save();
+      return { ok: true, tok: sess(u, gm ? 'g' : 'p'), user: out(u) };
+    }
+    if(op === 'login'){ var u1 = findU(b.id); if(!u1 || !pw) return { ok: false, reason: 'login' }; if(!u1.pwh) return { ok: false, reason: 'no_pw' }; if(u1.pwh !== h(pw)) return { ok: false, reason: 'login' };
+      var r1 = { ok: true, tok: sess(u1, 'p'), user: out(u1) }; if(b.gtoken){ var g1 = gmailOf(b.gtoken); if(g1){ u1.gmail = g1; S.m['g:' + g1] = u1.id; r1.glink = g1; } } save(); return r1; }
+    if(op === 'google'){ var g = gmailOf(b.gtoken); if(!g) return { ok: false, reason: 'google' }; var u2 = S.u[S.m['g:' + g]]; if(!u2) return { ok: false, reason: 'new', gmail: g }; var r2 = { ok: true, tok: sess(u2, 'g'), user: out(u2) }; save(); return r2; }
+    if(op === 'forgot'){ var m3 = phone(b.mobile); if(!m3) return { ok: false, reason: 'mobile' }; if(!yobV(b.yob)) return { ok: false, reason: 'yob' }; if(!pwOk) return { ok: false, reason: 'pw' };
+      var u3 = S.u[S.m['m:' + m3]]; if(!u3) return { ok: false, reason: 'nomatch' }; if(!u3.yob) return { ok: false, reason: 'noyob' }; if(u3.yob !== yobV(b.yob)) return { ok: false, reason: 'nomatch' };
+      u3.pwh = h(pw); Object.keys(S.sess).forEach(function(t){ if(S.sess[t].id === u3.id) delete S.sess[t]; }); var r3 = { ok: true, tok: sess(u3, 'p'), user: out(u3) }; save(); return r3; }
+    if(op === 'actuse'){ return { ok: false, reason: 'badcode' }; }
+    if(op === 'reglist') return { ok: true, list: [] };
+    if(op === 'reglook' || op === 'relink') return { ok: false, reason: 'nomatch' };
+    if(['actmake', 'staffcnic', 'sidreset', 'acctadm'].indexOf(op) >= 0) return { ok: false, reason: 'admin_only' };
+    s = bySess(b.tok); if(!s) return { ok: false, reason: 'session' };
+    if(op === 'me') return { ok: true, user: out(s.u) };
+    if(op === 'logout'){ delete S.sess[b.tok]; save(); return { ok: true }; }
+    if(op === 'setdist'){ s.u.district = String(b.district || ''); save(); return { ok: true, user: out(s.u) }; }
+    if(op === 'setyob'){ if(!yobV(b.yob)) return { ok: false, reason: 'yob' }; s.u.yob = yobV(b.yob); save(); return { ok: true, user: out(s.u) }; }
+    if(op === 'setpw'){ if(!pwOk) return { ok: false, reason: 'pw' }; var yok = !!(b.yob && s.u.yob && s.u.yob === yobV(b.yob));
+      if(s.u.pwh && !(s.via === 'g' && now - s.at < 15 * 60e3) && !yok && !(b.old && h(String(b.old)) === s.u.pwh)) return { ok: false, reason: 'old' };
+      s.u.pwh = h(pw); if(!s.u.yob && yobV(b.yob)) s.u.yob = yobV(b.yob); save(); return { ok: true, user: out(s.u) }; }
+    if(op === 'delete'){ var id = s.u.id; delete S.u[id]; Object.keys(S.m).forEach(function(k){ if(S.m[k] === id) delete S.m[k]; }); save(); return { ok: true }; }
+    return { ok: false, reason: 'bad_op' };
+  }
+  function pstat(rec){ var S = srv(), r = S.prof[rec]; return r ? { since: r.since, until: r.until, ts: r.ts } : null; }
+  function prof(path, b){
+    var S = srv(), now = Date.now(), rec = String(b.rec || ''), r = S.prof[rec], sd = sidOf(recMob(rec));
+    var subOf = function(){ return r && r.subid || ''; };
+    if(path === '/pclaim'){ if(r && r.key && !b.admin) return [409, { error: 'taken' }];
+      if(!r){ var mob = recMob(rec); if(mob && Object.keys(S.prof).some(function(x){ return x !== rec && recMob(x) === mob && (S.prof[x].until || 0) > now; })) return [409, { error: 'one_biz' }];
+        r = S.prof[rec] = { data: {}, since: now, until: now, ts: now, pend: 0 }; }
+      r.key = rnd(18); save(); return [200, { key: r.key, since: r.since, until: r.until, pend: 0, sid: sd, subid: subOf() }]; }
+    if(path === '/pget'){ if(!r) return [200, { none: true }]; return [200, { rec: rec, data: r.data || {}, since: r.since, until: r.until, ts: r.ts, imgs: Object.keys(S.img).filter(function(k){ return k.indexOf(rec + '_') === 0; }).map(function(k){ return { id: k, ts: r.ts }; }), pend: 0 }]; }
+    if(path === '/psave'){ if(!r) return [404, { error: 'no_profile' }]; if(!b.admin && (!b.key || b.key !== r.key)) return [403, { error: 'bad_key' }];
+      if(b.data) r.data = b.data; Object.keys(b.imgs || {}).forEach(function(sl){ var id = rec + '_' + sl; if(b.imgs[sl]) S.img[id] = b.imgs[sl]; else delete S.img[id]; }); r.ts = now; save(); return [200, { ok: true, ts: now }]; }
+    if(path === '/pstatus'){ if(!r) return [200, { ok: true, exists: false, steps: [{ k: 'biz', ok: false }] }]; var act = (r.until || 0) > now, days = Math.max(0, Math.round(((r.until || 0) - now) / 864e5)), kind = r.kind || '';
+      return [200, { ok: true, exists: true, active: act, kind: kind, until: r.until || 0, days: days, sid: sd, subid: subOf(), gpa: r.gpa || '', pend: 0, steps: [{ k: 'pay', ok: !!kind, v: kind }, { k: 'gpa', ok: !!r.gpa, v: r.gpa || '' }, { k: 'biz', ok: true }, { k: 'active', ok: act, v: days }, { k: 'id', ok: !!sd && !!subOf(), v: subOf() || sd }] }]; }
+    if(path === '/pcode'){ var c = String(b.code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''), e = S.codes[c];
+      if(!e) return [200, { ok: false, reason: 'none' }]; if(e.used && e.biz !== rec) return [200, { ok: false, reason: 'used' }]; if(e.mob && recMob(rec) !== e.mob) return [200, { ok: false, reason: 'other_biz' }];
+      if(!e.used){ if(!r){ var mb = recMob(rec); if(mb && Object.keys(S.prof).some(function(x){ return x !== rec && recMob(x) === mb && (S.prof[x].until || 0) > now; })) return [200, { ok: false, reason: 'one_biz' }]; r = S.prof[rec] = { data: {}, key: '', since: now, until: now, ts: now, pend: 0 }; }
+        r.until = Math.max(r.until || 0, now) + 365 * 864e5; r.kind = 'code'; if(!r.subid && sd) r.subid = sd.replace(/-/g, '') + 'M1'; e.used = now; e.biz = rec; }
+      save(); return [200, { ok: true, since: r.since, until: r.until, sid: sd, subid: subOf() }]; }
+    if(path === '/preq'){ var o = b.op; if(o === 'add'){ S.preq[rec] = { st: 'new', ts: now, data: b.data || {} }; save(); return [200, { ok: true }]; }
+      if(o === 'mine'){ var q = S.preq[rec]; if(r && (r.until || 0) > now && r.kind) return [200, { ok: true, st: 'done', note: '', ts: q ? q.ts : 0, upd: q ? q.ts : 0 }]; return [200, q ? { ok: true, st: q.st, note: '', ts: q.ts, upd: q.ts } : { ok: true, st: '' }]; }
+      if(o === 'list') return [200, { ok: true, list: [] }]; return [200, { ok: true }]; }
+    if(path === '/adreq'){ var a = b.op || b.act; if(a === 'add'){ var ad = { id: 'T' + rnd(8), rec: rec, data: b.data || {}, st: 'new', ts: now }; S.adreq.push(ad); save(); return [200, { ok: true, id: ad.id }]; }
+      if(a === 'mine') return [200, { ok: true, list: S.adreq.filter(function(x){ return !rec || x.rec === rec; }) }]; return [200, { ok: true, list: [] }]; }
+    return [200, { ok: true }];
+  }
+  function buy(b){ var S = srv(), now = Date.now();
+    if(b.probe) return { ok: true, linked: !!S.buys[b.purchaseToken], rec: S.buys[b.purchaseToken] || '' };
+    var rec = String(b.rec || ''), r = S.prof[rec]; if(!rec) return { ok: false, error: 'no_rec' }; if(!r) return { ok: false, error: 'no_prof' };
+    var first = !S.buys[b.purchaseToken], sd = sidOf(recMob(rec));
+    if(first){ S.buys[b.purchaseToken] = rec; r.until = Math.max(r.until || 0, now) + 365 * 864e5; r.kind = 'paid'; r.gpa = 'GPA.TEST-' + rnd(4, '0123456789') + '-' + rnd(4, '0123456789') + '-' + rnd(5, '0123456789'); if(!r.subid && sd) r.subid = sd.replace(/-/g, '') + 'M1'; }
+    if(b.fs && b.fs.col && b.fs.id) fsWrite(b.fs.col + '/' + b.fs.id, { approved: true, mcsLive: true }, true);
+    save(); var ut = new Date(r.until + 5 * 3600e3).toISOString().slice(0, 10);
+    return { ok: true, rec: rec, until: r.until, sku: b.sku || '', subid: r.subid || '', sid: sd, first: first, free: false, access: true, approved: true, gpa: r.gpa, gpaFixed: false, ack: true, state: 'SUBSCRIPTION_STATE_ACTIVE', test: false, promo: false,
+      done: { kind: 'paid', planDays: 365, title: '🎉 مبارک ہو!', msg: 'آپ کا کاروبار رجسٹر ہو گیا ہے — ایک سال کے لیے فعال (' + ut + ' تک)۔ یہی مدت اب آپ کے بزنس کارڈ پر نظر آئے گی۔', gpa: r.gpa, until: r.until, steps: [] } };
+  }
+  var PASS = { '/mcsdir': 1, '/mcscity': 1, '/rates': 1, '/ocr': 1, '/agfind': 1, '/agfree': 1, '/pimg': 1 };
+  var rFetch = window.fetch;
+  function J(code, o){ return Promise.resolve(new Response(JSON.stringify(o), { status: code, headers: { 'Content-Type': 'application/json' } })); }
+  window.fetch = function(input, init){
+    var url = typeof input === 'string' ? input : (input && input.url) || '';
+    if(url.indexOf(W) < 0) return rFetch.apply(this, arguments);
+    var u = new URL(url, location.href), path = u.pathname, method = String((init && init.method) || (input && input.method) || 'GET').toUpperCase(), b = {};
+    try{ b = JSON.parse((init && init.body) || '{}') || {}; }catch(e){}
+    var S = srv();
+    if(path === '/pimg'){ var id = u.searchParams.get('id') || b.id || ''; if(S.img[id]) return J(200, { data: S.img[id] }); return rFetch.apply(this, arguments); }
+    if(path === '/plist') return rFetch.apply(this, arguments).then(function(res){ return res.json(); }).catch(function(){ return {}; }).then(function(o){ o = o || {}; Object.keys(S.prof).forEach(function(k){ var r = S.prof[k], sd = sidOf(recMob(k)); o[k] = Object.assign({ since: r.since, until: r.until, ts: r.ts }, sd ? { sid: sd } : {}, r.subid ? { subid: r.subid } : {}); }); return J(200, o); });
+    if(PASS[path] || (method === 'GET' && path !== '/stat')) return rFetch.apply(this, arguments);
+    if((path === '/pget' || path === '/pstatus') && !S.prof[b.rec]) return rFetch.apply(this, arguments);
+    if(path === '/mcssid'){ var mob = /^p\d{10}/.test(String(b.rec || '')) ? recMob(b.rec) : phone(b.mob); if(!mob) return J(200, { ok: false, reason: 'mobile' });
+      if(S.m['m:' + mob] || b.assign){ var sd = b.assign ? sidFor(mob) : sidOf(mob); save(); return J(200, { ok: !!sd, sid: sd }); } return rFetch.apply(this, arguments); }
+    if(path === '/mcsauth') return J(200, auth(b));
+    if(path === '/mcsbuy') return J(200, buy(b));
+    if(/^\/p(claim|get|save|status|code)$|^\/preq$|^\/adreq$/.test(path)){ var x = prof(path, b); return J(x[0], x[1]); }
+    if(path === '/agstatus') return J(200, { ok: false, status: 'none' });
+    return J(200, { ok: true, test: 1 });   /* باقی ہر لکھنے والی درخواست — اصل سرور تک نہیں */
+  };
+  try{ var rBeacon = navigator.sendBeacon && navigator.sendBeacon.bind(navigator); if(rBeacon) navigator.sendBeacon = function(url){ return String(url).indexOf(W) >= 0 ? true : rBeacon.apply(null, arguments); }; }catch(e){}
+
+  /* ---------- 3) نقلی Firestore (تحریریں فون کے اندر، پڑھائی میں شامل) ---------- */
+  var FSD = null, LIS = [], QI = new WeakMap(), CI = new WeakMap();
+  function fsd(){ if(FSD) return FSD; try{ FSD = JSON.parse(LS.getItem('mcsT507fs') || 'null'); }catch(e){} FSD = FSD || {}; return FSD; }
+  function fsSave(){ try{ LS.setItem('mcsT507fs', JSON.stringify(FSD)); }catch(e){} }
+  function clean(v){ if(v == null || typeof v !== 'object') return v; if(Array.isArray(v)) return v.map(clean); var cn = v.constructor && v.constructor.name || ''; if(v._methodName || /FieldValue|Sentinel|Transform/.test(cn)) return Date.now(); if(typeof v.toMillis === 'function') return v.toMillis(); var o = {}; Object.keys(v).forEach(function(k){ o[k] = clean(v[k]); }); return o; }
+  function setPath(o, p, v){ var a = p.split('.'), t = o; for(var i = 0; i < a.length - 1; i++){ if(!t[a[i]] || typeof t[a[i]] !== 'object') t[a[i]] = {}; t = t[a[i]]; } t[a[a.length - 1]] = v; }
+  function merge(a, b){ Object.keys(b).forEach(function(k){ var v = b[k]; if(v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k])) merge(a[k], v); else a[k] = v; }); return a; }
+  function fsWrite(path, data, mergeIt, dotted){ var D = fsd(), cur = D[path] && mergeIt ? D[path] : (mergeIt ? (path in D ? {} : { __ov: 1 }) : null); data = clean(data || {});   /* اصل دستاویز پر جزوی تحریر = اوپر کی تہہ (اصل ڈیٹا کے ساتھ ملا کر دکھے) */
+    if(dotted){ cur = cur || {}; Object.keys(data).forEach(function(k){ setPath(cur, k, data[k]); }); } else cur = mergeIt ? merge(cur || {}, data) : data;
+    D[path] = cur; fsSave(); var col = path.slice(0, path.lastIndexOf('/')); LIS.forEach(function(l){ if(l.col === col) try{ l.fire(); }catch(e){} }); }
+  function fsDel(path){ var D = fsd(); D[path] = null; fsSave(); var col = path.slice(0, path.lastIndexOf('/')); LIS.forEach(function(l){ if(l.col === col) try{ l.fire(); }catch(e){} }); }
+  function ovl(d, real){ if(!d || !d.__ov) return d; var o = merge(JSON.parse(JSON.stringify(real || {})), d); delete o.__ov; return o; }
+  function fdoc(path, data){ var id = path.slice(path.lastIndexOf('/') + 1); return { id: id, ref: { id: id, path: path }, exists: function(){ return data != null; }, data: function(){ return data == null ? undefined : JSON.parse(JSON.stringify(data)); }, get: function(f){ return data ? data[f] : undefined; }, metadata: { fromCache: false, hasPendingWrites: false } }; }
+  function match(d, conds){ return (conds || []).every(function(c){ var v = d[c.f]; if(c.op === '==') return v === c.v; if(c.op === 'in') return (c.v || []).indexOf(v) >= 0; if(c.op === '!=') return v !== c.v; if(c.op === 'array-contains') return Array.isArray(v) && v.indexOf(c.v) >= 0; return true; }); }
+  function qOf(t){ if(!t) return null; if(t.type === 'collection') return { col: t.path, conds: [] }; return QI.get(t) || null; }
+  function fakeFor(q){ var D = fsd(), out = {}; Object.keys(D).forEach(function(p){ var col = p.slice(0, p.lastIndexOf('/')); if(col !== q.col) return; out[p] = D[p]; }); return out; }
+  function mkSnap(realDocs, q, changes, fromCache){ var D = fakeFor(q), docs = [], seen = {};
+    (realDocs || []).forEach(function(d){ var p = q.col + '/' + d.id; seen[p] = 1; if(p in D){ var x = ovl(D[p], D[p] && D[p].__ov ? d.data() : null); if(x && match(x, q.conds)) docs.push(fdoc(p, x)); } else docs.push(d); });
+    Object.keys(D).forEach(function(p){ if(!seen[p] && D[p] && !D[p].__ov && match(D[p], q.conds)) docs.push(fdoc(p, D[p])); });
+    return { docs: docs, size: docs.length, empty: !docs.length, forEach: function(f){ docs.forEach(f); }, docChanges: function(){ return changes || docs.map(function(d){ return { type: 'added', doc: d }; }); }, metadata: { fromCache: !!fromCache, hasPendingWrites: false } }; }
+  function wrapFB(F){
+    if(!F || F.__t507) return F; var G = Object.assign({}, F); G.__t507 = 1;
+    G.where = function(f, op, v){ var c = F.where(f, op, v); try{ CI.set(c, { f: f, op: op, v: v }); }catch(e){} return c; };
+    G.query = function(t){ var q = F.query.apply(null, arguments), base = qOf(t) || { col: t && t.path, conds: [] }, cs = base.conds.slice(); for(var i = 1; i < arguments.length; i++){ var c = CI.get(arguments[i]); if(c) cs.push(c); } try{ QI.set(q, { col: base.col, conds: cs }); }catch(e){} return q; };
+    G.setDoc = function(ref, data, o){ fsWrite(ref.path, data, !!(o && o.merge)); return Promise.resolve(); };
+    G.updateDoc = function(ref, data){ fsWrite(ref.path, data, true, true); return Promise.resolve(); };
+    G.deleteDoc = function(ref){ fsDel(ref.path); return Promise.resolve(); };
+    G.addDoc = function(col, data){ var id = 'T507' + rnd(16, 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'), p = col.path + '/' + id; fsWrite(p, data, false); return Promise.resolve({ id: id, path: p, parent: { path: col.path } }); };
+    G.writeBatch = function(){ var ops = []; return { set: function(r, d, o){ ops.push(function(){ fsWrite(r.path, d, !!(o && o.merge)); }); return this; }, update: function(r, d){ ops.push(function(){ fsWrite(r.path, d, true, true); }); return this; }, delete: function(r){ ops.push(function(){ fsDel(r.path); }); return this; }, commit: function(){ ops.forEach(function(f){ f(); }); return Promise.resolve(); } }; };
+    G.getDoc = function(ref){ var D = fsd(); if(ref && ref.path in D){ var x = D[ref.path]; if(x && x.__ov) return F.getDoc(ref).then(function(s){ return fdoc(ref.path, ovl(x, s.exists() ? s.data() : {})); }, function(){ return fdoc(ref.path, ovl(x, {})); }); return Promise.resolve(fdoc(ref.path, x)); } return F.getDoc(ref); };
+    var gd = function(real){ return function(t){ var q = qOf(t); if(!q) return real.apply(null, arguments); return real.apply(null, arguments).catch(function(){ return { docs: [] }; }).then(function(s){ return mkSnap(s.docs, q, null, false); }); }; };
+    G.getDocs = gd(F.getDocs); if(F.getDocsFromServer) G.getDocsFromServer = gd(F.getDocsFromServer);
+    G.onSnapshot = function(t){ var args = Array.prototype.slice.call(arguments), fi = typeof args[1] === 'function' ? 1 : 2, cb = args[fi];
+      if(t && t.type === 'document'){ var D0 = fsd(); if(t.path in D0 && !(D0[t.path] && D0[t.path].__ov)){ setTimeout(function(){ try{ cb(fdoc(t.path, fsd()[t.path])); }catch(e){} }, 0); var l0 = { col: t.path.slice(0, t.path.lastIndexOf('/')), fire: function(){ cb(fdoc(t.path, fsd()[t.path])); } }; LIS.push(l0); return function(){ LIS.splice(LIS.indexOf(l0), 1); }; } return F.onSnapshot.apply(null, args); }
+      var q = qOf(t); if(!q || typeof cb !== 'function') return F.onSnapshot.apply(null, args);
+      var last = [], sent = {}, lastCache = true;
+      function diff(docs){ var now = {}, ch = []; docs.forEach(function(d){ var p = q.col + '/' + d.id; if(String(d.id).indexOf('T507') === 0 || (p in fsd())){  now[p] = JSON.stringify(d.data()); if(!(p in sent)) ch.push({ type: 'added', doc: d }); else if(sent[p] !== now[p]) ch.push({ type: 'modified', doc: d }); } }); Object.keys(sent).forEach(function(p){ if(!(p in now)) ch.push({ type: 'removed', doc: fdoc(p, null) }); }); sent = now; return ch; }
+      var l = { col: q.col, fire: function(){ var s = mkSnap(last, q, [], lastCache); var ch = diff(s.docs); s.docChanges = function(){ return ch; }; if(ch.length) cb(s); } }; LIS.push(l);
+      args[fi] = function(real){ last = real.docs; lastCache = real.metadata && real.metadata.fromCache; var s = mkSnap(real.docs, q, null, lastCache), rc = real.docChanges().filter(function(c){ return !((q.col + '/' + c.doc.id) in fsd()); }), fc = diff(s.docs); s.docChanges = function(){ return rc.concat(fc); }; cb(s); };
+      var un = F.onSnapshot.apply(null, args); setTimeout(function(){ if(!last.length) l.fire(); }, 2500);
+      return function(){ LIS.splice(LIS.indexOf(l), 1); try{ un(); }catch(e){} }; };
+    return G;
+  }
+  var _fb; try{ Object.defineProperty(window, 'MCSFirebase', { configurable: true, get: function(){ return _fb; }, set: function(v){ _fb = wrapFB(v); } }); }catch(e){}
+
+  /* ---------- 4) نقلی Google Play ---------- */
+  var PURCH = function(){ try{ return JSON.parse(LS.getItem('mcsT507play') || '[]'); }catch(e){ return []; } };
+  window.getDigitalGoodsService = function(){ return Promise.resolve({ listPurchases: function(){ return Promise.resolve(PURCH()); }, listPurchaseHistory: function(){ return Promise.resolve(PURCH()); }, acknowledge: function(){ return Promise.resolve(); }, consume: function(){ return Promise.resolve(); }, getDetails: function(ids){ return Promise.resolve((ids || []).map(function(id){ return { itemId: id, title: 'My City Shines membership (TEST)', price: { currency: 'PKR', value: '0' } }; })); } }); };
+  var RPR = window.PaymentRequest;
+  window.PaymentRequest = function(methods, details){ var sku = ''; try{ sku = methods[0].data.sku; }catch(e){} if(!(methods && methods[0] && /play\.google\.com\/billing/.test(methods[0].supportedMethods))) return new RPR(methods, details);
+    return { canMakePayment: function(){ return Promise.resolve(true); }, show: function(){ return new Promise(function(res, rej){ var ov = document.createElement('div'); ov.id = 't507Play';
+      ov.innerHTML = '<div class="t5-box"><div class="t5-g">▶️ Google Play <b>🧪 TEST</b></div><div class="t5-t">My City Shines — 1 year membership</div><div class="t5-s" dir="ltr">' + sku + '</div><div class="t5-n">ٹیسٹ موڈ: اصل خریداری نہیں — کوئی پیسہ نہیں کٹتا</div><button type="button" class="t5-ok">✅ Subscribe (ادائیگی کامیاب)</button><button type="button" class="t5-no">✖ Cancel</button></div>';
+      document.body.appendChild(ov);
+      ov.querySelector('.t5-ok').onclick = function(){ ov.remove(); var tok = 'T507tok_' + rnd(24); var L = PURCH(); L.push({ itemId: sku, purchaseToken: tok }); try{ LS.setItem('mcsT507play', JSON.stringify(L)); }catch(e){} res({ details: { purchaseToken: tok }, methodName: methods[0].supportedMethods, complete: function(){ return Promise.resolve(); } }); };
+      ov.querySelector('.t5-no').onclick = function(){ ov.remove(); var e = new Error('Cancelled'); try{ Object.defineProperty(e, 'name', { value: 'AbortError' }); }catch(_){} rej(e); }; }); }, abort: function(){ return Promise.resolve(); } }; };
+
+  /* ---------- 5) پیلی پٹی: ٹیسٹ کوڈ / ٹیسٹ ختم ---------- */
+  window.mcsTestCode = function(){
+    var a = null; try{ a = JSON.parse(LS.getItem('mcsAuth') || 'null'); }catch(e){} var u = a && a.user; var S = srv(); var me = u && u.mobile && S.u[S.m['m:' + phone(u.mobile)]];
+    if(!me){ alert('🧪 پہلے ٹیسٹ اکاؤنٹ بنائیں / لاگ اِن کریں (Create New Account) — پھر اسی کا کوڈ بنے گا۔'); return; }
+    var sd = sidFor(me.mobile).replace(/-/g, ''), nm = String(me.name || 'TEST').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6) || 'TEST', c = sd + 'M1' + nm + '-' + rnd(6, 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789');
+    S.codes[c.replace(/[^A-Z0-9]/g, '')] = { mob: phone(me.mobile), at: Date.now() }; save();
+    try{ navigator.clipboard && navigator.clipboard.writeText(c).catch(function(){}); }catch(e){}
+    t5Sheet('<div class="t5-h">🔑 ٹیسٹ ایکٹیویشن کوڈ</div><div class="t5-code" dir="ltr">' + c + '</div><div class="t5-m">کاپی ہو گیا۔ رجسٹریشن فارم کے سبز ڈبے میں «🔑 Activation Key» میں پیسٹ کر کے محفوظ کریں — اصل کی طرح ایک سال لائیو۔ یہ کوڈ صرف اسی ٹیسٹ اکاؤنٹ (' + me.name + ') پر چلے گا۔</div>');
+  };
+  window.mcsTestEnd = function(){
+    if(!confirm('🗑️ ٹیسٹ ختم کریں؟\n\nٹیسٹ کا سب کچھ (اکاؤنٹ، کاروبار، کوڈ، کارڈ، تصویریں) اس فون سے مٹ جائے گا اور ایپ اصل حالت میں کھلے گی — آپ کا اصل لاگ اِن اور کاروبار ویسے ہی۔')) return;
+    window.__t507end = 1; var L = []; try{ L = JSON.parse(rGet.call(LS, 'mcsT~__idb') || '[]'); }catch(e){}
+    [LS, SS].forEach(function(s){ var n = lenD.get.call(s), ks = []; for(var i = 0; i < n; i++){ var k = rKey.call(s, i); if(k && (k.indexOf(P) === 0 || k.indexOf('B' + P) === 0 || k === 'mcsT507boot')) ks.push(k); } ks.forEach(function(k){ rRem.call(s, k); }); });
+    L.concat(['mcsTestBig507']).forEach(function(n){ try{ rDel.call(indexedDB, n); }catch(e){} });
+    try{ rRem.call(LS, FLAG); rRem.call(LS, 'mcsTEST507at'); rSet.call(LS, 'mcsTEST507clean', '1'); }catch(e){}
+    location.replace(location.pathname + '?t507end=' + Date.now());
+  };
+  function t5Sheet(html){ var o = document.getElementById('t507Sheet'); if(!o){ o = document.createElement('div'); o.id = 't507Sheet'; document.body.appendChild(o); o.addEventListener('click', function(e){ if(e.target === o) o.remove(); }); }
+    o.innerHTML = '<div class="t5-box">' + html + '<button type="button" class="t5-no" onclick="document.getElementById(\'t507Sheet\').remove()">✖ بند کریں</button></div>'; }
+  window.mcsTestMenu = function(){ t5Sheet('<div class="t5-h">🧪 ٹیسٹ موڈ — صرف اس فون پر</div><div class="t5-m">آپ ابھی ایک نئے گاہک کی طرح ہیں۔ اکاؤنٹ بنائیں، فارم بھریں، Google Play (ٹیسٹ) یا ٹیسٹ کوڈ سے لائیو کریں۔ اصل سرور، اصل گاہک اور حساب تک کچھ نہیں جاتا۔</div><button type="button" class="t5-ok" onclick="mcsTestCode()">🔑 ٹیسٹ ایکٹیویشن کوڈ بنائیں</button><button type="button" class="t5-end" onclick="mcsTestEnd()">🗑️ ٹیسٹ ختم کریں (سب ٹیسٹ ڈیٹا مٹائیں)</button>'); };
+  var css = '#t507Bar{position:fixed;top:calc(env(safe-area-inset-top,0px) + 2px);left:50%;transform:translateX(-50%);z-index:2147483646;background:repeating-linear-gradient(45deg,#facc15 0 12px,#fde047 12px 24px);color:#1f2937;font:800 12px/1 Arial,sans-serif;padding:5px 12px;border-radius:999px;border:2px solid #92400e;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;letter-spacing:.5px;white-space:nowrap}'
+    + '#t507Play,#t507Sheet{position:fixed;inset:0;z-index:2147483647;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}'
+    + '#t507Play .t5-box,#t507Sheet .t5-box{background:#fff;border-radius:18px;max-width:380px;width:100%;padding:16px;border:4px solid #facc15;box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:Arial,sans-serif;text-align:center;color:#111827}'
+    + '.t5-g{font-size:20px;font-weight:800;color:#0f766e}.t5-g b{background:#facc15;color:#111;border-radius:8px;padding:2px 6px;font-size:13px;margin-left:4px}.t5-t{font-size:16px;font-weight:700;margin:8px 0 2px}.t5-s{font-size:12px;color:#6b7280}'
+    + '.t5-n,.t5-m{font-family:"Jameel Noori Nastaleeq","Jameel Noori Nastaleeq Regular",serif;direction:rtl;font-size:16px;line-height:1.9;color:#92400e;background:#fef9c3;border-radius:12px;padding:8px;margin:10px 0}'
+    + '.t5-h{font-family:"Jameel Noori Nastaleeq Kasheeda","Jameel Noori Nastaleeq",serif;direction:rtl;font-size:22px;font-weight:700;color:#92400e}.t5-code{font:900 19px monospace;background:#ecfdf5;border:2px dashed #10b981;border-radius:12px;padding:10px;margin:10px 0;word-break:break-all;user-select:all}'
+    + '.t5-ok,.t5-no,.t5-end{display:block;width:100%;margin-top:8px;padding:12px;border-radius:12px;border:0;font:800 15px Arial,"Jameel Noori Nastaleeq",sans-serif;cursor:pointer}.t5-ok{background:#16a34a;color:#fff}.t5-no{background:#e5e7eb;color:#111827}.t5-end{background:#dc2626;color:#fff}';
+  function bar(){ if(!document.body){ return setTimeout(bar, 50); } var st = document.createElement('style'); st.id = 't507css'; st.textContent = css; document.head.appendChild(st);
+    var b = document.createElement('div'); b.id = 't507Bar'; b.textContent = '🧪 TEST MODE — ٹیسٹ موڈ'; b.onclick = window.mcsTestMenu; document.body.appendChild(b); }
+  bar();
+})();
+</script>
 <script id="mcsMo448">
 /* MCS1511SU448: رجسٹریشن ویزرڈ کے اندر کی ہر تبدیلی پر باقی ایپ کے بھاری MutationObserver دوڑتے تھے (پورے صفحے کی اسکین) — اب ویزرڈ کے اندرونی بدلاؤ پر وہ سوتے رہتے ہیں */
 (function(){ var MO = window.MutationObserver; if(!MO || MO.__wz448) return;
@@ -4428,10 +4677,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU506";
+const APP_VERSION = "MCS1711TU507";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU507": "🧪 Admin 1 test mode: full sign-up, form, Google Play (test) and activation key as a new customer — only on this phone, nothing reaches the live app",
   "MCS1711TU506": "Forgot PIN: only mobile number + year of birth + new PIN — set at once, no Help Desk step",
   "MCS1711TU505": "Form: sub-type list taps now select (locked box opens in place) • clean labels without blurry hints • every registered card (home + lists) in the same blue design • full business page: Edit only for admin",
   "MCS1711TU504": "📢 Ad requests: anyone can request an ad with photo and 15 / 30 days; referral fills itself; goes live after company approval",
@@ -26287,5 +26537,23 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
 :is(#serviceFormModal,#doctorFormModal,#pfEditModal,#agModal) label{opacity:1!important;filter:none!important;text-shadow:none!important;color:#0b2545!important;font-weight:800!important}
 #wzOv label.wzL .u{color:#0b2545!important;font-weight:700!important;opacity:1!important;filter:none!important;text-shadow:none!important;font-size:16px!important}
 </style>
+<script id="mcsTestBtn507">
+/* MCS1711TU507: ڈویلپر پینل میں «🧪 ٹیسٹ موڈ» — صرف Admin 1 (پینل خود ایڈمن لاگ اِن مانگتا ہے) + ایڈمن پاس ورڈ دوبارہ */
+(function(){
+  function add(){ const body = document.getElementById('devPanelBody'); if(!body || document.getElementById('t507Card')) return;
+    const c = document.createElement('div'); c.id = 't507Card'; c.className = 'backup-card';
+    c.style.cssText = 'border:3px solid #facc15;background:#fefce8;border-radius:14px;padding:10px;margin:8px 0';
+    c.innerHTML = window.MCS_TEST ? '<b>🧪 Test mode is ON</b><button type="button" class="btn block" style="margin-top:6px;background:#dc2626" onclick="mcsTestEnd()">🗑️ End test &amp; delete test data</button>'
+      : '<b>🧪 Test mode</b><div style="font-size:13px;margin:4px 0">Try sign-up, the business form, Google Play (test) and an activation key exactly like a new customer — only on this phone. Your real account, business and subscription stay safe; nothing reaches the live app.</div><button type="button" class="btn block" style="background:#ca8a04" onclick="mcsTestStart()">🧪 Start test mode</button>';
+    body.insertBefore(c, body.firstChild); }
+  window.mcsTestStart = function(){
+    if(typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn){ try{ showToast('🔒 Admin 1 only'); }catch(e){} return; }
+    askAdminPassword('🧪 Test mode — admin password', '🧪 Start', true).then(ok => { if(!ok) return;
+      if(confirm('🧪 Start test mode?\n\nThe app will open like a brand-new phone (not logged in). Your real login, business and Google Play subscription are kept aside and come back when you tap «End test».')) mcsTestEnter(); });
+  };
+  const _o = window.openDevPanel; if(typeof _o === 'function') window.openDevPanel = openDevPanel = function(){ const r = _o.apply(this, arguments); try{ add(); }catch(e){} return r; };
+  document.addEventListener('DOMContentLoaded', () => { try{ add(); }catch(e){} });
+})();
+</script>
 </body>
 </html>
