@@ -4427,10 +4427,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU491";
+const APP_VERSION = "MCS1711TU492";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU492": "Referral list fixed: PBT and all agents show again; removed agents' AG numbers show as «Vacant» and cannot be chosen",
   "MCS1711TU491": "Admin portal: new «Agents list» — AG number on the left, name in the middle, the agent's selfie on the right; tap a row to open that agent's portal; vacant / reserved AG numbers listed below.",
   "MCS1711TU490": "Admin who is already an approved MCS Agent on the server is linked automatically on this phone — no more «Be an MCS Agent» again and again.",
   "MCS1711TU489": "Your own business now shows an apps showcase: big picture (Play Store apps on top, then all other apps) in the business profile, and a tall strip on the home card.",
@@ -20481,7 +20482,7 @@ function rpkFill(sel){   /* MCS1111WE329 (مالک کا حکم): اوپر ADMIN1
   all.sort((x, y) => { const ax = /^AG-?\d/i.test(x.c) ? 0 : 1, ay = /^AG-?\d/i.test(y.c) ? 0 : 1; return (ax - ay) || String(x.c).replace(/\d+$/, '').localeCompare(String(y.c).replace(/\d+$/, ''), 'en') || (num(x.c) - num(y.c)); });
   const opt = p => `<option value="${escapeAttr(p.c)}" data-n="${escapeAttr(p.n)}" data-noen="1">${escapeHtml(pad(p.c))} · ${escapeHtml(p.n || '—')}</option>`;
   let h = '<option value="">— فہرست سے چنیں —</option><optgroup label="Admin">';
-  h += `<option value="ADMIN1" data-n="Admin 1" data-noen="1">${pad('MCS001')} · Admin 1</option><option value="ADMIN2" data-n="Admin 2" data-noen="1">${pad('MCS002')} · Admin 2</option></optgroup><optgroup label="Company">`;
+  h += `<option value="ADMIN1" data-n="Admin 1" data-noen="1">${pad('MCS001')} · Admin 1</option><option value="ADMIN2" data-n="Admin 2" data-noen="1">${pad('MCS002')} · Admin 2</option></optgroup>`;   /* MCS1711TU492: دہرا optgroup — PBT اور سب ایجنٹ غائب تھے */
   h += '<optgroup label="Company">';
   h += `<option value="PBT">${pad('PBT')} · Company — Piary Bhai Traders</option></optgroup>`;
   if(all.length) h += '<optgroup label="Agents">' + all.map(opt).join('') + '</optgroup>';
@@ -25466,6 +25467,35 @@ html body #screen-home #homeAds .ad-card.big::before{display:none !important}
   if(typeof oM === 'function') window.svcMemOpen = function(id, kind){ kind = kind || 'service'; const r = ((kind === 'doctor' ? store.doctors : store.services) || []).find(x => x.id === id); if(r && own(r)) return play(kind, r); return oM.apply(this, arguments); };
 })();
 </script>
+<style id="mcsVac487css">
+#rpkPop .r.vac{opacity:.75;background:repeating-linear-gradient(135deg,#fff7ed 0 10px,#ffedd5 10px 20px) !important;cursor:not-allowed}
+#rpkPop .r.vac span{color:#c2410c !important;font-weight:800}
+</style>
+<script id="mcsVac487">
+/* MCS1611MO487 (مالک کا حکم): ختم کیے گئے ایجنٹ کا AG نمبر «خالی» — ریفرل فہرست میں اپنی جگہ پر «Vacant — خالی، الاٹمنٹ کے لیے دستیاب» (چنا نہیں جا سکتا)؛
+   سب کو نظر (ایڈمن 1، ایڈمن 2، ایجنٹ)؛ نیا ایجنٹ بنے تو سرور خود پہلے یہی خالی نمبر دیتا ہے (AIO worker `agTakeFree`)۔ صرف پہلے الاٹ ہو کر خالی ہوئے نمبر — کبھی نہ دیے گئے نہیں */
+(function(){
+  const API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
+  const VLBL = 'Vacant — خالی، الاٹمنٹ کے لیے دستیاب';
+  let VAC = []; try{ VAC = JSON.parse(localStorage.getItem('mcsAgFree') || '[]') || []; }catch(e){}
+  window.mcsAgVacant = () => VAC.slice();
+  async function load(){ try{ const j = await (await fetch(API + '/agfree', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: '{}' })).json();
+    if(j && j.ok && Array.isArray(j.free)){ const ch = JSON.stringify(j.free) !== JSON.stringify(VAC); VAC = j.free; try{ localStorage.setItem('mcsAgFree', JSON.stringify(VAC)); }catch(e){} if(ch) try{ rpkFillAll(); }catch(e){} } }catch(e){} }
+  const oP = window.rpkPeople;
+  if(typeof oP === 'function') window.rpkPeople = rpkPeople = function(){ const L = oP.apply(this, arguments) || []; const have = new Set(L.map(x => x.c));
+    VAC.forEach(c => { if(!have.has(c)) L.push({ c, n: VLBL, vac: 1 }); }); return L; };
+  const oF = window.rpkFill;
+  if(typeof oF === 'function') window.rpkFill = rpkFill = function(sel){ const r = oF.apply(this, arguments);
+    try{ Array.from(sel.options).forEach(o => { if(VAC.includes(o.value) && o.getAttribute('data-n') === VLBL){ o.disabled = true; o.style.color = '#c2410c'; } }); }catch(e){} return r; };
+  /* پاپ اپ فہرست: خالی نمبر نظر آئے مگر چنا نہ جائے */
+  document.addEventListener('click', e => { const r = e.target.closest && e.target.closest('#rpkPop .r'); if(r && VAC.includes(r.dataset.c) && r.classList.contains('vac')){ e.stopPropagation(); e.preventDefault(); try{ showToast('🔓 ' + r.dataset.c + ' — خالی نمبر ہے، یہ نئے ایجنٹ کو خود ملے گا', 3500); }catch(_){} } }, true);
+  new MutationObserver(() => { const p = document.getElementById('rpkPop'); if(!p || p.__v487) return; p.__v487 = 1;
+    p.querySelectorAll('.r').forEach(r => { const s = r.querySelector('span'); if(VAC.includes(r.dataset.c) && s && s.textContent.trim() === VLBL) r.classList.add('vac'); }); }).observe(document.body, { childList: true });
+  setTimeout(load, 3000); setInterval(() => { if(!document.hidden) load(); }, 10 * 60e3);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) load(); });
+})();
+</script>
+
 <!--/MO485-->
 </body>
 </html>
