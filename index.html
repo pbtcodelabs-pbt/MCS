@@ -20,7 +20,7 @@
   if(!on) return;
 
   /* ---------- 1) فون کا الگ خانہ ---------- */
-  var RAW = {}; RAW[FLAG] = 1; RAW.mcsTEST507at = 1; RAW.pbt_devpass_v1 = 1;
+  var RAW = {}; RAW[FLAG] = 1; RAW.mcsTEST507at = 1; RAW.pbt_devpass_v1 = 1; RAW.mcsUpdOwner = 1;
   var LS = localStorage, SS = sessionStorage, mem = {}, bigDirty = {}, bigT = 0;
   function pk(k){ k = String(k); return RAW[k] ? k : P + k; }
   function own(s){ var out = [], n = lenD.get.call(s); for(var i = 0; i < n; i++){ var k = rKey.call(s, i); if(k && k.indexOf(P) === 0) out.push(k.slice(P.length)); } return out; }
@@ -97,6 +97,7 @@
     if(op === 'me') return { ok: true, user: out(s.u) };
     if(op === 'logout'){ delete S.sess[b.tok]; save(); return { ok: true }; }
     if(op === 'setdist'){ s.u.district = String(b.district || ''); save(); return { ok: true, user: out(s.u) }; }
+    if(op === 'setname'){ var nm = String(b.name || '').trim(); if(nm.length < 2) return { ok: false, reason: 'name' }; s.u.name = nm.slice(0, 60); save(); return { ok: true, user: out(s.u) }; }
     if(op === 'setyob'){ if(!yobV(b.yob)) return { ok: false, reason: 'yob' }; s.u.yob = yobV(b.yob); save(); return { ok: true, user: out(s.u) }; }
     if(op === 'setpw'){ if(!pwOk) return { ok: false, reason: 'pw' }; var yok = !!(b.yob && s.u.yob && s.u.yob === yobV(b.yob));
       if(s.u.pwh && !(s.via === 'g' && now - s.at < 15 * 60e3) && !yok && !(b.old && h(String(b.old)) === s.u.pwh)) return { ok: false, reason: 'old' };
@@ -3017,6 +3018,12 @@ body.cdOn{padding-top:30px}
   };
 })();
 </script>
+<style id="mcsRibbon510">
+/* MCS1711TU510: ایڈمن کا سرخ ترچھا ربن (بائیں اوپر کونا) — کچھ نہیں روکتا */
+#mcsAdmRibbon{position:fixed;top:0;left:0;width:118px;height:118px;overflow:hidden;z-index:2147483600;pointer-events:none}
+#mcsAdmRibbon span{position:absolute;top:24px;left:-38px;width:170px;transform:rotate(-45deg);background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff;text-align:center;font:900 15px/30px Arial,sans-serif;letter-spacing:2px;border-top:2px solid #fecaca;border-bottom:2px solid #7f1d1d;box-shadow:0 3px 8px rgba(0,0,0,.4);text-shadow:0 1px 1px rgba(0,0,0,.4)}
+#mcsAdmRibbon.a2 span{background:linear-gradient(180deg,#22c55e,#15803d);border-top-color:#bbf7d0;border-bottom-color:#14532d;font-size:14px;letter-spacing:1px}   /* Admin 2 = سبز */
+</style>
 <script id="mcsUpd509">
 /* MCS1711TU509 (مالک کا حکم — «اپڈیٹ کا کارڈ بار بار کام روکتا ہے، Admin 2 نالاں»): عام گاہک / Admin 2 کو اپڈیٹ کا کچھ نظر نہیں آتا —
    پیچھے خاموشی سے لگتی ہے (کھلا فارم ہو تو اس کے بند ہونے کا انتظار، کوئی پردہ / کارڈ نہیں)۔ صرف Admin 1 کے فون پر: اوپر باریک پٹی 0→100٪،
@@ -4706,10 +4713,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU509";
+const APP_VERSION = "MCS1711TU510";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU510": "Red ADMIN ribbon in the corner while in the admin account; change your account name in My Account (shown at the top)",
   "MCS1711TU509": "Updates install quietly in the background — no card for customers; only Admin 1 sees a thin progress bar and what changed",
   "MCS1711TU508": "🧪 Test activation key without dashes — same as Help Desk keys",
   "MCS1711TU507": "🧪 Admin 1 test mode: full sign-up, form, Google Play (test) and activation key as a new customer — only on this phone, nothing reaches the live app",
@@ -17688,9 +17696,26 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bB" onclick="fedListOpen()">📨 میرے درج کیے ہوئے <small style="font-weight:700;opacity:.85">— دوسروں کے کاروبار کے دعوتی میسج</small></button>
       <button class="uaBtn bW" onclick="uaInvAsk()">📥 مجھے ملا ہوا دعوتی میسج پیسٹ کریں</button>
+      <button class="uaBtn bW" onclick="uaNameForm()">✏️ Change name — نام بدلیں</button>
       <button class="uaBtn bW" onclick="uaPwForm()">🔑 ${u.hasPw ? 'Change Password — پاس ورڈ بدلیں' : 'Set Password — پاس ورڈ بنائیں'}</button>
       <button class="uaBtn bO" onclick="uaLogout()">${IC.exit}Log Out</button>
       <button class="uaBtn bW" style="color:#b91c1c;border-color:#fca5a5" onclick="uaDelete()">🗑️ Delete Account — اکاؤنٹ حذف کریں</button></div>`);
+  };
+  /* MCS1711TU510 (مالک کا حکم): اکاؤنٹ کا نام بدلنا — یہی نام ہوم کی اوپر والی پٹی میں (کاروبار کا فارم الگ) */
+  window.uaNameForm = function(){
+    const u = (uaMe() || {}).user || {};
+    show(`${head()}<div class="uaCard"><div class="uaHd"><i>${IC.user}</i><h2 style="font-size:22px">Change name</h2></div><div class="uaSub">This name shows at the top of the home screen</div>
+      ${field('uaName', 'user', 'Full Name', { rq:1, ac:'name', v: u.name || '' })}
+      <div class="uaErr" id="uaErr"></div>
+      <button class="uaBtn bB" onclick="uaDoName()">✅ Save</button><button class="uaBtn bO" onclick="uaAccount()">← Back</button></div>`);
+  };
+  window.uaDoName = async function(){
+    const a = uaMe(), name = String(($('uaName') || {}).value || '').replace(/\s+/g, ' ').trim(); if(name.length < 2) return setErr('name');
+    busy(1); const r = await api({ op:'setname', tok: a.tok, name }); busy(0);
+    if(!r.ok){ if(r.reason === 'session') return uaDrop(); return setErr(r.reason); }
+    try{ const k = JSON.parse(ls.get('mcsAuth') || 'null'); if(k){ k.user = Object.assign({}, k.user, r.user || { name }); ls.set('mcsAuth', JSON.stringify(k)); } }catch(e){}
+    try{ const h = document.getElementById('h2Type'); if(h) h.textContent = '👤 Normal'; if(typeof h2Sync === 'function') h2Sync(); else uaSync(); }catch(e){}
+    try{ showToast('✅ Name saved'); }catch(e){} uaAccount();
   };
   window.uaPwForm = function(){
     const u = (uaMe() || {}).user || {};
@@ -17733,7 +17758,14 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   window.uaSync = function(){
     try{
       const a = uaMe(), t = $('h2Type');
-      if(t && a && !staff() && /Normal/.test(t.textContent)){ t.textContent = '👤 ' + String(a.user.name || '').split(' ')[0]; t.classList.add('on'); const o = $('h2Out'); if(o) o.style.display = ''; }
+      if(t && a && !staff() && /Normal/.test(t.textContent)){ const nm = String(a.user.name || '').trim(); t.textContent = '👤 ' + (nm.length > 18 ? nm.slice(0, 17) + '…' : nm); t.setAttribute('data-noen', '1'); t.classList.add('on'); const o = $('h2Out'); if(o) o.style.display = ''; }   /* MCS1711TU510: پورا نام (اکاؤنٹ کا) — My Account ← «Change name» سے بدلتا ہے */
+      try{   /* MCS1711TU510 (مالک کا حکم): ایڈمن میں ہوں تو اوپر کونے میں موٹا سرخ ترچھا ربن «ADMIN» — صاف پتہ چلے کون سا اکاؤنٹ ہے */
+        const rl = typeof ptRole === 'function' ? ptRole() : '', lab = rl === 'dev' ? 'ADMIN' : rl === 'codev' ? 'ADMIN 2' : '';
+        let rb = $('mcsAdmRibbon');
+        if(!lab){ if(rb) rb.remove(); }
+        else { if(!rb){ rb = document.createElement('div'); rb.id = 'mcsAdmRibbon'; rb.setAttribute('aria-hidden', 'true'); rb.innerHTML = '<span></span>'; document.body.appendChild(rb); }
+          const sp = rb.querySelector('span'); if(sp.textContent !== lab) sp.textContent = lab; rb.className = rl === 'codev' ? 'a2' : 'a1'; }
+      }catch(e){}
       try{ if(a && !staff()){ const o3 = $('h2Out'); if(o3) o3.style.display = ''; } }catch(e){}
       let box = $('uaCpBox'); const host = $('cpAcctType');
       if(host){ if(!box){ box = document.createElement('div'); box.id = 'uaCpBox'; host.insertAdjacentElement('afterend', box); }
