@@ -228,6 +228,11 @@
     try{ navigator.clipboard && navigator.clipboard.writeText(c).catch(function(){}); }catch(e){}
     t5Sheet('<div class="t5-h">🔑 ٹیسٹ ایکٹیویشن کوڈ</div><div class="t5-code" dir="ltr">' + c + '</div><div class="t5-m">کاپی ہو گیا۔ رجسٹریشن فارم کے سبز ڈبے میں «🔑 Activation Key» میں پیسٹ کر کے محفوظ کریں — اصل کی طرح ایک سال لائیو۔ یہ کوڈ صرف اسی ٹیسٹ اکاؤنٹ (' + me.name + ') پر چلے گا۔</div>');
   };
+  window.mcsTestKeep = function(){   /* MCS1711TU513: ٹیسٹ سے نکلیں — ٹیسٹ ڈیٹا اسی فون میں محفوظ، اگلی بار وہیں سے */
+    window.__t507end = 1; try{ bigFlush(); }catch(e){}
+    try{ rRem.call(LS, FLAG); rRem.call(LS, 'mcsTEST507at'); }catch(e){}
+    setTimeout(function(){ location.replace(location.pathname + '?t507out=' + Date.now()); }, 400);
+  };
   window.mcsTestEnd = function(){
     if(!confirm('🗑️ ٹیسٹ ختم کریں؟\n\nٹیسٹ کا سب کچھ (اکاؤنٹ، کاروبار، کوڈ، کارڈ، تصویریں) اس فون سے مٹ جائے گا اور ایپ اصل حالت میں کھلے گی — آپ کا اصل لاگ اِن اور کاروبار ویسے ہی۔')) return;
     window.__t507end = 1; var L = []; try{ L = JSON.parse(rGet.call(LS, 'mcsT~__idb') || '[]'); }catch(e){}
@@ -238,7 +243,7 @@
   };
   function t5Sheet(html){ var o = document.getElementById('t507Sheet'); if(!o){ o = document.createElement('div'); o.id = 't507Sheet'; document.body.appendChild(o); o.addEventListener('click', function(e){ if(e.target === o) o.remove(); }); }
     o.innerHTML = '<div class="t5-box">' + html + '<button type="button" class="t5-no" onclick="document.getElementById(\'t507Sheet\').remove()">✖ بند کریں</button></div>'; }
-  window.mcsTestMenu = function(){ t5Sheet('<div class="t5-h">🧪 ٹیسٹ موڈ — صرف اس فون پر</div><div class="t5-m">آپ ابھی ایک نئے گاہک کی طرح ہیں۔ اکاؤنٹ بنائیں، فارم بھریں، Google Play (ٹیسٹ) یا ٹیسٹ کوڈ سے لائیو کریں۔ اصل سرور، اصل گاہک اور حساب تک کچھ نہیں جاتا۔</div><button type="button" class="t5-ok" onclick="mcsTestCode()">🔑 ٹیسٹ ایکٹیویشن کوڈ بنائیں</button><button type="button" class="t5-end" onclick="mcsTestEnd()">🗑️ ٹیسٹ ختم کریں (سب ٹیسٹ ڈیٹا مٹائیں)</button>'); };
+  window.mcsTestMenu = function(){ t5Sheet('<div class="t5-h">🧪 ٹیسٹ موڈ — صرف اس فون پر</div><div class="t5-m">آپ ابھی ایک نئے گاہک کی طرح ہیں۔ اکاؤنٹ بنائیں، فارم بھریں، Google Play (ٹیسٹ) یا ٹیسٹ کوڈ سے لائیو کریں۔ اصل سرور، اصل گاہک اور حساب تک کچھ نہیں جاتا۔</div><button type="button" class="t5-ok" onclick="mcsTestCode()">🔑 ٹیسٹ ایکٹیویشن کوڈ بنائیں</button><button type="button" class="t5-ok" style="background:#2563eb" onclick="mcsTestKeep()">💾 ٹیسٹ سے نکلیں — ٹیسٹ ڈیٹا محفوظ رکھیں</button><button type="button" class="t5-end" onclick="mcsTestEnd()">🗑️ ٹیسٹ سے نکلیں — ٹیسٹ ڈیٹا صاف کریں</button>'); };
   var css = '#t507Bar{position:fixed;top:calc(env(safe-area-inset-top,0px) + 2px);left:50%;transform:translateX(-50%);z-index:2147483646;background:repeating-linear-gradient(45deg,#facc15 0 12px,#fde047 12px 24px);color:#1f2937;font:800 12px/1 Arial,sans-serif;padding:5px 12px;border-radius:999px;border:2px solid #92400e;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;letter-spacing:.5px;white-space:nowrap}'
     + '#t507Play,#t507Sheet{position:fixed;inset:0;z-index:2147483647;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}'
     + '#t507Play .t5-box,#t507Sheet .t5-box{background:#fff;border-radius:18px;max-width:380px;width:100%;padding:16px;border:4px solid #facc15;box-shadow:0 10px 30px rgba(0,0,0,.35);font-family:Arial,sans-serif;text-align:center;color:#111827}'
@@ -3021,10 +3026,10 @@ body.cdOn{padding-top:30px}
 <style id="mcsAgB512">
 /* MCS1711TU512: رجسٹرڈ کارڈ پر ایجنٹ کا گول بیج (نیلا، سنہری ہاتھ) + نیچے AG کوڈ */
 html body .doc-card.rc .rc-agx{display:flex;flex-direction:column;align-items:center;gap:3px;margin:2px 0 4px}
-html body .doc-card.rc .rc-l .rc-agx .ag-corner{position:static !important;width:50px !important;height:50px !important;border-radius:50% !important;border:2px solid #fcd34d !important;box-shadow:0 0 0 2px #1e40af,0 3px 8px rgba(0,0,0,.35) !important}
+html body .doc-card.rc .rc-l .rc-agx .ag-corner{position:static !important;width:50px !important;height:50px !important;border-radius:50% !important;border:3px solid #fbbf24 !important;box-shadow:0 0 0 1px #b45309,0 0 8px rgba(251,191,36,.7),0 3px 8px rgba(0,0,0,.35) !important}
 html body .doc-card.rc .rc-l .rc-agx .ag-corner{background:radial-gradient(circle at 50% 35%,#2563eb,#1e3a8a 70%,#0b2a5b) !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;gap:1px !important;padding:0 !important;overflow:hidden !important}
 html body .doc-card.rc .rc-l .rc-agx .ag-corner svg{width:32px !important;height:auto !important}
-html body .doc-card.rc .rc-l .rc-agx .ag-corner small{display:block !important;position:static !important;font:900 8.5px/1 Arial,sans-serif !important;letter-spacing:.8px !important;color:#fcd34d !important;background:none !important}
+html body .doc-card.rc .rc-l .rc-agx .ag-corner small{display:block !important;position:static !important;font:900 10px/1 Arial,sans-serif !important;letter-spacing:1px !important;color:#fde047 !important;text-shadow:0 0 4px rgba(253,224,71,.8) !important;background:none !important}
 html body .doc-card.rc .rc-mcs{display:none !important}
 </style>
 <style id="mcsRibbon510">
@@ -3233,7 +3238,7 @@ html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !im
       <!-- MCS0511TH156 (ہیلپ ڈیسک #79، ایڈمن کا ڈیزائن، مالک کی منظوری ⚡): کمپیکٹ ہیڈر — بائیں نام / ورژن ● / اکاؤنٹ کی قسم / Log Out؛ تاریخیں؛ قبلہ؛ خوش آمدید + شہر؛ شیئر + لوگو + موسم.
            پرانے عناصر (heroStatus، ccQibla، ccCity، ccWx، شیئر) اسی ID کے ساتھ یہاں منتقل (h2Init)؛ نیچے کے تین تاریخ والے ڈبے ختم -->
       <div class="h2" id="hdr2">
-        <div class="h2-l"><div class="h2-title">My City <i>Shines</i></div><div id="h2StatusSlot"></div><div class="h2-ver" id="h2Ver"></div>
+        <div class="h2-l"><div class="h2-title">My City <i>Shines</i></div><div id="h2StatusSlot"></div><div class="h2-ver" id="h2Ver" onclick="event.stopPropagation();dpVerTap()"></div>
           <div class="h2-acct"><span class="h2-type" id="h2Type">👤 Normal</span><button type="button" class="h2-out" id="h2Out" onclick="h2Logout()" style="display:none">⎋ Log Out</button></div></div>
         <div class="h2-d"><div>📅 <span id="h2G"></span></div><div>🌙 <span id="h2H"></span></div><div>🍃 <span id="h2D"></span></div></div>
         <div class="h2-q" id="h2QSlot"></div>
@@ -4722,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU512";
+const APP_VERSION = "MCS1711TU513";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU513": "✏️ Edit running ads (fonts, sizes, colours, 12 border styles, photo brightness/saturation/sharpness) — Admin 1; 🧪 Test mode button on home; exit test keeping or clearing data; 7 taps on the home version opens the admin panel",
   "MCS1711TU512": "Cards: orange MCS tag and the AG001 on every card removed — the round blue agent badge with its own AG code shows only on MCS agents",
   "MCS1711TU511": "ADMIN 1 / ADMIN 2 ribbon moved to the right corner (nothing hidden); the small Admin label is gone when the ribbon shows",
   "MCS1711TU510": "Red ADMIN ribbon in the corner while in the admin account; change your account name in My Account (shown at the top)",
@@ -17773,7 +17779,11 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       try{   /* MCS1711TU510 (مالک کا حکم): ایڈمن میں ہوں تو اوپر کونے میں موٹا سرخ ترچھا ربن «ADMIN» — صاف پتہ چلے کون سا اکاؤنٹ ہے */
         const rl = typeof ptRole === 'function' ? ptRole() : '', lab = rl === 'dev' ? 'ADMIN 1' : rl === 'codev' ? 'ADMIN 2' : '';
         let rb = $('mcsAdmRibbon');
-        const ht = $('h2Type'); if(ht) ht.style.display = lab ? 'none' : '';   /* MCS1711TU511: ربن ہو تو نیچے والا «Admin» دوبارہ نہیں */
+        const ht = $('h2Type'); if(ht) ht.style.display = lab ? 'none' : '';
+        { let own = rl === 'dev'; try{ own = own || localStorage.getItem('mcsUpdOwner') === '1'; }catch(e){}   /* MCS1711TU513: مالک کے فون پر ہوم میں سیدھا «🧪 Test mode» — 7 ٹیپ / پاس ورڈ نہیں */
+          let tb = $('t507Go'); const hv = $('h2Ver');
+          if(!own || window.MCS_TEST || !hv){ if(tb) tb.remove(); }
+          else if(!tb){ tb = document.createElement('button'); tb.type = 'button'; tb.id = 't507Go'; tb.textContent = '🧪 Test mode'; tb.onclick = e => { e.stopPropagation(); if(confirm('🧪 Open test mode?\n\nThe app opens like a new phone. Your real account and business stay safe.')) mcsTestEnter(); }; hv.insertAdjacentElement('afterend', tb); } }   /* MCS1711TU511: ربن ہو تو نیچے والا «Admin» دوبارہ نہیں */
         if(!lab){ if(rb) rb.remove(); }
         else { if(!rb){ rb = document.createElement('div'); rb.id = 'mcsAdmRibbon'; rb.setAttribute('aria-hidden', 'true'); rb.innerHTML = '<span></span>'; document.body.appendChild(rb); }
           const sp = rb.querySelector('span'); if(sp.textContent !== lab) sp.textContent = lab; rb.className = rl === 'codev' ? 'a2' : 'a1'; }
@@ -24924,7 +24934,7 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
           const p = digits.slice(-10); let c = p === '3206793793' ? 'AG001' : p === '3138469706' ? 'AG002' : '';
           if(!c && !agIsRec(kind, s)) return '';
           if(!c){ const k = String(agKnownOf(kind, s.id) || ''); if(/^AG-?\d+$/i.test(k)) c = 'AG' + k.replace(/\D/g, '').padStart(3, '0'); }
-          return `<div class="rc-agx">${agBadgeHtml(kind, Object.assign({}, s, { mcsAgent: true }))}${c ? `<span class="rc-ag">${c}</span>` : ''}</div>`; }catch(e){ return ''; } })()}
+          return `<div class="rc-agx">${agBadgeHtml(kind, Object.assign({}, s, { mcsAgent: true })).replace(/url\(#agBg\)/g, '#fde047').replace(/url\(#agBd\)/g, '#f59e0b')}${c ? `<span class="rc-ag">${c}</span>` : ''}</div>`; }catch(e){ return ''; } })()}
           <div class="rc-dp">${m.selfie ? `<img src="${escapeAttr(m.selfie)}" alt="">` : emoji}</div>
           ${until ? `<div class="rc-exp${trial ? ' tr' : ''}"><small>${trial ? 'Trial' : 'Expiry'}</small><b dir="ltr">${fmt(until)}</b><i>${left} days left</i></div>` : ''}
         </div>
@@ -26624,7 +26634,7 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
 <script id="mcsTestBtn507">
 /* MCS1711TU507: ڈویلپر پینل میں «🧪 ٹیسٹ موڈ» — صرف Admin 1 (پینل خود ایڈمن لاگ اِن مانگتا ہے) + ایڈمن پاس ورڈ دوبارہ */
 (function(){
-  function add(){ const body = document.getElementById('devPanelBody'); if(!body || document.getElementById('t507Card')) return;
+  function add(){ const body = document.getElementById('devPanelBody'); if(!body) return; { const old = document.getElementById('t507Card'); if(old){ body.insertBefore(old, body.firstChild); return; } }   /* MCS1711TU513: ہمیشہ سب سے اوپر */
     const c = document.createElement('div'); c.id = 't507Card'; c.className = 'backup-card';
     c.style.cssText = 'border:3px solid #facc15;background:#fefce8;border-radius:14px;padding:10px;margin:8px 0';
     c.innerHTML = window.MCS_TEST ? '<b>🧪 Test mode is ON</b><button type="button" class="btn block" style="margin-top:6px;background:#dc2626" onclick="mcsTestEnd()">🗑️ End test &amp; delete test data</button>'
@@ -26637,6 +26647,141 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
   };
   const _o = window.openDevPanel; if(typeof _o === 'function') window.openDevPanel = openDevPanel = function(){ const r = _o.apply(this, arguments); try{ add(); }catch(e){} return r; };
   document.addEventListener('DOMContentLoaded', () => { try{ add(); }catch(e){} });
+})();
+</script>
+<style id="mcsAdx513css">
+#t507Go{display:inline-block;margin:4px 0 0 6px;padding:3px 10px;border:2px solid #92400e;border-radius:999px;background:repeating-linear-gradient(45deg,#facc15 0 8px,#fde047 8px 16px);color:#1f2937;font:900 11px/1.4 Arial,sans-serif;cursor:pointer;vertical-align:middle}
+/* MCS1711TU513 (مالک کا حکم): چلتے اشتہار کا ✏️ ایڈیٹر — صرف Admin 1؛ اشتہار اوپر (اصل ہوم پر، رکا ہوا)، بٹن نیچے؛ سلائیڈ میں کی بورڈ نہیں */
+html body #homeAds .adx-ed{position:absolute;top:8px;right:8px;z-index:9;width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:16px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+#adxSheet{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.35);display:flex;flex-direction:column;font-family:'Segoe UI',Selawik,Arial,sans-serif;color:#0f172a;max-height:62vh}
+#adxSheet .ax-hd{display:flex;align-items:center;gap:6px;padding:8px 10px 4px}
+#adxSheet .ax-hd b{flex:1;font-size:15px}
+#adxSheet .ax-hd button{border:0;border-radius:10px;padding:8px 12px;font:800 13px inherit;cursor:pointer}
+#adxSheet .ax-save{background:#16a34a;color:#fff}#adxSheet .ax-x{background:#e5e7eb;color:#111}#adxSheet .ax-rs{background:#fee2e2;color:#b91c1c}
+#adxSheet .ax-tabs{display:flex;gap:4px;padding:2px 8px 6px;overflow-x:auto}
+#adxSheet .ax-tabs button{flex:1 0 auto;border:1.5px solid #cbd5e1;background:#f8fafc;border-radius:999px;padding:7px 12px;font:800 13px inherit;cursor:pointer;white-space:nowrap}
+#adxSheet .ax-tabs button.on{background:#0f766e;border-color:#0f766e;color:#fff}
+#adxSheet .ax-body{overflow-y:auto;padding:4px 12px calc(14px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
+#adxSheet .ax-row{margin:8px 0}
+#adxSheet .ax-row>label{display:flex;justify-content:space-between;font-size:12.5px;font-weight:800;color:#334155;margin-bottom:3px}
+#adxSheet .ax-row>label i{font-style:normal;color:#0f766e}
+#adxSheet input[type=range]{width:100%;height:30px;accent-color:#0f766e;margin:0}
+#adxSheet .ax-chips{display:flex;flex-wrap:wrap;gap:6px}
+#adxSheet .ax-chips button{border:2px solid #cbd5e1;background:#fff;border-radius:10px;padding:6px 10px;font-size:14px;cursor:pointer;min-width:44px;min-height:36px}
+#adxSheet .ax-chips button.on{border-color:#0f766e;box-shadow:0 0 0 2px #99f6e4}
+#adxSheet .ax-sw{width:36px;height:36px;min-width:36px !important;padding:0 !important;border-radius:50% !important}
+#adxSheet .ax-bs{width:58px;height:36px;padding:0 !important;font-size:10px !important;background:#f1f5f9 !important}
+#adxSheet textarea,#adxSheet input[type=text]{width:100%;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:10px;padding:8px;font:600 15px inherit;unicode-bidi:plaintext}
+body.adx-on #homeAds{outline:3px dashed #f59e0b;outline-offset:3px}
+html body.adx-on #screen-home #homeAds{position:fixed !important;top:calc(8px + env(safe-area-inset-top,0px)) !important;left:8px !important;right:8px !important;width:auto !important;margin:0 !important;z-index:2147482999 !important;box-shadow:0 10px 30px rgba(0,0,0,.5) !important}
+body.adx-on::before{content:'';position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:2147482990}
+</style>
+<script id="mcsAdx513">
+(function(){
+  const FONTS = [
+    ['noori', 'نوری نستعلیق', "'Jameel Noori Nastaleeq','Jameel Noori Nastaleeq Regular',serif"],
+    ['kash', 'کشیدہ', "'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif"],
+    ['segoe', 'Segoe', "'Segoe UI',Selawik,Arial,sans-serif"],
+    ['sans', 'Roboto', "Roboto,Arial,sans-serif"],
+    ['bold', 'Heavy', "'Arial Black','Segoe UI Black',Impact,sans-serif"],
+    ['serif', 'Serif', "Georgia,'Noto Serif','Times New Roman',serif"],
+    ['mono', 'Mono', "'Courier New',monospace"],
+    ['cond', 'Narrow', "'Arial Narrow','Roboto Condensed',sans-serif"]
+  ];
+  const COLORS = ['#dc2626', '#ea580c', '#f59e0b', '#16a34a', '#0d9488', '#2563eb', '#1e3a8a', '#7c3aed', '#db2777', '#111827', '#ffffff', '#78350f'];
+  const BORDERS = ['None', 'Solid', 'Dashed', 'Dotted', 'Double', 'Groove', 'Ridge', 'Gold glow', 'Neon', 'Rainbow', 'Inset', 'Twin'];
+  const DEF = { font: '', tsz: 0, lsz: 0, tx: '', bg: '', bgL: 0, bs: 0, bw: 3, bc: '#f59e0b', bri: 100, sat: 100, con: 100, bar: 78 };
+  const E = s => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s == null ? '' : s));
+  const adm = () => { try{ return typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && !(typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } };
+  function hsl(hex, dl){ try{ let h = String(hex || '#000').replace('#', ''); if(h.length === 3) h = h.split('').map(c => c + c).join(''); let r = parseInt(h.slice(0, 2), 16) / 255, g = parseInt(h.slice(2, 4), 16) / 255, b = parseInt(h.slice(4, 6), 16) / 255;
+      const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let H = 0, S = 0, L = (mx + mn) / 2; if(mx !== mn){ const d = mx - mn; S = L > .5 ? d / (2 - mx - mn) : d / (mx + mn); H = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; H *= 60; }
+      L = Math.max(4, Math.min(96, L * 100 + (dl || 0))); return `hsl(${Math.round(H)},${Math.round(S * 100)}%,${Math.round(L)}%)`; }catch(e){ return hex; } }
+  function css(id, x){
+    x = Object.assign({}, DEF, x || {}); const S = `html body .ad-card[data-adx="${id}"]`, rules = [];
+    const f = (FONTS.find(z => z[0] === x.font) || [])[2];
+    const t = []; if(f) t.push(`font-family:${f} !important`); if(x.tx) t.push(`color:${x.tx} !important`);
+    const tb = t.concat(x.tsz ? [`font-size:${x.tsz}px !important`, 'line-height:1.35 !important'] : []);
+    if(tb.length) rules.push(`${S} .ad-tx b,${S} .ad-bar b{${tb.join(';')}}`);
+    const ts = t.concat(x.lsz ? [`font-size:${x.lsz}px !important`, 'line-height:1.45 !important'] : []);
+    if(ts.length) rules.push(`${S} .ad-tx span{${ts.join(';')}}`);
+    if(x.bg){ const c1 = hsl(x.bg, x.bgL), c2 = hsl(x.bg, x.bgL - 18);
+      rules.push(`${S}{background:linear-gradient(135deg,${c1},${c2}) ${x.bs === 9 ? 'padding-box' : ''} !important}`);
+      rules.push(`${S} .ad-bar{background:linear-gradient(transparent,${hsl(x.bg, x.bgL - 25).replace('hsl(', 'hsla(').replace(')', ',' + (x.bar / 100) + ')')}) !important}`); }
+    else if(x.bar !== 78) rules.push(`${S} .ad-bar{background:linear-gradient(transparent,rgba(0,0,0,${x.bar / 100})) !important}`);
+    const w = x.bw, c = x.bc || '#f59e0b', B = [];
+    switch(+x.bs){
+      case 1: B.push(`border:${w}px solid ${c}`); break;
+      case 2: B.push(`border:${w}px dashed ${c}`); break;
+      case 3: B.push(`border:${w}px dotted ${c}`); break;
+      case 4: B.push(`border:${Math.max(3, w)}px double ${c}`); break;
+      case 5: B.push(`border:${Math.max(2, w)}px groove ${c}`); break;
+      case 6: B.push(`border:${Math.max(2, w)}px ridge ${c}`); break;
+      case 7: B.push(`border:${w}px solid #fcd34d`, `box-shadow:0 0 0 2px #b45309,0 0 18px 4px rgba(252,211,77,.85) !important`); break;
+      case 8: B.push(`border:${w}px solid ${c}`, `box-shadow:0 0 8px 2px ${c},0 0 22px 6px ${c},inset 0 0 10px ${c} !important`); break;
+      case 9: B.push(`border:${w}px solid transparent`, `background-clip:padding-box`); rules.push(`${S}::after{content:'';position:absolute;inset:-${w}px;border-radius:inherit;padding:${w}px;background:linear-gradient(90deg,#ef4444,#f59e0b,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7,#ef4444);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:8}`); break;
+      case 10: B.push(`border:${w}px solid ${c}`, `box-shadow:inset 0 0 0 ${Math.max(2, w)}px rgba(255,255,255,.55),inset 0 0 18px rgba(0,0,0,.45) !important`); break;
+      case 11: B.push(`border:${w}px solid ${c}`, `outline:${Math.max(2, w - 1)}px solid ${c}`, `outline-offset:3px`); break;
+    }
+    if(B.length) rules.push(`${S}{${B.map(v => /!important/.test(v) ? v : v + ' !important').join(';')}}`);
+    if(x.bri !== 100 || x.sat !== 100 || x.con !== 100) rules.push(`${S} .ad-full,${S} .ad-vc{filter:brightness(${x.bri / 100}) saturate(${x.sat / 100}) contrast(${x.con / 100}) !important}`);
+    return rules.join('\n');
+  }
+  let D = null;   /* ایڈیٹر کا مسودہ: { id, sx, title, line } */
+  const prev = window.adCardHtml;
+  if(typeof prev === 'function'){
+    window.adCardHtml = adCardHtml = function(a, go, fx){
+      let h = prev.apply(this, arguments);
+      try{
+        if(!a || a.promo || !a.id) return h;
+        const sx = (D && D.id === a.id) ? D.sx : a.sx;
+        h = h.replace('<div class="ad-card', `<div data-adx="${a.id}" class="ad-card`);
+        if(sx) h = `<style>${css(a.id, sx)}</style>` + h;
+        if(adm() && !(D && D.id === a.id)){ const i = h.lastIndexOf('</div>'); h = h.slice(0, i) + `<button type="button" class="adx-ed" aria-label="Edit ad" onclick="event.stopPropagation();adxOpen(${a.id})">✏️</button>` + h.slice(i); }
+      }catch(e){}
+      return h;
+    };
+  }
+  function cur(){ return (adList || []).find(x => x && x.id === (D && D.id)); }
+  function rerender(){ try{ const sl = adSlides(), i = sl.findIndex(x => x && x.id === D.id); if(i >= 0) adIdx = i; adAnim = ''; adRender(); }catch(e){} }
+  function apply(){ const a = cur(); if(!a) return; const save = { title: a.title, line: a.line }; a.title = D.title; a.line = D.line; rerender(); a.title = save.title; a.line = save.line; }
+  let TAB = 'text';
+  function row(k, lab, min, max, unit){ const v = D.sx[k]; return `<div class="ax-row"><label>${lab}<i id="axv_${k}">${v ? v + (unit || '') : (min > 0 ? 'Auto' : v)}</i></label><input type="range" min="${min}" max="${max}" value="${v}" oninput="adxSet('${k}',+this.value,'${unit || ''}')"></div>`; }
+  function sw(k, list){ return `<div class="ax-chips">${list.map(c => `<button type="button" class="ax-sw${D.sx[k] === c ? ' on' : ''}" style="background:${c}" onclick="adxSet('${k}','${c}');adxDraw()"></button>`).join('')}<button type="button" class="${!D.sx[k] ? 'on' : ''}" onclick="adxSet('${k}','');adxDraw()">↺</button></div>`; }
+  function body(){
+    const x = D.sx;
+    if(TAB === 'text') return `<div class="ax-row"><label>Font</label><div class="ax-chips">${FONTS.map(f => `<button type="button" class="${x.font === f[0] ? 'on' : ''}" style="font-family:${f[2].replace(/"/g, "'")}" onclick="adxSet('font','${f[0]}');adxDraw()">${f[1]}</button>`).join('')}<button type="button" class="${!x.font ? 'on' : ''}" onclick="adxSet('font','');adxDraw()">↺</button></div></div>
+      ${row('tsz', 'Name size', 12, 44, 'px')}${row('lsz', 'Line size', 10, 30, 'px')}
+      <div class="ax-row"><label>Text colour</label>${sw('tx', COLORS)}</div>
+      <div class="ax-row"><label>Name (tap only to type)</label><input type="text" id="axTitle" value="${E(D.title)}" oninput="adxTxt()" dir="auto"></div>
+      <div class="ax-row"><label>Line</label><textarea id="axLine" rows="2" oninput="adxTxt()" dir="auto">${E(D.line)}</textarea></div>`;
+    if(TAB === 'bg') return `<div class="ax-row"><label>Background colour</label>${sw('bg', COLORS)}</div>${row('bgL', 'Lighter ↔ Darker', -40, 40)}${row('bar', 'Name strip darkness (photo ads)', 0, 100, '%')}`;
+    if(TAB === 'br') return `<div class="ax-row"><label>Border style</label><div class="ax-chips">${BORDERS.map((n, i) => `<button type="button" class="ax-bs${+x.bs === i ? ' on' : ''}" onclick="adxSet('bs',${i});adxDraw()">${n}</button>`).join('')}</div></div>${row('bw', 'Border thickness', 1, 12, 'px')}<div class="ax-row"><label>Border colour</label>${sw('bc', COLORS)}</div>`;
+    return `${row('bri', 'Brightness', 40, 160, '%')}${row('sat', 'Colour strength (saturation)', 0, 220, '%')}${row('con', 'Sharpness (contrast)', 50, 170, '%')}`;
+  }
+  window.adxDraw = function(){ const s = document.getElementById('adxSheet'); if(!s) return; const st = s.querySelector('.ax-body').scrollTop;
+    s.querySelectorAll('.ax-tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === TAB)); s.querySelector('.ax-body').innerHTML = body(); s.querySelector('.ax-body').scrollTop = st; };
+  window.adxTab = function(t){ TAB = t; adxDraw(); };
+  window.adxSet = function(k, v, unit){ if(!D) return; D.sx[k] = v; const l = document.getElementById('axv_' + k); if(l) l.textContent = v + (unit || ''); apply(); };
+  window.adxTxt = function(){ if(!D) return; D.title = (document.getElementById('axTitle') || {}).value || D.title; D.line = (document.getElementById('axLine') || {}).value || ''; apply(); };
+  window.adxOpen = function(id){
+    if(!adm()){ try{ showToast('🔒 Admin 1 only'); }catch(e){} return; }
+    const a = (adList || []).find(x => x && x.id === id); if(!a) return;
+    D = { id, sx: Object.assign({}, DEF, a.sx || {}), title: a.title || '', line: a.line || '' }; TAB = 'text';
+    try{ adHold = Date.now() + 1e9; }catch(e){} document.body.classList.add('adx-on');
+    let s = document.getElementById('adxSheet'); if(s) s.remove(); s = document.createElement('div'); s.id = 'adxSheet'; s.setAttribute('data-noen', '1');
+    s.innerHTML = `<div class="ax-hd"><b>✏️ Edit ad — ${E(a.title || '')}</b><button type="button" class="ax-rs" onclick="adxReset()">↺</button><button type="button" class="ax-x" onclick="adxClose(false)">✖</button><button type="button" class="ax-save" onclick="adxClose(true)">💾 Save</button></div>
+      <div class="ax-tabs"><button type="button" data-t="text" onclick="adxTab('text')">🔤 Text</button><button type="button" data-t="bg" onclick="adxTab('bg')">🎨 Background</button><button type="button" data-t="br" onclick="adxTab('br')">🖼️ Border</button><button type="button" data-t="ph" onclick="adxTab('ph')">📷 Photo</button></div><div class="ax-body"></div>`;
+    document.body.appendChild(s); adxDraw(); rerender();
+    const fit = () => { try{ const box = document.getElementById('homeAds'); if(box){ const r = box.getBoundingClientRect(); s.style.top = Math.round(r.bottom + 10) + 'px'; s.style.maxHeight = 'none'; } }catch(e){} };   /* اشتہار اوپر پکا، بٹن اس کے نیچے */
+    setTimeout(fit, 60); setTimeout(fit, 400);
+  };
+  window.adxReset = function(){ if(!D || !confirm('Reset this ad to the plain style?')) return; D.sx = Object.assign({}, DEF); apply(); adxDraw(); };
+  window.adxClose = function(save){
+    if(!D) return; const a = cur(), d = D;
+    if(save && a){ const list = (adList || []).map(x => x && x.id === d.id ? Object.assign({}, x, { sx: d.sx, title: String(d.title || '').trim() || x.title, line: String(d.line || '').trim() }) : x);
+      adList = list; try{ localStorage.setItem('mcsAds', JSON.stringify(list)); }catch(e){} try{ adSaveList(list); }catch(e){} }
+    D = null; const s = document.getElementById('adxSheet'); if(s) s.remove(); document.body.classList.remove('adx-on'); try{ adHold = Date.now() + 8000; }catch(e){} rerender();
+  };
 })();
 </script>
 </body>
