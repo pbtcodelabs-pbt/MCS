@@ -222,7 +222,7 @@
   window.mcsTestCode = function(){
     var a = null; try{ a = JSON.parse(LS.getItem('mcsAuth') || 'null'); }catch(e){} var u = a && a.user; var S = srv(); var me = u && u.mobile && S.u[S.m['m:' + phone(u.mobile)]];
     if(!me){ alert('🧪 پہلے ٹیسٹ اکاؤنٹ بنائیں / لاگ اِن کریں (Create New Account) — پھر اسی کا کوڈ بنے گا۔'); return; }
-    var sd = sidFor(me.mobile).replace(/-/g, ''), nm = String(me.name || 'TEST').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6) || 'TEST', c = sd + 'M1' + nm + '-' + rnd(6, 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789');
+    var sd = sidFor(me.mobile).replace(/-/g, ''), nm = String(me.name || 'TEST').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6) || 'TEST', c = sd + 'M1' + nm + rnd(6, 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789');   /* MCS1711TU508: ڈیش کے بغیر — ہیلپ ڈیسک کے کوڈ جیسا */
     S.codes[c.replace(/[^A-Z0-9]/g, '')] = { mob: phone(me.mobile), at: Date.now() }; save();
     try{ navigator.clipboard && navigator.clipboard.writeText(c).catch(function(){}); }catch(e){}
     t5Sheet('<div class="t5-h">🔑 ٹیسٹ ایکٹیویشن کوڈ</div><div class="t5-code" dir="ltr">' + c + '</div><div class="t5-m">کاپی ہو گیا۔ رجسٹریشن فارم کے سبز ڈبے میں «🔑 Activation Key» میں پیسٹ کر کے محفوظ کریں — اصل کی طرح ایک سال لائیو۔ یہ کوڈ صرف اسی ٹیسٹ اکاؤنٹ (' + me.name + ') پر چلے گا۔</div>');
@@ -4677,10 +4677,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU507";
+const APP_VERSION = "MCS1711TU508";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU508": "🧪 Test activation key without dashes — same as Help Desk keys",
   "MCS1711TU507": "🧪 Admin 1 test mode: full sign-up, form, Google Play (test) and activation key as a new customer — only on this phone, nothing reaches the live app",
   "MCS1711TU506": "Forgot PIN: only mobile number + year of birth + new PIN — set at once, no Help Desk step",
   "MCS1711TU505": "Form: sub-type list taps now select (locked box opens in place) • clean labels without blurry hints • every registered card (home + lists) in the same blue design • full business page: Edit only for admin",
