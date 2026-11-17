@@ -4427,10 +4427,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU494";
+const APP_VERSION = "MCS1711TU495";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU495": "Red «?» wherever something is missing — tap it to fix right there; «＋» on empty photo places; CNIC photo can now be taken from Gallery or Camera",
   "MCS1711TU494": "Referral list: PBT on top, then AG001 Admin 1, AG002 Admin 2, AG003… with photos • agents see «Registration complete» instead of the form • one selfie used everywhere • your local city photo on login / sign-up",
   "MCS1711TU493": "New registered business card: smaller, blue design; left column MCS badge, agent AG number, selfie, expiry; shop photo as a strip on the right; buttons spaced apart",
   "MCS1711TU492": "Referral list fixed: PBT and all agents show again; removed agents' AG numbers show as «Vacant» and cannot be chosen",
@@ -25758,6 +25759,123 @@ html body select.rpk-sel ~ .rpk-btn{display:none !important}
         try{ pushMoreToFirebase(p.kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); }catch(e){} });
       try{ saveStore(); mpRender(); }catch(e){} }catch(e){} finally{ window._sf494Busy = 0; }
     return r; };
+})();
+</script>
+
+<style id="mcsFix495css">
+/* MCS1711TU495 (مالک کا حکم): جہاں کمی ہو وہیں سرخ «?» — دبائیں تو وہیں درستگی؛ تصویر کی خالی جگہ پر «＋» */
+.q495{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin:0 5px;border-radius:50%;background:#dc2626;color:#fff !important;font:900 14px/1 Arial,sans-serif !important;-webkit-text-stroke:0 !important;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(220,38,38,.45);cursor:pointer;vertical-align:middle;animation:q495 1.6s ease-in-out infinite;flex:none}
+@keyframes q495{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.fl495{animation:fl495 1.4s ease 2;border-radius:10px}
+@keyframes fl495{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}50%{box-shadow:0 0 0 4px rgba(220,38,38,.55)}}
+.qr495{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px;direction:ltr}
+.qr495 button{display:inline-flex;align-items:center;gap:5px;border:1.5px solid #fca5a5;background:#fef2f2;color:#991b1b;border-radius:999px;padding:4px 10px 4px 4px;font:800 12px 'Segoe UI',Selawik,Arial,sans-serif;cursor:pointer}
+.qr495 button .q495{margin:0;width:18px;height:18px;font-size:12px;animation:none}
+.p495{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(59,91,219,.12);color:#3b5bdb;font:900 30px/1 Arial,sans-serif;cursor:pointer;z-index:3;border-radius:inherit}
+.p495::after{content:'＋'}
+html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28px/1 Arial,sans-serif;color:#3b5bdb;margin-bottom:2px}
+#agSrc495{position:fixed;inset:0;z-index:2147483300;background:rgba(11,37,69,.45);display:flex;align-items:flex-end;justify-content:center}
+#agSrc495 .bx{width:100%;max-width:420px;background:#fff;border-radius:20px 20px 0 0;padding:14px 14px 18px;box-shadow:0 -8px 24px rgba(0,0,0,.25);text-align:center}
+#agSrc495 .bx b{display:block;margin-bottom:10px;font:800 16px 'Segoe UI',Arial,sans-serif;color:#0f1f45}
+#agSrc495 button{display:block;width:100%;margin-top:8px;padding:12px;border-radius:14px;border:0;font:800 15px 'Segoe UI',Arial,sans-serif;cursor:pointer}
+#agSrc495 .g{background:#3b5bdb;color:#fff}#agSrc495 .c{background:#eef2ff;color:#1e3a8a}#agSrc495 .x{background:transparent;color:#64748b}
+</style>
+<script id="mcsFix495">
+(function(){
+  'use strict';
+  const E = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  /* ===== (۱) شناختی کارڈ / سیلفی کی تصویر: کیمرہ یا گیلری — دونوں ===== */
+  let pass = false;
+  document.addEventListener('click', e => {
+    const lb = e.target.closest && e.target.closest('label.ag-pic'); if(!lb || pass) return;
+    const inp = lb.querySelector('input[type=file]'); if(!inp) return;
+    e.preventDefault(); e.stopPropagation();
+    const front = /selfie/i.test(lb.id || '');
+    let m = document.getElementById('agSrc495'); if(m) m.remove(); m = document.createElement('div'); m.id = 'agSrc495';
+    m.innerHTML = `<div class="bx"><b>📸 Add picture — تصویر کہاں سے؟</b><button type="button" class="g" data-s="gal">🖼️ Gallery — گیلری سے چنیں</button><button type="button" class="c" data-s="cam">📷 Camera — کیمرے سے لیں</button><button type="button" class="x" data-s="">Cancel</button></div>`;
+    m.addEventListener('click', ev => { const b = ev.target.closest('button'); if(!b && ev.target !== m) return; m.remove(); const s = b ? b.dataset.s : '';
+      if(!s) return; if(s === 'gal') inp.removeAttribute('capture'); else inp.setAttribute('capture', front ? 'user' : 'environment');
+      pass = true; try{ inp.click(); }finally{ setTimeout(() => { pass = false; }, 300); } });
+    document.body.appendChild(m);
+  }, true);
+  /* ===== (۲) فارم میں: ہر خالی لازمی خانے کے نام کے ساتھ سرخ «?» — دبائیں تو وہی خانہ ===== */
+  const FORMS = ['serviceFormModal', 'doctorFormModal', 'pfEditModal', 'agModal', 'uaOv', 'wzW'];
+  const isReq = lb => lb.classList.contains('req') || !!lb.querySelector(':scope > i, :scope > .rq, :scope > span.rq') && /\*/.test((lb.querySelector(':scope > i, :scope > .rq') || {}).textContent || '');
+  function ctrlOf(lb){
+    if(lb.htmlFor){ const c = document.getElementById(lb.htmlFor); if(c) return c; }
+    const own = lb.querySelector('input:not([type=hidden]):not([type=checkbox]):not([type=file]),select,textarea'); if(own) return own;
+    const box = lb.closest('.field,.agx-f,.ag-f,.fm-row,.pf-f') || lb.parentElement; if(!box) return null;
+    return box.querySelector('input:not([type=hidden]):not([type=checkbox]):not([type=file]),select,textarea');
+  }
+  const empty = c => { if(!c) return false; if(c.tagName === 'SELECT') return !c.value || c.value === '__other'; const v = String(c.value || '').trim(); if(c.type === 'tel' || /whatsapp|mob|phone/i.test(c.id || '')) return v.replace(/\D/g, '').length < 10; return !v; };
+  function go(c){
+    if(!c) return; const box = c.closest('.field,.agx-f,.ag-f,.uaF') || c;
+    try{ box.scrollIntoView({ behavior: 'smooth', block: 'center' }); }catch(e){}
+    box.classList.remove('fl495'); void box.offsetWidth; box.classList.add('fl495');
+    setTimeout(() => { const b = c.classList.contains('rpk-sel') ? c.parentNode.querySelector('.rpk2') : null; if(b) b.click(); else { try{ c.focus(); }catch(e){} if(c.tagName === 'SELECT') try{ c.showPicker && c.showPicker(); }catch(e){} } }, 350);
+  }
+  window.mcsFixGo = go;
+  function scan(){
+    FORMS.forEach(id => { const f = document.getElementById(id); if(!f || !f.offsetParent && f.style.display === 'none') return;
+      f.querySelectorAll('label').forEach(lb => {
+        if(lb.closest('[style*="display:none"],[hidden]') || !lb.offsetParent) return;
+        const req = isReq(lb), c = req ? ctrlOf(lb) : null, need = !!(c && empty(c));
+        let q = lb.querySelector(':scope > .q495');
+        if(need && !q){ q = document.createElement('b'); q.className = 'q495'; q.textContent = '?'; q.title = 'Missing — tap to fill'; q.setAttribute('data-noen', '');
+          q.addEventListener('click', ev => { ev.preventDefault(); ev.stopPropagation(); go(ctrlOf(lb)); }); lb.appendChild(q); }
+        else if(!need && q) q.remove();
+      });
+    });
+  }
+  setInterval(scan, 700);
+  /* ===== (۳) اپنے کاروبار پر: کیا کمی ہے — «?» چپ (دبائیں تو فارم اسی خانے پر)، تصویر نہ ہو تو «＋» ===== */
+  const FIX = [
+    ['selfie', 'Your selfie', r => !(r.more && r.more.selfie), null],
+    ['shop', 'Shop photo', r => !(r.more && r.more.shop), null],
+    ['nameEn', 'English name', (r, k) => k !== 'doctor' && !String(r.nameEn || '').trim(), /english|انگلش|انگریزی/i],
+    ['type', 'Business type', (r, k) => k !== 'doctor' && (typeof isBlankVal === 'function' ? isBlankVal(r.type) : !r.type), /type|قسم|title|ٹائٹل/i],
+    ['addr', 'Address', r => !String(r.address || r.area || '').trim(), /address|پتہ/i],
+    ['map', 'Map location', r => !(r.more && r.more.map), /map|نقشہ|location|لوکیشن/i]
+  ];
+  function missing(kind, rec){ return FIX.filter(f => { try{ return f[2](rec, kind); }catch(e){ return false; } }); }
+  window.mcsFixPhoto = async function(kind, id, slot){ try{ await pfOpen(kind, id); }catch(e){} setTimeout(() => { try{ pfHeroAdd(slot); }catch(e){} }, 450); };
+  window.mcsFixField = async function(kind, id, key){
+    const f = FIX.find(x => x[0] === key); if(!f) return;
+    if(key === 'selfie' || key === 'shop') return window.mcsFixPhoto(kind, id, key === 'selfie' ? 1 : 0);
+    try{ await cardEdit(kind, id); }catch(e){}
+    let n = 0; const t = setInterval(() => { n++; const M = ['serviceFormModal', 'doctorFormModal', 'pfEditModal'].map(x => document.getElementById(x)).find(x => x && x.classList.contains('active'));
+      if(M){ const lb = Array.from(M.querySelectorAll('label')).find(l => l.offsetParent && f[3].test(l.textContent || '')); if(lb){ clearInterval(t); const c = ctrlOf(lb); if(c) go(c); else { try{ lb.scrollIntoView({ block: 'center' }); }catch(e){} lb.classList.add('fl495'); } return; } }
+      if(n > 20) clearInterval(t); }, 200);
+  };
+  const chips = (kind, id, L) => L.length ? `<div class="qr495" data-noen>${L.map(f => `<button type="button" onclick="event.stopPropagation();mcsFixField('${kind}','${E(id)}','${f[0]}')"><b class="q495">?</b>${E(f[1])}</button>`).join('')}</div>` : '';
+  const own = rec => { try{ return admUi() || pfOwnsStrict(rec); }catch(e){ return false; } };
+  function deco(){
+    document.querySelectorAll('#mpBar .mpx-card.b236').forEach(card => {
+      const m = /pfOpen\('(\w+)','([^']+)'\)/.exec(card.getAttribute('onclick') || ''); if(!m) return; const kind = m[1], id = m[2], rec = pfRecById(kind, id); if(!rec || !own(rec)) return;
+      const L = missing(kind, rec), sig = L.map(x => x[0]).join(',');
+      if(card.dataset.q495 === sig && (card.querySelector('.qr495') || !sig)) return; card.dataset.q495 = sig;
+      card.querySelectorAll('.qr495,.p495').forEach(x => x.remove());
+      if(sig) card.insertAdjacentHTML('beforeend', chips(kind, id, L));
+      const dp = card.querySelector('.b236-dp'), ph = card.querySelector('.b236-ph');
+      if(dp && !dp.querySelector('img') && L.some(x => x[0] === 'selfie')){ dp.style.position = 'relative'; dp.insertAdjacentHTML('beforeend', `<span class="p495" onclick="event.stopPropagation();mcsFixPhoto('${kind}','${E(id)}',1)"></span>`); }
+      if(ph && !ph.querySelector('img') && L.some(x => x[0] === 'shop')){ ph.style.position = 'relative'; ph.insertAdjacentHTML('beforeend', `<span class="p495" onclick="event.stopPropagation();mcsFixPhoto('${kind}','${E(id)}',0)"></span>`); }
+    });
+    /* رجسٹرڈ کارڈ (فہرست میں): اپنا ہو تو خالی سیلفی / تصویر پر «＋» */
+    document.querySelectorAll('.doc-card.rc').forEach(card => {
+      if(card.dataset.p495) return; const m = /pfCardTap\(event,'(\w+)','([^']+)'\)/.exec(card.getAttribute('onclick') || ''); card.dataset.p495 = '1'; if(!m) return;
+      const kind = m[1], id = m[2], rec = pfRecById(kind, id); if(!rec || !own(rec)) return;
+      const dp = card.querySelector('.rc-dp'), ph = card.querySelector('.rc-ph');
+      if(dp && !dp.querySelector('img')){ dp.style.position = 'relative'; dp.insertAdjacentHTML('beforeend', `<span class="p495" onclick="event.stopPropagation();mcsFixPhoto('${kind}','${E(id)}',1)"></span>`); }
+      if(ph && !/url\(/.test(ph.getAttribute('style') || '')){ ph.style.position = 'relative'; ph.insertAdjacentHTML('beforeend', `<span class="p495" onclick="event.stopPropagation();mcsFixPhoto('${kind}','${E(id)}',0)"></span>`); }
+    });
+    /* پوری تفصیل کا صفحہ (اپنا کاروبار): اوپر «?» چپ */
+    const pf = document.querySelector('.pf1'); if(pf && typeof pfCur !== 'undefined' && pfCur && pfCur.rec){
+      const rec = pfCur.rec, kind = pfCur.kind || (store.doctors.includes(rec) ? 'doctor' : 'service');
+      if(own(rec)){ const L = missing(kind, rec).filter(x => x[0] !== 'selfie' && x[0] !== 'shop'), sig = L.map(x => x[0]).join(',');
+        if(pf.dataset.q495 !== sig){ pf.dataset.q495 = sig; pf.querySelectorAll(':scope > .qr495').forEach(x => x.remove()); if(sig){ const h = pf.querySelector('.pf1-hero'); (h || pf).insertAdjacentHTML(h ? 'afterend' : 'afterbegin', chips(kind, rec.id, L)); } } }
+    }
+  }
+  setInterval(() => { try{ deco(); }catch(e){} }, 900);
 })();
 </script>
 
