@@ -4427,10 +4427,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU492";
+const APP_VERSION = "MCS1711TU493";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU493": "New registered business card: smaller, blue design; left column MCS badge, agent AG number, selfie, expiry; shop photo as a strip on the right; buttons spaced apart",
   "MCS1711TU492": "Referral list fixed: PBT and all agents show again; removed agents' AG numbers show as «Vacant» and cannot be chosen",
   "MCS1711TU491": "Admin portal: new «Agents list» — AG number on the left, name in the middle, the agent's selfie on the right; tap a row to open that agent's portal; vacant / reserved AG numbers listed below.",
   "MCS1711TU490": "Admin who is already an approved MCS Agent on the server is linked automatically on this phone — no more «Be an MCS Agent» again and again.",
@@ -24404,16 +24405,16 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
     const live = `<span class="rc-live${trial ? ' tr' : ''}">${trial ? '🟠 ٹرائل' : '🟢 لائیو'}${until ? (trial ? ` • <b>${left}</b> دن باقی` : ` • <bdi dir="ltr">${fmt(until)}</bdi> تک • <b>${left}</b> دن باقی`) : ''}</span>`;
     return `<div class="doc-card rc pf-gold" data-rk="${escapeAttr(key)}"${s.id ? ` onclick="pfCardTap(event,'${kind}','${sid}')"` : ''}>${dupBadge(kind, s)}${ewRib(kind, s)}
       <div class="rc-grid">
-        <div class="rc-l"><span class="rc-mcs">MCS</span>
+        <div class="rc-l"><span class="rc-mcs">MCS</span>${(function(){ try{ const r = refN(m.ref || ''), c = r === 'ADMIN1' ? 'AG001' : r === 'ADMIN2' ? 'AG002' : (/^AG-?\d+$/.test(r) ? 'AG' + r.replace(/\D/g, '').padStart(3, '0') : ''); return c ? `<span class="rc-ag">${c}</span>` : ''; }catch(e){ return ''; } })()}
           <div class="rc-dp">${m.selfie ? `<img src="${escapeAttr(m.selfie)}" alt="">` : emoji}</div>
           ${until ? `<div class="rc-exp${trial ? ' tr' : ''}"><small>${trial ? 'Trial' : 'Expiry'}</small><b dir="ltr">${fmt(until)}</b><i>${left} days left</i></div>` : ''}
-          ${rid ? `<span class="rc-id">${E(rid.toUpperCase())}</span>` : ''}
         </div>
         <div class="rc-m">
           ${s.nameEn && !mcsNameDup(s.nameEn, nameUr) ? `<div class="rc-en">${E(s.nameEn)}</div>` : ''}
           <div class="rc-name">${E(nameUr)}${newBadge(s)}</div>
           ${typ ? `<div class="rc-ty">${E(typ)}</div>` : (subL ? `<div class="rc-ty">${subL}</div>` : '')}
           ${addr ? `<div class="rc-ad">📍 ${addr}</div>` : ''}
+          ${rid ? `<div class="rc-id2">🆔 ${E(rid.toUpperCase())}</div>` : ''}
           <div class="rc-btns">${digits ? `<a class="c" href="tel:${digits}" aria-label="Call">${ICO_CALL}</a><a class="w" href="https://wa.me/${intl}" target="_blank" aria-label="WhatsApp">${ICO_WA}</a>` : ''}${favBtnHtml(kind, s.id)}<button class="a-share" onclick="event.stopPropagation();shareProfileCardById('${kind}','${sid}')" aria-label="Share">📤</button>${adm ? `<button type="button" class="ed" onclick="event.stopPropagation();cardEdit('${kind}','${sid}')" aria-label="Edit">✏️</button><button type="button" class="dl" onclick="event.stopPropagation();cardDel('${kind}','${sid}')" aria-label="Delete">🗑️</button>` : (mine ? `<button type="button" class="ed" onclick="event.stopPropagation();cardEdit('${kind}','${sid}')" aria-label="Edit">✏️</button>` : `<button class="a-reqadmin" onclick="event.stopPropagation();openReportChoice('${kind}','${sid}')" aria-label="Edit request">📩</button>`)}</div>
         </div>
         <div class="rc-r">
@@ -25497,5 +25498,47 @@ html body #screen-home #homeAds .ad-card.big::before{display:none !important}
 </script>
 
 <!--/MO485-->
+<style id="mcsCard493">
+/* MCS1711TU493 (مالک کا حکم): رجسٹرڈ کارڈ نیا — نیلا پس منظر (پرانے سبز / کریم سے الگ)، چھوٹا؛ بائیں ایک کالم: اوپر کونے میں MCS، نیچے ایجنٹ کا AG نمبر، سیلفی، میعاد؛
+   دائیں دکان کی تصویر پتلی پٹی؛ درمیان اوپر انگلش نام پھر اردو کشیدہ؛ بٹنوں میں فاصلہ (غلطی سے نہ دبیں)۔ ہوم کا «My Business» کارڈ بھی اسی رنگ میں */
+html body .doc-card.rc{width:94% !important;max-width:520px !important;height:200px !important;min-height:200px !important;max-height:200px !important;padding:0 0 28px !important;
+  background:linear-gradient(160deg,#f4f7ff 0%,#ffffff 45%,#e7eeff 100%) !important;border:2px solid #3b5bdb !important;border-radius:18px !important;box-shadow:0 4px 14px rgba(59,91,219,.18) !important}
+html body .doc-card.rc.pf-gold,html body .doc-card.rc[class]{border-width:2px !important;border-style:solid !important;border-color:#3b5bdb !important;box-shadow:0 4px 14px rgba(59,91,219,.18) !important}
+html body .doc-card.rc::before{display:none !important}
+html body .doc-card.rc .rc-grid{grid-template-columns:76px minmax(0,1fr) 60px !important;gap:8px !important;height:172px !important}
+html body .doc-card.rc .rc-l{gap:2px !important;padding:0 0 4px !important;background:linear-gradient(180deg,#dbe4ff,#eef2ff);border-radius:16px 0 14px 0;justify-content:flex-start !important}
+html body .doc-card.rc .rc-mcs{align-self:flex-start;margin:0 !important;border-radius:16px 0 12px 0 !important;padding:4px 10px !important;font-size:11px !important;border:0 !important;box-shadow:0 1px 3px rgba(0,0,0,.2) !important}
+html body .doc-card.rc .rc-ag{font:900 11px/1 'Segoe UI',Selawik,Arial,sans-serif;color:#fff;background:#3b5bdb;border-radius:999px;padding:3px 8px;letter-spacing:.5px;direction:ltr}
+html body .doc-card.rc .rc-dp{width:60px !important;height:60px !important;min-height:60px !important;border:2.5px solid #3b5bdb !important;box-shadow:0 0 0 2px #fff !important;background:#fff;margin-top:2px !important;font-size:26px !important}
+html body .doc-card.rc .rc-exp{line-height:1.1 !important}
+html body .doc-card.rc .rc-exp small{font-size:8.5px !important;color:#475569 !important}
+html body .doc-card.rc .rc-exp b{font-size:10.5px !important}
+html body .doc-card.rc .rc-exp i{font-size:9.5px !important;padding:1px 5px !important;color:#1e3a8a !important;background:#dbe4ff !important}
+html body .doc-card.rc .rc-l .rc-id{display:none !important}
+html body .doc-card.rc .rc-m{padding-top:6px !important;gap:1px !important}
+html body .doc-card.rc .rc-en{font-size:13px !important;color:#1e3a8a !important}
+html body .doc-card.rc .rc-name{font-size:18px !important;line-height:1.7 !important;-webkit-line-clamp:1 !important;font-weight:700 !important;color:#0f1f45 !important}
+html body .doc-card.rc .rc-ty{font-size:13px !important;line-height:1.6 !important}
+html body .doc-card.rc .rc-ad{font-size:12px !important;line-height:1.6 !important}
+html body .doc-card.rc .rc-id2{font:800 10px/1.4 'Segoe UI',Selawik,Arial,sans-serif;color:#1e3a8a;direction:ltr}
+html body .doc-card.rc .rc-btns{gap:10px !important;row-gap:6px !important;padding-bottom:4px;flex-wrap:nowrap !important}
+html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:30px !important;height:30px !important;min-width:30px !important;font-size:14px !important}
+html body .doc-card.rc .rc-r{padding:6px 6px 4px 0 !important}
+html body .doc-card.rc .rc-ph{border-radius:10px !important;border:2px solid #3b5bdb !important;background-color:#eef2ff !important;font-size:22px !important}
+html body .doc-card.rc > .st-line{bottom:4px !important;height:20px !important;line-height:20px !important;font-size:11px !important}
+@media (max-width:400px){
+  html body .doc-card.rc .rc-grid{grid-template-columns:70px minmax(0,1fr) 52px !important;gap:6px !important}
+  html body .doc-card.rc .rc-btns{gap:7px !important}
+  html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:26px !important;height:26px !important;min-width:26px !important;font-size:12px !important}
+}
+/* ہوم کا «My Business» کارڈ — اسی نیلے رنگ میں */
+html body .mpx-card.b236{background:linear-gradient(160deg,#f4f7ff 0%,#ffffff 45%,#e7eeff 100%) !important;border-color:#3b5bdb !important;box-shadow:0 6px 16px rgba(59,91,219,.18) !important}
+html body .mpx-card.b236 .b236-dp,html body .mpx-card.b236 .b236-ph{border-color:#3b5bdb !important}
+html body .mpx-card.b236 .b236-dp{background:#dbe4ff !important}
+html body .mpx-card.b236 .b236-mid{border-color:#3b5bdb33 !important}
+html body #mpBar .mpx-card.b236 .b236-ur{color:#1e3a8a !important;-webkit-text-stroke:.5px #0f1f45 !important}
+html body .mpx-card.b236 .b236-type{background:#dbe4ff !important;border-color:#91a7ff !important}
+</style>
+
 </body>
 </html>
