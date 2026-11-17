@@ -4428,11 +4428,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU502";
+const APP_VERSION = "MCS1711TU503";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1711TU502": "Owner name in English + Urdu exactly as on CNIC; completed business shows your card (edit only by button); logout always goes to the login page; admin password box no longer hides behind the login page; selfie reused",
+  "MCS1711TU503": "Developer panel opens again by tapping the version 7 times (with password) — Help Desk link still works",
+  "MCS1711TU503": "Owner name in English + Urdu exactly as on CNIC; completed business shows your card (edit only by button); logout always goes to the login page; admin password box no longer hides behind the login page; selfie reused",
   "MCS1711TU501": "🔑 Activation Key box takes the longer key with the person's name (MCS008M1HABIB-…)",
   "MCS1711TU500": "🔑 Activation Key now belongs to one person (MCS008M1-…) — it works only on that person's business",
   "MCS1711TU499": "🔑 Activation Key (1 year) in the registration form — enter a valid key and the business goes live for 1 year at once",
@@ -10656,7 +10657,7 @@ function askAdminPassword(msg, okText, force){
     if(!FB || !(force || (isAdminSignedIn && u && u.email) || isDevDevice())){ showToast('پہلے ایڈمن لاگ ان کریں'); res(false); return; }
     const needEm = !em;
     let ov = document.getElementById('admPwModal');
-    if(!ov){ ov = document.createElement('div'); ov.id = 'admPwModal'; ov.className = 'modal-overlay'; ov.style.zIndex = '2147483600';   /* MCS1711TU502: لاگ اِن صفحے (#uaOv 2147483000) کے اوپر — پہلے پیچھے چھپ جاتا تھا */ document.body.appendChild(ov); }
+    if(!ov){ ov = document.createElement('div'); ov.id = 'admPwModal'; ov.className = 'modal-overlay'; ov.style.zIndex = '2147483600';   /* MCS1711TU503: لاگ اِن صفحے (#uaOv 2147483000) کے اوپر — پہلے پیچھے چھپ جاتا تھا */ document.body.appendChild(ov); }
     ov.innerHTML = `<div class="modal-box adm-pw"><div class="adm-pw-ic">🔐</div><div class="adm-pw-t">ایڈمن پاس ورڈ لکھیں</div><div class="adm-pw-m">${escapeHtml(msg||'')}</div>
       ${needEm ? `<div class="adm-pw-row"><input type="email" id="admPwEm" dir="ltr" autocomplete="username" placeholder="ایڈمن ای میل"></div>` : ''}
       <div class="adm-pw-row"><input type="password" id="admPwIn" dir="ltr" autocomplete="current-password" placeholder="پاس ورڈ"><button type="button" onclick="const i=document.getElementById('admPwIn');i.type=i.type==='password'?'text':'password'">👁</button></div>
@@ -10895,7 +10896,7 @@ function cpAcctSync(){
   const v = document.getElementById('cpVer'); if(v) v.innerHTML = dpVerText();
 }
 let dpTaps = 0, dpTapT = 0;
-function dpVerTap(){ const now = Date.now(); if(now - dpTapT > 2500) dpTaps = 0; dpTapT = now; dpTaps = 0; /* MCS0711SA194: 7 ٹیپ ختم */ }
+function dpVerTap(){ const now = Date.now(); if(now - dpTapT > 2500) dpTaps = 0; dpTapT = now; dpTaps++; if(dpTaps >= 7){ dpTaps = 0; try{ if(isAdminSignedIn) openDevPanel(); else { try{ if(!localStorage.getItem(ADMIN_EMAIL_KEY)) localStorage.setItem(ADMIN_EMAIL_KEY, DEFAULT_CONTACT.gmail); }catch(e){} askAdminPassword('👨‍💻 Developer panel — developer password', '🔓 Open', true).then(ok => { if(ok) setTimeout(openDevPanel, 300); }); } }catch(e){} } /* MCS1711TU503 (مالک کا حکم): ورژن پر 7 ٹیپ = ڈویلپر پینل (پاس ورڈ سے) — واپس */ }
 function openDevPanel(){
   if(!isAdminSignedIn){ try{ showToast(adminRestoring ? '🔄 ایڈمن جڑ رہا ہے — چند سیکنڈ بعد دوبارہ دبائیں' : '🔒 پہلے ایڈمن لاگ اِن کریں'); }catch(e){} return; }   /* MCS0711SA187: ایڈمن / عام یوزر کے لیے نہیں */
   dpInit();
@@ -17427,7 +17428,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   async function sidFix(){
     try{ const a = uaMe(); const u = a && a.user; if(!u || !u.mobile) return;
       const r = await fetch(PF_API + '/mcssid', { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ mob: u.mobile }) }); const j = await r.json();
-      const sid = j && j.ok && j.sid ? String(j.sid) : ''; if(!sid || sid === u.sid) return; { const c0 = uaMe(); if(!c0 || c0.tok !== a.tok) return; }   /* MCS1711TU502: بیچ میں لاگ آؤٹ ہو گیا تو لاگ اِن واپس نہ لکھیں */
+      const sid = j && j.ok && j.sid ? String(j.sid) : ''; if(!sid || sid === u.sid) return; { const c0 = uaMe(); if(!c0 || c0.tok !== a.tok) return; }   /* MCS1711TU503: بیچ میں لاگ آؤٹ ہو گیا تو لاگ اِن واپس نہ لکھیں */
       u.mcsId = sid; if(!/^ADMIN/.test(String(u.sid || ''))) u.sid = sid; ls.set('mcsAuth', JSON.stringify(a));
       try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null') || {}; o.sid = u.sid; o.name = o.name || u.name; o.at = Date.now(); ls.set('mcsMyPk', JSON.stringify(o)); }catch(e){}
       try{ uaSync(); h2Sync(); }catch(e){}
@@ -17435,7 +17436,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   }
   window.mcsSidFix = sidFix;
   async function recheck(){ setTimeout(sidFix, 2500); const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU433'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
-    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); { const c0 = uaMe(); if(!c0 || c0.tok !== a.tok) return; }   /* MCS1711TU502: لاگ آؤٹ کے بعد پرانا جواب لاگ اِن واپس نہ کرے */ if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU433'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
+    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); { const c0 = uaMe(); if(!c0 || c0.tok !== a.tok) return; }   /* MCS1711TU503: لاگ آؤٹ کے بعد پرانا جواب لاگ اِن واپس نہ کرے */ if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU433'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ایڈمن کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
@@ -23976,7 +23977,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     try{ if(!doneOf(4)) agAdminSelfLink().then(ok => { try{ if(ok && $('wzOv') && $('wzOv').classList.contains('on')) draw(); }catch(e){} }); }catch(e){}   /* MCS1711TU490 */
     S.step = st; S.edit2 = 0; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
   };
-  function sLive(){   /* MCS1711TU502 (مالک کا حکم): مکمل کاروبار — فارم نہیں؛ اپنا کارڈ، ✏️ Edit صرف بٹن سے، ایجنٹ ہو تو حوصلہ افزائی + زیادہ کاروبار لائیں */
+  function sLive(){   /* MCS1711TU503 (مالک کا حکم): مکمل کاروبار — فارم نہیں؛ اپنا کارڈ، ✏️ Edit صرف بٹن سے، ایجنٹ ہو تو حوصلہ افزائی + زیادہ کاروبار لائیں */
     const ag = doneOf(4), live = doneOf(3), c = myCard();
     frame(`<div class="wzCard" style="text-align:center"><div class="wzOk"><div class="big">✅</div><b style="font-size:20px;color:#166534">${live ? 'Your business is LIVE' : 'Your registration is complete'}</b><div class="wzId" dir="ltr">${esc(sidNow())}</div></div>
       ${ag ? `<div class="wzGreen" style="text-align:left"><b>🤝 You are an MCS Agent.</b> Now your real job starts — bring more and more businesses to My City Shines and grow your revenue.<div class="u" style="margin-top:4px">زیادہ سے زیادہ کاروبار لائیں اور اپنی آمدن بڑھائیں۔</div></div>
@@ -23988,7 +23989,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   }
   window.wzEditMine = function(){ S.step = 2; S.edit2 = 1; save(); draw(); };   /* صرف بٹن دبانے پر ترمیم */
   const draw = () => { if(S.step > 3) S.step = 3;
-    if(S.step > 1 && !S.edit2 && (doneOf(3) || (doneOf(2) && doneOf(4)))) return sLive();   /* MCS1711TU502: کاروبار مکمل (لائیو، یا رجسٹرڈ + ایجنٹ) — فارم نہیں، صرف خلاصہ؛ ترمیم صرف «✏️ Edit» سے */
+    if(S.step > 1 && !S.edit2 && (doneOf(3) || (doneOf(2) && doneOf(4)))) return sLive();   /* MCS1711TU503: کاروبار مکمل (لائیو، یا رجسٹرڈ + ایجنٹ) — فارم نہیں، صرف خلاصہ؛ ترمیم صرف «✏️ Edit» سے */
     if(S.step === 1 && doneOf(1)) return s1done();                         /* MCS1511SU447: مکمل مرحلہ = «مکمل» صفحہ، پرانا فارم نہیں */
     if(S.step === 1 && !S.newAcct && !me()){ let pk = null; try{ pk = JSON.parse(localStorage.getItem('mcsMyPk') || 'null'); }catch(e){}   /* MCS1511SU450: اس فون پر اکاؤنٹ بن چکا — نیا فارم نہیں، صرف لاگ اِن */
       if(pk && pk.sid) return frame(`<div class="wzCard" style="text-align:center"><div class="wzHd"><i>🔐</i><b>Welcome back</b><span class="u">خوش آمدید — آپ کا اکاؤنٹ بن چکا ہے</span></div>
@@ -24144,7 +24145,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     const c = S.c, rec = myCard(), m = (rec && rec.more) || {};
     if(rec && !c.init){ c.init = 1; c.nameUr = c.nameUr || rec.nameUr || ''; c.nameEn = c.nameEn || rec.nameEn || ''; c.ptype = c.ptype || m.ptype || ''; c.mcat = c.mcat || m.mcat || ''; if(!(c.subs || []).length && Array.isArray(m.subs)) c.subs = m.subs.slice(); if(!(c.prods || []).length && Array.isArray(m.prods)) c.prods = m.prods.slice(); c.org = c.org || m.org || ''; c.city = c.city || rec.city || ''; c.addr = c.addr || rec.address || ''; save(); }
     if(!c.city) c.city = S.a.dist || (rec && rec.district) || '';
-    if(c.ownEn == null || c.ownUr == null){   /* MCS1711TU502 (مالک کا حکم): مالک کا نام انگلش + اردو، جیسا شناختی کارڈ پر — سائن اپ کا نام خود (دوبارہ نہیں لکھنا) */
+    if(c.ownEn == null || c.ownUr == null){   /* MCS1711TU503 (مالک کا حکم): مالک کا نام انگلش + اردو، جیسا شناختی کارڈ پر — سائن اپ کا نام خود (دوبارہ نہیں لکھنا) */
       const mm0 = (rec && rec.more) || {}, nm0 = String(((me() || {}).user || {}).name || S.a.name || '').trim(), ow0 = (rec && typeof splitOwnerIntro === 'function') ? splitOwnerIntro(rec.intro).owner : '';
       const isLat = v => /^[A-Za-z][A-Za-z .'-]*$/.test(v), isUr = v => /[\u0600-\u06FF]/.test(v);
       if(c.ownEn == null) c.ownEn = mm0.ownerEn || (isLat(ow0) ? ow0 : '') || (isLat(nm0) ? nm0 : '');
@@ -24216,7 +24217,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       rec.nameUr = c.nameUr.trim(); rec.nameEn = (c.nameEn || '').trim(); if(rec.nameEn.replace(/\s+/g, '').toLowerCase() === rec.nameUr.replace(/\s+/g, '').toLowerCase()) rec.nameEn = ''; rec.city = c.city.trim(); rec.address = c.addr.trim();
       rec.more = rec.more || {}; const mm = rec.more; mm.ptype = c.ptype; mm.mcat = c.mcat; mm.subs = c.subs.slice(); mm.prods = c.prods.slice(); mm.services = c.prods.join('، '); if(c.org) mm.org = c.org; else delete mm.org;
       const prim = c.subs.length ? (subUr(c.subs[0]) || c.subs[0]) : ''; if(prim) rec.type = prim;
-      { const oe = String(c.ownEn || '').replace(/\s+/g, ' ').trim(), ou = String(c.ownUr || '').replace(/\s+/g, ' ').trim();   /* MCS1711TU502: مالک کا نام انگلش (more.ownerEn) + اردو (intro کی پہلی لائن) */
+      { const oe = String(c.ownEn || '').replace(/\s+/g, ' ').trim(), ou = String(c.ownUr || '').replace(/\s+/g, ' ').trim();   /* MCS1711TU503: مالک کا نام انگلش (more.ownerEn) + اردو (intro کی پہلی لائن) */
         if(oe) mm.ownerEn = oe; if(ou){ const rest = typeof splitOwnerIntro === 'function' ? splitOwnerIntro(rec.intro).rest : ''; rec.intro = 'دکاندار: ' + ou + (rest ? '\n' + rest : ''); } }
       rec.updatedAt = Date.now(); rec.stage = rec.stage || 'basic';
     }catch(e){ return err('محفوظ نہیں ہو سکا — دوبارہ کوشش کریں'); }
@@ -26076,7 +26077,7 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
 })();
 </script>
 <script id="mcsFix502">
-/* MCS1711TU502 (مالک کا حکم — «ایک ہی معلومات بار بار نہیں»): اپنے کاروبار کے فارم میں سیلفی خالی ہو تو پہلے سے لی ہوئی سیلفی خود (دوبارہ سیلفی نہیں) */
+/* MCS1711TU503 (مالک کا حکم — «ایک ہی معلومات بار بار نہیں»): اپنے کاروبار کے فارم میں سیلفی خالی ہو تو پہلے سے لی ہوئی سیلفی خود (دوبارہ سیلفی نہیں) */
 (function(){
   const o = window.pfFieldsFill; if(typeof o !== 'function') return;
   window.pfFieldsFill = pfFieldsFill = function(pre, prof, rec){
