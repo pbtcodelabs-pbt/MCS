@@ -3542,7 +3542,8 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
     </div>
     <!-- MCS0311TU119 (ہیلپ ڈیسک #15): مکمل تفصیل — اردو + English؛ 🟥 = ضروری (نئے اندراج میں) -->
     <div class="field fm-ref"><label>🤝 ایجنٹ کا ریفرل کوڈ <small class="fm-opt">(اگر کسی MCS ایجنٹ نے درج کروایا — کوڈ مثلاً MS-001، یا ایجنٹ کا شناختی کارڈ نمبر)</small></label><div class="field-with-add"><input type="text" id="svcRef" maxlength="32" dir="ltr" autocapitalize="characters" placeholder="MS-001 — یا ایجنٹ کا شناختی کارڈ / موبائل" onchange="refResolve()"><button type="button" class="add-circle no-hint ref-paste" onclick="refPaste()" aria-label="پیسٹ" title="پیسٹ">📥</button><button type="button" class="add-circle no-hint ref-paste" onclick="refCopy()" aria-label="کاپی" title="کاپی">📋</button></div><div class="cp-hint" id="svcRefOk" style="margin-top:2px"></div><div class="ref-self" data-for="svcRef"></div></div>
-    <div class="field svc-hide" id="svcCnicField"><label class="req">🪪 شناختی کارڈ نمبر <small class="fm-opt">(13 ہندسے — کارڈ پر ظاہر نہیں ہوگا)</small></label><input type="text" id="svcCnic" inputmode="numeric" maxlength="15" dir="ltr" placeholder="12345-1234567-1" autocomplete="off"></div>
+    <div class="field svc-hide" id="svcCnicField"><label class="req">🪪 شناختی کارڈ نمبر <small class="fm-opt">(13 ہندسے — کارڈ پر ظاہر نہیں ہوگا)</small></label><input type="text" id="svcCnic" inputmode="numeric" maxlength="15" dir="ltr" placeholder="12345-1234567-1" autocomplete="off">
+      <div id="svcActKeyBox" style="margin-top:10px"><label>🔑 Activation Key — 1 year <small class="fm-opt">(optional)</small></label><input type="text" id="svcActKey" maxlength="20" dir="ltr" placeholder="MCS-1Y-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" style="text-transform:uppercase;letter-spacing:1px;font-family:Consolas,monospace"><small id="svcActKeyMsg" style="display:block;font-size:12px;color:#64748b;margin-top:3px">Have a key? The business goes live for 1 year as soon as you save.</small></div></div>
     <details class="fm-more" id="svcMoreBox">
       <summary>➕ مزید تفصیل <small>(اختیاری) خدمات، نقشہ، ای میل</small></summary>
       <div class="fm-more-note"><b class="req-dot">*</b> والے خانے ضروری ہیں · یہاں سب خانے اختیاری</div>
@@ -4427,10 +4428,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU498";
+const APP_VERSION = "MCS1711TU499";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU499": "🔑 Activation Key (1 year) in the registration form — enter a valid key and the business goes live for 1 year at once",
   "MCS1711TU498": "City photo removed from the login / sign-up page — nothing is downloaded or stored on the server for it; login page is clean and light",
   "MCS1711TU497": "Admin login no longer hides behind the big login page — it opens in front • Admin tab: tap your saved Gmail, type the password, you are in • Business tab: tap your saved Gmail, type your PIN, your account opens",
   "MCS1711TU496": "Login page: choose «User / Business» or «Admin» — each role shows its own Gmail and asks its PIN / password • Admin password now opens the normal ABC keyboard (not the numbers keyboard) • PIN / password page lifts above the keyboard",
@@ -26003,5 +26005,55 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
 })();
 </script>
 
+<script id="mcsKey499">
+/* MCS1711TU499 (مالک کا حکم): ایک سال کا رجسٹریشن کوڈ — رجسٹریشن فارم (سبز ڈبہ، شناختی کارڈ کے نیچے) میں «🔑 Activation Key»؛
+   مالک / ایڈمن 2 / ایجنٹ / دکاندار — جو بھی درست کوڈ ڈالے، محفوظ ہوتے ہی سرور (AIO /pcode) سے کاروبار فوراً ایک سال لائیو (منظوری کا انتظار نہیں)؛
+   فارم پھر بھی ایڈمن کو صرف جائزے کے لیے (/preq، «already active»)۔ کوڈ صرف ہیلپ ڈیسک «License Keys → My City Shines» میں بنتے ہیں — ایپ میں کبھی نہیں۔
+   Google Play کا بٹن الگ اپنی جگہ — یہاں کوئی قیمت / ادائیگی نہیں۔ */
+(function(){
+  const E = s => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s == null ? '' : s));
+  const norm = v => String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  window._actKey = '';
+  document.addEventListener('input', ev => { if(ev.target && ev.target.id === 'svcActKey') window._actKey = ev.target.value; }, true);
+  const clr = () => { window._actKey = ''; const i = document.getElementById('svcActKey'); if(i) i.value = ''; };
+  const _of = window.openServiceForm; if(typeof _of === 'function') window.openServiceForm = openServiceForm = function(){ clr(); return _of.apply(this, arguments); };
+  const roleNow = () => { try{ return typeof bzRole === 'function' ? (bzRole() || '') : ''; }catch(e){ return ''; } };
+  const errTx = r => ({ none: 'This key is not valid. Please check it.', used: 'This key has already been used for another business.', revoked: 'This key has been blocked.', wait: 'Too many wrong tries — please wait 15 minutes.', bad_code: 'This key is not valid. Please check it.', one_biz: 'This mobile already has another active business.' }[r] || 'Could not check the key — check internet and try again.');
+  async function redeem(kind, rec, code){
+    const rk = pfKeyOf(rec, kind || 'service'); if(!rk) return { ok: false, reason: 'x' };
+    try{ if(roleNow() === '' && typeof mpEntry === 'function' && !mpEntry(rec)) mpAdd(kind || 'service', rec, true); }catch(e){}
+    let j = null;
+    try{ const r = await fetch(PF_API + '/pcode', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ rec: rk, code, by: roleNow() || 'shop' }) }); j = await r.json(); }catch(e){ j = { ok: false, reason: 'net' }; }
+    if(j && j.ok){
+      try{ pfAct[rk] = Object.assign({}, pfAct[rk] || {}, { until: j.until, since: j.since || (pfAct[rk] || {}).since }); if(j.subid) pfAct[rk].subid = j.subid; }catch(e){}
+      try{ mpAll().forEach(p => { if(p.rk === rk) p.until = j.until; }); saveStore(); }catch(e){}
+      try{ const sn = JSON.parse(localStorage.getItem('mcsReviewSent') || '{}') || {}; sn[rk] = Date.now(); localStorage.setItem('mcsReviewSent', JSON.stringify(sn)); }catch(e){}   /* جائزے کی اپنی درخواست نیچے («already active») — دوسری خالی نہیں */
+      try{ await mcsGoLive(rk); }catch(e){}
+      try{ const more = rec.more || {}; mrqSend(rk, { self: 1, kind: kind || 'service', name: rec.nameUr || rec.name || '', mobile: rec.whatsapp || '', prof: rec.nameUr || rec.name || '', city: rec.city || '', area: rec.area || '', ref: more.ref || '', uid: (typeof agDev === 'function' ? agDev() : ''),
+        text: '🔑 ALREADY ACTIVE with a 1-year key (' + code.slice(0, 5) + '…) until ' + new Date(j.until).toLocaleDateString('en-GB') + ' — review the form only. Do NOT approve another year.' }); }catch(e){}
+    }
+    return j || { ok: false };
+  }
+  const _mf = window.memFlowOpen;
+  window.memFlowOpen = function(kind, rec){
+    const code = norm(window._actKey); if(!code || !rec) return _mf && _mf.apply(this, arguments);
+    const self = this, args = arguments; clr();
+    agModal(`<div style="text-align:center;font-size:40px">⏳</div><div class="ag-hd" style="text-align:center">Checking your key… <small dir="ltr">${E(code)}</small></div>`);
+    redeem(kind, rec, code).then(j => {
+      if(j && j.ok){
+        const sid = String(j.subid || j.sid || '').replace(/-/g, '');
+        agModal(`<div style="text-align:center;font-size:50px">🎉</div><div class="ag-hd" style="text-align:center">Your business is LIVE <small>کاروبار ایک سال کے لیے لائیو</small></div>
+          <div class="mem-pk"><div class="n" data-noen="1">🏪 ${E(rec.nameUr || rec.name || '')}</div><div class="p" style="font-size:18px" dir="ltr">✅ Active till ${E(new Date(j.until).toLocaleDateString('en-GB'))}</div>${sid ? `<small dir="ltr">🆔 ${E(sid)}</small>` : ''}</div>
+          <button type="button" class="mem-play" onclick="closeModal('agModal')">OK</button>`);
+      } else {
+        agModal(`<div style="text-align:center;font-size:46px">⚠️</div><div class="ag-hd" style="text-align:center">Key not accepted</div>
+          <div class="cp-hint" style="text-align:center;margin:8px 0">${E(errTx(j && j.reason))}<br>Your registration is saved.</div>
+          <button type="button" class="mem-play" id="key499Next">Continue</button>`);
+        const b = document.getElementById('key499Next'); if(b) b.onclick = () => { closeModal('agModal'); setTimeout(() => _mf && _mf.apply(self, args), 120); };
+      }
+    });
+  };
+})();
+</script>
 </body>
 </html>
