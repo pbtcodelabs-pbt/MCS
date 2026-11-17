@@ -3488,11 +3488,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
       </div>
       <div class="name-suggest" id="svcNameSuggest"></div>
       <div class="field bi-en" id="svcOwnerEnField">
-        <label>👤 Owner Name <small class="fm-opt">(English)</small></label>
+        <label class="req">👤 Owner Name <small class="fm-opt">(English — exactly as on CNIC)</small></label>
         <input type="text" id="svcOwnerEn" dir="ltr" placeholder="e.g. Abdul Sattar" autocomplete="off" autocapitalize="words" enterkeyhint="next">
       </div>
       <div class="field bi-ur" id="svcOwnerField">
-        <label class="req">👤 مالک / پروفیشنل کا نام <small class="fm-opt">(اردو)</small></label>
+        <label class="req">👤 مالک / پروفیشنل کا نام <small class="fm-opt">(اردو — بالکل شناختی کارڈ جیسا)</small></label>
         <input type="text" id="svcOwner" placeholder="مثلاً عبدالستار" autocomplete="off" enterkeyhint="next">
       </div>
       <div class="cls-box" id="svcCls1">
@@ -4428,10 +4428,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU501";
+const APP_VERSION = "MCS1711TU502";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU502": "Owner name in English + Urdu exactly as on CNIC; completed business shows your card (edit only by button); logout always goes to the login page; admin password box no longer hides behind the login page; selfie reused",
   "MCS1711TU501": "🔑 Activation Key box takes the longer key with the person's name (MCS008M1HABIB-…)",
   "MCS1711TU500": "🔑 Activation Key now belongs to one person (MCS008M1-…) — it works only on that person's business",
   "MCS1711TU499": "🔑 Activation Key (1 year) in the registration form — enter a valid key and the business goes live for 1 year at once",
@@ -10655,7 +10656,7 @@ function askAdminPassword(msg, okText, force){
     if(!FB || !(force || (isAdminSignedIn && u && u.email) || isDevDevice())){ showToast('پہلے ایڈمن لاگ ان کریں'); res(false); return; }
     const needEm = !em;
     let ov = document.getElementById('admPwModal');
-    if(!ov){ ov = document.createElement('div'); ov.id = 'admPwModal'; ov.className = 'modal-overlay'; ov.style.zIndex = '2147482000'; document.body.appendChild(ov); }
+    if(!ov){ ov = document.createElement('div'); ov.id = 'admPwModal'; ov.className = 'modal-overlay'; ov.style.zIndex = '2147483600';   /* MCS1711TU502: لاگ اِن صفحے (#uaOv 2147483000) کے اوپر — پہلے پیچھے چھپ جاتا تھا */ document.body.appendChild(ov); }
     ov.innerHTML = `<div class="modal-box adm-pw"><div class="adm-pw-ic">🔐</div><div class="adm-pw-t">ایڈمن پاس ورڈ لکھیں</div><div class="adm-pw-m">${escapeHtml(msg||'')}</div>
       ${needEm ? `<div class="adm-pw-row"><input type="email" id="admPwEm" dir="ltr" autocomplete="username" placeholder="ایڈمن ای میل"></div>` : ''}
       <div class="adm-pw-row"><input type="password" id="admPwIn" dir="ltr" autocomplete="current-password" placeholder="پاس ورڈ"><button type="button" onclick="const i=document.getElementById('admPwIn');i.type=i.type==='password'?'text':'password'">👁</button></div>
@@ -17426,7 +17427,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   async function sidFix(){
     try{ const a = uaMe(); const u = a && a.user; if(!u || !u.mobile) return;
       const r = await fetch(PF_API + '/mcssid', { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ mob: u.mobile }) }); const j = await r.json();
-      const sid = j && j.ok && j.sid ? String(j.sid) : ''; if(!sid || sid === u.sid) return;
+      const sid = j && j.ok && j.sid ? String(j.sid) : ''; if(!sid || sid === u.sid) return; { const c0 = uaMe(); if(!c0 || c0.tok !== a.tok) return; }   /* MCS1711TU502: بیچ میں لاگ آؤٹ ہو گیا تو لاگ اِن واپس نہ لکھیں */
       u.mcsId = sid; if(!/^ADMIN/.test(String(u.sid || ''))) u.sid = sid; ls.set('mcsAuth', JSON.stringify(a));
       try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null') || {}; o.sid = u.sid; o.name = o.name || u.name; o.at = Date.now(); ls.set('mcsMyPk', JSON.stringify(o)); }catch(e){}
       try{ uaSync(); h2Sync(); }catch(e){}
@@ -17434,7 +17435,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   }
   window.mcsSidFix = sidFix;
   async function recheck(){ setTimeout(sidFix, 2500); const a = uaMe(); let _fv = true; try{ _fv = ls.get('mcsSidV') !== 'MCS1511SU433'; }catch(e){}   /* MCS1511SU431: نئے ورژن پر ایک بار ID سرور سے ضرور تازہ */
-    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU433'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
+    if(!a || (!_fv && a.user && a.user.sid && a.user.pk && Date.now() - (a.chk || 0) < 6 * 3600e3)) return; const r = await api({ op:'me', tok: a.tok }); { const c0 = uaMe(); if(!c0 || c0.tok !== a.tok) return; }   /* MCS1711TU502: لاگ آؤٹ کے بعد پرانا جواب لاگ اِن واپس نہ کرے */ if(r.ok){ a.user = r.user; a.chk = Date.now(); try{ ls.set('mcsSidV', 'MCS1511SU433'); }catch(e){} try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){} ls.set('mcsAuth', JSON.stringify(a)); uaSync(); } else if(r.reason === 'session'){ a.stale = 1; a.chk = Date.now(); ls.set('mcsAuth', JSON.stringify(a)); } }   /* MCS1411SA422: سرور کا ٹوکن پرانا ہو تو بھی لاگ اِن نہیں مٹتا */
   /* ===================================================================================================
      MCS0611FR171 (مالک کا حکم): 📨 دعوتی میسج — کوئی بھی رجسٹرڈ بندہ (ایجنٹ ہونا ضروری نہیں) دوسرے کا کاروبار / پروفیشن فیڈ کرے؛
      ایڈمن کی منظوری کے بعد فیڈ کرنے والے کے پاس تیار میسج بنتا ہے؛ نیا بندہ لاگ اِن صفحے پر «میں پہلے سے رجسٹرڈ ہوں» ٹک لگا کر وہ میسج
@@ -23973,16 +23974,21 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     if(!m && st > 1) st = 1;                 /* اکاؤنٹ کے بغیر آگے نہیں */
     if(m && st === 1) st = myCard() && (myCard().more || {}).ptype ? 3 : 2;   /* MCS1511SU447: لاگ اِن ہے تو اکاؤنٹ بنانے کا صفحہ کبھی دوبارہ نہیں کھلتا */
     try{ if(!doneOf(4)) agAdminSelfLink().then(ok => { try{ if(ok && $('wzOv') && $('wzOv').classList.contains('on')) draw(); }catch(e){} }); }catch(e){}   /* MCS1711TU490 */
-    S.step = st; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
+    S.step = st; S.edit2 = 0; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
   };
-  function sLive(){   /* MCS1611MO482 (مالک کا حکم): سبسکرپشن مکمل — صرف خلاصہ، کوئی خانہ / ترمیم نہیں؛ اگلا: ایجنٹ (چمکتا بٹن) */
-    const ag = doneOf(4);
-    frame(`<div class="wzCard" style="text-align:center"><div class="wzOk"><div class="big">✅</div><b class="u" style="font-size:22px;color:#166534">آپ کا کاروبار لائیو ہے</b><div class="wzId" dir="ltr">${esc(sidNow())}</div></div>
-      ${ag ? `<div class="wzGreen u" style="font-size:18px">🤝 آپ ایم سی ایس ایجنٹ ہیں</div><button class="wzBtn bG" onclick="mcsWizClose()"><span class="u">بند کریں</span></button>`
-        : `<button class="wzBtn bG wzBig4" onclick="wzGo(4)" style="background:#b45309">🤝 Be an MCS Agent<small class="u">ایم سی ایس ایجنٹ بنیں — یہاں دبائیں</small></button>`}</div>`);
+  function sLive(){   /* MCS1711TU502 (مالک کا حکم): مکمل کاروبار — فارم نہیں؛ اپنا کارڈ، ✏️ Edit صرف بٹن سے، ایجنٹ ہو تو حوصلہ افزائی + زیادہ کاروبار لائیں */
+    const ag = doneOf(4), live = doneOf(3), c = myCard();
+    frame(`<div class="wzCard" style="text-align:center"><div class="wzOk"><div class="big">✅</div><b style="font-size:20px;color:#166534">${live ? 'Your business is LIVE' : 'Your registration is complete'}</b><div class="wzId" dir="ltr">${esc(sidNow())}</div></div>
+      ${ag ? `<div class="wzGreen" style="text-align:left"><b>🤝 You are an MCS Agent.</b> Now your real job starts — bring more and more businesses to My City Shines and grow your revenue.<div class="u" style="margin-top:4px">زیادہ سے زیادہ کاروبار لائیں اور اپنی آمدن بڑھائیں۔</div></div>
+        <button class="wzBtn bG wzBig4" onclick="mcsWizClose();setTimeout(function(){try{agEarnOpen()}catch(e){}},120)" style="background:#b45309">💰 Earn with MCS<small>Register more businesses</small></button>`
+        : `<button class="wzBtn bG wzBig4" onclick="wzGo(4)" style="background:#b45309">🤝 Be an MCS Agent<small class="u">ایم سی ایس ایجنٹ بنیں — یہاں دبائیں</small></button>`}
+      ${c ? `<button class="wzBtn bW" onclick="mcsWizClose();setTimeout(function(){try{pfOpen('service','${esc(c.id)}')}catch(e){}},120)">🪪 View my card</button>
+      <button class="wzBtn bW" onclick="wzEditMine()">✏️ Edit my business</button>` : ''}
+      <button class="wzBtn bW" onclick="mcsWizClose()">Close</button></div>`);
   }
+  window.wzEditMine = function(){ S.step = 2; S.edit2 = 1; save(); draw(); };   /* صرف بٹن دبانے پر ترمیم */
   const draw = () => { if(S.step > 3) S.step = 3;
-    if(S.step > 1 && doneOf(3)) return sLive();
+    if(S.step > 1 && !S.edit2 && (doneOf(3) || (doneOf(2) && doneOf(4)))) return sLive();   /* MCS1711TU502: کاروبار مکمل (لائیو، یا رجسٹرڈ + ایجنٹ) — فارم نہیں، صرف خلاصہ؛ ترمیم صرف «✏️ Edit» سے */
     if(S.step === 1 && doneOf(1)) return s1done();                         /* MCS1511SU447: مکمل مرحلہ = «مکمل» صفحہ، پرانا فارم نہیں */
     if(S.step === 1 && !S.newAcct && !me()){ let pk = null; try{ pk = JSON.parse(localStorage.getItem('mcsMyPk') || 'null'); }catch(e){}   /* MCS1511SU450: اس فون پر اکاؤنٹ بن چکا — نیا فارم نہیں، صرف لاگ اِن */
       if(pk && pk.sid) return frame(`<div class="wzCard" style="text-align:center"><div class="wzHd"><i>🔐</i><b>Welcome back</b><span class="u">خوش آمدید — آپ کا اکاؤنٹ بن چکا ہے</span></div>
@@ -24138,6 +24144,11 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     const c = S.c, rec = myCard(), m = (rec && rec.more) || {};
     if(rec && !c.init){ c.init = 1; c.nameUr = c.nameUr || rec.nameUr || ''; c.nameEn = c.nameEn || rec.nameEn || ''; c.ptype = c.ptype || m.ptype || ''; c.mcat = c.mcat || m.mcat || ''; if(!(c.subs || []).length && Array.isArray(m.subs)) c.subs = m.subs.slice(); if(!(c.prods || []).length && Array.isArray(m.prods)) c.prods = m.prods.slice(); c.org = c.org || m.org || ''; c.city = c.city || rec.city || ''; c.addr = c.addr || rec.address || ''; save(); }
     if(!c.city) c.city = S.a.dist || (rec && rec.district) || '';
+    if(c.ownEn == null || c.ownUr == null){   /* MCS1711TU502 (مالک کا حکم): مالک کا نام انگلش + اردو، جیسا شناختی کارڈ پر — سائن اپ کا نام خود (دوبارہ نہیں لکھنا) */
+      const mm0 = (rec && rec.more) || {}, nm0 = String(((me() || {}).user || {}).name || S.a.name || '').trim(), ow0 = (rec && typeof splitOwnerIntro === 'function') ? splitOwnerIntro(rec.intro).owner : '';
+      const isLat = v => /^[A-Za-z][A-Za-z .'-]*$/.test(v), isUr = v => /[\u0600-\u06FF]/.test(v);
+      if(c.ownEn == null) c.ownEn = mm0.ownerEn || (isLat(ow0) ? ow0 : '') || (isLat(nm0) ? nm0 : '');
+      if(c.ownUr == null) c.ownUr = (isUr(ow0) ? ow0 : '') || (isUr(nm0) ? nm0 : ''); }
     const cats = catsFor(c.ptype), orgs = (function(){ try{ return clsOrgList(); }catch(e){ return []; } })();
     const cur = (cats.find(x => x.en === c.mcat) || {titles: []});
     const subList = cur.titles.map(t => t.en); (c.subs || []).forEach(v => { if(!subList.some(x => x.toLowerCase() === String(v).toLowerCase())) subList.push(v); });
@@ -24150,6 +24161,8 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       ${LBL('Products &amp; Services (multiple)', 'مصنوعات و خدمات (ایک سے زیادہ)')}<div><input class="wzI" id="wzPrIn" placeholder="Enter products and services — لکھیں، Enter دبائیں یا اگلے خانے پر جائیں" value="${esc(c.prRaw)}" oninput="wzRaw()" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();wzProdAdd()}" onblur="wzBlur(event,'prod')"></div>
       <div class="wzChips" id="wzPrChips">${prChipsHtml()}</div>
       ${LBL('Associated Organization / Brand', 'متعلقہ ادارہ / برانڈ')}<select class="wzI" id="wzOrg" onchange="wzC('org')"><option value="">${esc((typeof CLS_NOORG !== 'undefined' ? CLS_NOORG : 'Independent'))}</option>${orgs.map(v => `<option value="${esc(v)}" ${c.org === v ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>
+      ${LBL('Owner Name (English) — exactly as on CNIC', 'مالک کا نام (انگلش) — بالکل شناختی کارڈ جیسا', 1)}<input class="wzI" id="wzOEn" dir="ltr" autocapitalize="words" placeholder="e.g. Muhammad Habib Shahbaz" value="${esc(c.ownEn || '')}" oninput="wzC('t')">
+      ${LBL('Owner Name (Urdu) — exactly as on CNIC', 'مالک کا نام (اردو) — بالکل شناختی کارڈ جیسا', 1)}<input class="wzI u" id="wzOUr" data-noen="1" placeholder="مثلاً محمد حبیب شہباز" value="${esc(c.ownUr || '')}" oninput="wzC('t')" style="font-size:19px">
       ${LBL('Business Name (English)', 'کاروبار کا نام (انگریزی)')}<input class="wzI" id="wzNEn" dir="ltr" placeholder="Enter business name" value="${esc(c.nameEn)}" oninput="wzC('t')">
       ${LBL('Business Name (Urdu)', 'کاروبار کا نام (اردو)', 1)}<input class="wzI u" id="wzNUr" placeholder="کاروبار کا نام درج کریں" value="${esc(c.nameUr)}" oninput="wzC('t')" style="font-size:19px">
       ${LBL('City / Main Area', 'شہر / مرکزی علاقہ', 1)}<input class="wzI" id="wzCity" list="wzCityL" placeholder="Select City / Area" value="${esc(c.city)}" oninput="wzC('t')"><datalist id="wzCityL">${cities.map(x => `<option value="${esc(x)}">`).join('')}</datalist>
@@ -24166,7 +24179,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     if(w === 'pt'){ c.ptype = g('wzPt'); c.mcat = ''; c.subs = []; save(); return s2(); }
     if(w === 'mc'){ c.mcat = g('wzMc'); c.subs = []; save(); return s2(); }
     if(w === 'org'){ c.org = g('wzOrg'); }
-    if($('wzNEn')) c.nameEn = g('wzNEn'); if($('wzNUr')) c.nameUr = g('wzNUr'); if($('wzCity')) c.city = g('wzCity'); if($('wzAddr')) c.addr = g('wzAddr');
+    if($('wzOEn')) c.ownEn = g('wzOEn'); if($('wzOUr')) c.ownUr = g('wzOUr'); if($('wzNEn')) c.nameEn = g('wzNEn'); if($('wzNUr')) c.nameUr = g('wzNUr'); if($('wzCity')) c.city = g('wzCity'); if($('wzAddr')) c.addr = g('wzAddr');
     save(); };
   window.wzSub = function(v){ const k = String(v).toLowerCase(), i = (S.c.subs || []).findIndex(x => String(x).toLowerCase() === k); if(i < 0) S.c.subs.push(v); else S.c.subs.splice(i, 1); wzC('t'); wzSubRefresh(false); };   /* MCS1511SU448: پورا صفحہ دوبارہ نہیں بنتا — صرف ڈبہ */
   window.wzSubChk = function(el){ wzSub(el.dataset.v); };
@@ -24181,6 +24194,9 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   window.wzProdDel = function(i){ S.c.prods.splice(i, 1); wzC('t'); wzPrRefresh(); };
   function chk2(){ const c = S.c;
     if(!c.ptype) return 'پروفائل کیٹگری منتخب کریں'; if(!c.mcat) return 'پروفائل ٹائپ منتخب کریں'; if(!(c.subs || []).length) return 'کم از کم ایک سب ٹائپ منتخب کریں';
+    { const oe = String(c.ownEn || '').trim(), ou = String(c.ownUr || '').trim();
+      if(!oe) return 'مالک کا نام انگلش میں لکھیں — بالکل شناختی کارڈ جیسا'; if(!/^[A-Za-z][A-Za-z .'-]*$/.test(oe)) return 'انگلش نام میں صرف انگلش حروف (A–Z)';
+      if(!ou) return 'مالک کا نام اردو میں لکھیں — بالکل شناختی کارڈ جیسا'; if(!/[\u0600-\u06FF]/.test(ou)) return 'اردو نام اردو حروف میں لکھیں'; }
     if(!(c.nameUr || '').trim()) return 'کاروبار کا نام اردو میں لکھیں'; if(!(c.city || '').trim()) return 'شہر / علاقہ لکھیں'; if(!(c.addr || '').trim()) return 'مکمل پتہ لکھیں'; return ''; }
   window.wzPreview = function(){ wzC('t'); wzCommitQuiet(); const m = chk2(); if(m) return err(m); const c = S.c, pt = PT().find(t => t[0] === c.ptype);
     const old = $('wzPv'); if(old) old.remove();
@@ -24200,6 +24216,8 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       rec.nameUr = c.nameUr.trim(); rec.nameEn = (c.nameEn || '').trim(); if(rec.nameEn.replace(/\s+/g, '').toLowerCase() === rec.nameUr.replace(/\s+/g, '').toLowerCase()) rec.nameEn = ''; rec.city = c.city.trim(); rec.address = c.addr.trim();
       rec.more = rec.more || {}; const mm = rec.more; mm.ptype = c.ptype; mm.mcat = c.mcat; mm.subs = c.subs.slice(); mm.prods = c.prods.slice(); mm.services = c.prods.join('، '); if(c.org) mm.org = c.org; else delete mm.org;
       const prim = c.subs.length ? (subUr(c.subs[0]) || c.subs[0]) : ''; if(prim) rec.type = prim;
+      { const oe = String(c.ownEn || '').replace(/\s+/g, ' ').trim(), ou = String(c.ownUr || '').replace(/\s+/g, ' ').trim();   /* MCS1711TU502: مالک کا نام انگلش (more.ownerEn) + اردو (intro کی پہلی لائن) */
+        if(oe) mm.ownerEn = oe; if(ou){ const rest = typeof splitOwnerIntro === 'function' ? splitOwnerIntro(rec.intro).rest : ''; rec.intro = 'دکاندار: ' + ou + (rest ? '\n' + rest : ''); } }
       rec.updatedAt = Date.now(); rec.stage = rec.stage || 'basic';
     }catch(e){ return err('محفوظ نہیں ہو سکا — دوبارہ کوشش کریں'); }
     S.step = 3; S.cardNew = 1; S.edit2 = 0; save(); draw(); try{ showToast('✓ کارڈ محفوظ — اب پلان منتخب کریں'); }catch(e){}   /* MCS1511SU448: اگلا صفحہ فوراً؛ بھاری محفوظ کاری (پورا ڈیٹا لکھنا) پیچھے */
@@ -26055,6 +26073,18 @@ html body .ag-pic:not(.has) span::before{content:'＋';display:block;font:900 28
       }
     });
   };
+})();
+</script>
+<script id="mcsFix502">
+/* MCS1711TU502 (مالک کا حکم — «ایک ہی معلومات بار بار نہیں»): اپنے کاروبار کے فارم میں سیلفی خالی ہو تو پہلے سے لی ہوئی سیلفی خود (دوبارہ سیلفی نہیں) */
+(function(){
+  const o = window.pfFieldsFill; if(typeof o !== 'function') return;
+  window.pfFieldsFill = pfFieldsFill = function(pre, prof, rec){
+    const r = o.apply(this, arguments);
+    try{ const S = pfEd[pre]; if(!S || S.thumb || S.imgs[1] || !rec || typeof pfAcctOwns !== 'function' || !pfAcctOwns(rec)) return r;
+      const M = window.sfMem || {}; let v = M.mcsSelfie || ''; try{ if(!v) v = localStorage.getItem('mcsSelfie') || ''; if(!v && typeof ptSelfieGet === 'function') v = ptSelfieGet(typeof ptRole === 'function' ? ptRole() : 'user'); }catch(e){}
+      if(v && /^data:image\//.test(v)) pfSetSelfie(pre, v); }catch(e){}
+    return r; };
 })();
 </script>
 </body>
