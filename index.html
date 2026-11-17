@@ -3018,6 +3018,15 @@ body.cdOn{padding-top:30px}
   };
 })();
 </script>
+<style id="mcsAgB512">
+/* MCS1711TU512: رجسٹرڈ کارڈ پر ایجنٹ کا گول بیج (نیلا، سنہری ہاتھ) + نیچے AG کوڈ */
+html body .doc-card.rc .rc-agx{display:flex;flex-direction:column;align-items:center;gap:3px;margin:2px 0 4px}
+html body .doc-card.rc .rc-l .rc-agx .ag-corner{position:static !important;width:50px !important;height:50px !important;border-radius:50% !important;border:2px solid #fcd34d !important;box-shadow:0 0 0 2px #1e40af,0 3px 8px rgba(0,0,0,.35) !important}
+html body .doc-card.rc .rc-l .rc-agx .ag-corner{background:radial-gradient(circle at 50% 35%,#2563eb,#1e3a8a 70%,#0b2a5b) !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;gap:1px !important;padding:0 !important;overflow:hidden !important}
+html body .doc-card.rc .rc-l .rc-agx .ag-corner svg{width:32px !important;height:auto !important}
+html body .doc-card.rc .rc-l .rc-agx .ag-corner small{display:block !important;position:static !important;font:900 8.5px/1 Arial,sans-serif !important;letter-spacing:.8px !important;color:#fcd34d !important;background:none !important}
+html body .doc-card.rc .rc-mcs{display:none !important}
+</style>
 <style id="mcsRibbon510">
 /* MCS1711TU510/511: ایڈمن کا سرخ ترچھا ربن (دائیں اوپر کونا) — کچھ نہیں روکتا */
 #mcsAdmRibbon{position:fixed;top:0;right:0;width:92px;height:92px;overflow:hidden;z-index:2147483600;pointer-events:none}
@@ -4713,10 +4722,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU511";
+const APP_VERSION = "MCS1711TU512";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU512": "Cards: orange MCS tag and the AG001 on every card removed — the round blue agent badge with its own AG code shows only on MCS agents",
   "MCS1711TU511": "ADMIN 1 / ADMIN 2 ribbon moved to the right corner (nothing hidden); the small Admin label is gone when the ribbon shows",
   "MCS1711TU510": "Red ADMIN ribbon in the corner while in the admin account; change your account name in My Account (shown at the top)",
   "MCS1711TU509": "Updates install quietly in the background — no card for customers; only Admin 1 sees a thin progress bar and what changed",
@@ -24910,7 +24920,11 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
     const live = `<span class="rc-live${trial ? ' tr' : ''}">${trial ? '🟠 ٹرائل' : '🟢 لائیو'}${until ? (trial ? ` • <b>${left}</b> دن باقی` : ` • <bdi dir="ltr">${fmt(until)}</bdi> تک • <b>${left}</b> دن باقی`) : ''}</span>`;
     return `<div class="doc-card rc pf-gold" data-rk="${escapeAttr(key)}"${s.id ? ` onclick="pfCardTap(event,'${kind}','${sid}')"` : ''}>${dupBadge(kind, s)}${ewRib(kind, s)}
       <div class="rc-grid">
-        <div class="rc-l"><span class="rc-mcs">MCS</span>${(function(){ try{ const r = refN(m.ref || ''), c = r === 'ADMIN1' ? 'AG001' : r === 'ADMIN2' ? 'AG002' : (/^AG-?\d+$/.test(r) ? 'AG' + r.replace(/\D/g, '').padStart(3, '0') : ''); return c ? `<span class="rc-ag">${c}</span>` : ''; }catch(e){ return ''; } })()}
+        <div class="rc-l">${(function(){ try{   /* MCS1711TU512 (مالک کا حکم): نارنجی «MCS» اور ریفرل والا AG کوڈ ہر کارڈ سے ختم — گول نیلا بیج (سنہری ہاتھ) + اپنا AG کوڈ صرف اس کارڈ پر جو خود MCS ایجنٹ ہو */
+          const p = digits.slice(-10); let c = p === '3206793793' ? 'AG001' : p === '3138469706' ? 'AG002' : '';
+          if(!c && !agIsRec(kind, s)) return '';
+          if(!c){ const k = String(agKnownOf(kind, s.id) || ''); if(/^AG-?\d+$/i.test(k)) c = 'AG' + k.replace(/\D/g, '').padStart(3, '0'); }
+          return `<div class="rc-agx">${agBadgeHtml(kind, Object.assign({}, s, { mcsAgent: true }))}${c ? `<span class="rc-ag">${c}</span>` : ''}</div>`; }catch(e){ return ''; } })()}
           <div class="rc-dp">${m.selfie ? `<img src="${escapeAttr(m.selfie)}" alt="">` : emoji}</div>
           ${until ? `<div class="rc-exp${trial ? ' tr' : ''}"><small>${trial ? 'Trial' : 'Expiry'}</small><b dir="ltr">${fmt(until)}</b><i>${left} days left</i></div>` : ''}
         </div>
