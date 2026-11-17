@@ -4428,10 +4428,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU505";
+const APP_VERSION = "MCS1711TU506";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU506": "Forgot PIN: only mobile number + year of birth + new PIN — set at once, no Help Desk step",
   "MCS1711TU505": "Form: sub-type list taps now select (locked box opens in place) • clean labels without blurry hints • every registered card (home + lists) in the same blue design • full business page: Edit only for admin",
   "MCS1711TU504": "📢 Ad requests: anyone can request an ad with photo and 15 / 30 days; referral fills itself; goes live after company approval",
   "MCS1711TU503": "Developer panel opens again by tapping the version 7 times (with password) — Help Desk link still works",
@@ -16974,7 +16975,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   };
   ERR.adm = 'ایڈمن جی میل یا پاس ورڈ غلط ہے — Wrong admin Gmail or password';
   /* MCS1711TU505 (مالک کا حکم): پیدائش کا سال — PIN بھول جائے تو موبائل + سال سے وہیں نیا PIN */
-  Object.assign(ERR, { yob:'Write your year of birth — 4 digits, e.g. 1985', nomatch:'Mobile number or year of birth does not match', noyob:'No year of birth saved on this account — use Help Desk below', old:'Current PIN (or year of birth) is wrong' });
+  Object.assign(ERR, { yob:'Write your year of birth — 4 digits, e.g. 1985', nomatch:'Mobile number or year of birth does not match', noyob:'No year of birth on this account yet — log in once with «Continue with Google», then set your PIN and year of birth', old:'Current PIN (or year of birth) is wrong' });
   window.uaYobVal = function(el){ const y = String((el && el.value) || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, ''); const n = +y, cy = new Date().getFullYear(); return y.length === 4 && n >= 1920 && n <= cy - 8 ? y : ''; };
   async function api(body){
     try{ const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ dev: (typeof agDev === 'function' ? agDev() : '') }, body)) }); return await r.json(); }
@@ -17365,8 +17366,6 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       ${field('uaFNew', 'lock', 'New PIN (6 digits)', { type:'password', rq:1, im:'numeric', ac:'new-password' })}
       <div class="uaErr" id="uaErr"></div>
       <button class="uaBtn bB" onclick="uaDoForgot()">✅ Set new PIN &amp; log in</button>
-      <div class="uaSub" style="margin-top:10px">Year of birth not saved on your account?</div>
-      <button class="uaBtn bW" onclick="uaHelp()">❓ Help Desk — پاس ورڈ بھول گیا</button>
       <button class="uaBtn bO" onclick="uaLogin()">← Back to Login</button></div>`);
   };
   window.uaDoForgot = async function(){   /* MCS1711TU505: موبائل + پیدائش کا سال → نیا PIN اور سیدھا اندر */
