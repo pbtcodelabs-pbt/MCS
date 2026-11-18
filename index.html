@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE526";
+const APP_VERSION = "MCS1811WE527";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE527": "Admin 1 tools: «Edit any business» — search any business and edit its whole profile",
   "MCS1811WE526": "Admin 1 tools in My Account (card text editor, test mode, admin panel) — no 7 taps; admin can edit any business profile without typing the password again",
   "MCS1811WE525": "Card text editor: choose the Urdu font — Noori Nastaleeq Kasheeda or Noori Nastaleeq",
   "MCS1811WE524": "Admin 1 card text editor: make the name, type and address on all registered cards bigger or smaller for everyone",
@@ -21379,6 +21380,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     if(sf(ptRole, rl) === 'dev' && typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){   /* MCS1811WE526 (مالک کا حکم): Admin 1 کے اوزار یہیں — 7 ٹیپ / پاس ورڈ نہیں */
       h += '<div class="mx-sec pl">🛠️ Admin 1 tools</div><div class="mx-card mx-list">'
         + row('🔤', 'Card text editor', ID, 'cuOpen', 'c1', 'سب کارڈوں کا فونٹ اور سائز')
+        + row('🏪', 'Edit any business', ID, 'abeOpen', 'c1', 'کسی بھی کاروبار کی پوری پروفائل ایڈٹ کریں')
         + row('🧪', 'Test mode', ID, 'mxTestGo', 'c2', 'نئے گاہک کی طرح پورا عمل آزمائیں')
         + row('⚙️', 'Admin panel', ID, 'openDevPanel', 'c3', 'ایڈمن کے باقی سب کام')
         + '</div>';
@@ -26958,5 +26960,39 @@ html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:
 <script id="mcsAdmTools526">
 window.mxTestGo = function(){ if(confirm('🧪 Open test mode?\n\nThe app opens like a new phone. Your real account and business stay safe.')) mcsTestEnter(); };
 </script>
+<script id="mcsAnyBiz527">
+/* MCS1811WE527 (مالک کا حکم): Admin 1 — کسی بھی کاروبار کی پوری پروفائل ایڈٹ (My Account ← Admin 1 tools ← Edit any business)؛ تلاش: نام / موبائل / MCS نمبر */
+(function(){
+  const E = s => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s == null ? '' : s));
+  const adm = () => { try{ return typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn; }catch(e){ return false; } };
+  function all(){ const L = []; try{ (store.services || []).forEach(r => { if(r && r.id) L.push(['service', r]); }); (store.doctors || []).forEach(r => { if(r && r.id) L.push(['doctor', r]); }); }catch(e){} return L; }
+  function sid(k, r){ try{ const a = pfAct[pfKeyOf(r, k)] || {}; return String(a.subid || a.sid || '').replace(/-/g, ''); }catch(e){ return ''; } }
+  function live(k, r){ try{ return !!(r.mcsLive || pfActive(r)); }catch(e){ return !!r.mcsLive; } }
+  window.abeFind = function(){ const q = String((document.getElementById('abeQ') || {}).value || '').trim().toLowerCase(), d = q.replace(/\D/g, '');
+    let L = all().filter(([k, r]) => { if(!q) return live(k, r); const t = [r.nameUr, r.nameEn, r.name, r.type, r.city, sid(k, r)].join(' ').toLowerCase(); return t.includes(q) || (d.length >= 4 && String(r.whatsapp || '').replace(/\D/g, '').includes(d.replace(/^0/, ''))); });
+    L.sort((a, b) => (live(b[0], b[1]) ? 1 : 0) - (live(a[0], a[1]) ? 1 : 0)); L = L.slice(0, 40);
+    const box = document.getElementById('abeL'); if(!box) return;
+    box.innerHTML = L.length ? L.map(([k, r]) => `<div class="abe-it"><div class="abe-tx"><b data-noen>${E(r.nameUr || r.name || r.nameEn || '')}</b><small dir="ltr">${E(sid(k, r) || '')} ${E(r.whatsapp || '')}${live(k, r) ? ' · ✅' : ''}</small></div><button type="button" onclick="abeGo('${k}','${String(r.id).replace(/'/g, '')}')">✏️ Edit</button></div>`).join('') : '<div class="abe-no">کوئی کاروبار نہیں ملا</div>'; };
+  window.abeOpen = function(){ if(!adm()){ try{ showToast('🔒 Admin 1 only'); }catch(e){} return; }
+    let o = document.getElementById('abeSheet'); if(o) o.remove(); o = document.createElement('div'); o.id = 'abeSheet';
+    o.innerHTML = `<div class="abe-box"><div class="abe-hd"><b>🏪 Edit any business</b><button type="button" onclick="document.getElementById('abeSheet').remove()">✖</button></div>
+      <input id="abeQ" type="search" placeholder="Name / mobile / MCS ID" oninput="abeFind()" autocomplete="off"><div id="abeL" class="abe-l"></div></div>`;
+    document.body.appendChild(o); abeFind(); };
+  window.abeGo = async function(kind, id){ const o = document.getElementById('abeSheet'); if(o) o.remove();
+    try{ await pfOpen(kind, id); if(pfCur && pfCur.rec && pfCur.rec.id === id){ pfUnlocked[pfCur.rk] = 1; await pfEditOpen(); return; } }catch(e){}
+    try{ if(kind === 'doctor') openDoctorForm(id); else openServiceForm(id); }catch(e){ showToast('⚠️ ' + (e.message || '')); } };
+})();
+</script>
+<style id="mcsAnyBiz527css">
+#abeSheet{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.6);display:flex;align-items:flex-end;justify-content:center}
+#abeSheet .abe-box{width:100%;max-width:560px;height:85vh;background:#f8fafc;border-radius:20px 20px 0 0;display:flex;flex-direction:column;padding:10px 12px;box-sizing:border-box;font-family:'Segoe UI',Selawik,Arial,sans-serif}
+#abeSheet .abe-hd{display:flex;align-items:center;margin-bottom:8px}#abeSheet .abe-hd b{flex:1;font-size:16px}#abeSheet .abe-hd button{border:0;background:#e5e7eb;border-radius:10px;padding:8px 12px;font-weight:800}
+#abeSheet input{width:100%;box-sizing:border-box;border:2px solid #3b5bdb;border-radius:12px;padding:11px;font-size:16px;margin-bottom:8px}
+#abeSheet .abe-l{flex:1;overflow-y:auto}
+#abeSheet .abe-it{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin-bottom:6px}
+#abeSheet .abe-tx{flex:1;min-width:0}#abeSheet .abe-tx b{display:block;font-size:17px;line-height:1.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#abeSheet .abe-tx small{color:#64748b;font-size:12px}
+#abeSheet .abe-it button{border:0;background:#3b5bdb;color:#fff;border-radius:10px;padding:9px 12px;font-weight:800;white-space:nowrap}
+#abeSheet .abe-no{text-align:center;color:#64748b;padding:20px}
+</style>
 </body>
 </html>
