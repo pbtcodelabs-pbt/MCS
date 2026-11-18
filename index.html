@@ -243,6 +243,16 @@
   };
   function t5Sheet(html){ var o = document.getElementById('t507Sheet'); if(!o){ o = document.createElement('div'); o.id = 't507Sheet'; document.body.appendChild(o); o.addEventListener('click', function(e){ if(e.target === o) o.remove(); }); }
     o.innerHTML = '<div class="t5-box">' + html + '<button type="button" class="t5-no" onclick="document.getElementById(\'t507Sheet\').remove()">✖ بند کریں</button></div>'; }
+  /* MCS1811WE539 (مالک کا حکم — ٹیسٹ والی «ڈینٹل شاپ دتہ» کی حذف درخواست اصل ہیلپ ڈیسک میں چلی گئی تھی): ٹیسٹ موڈ میں ہیلپ ڈیسک کو کچھ نہیں جاتا —
+     ہیلپ ڈیسک الگ نظام ہے، «ٹیسٹ ختم» اسے صاف نہیں کر سکتا؛ اس لیے یہیں روک: پیغام صرف ٹیسٹ پاپ اپ میں دکھتا ہے */
+  (function(){ var real = window.PBTHelp;
+    function block(o){ var t = String((o && o.text) || '').replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; });
+      t5Sheet('<div class="t5-h">🧪 ٹیسٹ موڈ — ہیلپ ڈیسک کو کچھ نہیں بھیجا گیا</div><div class="t5-m">اصل ایپ میں یہ پیغام ہیلپ ڈیسک کو جاتا:</div>' + (t ? '<div class="t5-m" style="white-space:pre-wrap;text-align:right;background:#fef9c3;border-radius:10px;padding:8px">' + t + '</div>' : '')); }
+    function wrap(v){ if(v && typeof v === 'object' && !v.__t507){ try{ v.open = block; v.__t507 = 1; }catch(e){} } return v; }
+    try{ Object.defineProperty(window, 'PBTHelp', { configurable: true, get: function(){ return real; }, set: function(v){ real = wrap(v); } }); wrap(real); }catch(e){}
+    window.openHelpDesk = function(){ block({}); };
+    try{ Object.defineProperty(window, 'openHelpDesk', { configurable: true, get: function(){ return function(){ block({}); }; }, set: function(){} }); }catch(e){}
+  })();
   window.mcsTestMenu = function(){ t5Sheet('<div class="t5-h">🧪 ٹیسٹ موڈ — صرف اس فون پر</div><div class="t5-m">آپ ابھی ایک نئے گاہک کی طرح ہیں۔ اکاؤنٹ بنائیں، فارم بھریں، Google Play (ٹیسٹ) یا ٹیسٹ کوڈ سے لائیو کریں۔ اصل سرور، اصل گاہک اور حساب تک کچھ نہیں جاتا۔</div><button type="button" class="t5-ok" onclick="mcsTestCode()">🔑 ٹیسٹ ایکٹیویشن کوڈ بنائیں</button><button type="button" class="t5-ok" style="background:#2563eb" onclick="mcsTestKeep()">💾 ٹیسٹ سے نکلیں — ٹیسٹ ڈیٹا محفوظ رکھیں</button><button type="button" class="t5-end" onclick="mcsTestEnd()">🗑️ ٹیسٹ سے نکلیں — ٹیسٹ ڈیٹا صاف کریں</button>'); };
   var css = '#t507Bar{position:fixed;top:calc(env(safe-area-inset-top,0px) + 2px);left:50%;transform:translateX(-50%);z-index:2147483646;background:repeating-linear-gradient(45deg,#facc15 0 12px,#fde047 12px 24px);color:#1f2937;font:800 12px/1 Arial,sans-serif;padding:5px 12px;border-radius:999px;border:2px solid #92400e;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;letter-spacing:.5px;white-space:nowrap}'
     + '#t507Play,#t507Sheet{position:fixed;inset:0;z-index:2147483647;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}'
@@ -4727,10 +4737,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE538";
+const APP_VERSION = "MCS1811WE539";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE539": "Test mode: nothing is sent to the Help Desk (a yellow test pop-up shows what would have been sent) — leaving test mode now leaves no trace anywhere",
   "MCS1811WE538": "Membership: only Google Play — no promo code and no «send details for verification» anywhere",
   "MCS1811WE537": "No more activation codes: the Activation Key box is gone; the business is activated for 1 year straight from our Help Desk by MCS ID — the owner gets a congratulations message and the business goes live",
   "MCS1811WE536": "Home header: the red role tag under your photo is removed (the yellow role name beside the photo already shows it)",
