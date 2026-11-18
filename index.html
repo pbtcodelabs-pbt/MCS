@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE518";
+const APP_VERSION = "MCS1811WE519";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE519": "Business form: a separate «Card photo (tall)» box — wide shop photo shows in details, tall photo on the card",
   "MCS1811WE518": "Ads now use only 4 smooth effects — Fade-In, Fade-Out, Slide Left, Slide Right (no more up/down moves)",
   "MCS1711TU517": "Shop photo: new «Card (tall)» size, and the matching size is chosen by itself so the whole photo fits",
   "MCS1711TU516": "Business cards: wider shop photo, bigger profile photo and bigger, clearer names and details",
@@ -5493,7 +5494,7 @@ function pfFieldsHtml(pre){
 }
 function pfFieldsFill(pre, prof, rec){
   const d = (prof && prof.data) || {};
-  pfEd[pre] = {imgs: Array.from({length:PF_MAX_IMGS}, ()=>null), del:{}, slot:0, thumb:(rec && rec.more && rec.more.selfie) || '', thumbChanged:false};
+  pfEd[pre] = {imgs: Array.from({length:PF_MAX_IMGS}, ()=>null), del:{}, slot:0, thumb:(rec && rec.more && rec.more.selfie) || '', thumbChanged:false, card:(rec && rec.more && rec.more.card) || '', cardChanged:false};
   (prof && prof.imgs || []).forEach(x=>{ const slot = +String(x.id).split('_').pop(); if(slot >= 0 && slot < PF_MAX_IMGS) pfEd[pre].imgs[slot] = {id:x.id, ts:x.ts, src:'', changed:false}; });
   const set = (id, v)=>{ const e = document.getElementById(pre + id); if(e) e.value = v || ''; };
   set('About', d.about); set('Hours', d.hours); set('Off', d.off); set('Ref', d.ref && d.ref !== 'PBT' ? refN(d.ref) : '');
@@ -5520,8 +5521,11 @@ function pfSlotsRender(pre){
   let saved = ''; try{ saved = localStorage.getItem('mcsSelfie') || ''; }catch(e){}
   box.innerHTML = L.map((l, i)=>{ const x = S.imgs[i];
     return `<div class="pf-s2"><div class="pf-slot ${l[2]}${x ? '' : ' empty'}" onclick="pfPickSlot('${pre}',${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot('${pre}',${i})">✖</i>` : `<span class="pf-plus">＋</span><em>${i === 1 ? 'سیلفی لگانے کے لیے ٹچ کریں' : 'دکان کی تصویر لگانے کے لیے ٹچ کریں'}</em>`}</div><b>${l[0]}</b><small>${l[1]}</small>`
-      + (i === 1 && !x && saved ? `<button type="button" class="pf-reuse" onclick="pfUseSavedSelfie('${pre}')">↩️ پہلے والی اپنی سیلفی لگائیں</button>` : '') + `</div>`; }).join('');
+      + (i === 1 && !x && saved ? `<button type="button" class="pf-reuse" onclick="pfUseSavedSelfie('${pre}')">↩️ پہلے والی اپنی سیلفی لگائیں</button>` : '') + `</div>`; }).join('')
+    /* MCS1811WE519 (مالک کا حکم): تیسرا خانہ — کارڈ کی دائیں لمبی جگہ کی اپنی تصویر (نہ لگائیں تو دکان والی) */
+    + `<div class="pf-s2 pf-card519"><div class="pf-slot card${S.card ? '' : ' empty'}" onclick="pfPickSlot('${pre}',2)">${S.card ? `<img src="${S.card}" alt=""><i onclick="event.stopPropagation();pfDelCard('${pre}')">✖</i>` : `<span class="pf-plus">＋</span><em>کارڈ کی لمبی تصویر</em>`}</div><b>📇 کارڈ کی تصویر (لمبی)</b><small>کارڈ کی دائیں لمبی جگہ — نہ لگائیں تو دکان والی تصویر</small></div>`;
 }
+function pfDelCard(pre){ const S = pfEd[pre]; if(!S) return; S.card = ''; S.cardChanged = true; pfSlotsRender(pre); }
 let pfPickPre = '';
 
 /* ===== MCS0711SA201 (مالک کا حکم): دکان کی چورس تصویر اور سیلفی — گیلری / کیمرہ، کاٹنا، روشنی، صفائی، گھمانا، زوم ===== */
@@ -5630,7 +5634,9 @@ async function phDone(){
     else{
       let d = out.toDataURL('image/jpeg', .8);
       for(const [sz, q] of [[1000,.7],[900,.62],[800,.55]]){ if(d.length <= 420000) break; const o2 = document.createElement('canvas'); o2.width = Math.round(out.width * sz / 1000); o2.height = Math.round(out.height * sz / 1000); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', q); }
-      const St = pfEd[pre]; if(!St) return; St.imgs[0] = {src:d, changed:true}; delete St.del[0]; try{ St.shopThumb = await pfShopThumb(d); St.shopThumbChanged = true; }catch(e){} pfSlotsRender(pre);
+      const St = pfEd[pre]; if(!St) return;
+      if(St.slot === 2){ const W = 300, H = Math.round(W * out.height / out.width), c2 = document.createElement('canvas'); c2.width = W; c2.height = H; c2.getContext('2d').drawImage(out, 0, 0, W, H); St.card = c2.toDataURL('image/jpeg', .75); St.cardChanged = true; St.slot = 0; pfSlotsRender(pre); showToast('✅ کارڈ کی تصویر لگ گئی'); return; }
+      St.imgs[0] = {src:d, changed:true}; delete St.del[0]; try{ St.shopThumb = await pfShopThumb(d); St.shopThumbChanged = true; }catch(e){} pfSlotsRender(pre);
     }
     showToast('✅ تصویر لگ گئی');
   }catch(e){ showToast('تصویر نہیں لگی — دوبارہ کوشش کریں'); }
@@ -5690,6 +5696,7 @@ async function pfSubmit(kind, rec, pre){
   if(!OWN_REF_RX.test(data.ref) && data.ref !== oldRef){ try{ fetch(AG_API + '/agref', {method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({code: data.ref, rk, name: rec.nameUr||rec.name||'', phone: rec.whatsapp||'', cat: (ubCatMeta(kind==='doctor' ? 'doctor' : rec.category)||{}).ur||'', city: rec.city||''})}).then(x=>x.json()).then(x=>{ if(x && x.ok === false && x.reason === 'bad_code') showToast('⚠️ ریفرل کوڈ «' + data.ref + '» نہیں ملا — درست کوڈ لکھیں یا خالی چھوڑیں', 5000); }).catch(()=>{}); }catch(e){} }
   if(pfAct[rk]) pfAct[rk].ts = j.ts; localStorage.setItem('mcsPfList', JSON.stringify(pfAct));
   try{ const S = pfEd[pre]; if(S && S.thumbChanged){ rec.more = rec.more || {}; if(S.thumb) rec.more.selfie = S.thumb; else delete rec.more.selfie; S.thumbChanged = false; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); } }catch(e){}   /* MCS0711SA194 */
+  try{ const S = pfEd[pre]; if(S && S.cardChanged){ rec.more = rec.more || {}; if(S.card) rec.more.card = S.card; else delete rec.more.card; S.cardChanged = false; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); } }catch(e){}   /* MCS1811WE519 */
   try{ const S = pfEd[pre]; if(S && S.shopThumbChanged){ rec.more = rec.more || {}; if(S.shopThumb) rec.more.shop = S.shopThumb; else delete rec.more.shop; S.shopThumbChanged = false; saveStore(); pushMoreToFirebase(kind === 'doctor' ? 'doctors' : 'services', rec.fsId || rec.id, rec.more); } }catch(e){}   /* MCS1411SA402: کارڈ پر دکان کی تصویر */
   return {ok:true};
 }
@@ -24918,7 +24925,7 @@ html body .doc-card.rc .rc-l .ag-corner{position:static !important;left:auto !im
     const rid = shortRecordId(kind, s) || '';
     const mine = ((isAdminSignedIn || (typeof isDevDevice === 'function' && isDevDevice() && !window.__noAdmBtn)) || pfOwnsStrict(s));
     const nameUr = s.nameUr || s.name || '';
-    const thumb = m.shop || TH[key] || '';
+    const thumb = m.card || m.shop || TH[key] || '';   /* MCS1811WE519: کارڈ کی اپنی لمبی تصویر پہلے */
     if(!thumb) want(kind, s, key);
     const subL = doc ? [s.specialty, s.hospital].filter(Boolean).map(E).join(' • ') : '';
     const typ = doc ? '' : (isBlankVal(s.type) ? '' : s.type);
@@ -26843,12 +26850,14 @@ html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:3
   html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:27px !important;height:27px !important;min-width:27px !important;font-size:12px !important}
 }
 </style>
-<style>#phCropModal #phCv{max-height:50vh !important;width:auto !important;max-width:100% !important;aspect-ratio:auto !important}</style>
+<style>.pf-card519{grid-column:1/-1;max-width:170px;margin:6px auto 0}.pf-card519 .pf-slot.card{aspect-ratio:.42 !important;height:auto !important;width:110px !important;margin:0 auto}.pf-card519 .pf-slot.card img{width:100%;height:100%;object-fit:cover}
+#phCropModal #phCv{max-height:50vh !important;width:auto !important;max-width:100% !important;aspect-ratio:auto !important}</style>
 <script id="mcsPh517">
 /* MCS1711TU517 (مالک کا حکم): دکان کی تصویر — «▯ کارڈ (لمبی)» سائز (کارڈ کی دائیں والی لمبوتری جگہ)، اور تصویر کھلتے ہی اسی کے اپنے ناپ کا سائز خود چنا + پوری تصویر فریم میں (نہ باہر نکلے، نہ اوپر نیچے خالی) */
 (function(){ const o = window.phOpen; if(typeof o !== 'function') return;
   window.phOpen = phOpen = function(c, mode){ const r = o.apply(this, arguments);
     try{ if(mode !== 'selfie' && c && c.width && c.height){ const ar = c.width / c.height, L = [16/9, 4/3, 1, 0.42]; let best = 0, d = 9; L.forEach(x => { const e = Math.abs(Math.log(ar / x)); if(e < d){ d = e; best = x; } });
+      try{ const St = pfEd[pfPickPre]; if(St && St.slot === 2){ best = 0.42; d = 0; } }catch(e){}   /* MCS1811WE519: کارڈ والا خانہ = ہمیشہ لمبی */
       if(d < 0.12){ setTimeout(() => { try{ phSetAr(best); phFit(); }catch(e){} }, 60); } } }catch(e){}
     return r; };
 })();
