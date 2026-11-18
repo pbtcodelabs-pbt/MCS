@@ -4761,10 +4761,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE545";
+const APP_VERSION = "MCS1811WE546";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE546": "Updates now install even while the login screen is open • agent login no longer hangs on weak internet",
   "MCS1811WE545": "Login: no more jumping up/down • correct PIN + Enter goes in at once • the app checks for updates every 3 minutes",
   "MCS1811WE544": "Home: the prayer times strip is removed",
   "MCS1811WE543": "Login: a phone with an MCS ID opens on Registered User (MCS ID + PIN) • «New? Create account» on the User login • no test-mode label",
@@ -17085,7 +17086,9 @@ if('serviceWorker' in navigator){
     if(document.querySelector('.modal-overlay.active')){ updSyncShield(); setTimeout(reloadWhenSafe, 2000); return; }
     /* MCS1711TU509: خاموش اپڈیٹ — کچھ لکھ رہے ہوں یا ابھی ابھی اسکرین چھوئی ہو تو رکیں؛ ایپ پیچھے جائے تو فوراً */
     try{ const ae = document.activeElement, typing = ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName), busy = Date.now() - (window.__u509touch || 0) < 8000;
-      if(document.visibilityState === 'visible' && (typing || busy || document.querySelector('#wzOv,.wz-on #wzW,#uaOv.on'))){ setTimeout(reloadWhenSafe, 2000); return; } }catch(e){}
+      /* MCS1811WE546 (مالک: «اپڈیٹ کی پٹی چلتی رہتی ہے، اپڈیٹ نہیں لگتی»): لاگ اِن صفحہ کھلا ہو مگر کچھ لکھا نہ ہو تو اپڈیٹ فوراً لگ جائے */
+      const lgTyped = [...document.querySelectorAll('#uaOv.on input')].some(i => i.type !== 'hidden' && String(i.value || '').trim());
+      if(document.visibilityState === 'visible' && (typing || lgTyped || (busy && !document.querySelector('#uaOv.on')) || document.querySelector('#wzOv,.wz-on #wzW'))){ setTimeout(reloadWhenSafe, 2000); return; } }catch(e){}
     swReloading = true;
     location.reload();
   }
@@ -17375,8 +17378,9 @@ body.d2 #homeAds .ad-ribbon{display:none}
   Object.assign(ERR, { yob:'Write your year of birth — 4 digits, e.g. 1985', nomatch:'Mobile number or year of birth does not match', noyob:'No year of birth on this account yet — log in once with «Continue with Google», then set your PIN and year of birth', old:'Current PIN (or year of birth) is wrong' });
   window.uaYobVal = function(el){ const y = String((el && el.value) || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, ''); const n = +y, cy = new Date().getFullYear(); return y.length === 4 && n >= 1920 && n <= cy - 8 ? y : ''; };
   async function api(body){
-    try{ const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ dev: (typeof agDev === 'function' ? agDev() : '') }, body)) }); return await r.json(); }
-    catch(e){ return { ok:false, reason:'net' }; }
+    const ac = (typeof AbortController === 'function') ? new AbortController() : null, tm = ac ? setTimeout(() => ac.abort(), 15000) : 0;   /* MCS1811WE546: کمزور نیٹ پر لاگ اِن ہمیشہ کھڑا نہ رہے — 15 سیکنڈ بعد «نیٹ» کا پیغام */
+    try{ const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(Object.assign({ dev: (typeof agDev === 'function' ? agDev() : '') }, body)), signal: ac ? ac.signal : undefined }); return await r.json(); }
+    catch(e){ return { ok:false, reason:'net' }; } finally { clearTimeout(tm); }
   }
   /* MCS1211TH363: کاروبار ایڈٹ — مالک کا اپنا MCS لاگ اِن PIN سرور سے جانچنا (لاگ اِن بدلے بغیر) */
   window.uaCheckPin = async function(pin){
@@ -18348,7 +18352,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   }
   async function lgAgentSignIn(d10, pin){
     const mob = '0' + d10.slice(-10);
-    const post = async (path, body) => { try{ return await (await fetch(AG_API + path, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(body) })).json(); }catch(e){ return null; } };
+    const post = async (path, body) => { const ac = (typeof AbortController === 'function') ? new AbortController() : null, tm = ac ? setTimeout(() => ac.abort(), 12000) : 0; try{ return await (await fetch(AG_API + path, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(body), signal: ac ? ac.signal : undefined })).json(); }catch(e){ return null; } finally { clearTimeout(tm); } };   /* MCS1811WE546: کمزور نیٹ پر لاگ اِن ہمیشہ کھڑا نہ رہے */
     const fin = (name, extra) => { uaClearOthers('agent'); ls.set('mcsAgent', JSON.stringify(Object.assign({ phone: '92' + d10.slice(-10), name, pin, at: Date.now() }, extra || {}))); try{ localStorage.setItem('mcsLastAgMob', mob); }catch(e){} uaRoleDone('agent', name); return true; };
     try{ const op = JSON.parse(ls.get('mcsAgOwnPin') || 'null'); if(op && mob11(op.p) === mob11(d10) && op.h === fnv('agpin:' + op.p + ':' + pin)){ const g0 = await post('/agstatus', { phone: d10, dev: agDev() }); if(g0 && g0.ok && g0.status === 'approved') return fin(g0.name, { code: g0.code }); } }catch(e){}
     const g = await post('/agstatus', { phone: d10, pin, dev: agDev() });
