@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE530";
+const APP_VERSION = "MCS1811WE531";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE531": "Card editor (🔤 on each card): text size/font only for that card; background and border colour for all cards alike",
   "MCS1811WE530": "Cleaner home header (Help Desk #283): big city name, ID and role on the right, plain dates and time — no boxes",
   "MCS1811WE529": "Admin Portal: new first tab «🛠️ Tools» — edit any business page, card text, test mode, ads",
   "MCS1811WE528": "Admin 1 «🎨 Design» on any business page — background, name colour, Urdu font, sizes and edit the text right on the page (no form)",
@@ -13510,7 +13511,7 @@ function ptOpen(editProf, prev){
     const pend = (typeof pendingApprovals !== 'undefined' && pendingApprovals.length) || '', pfn = ((document.getElementById('pfPendN')||{}).textContent || '').replace(/\D/g,'');
     const tab = (ptDevTab === 'cod' ? 'day' : ptDevTab), tabs = [['tools','🛠️','ٹولز'],['day','📥','روزانہ'],['biz','🏪','بزنس / ایجنٹ'],['rep','📣','رپورٹ'],['more','🧰','مزید']];   /* MCS1811WE529: Admin 1 tools سب سے پہلے */
     const G = {
-      tools: [['🎨','کسی بھی کاروبار کا صفحہ','تلاش ← 🎨 Design / ایڈٹ','abeOpen'],['🔤','کارڈ کی لکھائی','سب کارڈ — فونٹ اور سائز','cuOpen'],['🧪','ٹیسٹ موڈ','نئے گاہک کی طرح آزمائیں','mxTestGo'],['📢','اشتہار','✏️ ہر اشتہار پر ایڈیٹر','adOpenAdmin']],
+      tools: [['🎨','کسی بھی کاروبار کا صفحہ','تلاش ← 🎨 Design / ایڈٹ','abeOpen'],['🔤','کارڈ کی لکھائی','کاروبار چنیں ← اس کے کارڈ پر 🔤','cuOpen'],['🧪','ٹیسٹ موڈ','نئے گاہک کی طرح آزمائیں','mxTestGo'],['📢','اشتہار','✏️ ہر اشتہار پر ایڈیٹر','adOpenAdmin']],
       day: [['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['❓','غیر مختص','کیٹگری بدلیں','unOpen'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
       biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen']],
       cod: [['👥','ایڈمنز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','ایڈمن پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
@@ -21383,7 +21384,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     }
     if(sf(ptRole, rl) === 'dev' && typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){   /* MCS1811WE526 (مالک کا حکم): Admin 1 کے اوزار یہیں — 7 ٹیپ / پاس ورڈ نہیں */
       h += '<div class="mx-sec pl">🛠️ Admin 1 tools</div><div class="mx-card mx-list">'
-        + row('🔤', 'Card text editor', ID, 'cuOpen', 'c1', 'سب کارڈوں کا فونٹ اور سائز')
+        + row('🔤', 'Card text editor', ID, 'cuOpen', 'c1', 'ہر کارڈ پر 🔤 — صرف وہی کارڈ')
         + row('🏪', 'Edit any business', ID, 'abeOpen', 'c1', 'کسی بھی کاروبار کی پوری پروفائل ایڈٹ کریں')
         + row('🧪', 'Test mode', ID, 'mxTestGo', 'c2', 'نئے گاہک کی طرح پورا عمل آزمائیں')
         + row('⚙️', 'Admin panel', ID, 'openDevPanel', 'c3', 'ایڈمن کے باقی سب کام')
@@ -26897,52 +26898,65 @@ html body .doc-card.rc .rc-ph{border-radius:14px !important;overflow:hidden}.pf1
 .mx-role.ag{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fde047;border:2px solid #fbbf24}.mx-role.rm{background:linear-gradient(180deg,#0d9488,#0f766e)}.mx-role.us{background:#e2e8f0;color:#334155;box-shadow:none}
 </style>
 <script id="mcsCardUi524">
-/* MCS1811WE524 (مالک کا حکم): «🔤 کارڈ کی لکھائی» — سب رجسٹرڈ کارڈوں کا ایک ہی انداز، سائز صرف Admin 1 (ڈویلپر پینل)؛ appConfig/cardui → سب کے فون پر۔
-   چھوٹے فون پر سائز خود چھوٹا (412px کے حساب سے) تاکہ کچھ نہ کٹے */
+/* MCS1811WE531 (مالک کا حکم): «🔤 کارڈ کی لکھائی» اب صرف اسی کارڈ پر جس پر کام ہو (rec.more.cs) — سب کارڈوں پر ایک ساتھ والا انداز ختم (appConfig/cardui اب نہیں پڑھا جاتا)۔
+   ہر رجسٹرڈ کارڈ پر صرف Admin 1 کو 🔤 بٹن؛ اوپر وہی کارڈ، نیچے سلائیڈیں + دو اردو فونٹ */
 (function(){
-  const DEF = { nm: 21, ty: 14.5, ad: 13.5, fo: 'kash' }, K = 'mcsCardUi';
-  const FO = { kash: "'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif", noori: "'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif" };   /* MCS1811WE525: صرف دو اردو فونٹ */
-  let C = Object.assign({}, DEF); try{ Object.assign(C, JSON.parse(localStorage.getItem(K) || '{}')); }catch(e){}
+  const DEF = { nm: 21, ty: 14.5, ad: 13.5, fo: 'kash' };
+  const FO = { kash: "'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif", noori: "'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif" };
+  try{ localStorage.removeItem('mcsCardUi'); }catch(e){}
   const f = v => `min(${v}px, calc(${v} / 412 * 100vw))`;
-  function apply(x){ x = x || C; let st = document.getElementById('mcsCardUiCss'); if(!st){ st = document.createElement('style'); st.id = 'mcsCardUiCss'; document.head.appendChild(st); }
-    const ff = `font-family:${FO[x.fo] || FO.kash} !important;`;
-    st.textContent = `html body .doc-card.rc.rc.rc .rc-name,html body .doc-card.rc.rc.rc .rc-ty,html body .doc-card.rc.rc.rc .rc-ad{${ff}}
-html body .doc-card.rc.rc.rc .rc-name{font-size:${f(x.nm)} !important;line-height:1.75 !important}
-html body .doc-card.rc.rc.rc .rc-ty{font-size:${f(x.ty)} !important;line-height:1.7 !important}
-html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:1.7 !important}`; }
-  apply();
-  function listen(){ const FB = window.MCSFirebase; if(!FB || !FB.onSnapshot) return;
-    try{ FB.onSnapshot(FB.doc(FB.db, 'appConfig', 'cardui'), sn => { try{ const d = sn.exists() ? sn.data() : null; if(d && d.nm){ C = { nm: +d.nm, ty: +d.ty, ad: +d.ad, fo: d.fo === 'noori' ? 'noori' : 'kash' }; try{ localStorage.setItem(K, JSON.stringify(C)); }catch(e){} if(!D) apply(); } }catch(e){} }, () => {}); }catch(e){} }
-  if(window.MCSFirebase) listen(); else window.addEventListener('mcs-firebase-ready', listen, { once: true });
-  let D = null;
   const adm = () => { try{ return typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && !(typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } };
-  function sample(){ try{ const L = (store.services || []).filter(r => r && r.mcsLive && r.approved); const r = L.find(x => /3206793793/.test(String(x.whatsapp || ''))) || L[0];
-      if(r) return svcCardHtml(r); }catch(e){}
-    return '<div style="padding:16px;text-align:center;color:#64748b">— کوئی رجسٹرڈ کارڈ نہیں —</div>'; }
-  function row(k, lab, mn, mx){ return `<div class="cu-row"><label>${lab}<i id="cuv_${k}">${D[k]}px</i></label><input type="range" min="${mn}" max="${mx}" step="0.5" value="${D[k]}" oninput="cuSet('${k}',+this.value)"></div>`; }
-  window.cuSet = function(k, v){ if(!D) return; D[k] = v; const l = document.getElementById('cuv_' + k); if(l) l.textContent = v + 'px'; apply(D); };
-  window.cuOpen = function(){
+  function rules(rk, x){ const S = `html body .doc-card.rc.rc.rc[data-rk="${String(rk).replace(/"/g, '')}"]`, ff = x.fo && FO[x.fo] ? `font-family:${FO[x.fo]} !important;` : '';
+    return `${S} .rc-name{${ff}${x.nm ? `font-size:${f(x.nm)} !important;line-height:1.75 !important;` : ''}}
+${S} .rc-ty{${ff}${x.ty ? `font-size:${f(x.ty)} !important;line-height:1.7 !important;` : ''}}
+${S} .rc-ad{${ff}${x.ad ? `font-size:${f(x.ad)} !important;line-height:1.7 !important;` : ''}}`; }
+  /* MCS1811WE531: پس منظر / بارڈر کا رنگ — سب کارڈوں پر یکساں (appConfig/cardui.bg / .br) */
+  const BG = ['', '#e7eeff', '#ecfdf5', '#fef9c3', '#fff7ed', '#fce7f3', '#f3e8ff', '#e0f2fe', '#f1f5f9'], BR = ['', '#3b5bdb', '#0f766e', '#16a34a', '#d97706', '#dc2626', '#7c3aed', '#db2777', '#111827'];
+  let G = { bg: '', br: '' }; try{ Object.assign(G, JSON.parse(localStorage.getItem('mcsCardG') || '{}')); }catch(e){}
+  function gRules(g){ const S = 'html body .doc-card.rc.rc.rc', R = [];
+    if(g.bg) R.push(`${S}{background:linear-gradient(160deg,${g.bg} 0%,#ffffff 48%,${g.bg} 100%) !important}${S} .rc-l{background:linear-gradient(180deg,${g.bg},#ffffff) !important}`);
+    if(g.br) R.push(`${S},${S}.pf-gold,${S}[class]{border-color:${g.br} !important;box-shadow:0 4px 14px ${g.br}33 !important}${S} .rc-ph{border-color:${g.br} !important}`);
+    return R.join('\n'); }
+  function gListen(){ const FB = window.MCSFirebase; if(!FB || !FB.onSnapshot) return; try{ FB.onSnapshot(FB.doc(FB.db, 'appConfig', 'cardui'), sn => { try{ const d = sn.exists() ? sn.data() : {}; G = { bg: d.bg || '', br: d.br || '' }; try{ localStorage.setItem('mcsCardG', JSON.stringify(G)); }catch(e){} sig = ''; build(); }catch(e){} }, () => {}); }catch(e){} }
+  if(window.MCSFirebase) setTimeout(gListen, 0); else window.addEventListener('mcs-firebase-ready', gListen, { once: true });
+  let D = null, sig = '';
+  function build(){ try{ const L = []; [['service', store.services], ['doctor', store.doctors]].forEach(([k, a]) => (a || []).forEach(r => { const cs = r && r.more && r.more.cs; if(cs) L.push([pfKeyOf(r, k), cs]); }));
+      if(D) L.push([D.rk, D.v]); const t = gRules(D ? D.g : G) + '\n' + L.map(([rk, x]) => rules(rk, x)).join('\n'); if(t === sig) return; sig = t;
+      let st = document.getElementById('mcsCardUiCss'); if(!st){ st = document.createElement('style'); st.id = 'mcsCardUiCss'; document.head.appendChild(st); } st.textContent = t; }catch(e){} }
+  setTimeout(build, 800); setInterval(() => { if(!document.hidden) build(); }, 4000);
+  /* ہر رجسٹرڈ کارڈ پر 🔤 (صرف Admin 1) */
+  [['svcCardHtml', 'service'], ['docCardHtml', 'doctor']].forEach(([fn, kind]) => { const o = window[fn]; if(typeof o !== 'function') return;
+    const w = function(rec){ let h = o.apply(this, arguments); try{ if(adm() && rec && rec.id && h.indexOf('class="doc-card rc') >= 0){ const i = h.indexOf('class="rc-m">'); if(i >= 0){ const j = i + 'class="rc-m">'.length; h = h.slice(0, j) + `<button type="button" class="cu-one" onclick="event.stopPropagation();cuOpen('${kind}','${String(rec.id).replace(/'/g, '')}')" aria-label="Card text">🔤</button>` + h.slice(j); } } }catch(e){} return h; };
+    try{ window[fn] = w; eval(fn + ' = w'); }catch(e){ window[fn] = w; } });
+  function row(k, lab, mn, mx){ return `<div class="cu-row"><label>${lab}<i id="cuv_${k}">${D.v[k]}px</i></label><input type="range" min="${mn}" max="${mx}" step="0.5" value="${D.v[k]}" oninput="cuSet('${k}',+this.value)"></div>`; }
+  function pv(){ const b = document.querySelector('#cuSheet .cu-pv'); if(!b || !D) return; try{ b.innerHTML = D.kind === 'doctor' ? docCardHtml(D.rec, 'list') : svcCardHtml(D.rec); }catch(e){} }
+  window.cuSet = function(k, v){ if(!D) return; D.v[k] = v; const l = document.getElementById('cuv_' + k); if(l) l.textContent = v + 'px'; build(); };
+  window.cuFont = function(v){ if(!D) return; D.v.fo = v; document.querySelectorAll('#cuSheet .cu-fo button').forEach(b => b.classList.toggle('on', b.dataset.fo === v)); build(); };
+  window.cuOpen = function(kind, id){
     if(!adm()){ try{ showToast('🔒 Admin 1 only'); }catch(e){} return; }
-    D = Object.assign({}, C);
+    if(!id){ try{ abeOpen(); showToast('🔤 کاروبار چنیں، پھر اس کے کارڈ پر 🔤 دبائیں', 4000); }catch(e){} return; }
+    const rec = kind === 'doctor' ? (store.doctors || []).find(x => x.id === id) : (store.services || []).find(x => x.id === id); if(!rec) return;
+    D = { kind, rec, rk: pfKeyOf(rec, kind), v: Object.assign({}, DEF, (rec.more && rec.more.cs) || {}), g: Object.assign({}, G) };
     let o = document.getElementById('cuSheet'); if(o) o.remove(); o = document.createElement('div'); o.id = 'cuSheet'; o.setAttribute('data-noen', '1');
-    o.innerHTML = `<div class="cu-box"><div class="cu-hd"><b>🔤 Card text — all cards</b><button type="button" class="cu-x" onclick="cuClose(false)">✖</button></div>
-      <div class="cu-pv">${sample()}</div>
-      <div class="cu-ct"><div class="cu-row"><label>Urdu font</label><div class="cu-fo"><button type="button" data-fo="kash" class="${D.fo !== 'noori' ? 'on' : ''}" style="font-family:${FO.kash}" onclick="cuFont('kash')">نوری نستعلیق کشیدہ</button><button type="button" data-fo="noori" class="${D.fo === 'noori' ? 'on' : ''}" style="font-family:${FO.noori}" onclick="cuFont('noori')">نوری نستعلیق</button></div></div>${row('nm', 'اردو نام — Name', 14, 30)}${row('ty', 'قسم / کام — Type', 10, 20)}${row('ad', 'پتہ — Address', 10, 18)}
-      <div class="cu-btns"><button type="button" class="cu-rs" onclick="cuReset()">↺ Default</button><button type="button" class="cu-sv" onclick="cuClose(true)">💾 Save — all phones</button></div></div></div>`;
-    document.body.appendChild(o); try{ closeModal('devPanelModal'); }catch(e){}
+    o.innerHTML = `<div class="cu-box"><div class="cu-hd"><b>🔤 This card only</b><button type="button" class="cu-x" onclick="cuClose(false)">✖</button></div>
+      <div class="cu-pv"></div>
+      <div class="cu-ct"><div class="cu-row"><label>Urdu font</label><div class="cu-fo"><button type="button" data-fo="kash" class="${D.v.fo !== 'noori' ? 'on' : ''}" style="font-family:${FO.kash}" onclick="cuFont('kash')">نوری نستعلیق کشیدہ</button><button type="button" data-fo="noori" class="${D.v.fo === 'noori' ? 'on' : ''}" style="font-family:${FO.noori}" onclick="cuFont('noori')">نوری نستعلیق</button></div></div>
+      ${row('nm', 'اردو نام — Name', 14, 30)}${row('ty', 'قسم / کام — Type', 10, 20)}${row('ad', 'پتہ — Address', 10, 18)}
+      <div class="cu-row"><label>🎨 Background — ALL cards</label><div class="cu-sw">${BG.map(c => `<button type="button" data-k="bg" data-c="${c}" class="${D.g.bg === c ? 'on' : ''}" style="background:${c || '#fff'}" onclick="cuG('bg','${c}')">${c ? '' : '↺'}</button>`).join('')}</div></div>
+      <div class="cu-row"><label>🖼️ Border — ALL cards</label><div class="cu-sw">${BR.map(c => `<button type="button" data-k="br" data-c="${c}" class="${D.g.br === c ? 'on' : ''}" style="background:${c || '#fff'}" onclick="cuG('br','${c}')">${c ? '' : '↺'}</button>`).join('')}</div></div>
+      <div class="cu-btns"><button type="button" class="cu-rs" onclick="cuReset()">↺ Default</button><button type="button" class="cu-sv" onclick="cuClose(true)">💾 Save this card</button></div></div></div>`;
+    document.body.appendChild(o); pv(); build();
   };
-  window.cuFont = function(v){ if(!D) return; D.fo = v; document.querySelectorAll('#cuSheet .cu-fo button').forEach(b => b.classList.toggle('on', b.dataset.fo === v)); apply(D); };
-  window.cuReset = function(){ if(!D) return; D = Object.assign({}, DEF); document.querySelectorAll('#cuSheet .cu-fo button').forEach(b => b.classList.toggle('on', b.dataset.fo === D.fo)); ['nm', 'ty', 'ad'].forEach(k => { const i = document.querySelector(`#cuSheet input[oninput*="'${k}'"]`); if(i) i.value = D[k]; const l = document.getElementById('cuv_' + k); if(l) l.textContent = D[k] + 'px'; }); apply(D); };
+  window.cuG = function(k, c){ if(!D) return; D.g[k] = c; D.gCh = true; document.querySelectorAll(`#cuSheet .cu-sw button[data-k="${k}"]`).forEach(b => b.classList.toggle('on', b.dataset.c === c)); build(); };
+  window.cuReset = function(){ if(!D) return; D.v = Object.assign({}, DEF); D.reset = true; document.querySelectorAll('#cuSheet .cu-fo button').forEach(b => b.classList.toggle('on', b.dataset.fo === D.v.fo)); ['nm', 'ty', 'ad'].forEach(k => { const i = document.querySelector(`#cuSheet input[oninput*="'${k}'"]`); if(i) i.value = D.v[k]; const l = document.getElementById('cuv_' + k); if(l) l.textContent = D.v[k] + 'px'; }); build(); };
   window.cuClose = function(save){ const d = D; D = null; const o = document.getElementById('cuSheet'); if(o) o.remove();
-    if(save && d){ C = d; try{ localStorage.setItem(K, JSON.stringify(C)); }catch(e){} apply(C); const FB = window.MCSFirebase;
-      if(FB && FB.setDoc) FB.setDoc(FB.doc(FB.db, 'appConfig', 'cardui'), { nm: C.nm, ty: C.ty, ad: C.ad, fo: C.fo || 'kash', ts: Date.now() }, { merge: true }).then(() => showToast('✅ Saved — all phones')).catch(() => alert('⚠️ Not saved on server — check internet / admin login'));
-    } else apply(C); };
-  /* ڈویلپر پینل میں ڈبہ */
-  function add(){ const body = document.getElementById('devPanelBody'); if(!body || document.getElementById('cuCard')) return;
-    const c = document.createElement('div'); c.id = 'cuCard'; c.style.cssText = 'border:3px solid #3b5bdb;background:#eef2ff;border-radius:14px;padding:10px;margin:8px 0';
-    c.innerHTML = '<b>🔤 Card text</b><div style="font-size:13px;margin:4px 0">Make the name, type and address on all registered cards bigger or smaller — one style for everyone.</div><button type="button" class="btn block" style="background:#3b5bdb" onclick="cuOpen()">🔤 Open card text editor</button>';
-    const t = document.getElementById('t507Card'); if(t && t.nextSibling) body.insertBefore(c, t.nextSibling); else body.insertBefore(c, body.firstChild); }
-  const _o = window.openDevPanel; if(typeof _o === 'function') window.openDevPanel = openDevPanel = function(){ const r = _o.apply(this, arguments); try{ add(); }catch(e){} return r; };
+    if(save && d){ const r = d.rec; r.more = r.more || {}; const same = ['nm', 'ty', 'ad', 'fo'].every(k => d.v[k] === DEF[k]);
+      if(same) delete r.more.cs; else r.more.cs = { nm: d.v.nm, ty: d.v.ty, ad: d.v.ad, fo: d.v.fo };
+      try{ saveStore(); }catch(e){} try{ pushMoreToFirebase(d.kind === 'doctor' ? 'doctors' : 'services', r.fsId || r.id, r.more); showToast('✅ Saved — all phones'); }catch(e){ showToast('⚠️ not saved'); }
+      if(d.gCh){ G = Object.assign({}, d.g); try{ localStorage.setItem('mcsCardG', JSON.stringify(G)); }catch(e){} const FB = window.MCSFirebase; if(FB && FB.setDoc) FB.setDoc(FB.doc(FB.db, 'appConfig', 'cardui'), { bg: G.bg || '', br: G.br || '', ts: Date.now() }, { merge: true }).catch(() => alert('⚠️ Colours not saved on server')); } }
+    sig = ''; build(); };
+  /* ڈویلپر پینل کا پرانا «سب کارڈ» ڈبہ ہٹا */
+  try{ const c = document.getElementById('cuCard'); if(c) c.remove(); }catch(e){}
 })();
 </script>
 <style id="mcsCardUi524css">
@@ -26959,6 +26973,9 @@ html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:
 #cuSheet input[type=range]{width:100%;height:30px;accent-color:#3b5bdb}
 #cuSheet .cu-btns{display:flex;gap:8px;margin-top:6px}#cuSheet .cu-btns button{flex:1;border:0;border-radius:12px;padding:12px;font-weight:900;font-size:14px}
 #cuSheet .cu-fo{display:flex;gap:8px;margin-top:4px}#cuSheet .cu-fo button{flex:1;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:6px 8px;font-size:18px;line-height:1.9}#cuSheet .cu-fo button.on{border-color:#3b5bdb;background:#eef2ff;box-shadow:0 0 0 2px #c7d2fe}
+html body .doc-card.rc .rc-m{position:relative}html body .doc-card.rc .rc-m>button.cu-one{position:absolute;top:2px;left:0;z-index:3;width:26px;height:26px;border-radius:8px;border:1.5px solid #3b5bdb;background:#eef2ff;color:#3b5bdb;font-size:13px;padding:0;line-height:1}
+#cuSheet .cu-sw{display:flex;flex-wrap:wrap;gap:6px}#cuSheet .cu-sw button{width:32px;height:32px;border-radius:50%;border:2px solid #cbd5e1;padding:0;font-size:13px}#cuSheet .cu-sw button.on{border-color:#3b5bdb;box-shadow:0 0 0 3px #c7d2fe}
+#cuSheet .cu-ct{max-height:52vh;overflow-y:auto}
 #cuSheet .cu-rs{background:#fee2e2;color:#b91c1c}#cuSheet .cu-sv{background:#16a34a;color:#fff}
 </style>
 <script id="mcsAdmTools526">
