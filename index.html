@@ -20,7 +20,7 @@
   if(!on) return;
 
   /* ---------- 1) فون کا الگ خانہ ---------- */
-  var RAW = {}; RAW[FLAG] = 1; RAW.mcsTEST507at = 1; RAW.pbt_devpass_v1 = 1; RAW.mcsUpdOwner = 1;
+  var RAW = {}; RAW[FLAG] = 1; RAW.mcsTEST507at = 1; RAW.pbt_devpass_v1 = 1; RAW.mcsUpdOwner = 1; RAW.mcsT540ttk = 1;
   var LS = localStorage, SS = sessionStorage, mem = {}, bigDirty = {}, bigT = 0;
   function pk(k){ k = String(k); return RAW[k] ? k : P + k; }
   function own(s){ var out = [], n = lenD.get.call(s); for(var i = 0; i < n; i++){ var k = rKey.call(s, i); if(k && k.indexOf(P) === 0) out.push(k.slice(P.length)); } return out; }
@@ -235,12 +235,36 @@
   };
   window.mcsTestEnd = function(){
     if(!confirm('🗑️ ٹیسٹ ختم کریں؟\n\nٹیسٹ کا سب کچھ (اکاؤنٹ، کاروبار، کوڈ، کارڈ، تصویریں) اس فون سے مٹ جائے گا اور ایپ اصل حالت میں کھلے گی — آپ کا اصل لاگ اِن اور کاروبار ویسے ہی۔')) return;
+    try{ if(TTK) tPost({ op: 'wipe' }).catch(function(){}); rRem.call(LS, 'mcsT540ttk'); }catch(e){}   /* MCS1811WE541: سرور کا ٹیسٹ خانہ بھی صاف */
     window.__t507end = 1; var L = []; try{ L = JSON.parse(rGet.call(LS, 'mcsT~__idb') || '[]'); }catch(e){}
     [LS, SS].forEach(function(s){ var n = lenD.get.call(s), ks = []; for(var i = 0; i < n; i++){ var k = rKey.call(s, i); if(k && (k.indexOf(P) === 0 || k.indexOf('B' + P) === 0 || k === 'mcsT507boot')) ks.push(k); } ks.forEach(function(k){ rRem.call(s, k); }); });
     L.concat(['mcsTestBig507']).forEach(function(n){ try{ rDel.call(indexedDB, n); }catch(e){} });
     try{ rRem.call(LS, FLAG); rRem.call(LS, 'mcsTEST507at'); rSet.call(LS, 'mcsTEST507clean', '1'); }catch(e){}
     location.replace(location.pathname + '?t507end=' + Date.now());
   };
+  /* ---------- MCS1811WE541 (مالک کا حکم): ٹیسٹ اکاؤنٹ ہیلپ ڈیسک میں (🧪) — سرور کا الگ ٹیسٹ خانہ `/mcstest` (چابی `mcsT540ttk`، صرف ایڈمن سے ملی)؛
+     ہر 20 سیکنڈ ٹیسٹ اکاؤنٹ / کاروبار اوپر، اور ہیلپ ڈیسک سے «ایک سال ایکٹیو» ہوتے ہی یہیں نقلی سرور میں لاگو (مبارکباد / لائیو اسی طرح)؛ ٹیسٹ ختم = سرور سے بھی صاف ---------- */
+  var TTK = ''; try{ TTK = rGet.call(LS, 'mcsT540ttk') || ''; }catch(e){}
+  var TAPI = 'https://' + W + '/mcstest';
+  function tPost(o){ return rFetch.call(window, TAPI, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(Object.assign({ ttk: TTK }, o)), keepalive: o.op === 'wipe' }); }
+  function tSync(){
+    if(!TTK || window.__t507end) return; var S = srv(), items = [];
+    Object.keys(S.u).forEach(function(id){ var u = S.u[id], sd = String(sidOf(u.mobile) || '').replace(/-/g, ''); if(!sd) return;
+      var rec = Object.keys(S.prof).filter(function(k){ return recMob(k) === u.mobile; })[0] || '', reg = { owner: u.name || '' };
+      try{ var m10 = String(u.mobile).slice(-10), L = (typeof store !== 'undefined' && store && store.services) || [], r = L.filter(function(x){ return x && String(x.whatsapp || '').replace(/\D/g, '').slice(-10) === m10; })[0];
+        if(r){ reg.biz = r.nameEn || r.name || r.nameUr || ''; reg.cat = r.category || ''; reg.addr = r.address || ''; reg.city = r.city || r.district || ''; } }catch(e){}
+      items.push({ sid: sd, name: u.name || '', mobile: '0' + String(u.mobile).slice(2), rec: rec, reg: reg }); });
+    if(items.length) tPost({ op: 'put', items: items }).catch(function(){});
+    tPost({ op: 'status' }).then(function(r){ return r.json(); }).then(function(j){
+      if(!j || !j.ok) return; var ch = false, now = Date.now();
+      (j.list || []).forEach(function(x){ if(!(x.until > now)) return;
+        var rec = x.rec || Object.keys(S.prof).filter(function(k){ return String(sidOf(recMob(k)) || '').replace(/-/g, '') === x.sid; })[0];
+        var r = rec && S.prof[rec]; if(!r || (r.until || 0) >= x.until) return;
+        r.until = x.until; r.kind = r.kind || 'code'; if(!r.subid) r.subid = x.sid + 'M1'; ch = true; });
+      if(ch){ save(); try{ if(typeof pfLoadList === 'function') pfLoadList(); }catch(e){} }
+    }).catch(function(){});
+  }
+  setTimeout(tSync, 8000); setInterval(tSync, 20000);
   function t5Sheet(html){ var o = document.getElementById('t507Sheet'); if(!o){ o = document.createElement('div'); o.id = 't507Sheet'; document.body.appendChild(o); o.addEventListener('click', function(e){ if(e.target === o) o.remove(); }); }
     o.innerHTML = '<div class="t5-box">' + html + '<button type="button" class="t5-no" onclick="document.getElementById(\'t507Sheet\').remove()">✖ بند کریں</button></div>'; }
   /* MCS1811WE539 (مالک کا حکم — ٹیسٹ والی «ڈینٹل شاپ دتہ» کی حذف درخواست اصل ہیلپ ڈیسک میں چلی گئی تھی): ٹیسٹ موڈ میں ہیلپ ڈیسک کو کچھ نہیں جاتا —
@@ -4741,6 +4765,7 @@ const APP_VERSION = "MCS1811WE541";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE541": "Test mode: the test account now shows in the Help Desk (🧪) — activate it there for 1 year and check the full registration; ending test mode clears it from the server too",
   "MCS1811WE541": "New login system: Login As (User / Registered User / Agent / Admin) • User = one big LOGIN button, no PIN • new Sign Up (locality + date of birth + confirm PIN) • Forgot PIN (birth year + last 3 digits) • Change PIN screen",
   "MCS1811WE540": "Welcome Back: only your name, MCS ID and PIN • every log out (admin too) goes straight to Welcome Back • ⎋ Log Out in the admin tools • test-mode strip removed",
   "MCS1811WE539": "Test mode: nothing is sent to the Help Desk (a yellow test pop-up shows what would have been sent) — leaving test mode now leaves no trace anywhere",
@@ -27676,6 +27701,14 @@ html body #screen-home #hdr2.h229 .x-rl{display:none !important}
 /* MCS1811WE540 (مالک کا حکم): اوپر «🧪 TEST MODE» کی پٹی اور ہیڈر والا «🧪 Test mode» بٹن ختم — ٹیسٹ موڈ صرف ایڈمن اوزار «🧪 ٹیسٹ موڈ» سے (چالو ہو تو وہی بٹن ختم کرنے کا مینو کھولتا ہے) */
 #t507Bar,#t507Go{display:none !important}
 </style>
+<script id="mcsT541">
+/* MCS1811WE541: ٹیسٹ موڈ کھولتے وقت (صرف ایڈمن لاگ اِن) سرور سے ٹیسٹ خانے کی چابی — تاکہ ٹیسٹ اکاؤنٹ ہیلپ ڈیسک میں 🧪 آئے */
+(function(){ var o = window.mcsTestEnter; if(typeof o !== 'function' || window.MCS_TEST) return;
+  window.mcsTestEnter = async function(){ var self = this, a = arguments;
+    try{ if(!localStorage.getItem('mcsT540ttk') && typeof vfAdminHdr === 'function'){ var h = await vfAdminHdr(); var r = await fetch(PF_API + '/mcstest', { method: 'POST', headers: h, body: JSON.stringify({ op: 'start' }) }); var j = await r.json(); if(j && j.ok && j.ttk) localStorage.setItem('mcsT540ttk', j.ttk); } }catch(e){}
+    return o.apply(self, a); };
+})();
+</script>
 </body>
 
 </html>
