@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE525";
+const APP_VERSION = "MCS1811WE526";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE526": "Admin 1 tools in My Account (card text editor, test mode, admin panel) — no 7 taps; admin can edit any business profile without typing the password again",
   "MCS1811WE525": "Card text editor: choose the Urdu font — Noori Nastaleeq Kasheeda or Noori Nastaleeq",
   "MCS1811WE524": "Admin 1 card text editor: make the name, type and address on all registered cards bigger or smaller for everyone",
   "MCS1811WE523": "Your own uploaded shop photo now shows on your business (the old fixed sample picture is removed)",
@@ -5736,7 +5737,7 @@ async function pfEditAuth(){
   const nm = (c.rec && (c.rec.nameUr || c.rec.name)) || '';
   let ok = false;
   if(admUi()){
-    ok = await askAdminPassword('🔐 ' + (nm ? '«' + nm + '» — ' : '') + 'یہ کاروبار محفوظ ہے۔ ایڈٹ کھولنے کے لیے ایڈمن پاس ورڈ لکھیں۔', '✏️ ایڈٹ کھولیں');
+    ok = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? true : await askAdminPassword('🔐 ' + (nm ? '«' + nm + '» — ' : '') + 'یہ کاروبار محفوظ ہے۔ ایڈٹ کھولنے کے لیے ایڈمن پاس ورڈ لکھیں۔', '✏️ ایڈٹ کھولیں');   /* MCS1811WE526 (مالک کا حکم): ایڈمن لاگ اِن ہو تو ہر بار پاس ورڈ نہیں */
   } else {
     const m = codevMe();
     if(m && m.pin){
@@ -21375,6 +21376,13 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
         + (best && best.p.until ? '<div class="mx-row"><em>📅</em><span>Expiry Date</span><b class="mx-chip b">' + fmtDate(best.p.until) + '</b></div><div class="mx-row"><em>⏳</em><span>Days Left</span><b class="mx-chip' + (best.lf > 0 ? '' : ' r') + '">' + Math.max(0, best.lf) + '</b></div>' : '')
         + '</div></div>';
     }
+    if(sf(ptRole, rl) === 'dev' && typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){   /* MCS1811WE526 (مالک کا حکم): Admin 1 کے اوزار یہیں — 7 ٹیپ / پاس ورڈ نہیں */
+      h += '<div class="mx-sec pl">🛠️ Admin 1 tools</div><div class="mx-card mx-list">'
+        + row('🔤', 'Card text editor', ID, 'cuOpen', 'c1', 'سب کارڈوں کا فونٹ اور سائز')
+        + row('🧪', 'Test mode', ID, 'mxTestGo', 'c2', 'نئے گاہک کی طرح پورا عمل آزمائیں')
+        + row('⚙️', 'Admin panel', ID, 'openDevPanel', 'c3', 'ایڈمن کے باقی سب کام')
+        + '</div>';
+    }
     h += '<div class="mx-sec pl">Account Management</div><div class="mx-card mx-list">'
       + (ua ? row('👤', 'Personal Information', ID, 'uaAccount', 'c1', 'نام، موبائل، ای میل') : row('🔐', 'Login / Sign Up', ID, 'uaLogin', 'c1', 'اکاؤنٹ بنائیں'))
       + (ua ? row('🛡️', 'Security &amp; Password', ID, 'uaPwForm', 'c2', 'پاس ورڈ بنائیں / بدلیں') : '')
@@ -26947,5 +26955,8 @@ html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:
 #cuSheet .cu-fo{display:flex;gap:8px;margin-top:4px}#cuSheet .cu-fo button{flex:1;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:6px 8px;font-size:18px;line-height:1.9}#cuSheet .cu-fo button.on{border-color:#3b5bdb;background:#eef2ff;box-shadow:0 0 0 2px #c7d2fe}
 #cuSheet .cu-rs{background:#fee2e2;color:#b91c1c}#cuSheet .cu-sv{background:#16a34a;color:#fff}
 </style>
+<script id="mcsAdmTools526">
+window.mxTestGo = function(){ if(confirm('🧪 Open test mode?\n\nThe app opens like a new phone. Your real account and business stay safe.')) mcsTestEnter(); };
+</script>
 </body>
 </html>
