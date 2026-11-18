@@ -4737,10 +4737,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE539";
+const APP_VERSION = "MCS1811WE540";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE540": "Welcome Back: only your name, MCS ID and PIN • every log out (admin too) goes straight to Welcome Back • ⎋ Log Out in the admin tools • test-mode strip removed",
   "MCS1811WE539": "Test mode: nothing is sent to the Help Desk (a yellow test pop-up shows what would have been sent) — leaving test mode now leaves no trace anywhere",
   "MCS1811WE538": "Membership: only Google Play — no promo code and no «send details for verification» anywhere",
   "MCS1811WE537": "No more activation codes: the Activation Key box is gone; the business is activated for 1 year straight from our Help Desk by MCS ID — the owner gets a congratulations message and the business goes live",
@@ -13529,7 +13530,7 @@ function ptOpen(editProf, prev){
     const pend = (typeof pendingApprovals !== 'undefined' && pendingApprovals.length) || '', pfn = ((document.getElementById('pfPendN')||{}).textContent || '').replace(/\D/g,'');
     const tab = (ptDevTab === 'cod' ? 'day' : ptDevTab), tabs = [['tools','🛠️','ٹولز'],['day','📥','روزانہ'],['biz','🏪','بزنس / ایجنٹ'],['rep','📣','رپورٹ'],['more','🧰','مزید']];   /* MCS1811WE529: Admin 1 tools سب سے پہلے */
     const G = {
-      tools: [['🎨','کسی بھی کاروبار کا صفحہ','تلاش ← 🎨 Design / ایڈٹ','abeOpen'],['🔤','کارڈ کی لکھائی','کاروبار چنیں ← اس کے کارڈ پر 🔤','cuOpen'],['🧪','ٹیسٹ موڈ','نئے گاہک کی طرح آزمائیں','mxTestGo'],['📢','اشتہار','✏️ ہر اشتہار پر ایڈیٹر','adOpenAdmin']],
+      tools: [['🎨','کسی بھی کاروبار کا صفحہ','تلاش ← 🎨 Design / ایڈٹ','abeOpen'],['🔤','کارڈ کی لکھائی','کاروبار چنیں ← اس کے کارڈ پر 🔤','cuOpen'],['🧪','ٹیسٹ موڈ','نئے گاہک کی طرح آزمائیں','mxTestGo'],['⎋','لاگ آؤٹ','','mcsLogoutAll'],['📢','اشتہار','✏️ ہر اشتہار پر ایڈیٹر','adOpenAdmin']],
       day: [['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['❓','غیر مختص','کیٹگری بدلیں','unOpen'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
       biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen']],
       cod: [['👥','ایڈمنز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','ایڈمن پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
@@ -17494,18 +17495,15 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
       ${o.name ? `<div class="uwName">${esc(o.name)}</div>` : ''}
       <div class="uwLbl">Your MCS Account ID<u data-noen>آپ کا MCS نمبر</u></div>
       <div class="uwId" dir="ltr">${esc(sid)}</div>
-      <div class="uwLbl">Mobile number<u data-noen>اپنا موبائل نمبر لکھیں — لکھتے ہی اندر</u></div>
-      <div class="uwPinRow"><input id="uwMob" class="uwPin" style="letter-spacing:2px;font-size:26px" type="tel" inputmode="numeric" maxlength="13" placeholder="03XXXXXXXXX" autocomplete="tel" oninput="uaWelcomeMob(this)"></div>
-      <div class="uwLbl" style="margin-top:6px">— or 6-digit PIN —<u data-noen>یا اپنا 6 ہندسوں کا PIN لکھیں</u></div>
+      <div class="uwLbl">6-digit PIN<u data-noen>اپنا 6 ہندسوں کا PIN لکھیں</u></div>
       <div class="uwPinRow"><input id="uwPin" class="uwPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" autocomplete="current-password" oninput="uaWelcomeIn(this)"><button type="button" class="uwEye" onclick="uaEye('uwPin', this)">👁</button></div>
       <div class="uaErr" id="uaErr"></div>
       <div class="uwLinks"><a onclick="uaForgot()">Forgot PIN?</a><a onclick="uaSetRole('biz')">Other account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>
       <div class="uwLinks" style="justify-content:center"><a onclick="uaSetRole('dev')">🛠️ Admin login / <span data-noen>ایڈمن لاگ اِن</span></a></div>
-      <div id="uaGBoxW" style="display:flex;justify-content:center;min-height:44px;margin-top:12px"></div>
       <div class="uwLinks" style="justify-content:center"><a onclick="uaForgetPk()">🗑 Remove this ID from this phone / <span data-noen>یہ ID فون سے ہٹائیں</span></a></div>
     </div>`);
-    gBtn('uaGBoxW', 'continue_with');
-    setTimeout(() => { try{ const p = $('uwMob'); if(p) p.focus(); }catch(e){} }, 250);
+    /* MCS1811WE540 (مالک کا حکم): صرف نام + MCS نمبر + PIN — موبائل نمبر / Google کا دوہرا راستہ ختم */
+    setTimeout(() => { try{ const p = $('uwPin'); if(p) p.focus(); }catch(e){} }, 250);
   };
   window.uaEnter = function(msg){ try{ if(uwMyPk()) return uaWelcome(msg); }catch(e){} return uaLogin(msg); };
   window.uaWelcomeIn = function(el){
@@ -17604,7 +17602,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     const wasUser = !!window.__uwUser || !!uaMe(); window.__uwUser = false;
     uaClearOthers('none'); ls.set('mcsAuth', null); ls.set('mcsGuest', null);
     try{ uaSync(); h2Sync(); cdBar(); mpRender(); }catch(e){}
-    setTimeout(() => { try{ (wasUser && uaLRole() !== 'dev' ? uaWelcome : uaLogin)(); }catch(e){ uaLogin(); } }, 250);
+    setTimeout(() => { try{ (uwMyPk() ? uaWelcome : uaLogin)(); }catch(e){ uaLogin(); } }, 250);   /* MCS1811WE540 (مالک کا حکم): ایڈمن ہو یا عام — لاگ آؤٹ کے بعد سیدھا Welcome Back */
   };
   window.uaDoSignup = async function(){
     const name = ($('uaName').value || '').trim(), mobile = ($('uaMob').value || '').trim(), pw = ($('uaPw2').value || '').trim();
@@ -27098,7 +27096,7 @@ html body .doc-card.rc .rc-m{position:relative}html body .doc-card.rc .rc-m>butt
 #cuSheet .cu-rs{background:#fee2e2;color:#b91c1c}#cuSheet .cu-sv{background:#16a34a;color:#fff}
 </style>
 <script id="mcsAdmTools526">
-window.mxTestGo = function(){ if(confirm('🧪 Open test mode?\n\nThe app opens like a new phone. Your real account and business stay safe.')) mcsTestEnter(); };
+window.mxTestGo = function(){ if(window.MCS_TEST && typeof window.mcsTestMenu === 'function') return window.mcsTestMenu(); /* MCS1811WE540: ٹیسٹ موڈ کی پٹی ختم — یہی بٹن ٹیسٹ ختم بھی کرتا ہے */ if(confirm('🧪 Open test mode?\n\nThe app opens like a new phone. Your real account and business stay safe.')) mcsTestEnter(); };
 </script>
 <script id="mcsAnyBiz527">
 /* MCS1811WE527 (مالک کا حکم): Admin 1 — کسی بھی کاروبار کی پوری پروفائل ایڈٹ (My Account ← Admin 1 tools ← Edit any business)؛ تلاش: نام / موبائل / MCS نمبر */
@@ -27374,6 +27372,10 @@ html body #screen-home #hdr2.h229 .x-rl{display:none !important}
   window.mcsAct537Congrats = congrats;
 })();
 </script>
+<style id="mcsT540css">
+/* MCS1811WE540 (مالک کا حکم): اوپر «🧪 TEST MODE» کی پٹی اور ہیڈر والا «🧪 Test mode» بٹن ختم — ٹیسٹ موڈ صرف ایڈمن اوزار «🧪 ٹیسٹ موڈ» سے (چالو ہو تو وہی بٹن ختم کرنے کا مینو کھولتا ہے) */
+#t507Bar,#t507Go{display:none !important}
+</style>
 </body>
 
 </html>
