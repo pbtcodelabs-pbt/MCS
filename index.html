@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU517";
+const APP_VERSION = "MCS1811WE518";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE518": "Ads now use only 4 smooth effects — Fade-In, Fade-Out, Slide Left, Slide Right (no more up/down moves)",
   "MCS1711TU517": "Shop photo: new «Card (tall)» size, and the matching size is chosen by itself so the whole photo fits",
   "MCS1711TU516": "Business cards: wider shop photo, bigger profile photo and bigger, clearer names and details",
   "MCS1711TU515": "The «AD • Ad» tag is removed from shop ads",
@@ -16306,14 +16307,13 @@ function adRecPick(k){
 try{ document.getElementById('adRecCats').addEventListener('click', e=>{ const b = e.target.closest('button[data-k]'); if(b) adRecPick(b.dataset.k); }); }catch(e){}
 /* MCS3010FR094: اشتہار — انگلی سے کھسکائیں، ایڈمن کا وقت (آدھے سیکنڈ تک) اور آنے کے انداز (appConfig/ads.cfg) */
 /* MCS3010FR095: اشتہار آنے کے 24 انداز — ہر ایک کا چھوٹا چلتا نمونہ؛ CSS خود بنتا ہے */
-const AD_FX_DEF = [
+const AD_FX_DEF = [   /* MCS1811WE518 (مالک کا حکم، Admin 2 کا مشورہ): صرف چار — اوپر / نیچے اڑنے والی (flytop / flybottom) ختم، ہوم ہلنا بند */
+  ['fade','🌙 Fade-In','from{opacity:0}to{opacity:1}',.8,'ease'],
+  ['fadeout','🌘 Fade-Out','from{opacity:0}to{opacity:1}',.8,'ease'],
   ['slideleft','⬅️ Slide Left','from{transform:translateX(105%);opacity:.2}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
-  ['slideright','➡️ Slide Right','from{transform:translateX(-105%);opacity:.2}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
-  ['flytop','⬇️ Fly in from Top','from{transform:translateY(-110%);opacity:0}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
-  ['flybottom','⬆️ Fly in from Bottom','from{transform:translateY(110%);opacity:0}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)'],
-  ['fade','🌙 Fade in / Fade out','from{opacity:0}to{opacity:1}',.8,'ease']
+  ['slideright','➡️ Slide Right','from{transform:translateX(-105%);opacity:.2}to{transform:none;opacity:1}',.55,'cubic-bezier(.2,.8,.2,1)']
 ];
-const AD_FX = [['auto','🎲 Auto (random of these 5)']].concat(AD_FX_DEF.map(x=>[x[0], x[1]]));   /* MCS1111WE319: صرف یہی پانچ انداز */
+const AD_FX = [['auto','🎲 Auto (random of these 4)']].concat(AD_FX_DEF.map(x=>[x[0], x[1]]));   /* MCS1111WE319: صرف یہی پانچ انداز */
 function adFxOk(k){ return AD_FX.some(x=>x[0]===k); }
 (function(){
   const css = AD_FX_DEF.map(([k,,kf,d,e])=>`@keyframes adk_${k}{${kf}} #homeAds .fx-${k}{animation:adk_${k} var(--fxd, ${d}s) ${e};} .fxp.fxp-${k} i{animation:adk_${k} calc(var(--fxd, ${d}s) + 1s) ${e} infinite;}`).join('\n')
@@ -16340,7 +16340,7 @@ function adCfgSave(){
 }
 function adPickFx(){ let e = (adCfgDraft||adCfg).effect || 'auto'; if(!adFxOk(e)) e = 'auto'; if(e !== 'auto') return e; const list = AD_FX.map(x=>x[0]).filter(k=>k!=='auto'); return list[Math.floor(Math.random()*list.length)]; }
 function adGo(dir){ adDir = dir; adAnim = adPickFx(); const n = adSlides().length || 1; adIdx = (adIdx + dir + n) % n; adShownAt = Date.now();
-  if(adAnim === 'fade'){ const c = document.querySelector('#homeAds .ad-card'); if(c){ c.style.transition = 'opacity .3s'; c.style.opacity = '0'; setTimeout(adRender, 300); return; } }   /* Fade out ← Fade in */
+  if(adAnim === 'fadeout'){ const c = document.querySelector('#homeAds .ad-card'); if(c){ c.style.transition = 'opacity .35s'; c.style.opacity = '0'; adAnim = 'fade'; setTimeout(adRender, 350); return; } }   /* MCS1811WE518: Fade-Out = پرانا آہستہ غائب، پھر نیا آہستہ ظاہر؛ Fade-In = نیا سیدھا آہستہ ظاہر */
   adRender(); }
 try{
   document.getElementById('adFxPick').addEventListener('click', e=>{ const b = e.target.closest('button[data-fx]'); if(!b) return; adCfgDraft = adCfgDraft || Object.assign({}, adCfg); adCfgDraft.effect = b.dataset.fx; adCfgRender(); adGo(1); });
@@ -25225,7 +25225,7 @@ body:has(#screen-home.active){overflow:hidden !important}
 html body #homeAds .ad-dots i,html body #homeAds .ad-dots i.on{width:7px !important;height:7px !important;border-radius:50% !important;flex:0 0 7px;transition:background .3s !important}
 html body #homeAds .ad-dots i.on{background:#e9a23b !important;box-shadow:0 0 0 2px rgba(233,162,59,.35)}
 html body.d2 #screen-home #homeAds{height:150px !important;min-height:150px !important;max-height:150px !important;overflow:hidden !important;aspect-ratio:auto !important}
-html body #homeAds .ad-card[class*="fx-"]{animation-name:adk_fade !important;animation-duration:.6s !important}   /* اشتہار اوپر نیچے / دائیں بائیں نہیں اڑتا — صرف آہستہ بدلتا ہے */
+html body #homeAds .ad-card[class*="fx-"]:not(.fx-fade):not(.fx-fadeout):not(.fx-slideleft):not(.fx-slideright){animation-name:adk_fade !important;animation-duration:.6s !important}   /* اشتہار اوپر نیچے / دائیں بائیں نہیں اڑتا — صرف آہستہ بدلتا ہے */
 html body #screen-home #mpBar,html body #screen-home #bizPromo,html body #screen-home #d2Prays{overflow-anchor:none}
 </style>
 <script id="mcsSteady433js">
