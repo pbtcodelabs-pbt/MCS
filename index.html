@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE537";
+const APP_VERSION = "MCS1811WE538";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE538": "Membership: only Google Play — no promo code and no «send details for verification» anywhere",
   "MCS1811WE537": "No more activation codes: the Activation Key box is gone; the business is activated for 1 year straight from our Help Desk by MCS ID — the owner gets a congratulations message and the business goes live",
   "MCS1811WE536": "Home header: the red role tag under your photo is removed (the yellow role name beside the photo already shows it)",
   "MCS1811WE535": "Agent screen: «Earn with MCS» is now «➕ Invite & Register New Businesses» — it opens a list of signed-up people (MCS ID with name); tap one and that person's registration form opens so you can register the business as an agent",
@@ -24768,7 +24769,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     box.innerHTML = [MCS_PLAY_SKUS.find(k => owned.includes(k)) || next || MCS_PLAY_SKUS[0]].map((k, i) => { const d = det && det[k], own = owned.includes(k), on = k === next;   /* MCS1511SU455 */
       const pr = d ? esc(mcsPlayPrice(d.p)) + (typeof mcsPlayPer === 'function' ? mcsPlayPer(d.per) : '') : '';
       return `<div class="wzPl ${own ? 'ok' : on ? 'on' : 'lk'}"><div class="n"><b>Membership — 1 year</b><small dir="ltr">${k}</small></div>${pr ? `<span class="pr">${pr}</span>` : ''}${own ? '<span class="tg">✓ Purchased · <span class="u">خرید لیا</span></span>' : on ? '<button type="button" id="wzPay" onclick="wzDo3()">Subscribe <span class="u">سبسکرائب</span></button>' : '<span class="tg">🔒 Locked · <span class="u">مقفل</span></span>'}</div>`; }).join('')
-      + (!mcsPlayOk() ? '<div class="wzNote u">اس فون پر Google Play ادائیگی نہیں کھلی (ایپ Play Store سے انسٹال ہونی چاہیے) — دبانے پر تصدیق کے لیے تفصیل بھیجنے کا راستہ آئے گا۔</div>' : (det ? '' : '<div class="wzNote u">قیمت Play سے نہیں آئی — انٹرنیٹ / ٹیسٹر Gmail چیک کریں۔</div>'));
+      + (!mcsPlayOk() ? '<div class="wzNote">Google Play payment opens only in My City Shines installed from the Google Play Store.</div>' : (det ? '' : '<div class="wzNote u">قیمت Play سے نہیں آئی — انٹرنیٹ / ٹیسٹر Gmail چیک کریں۔</div>'));
   }
   function ok3(rec, tries){
     const sub = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || '', m = rec.more || {};
@@ -24848,9 +24849,9 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   window.wzResend = function(){ const rec = myCard(); if(rec) try{ memAutoSend('service', rec); }catch(e){} };
   function altPath(rec){   /* جو بندہ Google Play سے ادائیگی نہیں کر سکتا — صرف اکاؤنٹ کی تفصیل تصدیق کے لیے */
     const a = $('wzAlt'); if(!a) return;
-    a.innerHTML = `<div class="wzNote u">اس فون پر Google Play ادائیگی دستیاب نہیں۔<br>اصل Google Play خریداری ہی رجسٹریشن کی شرط ہے — Play Store سے انسٹال ایپ میں خریداری کریں۔<br><span dir="ltr" style="font-family:inherit">Send your account details for verification.</span></div>
-      <button class="wzBtn bB" onclick="wzSendVer()">📨 Send Account Details for Verification<small class="u">تصدیق کے لیے اکاؤنٹ کی تفصیل بھیجیں</small></button>`;
-    flash('اس فون پر Google Play ادائیگی نہیں کھل سکی — ایپ Play Store کے ٹیسٹ لنک سے انسٹال ہونی چاہیے۔ نیچے «تصدیق کے لیے بھیجیں» کا راستہ کھلا ہے۔'); try{ a.scrollIntoView({block: 'center'}); }catch(e){} }
+    /* MCS1811WE538 (مالک کا حکم): «تفصیل تصدیق کے لیے بھیجیں» ختم — صرف Google Play؛ ایکٹیویشن ہیلپ ڈیسک سے MCS نمبر پر */
+    a.innerHTML = `<div class="wzNote">Google Play payment could not open on this phone. Please install <b>My City Shines</b> from the Google Play Store and buy the membership there.</div>`;
+    try{ a.scrollIntoView({block: 'center'}); }catch(e){} }
   window.wzSendVer = function(){ const rec = myCard(); if(!rec) return; try{ saveP(rec); memAutoSend('service', rec); S.p.sentVer = Date.now(); save(); flash('✅ محفوظ', 1); }catch(e){} };
 
   /* ================= مرحلہ ۴: MCS ایجنٹ (اختیاری) ================= */
