@@ -4761,10 +4761,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE544";
+const APP_VERSION = "MCS1811WE545";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE545": "Login: no more jumping up/down • correct PIN + Enter goes in at once • the app checks for updates every 3 minutes",
   "MCS1811WE544": "Home: the prayer times strip is removed",
   "MCS1811WE543": "Login: a phone with an MCS ID opens on Registered User (MCS ID + PIN) • «New? Create account» on the User login • no test-mode label",
   "MCS1811WE542": "The bottom bar (◀ ▶ 🏠 and tabs) stays on every page • on Home, back (app or phone) asks to log out — press back again to log out",
@@ -17111,6 +17112,8 @@ if('serviceWorker' in navigator){
       document.addEventListener('visibilitychange', ()=>{
         if(document.visibilityState==='visible' && navigator.onLine) reg.update().catch(()=>{});
       });
+      /* MCS1811WE545 (مالک کا حکم — «اپڈیٹ نہیں لگتی»): ایپ کھلی رہے تب بھی ہر 3 منٹ نئے ورژن کی جانچ */
+      setInterval(()=>{ if(document.visibilityState==='visible' && navigator.onLine) reg.update().catch(()=>{}); }, 180000);
     }).catch(()=>{ /* offline-first: ignore reg failure */ });
   });
 }
@@ -17423,8 +17426,10 @@ body.d2 #homeAds .ad-ribbon{display:none}
     try{
       const o = $('uaOv'); if(!o || !o.classList.contains('on') || document.activeElement !== t) return;
       const row = (t.closest && t.closest('.uaF, .uwPinRow')) || t, rr = row.getBoundingClientRect(), orr = o.getBoundingClientRect();
-      const want = Math.min(o.clientHeight * 0.3, 150), d = rr.top - orr.top - want;
-      if(Math.abs(d) > 6) o.scrollBy({ top: d, behavior: 'smooth' });
+      /* MCS1811WE545 (مالک کا حکم — «لاگ اِن صفحہ اوپر نیچے ہلتا ہے»): صرف تب سرکائیں جب خانہ واقعی چھپا ہو (کی بورڈ کے نیچے یا اوپر کٹا ہوا) */
+      const vb = orr.top + o.clientHeight - 12, vt = orr.top + 8;
+      if(rr.bottom > vb){ o.scrollBy({ top: rr.bottom - vb + 16, behavior: 'smooth' }); }
+      else if(rr.top < vt){ o.scrollBy({ top: rr.top - vt - 8, behavior: 'smooth' }); }
     }catch(e){}
   }
   try{
@@ -18231,7 +18236,9 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     nomatch: 'Birth year or mobile digits do not match — پیدائش کا سال یا موبائل کے ہندسے نہیں ملے',
     agent: 'Agent mobile or PIN is wrong — ایجنٹ کا موبائل یا PIN غلط ہے'
   });
-  const lgRole = () => { let r = ls.get('mcsLoginRole2'); if(!r) r = ls.get('mcsLoginRole') === 'dev' ? 'admin' : 'user'; return LG_ROLES.some(x => x[0] === r) ? r : 'user'; };
+  const lgRole = () => { let r = ls.get('mcsLoginRole2'); if(!r) r = ls.get('mcsLoginRole') === 'dev' ? 'admin' : 'user'; r = LG_ROLES.some(x => x[0] === r) ? r : 'user';
+    if(r === 'user' && !window.__lgUserPicked){ try{ if(!lgOther && uwMyPk()) r = 'reg'; }catch(e){} }   /* MCS1811WE545: صفحہ اور LOGIN بٹن ایک ہی انتخاب — فون میں MCS نمبر ہو تو Registered User */
+    return r; };
   let lgOther = false, lgBusy = false;
   const lgPk = () => (lgOther ? null : uwMyPk());
   const lgMobFmt = m => { try{ return mcsMobFmt(m); }catch(e){ return String(m || ''); } };
@@ -18351,6 +18358,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   }
   window.lgGo = async function(){
     if(lgBusy) return;
+    { const ov = $('uaOv'); if(ov && !ov.classList.contains('on')) return; }   /* MCS1811WE545: 6 ہندسوں پر خود لاگ اِن ہو چکا ہو تو Enter دوبارہ نہ بھیجے */
     const role = lgRole();
     if(role === 'user') return uaGuest();
     const raw = String(($('uaPw') || {}).value || ''), idv = String((($('uaId') || {}).value) || '').trim();
@@ -18380,7 +18388,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       if(pin.length < 5){ lgErr('pw6'); return; }
       const r = await api({ op:'login', id: (typeof mcsSidSrv === 'function' ? mcsSidSrv(who) : who), pw: pin });
       if(!r || !r.ok){ lgErr((r && r.reason) || 'net'); const p = $('uaPw'); if(p){ p.value = ''; p.focus(); } return; }
-      try{ const c = $('lgChip'), sid = r.user && (r.user.sid || r.user.id); if(c && sid){ c.textContent = lgSidFmt(sid); c.style.display = 'table'; c.classList.add('pop'); await new Promise(res => setTimeout(res, 650)); } }catch(e){}   /* سرپرائز: اوپر MCS نمبر ظاہر */
+      try{ const c = $('lgChip'), sid = r.user && (r.user.sid || r.user.id); if(c && sid){ const was = c.style.display !== 'none' && c.textContent === lgSidFmt(sid); c.textContent = lgSidFmt(sid); c.style.display = 'table'; c.classList.add('pop'); if(!was) await new Promise(res => setTimeout(res, 350)); } }catch(e){}   /* MCS1811WE545: نمبر پہلے سے دکھ رہا ہو تو انتظار نہیں */   /* سرپرائز: اوپر MCS نمبر ظاہر */
       lgOther = false; uaClearOthers('user'); done(r);
     } finally { lgBusy = false; busy(0); }
   };
