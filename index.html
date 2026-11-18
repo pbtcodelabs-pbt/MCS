@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE532";
+const APP_VERSION = "MCS1811WE533";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE533": "Admin 1 always shows MCS001 (not an old ID); agent photo and name with the AG code on «Registration complete»",
   "MCS1811WE532": "Home header (Help Desk #283): share button moved to My Account → «📤 Share this app»; bigger Hijri date",
   "MCS1811WE531": "Card editor (🔤 on each card): text size/font only for that card; background and border colour for all cards alike",
   "MCS1811WE530": "Cleaner home header (Help Desk #283): big city name, ID and role on the right, plain dates and time — no boxes",
@@ -24317,7 +24318,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
 
   /* ---------- مددگار ---------- */
   const me = () => { try{ return (typeof uaMe === 'function' && uaMe()) || null; }catch(e){ return null; } };
-  const sidNow = () => { const m = me(); const u = m && m.user; const s = (u && (u.sid || u.id)) || S.sid || ''; return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : s) : ''; };
+  const sidNow = () => { const ax = window.mcsAdminSid && window.mcsAdminSid(); if(ax) return ax; /* MCS1811WE533: ایڈمن کی پکی ID */ const m = me(); const u = m && m.user; const s = (u && (u.sid || u.id)) || S.sid || ''; return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : s) : ''; };
   const admMob = () => { try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? DEFAULT_CONTACT.whatsapp : ''; }catch(e){ return ''; } };   /* MCS1611MO485: ایڈمن = مالک — اپنا کاروبار 0320 والا */
   const myCard0 = () => { try{ const mob = d10((me() && me().user && me().user.mobile) || S.a.mobile || admMob()); if(!mob) return null;
     const L = (store.services || []).filter(x => d10(x.whatsapp) === mob); if(!L.length) return null;
@@ -26312,7 +26313,7 @@ html body select.rpk-sel ~ .rpk-btn{display:none !important}
       <p>Your business is LIVE and you are an MCS Agent${a.name ? ', ' + E(a.name) : ''}. Your registration is complete — now your real job starts!</p>
       <p>Register more and more businesses and professionals on My City Shines — the more you bring, the more your business grows.</p>
       <p class="ur">آپ کا کاروبار لائیو ہے اور آپ MCS ایجنٹ بن چکے ہیں — اب زیادہ سے زیادہ کاروبار اور پروفیشنل رجسٹر کروائیں تاکہ آپ کا کاروبار بڑھے۔</p>
-      ${code ? `<div class="cp-hint">Your referral code</div><div class="code" onclick="agCopy('${E(code)}')">${E(code)} 📋</div>` : ''}
+      ${code ? `<div class="cp-hint">Your referral code</div><div class="agWho533" data-noen="1"><img src="${E(agPic533())}" alt=""><div><b>${E(a.name || '')}</b><span>MCS Agent</span></div></div><div class="code" onclick="agCopy('${E(code)}')">${E(code)} 📋</div>` : ''}
       <button type="button" class="btn block ag-send" style="margin-top:8px" onclick="closeModal('agModal');try{mpWant=true;d2AddOpen()}catch(e){}">➕ Register a new business</button>
       ${code ? `<button type="button" class="btn block secondary" style="margin-top:6px" onclick="agShare('${E(code)}')">📤 Share referral code</button>` : ''}
       ${isAdm() || (typeof codevOn === 'function' && codevOn()) ? `<button type="button" class="btn block secondary" style="margin-top:6px" onclick="agFullForm()">🤝 Make another person an MCS Agent</button>` : ''}
@@ -27138,7 +27139,7 @@ html body #screen-home #hdr2.h229 .xr{overflow:visible !important}
     const w = h.querySelector('.x-wel b'); if(w && !w.dataset.f530){ w.dataset.f530 = 1; w.innerHTML = 'Welcome To <i>My City</i>'; }
     const dpw = h.querySelector('.x-dpw'); if(!dpw) return; let who = dpw.querySelector('.x-who');
     if(!who){ who = document.createElement('div'); who.className = 'x-who'; who.setAttribute('data-noen', ''); who.innerHTML = '<b></b><span></span>'; dpw.insertBefore(who, dpw.firstChild); }
-    let id = ''; try{ const a = uaMe(); id = a && a.user ? mcsSidFmt(a.user.sid || a.user.id || '') : ''; }catch(e){} if(!/^MCS\d+$/.test(id)) id = '';
+    let id = ''; try{ id = (window.mcsAdminSid && window.mcsAdminSid()) || ''; if(!id){ const a = uaMe(); id = a && a.user ? mcsSidFmt(a.user.sid || a.user.id || '') : ''; } }catch(e){} if(!/^MCS\d+$/.test(id)) id = '';
     const b = who.querySelector('b'), sp = who.querySelector('span'), r = role(); if(b.textContent !== id) b.textContent = id; if(sp.textContent !== r) sp.textContent = r; }
   function go(){ fix(); setInterval(fix, 3000); }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(go, 400)); else setTimeout(go, 400);
@@ -27157,5 +27158,20 @@ html body #screen-home #hdr2.h229 .xl > *{margin-left:0 !important;padding-left:
 html body #screen-home #hdr2.h229 .xl .h2-title,html body #screen-home #hdr2.h229 .xl .h2-title *{margin-left:0 !important;padding-left:0 !important;text-align:left !important}
 html body #screen-home #hdr2.h229 .xr > *{margin-right:0 !important;padding-right:0 !important}
 </style>
+<style id="mcsAgWho533css">
+/* MCS1811WE533 (مالک کا حکم): مبارکباد والے صفحے پر AG کوڈ کے ساتھ ایجنٹ کی تصویر + نام */
+.mcsAgDone .agWho533{display:flex;align-items:center;justify-content:center;gap:12px;margin:6px auto 8px;direction:ltr}
+.mcsAgDone .agWho533 img{width:72px;height:72px;border-radius:14px;object-fit:cover;border:3px solid #15803d;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.mcsAgDone .agWho533 div{display:flex;flex-direction:column;align-items:flex-start;text-align:left}
+.mcsAgDone .agWho533 b{font:900 19px/1.2 'Segoe UI',Selawik,Arial,sans-serif;color:#0f1f45}
+.mcsAgDone .agWho533 span{font:800 14px/1.3 'Segoe UI',Selawik,Arial,sans-serif;color:#15803d}
+</style>
+<script id="mcsAdmSid533">
+/* MCS1811WE533 (مالک کا حکم): Admin 1 ہمیشہ MCS001، Admin 2 (عمران) MCS002 — فون میں پڑی پرانی ID (مثلاً MCS006) نہیں */
+window.mcsAdminSid = function(){ try{ const r = typeof ptRole === 'function' ? ptRole() : ''; if(r === 'dev') return 'MCS001';
+  if(r === 'codev'){ const m = typeof codevMe === 'function' ? codevMe() : null; if(m && String(m.phone || '').replace(/\D/g, '').slice(-10) === '3138469706') return 'MCS002'; } }catch(e){} return ''; };
+window.agPic533 = function(){ let v = ''; try{ const r = typeof ptRole === 'function' ? ptRole() : 'user';
+  v = ptSelfieGet(r) || ptSelfieGet('agent') || ptSelfieGet('user') || (typeof agImgs !== 'undefined' && agImgs && agImgs.selfie) || ''; }catch(e){} return v || 'icons/icon-192.png?v=MCS0711SA179'; };
+</script>
 </body>
 </html>
