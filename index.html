@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE527";
+const APP_VERSION = "MCS1811WE528";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE528": "Admin 1 «🎨 Design» on any business page — background, name colour, Urdu font, sizes and edit the text right on the page (no form)",
   "MCS1811WE527": "Admin 1 tools: «Edit any business» — search any business and edit its whole profile",
   "MCS1811WE526": "Admin 1 tools in My Account (card text editor, test mode, admin panel) — no 7 taps; admin can edit any business profile without typing the password again",
   "MCS1811WE525": "Card text editor: choose the Urdu font — Noori Nastaleeq Kasheeda or Noori Nastaleeq",
@@ -26993,6 +26994,87 @@ window.mxTestGo = function(){ if(confirm('🧪 Open test mode?\n\nThe app opens 
 #abeSheet .abe-tx{flex:1;min-width:0}#abeSheet .abe-tx b{display:block;font-size:17px;line-height:1.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#abeSheet .abe-tx small{color:#64748b;font-size:12px}
 #abeSheet .abe-it button{border:0;background:#3b5bdb;color:#fff;border-radius:10px;padding:9px 12px;font-weight:800;white-space:nowrap}
 #abeSheet .abe-no{text-align:center;color:#64748b;padding:20px}
+</style>
+<script id="mcsPfDesign528">
+/* MCS1811WE528 (مالک کا حکم): کاروبار کا تیار صفحہ — فارم نہیں، اسی صفحے پر «🎨 Design» (صرف Admin 1): پس منظر، نام / ذیلی لائن کا رنگ، فونٹ (کشیدہ / نوری)، سائز،
+   اور صفحے کی تحریر وہیں انگلی رکھ کر درست (نام، ذیلی لائن، تفصیل — صرف دکھاوا، ریکارڈ ویسا)۔ rec.more.pv → سب کے فون */
+(function(){
+  const FO = { kash: "'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif", noori: "'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif" };
+  const COLORS = ['#ffffff', '#fef9c3', '#dcfce7', '#cffafe', '#dbeafe', '#ede9fe', '#fce7f3', '#fee2e2', '#0f766e', '#1e3a8a', '#7c2d12', '#111827'];
+  const TX = ['#0f1f45', '#111827', '#ffffff', '#b91c1c', '#c2410c', '#ca8a04', '#15803d', '#0f766e', '#1d4ed8', '#7c3aed', '#be185d', '#fde047'];
+  const DEF = { bg: '', bgL: 0, nmC: '', nmS: 0, subC: '', subS: 0, abS: 0, fo: '', nm: '', sub: '', ab: '' };
+  const E = s => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s == null ? '' : s));
+  const adm = () => { try{ return typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && !(typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } };
+  function hsl(hex, dl){ try{ let h = String(hex).replace('#', ''); let r = parseInt(h.slice(0, 2), 16) / 255, g = parseInt(h.slice(2, 4), 16) / 255, b = parseInt(h.slice(4, 6), 16) / 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let H = 0, S = 0, L = (mx + mn) / 2; if(mx !== mn){ const d = mx - mn; S = L > .5 ? d / (2 - mx - mn) : d / (mx + mn); H = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; H *= 60; } L = Math.max(3, Math.min(98, L * 100 + (dl || 0))); return `hsl(${Math.round(H)},${Math.round(S * 100)}%,${Math.round(L)}%)`; }catch(e){ return hex; } }
+  function css(v){ const S = 'html body .pf1[data-pv]', R = [];
+    if(v.bg) R.push(`${S}{background:linear-gradient(180deg,${hsl(v.bg, v.bgL)},${hsl(v.bg, v.bgL - 6)}) !important;border-radius:18px;padding:8px 6px 10px !important}`);
+    const nm = []; if(v.nmC) nm.push(`color:${v.nmC} !important`); if(v.nmS) nm.push(`font-size:${v.nmS}px !important;line-height:1.7 !important`); if(v.fo && FO[v.fo]) nm.push(`font-family:${FO[v.fo]} !important`); if(nm.length) R.push(`${S} .pf1-nm{${nm.join(';')}}`);
+    const sb = []; if(v.subC) sb.push(`color:${v.subC} !important`); if(v.subS) sb.push(`font-size:${v.subS}px !important;line-height:1.8 !important`); if(v.fo && FO[v.fo]) sb.push(`font-family:${FO[v.fo]} !important`); if(sb.length) R.push(`${S} .pf1-sub{${sb.join(';')}}`);
+    const ab = []; if(v.abS) ab.push(`font-size:${v.abS}px !important;line-height:1.9 !important`); if(v.fo && FO[v.fo]) ab.push(`font-family:${FO[v.fo]} !important`); if(ab.length) R.push(`${S} .pf1-about{${ab.join(';')}}`);
+    return R.join('\n'); }
+  let D = null;
+  const o0 = window.pfOneHtml;
+  if(typeof o0 === 'function') window.pfOneHtml = pfOneHtml = function(c, x){
+    let h = o0.apply(this, arguments);
+    try{ const v = (D && pfCur && D.rk === c.rk) ? D.v : ((x.more && x.more.pv) || null);
+      const t = document.createElement('template'); t.innerHTML = h; const root = t.content.querySelector('.pf1');
+      if(root){
+        ['.pf1-nm', '.pf1-sub', '.pf1-about'].forEach(sel => { const e = root.querySelector(sel); if(e) e.setAttribute('data-orig', e.textContent.replace(/^📝\s*/, '').trim()); });   /* اصل تحریر — جو نہ بدلی ہو وہ محفوظ نہیں */
+        if(v){ root.setAttribute('data-pv', '1');
+          const set = (sel, txt, pre) => { const e = root.querySelector(sel); if(e && txt) e.textContent = (pre || '') + txt; };
+          set('.pf1-nm', v.nm); set('.pf1-sub', v.sub); set('.pf1-about', v.ab, '📝 ');
+          const st = document.createElement('style'); st.textContent = css(v); root.prepend(st); }
+        if(adm()){ const a = root.querySelector('.pf1-act'); const b = `<button type="button" class="pfd-btn" onclick="pfdOpen()">🎨 Design</button>`;
+          if(a) a.insertAdjacentHTML('afterbegin', b); else root.insertAdjacentHTML('beforeend', `<div class="pf1-act">${b}</div>`); }
+        h = t.innerHTML; }
+    }catch(e){}
+    return h; };
+  function grab(){ const r = document.querySelector('#pfBody .pf1'); if(!r || !D) return; const g = sel => { const e = r.querySelector(sel); if(!(e && e.isContentEditable)) return null; const t = e.textContent.replace(/^📝\s*/, '').trim(); return t === (e.getAttribute('data-orig') || '') ? '' : t; };
+    const nm = g('.pf1-nm'), sub = g('.pf1-sub'), ab = g('.pf1-about'); if(nm != null) D.v.nm = nm; if(sub != null) D.v.sub = sub; if(ab != null) D.v.ab = ab; }
+  function redraw(){ grab(); try{ pfRender(); }catch(e){} if(D && D.edit) editOn(); }
+  function editOn(){ const r = document.querySelector('#pfBody .pf1'); if(!r) return; ['.pf1-nm', '.pf1-sub', '.pf1-about'].forEach(sel => { const e = r.querySelector(sel); if(e){ e.contentEditable = 'true'; e.classList.add('pfd-ed'); } }); }
+  let TAB = 'col';
+  function sw(k, list){ return `<div class="pfd-ch">${list.map(c => `<button type="button" class="pfd-sw${D.v[k] === c ? ' on' : ''}" style="background:${c}" onclick="pfdSet('${k}','${c}');pfdDraw()"></button>`).join('')}<button type="button" class="${!D.v[k] ? 'on' : ''}" onclick="pfdSet('${k}','');pfdDraw()">↺</button></div>`; }
+  function rg(k, lab, mn, mx){ return `<div class="pfd-r"><label>${lab}<i id="pfdv_${k}">${D.v[k] ? D.v[k] + 'px' : 'Auto'}</i></label><input type="range" min="${mn}" max="${mx}" value="${D.v[k] || mn}" oninput="pfdSet('${k}',+this.value,1)"></div>`; }
+  function body(){ const v = D.v;
+    if(TAB === 'col') return `<div class="pfd-r"><label>Page background</label>${sw('bg', COLORS)}</div><div class="pfd-r"><label>Lighter ↔ Darker<i id="pfdv_bgL">${v.bgL}</i></label><input type="range" min="-30" max="30" value="${v.bgL}" oninput="pfdSet('bgL',+this.value)"></div>
+      <div class="pfd-r"><label>Name colour</label>${sw('nmC', TX)}</div><div class="pfd-r"><label>Second line colour</label>${sw('subC', TX)}</div>`;
+    if(TAB === 'txt') return `<div class="pfd-r"><label>Urdu font</label><div class="pfd-ch"><button type="button" class="pfd-fo${v.fo !== 'noori' && v.fo ? ' on' : ''}" style="font-family:${FO.kash}" onclick="pfdSet('fo','kash');pfdDraw()">نوری نستعلیق کشیدہ</button><button type="button" class="pfd-fo${v.fo === 'noori' ? ' on' : ''}" style="font-family:${FO.noori}" onclick="pfdSet('fo','noori');pfdDraw()">نوری نستعلیق</button></div></div>
+      ${rg('nmS', 'Name size', 16, 40)}${rg('subS', 'Second line size', 11, 26)}${rg('abS', 'Details size', 11, 26)}`;
+    return `<div class="pfd-r" style="font-weight:700;line-height:1.7">✍️ Tap the <b>name</b>, the <b>second line</b> or the <b>details</b> on the page above and type — it changes right there. (Only how the page looks — the form / record is not changed.)</div>
+      <div class="pfd-ch"><button type="button" onclick="pfdTxtReset()">↺ Original text</button></div>`; }
+  window.pfdDraw = function(){ const s = document.getElementById('pfdSheet'); if(!s || !D) return; s.querySelectorAll('.pfd-tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === TAB)); s.querySelector('.pfd-body').innerHTML = body(); };
+  window.pfdTab = function(t){ TAB = t; D.edit = t === 'ed'; pfdDraw(); redraw(); };
+  window.pfdSet = function(k, v, px){ if(!D) return; D.v[k] = v; const l = document.getElementById('pfdv_' + k); if(l) l.textContent = px ? v + 'px' : v; redraw(); };
+  window.pfdTxtReset = function(){ if(!D) return; D.v.nm = D.v.sub = D.v.ab = ''; D.edit = false; try{ pfRender(); }catch(e){} D.edit = true; editOn(); };
+  window.pfdOpen = function(){ if(!adm() || !pfCur) return; const more = (pfCur.rec && pfCur.rec.more) || {};
+    D = { rk: pfCur.rk, v: Object.assign({}, DEF, more.pv || {}), edit: false }; TAB = 'col';
+    let s = document.getElementById('pfdSheet'); if(s) s.remove(); s = document.createElement('div'); s.id = 'pfdSheet'; s.setAttribute('data-noen', '1');
+    s.innerHTML = `<div class="pfd-hd"><b>🎨 Design this page</b><button type="button" class="x" onclick="pfdClose(false)">✖</button><button type="button" class="sv" onclick="pfdClose(true)">💾 Save</button></div>
+      <div class="pfd-tabs"><button type="button" data-t="col" onclick="pfdTab('col')">🎨 Colours</button><button type="button" data-t="txt" onclick="pfdTab('txt')">🔤 Font & size</button><button type="button" data-t="ed" onclick="pfdTab('ed')">✍️ Edit text</button></div><div class="pfd-body"></div>`;
+    document.body.appendChild(s); document.body.classList.add('pfd-on'); pfdDraw(); redraw(); };
+  window.pfdClose = function(save){ if(!D) return; grab(); const d = D; D = null; const s = document.getElementById('pfdSheet'); if(s) s.remove(); document.body.classList.remove('pfd-on');
+    if(save && pfCur && pfCur.rec){ const r = pfCur.rec, clean = {}; Object.keys(d.v).forEach(k => { if(d.v[k] !== '' && d.v[k] !== 0 && d.v[k] != null) clean[k] = d.v[k]; });
+      r.more = r.more || {}; if(Object.keys(clean).length) r.more.pv = clean; else delete r.more.pv;
+      try{ saveStore(); }catch(e){} try{ pushMoreToFirebase(pfCur.kind === 'doctor' ? 'doctors' : 'services', r.fsId || r.id, r.more); showToast('✅ Saved — all phones'); }catch(e){ showToast('⚠️ ' + (e.message || 'not saved')); } }
+    try{ pfRender(); }catch(e){} };
+})();
+</script>
+<style id="mcsPfDesign528css">
+.pf1-act .pfd-btn{background:linear-gradient(135deg,#7c3aed,#db2777) !important;color:#fff !important;border-color:transparent !important}
+body.pfd-on #pfModal .modal-box,body.pfd-on #pfModal .pf-page,body.pfd-on #pfBody{padding-bottom:48vh !important}
+#pfdSheet{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;max-height:46vh;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.35);display:flex;flex-direction:column;font-family:'Segoe UI',Selawik,Arial,sans-serif;color:#0f172a}
+#pfdSheet .pfd-hd{display:flex;align-items:center;gap:6px;padding:8px 10px 4px}#pfdSheet .pfd-hd b{flex:1;font-size:15px}
+#pfdSheet .pfd-hd button{border:0;border-radius:10px;padding:8px 12px;font-weight:800}#pfdSheet .x{background:#e5e7eb}#pfdSheet .sv{background:#16a34a;color:#fff}
+#pfdSheet .pfd-tabs{display:flex;gap:4px;padding:2px 8px 6px}#pfdSheet .pfd-tabs button{flex:1;border:1.5px solid #cbd5e1;background:#f8fafc;border-radius:999px;padding:7px 6px;font-weight:800;font-size:13px}
+#pfdSheet .pfd-tabs button.on{background:#7c3aed;border-color:#7c3aed;color:#fff}
+#pfdSheet .pfd-body{overflow-y:auto;padding:4px 12px calc(14px + env(safe-area-inset-bottom,0px))}
+#pfdSheet .pfd-r{margin:8px 0}#pfdSheet .pfd-r>label{display:flex;justify-content:space-between;font-size:12.5px;font-weight:800;color:#334155;margin-bottom:3px}#pfdSheet .pfd-r>label i{font-style:normal;color:#7c3aed}
+#pfdSheet input[type=range]{width:100%;height:30px;accent-color:#7c3aed}
+#pfdSheet .pfd-ch{display:flex;flex-wrap:wrap;gap:6px}#pfdSheet .pfd-ch button{border:2px solid #cbd5e1;background:#fff;border-radius:10px;padding:6px 10px;min-width:40px;min-height:36px}
+#pfdSheet .pfd-ch button.on{border-color:#7c3aed;box-shadow:0 0 0 2px #ddd6fe}#pfdSheet .pfd-sw{width:34px;height:34px;min-width:34px !important;padding:0 !important;border-radius:50% !important}
+#pfdSheet .pfd-fo{flex:1;font-size:18px;line-height:1.9}
+.pfd-ed{outline:2px dashed #7c3aed;outline-offset:3px;border-radius:6px;cursor:text}
 </style>
 </body>
 </html>
