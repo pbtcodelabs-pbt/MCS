@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE533";
+const APP_VERSION = "MCS1811WE534";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE534": "Home header: the red corner ribbon is gone — a small role tag now sits under your photo (ADMIN 1, ADMIN 2, AGENT, MEMBER or USER); admin's own selfie shows in the header; long city names shrink to fit instead of being cut",
   "MCS1811WE533": "MCS Agent screen: your selfie, name, AG number and «MCS Agent» badge on top with congratulations; Admin now sees his own MCS number (not an old test one) and his registered business + agent summary",
   "MCS1811WE532": "Home header (Help Desk #283): share button moved to My Account → «📤 Share this app»; bigger Hijri date",
   "MCS1811WE531": "Card editor (🔤 on each card): text size/font only for that card; background and border colour for all cards alike",
@@ -23566,7 +23567,8 @@ html #screen-home #hdr2.h229 .h2-d #h2H{font:400 2.5cqw/1.6 'Jameel Noori Nastal
   function $(id){ return document.getElementById(id); }
   function aid(){ try{ var a = typeof uaMe === 'function' ? uaMe() : null, s = a && a.user && (a.user.sid || ''); return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : String(s).replace(/-/g, '')) : ''; }catch(e){ return ''; } }
   function dp(){ var v = '';
-    try{ var rl = typeof ptRole === 'function' ? ptRole() : 'user'; v = typeof ptSelfieGet === 'function' ? (ptSelfieGet(rl) || ptSelfieGet('user')) : '';
+    try{ var rl = typeof ptRole === 'function' ? ptRole() : 'user'; if(typeof ptSelfieGet === 'function'){ v = ptSelfieGet(rl); if(!v && (rl === 'dev' || rl === 'codev') && typeof mcsMyShow === 'function'){ try{ v = mcsMyShow().photo || ''; }catch(e){} }   /* MCS1811WE534: ایڈمن کی اپنی سیلفی ہیڈر میں */
+        if(!v) v = ptSelfieGet('user'); }
       /* MCS1811WE532 (مالک کا حکم): اپنی تصویر نہ ہو تو اپنے رجسٹرڈ کاروبار والی (more.selfie) */
       if(!v && typeof mpListReal === 'function'){ var L = mpListReal() || []; for(var i = 0; i < L.length && !v; i++){ var m = L[i] && L[i].rec && L[i].rec.more; if(m && typeof m.selfie === 'string' && m.selfie) v = m.selfie; } } }catch(e){}
     return v || 'icons/icon-192.png?v=MCS0711SA179'; }
@@ -27184,7 +27186,12 @@ html body #screen-home #hdr2.h229 .xr{overflow:visible !important}
     const dpw = h.querySelector('.x-dpw'); if(!dpw) return; let who = dpw.querySelector('.x-who');
     if(!who){ who = document.createElement('div'); who.className = 'x-who'; who.setAttribute('data-noen', ''); who.innerHTML = '<b></b><span></span>'; dpw.insertBefore(who, dpw.firstChild); }
     let id = ''; try{ const a = uaMe(); id = a && a.user ? mcsSidFmt(a.user.sid || a.user.id || '') : ''; }catch(e){} if(!/^MCS\d+$/.test(id)) id = '';
-    const b = who.querySelector('b'), sp = who.querySelector('span'), r = role(); if(b.textContent !== id) b.textContent = id; if(sp.textContent !== r) sp.textContent = r; }
+    const b = who.querySelector('b'), sp = who.querySelector('span'), r = role(); if(b.textContent !== id) b.textContent = id; if(sp.textContent !== r) sp.textContent = r;
+    /* MCS1811WE534 (مالک کا حکم): کونے کے ربن کی جگہ تصویر کے نیچے چھوٹا رول ٹیگ — ADMIN 1 / ADMIN 2 / AGENT / MEMBER / USER */
+    let pl = dpw.querySelector('.x-rl'); if(!pl){ pl = document.createElement('span'); pl.className = 'x-rl'; pl.setAttribute('data-noen', ''); dpw.appendChild(pl); }
+    const tg = r ? String(r).toUpperCase().replace('BUSINESS MEMBER', 'MEMBER') : ''; if(pl.textContent !== tg) pl.textContent = tg; pl.style.display = tg ? '' : 'none'; pl.setAttribute('data-r', tg.replace(/\s+/g, '').toLowerCase());
+    /* شہر کا نام کٹے نہیں — لمبا ہو تو فونٹ خود چھوٹا */
+    try{ const c = document.getElementById('ccCity'); if(c){ const k = c.textContent + '|' + c.clientWidth; if(c.dataset.fit !== k){ c.style.removeProperty('font-size'); let fs = 6.6; while(c.scrollWidth > c.clientWidth + 1 && fs > 3.4){ fs -= .4; c.style.setProperty('font-size', fs.toFixed(1) + 'cqw', 'important'); } c.dataset.fit = c.textContent + '|' + c.clientWidth; } } }catch(e){} }
   function go(){ fix(); setInterval(fix, 3000); }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(go, 400)); else setTimeout(go, 400);
 })();
@@ -27201,6 +27208,15 @@ html body #screen-home #hdr2.h229 .h2-d > div > span{justify-self:end !important
 html body #screen-home #hdr2.h229 .xl > *{margin-left:0 !important;padding-left:0 !important}
 html body #screen-home #hdr2.h229 .xl .h2-title,html body #screen-home #hdr2.h229 .xl .h2-title *{margin-left:0 !important;padding-left:0 !important;text-align:left !important}
 html body #screen-home #hdr2.h229 .xr > *{margin-right:0 !important;padding-right:0 !important}
+/* MCS1811WE534 (مالک کا حکم): کونے کا ترچھا ربن ختم؛ تصویر کے نیچے دائیں سیدھ میں رول ٹیگ */
+#mcsAdmRibbon{display:none !important}
+html body #screen-home #hdr2.h229 .x-dpw{margin-bottom:1.8cqw !important}
+html body #screen-home #hdr2.h229 .x-dpw .x-rl{position:absolute;right:0;bottom:-2cqw;z-index:4;display:block;font:900 2.7cqw/1 Arial,sans-serif;letter-spacing:.25cqw;color:#fff;background:#0f766e;border:.35cqw solid #fff;border-radius:999px;padding:.8cqw 2.1cqw;white-space:nowrap;box-shadow:0 .4cqw 1cqw rgba(0,0,0,.35)}
+html body #screen-home #hdr2.h229 .x-rl[data-r="admin1"]{background:#d62828}
+html body #screen-home #hdr2.h229 .x-rl[data-r="admin2"]{background:#15803d}
+html body #screen-home #hdr2.h229 .x-rl[data-r="agent"]{background:#b45309}
+html body #screen-home #hdr2.h229 .x-rl[data-r="member"]{background:#1d4ed8}
+html body #screen-home #hdr2.h229 .x-rl[data-r="user"]{background:#64748b}
 </style>
 </body>
 </html>
