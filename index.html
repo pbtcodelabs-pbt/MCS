@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE535";
+const APP_VERSION = "MCS1811WE536";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE536": "Home header: the red role tag under your photo is removed (the yellow role name beside the photo already shows it)",
   "MCS1811WE535": "Agent screen: «Earn with MCS» is now «➕ Invite & Register New Businesses» — it opens a list of signed-up people (MCS ID with name); tap one and that person's registration form opens so you can register the business as an agent",
   "MCS1811WE534": "Home header: the red corner ribbon is gone — a small role tag now sits under your photo (ADMIN 1, ADMIN 2, AGENT, MEMBER or USER); admin's own selfie shows in the header; long city names shrink to fit instead of being cut",
   "MCS1811WE533": "MCS Agent screen: your selfie, name, AG number and «MCS Agent» badge on top with congratulations; Admin now sees his own MCS number (not an old test one) and his registered business + agent summary",
@@ -27240,8 +27241,8 @@ html body #screen-home #hdr2.h229 .xr{overflow:visible !important}
     let id = ''; try{ const a = uaMe(); id = a && a.user ? mcsSidFmt(a.user.sid || a.user.id || '') : ''; }catch(e){} if(!/^MCS\d+$/.test(id)) id = '';
     const b = who.querySelector('b'), sp = who.querySelector('span'), r = role(); if(b.textContent !== id) b.textContent = id; if(sp.textContent !== r) sp.textContent = r;
     /* MCS1811WE534 (مالک کا حکم): کونے کے ربن کی جگہ تصویر کے نیچے چھوٹا رول ٹیگ — ADMIN 1 / ADMIN 2 / AGENT / MEMBER / USER */
-    let pl = dpw.querySelector('.x-rl'); if(!pl){ pl = document.createElement('span'); pl.className = 'x-rl'; pl.setAttribute('data-noen', ''); dpw.appendChild(pl); }
-    const tg = r ? String(r).toUpperCase().replace('BUSINESS MEMBER', 'MEMBER') : ''; if(pl.textContent !== tg) pl.textContent = tg; pl.style.display = tg ? '' : 'none'; pl.setAttribute('data-r', tg.replace(/\s+/g, '').toLowerCase());
+    /* MCS1811WE536 (مالک کا حکم): تصویر کے نیچے لال رول ٹیگ ختم — اوپر پیلا «Admin 1» پہلے سے آتا ہے */
+    try{ const o = dpw.querySelector('.x-rl'); if(o) o.remove(); }catch(e){}
     /* شہر کا نام کٹے نہیں — لمبا ہو تو فونٹ خود چھوٹا */
     try{ const c = document.getElementById('ccCity'); if(c){ const k = c.textContent + '|' + c.clientWidth; if(c.dataset.fit !== k){ c.style.removeProperty('font-size'); let fs = 6.6; while(c.scrollWidth > c.clientWidth + 1 && fs > 3.4){ fs -= .4; c.style.setProperty('font-size', fs.toFixed(1) + 'cqw', 'important'); } c.dataset.fit = c.textContent + '|' + c.clientWidth; } } }catch(e){} }
   function go(){ fix(); setInterval(fix, 3000); }
@@ -27269,6 +27270,7 @@ html body #screen-home #hdr2.h229 .x-rl[data-r="admin2"]{background:#15803d}
 html body #screen-home #hdr2.h229 .x-rl[data-r="agent"]{background:#b45309}
 html body #screen-home #hdr2.h229 .x-rl[data-r="member"]{background:#1d4ed8}
 html body #screen-home #hdr2.h229 .x-rl[data-r="user"]{background:#64748b}
+html body #screen-home #hdr2.h229 .x-rl{display:none !important}
 </style>
 </body>
 </html>
