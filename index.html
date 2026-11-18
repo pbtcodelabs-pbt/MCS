@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE519";
+const APP_VERSION = "MCS1811WE520";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE520": "Photo sizes written under each photo box; crop buttons for the exact Profile 1200×675 and Card 420×1000 sizes; rounded photo corners",
   "MCS1811WE519": "Business form: a separate «Card photo (tall)» box — wide shop photo shows in details, tall photo on the card",
   "MCS1811WE518": "Ads now use only 4 smooth effects — Fade-In, Fade-Out, Slide Left, Slide Right (no more up/down moves)",
   "MCS1711TU517": "Shop photo: new «Card (tall)» size, and the matching size is chosen by itself so the whole photo fits",
@@ -5517,13 +5518,13 @@ function pfFieldsRead(pre){
 }
 function pfSlotsRender(pre){
   const S = pfEd[pre]; const box = document.getElementById(pre + 'Slots'); if(!S || !box) return;
-  const L = [['🏪 دکان کی تصویر', 'سامنے سے دکان — تفصیل میں بڑی نظر آئے گی', 'shop'], ['🤳 اپنی سیلفی', 'گول فریم — کارڈ پر لگے گی', 'selfie']];
+  const L = [['🏪 دکان کی تصویر', 'سامنے سے دکان — تفصیل میں بڑی نظر آئے گی', 'shop', '📐 1200 × 675 (چوڑی)'], ['🤳 اپنی سیلفی', 'گول فریم — کارڈ پر لگے گی', 'selfie', '📐 600 × 600 (گول)']];
   let saved = ''; try{ saved = localStorage.getItem('mcsSelfie') || ''; }catch(e){}
   box.innerHTML = L.map((l, i)=>{ const x = S.imgs[i];
-    return `<div class="pf-s2"><div class="pf-slot ${l[2]}${x ? '' : ' empty'}" onclick="pfPickSlot('${pre}',${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot('${pre}',${i})">✖</i>` : `<span class="pf-plus">＋</span><em>${i === 1 ? 'سیلفی لگانے کے لیے ٹچ کریں' : 'دکان کی تصویر لگانے کے لیے ٹچ کریں'}</em>`}</div><b>${l[0]}</b><small>${l[1]}</small>`
+    return `<div class="pf-s2"><div class="pf-slot ${l[2]}${x ? '' : ' empty'}" onclick="pfPickSlot('${pre}',${i})">${x ? (x.src ? `<img src="${x.src}" alt="">` : '⏳') + `<i onclick="event.stopPropagation();pfDelSlot('${pre}',${i})">✖</i>` : `<span class="pf-plus">＋</span><em>${i === 1 ? 'سیلفی لگانے کے لیے ٹچ کریں' : 'دکان کی تصویر لگانے کے لیے ٹچ کریں'}</em>`}</div><b>${l[0]}</b><small>${l[1]}</small><small class="pf-sz" dir="ltr">${l[3]}</small>`
       + (i === 1 && !x && saved ? `<button type="button" class="pf-reuse" onclick="pfUseSavedSelfie('${pre}')">↩️ پہلے والی اپنی سیلفی لگائیں</button>` : '') + `</div>`; }).join('')
     /* MCS1811WE519 (مالک کا حکم): تیسرا خانہ — کارڈ کی دائیں لمبی جگہ کی اپنی تصویر (نہ لگائیں تو دکان والی) */
-    + `<div class="pf-s2 pf-card519"><div class="pf-slot card${S.card ? '' : ' empty'}" onclick="pfPickSlot('${pre}',2)">${S.card ? `<img src="${S.card}" alt=""><i onclick="event.stopPropagation();pfDelCard('${pre}')">✖</i>` : `<span class="pf-plus">＋</span><em>کارڈ کی لمبی تصویر</em>`}</div><b>📇 کارڈ کی تصویر (لمبی)</b><small>کارڈ کی دائیں لمبی جگہ — نہ لگائیں تو دکان والی تصویر</small></div>`;
+    + `<div class="pf-s2 pf-card519"><div class="pf-slot card${S.card ? '' : ' empty'}" onclick="pfPickSlot('${pre}',2)">${S.card ? `<img src="${S.card}" alt=""><i onclick="event.stopPropagation();pfDelCard('${pre}')">✖</i>` : `<span class="pf-plus">＋</span><em>کارڈ کی لمبی تصویر</em>`}</div><b>📇 کارڈ کی تصویر (لمبی)</b><small>کارڈ کی دائیں لمبی جگہ — نہ لگائیں تو دکان والی تصویر</small><small class="pf-sz" dir="ltr">📐 420 × 1000 (لمبی)</small></div>`;
 }
 function pfDelCard(pre){ const S = pfEd[pre]; if(!S) return; S.card = ''; S.cardChanged = true; pfSlotsRender(pre); }
 let pfPickPre = '';
@@ -5564,7 +5565,7 @@ function phOpen(c, mode){
     <div class="agc-row"><button type="button" onclick="phFit()">⤢ پوری تصویر</button><button type="button" onclick="phFill()">⤡ دائرہ بھر دیں</button></div>
     <div class="agc-row"><button type="button" onclick="phRot(-1)">↺ بائیں گھمائیں</button><button type="button" onclick="phRot(1)">↻ دائیں گھمائیں</button></div>
     <div class="agc-row"><span>📐 سیدھا</span><input type="range" id="phF" min="-100" max="100" value="0" style="flex:1"></div>
-    ${sf ? '' : `<div class="agc-row"><span>📐 سائز</span><button type="button" class="ph-chip" data-ar="1.7778" onclick="phSetAr(16/9)">▬ چوڑی 16:9</button><button type="button" class="ph-chip on" data-ar="1.3333" onclick="phSetAr(4/3)">▭ 4:3</button><button type="button" class="ph-chip" data-ar="1" onclick="phSetAr(1)">⬜ چوکور</button><button type="button" class="ph-chip" data-ar="0.42" onclick="phSetAr(0.42)">▯ کارڈ (لمبی)</button></div>
+    ${sf ? '' : `<div class="agc-row"><span>📐 سائز</span><button type="button" class="ph-chip" data-ar="1.7778" onclick="phSetAr(16/9)">▬ پروفائل 1200×675</button><button type="button" class="ph-chip on" data-ar="1.3333" onclick="phSetAr(4/3)">▭ 4:3</button><button type="button" class="ph-chip" data-ar="1" onclick="phSetAr(1)">⬜ چوکور</button><button type="button" class="ph-chip" data-ar="0.42" onclick="phSetAr(0.42)">📇 کارڈ 420×1000</button></div>
     <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="phR"> ⭕ گول کریں</label><select id="phFr"><option value="">🖼️ فریم نہیں</option><option value="#ffffff">⬜ سفید فریم</option><option value="#f59e0b">🟨 سنہری فریم</option><option value="#16a34a">🟩 ہرا فریم</option><option value="#dc2626">🟥 سرخ فریم</option><option value="#1d4ed8">🟦 نیلا فریم</option></select></div>`}
     <div class="agc-row"><span>☀️ روشنی</span><input type="range" id="phB" min="60" max="170" value="100" style="flex:1"></div>
     <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="phE" ${PH.enh ? 'checked' : ''}> ✨ صاف ستھرا کریں (کنٹراسٹ اور صفائی خود بہتر)</label></div>
@@ -5622,7 +5623,7 @@ function phBake(cv){
   ctx.putImageData(id, 0, 0);
 }
 async function phDone(){
-  const sf = PH.mode === 'selfie', S = sf ? 600 : 1000, out = document.createElement('canvas'); phPaint(out, S);
+  const sf = PH.mode === 'selfie', S = sf ? 600 : (Math.abs((PH.ar || 1) - 16/9) < .01 ? 1200 : 1000),   /* MCS1811WE520: پروفائل ٹھیک 1200×675، کارڈ 420×1000 */ out = document.createElement('canvas'); phPaint(out, S);
   if(PH.br !== 100 || PH.enh){ try{ phBake(out); }catch(e){} }
   if(PH.enh){ try{ agcEnhance(out); }catch(e){} }
   phShape(out);
@@ -5633,9 +5634,9 @@ async function phDone(){
     if(sf){ await pfSetSelfie(pre, out.toDataURL('image/jpeg', .85)); }
     else{
       let d = out.toDataURL('image/jpeg', .8);
-      for(const [sz, q] of [[1000,.7],[900,.62],[800,.55]]){ if(d.length <= 420000) break; const o2 = document.createElement('canvas'); o2.width = Math.round(out.width * sz / 1000); o2.height = Math.round(out.height * sz / 1000); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', q); }
+      for(const [sz, q] of [[1000,.72],[900,.62],[800,.55]]){ if(d.length <= 420000) break; const o2 = document.createElement('canvas'); o2.width = Math.round(out.width * sz / 1000); o2.height = Math.round(out.height * sz / 1000); o2.getContext('2d').drawImage(out, 0, 0, o2.width, o2.height); d = o2.toDataURL('image/jpeg', q); }
       const St = pfEd[pre]; if(!St) return;
-      if(St.slot === 2){ const W = 300, H = Math.round(W * out.height / out.width), c2 = document.createElement('canvas'); c2.width = W; c2.height = H; c2.getContext('2d').drawImage(out, 0, 0, W, H); St.card = c2.toDataURL('image/jpeg', .75); St.cardChanged = true; St.slot = 0; pfSlotsRender(pre); showToast('✅ کارڈ کی تصویر لگ گئی'); return; }
+      if(St.slot === 2){ const W = 420, H = Math.round(W * out.height / out.width), c2 = document.createElement('canvas'); c2.width = W; c2.height = H; c2.getContext('2d').drawImage(out, 0, 0, W, H); St.card = c2.toDataURL('image/jpeg', .75); St.cardChanged = true; St.slot = 0; pfSlotsRender(pre); showToast('✅ کارڈ کی تصویر لگ گئی'); return; }
       St.imgs[0] = {src:d, changed:true}; delete St.del[0]; try{ St.shopThumb = await pfShopThumb(d); St.shopThumbChanged = true; }catch(e){} pfSlotsRender(pre);
     }
     showToast('✅ تصویر لگ گئی');
@@ -26850,7 +26851,9 @@ html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:3
   html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:27px !important;height:27px !important;min-width:27px !important;font-size:12px !important}
 }
 </style>
-<style>.pf-card519{grid-column:1/-1;max-width:170px;margin:6px auto 0}.pf-card519 .pf-slot.card{aspect-ratio:.42 !important;height:auto !important;width:110px !important;margin:0 auto}.pf-card519 .pf-slot.card img{width:100%;height:100%;object-fit:cover}
+<style>.pf-sz{display:block;margin-top:2px;font:800 12px/1.4 Arial,sans-serif !important;color:#065f46 !important;background:#ecfdf5;border-radius:8px;padding:1px 6px;width:max-content;margin-inline:auto}
+html body .doc-card.rc .rc-ph{border-radius:14px !important;overflow:hidden}.pf1-shop{border-radius:18px !important;overflow:hidden}.pf-slot img{border-radius:12px}
+.pf-card519{grid-column:1/-1;max-width:170px;margin:6px auto 0}.pf-card519 .pf-slot.card{aspect-ratio:.42 !important;height:auto !important;width:110px !important;margin:0 auto}.pf-card519 .pf-slot.card img{width:100%;height:100%;object-fit:cover}
 #phCropModal #phCv{max-height:50vh !important;width:auto !important;max-width:100% !important;aspect-ratio:auto !important}</style>
 <script id="mcsPh517">
 /* MCS1711TU517 (مالک کا حکم): دکان کی تصویر — «▯ کارڈ (لمبی)» سائز (کارڈ کی دائیں والی لمبوتری جگہ)، اور تصویر کھلتے ہی اسی کے اپنے ناپ کا سائز خود چنا + پوری تصویر فریم میں (نہ باہر نکلے، نہ اوپر نیچے خالی) */
