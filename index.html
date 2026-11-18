@@ -4761,10 +4761,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE542";
+const APP_VERSION = "MCS1811WE543";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE543": "Login: a phone with an MCS ID opens on Registered User (MCS ID + PIN) • «New? Create account» on the User login • no test-mode label",
   "MCS1811WE542": "The bottom bar (◀ ▶ 🏠 and tabs) stays on every page • on Home, back (app or phone) asks to log out — press back again to log out",
   "MCS1811WE541": "Test mode: the test account now shows in the Help Desk (🧪) — activate it there for 1 year and check the full registration; ending test mode clears it from the server too",
   "MCS1811WE541": "New login system: Login As (User / Registered User / Agent / Admin) • User = one big LOGIN button, no PIN • new Sign Up (locality + date of birth + confirm PIN) • Forgot PIN (birth year + last 3 digits) • Change PIN screen",
@@ -18278,11 +18279,11 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
 #uaOv .uaBtn.bX{background:#fff;color:#0b2f8f;border:2px solid #1546c0;font-weight:800;letter-spacing:.5px;box-shadow:none}`;
     document.head.appendChild(s);
   }
-  const lgHead = () => `${window.MCS_TEST ? '<div class="lgTest"><u data-noen>ٹیسٹ موڈ</u>TEST MODE —</div>' : ''}${head()}`;
+  const lgHead = () => `${head()}`;   /* MCS1811WE543 (مالک کا حکم): ٹیسٹ موڈ کا پیلا نشان کہیں نہیں */
   const lgField = (id, ic, ph, o) => field(id, ic, ph, o);
   document.addEventListener('click', e => { const d = $('lgDd'); if(d && d.classList.contains('open') && !d.contains(e.target)) d.classList.remove('open'); });
   window.lgDdTog = function(e){ if(e) e.stopPropagation(); const d = $('lgDd'); if(d) d.classList.toggle('open'); };
-  window.uaSetRole = function(r){ r = r === 'dev' ? 'admin' : (r === 'biz' ? 'reg' : r); if(!LG_ROLES.some(x => x[0] === r)) r = 'user'; ls.set('mcsLoginRole2', r); ls.set('mcsLoginRole', r === 'admin' ? 'dev' : 'biz'); lgOther = false; uaLogin(); };
+  window.uaSetRole = function(r){ window.__lgUserPicked = (r === 'user'); r = r === 'dev' ? 'admin' : (r === 'biz' ? 'reg' : r); if(!LG_ROLES.some(x => x[0] === r)) r = 'user'; ls.set('mcsLoginRole2', r); ls.set('mcsLoginRole', r === 'admin' ? 'dev' : 'biz'); lgOther = false; uaLogin(); };
   window.lgUseOther = function(){ lgOther = true; uaLogin(); };
   window.lgPinIn = function(el){
     const adm = lgRole() === 'admin' || !!uaAdmGmail();   /* ایڈمن فون پر حروف والا کی بورڈ — پاس ورڈ ABC ہو سکتا ہے */
@@ -18295,6 +18296,8 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   window.uaLogin = function(msg){
     let role = lgRole();
     if(msg && role === 'user'){ role = 'reg'; ls.set('mcsLoginRole2', 'reg'); }
+    /* MCS1811WE543 (مالک کا حکم): فون میں MCS نمبر ہو تو خود «Registered User» — MCS نمبر + PIN (اسی بار ہاتھ سے «User» چنا ہو تو وہی) */
+    if(role === 'user' && !window.__lgUserPicked){ let hasPk = false; try{ hasPk = !!uwMyPk(); }catch(e){} if(hasPk && !lgOther) role = 'reg'; }
     lgCss();
     const pk = role === 'reg' ? lgPk() : null, agM = role === 'agent' && !lgOther ? String(ls.get('mcsLastAgMob') || '') : '', admG = role === 'admin' && !lgOther ? uaAdmGmail() : '';
     const rl = LG_ROLES.find(x => x[0] === role), master = !!uaAdmGmail();
@@ -18319,7 +18322,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     else if(role === 'admin' && admG) links = `<div class="lgLinks c"><a onclick="lgUseOther()">Other Gmail / <span data-noen>دوسرا Gmail</span></a></div>`;
     const dd = `<div class="lgLbl">Login As</div><div class="lgDd" id="lgDd"><button type="button" class="lgDdB" onclick="lgDdTog(event)">${LGI[role]}<span>${rl[1]}</span><i class="cv">${LGI.chev}</i></button><div class="lgDdL">${LG_ROLES.map(x => `<button type="button" class="${x[0] === role ? 'on' : ''}" onclick="uaSetRole('${x[0]}')">${LGI[x[0]]}<span>${x[1]} <u data-noen>${x[2]}</u></span>${x[0] === role ? LGI.check : ''}</button>`).join('')}</div></div>`;
     const body = role === 'user'
-      ? `${dd}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB lgBig" onclick="lgGo()">${IC.login}LOGIN</button>`
+      ? `${dd}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB lgBig" onclick="lgGo()">${IC.login}LOGIN</button><div class="lgLinks c"><a onclick="uaSignup()">New? Create account / <span data-noen>نیا اکاؤنٹ بنائیں</span></a></div>`
       : `${dd}${idIn}${secret}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB" onclick="lgGo()">${IC.login}LOGIN</button>${links}`;
     show(`${lgHead()}<div class="uaCard uaLg"><div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}${role === 'user' ? '' : idBox}${body}</div>`);
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') lgGo(); });
