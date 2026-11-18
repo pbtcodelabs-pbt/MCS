@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU516";
+const APP_VERSION = "MCS1711TU517";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU517": "Shop photo: new «Card (tall)» size, and the matching size is chosen by itself so the whole photo fits",
   "MCS1711TU516": "Business cards: wider shop photo, bigger profile photo and bigger, clearer names and details",
   "MCS1711TU515": "The «AD • Ad» tag is removed from shop ads",
   "MCS1711TU514": "Ad editor now changes the ad (fonts, sizes, colours, borders, photo) and ✋ Move lets you drag the name, line, picture and buttons anywhere inside the ad",
@@ -5558,7 +5559,7 @@ function phOpen(c, mode){
     <div class="agc-row"><button type="button" onclick="phFit()">⤢ پوری تصویر</button><button type="button" onclick="phFill()">⤡ دائرہ بھر دیں</button></div>
     <div class="agc-row"><button type="button" onclick="phRot(-1)">↺ بائیں گھمائیں</button><button type="button" onclick="phRot(1)">↻ دائیں گھمائیں</button></div>
     <div class="agc-row"><span>📐 سیدھا</span><input type="range" id="phF" min="-100" max="100" value="0" style="flex:1"></div>
-    ${sf ? '' : `<div class="agc-row"><span>📐 سائز</span><button type="button" class="ph-chip" data-ar="1.7778" onclick="phSetAr(16/9)">▬ چوڑی 16:9</button><button type="button" class="ph-chip on" data-ar="1.3333" onclick="phSetAr(4/3)">▭ 4:3</button><button type="button" class="ph-chip" data-ar="1" onclick="phSetAr(1)">⬜ چوکور</button></div>
+    ${sf ? '' : `<div class="agc-row"><span>📐 سائز</span><button type="button" class="ph-chip" data-ar="1.7778" onclick="phSetAr(16/9)">▬ چوڑی 16:9</button><button type="button" class="ph-chip on" data-ar="1.3333" onclick="phSetAr(4/3)">▭ 4:3</button><button type="button" class="ph-chip" data-ar="1" onclick="phSetAr(1)">⬜ چوکور</button><button type="button" class="ph-chip" data-ar="0.42" onclick="phSetAr(0.42)">▯ کارڈ (لمبی)</button></div>
     <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="phR"> ⭕ گول کریں</label><select id="phFr"><option value="">🖼️ فریم نہیں</option><option value="#ffffff">⬜ سفید فریم</option><option value="#f59e0b">🟨 سنہری فریم</option><option value="#16a34a">🟩 ہرا فریم</option><option value="#dc2626">🟥 سرخ فریم</option><option value="#1d4ed8">🟦 نیلا فریم</option></select></div>`}
     <div class="agc-row"><span>☀️ روشنی</span><input type="range" id="phB" min="60" max="170" value="100" style="flex:1"></div>
     <div class="agc-row"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="phE" ${PH.enh ? 'checked' : ''}> ✨ صاف ستھرا کریں (کنٹراسٹ اور صفائی خود بہتر)</label></div>
@@ -26842,5 +26843,15 @@ html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:3
   html body .doc-card.rc .rc-btns>a,html body .doc-card.rc .rc-btns>button{width:27px !important;height:27px !important;min-width:27px !important;font-size:12px !important}
 }
 </style>
+<style>#phCropModal #phCv{max-height:50vh !important;width:auto !important;max-width:100% !important;aspect-ratio:auto !important}</style>
+<script id="mcsPh517">
+/* MCS1711TU517 (مالک کا حکم): دکان کی تصویر — «▯ کارڈ (لمبی)» سائز (کارڈ کی دائیں والی لمبوتری جگہ)، اور تصویر کھلتے ہی اسی کے اپنے ناپ کا سائز خود چنا + پوری تصویر فریم میں (نہ باہر نکلے، نہ اوپر نیچے خالی) */
+(function(){ const o = window.phOpen; if(typeof o !== 'function') return;
+  window.phOpen = phOpen = function(c, mode){ const r = o.apply(this, arguments);
+    try{ if(mode !== 'selfie' && c && c.width && c.height){ const ar = c.width / c.height, L = [16/9, 4/3, 1, 0.42]; let best = 0, d = 9; L.forEach(x => { const e = Math.abs(Math.log(ar / x)); if(e < d){ d = e; best = x; } });
+      if(d < 0.12){ setTimeout(() => { try{ phSetAr(best); phFit(); }catch(e){} }, 60); } } }catch(e){}
+    return r; };
+})();
+</script>
 </body>
 </html>
