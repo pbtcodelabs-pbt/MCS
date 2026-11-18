@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1711TU513";
+const APP_VERSION = "MCS1711TU514";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1711TU514": "Ad editor now changes the ad (fonts, sizes, colours, borders, photo) and ✋ Move lets you drag the name, line, picture and buttons anywhere inside the ad",
   "MCS1711TU513": "✏️ Edit running ads (fonts, sizes, colours, 12 border styles, photo brightness/saturation/sharpness) — Admin 1; 🧪 Test mode button on home; exit test keeping or clearing data; 7 taps on the home version opens the admin panel",
   "MCS1711TU512": "Cards: orange MCS tag and the AG001 on every card removed — the round blue agent badge with its own AG code shows only on MCS agents",
   "MCS1711TU511": "ADMIN 1 / ADMIN 2 ribbon moved to the right corner (nothing hidden); the small Admin label is gone when the ribbon shows",
@@ -26673,7 +26674,7 @@ html body #homeAds .adx-ed{position:absolute;top:8px;right:8px;z-index:9;width:3
 #adxSheet .ax-bs{width:58px;height:36px;padding:0 !important;font-size:10px !important;background:#f1f5f9 !important}
 #adxSheet textarea,#adxSheet input[type=text]{width:100%;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:10px;padding:8px;font:600 15px inherit;unicode-bidi:plaintext}
 body.adx-on #homeAds{outline:3px dashed #f59e0b;outline-offset:3px}
-html body.adx-on #screen-home #homeAds{position:fixed !important;top:calc(8px + env(safe-area-inset-top,0px)) !important;left:8px !important;right:8px !important;width:auto !important;margin:0 !important;z-index:2147482999 !important;box-shadow:0 10px 30px rgba(0,0,0,.5) !important}
+html body.adx-on #screen-home #homeAds{touch-action:none !important;position:fixed !important;top:calc(8px + env(safe-area-inset-top,0px)) !important;left:8px !important;right:8px !important;width:auto !important;margin:0 !important;z-index:2147482999 !important;box-shadow:0 10px 30px rgba(0,0,0,.5) !important}
 body.adx-on::before{content:'';position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:2147482990}
 </style>
 <script id="mcsAdx513">
@@ -26697,17 +26698,21 @@ body.adx-on::before{content:'';position:fixed;inset:0;background:rgba(15,23,42,.
       const mx = Math.max(r, g, b), mn = Math.min(r, g, b); let H = 0, S = 0, L = (mx + mn) / 2; if(mx !== mn){ const d = mx - mn; S = L > .5 ? d / (2 - mx - mn) : d / (mx + mn); H = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; H *= 60; }
       L = Math.max(4, Math.min(96, L * 100 + (dl || 0))); return `hsl(${Math.round(H)},${Math.round(S * 100)}%,${Math.round(L)}%)`; }catch(e){ return hex; } }
   function css(id, x){
-    x = Object.assign({}, DEF, x || {}); const S = `html body .ad-card[data-adx="${id}"]`, rules = [];
+    x = Object.assign({}, DEF, x || {}); const rules = [];
+    /* MCS1711TU514: ہوم کے اشتہار کے پرانے اصول (#screen-home #homeAds …) زیادہ طاقتور تھے — اب انہی IDs کے ساتھ */
+    const P = [`html body #screen-home #homeAds .ad-card[data-adx="${id}"]`, `html body .ad-card[data-adx="${id}"]`];
+    const S = { toString(){ return P[0]; } }; const Q = suf => P.map(p => p + suf).join(',');
     const f = (FONTS.find(z => z[0] === x.font) || [])[2];
     const t = []; if(f) t.push(`font-family:${f} !important`); if(x.tx) t.push(`color:${x.tx} !important`);
-    const tb = t.concat(x.tsz ? [`font-size:${x.tsz}px !important`, 'line-height:1.35 !important'] : []);
-    if(tb.length) rules.push(`${S} .ad-tx b,${S} .ad-bar b{${tb.join(';')}}`);
-    const ts = t.concat(x.lsz ? [`font-size:${x.lsz}px !important`, 'line-height:1.45 !important'] : []);
-    if(ts.length) rules.push(`${S} .ad-tx span{${ts.join(';')}}`);
+    const wrapT = ['white-space:normal !important', 'text-overflow:clip !important', 'overflow:visible !important', '-webkit-line-clamp:unset !important', 'display:block !important'];   /* بڑا نام پورا دکھے، «…» نہیں */
+    const tb = t.concat(x.tsz ? [`font-size:${x.tsz}px !important`, 'line-height:1.35 !important'].concat(wrapT) : []);
+    if(tb.length) rules.push(`${Q(' .ad-tx b')},${Q(' .ad-bar b')}{${tb.join(';')}}`);
+    const ts = t.concat(x.lsz ? [`font-size:${x.lsz}px !important`, 'line-height:1.45 !important'].concat(wrapT) : []);
+    if(ts.length) rules.push(`${Q(' .ad-tx span')}{${ts.join(';')}}`);
     if(x.bg){ const c1 = hsl(x.bg, x.bgL), c2 = hsl(x.bg, x.bgL - 18);
-      rules.push(`${S}{background:linear-gradient(135deg,${c1},${c2}) ${x.bs === 9 ? 'padding-box' : ''} !important}`);
-      rules.push(`${S} .ad-bar{background:linear-gradient(transparent,${hsl(x.bg, x.bgL - 25).replace('hsl(', 'hsla(').replace(')', ',' + (x.bar / 100) + ')')}) !important}`); }
-    else if(x.bar !== 78) rules.push(`${S} .ad-bar{background:linear-gradient(transparent,rgba(0,0,0,${x.bar / 100})) !important}`);
+      rules.push(`${Q('')}{background:linear-gradient(135deg,${c1},${c2}) ${x.bs === 9 ? 'padding-box' : ''} !important}`);
+      rules.push(`${Q(' .ad-bar')}{background:linear-gradient(transparent,${hsl(x.bg, x.bgL - 25).replace('hsl(', 'hsla(').replace(')', ',' + (x.bar / 100) + ')')}) !important}`); }
+    else if(x.bar !== 78) rules.push(`${Q(' .ad-bar')}{background:linear-gradient(transparent,rgba(0,0,0,${x.bar / 100})) !important}`);
     const w = x.bw, c = x.bc || '#f59e0b', B = [];
     switch(+x.bs){
       case 1: B.push(`border:${w}px solid ${c}`); break;
@@ -26718,12 +26723,15 @@ body.adx-on::before{content:'';position:fixed;inset:0;background:rgba(15,23,42,.
       case 6: B.push(`border:${Math.max(2, w)}px ridge ${c}`); break;
       case 7: B.push(`border:${w}px solid #fcd34d`, `box-shadow:0 0 0 2px #b45309,0 0 18px 4px rgba(252,211,77,.85) !important`); break;
       case 8: B.push(`border:${w}px solid ${c}`, `box-shadow:0 0 8px 2px ${c},0 0 22px 6px ${c},inset 0 0 10px ${c} !important`); break;
-      case 9: B.push(`border:${w}px solid transparent`, `background-clip:padding-box`); rules.push(`${S}::after{content:'';position:absolute;inset:-${w}px;border-radius:inherit;padding:${w}px;background:linear-gradient(90deg,#ef4444,#f59e0b,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7,#ef4444);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:8}`); break;
+      case 9: B.push(`border:${w}px solid transparent`, `background-clip:padding-box`); rules.push(`${Q('::after')}{content:'';position:absolute;inset:-${w}px;border-radius:inherit;padding:${w}px;background:linear-gradient(90deg,#ef4444,#f59e0b,#eab308,#22c55e,#06b6d4,#3b82f6,#a855f7,#ef4444);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:8}`); break;
       case 10: B.push(`border:${w}px solid ${c}`, `box-shadow:inset 0 0 0 ${Math.max(2, w)}px rgba(255,255,255,.55),inset 0 0 18px rgba(0,0,0,.45) !important`); break;
       case 11: B.push(`border:${w}px solid ${c}`, `outline:${Math.max(2, w - 1)}px solid ${c}`, `outline-offset:3px`); break;
     }
-    if(B.length) rules.push(`${S}{${B.map(v => /!important/.test(v) ? v : v + ' !important').join(';')}}`);
-    if(x.bri !== 100 || x.sat !== 100 || x.con !== 100) rules.push(`${S} .ad-full,${S} .ad-vc{filter:brightness(${x.bri / 100}) saturate(${x.sat / 100}) contrast(${x.con / 100}) !important}`);
+    if(B.length) rules.push(`${Q('')}{${B.map(v => /!important/.test(v) ? v : v + ' !important').join(';')}}`);
+    if(x.bri !== 100 || x.sat !== 100 || x.con !== 100) rules.push(`${Q(' .ad-full')},${Q(' .ad-vc')}{filter:brightness(${x.bri / 100}) saturate(${x.sat / 100}) contrast(${x.con / 100}) !important}`);
+    const mv = (k, sel) => { const dx = +x['p' + k + 'x'] || 0, dy = +x['p' + k + 'y'] || 0; if(dx || dy) rules.push(`${Q(sel)}{position:relative !important;transform:translate(${dx}cqw,${dy}cqw) !important;z-index:4 !important}`); };
+    if(['t', 'l', 'i', 'g'].some(k => x['p' + k + 'x'] || x['p' + k + 'y'])){ rules.push(`${Q('')}{container-type:inline-size !important}`);
+      mv('t', ' .ad-tx b'); mv('t', ' .ad-bar b'); mv('l', ' .ad-tx span'); mv('i', ' .ad-ic'); mv('i', ' .ad-vc'); mv('g', ' .ad-go'); mv('g', ' .ad-bar a'); }
     return rules.join('\n');
   }
   let D = null;   /* ایڈیٹر کا مسودہ: { id, sx, title, line } */
@@ -26756,6 +26764,8 @@ body.adx-on::before{content:'';position:fixed;inset:0;background:rgba(15,23,42,.
       <div class="ax-row"><label>Line</label><textarea id="axLine" rows="2" oninput="adxTxt()" dir="auto">${E(D.line)}</textarea></div>`;
     if(TAB === 'bg') return `<div class="ax-row"><label>Background colour</label>${sw('bg', COLORS)}</div>${row('bgL', 'Lighter ↔ Darker', -40, 40)}${row('bar', 'Name strip darkness (photo ads)', 0, 100, '%')}`;
     if(TAB === 'br') return `<div class="ax-row"><label>Border style</label><div class="ax-chips">${BORDERS.map((n, i) => `<button type="button" class="ax-bs${+x.bs === i ? ' on' : ''}" onclick="adxSet('bs',${i});adxDraw()">${n}</button>`).join('')}</div></div>${row('bw', 'Border thickness', 1, 12, 'px')}<div class="ax-row"><label>Border colour</label>${sw('bc', COLORS)}</div>`;
+    if(TAB === 'mv') return `<div class="ax-row" style="font-size:14px;line-height:1.6;font-weight:700;color:#334155">✋ Touch the <b>name</b>, the <b>line</b>, the <b>picture / icon</b> or the <b>Call / WhatsApp buttons</b> on the ad above and slide your finger — they move anywhere inside the ad.</div>
+      <div class="ax-chips"><button type="button" onclick="adxMvReset()">↺ Reset positions</button></div>`;
     return `${row('bri', 'Brightness', 40, 160, '%')}${row('sat', 'Colour strength (saturation)', 0, 220, '%')}${row('con', 'Sharpness (contrast)', 50, 170, '%')}`;
   }
   window.adxDraw = function(){ const s = document.getElementById('adxSheet'); if(!s) return; const st = s.querySelector('.ax-body').scrollTop;
@@ -26770,11 +26780,33 @@ body.adx-on::before{content:'';position:fixed;inset:0;background:rgba(15,23,42,.
     try{ adHold = Date.now() + 1e9; }catch(e){} document.body.classList.add('adx-on');
     let s = document.getElementById('adxSheet'); if(s) s.remove(); s = document.createElement('div'); s.id = 'adxSheet'; s.setAttribute('data-noen', '1');
     s.innerHTML = `<div class="ax-hd"><b>✏️ Edit ad — ${E(a.title || '')}</b><button type="button" class="ax-rs" onclick="adxReset()">↺</button><button type="button" class="ax-x" onclick="adxClose(false)">✖</button><button type="button" class="ax-save" onclick="adxClose(true)">💾 Save</button></div>
-      <div class="ax-tabs"><button type="button" data-t="text" onclick="adxTab('text')">🔤 Text</button><button type="button" data-t="bg" onclick="adxTab('bg')">🎨 Background</button><button type="button" data-t="br" onclick="adxTab('br')">🖼️ Border</button><button type="button" data-t="ph" onclick="adxTab('ph')">📷 Photo</button></div><div class="ax-body"></div>`;
+      <div class="ax-tabs"><button type="button" data-t="text" onclick="adxTab('text')">🔤 Text</button><button type="button" data-t="bg" onclick="adxTab('bg')">🎨 Background</button><button type="button" data-t="br" onclick="adxTab('br')">🖼️ Border</button><button type="button" data-t="ph" onclick="adxTab('ph')">📷 Photo</button><button type="button" data-t="mv" onclick="adxTab('mv')">✋ Move</button></div><div class="ax-body"></div>`;
     document.body.appendChild(s); adxDraw(); rerender();
     const fit = () => { try{ const box = document.getElementById('homeAds'); if(box){ const r = box.getBoundingClientRect(); s.style.top = Math.round(r.bottom + 10) + 'px'; s.style.maxHeight = 'none'; } }catch(e){} };   /* اشتہار اوپر پکا، بٹن اس کے نیچے */
     setTimeout(fit, 60); setTimeout(fit, 400);
   };
+  window.adxMvReset = function(){ if(!D) return; ['t', 'l', 'i', 'g'].forEach(k => { delete D.sx['p' + k + 'x']; delete D.sx['p' + k + 'y']; }); apply(); };
+  /* MCS1711TU514: ✋ اشتہار کے اندر انگلی سے سرکانا — ہوم کی سوائپ (اگلا اشتہار) ایڈیٹر کھلا ہو تو بند */
+  (function(){ let drag = null;
+    const PARTS = [['t', '.ad-tx b,.ad-bar b'], ['l', '.ad-tx span'], ['i', '.ad-ic,.ad-vc'], ['g', '.ad-go,.ad-bar a']];
+    const inAd = e => { const box = document.getElementById('homeAds'); return D && box && e.target && box.contains(e.target) ? box : null; };
+    const pt = e => { const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e; return { x: t.clientX, y: t.clientY }; };
+    function down(e){ const box = inAd(e); if(!box) return; e.stopPropagation(); if(TAB !== 'mv') return;
+      for(const [k, sel] of PARTS){ const el = e.target.closest(sel); if(el && box.contains(el)){ const card = box.querySelector('.ad-card'); const p = pt(e);
+        drag = { k, el, card, x0: p.x, y0: p.y, dx0: +D.sx['p' + k + 'x'] || 0, dy0: +D.sx['p' + k + 'y'] || 0, w: (card && card.getBoundingClientRect().width) || 400 }; e.preventDefault(); return; } } }
+    function move(e){ if(!D) return; if(inAd(e)) e.stopPropagation(); if(!drag) return; e.preventDefault(); const p = pt(e);
+      const dx = drag.dx0 + (p.x - drag.x0) / drag.w * 100, dy = drag.dy0 + (p.y - drag.y0) / drag.w * 100;
+      drag.el.style.setProperty('transform', `translate(${dx}cqw,${dy}cqw)`, 'important'); drag.el.style.setProperty('position', 'relative', 'important'); drag.card && drag.card.style.setProperty('container-type', 'inline-size', 'important');
+      drag.nx = Math.round(dx * 10) / 10; drag.ny = Math.round(dy * 10) / 10; }
+    function up(e){ if(!D) return; if(inAd(e)) e.stopPropagation(); if(!drag) return; const d = drag; drag = null; if(d.nx != null){ D.sx['p' + d.k + 'x'] = d.nx; D.sx['p' + d.k + 'y'] = d.ny; apply(); } }
+    function clk(e){ if(inAd(e)){ e.stopPropagation(); e.preventDefault(); } }
+    const stop = e => { if(inAd(e)) e.stopPropagation(); };   /* ہوم کی سوائپ کو اشتہار تک نہ پہنچنے دیں */
+    window.addEventListener('pointerdown', down, { capture: true, passive: false });
+    window.addEventListener('pointermove', move, { capture: true, passive: false });
+    ['pointerup', 'pointercancel'].forEach(t => window.addEventListener(t, up, { capture: true, passive: false }));
+    ['touchstart', 'touchmove', 'touchend', 'mousedown', 'mouseup'].forEach(t => window.addEventListener(t, stop, { capture: true, passive: false }));
+    window.addEventListener('click', clk, true);
+  })();
   window.adxReset = function(){ if(!D || !confirm('Reset this ad to the plain style?')) return; D.sx = Object.assign({}, DEF); apply(); adxDraw(); };
   window.adxClose = function(save){
     if(!D) return; const a = cur(), d = D;
