@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE532";
+const APP_VERSION = "MCS1811WE533";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE533": "MCS Agent screen: your selfie, name, AG number and «MCS Agent» badge on top with congratulations; Admin now sees his own MCS number (not an old test one) and his registered business + agent summary",
   "MCS1811WE532": "Home header (Help Desk #283): share button moved to My Account → «📤 Share this app»; bigger Hijri date",
   "MCS1811WE531": "Card editor (🔤 on each card): text size/font only for that card; background and border colour for all cards alike",
   "MCS1811WE530": "Cleaner home header (Help Desk #283): big city name, ID and role on the right, plain dates and time — no boxes",
@@ -24090,6 +24091,13 @@ html body html body .doc-card.dpbig > .pf-tag{bottom:5px !important;left:6px !im
 #wzOv .wzChip.on{background:#eff4ff;color:#1d4ed8;border-color:#1d4ed8}
 #wzOv .wzChip i{font-style:normal;margin-inline-start:6px;opacity:.7}
 #wzOv .wzRow{display:flex;gap:8px}#wzOv .wzRow>*{flex:1}
+#wzOv .wzWho{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0 8px;border-bottom:2px solid #e2c15a;margin-bottom:6px}
+#wzOv .wzWho .ph{width:96px;height:96px;border-radius:50%;overflow:hidden;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font:900 40px Arial,sans-serif;color:#1e3a8a;border:4px solid #c9971c;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#wzOv .wzWho .ph img{width:100%;height:100%;object-fit:cover}
+#wzOv .wzWho .ag{font:900 34px Arial,sans-serif;color:#7c4a03;letter-spacing:1px;line-height:1.1}
+#wzOv .wzWho .role{font:900 14px Arial,sans-serif;color:#fff;background:linear-gradient(135deg,#b45309,#d9a21b);border-radius:999px;padding:3px 14px}
+#wzOv .wzWho .nm{font:900 22px Arial,sans-serif;color:#0f1f45;margin-top:2px}
+#wzOv .wzWho .mc{font:800 16px Arial,sans-serif;color:#1e3a8a;background:#dbe4ff;border-radius:8px;padding:2px 12px}
 #wzOv .wzOk{text-align:center;padding:10px 4px}
 #wzOv .wzOk .big{font-size:40px;color:#1d4ed8;line-height:1.2}
 #wzOv .wzOk b{font-size:19px!important;color:#111827!important}
@@ -24317,14 +24325,15 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
 
   /* ---------- مددگار ---------- */
   const me = () => { try{ return (typeof uaMe === 'function' && uaMe()) || null; }catch(e){ return null; } };
-  const sidNow = () => { const m = me(); const u = m && m.user; const s = (u && (u.sid || u.id)) || S.sid || ''; return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : s) : ''; };
+  const sidNow = () => { try{ const X = window.mcsMyShow && window.mcsMyShow(); if(X && X.adm && X.mcs) return X.mcs; }catch(e){}   /* MCS1811WE533: ایڈمن کا اپنا MCS نمبر */
+    const m = me(); const u = m && m.user; const s = (u && (u.sid || u.id)) || S.sid || ''; return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : s) : ''; };
   const admMob = () => { try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? DEFAULT_CONTACT.whatsapp : ''; }catch(e){ return ''; } };   /* MCS1611MO485: ایڈمن = مالک — اپنا کاروبار 0320 والا */
-  const myCard0 = () => { try{ const mob = d10((me() && me().user && me().user.mobile) || S.a.mobile || admMob()); if(!mob) return null;
+  const myCard0 = () => { try{ const mob = d10(admMob() || (me() && me().user && me().user.mobile) || S.a.mobile); if(!mob) return null;   /* MCS1811WE533: ایڈمن ہو تو اپنا کاروبار، پرانا ٹیسٹ اکاؤنٹ نہیں */
     const L = (store.services || []).filter(x => d10(x.whatsapp) === mob); if(!L.length) return null;
     L.sort((a, b) => (((b.more || {}).ptype ? 1 : 0) - ((a.more || {}).ptype ? 1 : 0)) || ((b.updatedAt || 0) - (a.updatedAt || 0)));   /* MCS1411SA399: سب سے مکمل / تازہ کارڈ */
     return L[0]; }catch(e){ return null; } };
   let _mcK = '', _mcT = 0, _mcV = null;   /* MCS1511SU448: ہر ڈرائنگ میں دسیوں بار ہزاروں ریکارڈ چھانتا تھا — اب مختصر یادداشت */
-  const myCard = () => { try{ const k = d10((me() && me().user && me().user.mobile) || S.a.mobile || admMob()) + '|' + (store.services || []).length; if(k === _mcK && Date.now() - _mcT < 400) return _mcV; _mcV = myCard0(); _mcK = k; _mcT = Date.now(); return _mcV; }catch(e){ return myCard0(); } };
+  const myCard = () => { try{ const k = d10(admMob() || (me() && me().user && me().user.mobile) || S.a.mobile) + '|' + (store.services || []).length; if(k === _mcK && Date.now() - _mcT < 400) return _mcV; _mcV = myCard0(); _mcK = k; _mcT = Date.now(); return _mcV; }catch(e){ return myCard0(); } };
   const ensureCard = () => { let c = myCard(); if(c) return c;   /* MCS1511SU448: کارڈ فون میں نہ ہو تو (سرور ہم وقتی میں ہٹ گیا ہو) اکاؤنٹ سے وہیں بنا لو — «کارڈ نہیں ملا» کی اصل وجہ */
     try{ const m = me(), u = m && m.user; if(u && (u.mobile || S.a.mobile)){ uaAutoCard(Object.assign({}, u, { name: u.name || S.a.name || '', mobile: u.mobile || S.a.mobile, district: u.district || S.a.dist || '', sid: u.sid || u.id || S.sid || '' })); } }catch(e){}
     _mcT = 0; return myCard(); };
@@ -24398,10 +24407,16 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     try{ if(!doneOf(4)) agAdminSelfLink().then(ok => { try{ if(ok && $('wzOv') && $('wzOv').classList.contains('on')) draw(); }catch(e){} }); }catch(e){}   /* MCS1711TU490 */
     S.step = st; S.edit2 = 0; lastStep = 0; save(); $('wzOv').classList.add('on'); document.body.classList.add('wz-on'); document.body.style.overflow = 'hidden'; try{ window.scrollTo(0, 0); }catch(e){} draw(); wzGuard(1);
   };
-  function sLive(){   /* MCS1711TU503 (مالک کا حکم): مکمل کاروبار — فارم نہیں؛ اپنا کارڈ، ✏️ Edit صرف بٹن سے، ایجنٹ ہو تو حوصلہ افزائی + زیادہ کاروبار لائیں */
-    const ag = doneOf(4), live = doneOf(3), c = myCard();
-    frame(`<div class="wzCard" style="text-align:center"><div class="wzOk"><div class="big">✅</div><b style="font-size:20px;color:#166534">${live ? 'Your business is LIVE' : 'Your registration is complete'}</b><div class="wzId" dir="ltr">${esc(sidNow())}</div></div>
-      ${ag ? `<div class="wzGreen" style="text-align:left"><b>🤝 You are an MCS Agent.</b> Now your real job starts — bring more and more businesses to My City Shines and grow your revenue.<div class="u" style="margin-top:4px">زیادہ سے زیادہ کاروبار لائیں اور اپنی آمدن بڑھائیں۔</div></div>
+  function sLive(){   /* MCS1811WE533 (مالک کا حکم): مکمل کاروبار / ایجنٹ — سب سے اوپر تصویر، نام، MCS نمبر، AG نمبر؛ مبارکباد؛ پھر Earn with MCS */
+    const X = (window.mcsMyShow && window.mcsMyShow()) || {}, ag = doneOf(4) || (X.adm && !!X.ag), live = doneOf(3) || X.adm, c = myCard();
+    const nm = X.name || '', idn = X.mcs || sidNow(), ini = nm ? esc(nm.trim()[0].toUpperCase()) : '👤';
+    const who = `<div class="wzWho"><span class="ph">${X.photo ? `<img src="${esc(X.photo)}" alt="">` : ini}</span>
+      ${ag && X.ag ? `<span class="ag" dir="ltr">${esc(X.ag)}</span><span class="role">🏅 MCS Agent · <span class="u">ایم سی ایس ایجنٹ</span></span>` : ''}
+      ${nm ? `<span class="nm" data-noen="1">${esc(nm)}</span>` : ''}<span class="mc" dir="ltr">${esc(idn)}</span></div>`;
+    frame(`<div class="wzCard" style="text-align:center">${who}<div class="wzOk"><div class="big">🎉</div><b style="font-size:20px;color:#166534">Congratulations${nm ? ', ' + esc(nm) : ''}!</b>
+      <div style="margin-top:6px;font-weight:700">${live ? 'Your business' : 'Your registration'} <span dir="ltr">${esc(idn)}</span> ${live ? 'is registered' : 'is complete'}${ag && X.ag ? ' and you are also an MCS Agent <span dir="ltr">' + esc(X.ag) + '</span>' : ''}.</div>
+      <div class="u" style="font-size:18px">${live ? 'آپ کا کاروبار' : 'آپ کی رجسٹریشن'} <span dir="ltr">${esc(idn)}</span> ${live ? 'رجسٹر ہو چکا ہے' : 'مکمل ہو چکی ہے'}${ag && X.ag ? ' اور آپ <span dir="ltr">' + esc(X.ag) + '</span> کے طور پر ایم سی ایس ایجنٹ بھی ہیں' : ''}۔</div></div>
+      ${ag ? `<div class="wzGreen" style="text-align:left"><b>🤝 You are an MCS Agent.</b> Find new businesses, do business and grow your earnings — press «Earn with MCS».<div class="u" style="margin-top:4px">آپ ایجنٹ بن چکے ہیں — نئے کاروبار تلاش کریں، بزنس کریں اور اپنی کمائی بڑھائیں۔ نیچے «Earn with MCS» دبائیں۔</div></div>
         <button class="wzBtn bG wzBig4" onclick="mcsWizClose();setTimeout(function(){try{agEarnOpen()}catch(e){}},120)" style="background:#b45309">💰 Earn with MCS<small>Register more businesses</small></button>`
         : `<button class="wzBtn bG wzBig4" onclick="wzGo(4)" style="background:#b45309">🤝 Be an MCS Agent<small class="u">ایم سی ایس ایجنٹ بنیں — یہاں دبائیں</small></button>`}
       ${c ? `<button class="wzBtn bW" onclick="mcsWizClose();setTimeout(function(){try{pfOpen('service','${esc(c.id)}')}catch(e){}},120)">🪪 View my card</button>
@@ -24410,8 +24425,9 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   }
   window.wzEditMine = function(){ S.step = 2; S.edit2 = 1; save(); draw(); };   /* صرف بٹن دبانے پر ترمیم */
   const draw = () => { if(S.step > 3) S.step = 3;
-    if(S.step > 1 && !S.edit2 && (doneOf(3) || (doneOf(2) && doneOf(4)))) return sLive();   /* MCS1711TU503: کاروبار مکمل (لائیو، یا رجسٹرڈ + ایجنٹ) — فارم نہیں، صرف خلاصہ؛ ترمیم صرف «✏️ Edit» سے */
-    if(S.step === 1 && doneOf(1)) return s1done();                         /* MCS1511SU447: مکمل مرحلہ = «مکمل» صفحہ، پرانا فارم نہیں */
+    const admX = (() => { try{ const X = window.mcsMyShow && window.mcsMyShow(); return !!(X && X.adm); }catch(e){ return false; } })();   /* MCS1811WE533: ایڈمن کو مرحلے نہیں، اپنا خلاصہ */
+    if(S.step > 1 && !S.edit2 && (admX || doneOf(3) || (doneOf(2) && doneOf(4)))) return sLive();   /* MCS1711TU503: کاروبار مکمل (لائیو، یا رجسٹرڈ + ایجنٹ) — فارم نہیں، صرف خلاصہ؛ ترمیم صرف «✏️ Edit» سے */
+    if(S.step === 1 && doneOf(1)){ if(admX || doneOf(3) || (doneOf(2) && doneOf(4))) return sLive(); return s1done(); }                         /* MCS1511SU447: مکمل مرحلہ = «مکمل» صفحہ، پرانا فارم نہیں */
     if(S.step === 1 && !S.newAcct && !me()){ let pk = null; try{ pk = JSON.parse(localStorage.getItem('mcsMyPk') || 'null'); }catch(e){}   /* MCS1511SU450: اس فون پر اکاؤنٹ بن چکا — نیا فارم نہیں، صرف لاگ اِن */
       if(pk && pk.sid) return frame(`<div class="wzCard" style="text-align:center"><div class="wzHd"><i>🔐</i><b>Welcome back</b><span class="u">خوش آمدید — آپ کا اکاؤنٹ بن چکا ہے</span></div>
         <div style="font:900 28px Arial;letter-spacing:1px;margin:10px 0;color:#0b3d91">${esc(mcsSidFmt(pk.sid))}</div>
@@ -26222,6 +26238,13 @@ html body select.rpk-sel ~ .rpk-btn{display:none !important}
 .mcsAgDone h3{margin:6px 0 2px;font:900 19px 'Segoe UI',Selawik,Arial,sans-serif;color:#15803d}
 .mcsAgDone p{margin:8px 0;font:700 15px/1.5 'Segoe UI',Selawik,Arial,sans-serif;color:#0f1f45;direction:ltr}
 .mcsAgDone .ur{font-family:'Jameel Noori Nastaleeq Regular',serif;font-size:17px;line-height:2;direction:rtl;color:#1e3a8a;font-weight:400}
+.mcsAgDone .who{display:flex;flex-direction:column;align-items:center;gap:3px;padding-bottom:8px;border-bottom:2px solid #e2c15a;margin-bottom:4px}
+.mcsAgDone .who .ph{width:92px;height:92px;border-radius:50%;overflow:hidden;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font:900 38px Arial,sans-serif;color:#1e3a8a;border:4px solid #c9971c;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.mcsAgDone .who .ph img{width:100%;height:100%;object-fit:cover}
+.mcsAgDone .who .ag{font:900 34px Arial,sans-serif;color:#7c4a03;letter-spacing:1px;line-height:1.1;direction:ltr}
+.mcsAgDone .who .role{font:900 14px 'Segoe UI',Arial,sans-serif;color:#fff;background:linear-gradient(135deg,#b45309,#d9a21b);border-radius:999px;padding:3px 14px}
+.mcsAgDone .who .nm{font:900 21px 'Segoe UI',Arial,sans-serif;color:#0f1f45;margin-top:2px}
+.mcsAgDone .who .mc{font:800 14px Arial,sans-serif;color:#1e3a8a;background:#dbe4ff;border-radius:8px;padding:2px 10px;direction:ltr}
 .mcsAgDone .code{display:inline-block;margin:6px 0;font:900 26px Arial,sans-serif;color:#1e3a8a;background:#dbe4ff;border:2px solid #3b5bdb;border-radius:14px;padding:6px 18px;letter-spacing:1px;direction:ltr;cursor:pointer}
 </style>
 <script id="mcsCity494">
@@ -26306,12 +26329,34 @@ html body select.rpk-sel ~ .rpk-btn{display:none !important}
   window.mcsCityBanRefresh = refresh;
   /* ===== (۳) ایجنٹ بن چکا ہے تو «Earn with MCS» پر فارم نہیں — مکمل؛ ہر بار یہی پیغام ===== */
   const agNum = c => { const m = /^AG-?0*(\d+)$/i.exec(String(c || '').trim()); return m ? +m[1] : 0; };
+  /* MCS1811WE533 (مالک کا حکم): ایک جگہ سے «میں کون ہوں» — تصویر، نام، MCS نمبر، AG نمبر؛ ایڈمن کا اپنا نمبر (MCS001 / MCS002)، پرانا ٹیسٹ اکاؤنٹ نہیں */
+  window.mcsMyShow = function(a){
+    const l10 = x => String(x || '').replace(/\D/g, '').slice(-10);
+    const ADMN = { '3206793793': ['MCS001', 'AG001', 'Admin 1'], '3138469706': ['MCS002', 'AG002', 'Admin 2'] };
+    let au = null; try{ au = (typeof uaMe === 'function' && uaMe()) || null; }catch(e){}
+    const u = (au && au.user) || {}; a = a || (typeof agMe === 'function' ? agMe() : null) || {};
+    let adminOn = false; try{ adminOn = !!(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn); }catch(e){}
+    let mob = adminOn ? l10(typeof DEFAULT_CONTACT !== 'undefined' ? DEFAULT_CONTACT.whatsapp : '') : (l10(a.phone) || l10(u.mobile));
+    const adm = ADMN[mob] || null;
+    let card = null; try{ const L = (store.services || []).filter(x => mob && l10(x.whatsapp) === mob);
+      card = L.find(x => /^MCS\d+M\d+$/i.test(shortRecordId('service', x) || '')) || L.find(x => x.more && x.more.ptype) || L[0] || null; }catch(e){}
+    let full = ''; try{ const t = card ? shortRecordId('service', card) : ''; if(/^MCS\d+M\d+$/i.test(t)) full = t.toUpperCase(); }catch(e){}
+    let acct = ''; try{ const sv = u.sid || u.id; acct = sv ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(sv) : String(sv)) : ''; }catch(e){}
+    const agc = agNum(a.code) ? 'AG' + String(agNum(a.code)).padStart(3, '0') : (adm ? adm[1] : '');
+    let ph = ''; try{ ph = (card && card.more && card.more.selfie) || ''; if(!ph && typeof ptSelfieGet === 'function') ph = ptSelfieGet('agent') || (adm ? ptSelfieGet('dev') : '') || ptSelfieGet(''); if(!ph) ph = (window.sfMem && window.sfMem.mcsSelfie) || localStorage.getItem('mcsSelfie') || ''; }catch(e){}
+    let nm = String(a.name || '').trim() || String(u.name || '').trim(); if(!nm && card) nm = String(card.name || card.nameUr || '').trim(); if(!nm && adm) nm = adm[2];
+    return { adm: !!adm, mcs: full || (adm ? adm[0] : acct), base: adm ? adm[0] : acct, full: full, ag: agc, name: nm, photo: ph, mob: mob };
+  };
   window.mcsAgDone = function(a){
-    a = a || (typeof agMe === 'function' ? agMe() : null) || {}; const code = agNum(a.code) ? 'AG' + String(agNum(a.code)).padStart(3, '0') : (a.code || '');
-    agModal(`<div class="mcsAgDone"><div class="big">🎉</div><h3>Registration complete</h3>
-      <p>Your business is LIVE and you are an MCS Agent${a.name ? ', ' + E(a.name) : ''}. Your registration is complete — now your real job starts!</p>
-      <p>Register more and more businesses and professionals on My City Shines — the more you bring, the more your business grows.</p>
-      <p class="ur">آپ کا کاروبار لائیو ہے اور آپ MCS ایجنٹ بن چکے ہیں — اب زیادہ سے زیادہ کاروبار اور پروفیشنل رجسٹر کروائیں تاکہ آپ کا کاروبار بڑھے۔</p>
+    a = a || (typeof agMe === 'function' ? agMe() : null) || {}; const X = window.mcsMyShow(a), code = X.ag || a.code || '', nm = X.name;
+    const ini = nm ? E(nm.trim()[0].toUpperCase()) : '🤝';
+    agModal(`<div class="mcsAgDone">
+      <div class="who"><span class="ph">${X.photo ? `<img src="${E(X.photo)}" alt="">` : ini}</span>
+        <span class="ag">${E(code)}</span><span class="role">🏅 MCS Agent · ایم سی ایس ایجنٹ</span>
+        ${nm ? `<span class="nm" data-noen="1">${E(nm)}</span>` : ''}${X.mcs ? `<span class="mc">${E(X.mcs)}</span>` : ''}</div>
+      <div class="big">🎉</div><h3>Congratulations${nm ? ', ' + E(nm) : ''}!</h3>
+      <p>You are now an MCS Agent — find new businesses, do business and grow your earnings.</p>
+      <p class="ur">مبارک ہو! آپ ایجنٹ بن چکے ہیں — نئے کاروبار تلاش کریں، بزنس کریں اور اپنی کمائی بڑھائیں۔</p>
       ${code ? `<div class="cp-hint">Your referral code</div><div class="code" onclick="agCopy('${E(code)}')">${E(code)} 📋</div>` : ''}
       <button type="button" class="btn block ag-send" style="margin-top:8px" onclick="closeModal('agModal');try{mpWant=true;d2AddOpen()}catch(e){}">➕ Register a new business</button>
       ${code ? `<button type="button" class="btn block secondary" style="margin-top:6px" onclick="agShare('${E(code)}')">📤 Share referral code</button>` : ''}
