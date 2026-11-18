@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE534";
+const APP_VERSION = "MCS1811WE535";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE535": "Agent screen: «Earn with MCS» is now «➕ Invite & Register New Businesses» — it opens a list of signed-up people (MCS ID with name); tap one and that person's registration form opens so you can register the business as an agent",
   "MCS1811WE534": "Home header: the red corner ribbon is gone — a small role tag now sits under your photo (ADMIN 1, ADMIN 2, AGENT, MEMBER or USER); admin's own selfie shows in the header; long city names shrink to fit instead of being cut",
   "MCS1811WE533": "MCS Agent screen: your selfie, name, AG number and «MCS Agent» badge on top with congratulations; Admin now sees his own MCS number (not an old test one) and his registered business + agent summary",
   "MCS1811WE532": "Home header (Help Desk #283): share button moved to My Account → «📤 Share this app»; bigger Hijri date",
@@ -22902,6 +22903,57 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     }catch(e){}
   }
   window.openServiceForm = openServiceForm = function(){ const r = _osf.apply(this, arguments); try{ box(); }catch(e){} try{ ownFill(); }catch(e){} return r; };
+  /* MCS1811WE535 (مالک کا حکم): «➕ Invite & Register New Businesses» — سائن اپ شدہ بندوں کی فہرست، ہر MCS ID کے ساتھ اسی بندے کا نام؛ چنتے ہی اسی کا رجسٹریشن فارم کھلے اور ایجنٹ کے طور پر رجسٹریشن شروع ہو */
+  function invCss(){
+    if($('invCss')) return; const st = document.createElement('style'); st.id = 'invCss';
+    st.textContent = '.inv-bar{display:flex;gap:6px;margin:8px 0}.inv-q{flex:1;min-width:0;box-sizing:border-box;border:1.5px solid #86efac;border-radius:10px;padding:10px 12px;font:600 15px inherit;font-family:inherit;direction:rtl;background:#f8fffb;outline:0}'
+      + '.inv-rf{flex:none;border:0;border-radius:10px;background:#16a34a;color:#fff;font-weight:900;font-size:16px;padding:0 14px;cursor:pointer}'
+      + '.inv-list{max-height:55vh;overflow:auto;-webkit-overflow-scrolling:touch;border:1px solid #bbf7d0;border-radius:12px;background:#fff}'
+      + '.inv-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #ecfdf5;background:#fff;padding:10px 12px;cursor:pointer;font-family:inherit;text-align:start;direction:rtl}'
+      + '.inv-row:active{background:#d1fae5}.inv-row.done{background:#f8fafc}'
+      + '.inv-id{flex:none;background:#14532d;color:#fff;border-radius:8px;padding:3px 10px;font:800 14px Arial,sans-serif;letter-spacing:.4px;direction:ltr}'
+      + '.inv-nm{flex:1;min-width:0;font-size:19px;font-weight:800;line-height:1.8;color:#0f1f45;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'
+      + '.inv-go{flex:none;color:#16a34a;font-weight:900;font-size:18px}'
+      + '.inv-sub{flex:1 0 100%;font:600 12px Arial,sans-serif;color:#475569;direction:ltr;text-align:start}'
+      + '.inv-none{padding:14px;text-align:center;color:#b45309;font-weight:700;font-size:13px;line-height:1.8}';
+    document.head.appendChild(st);
+  }
+  function invEntries(){ const L = entries().filter(x => /^MCS/i.test(x.sid)); L.sort((a, b) => (a.done ? 1 : 0) - (b.done ? 1 : 0)); return L; }   /* نیا (غیر رجسٹرڈ) پہلے، رجسٹرڈ ✅ بعد میں */
+  function invDraw(){
+    const box = $('invList'); if(!box) return;
+    const L = window._invEntries = invEntries();
+    const qv = (($('invQ') || {}).value || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).toLowerCase().replace(/\s+/g, '');
+    const F = L.filter(x => !qv || (x.sid + (x.name || '') + (x.district || '') + '0' + d10(x.mobile) + d10(x.mobile)).toLowerCase().replace(/\s+/g, '').includes(qv));
+    box.innerHTML = F.length ? F.map(x => `<button type="button" class="inv-row${x.done ? ' done' : ''}" onclick="mcsInvPick('${x.key}')"><span class="inv-id">${esc(x.sid)}</span><span class="inv-nm" data-noen="1" dir="auto">${esc(x.name || '— نام نہیں ملا —')}</span><span class="inv-go">${x.done ? '✅' : '◂'}</span><span class="inv-sub">📱 0${esc(d10(x.mobile))}${x.district ? ' &nbsp;•&nbsp; 📍 ' + esc(x.district) : ''}</span></button>`).join('')
+      : `<div class="inv-none">${L.length ? 'کوئی نہیں ملا' : 'فہرست خالی ہے — 🔄 دبا کر تازہ کریں (انٹرنیٹ چاہیے)'}</div>`;
+  }
+  window.mcsInvFilter = function(){ invDraw(); };
+  window.mcsInvRefresh = function(manual){ const m = $('invMsg'); if(manual && m) m.textContent = '⏳ فہرست تازہ ہو رہی ہے…'; Promise.resolve(window.mcsRegRefresh(!!manual)).then(() => { if(m) m.textContent = ''; invDraw(); }, () => { if(m) m.textContent = ''; invDraw(); }); };
+  window.mcsInviteOpen = function(){
+    invCss();
+    agModal(`<div class="ag-hd">➕ Invite &amp; Register New Businesses <small>نئے کاروبار مدعو کریں اور رجسٹر کریں</small></div>
+      <div class="cp-hint" data-noen="1" style="direction:rtl;line-height:1.9">جس بندے کا کاروبار رجسٹر کرنا ہے اس کا نام / MCS ID فہرست سے چنیں — اسی کا رجسٹریشن فارم کھل جائے گا اور آپ ایجنٹ کے طور پر اس کی رجسٹریشن شروع کر دیں گے۔</div>
+      <div class="inv-bar"><input type="text" id="invQ" class="inv-q" data-noen="1" placeholder="🔍 نام / MCS ID / موبائل لکھیں" autocomplete="off" oninput="mcsInvFilter()"><button type="button" class="inv-rf" title="Refresh" onclick="mcsInvRefresh(true)">🔄</button></div>
+      <div id="invMsg" style="font-weight:800;font-size:13px"></div>
+      <div class="inv-list" id="invList"></div>`);
+    invDraw(); mcsInvRefresh(false);
+  };
+  window.mcsInvPick = function(key){
+    const u = (window._invEntries || []).find(x => x.key === key); if(!u) return;
+    const k = d10(u.mobile), basic = k ? (store.services || []).find(x => x && d10(x.whatsapp) === k && (x.stage === 'basic' || !x.stage)) : null;
+    window._pkCtx = { sid: u.sid, key: u.key, name: u.name || '', mobile: u.mobile, district: u.district || '', recId: basic ? basic.id : null };
+    try{ closeModal('agModal'); }catch(e){}
+    if(basic){   /* اس بندے کا کارڈ فون میں ہے — اسی کا رجسٹریشن فارم */
+      try{ if(typeof svcMyBasicAdd === 'function') svcMyBasicAdd(basic.id); }catch(e){}
+      setTimeout(() => { try{ svcRegisterOpen(basic.id); }catch(e){} setTimeout(() => fill(window._pkCtx), 250); }, 150);
+    } else {   /* کارڈ نہیں ملا — نیا فارم؛ ویزرڈ (اپنا اکاؤنٹ) نہیں، اس بندے کا نام / موبائل / ضلع فارم میں */
+      setTimeout(() => {
+        window.mcsInvBypass = true; try{ openServiceForm(); }catch(e){} window.mcsInvBypass = false;
+        setTimeout(() => { try{ const sel = $('pkRegSel'); if(sel){ sel.value = u.key; window.pkRegPick(); } else fill(window._pkCtx); }catch(e){} }, 250);
+      }, 150);
+    }
+    try{ showToast('✅ ' + (u.name || '') + ' (' + u.sid + ') — رجسٹریشن فارم کھل رہا ہے', 3500); }catch(e){}
+  };
   // محفوظ ہونے کے بعد: منظوری کے لیے ایڈمن کو
   const _ss = window.saveService;
   window.saveService = saveService = function(){
@@ -24418,8 +24470,8 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     frame(`<div class="wzCard" style="text-align:center">${who}<div class="wzOk"><div class="big">🎉</div><b style="font-size:20px;color:#166534">Congratulations${nm ? ', ' + esc(nm) : ''}!</b>
       <div style="margin-top:6px;font-weight:700">${live ? 'Your business' : 'Your registration'} <span dir="ltr">${esc(idn)}</span> ${live ? 'is registered' : 'is complete'}${ag && X.ag ? ' and you are also an MCS Agent <span dir="ltr">' + esc(X.ag) + '</span>' : ''}.</div>
       <div class="u" style="font-size:18px">${live ? 'آپ کا کاروبار' : 'آپ کی رجسٹریشن'} <span dir="ltr">${esc(idn)}</span> ${live ? 'رجسٹر ہو چکا ہے' : 'مکمل ہو چکی ہے'}${ag && X.ag ? ' اور آپ <span dir="ltr">' + esc(X.ag) + '</span> کے طور پر ایم سی ایس ایجنٹ بھی ہیں' : ''}۔</div></div>
-      ${ag ? `<div class="wzGreen" style="text-align:left"><b>🤝 You are an MCS Agent.</b> Find new businesses, do business and grow your earnings — press «Earn with MCS».<div class="u" style="margin-top:4px">آپ ایجنٹ بن چکے ہیں — نئے کاروبار تلاش کریں، بزنس کریں اور اپنی کمائی بڑھائیں۔ نیچے «Earn with MCS» دبائیں۔</div></div>
-        <button class="wzBtn bG wzBig4" onclick="mcsWizClose();setTimeout(function(){try{agEarnOpen()}catch(e){}},120)" style="background:#b45309">💰 Earn with MCS<small>Register more businesses</small></button>`
+      ${ag ? `<div class="wzGreen" style="text-align:left"><b>🤝 You are an MCS Agent.</b> Find new businesses, do business and grow your earnings — press «Invite &amp; Register New Businesses».<div class="u" style="margin-top:4px">آپ ایجنٹ بن چکے ہیں — نئے کاروبار تلاش کریں، بزنس کریں اور اپنی کمائی بڑھائیں۔ نیچے «Invite &amp; Register New Businesses» دبائیں۔</div></div>
+        <button class="wzBtn bG wzBig4" onclick="mcsWizClose();setTimeout(function(){try{(window.mcsInviteOpen||agEarnOpen)()}catch(e){}},120)" style="background:#b45309">➕ Invite &amp; Register New Businesses<small class="u">نئے کاروبار مدعو کریں اور رجسٹر کریں</small></button>`
         : `<button class="wzBtn bG wzBig4" onclick="wzGo(4)" style="background:#b45309">🤝 Be an MCS Agent<small class="u">ایم سی ایس ایجنٹ بنیں — یہاں دبائیں</small></button>`}
       ${c ? `<button class="wzBtn bW" onclick="mcsWizClose();setTimeout(function(){try{pfOpen('service','${esc(c.id)}')}catch(e){}},120)">🪪 View my card</button>
       <button class="wzBtn bW" onclick="wzEditMine()">✏️ Edit my business</button>` : ''}
@@ -25053,7 +25105,7 @@ html body .doc-card.rc .rc-l .ag-corner{width:30px !important;height:30px !impor
 <script id="mcsFix409js">
 /* MCS1411SA410 (مالک کا حکم): سب کے لیے (ایڈمن، ایجنٹ، عام صارف) نیا رجسٹریشن ویزرڈ — نیا اندراج کہیں سے بھی پرانے فارم میں نہیں کھلتا؛ کو-ڈویلپر کا کردار ختم */
 (function(){
-  const goWiz = step => { try{ if(typeof window.mcsWizOpen === 'function'){ window.mcsWizOpen(step); return true; } }catch(e){} return false; };
+  const goWiz = step => { try{ if(window.mcsInvBypass) return false; if(typeof window.mcsWizOpen === 'function'){ window.mcsWizOpen(step); return true; } }catch(e){} return false; };
   const mineOf = id => { try{ const r = (store.services || []).find(x => String(x.id) === String(id)); return (r && typeof pfAcctOwns === 'function' && uaMe() && pfAcctOwns(r)) ? r : null; }catch(e){ return null; } };
   const oD = window.d2AddOpen;
   if(typeof oD === 'function') window.d2AddOpen = function(){ if(goWiz()) return; return oD.apply(this, arguments); };
@@ -26360,7 +26412,7 @@ html body select.rpk-sel ~ .rpk-btn{display:none !important}
       <p>You are now an MCS Agent — find new businesses, do business and grow your earnings.</p>
       <p class="ur">مبارک ہو! آپ ایجنٹ بن چکے ہیں — نئے کاروبار تلاش کریں، بزنس کریں اور اپنی کمائی بڑھائیں۔</p>
       ${code ? `<div class="cp-hint">Your referral code</div><div class="code" onclick="agCopy('${E(code)}')">${E(code)} 📋</div>` : ''}
-      <button type="button" class="btn block ag-send" style="margin-top:8px" onclick="closeModal('agModal');try{mpWant=true;d2AddOpen()}catch(e){}">➕ Register a new business</button>
+      <button type="button" class="btn block ag-send" style="margin-top:8px" onclick="closeModal('agModal');try{(window.mcsInviteOpen||d2AddOpen)()}catch(e){}">➕ Invite &amp; Register New Businesses<small style="display:block;font-size:13px;font-weight:600">نئے کاروبار مدعو کریں اور رجسٹر کریں</small></button>
       ${code ? `<button type="button" class="btn block secondary" style="margin-top:6px" onclick="agShare('${E(code)}')">📤 Share referral code</button>` : ''}
       ${isAdm() || (typeof codevOn === 'function' && codevOn()) ? `<button type="button" class="btn block secondary" style="margin-top:6px" onclick="agFullForm()">🤝 Make another person an MCS Agent</button>` : ''}
     </div>`);
