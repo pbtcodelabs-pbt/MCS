@@ -4761,10 +4761,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE541";
+const APP_VERSION = "MCS1811WE542";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE542": "The bottom bar (◀ ▶ 🏠 and tabs) stays on every page • on Home, back (app or phone) asks to log out — press back again to log out",
   "MCS1811WE541": "Test mode: the test account now shows in the Help Desk (🧪) — activate it there for 1 year and check the full registration; ending test mode clears it from the server too",
   "MCS1811WE541": "New login system: Login As (User / Registered User / Agent / Admin) • User = one big LOGIN button, no PIN • new Sign Up (locality + date of birth + confirm PIN) • Forgot PIN (birth year + last 3 digits) • Change PIN screen",
   "MCS1811WE540": "Welcome Back: only your name, MCS ID and PIN • every log out (admin too) goes straight to Welcome Back • ⎋ Log Out in the admin tools • test-mode strip removed",
@@ -7491,6 +7492,7 @@ function goBack(){
     return;
   }
   if(navStack.length>1){ try{ history.back(); return; }catch(e){} }
+  if(currentScreen === 'home'){ mcsAskLogout(); return; }   /* MCS1811WE542: ہوم پر ایپ کا ◀ بھی وہی */
   goHome();
 }
 function formHasTyping(ov){
@@ -7510,7 +7512,17 @@ function goHome(){
 }
 window.addEventListener('resize', ()=>{ if(mcsTyping()) return; try{ fitOpenForms(); }catch(e){} });
 /* MCS0811SU222 (مالک کا حکم): فون کا بیک بٹن ایپ بند نہ کرے — ایک پیج پیچھے؛ آخر پر «کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟» */
-function mcsAskLogout(){ let ok = true; try{ ok = confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟'); }catch(e){} if(!ok) return; if(window.mcsLogoutAll) window.mcsLogoutAll(true); else if(window.uaLogin) window.uaLogin(); }
+/* MCS1811WE542 (مالک کا حکم): ہوم پر پیچھے (ایپ کا ◀ یا فون کا بیک) — پہلی بار پوچھے «لاگ آؤٹ؟ دوبارہ دبائیں»، دوسری بار (3 سیکنڈ میں) لاگ آؤٹ */
+let _mcsBackAt = 0;
+function mcsAskLogout(){
+  const now = Date.now();
+  if(now - _mcsBackAt < 3500){ _mcsBackAt = 0; try{ document.getElementById('mcsBackAsk')?.remove(); }catch(e){} if(window.mcsLogoutAll) window.mcsLogoutAll(true); else if(window.uaLogin) window.uaLogin(); return; }
+  _mcsBackAt = now;
+  try{ let d = document.getElementById('mcsBackAsk'); if(d) d.remove(); d = document.createElement('div'); d.id = 'mcsBackAsk';
+    d.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h,64px) + 18px + env(safe-area-inset-bottom,0px));z-index:2147483000;background:#0f172a;color:#fff;border:2px solid #fde047;border-radius:16px;padding:12px 16px;font:800 15px/1.5 "Segoe UI",Selawik,Arial,sans-serif;text-align:center;max-width:92vw;box-shadow:0 8px 24px rgba(0,0,0,.4);cursor:pointer';
+    d.innerHTML = '🔒 Log out? Press back again<br><span style="font-family:\'Jameel Noori Nastaleeq Kasheeda\',serif;font-weight:400">لاگ آؤٹ کرنا ہے؟ دوبارہ پیچھے دبائیں</span>';
+    d.onclick = () => { d.remove(); mcsAskLogout(); }; document.body.appendChild(d); setTimeout(() => { try{ d.remove(); }catch(e){} }, 3500); }catch(e){}
+}
 try{ history.replaceState({root:1},''); history.pushState({guard:1},''); }catch(e){}
 function mcsRootBack(ev){
   const st = ev && ev.state; if(!(st && st.root)) return false;
@@ -27709,6 +27721,19 @@ html body #screen-home #hdr2.h229 .x-rl{display:none !important}
     return o.apply(self, a); };
 })();
 </script>
+<style id="mcsNav542css">
+/* MCS1811WE542 (مالک کا حکم): نیچے کی گرڈ (◀ ▶ 🏠 + My Chats… Settings) ہر صفحے / پاپ اپ / ویزرڈ پر نظر آئے — صرف لاگ اِن صفحے پر نہیں */
+body.nav-on .bnav,body.wz-on.nav-on .bnav{display:flex !important;z-index:2147481000 !important}
+body:has(#uaOv.on) .bnav{display:none !important}
+/* ◀ ▶ دوبارہ (مالک کا حکم) — دونوں کناروں پر پتلے تیر، چھ بٹن ویسے */
+html body.d2 .bnav #bnBack,html body.d2 .bnav #bnFwd{display:flex !important;flex:0 0 22px !important;width:22px !important;min-width:0 !important;height:auto !important;padding:0 !important;margin:0 !important;border-radius:10px !important;background:rgba(255,255,255,.16) !important;align-items:center !important;justify-content:center !important;position:static !important;transform:none !important}
+html body.d2 .bnav #bnBack{order:-10 !important}html body.d2 .bnav #bnFwd{order:99 !important}
+html body.d2 .bnav #bnBack span,html body.d2 .bnav #bnFwd span{display:none !important}
+html body.d2 .bnav #bnBack svg,html body.d2 .bnav #bnFwd svg{width:16px !important;height:16px !important;stroke-width:3 !important}
+html body.d2 .bnav #bnFwd[disabled]{opacity:.35 !important}
+html body.d2 .bnav{gap:3px !important}
+body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-inset-bottom,0px)) !important;box-sizing:border-box}
+</style>
 </body>
 
 </html>
