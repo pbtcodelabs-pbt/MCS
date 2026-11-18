@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE536";
+const APP_VERSION = "MCS1811WE537";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE537": "No more activation codes: the Activation Key box is gone; the business is activated for 1 year straight from our Help Desk by MCS ID — the owner gets a congratulations message and the business goes live",
   "MCS1811WE536": "Home header: the red role tag under your photo is removed (the yellow role name beside the photo already shows it)",
   "MCS1811WE535": "Agent screen: «Earn with MCS» is now «➕ Invite & Register New Businesses» — it opens a list of signed-up people (MCS ID with name); tap one and that person's registration form opens so you can register the business as an agent",
   "MCS1811WE534": "Home header: the red corner ribbon is gone — a small role tag now sits under your photo (ADMIN 1, ADMIN 2, AGENT, MEMBER or USER); admin's own selfie shows in the header; long city names shrink to fit instead of being cut",
@@ -27272,5 +27273,95 @@ html body #screen-home #hdr2.h229 .x-rl[data-r="member"]{background:#1d4ed8}
 html body #screen-home #hdr2.h229 .x-rl[data-r="user"]{background:#64748b}
 html body #screen-home #hdr2.h229 .x-rl{display:none !important}
 </style>
+<style id="mcsAct537css">
+/* MCS1811WE537 (مالک کا حکم): رجسٹریشن فارم میں «🔑 Activation Key» کا خانہ ختم — ایکٹیویشن ہیلپ ڈیسک سے MCS نمبر پر، کوڈ نہیں */
+#svcActKeyBox{display:none !important}
+#act537Ov{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+#act537Ov .bx{background:#fff;border-radius:20px;max-width:420px;width:100%;padding:20px 18px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.35);font-family:'Segoe UI',Selawik,Arial,sans-serif}
+#act537Ov .big{font-size:52px;line-height:1}
+#act537Ov h3{margin:8px 0 4px;font:900 21px/1.3 'Segoe UI',Selawik,Arial,sans-serif;color:#15803d}
+#act537Ov p{margin:8px 0;font:700 15px/1.5 'Segoe UI',Selawik,Arial,sans-serif;color:#0f1f45}
+#act537Ov .id{display:inline-block;margin:6px 0 10px;padding:6px 16px;border-radius:12px;background:#dcfce7;color:#166534;font:900 20px/1.2 'Segoe UI',Selawik,Arial,sans-serif;direction:ltr}
+#act537Ov button{display:block;width:100%;border:0;border-radius:14px;padding:13px;margin-top:8px;font:800 16px/1.2 'Segoe UI',Selawik,Arial,sans-serif;cursor:pointer}
+#act537Ov .g{background:#0f766e;color:#fff}#act537Ov .w{background:#e2e8f0;color:#0f172a}
+</style>
+<script id="mcsAct537">
+/* MCS1811WE537 (مالک کا حکم — کوڈ کا نظام ختم):
+   (1) رجسٹریشن کا خلاصہ (کاروبار، شناختی کارڈ، تصویر، فون) سرور کو — ہیلپ ڈیسک «📋 New MCS» میں نظر آئے
+   (2) ہیلپ ڈیسک سے ایک سال ایکٹیو ہوتے ہی: کاروبار لائیو (mcsGoLive) + ایک بار مبارکباد + «MCS Agent بنیں» */
+(function(){
+  var API = 'https://aio-pos-verify.pbtcodelabs.workers.dev/mcsauth';
+  function lsG(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function lsS(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+  function d10(x){ return String(x || '').replace(/\D/g, '').slice(-10); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function me(){ try{ return (typeof uaMe === 'function' && uaMe()) || null; }catch(e){ return null; } }
+  function own(){
+    var a = me(), mob = a && a.user ? d10(a.user.mobile) : ''; if(!mob) return null;
+    try{ var L = (store.services || []).filter(function(r){ return r && d10(r.whatsapp) === mob; }); var k = 'service';
+      if(!L.length){ L = (store.doctors || []).filter(function(r){ return r && d10(r.whatsapp) === mob; }); k = 'doctor'; }
+      if(!L.length) return null; return { rec: L[0], kind: k }; }catch(e){ return null; }
+  }
+  function thumb(src, cb){
+    if(!src || !/^data:image\//.test(src)){ cb(''); return; }
+    try{ var im = new Image(); im.onload = function(){ try{ var s = Math.min(1, 220 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); cb(c.toDataURL('image/jpeg', .72)); }catch(e){ cb(''); } }; im.onerror = function(){ cb(''); }; im.src = src; }catch(e){ cb(''); }
+  }
+  var busy = false;
+  function sendSum(){
+    if(busy) return; var a = me(); if(!a || !a.tok) return; var o = own(); if(!o) return;
+    var r = o.rec, m = r.more || {}, cn = '';
+    try{ cn = (JSON.parse(lsG('mcsRegCnic') || '{}') || {})[r.id] || ''; }catch(e){}
+    var rk = ''; try{ rk = pfKeyOf(r, o.kind) || ''; }catch(e){}
+    var reg = { biz: r.nameEn || r.name || r.nameUr || '', cat: r.category || '', addr: r.address || '', area: r.area || '', city: r.city || '', dist: r.district || '', owner: m.ownerEn || r.owner || m.owner || (a.user && a.user.name) || '', cnic: cn, wa: r.whatsapp || '', rec: rk, step: r.stage || '' };
+    var sel = ''; try{ sel = m.selfie || (typeof ptSelfieGet === 'function' ? (ptSelfieGet('user') || ptSelfieGet('agent')) : '') || ''; }catch(e){}
+    var key = JSON.stringify(reg) + '|' + sel.length; if(lsG('mcsRegSum537') === key) return;
+    busy = true;
+    thumb(sel, function(img){
+      var body = { op: 'regsum', tok: a.tok, reg: reg, dev: (typeof agDev === 'function' ? agDev() : '') }; if(img) body.img = img;
+      fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(function(x){ return x.json(); })
+        .then(function(j){ if(j && j.ok) lsS('mcsRegSum537', key); }).catch(function(){}).then(function(){ busy = false; });
+    });
+  }
+  function congrats(sid){
+    if(document.getElementById('act537Ov')) return;
+    var o = document.createElement('div'); o.id = 'act537Ov';
+    o.innerHTML = '<div class="bx"><div class="big">🎉</div><h3>Congratulations!</h3>'
+      + '<p>Your registration is complete — you are now an active business and a Registered Member of My City Shines.</p>'
+      + (sid ? '<div class="id" data-noen="1">' + esc(sid) + '</div>' : '')
+      + '<p>Your business card, profile and portal are now live for everyone.</p>'
+      + '<p>Want to earn with My City Shines? Apply to become an MCS Agent.</p>'
+      + '<button type="button" class="g" id="act537Ag">🤝 Become an MCS Agent</button><button type="button" class="w" id="act537Ok">OK</button></div>';
+    document.body.appendChild(o);
+    document.getElementById('act537Ok').onclick = function(){ o.remove(); };
+    document.getElementById('act537Ag').onclick = function(){ o.remove(); try{ if(typeof agEarnOpen === 'function') agEarnOpen(); }catch(e){} };
+  }
+  function watch(){
+    var L = []; try{ L = typeof mpListReal === 'function' ? (mpListReal() || []) : []; }catch(e){}
+    var seen = {}; try{ seen = JSON.parse(lsG('mcsAct537') || '{}') || {}; }catch(e){}
+    var ch = false, fire = '';
+    L.forEach(function(x){ try{
+      var rk = x.p && x.p.rk; if(!rk) return; var on = !!pfActive(x.rec);
+      if(on && x.rec && x.rec.mcsLive !== true){ try{ mcsGoLive(rk); }catch(e){} }
+      if(seen[rk] === undefined){ seen[rk] = on ? 1 : 0; ch = true; }
+      else if(on && !seen[rk]){ seen[rk] = 1; ch = true; fire = rk; }
+      else if(!on && seen[rk]){ seen[rk] = 0; ch = true; }
+    }catch(e){} });
+    if(ch) lsS('mcsAct537', JSON.stringify(seen));
+    if(fire){ var sid = ''; try{ var a = me(); sid = a && a.user ? mcsSidFmt(a.user.sid || a.user.id || '') : ''; }catch(e){} congrats(/^MCS\d+$/.test(sid) ? sid : ''); }
+    return L.some(function(x){ try{ return !pfActive(x.rec); }catch(e){ return false; } });
+  }
+  var n = 0;
+  function tick(){ n++;
+    try{ sendSum(); }catch(e){}
+    var waiting = false; try{ waiting = watch(); }catch(e){}
+    if(waiting && n % 3 === 0){ try{ if(typeof pfLoadList === 'function') pfLoadList().then(function(){ try{ watch(); }catch(e){} }); }catch(e){} }
+  }
+  function go(){ setTimeout(tick, 6000); setInterval(tick, 60000); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+  window.mcsAct537Congrats = congrats;
+})();
+</script>
 </body>
+
 </html>
