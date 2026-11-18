@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE523";
+const APP_VERSION = "MCS1811WE524";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE524": "Admin 1 card text editor: make the name, type and address on all registered cards bigger or smaller for everyone",
   "MCS1811WE523": "Your own uploaded shop photo now shows on your business (the old fixed sample picture is removed)",
   "MCS1811WE522": "Form: the shop photo box is now the same 16:9 shape as the photo, so it fills completely",
   "MCS1811WE521": "My Account: the big My Membership box is gone; under the name it now says ADMIN 1, ADMIN 2, MCS Agent, Registered Member or User",
@@ -26879,6 +26880,63 @@ html body .doc-card.rc .rc-ph{border-radius:14px !important;overflow:hidden}.pf1
 .mx-role{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:999px;font:900 13px/1.5 'Segoe UI',Selawik,Arial,sans-serif;letter-spacing:.5px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
 .mx-role.a1{background:linear-gradient(180deg,#ef4444,#b91c1c)}.mx-role.a2{background:linear-gradient(180deg,#22c55e,#15803d)}
 .mx-role.ag{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fde047;border:2px solid #fbbf24}.mx-role.rm{background:linear-gradient(180deg,#0d9488,#0f766e)}.mx-role.us{background:#e2e8f0;color:#334155;box-shadow:none}
+</style>
+<script id="mcsCardUi524">
+/* MCS1811WE524 (مالک کا حکم): «🔤 کارڈ کی لکھائی» — سب رجسٹرڈ کارڈوں کا ایک ہی انداز، سائز صرف Admin 1 (ڈویلپر پینل)؛ appConfig/cardui → سب کے فون پر۔
+   چھوٹے فون پر سائز خود چھوٹا (412px کے حساب سے) تاکہ کچھ نہ کٹے */
+(function(){
+  const DEF = { nm: 21, ty: 14.5, ad: 13.5 }, K = 'mcsCardUi';
+  let C = Object.assign({}, DEF); try{ Object.assign(C, JSON.parse(localStorage.getItem(K) || '{}')); }catch(e){}
+  const f = v => `min(${v}px, calc(${v} / 412 * 100vw))`;
+  function apply(x){ x = x || C; let st = document.getElementById('mcsCardUiCss'); if(!st){ st = document.createElement('style'); st.id = 'mcsCardUiCss'; document.head.appendChild(st); }
+    st.textContent = `html body .doc-card.rc.rc.rc .rc-name{font-size:${f(x.nm)} !important;line-height:1.75 !important}
+html body .doc-card.rc.rc.rc .rc-ty{font-size:${f(x.ty)} !important;line-height:1.7 !important}
+html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:1.7 !important}`; }
+  apply();
+  function listen(){ const FB = window.MCSFirebase; if(!FB || !FB.onSnapshot) return;
+    try{ FB.onSnapshot(FB.doc(FB.db, 'appConfig', 'cardui'), sn => { try{ const d = sn.exists() ? sn.data() : null; if(d && d.nm){ C = { nm: +d.nm, ty: +d.ty, ad: +d.ad }; try{ localStorage.setItem(K, JSON.stringify(C)); }catch(e){} if(!D) apply(); } }catch(e){} }, () => {}); }catch(e){} }
+  if(window.MCSFirebase) listen(); else window.addEventListener('mcs-firebase-ready', listen, { once: true });
+  let D = null;
+  const adm = () => { try{ return typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && !(typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } };
+  function sample(){ try{ const L = (store.services || []).filter(r => r && r.mcsLive && r.approved); const r = L.find(x => /3206793793/.test(String(x.whatsapp || ''))) || L[0];
+      if(r) return svcCardHtml(r); }catch(e){}
+    return '<div style="padding:16px;text-align:center;color:#64748b">— کوئی رجسٹرڈ کارڈ نہیں —</div>'; }
+  function row(k, lab, mn, mx){ return `<div class="cu-row"><label>${lab}<i id="cuv_${k}">${D[k]}px</i></label><input type="range" min="${mn}" max="${mx}" step="0.5" value="${D[k]}" oninput="cuSet('${k}',+this.value)"></div>`; }
+  window.cuSet = function(k, v){ if(!D) return; D[k] = v; const l = document.getElementById('cuv_' + k); if(l) l.textContent = v + 'px'; apply(D); };
+  window.cuOpen = function(){
+    if(!adm()){ try{ showToast('🔒 Admin 1 only'); }catch(e){} return; }
+    D = Object.assign({}, C);
+    let o = document.getElementById('cuSheet'); if(o) o.remove(); o = document.createElement('div'); o.id = 'cuSheet'; o.setAttribute('data-noen', '1');
+    o.innerHTML = `<div class="cu-box"><div class="cu-hd"><b>🔤 Card text — all cards</b><button type="button" class="cu-x" onclick="cuClose(false)">✖</button></div>
+      <div class="cu-pv">${sample()}</div>
+      <div class="cu-ct">${row('nm', 'اردو نام — Name', 14, 30)}${row('ty', 'قسم / کام — Type', 10, 20)}${row('ad', 'پتہ — Address', 10, 18)}
+      <div class="cu-btns"><button type="button" class="cu-rs" onclick="cuReset()">↺ Default</button><button type="button" class="cu-sv" onclick="cuClose(true)">💾 Save — all phones</button></div></div></div>`;
+    document.body.appendChild(o); try{ closeModal('devPanelModal'); }catch(e){}
+  };
+  window.cuReset = function(){ if(!D) return; D = Object.assign({}, DEF); ['nm', 'ty', 'ad'].forEach(k => { const i = document.querySelector(`#cuSheet input[oninput*="'${k}'"]`); if(i) i.value = D[k]; const l = document.getElementById('cuv_' + k); if(l) l.textContent = D[k] + 'px'; }); apply(D); };
+  window.cuClose = function(save){ const d = D; D = null; const o = document.getElementById('cuSheet'); if(o) o.remove();
+    if(save && d){ C = d; try{ localStorage.setItem(K, JSON.stringify(C)); }catch(e){} apply(C); const FB = window.MCSFirebase;
+      if(FB && FB.setDoc) FB.setDoc(FB.doc(FB.db, 'appConfig', 'cardui'), { nm: C.nm, ty: C.ty, ad: C.ad, ts: Date.now() }, { merge: true }).then(() => showToast('✅ Saved — all phones')).catch(() => alert('⚠️ Not saved on server — check internet / admin login'));
+    } else apply(C); };
+  /* ڈویلپر پینل میں ڈبہ */
+  function add(){ const body = document.getElementById('devPanelBody'); if(!body || document.getElementById('cuCard')) return;
+    const c = document.createElement('div'); c.id = 'cuCard'; c.style.cssText = 'border:3px solid #3b5bdb;background:#eef2ff;border-radius:14px;padding:10px;margin:8px 0';
+    c.innerHTML = '<b>🔤 Card text</b><div style="font-size:13px;margin:4px 0">Make the name, type and address on all registered cards bigger or smaller — one style for everyone.</div><button type="button" class="btn block" style="background:#3b5bdb" onclick="cuOpen()">🔤 Open card text editor</button>';
+    const t = document.getElementById('t507Card'); if(t && t.nextSibling) body.insertBefore(c, t.nextSibling); else body.insertBefore(c, body.firstChild); }
+  const _o = window.openDevPanel; if(typeof _o === 'function') window.openDevPanel = openDevPanel = function(){ const r = _o.apply(this, arguments); try{ add(); }catch(e){} return r; };
+})();
+</script>
+<style id="mcsCardUi524css">
+#cuSheet{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.6);display:flex;align-items:flex-end;justify-content:center}
+#cuSheet .cu-box{width:100%;max-width:560px;max-height:100%;background:#f8fafc;border-radius:20px 20px 0 0;display:flex;flex-direction:column;font-family:'Segoe UI',Selawik,Arial,sans-serif}
+#cuSheet .cu-hd{display:flex;align-items:center;padding:10px 12px}#cuSheet .cu-hd b{flex:1;font-size:16px}
+#cuSheet .cu-x{border:0;background:#e5e7eb;border-radius:10px;padding:8px 12px;font-weight:800}
+#cuSheet .cu-pv{padding:4px 0 8px;display:flex;justify-content:center;pointer-events:none}
+#cuSheet .cu-ct{padding:4px 14px calc(14px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #e2e8f0}
+#cuSheet .cu-row{margin:8px 0}#cuSheet .cu-row label{display:flex;justify-content:space-between;font-weight:800;font-size:13px;color:#334155}#cuSheet .cu-row label i{font-style:normal;color:#3b5bdb}
+#cuSheet input[type=range]{width:100%;height:30px;accent-color:#3b5bdb}
+#cuSheet .cu-btns{display:flex;gap:8px;margin-top:6px}#cuSheet .cu-btns button{flex:1;border:0;border-radius:12px;padding:12px;font-weight:900;font-size:14px}
+#cuSheet .cu-rs{background:#fee2e2;color:#b91c1c}#cuSheet .cu-sv{background:#16a34a;color:#fff}
 </style>
 </body>
 </html>
