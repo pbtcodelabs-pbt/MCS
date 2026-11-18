@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE520";
+const APP_VERSION = "MCS1811WE521";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE521": "My Account: the big My Membership box is gone; under the name it now says ADMIN 1, ADMIN 2, MCS Agent, Registered Member or User",
   "MCS1811WE520": "Photo sizes written under each photo box; crop buttons for the exact Profile 1200×675 and Card 420×1000 sizes; rounded photo corners",
   "MCS1811WE519": "Business form: a separate «Card photo (tall)» box — wide shop photo shows in details, tall photo on the card",
   "MCS1811WE518": "Ads now use only 4 smooth effects — Fade-In, Fade-Out, Slide Left, Slide Right (no more up/down moves)",
@@ -21355,9 +21356,15 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     var h = top(ID, 'My Account', 'Personal Account &amp; Membership', '👤') + '<div class="mx-in">';
     h += '<div class="mx-card mx-prof"><div class="mx-av" onclick="ptSelfieAsk()">' + (sv ? '<img src="' + escapeAttr(sv) + '" alt="">' : '👤') + '</div>'
       + '<div class="mx-pi"><b>' + esc(nm) + '</b>' + (acid ? '<div class="id">Account ID: <span>' + esc(acid) + '</span></div>' : '')
-      + '<div class="mx-ok' + (active ? '' : ' no') + '"><i>' + (active ? '✓' : '•') + '</i>' + (active ? 'Active Member' : 'Member') + '</div></div>'
+      + (function(){   /* MCS1811WE521 (مالک کا حکم): درجہ — ADMIN 1 / ADMIN 2 / MCS Agent / Registered Member / User */
+          var r = sf(ptRole, rl) || rl, ag = me && (me.pin || me.code), t, c;
+          if(r === 'dev'){ t = 'ADMIN 1'; c = 'a1'; } else if(r === 'codev'){ t = 'ADMIN 2'; c = 'a2'; }
+          else if(ag || L.some(function(x){ return sf(function(){ return agIsRec(x.p.kind, x.rec); }, false); })){ t = '🤝 MCS Agent'; c = 'ag'; }
+          else if(active || L.some(function(x){ return sf(function(){ return pfActive(x.rec); }, false); })){ t = '✅ Registered Member'; c = 'rm'; }
+          else { t = '👤 User'; c = 'us'; }
+          return '<div class="mx-role ' + c + '">' + t + '</div>'; })() + '</div>'
       + '<button type="button" class="mx-edit" onclick="ptSelfieAsk()" aria-label="تصویر بدلیں">✏️</button></div>';
-    if(L.length){
+    if(false && L.length){   /* MCS1811WE521 (مالک کا حکم): «My Membership» کا بڑا ڈبہ ختم */
       var st = best ? (best.lf > 0 ? ['Active', ''] : ['Expired', 'r']) : (L.some(function(x){ return x.p.pend; }) ? ['Pending', 'w'] : ['Not started', 'w']);
       h += '<div class="mx-card mx-mem"><div class="mx-mb"><i>🏅</i>My<br>Membership</div><div class="mx-mr">'
         + '<div class="mx-row"><em>📋</em><span>Subscription Status</span><b class="mx-chip ' + st[1] + '">' + st[0] + '</b></div>'
@@ -26865,5 +26872,10 @@ html body .doc-card.rc .rc-ph{border-radius:14px !important;overflow:hidden}.pf1
     return r; };
 })();
 </script>
+<style id="mcsRole521">
+.mx-role{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:999px;font:900 13px/1.5 'Segoe UI',Selawik,Arial,sans-serif;letter-spacing:.5px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.mx-role.a1{background:linear-gradient(180deg,#ef4444,#b91c1c)}.mx-role.a2{background:linear-gradient(180deg,#22c55e,#15803d)}
+.mx-role.ag{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fde047;border:2px solid #fbbf24}.mx-role.rm{background:linear-gradient(180deg,#0d9488,#0f766e)}.mx-role.us{background:#e2e8f0;color:#334155;box-shadow:none}
+</style>
 </body>
 </html>
