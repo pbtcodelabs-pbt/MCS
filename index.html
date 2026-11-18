@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE524";
+const APP_VERSION = "MCS1811WE525";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE525": "Card text editor: choose the Urdu font — Noori Nastaleeq Kasheeda or Noori Nastaleeq",
   "MCS1811WE524": "Admin 1 card text editor: make the name, type and address on all registered cards bigger or smaller for everyone",
   "MCS1811WE523": "Your own uploaded shop photo now shows on your business (the old fixed sample picture is removed)",
   "MCS1811WE522": "Form: the shop photo box is now the same 16:9 shape as the photo, so it fills completely",
@@ -26885,16 +26886,19 @@ html body .doc-card.rc .rc-ph{border-radius:14px !important;overflow:hidden}.pf1
 /* MCS1811WE524 (مالک کا حکم): «🔤 کارڈ کی لکھائی» — سب رجسٹرڈ کارڈوں کا ایک ہی انداز، سائز صرف Admin 1 (ڈویلپر پینل)؛ appConfig/cardui → سب کے فون پر۔
    چھوٹے فون پر سائز خود چھوٹا (412px کے حساب سے) تاکہ کچھ نہ کٹے */
 (function(){
-  const DEF = { nm: 21, ty: 14.5, ad: 13.5 }, K = 'mcsCardUi';
+  const DEF = { nm: 21, ty: 14.5, ad: 13.5, fo: 'kash' }, K = 'mcsCardUi';
+  const FO = { kash: "'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif", noori: "'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif" };   /* MCS1811WE525: صرف دو اردو فونٹ */
   let C = Object.assign({}, DEF); try{ Object.assign(C, JSON.parse(localStorage.getItem(K) || '{}')); }catch(e){}
   const f = v => `min(${v}px, calc(${v} / 412 * 100vw))`;
   function apply(x){ x = x || C; let st = document.getElementById('mcsCardUiCss'); if(!st){ st = document.createElement('style'); st.id = 'mcsCardUiCss'; document.head.appendChild(st); }
-    st.textContent = `html body .doc-card.rc.rc.rc .rc-name{font-size:${f(x.nm)} !important;line-height:1.75 !important}
+    const ff = `font-family:${FO[x.fo] || FO.kash} !important;`;
+    st.textContent = `html body .doc-card.rc.rc.rc .rc-name,html body .doc-card.rc.rc.rc .rc-ty,html body .doc-card.rc.rc.rc .rc-ad{${ff}}
+html body .doc-card.rc.rc.rc .rc-name{font-size:${f(x.nm)} !important;line-height:1.75 !important}
 html body .doc-card.rc.rc.rc .rc-ty{font-size:${f(x.ty)} !important;line-height:1.7 !important}
 html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:1.7 !important}`; }
   apply();
   function listen(){ const FB = window.MCSFirebase; if(!FB || !FB.onSnapshot) return;
-    try{ FB.onSnapshot(FB.doc(FB.db, 'appConfig', 'cardui'), sn => { try{ const d = sn.exists() ? sn.data() : null; if(d && d.nm){ C = { nm: +d.nm, ty: +d.ty, ad: +d.ad }; try{ localStorage.setItem(K, JSON.stringify(C)); }catch(e){} if(!D) apply(); } }catch(e){} }, () => {}); }catch(e){} }
+    try{ FB.onSnapshot(FB.doc(FB.db, 'appConfig', 'cardui'), sn => { try{ const d = sn.exists() ? sn.data() : null; if(d && d.nm){ C = { nm: +d.nm, ty: +d.ty, ad: +d.ad, fo: d.fo === 'noori' ? 'noori' : 'kash' }; try{ localStorage.setItem(K, JSON.stringify(C)); }catch(e){} if(!D) apply(); } }catch(e){} }, () => {}); }catch(e){} }
   if(window.MCSFirebase) listen(); else window.addEventListener('mcs-firebase-ready', listen, { once: true });
   let D = null;
   const adm = () => { try{ return typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && !(typeof codevOn === 'function' && codevOn()); }catch(e){ return false; } };
@@ -26909,14 +26913,15 @@ html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:
     let o = document.getElementById('cuSheet'); if(o) o.remove(); o = document.createElement('div'); o.id = 'cuSheet'; o.setAttribute('data-noen', '1');
     o.innerHTML = `<div class="cu-box"><div class="cu-hd"><b>🔤 Card text — all cards</b><button type="button" class="cu-x" onclick="cuClose(false)">✖</button></div>
       <div class="cu-pv">${sample()}</div>
-      <div class="cu-ct">${row('nm', 'اردو نام — Name', 14, 30)}${row('ty', 'قسم / کام — Type', 10, 20)}${row('ad', 'پتہ — Address', 10, 18)}
+      <div class="cu-ct"><div class="cu-row"><label>Urdu font</label><div class="cu-fo"><button type="button" data-fo="kash" class="${D.fo !== 'noori' ? 'on' : ''}" style="font-family:${FO.kash}" onclick="cuFont('kash')">نوری نستعلیق کشیدہ</button><button type="button" data-fo="noori" class="${D.fo === 'noori' ? 'on' : ''}" style="font-family:${FO.noori}" onclick="cuFont('noori')">نوری نستعلیق</button></div></div>${row('nm', 'اردو نام — Name', 14, 30)}${row('ty', 'قسم / کام — Type', 10, 20)}${row('ad', 'پتہ — Address', 10, 18)}
       <div class="cu-btns"><button type="button" class="cu-rs" onclick="cuReset()">↺ Default</button><button type="button" class="cu-sv" onclick="cuClose(true)">💾 Save — all phones</button></div></div></div>`;
     document.body.appendChild(o); try{ closeModal('devPanelModal'); }catch(e){}
   };
-  window.cuReset = function(){ if(!D) return; D = Object.assign({}, DEF); ['nm', 'ty', 'ad'].forEach(k => { const i = document.querySelector(`#cuSheet input[oninput*="'${k}'"]`); if(i) i.value = D[k]; const l = document.getElementById('cuv_' + k); if(l) l.textContent = D[k] + 'px'; }); apply(D); };
+  window.cuFont = function(v){ if(!D) return; D.fo = v; document.querySelectorAll('#cuSheet .cu-fo button').forEach(b => b.classList.toggle('on', b.dataset.fo === v)); apply(D); };
+  window.cuReset = function(){ if(!D) return; D = Object.assign({}, DEF); document.querySelectorAll('#cuSheet .cu-fo button').forEach(b => b.classList.toggle('on', b.dataset.fo === D.fo)); ['nm', 'ty', 'ad'].forEach(k => { const i = document.querySelector(`#cuSheet input[oninput*="'${k}'"]`); if(i) i.value = D[k]; const l = document.getElementById('cuv_' + k); if(l) l.textContent = D[k] + 'px'; }); apply(D); };
   window.cuClose = function(save){ const d = D; D = null; const o = document.getElementById('cuSheet'); if(o) o.remove();
     if(save && d){ C = d; try{ localStorage.setItem(K, JSON.stringify(C)); }catch(e){} apply(C); const FB = window.MCSFirebase;
-      if(FB && FB.setDoc) FB.setDoc(FB.doc(FB.db, 'appConfig', 'cardui'), { nm: C.nm, ty: C.ty, ad: C.ad, ts: Date.now() }, { merge: true }).then(() => showToast('✅ Saved — all phones')).catch(() => alert('⚠️ Not saved on server — check internet / admin login'));
+      if(FB && FB.setDoc) FB.setDoc(FB.doc(FB.db, 'appConfig', 'cardui'), { nm: C.nm, ty: C.ty, ad: C.ad, fo: C.fo || 'kash', ts: Date.now() }, { merge: true }).then(() => showToast('✅ Saved — all phones')).catch(() => alert('⚠️ Not saved on server — check internet / admin login'));
     } else apply(C); };
   /* ڈویلپر پینل میں ڈبہ */
   function add(){ const body = document.getElementById('devPanelBody'); if(!body || document.getElementById('cuCard')) return;
@@ -26927,6 +26932,9 @@ html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:
 })();
 </script>
 <style id="mcsCardUi524css">
+/* MCS1811WE525: «نوری نستعلیق» (سادہ) کا @font-face پہلے غلط تھا (دو نام ایک ساتھ — براؤزر رد کرتا تھا)؛ اب ٹھیک */
+@font-face{font-family:'Jameel Noori Nastaleeq Regular';src:url('./JameelNooriNastaleeqRegular.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Jameel Noori Nastaleeq';src:url('./JameelNooriNastaleeqRegular.ttf') format('truetype');font-display:swap}
 #cuSheet{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.6);display:flex;align-items:flex-end;justify-content:center}
 #cuSheet .cu-box{width:100%;max-width:560px;max-height:100%;background:#f8fafc;border-radius:20px 20px 0 0;display:flex;flex-direction:column;font-family:'Segoe UI',Selawik,Arial,sans-serif}
 #cuSheet .cu-hd{display:flex;align-items:center;padding:10px 12px}#cuSheet .cu-hd b{flex:1;font-size:16px}
@@ -26936,6 +26944,7 @@ html body .doc-card.rc.rc.rc .rc-ad{font-size:${f(x.ad)} !important;line-height:
 #cuSheet .cu-row{margin:8px 0}#cuSheet .cu-row label{display:flex;justify-content:space-between;font-weight:800;font-size:13px;color:#334155}#cuSheet .cu-row label i{font-style:normal;color:#3b5bdb}
 #cuSheet input[type=range]{width:100%;height:30px;accent-color:#3b5bdb}
 #cuSheet .cu-btns{display:flex;gap:8px;margin-top:6px}#cuSheet .cu-btns button{flex:1;border:0;border-radius:12px;padding:12px;font-weight:900;font-size:14px}
+#cuSheet .cu-fo{display:flex;gap:8px;margin-top:4px}#cuSheet .cu-fo button{flex:1;border:2px solid #cbd5e1;background:#fff;border-radius:12px;padding:6px 8px;font-size:18px;line-height:1.9}#cuSheet .cu-fo button.on{border-color:#3b5bdb;background:#eef2ff;box-shadow:0 0 0 2px #c7d2fe}
 #cuSheet .cu-rs{background:#fee2e2;color:#b91c1c}#cuSheet .cu-sv{background:#16a34a;color:#fff}
 </style>
 </body>
