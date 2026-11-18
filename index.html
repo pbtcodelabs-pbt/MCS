@@ -4727,10 +4727,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE528";
+const APP_VERSION = "MCS1811WE529";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE529": "Admin Portal: new first tab «🛠️ Tools» — edit any business page, card text, test mode, ads",
   "MCS1811WE528": "Admin 1 «🎨 Design» on any business page — background, name colour, Urdu font, sizes and edit the text right on the page (no form)",
   "MCS1811WE527": "Admin 1 tools: «Edit any business» — search any business and edit its whole profile",
   "MCS1811WE526": "Admin 1 tools in My Account (card text editor, test mode, admin panel) — no 7 taps; admin can edit any business profile without typing the password again",
@@ -13381,7 +13382,7 @@ function agStatusView(r){
 }
 /* ===== MCS0611FR170 (مالک کا حکم): پانچ الگ پورٹل — ایڈمن / کاروبار / پروفیشن / عام یوزر =====
    فون اپنی حیثیت یاد رکھتا ہے: ایڈمن لاگ اِن، ایڈمن لاگ اِن، ممبرشپ (کاروبار / پروفیشن) اور یوزر اکاؤنٹ؛ اوپر کی پٹی دبائیں تو اپنا پورٹل کھلے */
-let ptPrev = null, ptDevTab = 'day';
+let ptPrev = null, ptDevTab = 'tools';   /* MCS1811WE529: ٹولز پہلے */
 function ptDevTabGo(t){ ptDevTab = t; ptOpen(); }
 function ptSwitch(){ try{ if(ptRole() === 'dev') return; }catch(e){} closeModal('portalModal'); setTimeout(()=>{ try{ uaLogin(); }catch(e){} }, 160); }   /* MCS0811SU217: پورٹل سے ہی لاگ اِن صفحہ دوبارہ کھلے */
 function ptRole(){
@@ -13506,8 +13507,9 @@ function ptOpen(editProf, prev){
   let nm = '', sub = '', body = '';
   if(rl === 'dev'){ const p = ptDevProf(); nm = p.name || 'Admin'; sub = [ptEmail(), p.phone, p.city].filter(Boolean).join(' • ');
     const pend = (typeof pendingApprovals !== 'undefined' && pendingApprovals.length) || '', pfn = ((document.getElementById('pfPendN')||{}).textContent || '').replace(/\D/g,'');
-    const tab = (ptDevTab === 'cod' ? 'day' : ptDevTab), tabs = [['day','📥','روزانہ'],['biz','🏪','بزنس / ایجنٹ'],['rep','📣','رپورٹ'],['more','🧰','مزید']];
+    const tab = (ptDevTab === 'cod' ? 'day' : ptDevTab), tabs = [['tools','🛠️','ٹولز'],['day','📥','روزانہ'],['biz','🏪','بزنس / ایجنٹ'],['rep','📣','رپورٹ'],['more','🧰','مزید']];   /* MCS1811WE529: Admin 1 tools سب سے پہلے */
     const G = {
+      tools: [['🎨','کسی بھی کاروبار کا صفحہ','تلاش ← 🎨 Design / ایڈٹ','abeOpen'],['🔤','کارڈ کی لکھائی','سب کارڈ — فونٹ اور سائز','cuOpen'],['🧪','ٹیسٹ موڈ','نئے گاہک کی طرح آزمائیں','mxTestGo'],['📢','اشتہار','✏️ ہر اشتہار پر ایڈیٹر','adOpenAdmin']],
       day: [['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['❓','غیر مختص','کیٹگری بدلیں','unOpen'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
       biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen']],
       cod: [['👥','ایڈمنز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','ایڈمن پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
