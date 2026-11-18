@@ -227,3 +227,4 @@
 - **MCS1811WE544 (مالک کا حکم):** ہوم سے نمازوں کے اوقات کی پٹی (`#d2Prays`، `#ccPrays`) چھپی؛ «🕌 نماز کے اوقات» کا حساب / پاپ اپ کوڈ ویسا (دوبارہ چاہیے تو صرف یہ CSS ہٹائیں)۔
 - MCS1811WE545 (18 Nov 2026, #298): login role default fixed (lgRole = Registered User when MCS ID is on phone, so LOGIN/Enter work), uaKbReveal scrolls only when field hidden (no jumping), no duplicate login on Enter, shorter chip wait, SW update check every 3 min.
 - MCS1811WE546 (18 Nov 2026, #298): reloadWhenSafe no longer waits forever on the open login screen (update applies unless something typed); api()/agent fetch 12–15s timeout so login never hangs.
+- MCS1811WE547 (18 Nov 2026, #298): login jitter root fix — uaKbFit no longer follows visualViewport scroll/offsetTop (feedback loop), height only on 60px+ change, no uaCity hide / 55vh padding on keyboard, single reveal.

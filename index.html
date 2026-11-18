@@ -4761,10 +4761,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1811WE546";
+const APP_VERSION = "MCS1811WE547";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1811WE547": "Login screen stays still when the keyboard opens (no up/down jumping)",
   "MCS1811WE546": "Updates now install even while the login screen is open • agent login no longer hangs on weak internet",
   "MCS1811WE545": "Login: no more jumping up/down • correct PIN + Enter goes in at once • the app checks for updates every 3 minutes",
   "MCS1811WE544": "Home: the prayer times strip is removed",
@@ -17314,8 +17315,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
 #uaOv .uaGmCard.dev u{color:#92400e}
 #uaOv .uaGmCard.open{box-shadow:0 0 0 3px rgba(37,99,235,.25)}
 #admPwModal.active,#pfPinModal.active{z-index:2147483500}
-#uaOv.uaKb .uaCity{display:none}
-#uaOv.uaKb .uaWrap{padding-bottom:max(170px,55vh)}
+#uaOv.uaKb .uaWrap{padding-bottom:40px}   /* MCS1811WE547: کی بورڈ پر صفحے کی شکل نہ بدلے (پہلے شہر کی تصویر چھپتی اور 55vh جگہ بنتی — جھولا) */
 #admPwModal.active,#pfPinModal.active{align-items:center}
 </style>
 <div id="uaOv" aria-modal="true" role="dialog"><div class="uaWave"></div><button class="uaX" id="uaX" onclick="uaHide()" title="Close">✕</button><div class="uaWrap" id="uaWrap"></div>
@@ -17422,7 +17422,9 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function uaKbFit(){
     const o = $('uaOv'); if(!o || !o.classList.contains('on')) return;
     const vv = window.visualViewport;
-    if(vv){ o.style.height = Math.round(vv.height) + 'px'; o.style.top = Math.round(vv.offsetTop) + 'px'; o.style.bottom = 'auto'; }
+    /* MCS1811WE547 (مالک: «لاگ اِن پر مسلسل صفحہ اوپر نیچے»): پہلے ہر visualViewport «scroll» پر صفحے کا top بدلتا تھا → براؤزر پھر سرکاتا → جھولا۔
+       اب صرف اونچائی، اور وہ بھی تب جب کی بورڈ کھلنے / بند ہونے جتنا فرق (60px+) ہو؛ top ہمیشہ 0 */
+    if(vv){ const h = Math.round(vv.height), cur = parseInt(o.style.height) || 0; if(!cur || Math.abs(h - cur) > 60){ o.style.height = h + 'px'; } o.style.top = '0px'; o.style.bottom = 'auto'; try{ if(vv.offsetTop > 0 && document.scrollingElement) document.scrollingElement.scrollTop = 0; }catch(e){} }
     const a = document.activeElement, typing = !!(a && o.contains(a) && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)), small = vv ? (window.innerHeight - vv.height > 120) : false;
     o.classList.toggle('uaKb', typing || small);
   }
@@ -17440,10 +17442,9 @@ body.d2 #homeAds .ad-ribbon{display:none}
     const vv0 = window.visualViewport;
     if(vv0){
       vv0.addEventListener('resize', () => { uaKbFit(); const a = document.activeElement, o = $('uaOv'); if(a && o && o.contains(a)) setTimeout(() => uaKbReveal(a), 80); });
-      vv0.addEventListener('scroll', uaKbFit);
     }
     window.addEventListener('resize', uaKbFit);
-    document.addEventListener('focusin', e => { const t = e.target, o = $('uaOv'); if(!o || !o.classList.contains('on') || !t || !o.contains(t) || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return; uaKbFit(); [150, 400, 800].forEach(ms => setTimeout(() => uaKbReveal(t), ms)); }, true);
+    document.addEventListener('focusin', e => { const t = e.target, o = $('uaOv'); if(!o || !o.classList.contains('on') || !t || !o.contains(t) || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return; uaKbFit(); [350].forEach(ms => setTimeout(() => uaKbReveal(t), ms)); }, true);
     document.addEventListener('focusout', () => { setTimeout(uaKbFit, 220); }, true);
   }catch(e){}
   /* MCS1711TU496 (مالک کا حکم): لاگ اِن صفحے پر رول چنیں — «User / Business» یا «Admin»۔ ہر رول کا اپنا Gmail سامنے آتا ہے اور وہی PIN / پاس ورڈ مانگتا ہے۔
