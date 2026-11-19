@@ -3272,7 +3272,6 @@ html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !im
   <div id="adminPopIn" style="display:none;">
     <div class="ap-title">✅ ایڈمن لاگ ان ہیں</div>
     <button type="button" class="ap-btn" onclick="showAdminPop(false);openControlPanel();setTimeout(()=>{const t=document.getElementById('adminPanelBox');if(t)t.scrollIntoView({behavior:'smooth',block:'start'});},250)">⏳ منظوری / سیٹنگز کھولیں</button>
-    <button type="button" class="ap-btn ap-out" onclick="mcsLogoutAll()">لاگ آؤٹ</button>
   </div>
 </div>
 
@@ -4261,7 +4260,6 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
         <div id="pendingApprovalsWrap"></div>
         <button class="btn block" style="margin-top:8px;background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff" onclick="pfPendOpen()">⏳ نئے کاروبار کی منظوری <b id="pfPendN"></b> <small>— دکانداروں کی خود بنائی</small></button>
         <button class="btn block" style="margin-top:10px;background:linear-gradient(135deg,#0f766e,#0d3b66);color:#fff" onclick="agAdminOpen()">🤝 ایجنٹ اور ریفرل کوڈ <small id="agAdminCount"></small></button>
-        <button class="btn block secondary" style="margin-top:10px;" onclick="mcsLogoutAll()">لاگ آؤٹ</button>
       </div>
 
       <div class="backup-card" id="adminAddCategoryBox" style="display:none;">
@@ -4774,10 +4772,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH570";
+const APP_VERSION = "MCS1911TH571";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH571": "One red power Log Out button on the home header (nowhere else) • Log out always lands on the Login page • MCS ID shows by itself on this phone • Continue as Guest on Login • Back button no longer needs several presses",
   "MCS1911TH570": "One simple login: no Login As list • first time shows only Sign Up (+ Continue as Guest) • log out opens a fresh Login page • My Account shows Log Out only when logged in",
   "MCS1911TH567": "Money accounts (revenue, payouts, commissions, share rates, reports) no longer open inside the app — only in the separate MCS Agents portal",
   "MCS1911TH566": "Admin «Forgot password»: works for the admin Gmail only and says so; reminds to check Spam",
@@ -13535,7 +13534,7 @@ function ptDevProf(){ try{ return JSON.parse(localStorage.getItem('mcsDevProfile
 function ptEmail(){ try{ const u = window.MCSFirebase && window.MCSFirebase.auth && window.MCSFirebase.auth.currentUser; return (u && u.email) || localStorage.getItem(ADMIN_EMAIL_KEY) || ''; }catch(e){ return ''; } }
 function ptDevFirst(){ if(isAdminSignedIn && !localStorage.getItem('mcsDevProfile')) ptOpen(true); }
 function ptDo(fn, a, b){ closeModal('portalModal'); setTimeout(()=>{ try{ const f = window[fn]; if(typeof f === 'function') f(a, b); }catch(e){ showToast('⚠️ ' + (e.message||'')); } }, 160); }
-function ptT(ic, lb, sub, fn, n, cls){ return `<button type="button" class="pt-t ${cls||''}" onclick="${ptPrev ? "showToast('👁️ پیش منظر — صرف دیکھنے کے لیے')" : "ptDo('" + fn + "')"}"><i>${ic}</i>${lb}${sub ? `<small>${sub}</small>` : ''}${n ? `<b class="n">${n}</b>` : ''}</button>`; }
+function ptT(ic, lb, sub, fn, n, cls){ return `<button type="button" class="pt-t ${cls||''}" onclick="${(ptPrev && !ptPrev.live) ? "showToast('👁️ پیش منظر — صرف دیکھنے کے لیے')" : "ptDo('" + fn + "')"}"><i>${ic}</i>${lb}${sub ? `<small>${sub}</small>` : ''}${n ? `<b class="n">${n}</b>` : ''}</button>`; }
 function ptHelp(){ const m = ptRole(); const a = (typeof uaMe === 'function' && uaMe()) || null, me = agMe() || {}; const text = '(' + PT_META[m][2] + ' پورٹل سے)\n';
   try{ if(window.PBTHelp){ window.PBTHelp.open({app:'MCS', ver: APP_VERSION, phone: me.phone ? '0' + String(me.phone).slice(2) : '', name: me.name || (a && a.user && a.user.name) || '', text, type:'ask'}); return; } }catch(e){} showToast('Help Desk ابھی دستیاب نہیں'); }
 function ptDevSave(){ const g = id => (document.getElementById(id)||{}).value || ''; localStorage.setItem('mcsDevProfile', JSON.stringify({name: g('ptN').trim(), phone: g('ptP').trim(), city: g('ptC').trim(), at: Date.now()})); showToast('✅ پروفائل محفوظ'); ptOpen(); }
@@ -13634,8 +13633,8 @@ async function sfCardSync(){
 window.addEventListener('load', ()=> setTimeout(sfCardSync, 4000));
 let sfSyncT = 0; function sfCardSyncSoon(){ clearTimeout(sfSyncT); sfSyncT = setTimeout(sfCardSync, 1500); }
 function ptOpen(editProf, prev){
-  ptPrev = prev || null;
-  const rl = ptPrev ? ptPrev.role : ptRole(), M = PT_META[rl], a = (typeof uaMe === 'function' && uaMe()) || null, me = agMe() || {}, cd = (ptPrev ? {name:'Admin', phone:''} : codevMe()) || {};
+  ptPrev = prev || null; const pv = (ptPrev && !ptPrev.live) ? ptPrev : null;
+  const rl = ptPrev ? ptPrev.role : ptRole(), M = PT_META[rl], a = (typeof uaMe === 'function' && uaMe()) || null, me = agMe() || {}, cd = (pv ? {name:'Admin', phone:''} : codevMe()) || {};
   let m = document.getElementById('portalModal');
   if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'portalModal'; document.body.appendChild(m); }
   let nm = '', sub = '', body = '';
@@ -13643,12 +13642,12 @@ function ptOpen(editProf, prev){
     const pend = (typeof pendingApprovals !== 'undefined' && pendingApprovals.length) || '', pfn = ((document.getElementById('pfPendN')||{}).textContent || '').replace(/\D/g,'');
     const tab = (ptDevTab === 'cod' ? 'day' : ptDevTab), tabs = [['tools','🛠️','ٹولز'],['day','📥','روزانہ'],['biz','🏪','بزنس / ایجنٹ'],['rep','📣','رپورٹ'],['more','🧰','مزید']];   /* MCS1811WE529: Admin 1 tools سب سے پہلے */
     const G = {
-      tools: [['🎨','کسی بھی کاروبار کا صفحہ','تلاش ← 🎨 Design / ایڈٹ','abeOpen'],['🔤','کارڈ کی لکھائی','کاروبار چنیں ← اس کے کارڈ پر 🔤','cuOpen'],['🧪','ٹیسٹ موڈ','نئے گاہک کی طرح آزمائیں','mxTestGo'],['⎋','لاگ آؤٹ','','mcsLogoutAll'],['📢','اشتہار','✏️ ہر اشتہار پر ایڈیٹر','adOpenAdmin']],
+      tools: [['🎨','کسی بھی کاروبار کا صفحہ','تلاش ← 🎨 Design / ایڈٹ','abeOpen'],['🔤','کارڈ کی لکھائی','کاروبار چنیں ← اس کے کارڈ پر 🔤','cuOpen'],['🧪','ٹیسٹ موڈ','نئے گاہک کی طرح آزمائیں','mxTestGo'],['📢','اشتہار','✏️ ہر اشتہار پر ایڈیٹر','adOpenAdmin']],
       day: [['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['❓','غیر مختص','کیٹگری بدلیں','unOpen'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
       biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen']],
       cod: [['👥','ایڈمنز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','ایڈمن پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
       rep: [['📊','سرور کا استعمال','Firebase / Cloudflare — آج کتنا ٪','usOpen'],['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
-      more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen'],['🗂️','کیٹگری / امپورٹ','ایڈمن پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel'],['⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red']]
+      more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen'],['🗂️','کیٹگری / امپورٹ','ایڈمن پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel']]
     };
     body = `<div class="pt-tabs">${tabs.map(t=>`<button type="button" class="pt-tab${t[0]===tab?' on':''}" onclick="ptDevTabGo('${t[0]}')"><i>${t[1]}</i>${t[2]}</button>`).join('')}</div>`
       + `<div class="pt-grid">${G[tab].map(t=>ptT(t[0],t[1],t[2],t[3],t[4],t[5])).join('')}</div>`
@@ -13656,7 +13655,7 @@ function ptOpen(editProf, prev){
       + (tab === 'more' ? `<details class="pt-card pt-f" ${(p.name && !editProf) ? '' : 'open'}><summary>🪪 میرا پروفائل ${p.name ? '' : '<small style="color:#dc2626">— پہلی بار بھر دیں</small>'}</summary><input id="ptN" placeholder="نام" value="${escapeAttr(p.name||'')}"><input id="ptP" dir="ltr" inputmode="tel" placeholder="موبائل نمبر" value="${escapeAttr(p.phone||'')}"><input id="ptC" placeholder="شہر" value="${escapeAttr(p.city||'')}"><div class="r"><button type="button" class="p" onclick="ptDevSave()">✅ محفوظ</button></div></details>` : '');
   } else if(rl === 'codev'){ nm = cd.name || 'Admin 2'; sub = cd.phone ? '0' + String(cd.phone).slice(2) : '';
     body = `<div class="cp-hint" style="margin:0 0 8px">👥 آپ نیا بزنس، پروفیشن یا ایجنٹ بھیج سکتے ہیں — ایڈمن کی منظوری کے بعد ہی لائیو ہوگا۔ باقی چیزیں صرف جانچ کے لیے (محفوظ نہیں ہوتیں)۔ مسئلہ یا تجویز Help Desk سے۔</div><div class="pt-grid">${ptT('🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen')}${ptT('🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen')}${ptT('📩','اطلاع','دکانداروں کو','ntOpen')}${ptT('📈','ایجنٹ کارکردگی','سست / ایکٹو','agPerfOpen')}${ptT('🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen')}${ptT('📊','کالوں کی رپورٹ','','stOpenAdmin')}${ptT('📢','اشتہار اور آمدنی','','adOpenAdmin')}${ptT('👀','وزیٹرز','کون کتنی بار','vlOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
-  } else if(rl === 'agent'){ nm = me.name || 'ایجنٹ'; sub = me.phone ? '0' + String(me.phone).slice(2) : ''; { const am = (ptPrev && ptPrev.a) ? {name: ptPrev.a.name, phone: ptPrev.a.phone, code: ptPrev.a.code} : me; nm = am.name || 'ایجنٹ'; sub = am.phone ? '0' + String(am.phone).slice(2) : ''; body = apBody(am, !!ptPrev); }
+  } else if(rl === 'agent'){ nm = me.name || 'ایجنٹ'; sub = me.phone ? '0' + String(me.phone).slice(2) : ''; { const am = (ptPrev && ptPrev.a) ? {name: ptPrev.a.name, phone: ptPrev.a.phone, code: ptPrev.a.code} : me; nm = am.name || 'ایجنٹ'; sub = am.phone ? '0' + String(am.phone).slice(2) : ''; body = apBody(am, !!pv); }
   } else {
     const L = mpListReal(); nm = (a && a.user && a.user.name) || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
     sub = (a && a.user && (a.user.sid || a.user.id)) || (me.phone ? '0' + String(me.phone).slice(2) : '');
@@ -13669,8 +13668,8 @@ function ptOpen(editProf, prev){
     body += `<div class="pt-sec">🤝 ریفرل</div>` + (code ? `<div class="pt-card"><small>میرا ریفرل کوڈ</small><div class="pt-code" onclick="agCopy('${escapeAttr(code)}')">${escapeHtml(code)}</div><div class="r"><button type="button" class="p" onclick="agCopy('${escapeAttr(code)}')">📋 کاپی</button><button type="button" onclick="agShare('${escapeAttr(code)}')">📤 شیئر</button></div>${refNo ? `<small>یا اپنا موبائل نمبر بھی بتا سکتے ہیں: ${refNo}</small>` : ''}</div>` : `<div class="pt-grid">${ptT('🤝','MCS ایجنٹ بنیں','ریفرل کوڈ / حالت','agOpen')}</div>`);
     body += `<div class="pt-grid">${ptT('➕', L.length ? 'ایک اور کاروبار / پروفیشن' : 'اپنا کاروبار / پروفیشن جوڑیں', L.length ? '' : '', 'mpNewMore')}${a ? ptT('👤','میرا اکاؤنٹ','','uaAccount') : ptT('🔐','Login / Sign Up','','uaLogin')}${ptT('💳','Play پیکج اور قیمت','','mcsPlayPackages')}${ptT('❓','Help Desk','','ptHelp')}${ptT('⚙️','سیٹنگز','رنگ، فونٹ، بیک اپ','openControlPanel')}</div>`;
   }
-  if(!ptPrev && rl !== 'dev') body += (typeof mpoAcctExtra === 'function' ? mpoAcctExtra(rl) : '') + `<div class="pt-grid">${ptT('⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red')}</div>`;
-  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${ptPrev ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av${ptPrev ? '' : ' pt-av-ed'}"${ptPrev ? '' : ' onclick="ptSelfieAsk()"'}>${(()=>{ let sv = ''; try{ sv = ptPrev ? '' : ptSelfieGet(rl); }catch(e){} return sv ? `<img src="${escapeAttr(sv)}" alt="">` : M[0]; })()}${ptPrev ? '' : '<em class="pt-cam">📷</em>'}</div>${ptPrev ? '' : '<div class="pt-avh" onclick="ptSelfieAsk()">📷 سیلفی لگائیں / بدلیں</div>'}<div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span>${(ptPrev || rl === 'dev') ? '' : '<button type="button" class="pt-sw" onclick="ptSwitch()">🔄 اکاؤنٹ بدلیں</button>'}</div><div class="pt-body">${ptPrev ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ایڈمن پورٹل</button></div>' : ''}${body}</div></div>`;
+  if(!pv && rl !== 'dev') body += (typeof mpoAcctExtra === 'function' ? mpoAcctExtra(rl) : '');
+  m.innerHTML = `<div class="modal-box pt-box"><div class="pt-hd ${rl}"><button type="button" class="x" onclick="${pv ? 'ptBack()' : "closeModal('portalModal')"}">×</button><div class="pt-av${pv ? '' : ' pt-av-ed'}"${pv ? '' : ' onclick="ptSelfieAsk()"'}>${(()=>{ let sv = ''; try{ sv = pv ? '' : ptSelfieGet(rl); }catch(e){} return sv ? `<img src="${escapeAttr(sv)}" alt="">` : M[0]; })()}${pv ? '' : '<em class="pt-cam">📷</em>'}</div>${pv ? '' : '<div class="pt-avh" onclick="ptSelfieAsk()">📷 سیلفی لگائیں / بدلیں</div>'}<div class="pt-nm">${escapeHtml(nm)}</div>${sub ? `<div class="pt-sub">${escapeHtml(sub)}</div>` : ''}<span class="pt-role">${M[1]} • ${M[2]}</span>${(ptPrev || rl === 'dev') ? '' : '<button type="button" class="pt-sw" onclick="ptSwitch()">🔄 اکاؤنٹ بدلیں</button>'}</div><div class="pt-body">${pv ? '<div class="pt-prev"><span>👁️ پیش منظر — صرف دیکھنے کے لیے</span><button type="button" onclick="ptBack()">↩️ ایڈمن پورٹل</button></div>' : ''}${body}</div></div>`;
   openModal('portalModal');
   if(editProf){ setTimeout(()=>{ const e = document.getElementById('ptN'); if(e){ e.scrollIntoView({block:'center'}); e.focus(); } }, 300); }
 }
@@ -14481,7 +14480,7 @@ function cdBar(){
     + (cdCan('chat') ? `<button type="button" onclick="mcOpen()">💬 Chats</button>` : '')
     + ''   /* MCS1911TH567: حساب صرف الگ MCS Agents پورٹل پر */
     + (cdCan('help') ? `<button type="button" onclick="cdReport()">❓ Help Desk</button>` : '')
-    + `<button type="button" class="x" onclick="cdLogout()">✖</button>`;
+    ;
 }
 function cdReport(){
   const m = codevMe() || {}; const text = '👥 ایڈمن (' + (m.name||'') + ', 0' + String(m.phone||'').slice(2) + ') — جانچ میں:\n';
@@ -17691,9 +17690,10 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
   };
   /* MCS0811SU217: ایک ہی لاگ اِن — موبائل/ای میل + پاس ورڈ/PIN سے رول خود پہچانا جاتا ہے: ایڈمن ← ایڈمن ← ایجنٹ ← عام یوزر */
   function agentOn(){ try{ const m = typeof agMe === 'function' && agMe(); return !!(m && m.phone && m.pin); }catch(e){ return false; } }
-  function uaClearOthers(keep){ try{ if(keep !== 'dev' && keep !== 'user' && typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) adminLogout();   /* MCS1611MO485: اپنے کاروبار والے اکاؤنٹ سے لاگ اِن پر ایڈمن کبھی باہر نہیں */ if(keep !== 'codev') ls.set('mcsCodev', null); if(keep !== 'agent') ls.set('mcsAgent', null); if(keep !== 'user') {} }catch(e){} }
+  /* MCS1911TH571: ایک بندہ = ایڈمن + رجسٹرڈ + ایجنٹ — کوئی لاگ اِن دوسرے کو نہیں مٹاتا؛ صرف لاگ آؤٹ سب صاف کرتا ہے */
+  function uaClearOthers(keep){ try{ if(keep !== 'none') return; if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) adminLogout(); ls.set('mcsCodev', null); ls.set('mcsAgent', null); }catch(e){} }
   function uaRoleBanner(){ try{ const rl = ptRole(); if(rl === 'user' && !uaMe() && !staff()) return ''; const M = PT_META[rl];
-    return `<div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:800">${M[0]} آپ اس وقت <b>${M[1]}</b> میں داخل ہیں<div style="display:flex;gap:6px;margin-top:6px"><button class="uaBtn bW" style="margin:0" onclick="uaHide();ptOpen()">↩️ اپنا پورٹل</button><button class="uaBtn bO" style="margin:0" onclick="mcsLogoutAll()">⎋ لاگ آؤٹ</button></div></div>`; }catch(e){ return ''; } }
+    return `<div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:800">${M[0]} آپ اس وقت <b>${M[1]}</b> میں داخل ہیں<div style="display:flex;gap:6px;margin-top:6px"><button class="uaBtn bW" style="margin:0" onclick="uaHide();ptOpen()">↩️ اپنا پورٹل</button></div></div>`; }catch(e){ return ''; } }
   function uaRoleDone(role, name){ ls.set('mcsFreshOut', null);
     const M = PT_META[role]; ls.set('mcsGuest', null); const o = $('uaOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; uaPending = null;
     try{ showToast(M[0] + ' ' + (name || '') + ' — ' + M[1] + ' کھل گیا', 3500); }catch(e){}
@@ -17723,15 +17723,19 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     if(!r.ok) return setErr(r.reason);
     uaClearOthers('user'); done(r);
   };
-  window.mcsLogoutAll = async function(skip){
-    try{ if(skip !== true && !confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return; }catch(e){}
-    try{ closeModal('portalModal'); }catch(e){}
-    try{ const a = uaMe(), k = JSON.parse(ls.get('mcsKeep') || 'null'); if(a && !(k && k.tok === a.tok)) api({ op:'logout', tok: a.tok }); }catch(e){}   /* MCS1611MO477: یاد رکھا فون — سیشن سرور پر رہے */
-    const wasUser = !!window.__uwUser || !!uaMe(); window.__uwUser = false;
-    uaClearOthers('none'); ls.set('mcsAuth', null); ls.set('mcsGuest', null);
-    try{ uaSync(); h2Sync(); cdBar(); mpRender(); }catch(e){}
-    ls.set('mcsFreshOut', '1');   /* MCS1911TH570: لاگ آؤٹ کے بعد بالکل نیا لاگ اِن صفحہ */
-    setTimeout(() => { try{ uaLogin(); }catch(e){} }, 250);   /* MCS1811WE540 (مالک کا حکم): ایڈمن ہو یا عام — لاگ آؤٹ کے بعد سیدھا Welcome Back */
+  /* MCS1911TH571: ایک ہی پکا لاگ آؤٹ — پوچھے بغیر، سب رول (ایڈمن / رجسٹرڈ / ایجنٹ) صاف، پھر لاگ اِن صفحہ */
+  window.mcsLogoutAll = async function(){
+    try{ document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active')); }catch(e){}
+    try{ const em0 = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn && typeof ptEmail === 'function') ? ptEmail() : ''; if(em0) localStorage.setItem('mcsAdmGmail', em0); }catch(e){}
+    try{ const a = uaMe(), k = JSON.parse(ls.get('mcsKeep') || 'null'); if(a && !(k && k.tok === a.tok)) api({ op:'logout', tok: a.tok }); }catch(e){}
+    ls.set('mcsLoggedOut', '1');
+    ['mcsAuth','mcsAuthTmp','mcsGuest','mcsCodev','mcsAgent','mcsAgOwnPin','mcsDevDevice','mcsAdminLast','mcsAdminEmail','mcsFreshOut'].forEach(k => ls.set(k, null));
+    window.__uwUser = false; lgOther = false;
+    try{ isAdminSignedIn = false; adminRestoring = false; }catch(e){}
+    try{ const FB = window.MCSFirebase; if(FB && FB.signOut) await Promise.race([FB.signOut(FB.auth), new Promise(r => setTimeout(r, 2500))]); }catch(e){}
+    try{ isAdminSignedIn = false; adminRestoring = false; if(typeof updateAdminBadge === 'function') updateAdminBadge(); if(typeof showAdminPop === 'function') showAdminPop(false); }catch(e){}
+    try{ uaSync(); h2Sync(); cdBar(); mpRender(); hlRenderSoon(); }catch(e){}
+    try{ uaLogin(); }catch(e){}
   };
   window.uaDoSignup = async function(){
     const name = ($('uaName').value || '').trim(), mobile = ($('uaMob').value || '').trim(), pw = ($('uaPw2').value || '').trim();
@@ -17884,7 +17888,6 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       <button class="uaBtn bW" onclick="uaInvAsk()">📥 مجھے ملا ہوا دعوتی میسج پیسٹ کریں</button>
       <button class="uaBtn bW" onclick="uaNameForm()">✏️ Change name — نام بدلیں</button>
       <button class="uaBtn bW" onclick="uaPwForm()">🔑 ${u.hasPw ? 'Change Password — پاس ورڈ بدلیں' : 'Set Password — پاس ورڈ بنائیں'}</button>
-      <button class="uaBtn bO" onclick="uaLogout()">${IC.exit}Log Out</button>
       <button class="uaBtn bW" style="color:#b91c1c;border-color:#fca5a5" onclick="uaDelete()">🗑️ Delete Account — اکاؤنٹ حذف کریں</button></div>`);
   };
   /* MCS1711TU510 (مالک کا حکم): اکاؤنٹ کا نام بدلنا — یہی نام ہوم کی اوپر والی پٹی میں (کاروبار کا فارم الگ) */
@@ -17960,7 +17963,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       try{ if(a && !staff()){ const o3 = $('h2Out'); if(o3) o3.style.display = ''; } }catch(e){}
       let box = $('uaCpBox'); const host = $('cpAcctType');
       if(host){ if(!box){ box = document.createElement('div'); box.id = 'uaCpBox'; host.insertAdjacentElement('afterend', box); }
-        box.innerHTML = a ? `🔐 <b>${esc(a.user.name)}</b> — ${esc(mcsSidFmt(a.user.sid || a.user.id))}<br><button style="background:#1d4ed8;color:#fff" onclick="uaAccount()">👤 میرا اکاؤنٹ</button><button style="background:#6366f1;color:#fff" onclick="fedListOpen()">📨 میرے درج کیے ہوئے</button><button style="background:#fee2e2;color:#b91c1c" onclick="uaLogout()">لاگ آؤٹ</button>`
+        box.innerHTML = a ? `🔐 <b>${esc(a.user.name)}</b> — ${esc(mcsSidFmt(a.user.sid || a.user.id))}<br><button style="background:#1d4ed8;color:#fff" onclick="uaAccount()">👤 میرا اکاؤنٹ</button><button style="background:#6366f1;color:#fff" onclick="fedListOpen()">📨 میرے درج کیے ہوئے</button>`
           : `👀 آپ Guest ہیں — کاروبار جوڑنے کے لیے<br><button style="background:#1d4ed8;color:#fff" onclick="uaLogin()">🔐 Login</button><button style="background:#16a34a;color:#fff" onclick="uaSignup()">➕ Sign Up</button>`; }
     }catch(e){}
   };
@@ -18321,7 +18324,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     agent: 'Agent mobile or PIN is wrong — ایجنٹ کا موبائل یا PIN غلط ہے'
   });
   /* MCS1911TH570: ڈراپ ڈاؤن ختم — فون میں پہچان ہو تو سیدھا MCS نمبر + PIN؛ پہلی بار صرف Sign Up؛ لاگ آؤٹ کے بعد بالکل نیا صفحہ */
-  const lgRole = () => { try{ if(ls.get('mcsFreshOut') === '1'){ if(uaMe() || staff()) ls.set('mcsFreshOut', null); else { lgOther = true; return 'any'; } } if(lgOther) return 'any'; if(uwMyPk()) return 'reg'; if(ls.get('mcsLastAgMob')) return 'agent'; if(uaAdmGmail()) return 'admin'; }catch(e){} return 'new'; };
+  const lgRole = () => { try{ if(lgOther) return 'any'; if(uwMyPk()) return 'reg'; if(ls.get('mcsLastAgMob')) return 'agent'; if(uaAdmGmail()) return 'admin'; }catch(e){} return 'new'; };
   let lgOther = false, lgBusy = false;
   const lgPk = () => (lgOther ? null : uwMyPk());
   const lgMobFmt = m => { try{ return mcsMobFmt(m); }catch(e){ return String(m || ''); } };
@@ -18400,7 +18403,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     const other = role === 'any' ? '' : `<div class="lgLinks c"><a onclick="lgUseOther()">Use another account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>`;
     const fg = role === 'agent' ? 'uaAgForgot()' : (role === 'admin' ? 'lgAdmForgot()' : 'uaForgot()');
     links = `<div class="lgLinks"><a onclick="${fg}">Forgot PIN ?</a><a onclick="uaSignup()">New? Sign Up</a></div>${other}`;
-    show(`${lgHead()}<div class="uaCard uaLg"><div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}${idBox}${idIn}${secret}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB" onclick="lgGo()">${IC.login}LOGIN</button>${links}</div>`);
+    show(`${lgHead()}<div class="uaCard uaLg"><div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}${idBox}${idIn}${secret}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB" onclick="lgGo()">${IC.login}LOGIN</button><button type="button" class="uaBtn bX" onclick="uaGuest()">${IC.user}Continue as Guest</button>${links}</div>`);
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') lgGo(); });
     const id0 = $('uaId'); if(id0) id0.addEventListener('keydown', e => { if(e.key === 'Enter'){ const p = $('uaPw'); if(p) p.focus(); } });
     setTimeout(() => { try{ const t = $('uaId') || $('uaPw'); if(t) t.focus(); }catch(e){} }, 300);
@@ -21918,7 +21921,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
       + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
       + '</div>';
     /* MCS1511SU453 (مالک کا حکم): لاگ آؤٹ صرف یہاں — My Account کا آخری بٹن (سر والا سرخ Log Out ختم) */
-    h += (ua || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || sf(function(){ return codevOn(); }, false) || (me && me.pin)) ? '<button type="button" class="mx-out" onclick="mxGo(\'' + ID + '\',\'h2Logout\')">⎋ Log Out</button>' : '<button type="button" class="mx-out in" onclick="mxGo(\'' + ID + '\',\'uaLogin\')">🔐 Log In</button>';
+    h += (ua || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || sf(function(){ return codevOn(); }, false) || (me && me.pin)) ? '' : '<button type="button" class="mx-out in" onclick="mxGo(\'' + ID + '\',\'uaLogin\')">🔐 Log In</button>';
     h += '<div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
     shell(ID, h);
   };
@@ -22804,24 +22807,6 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
       return _ptRole();
     };
   }
-  var _logout = window.mcsLogoutAll;
-  if(typeof _logout === 'function'){
-    window.mcsLogoutAll = async function(skip){
-      try{ if(skip !== true && !confirm('کیا آپ واقعی لاگ آؤٹ ہونا چاہتے ہیں؟')) return; }catch(e){}
-      try{ window.__uwUser = !!(typeof uaMe === 'function' && uaMe()); }catch(e){}
-      try{ var wasDev = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn), em0 = (typeof ptEmail === 'function' && ptEmail()) || ''; if(wasDev && em0) LS.set('mcsAdmGmail', em0); LS.set('mcsLoginRole', wasDev ? 'dev' : 'biz'); }catch(e){}   /* MCS1711TU496: لاگ آؤٹ کے بعد وہی رول اور ایڈمن کا Gmail سامنے */
-      LS.set(OUT, '1');
-      try{ closeModal('portalModal'); }catch(e){}
-      try{ if(typeof ADMIN_LAST_KEY !== 'undefined') LS.set(ADMIN_LAST_KEY, null); if(typeof ADMIN_EMAIL_KEY !== 'undefined') LS.set(ADMIN_EMAIL_KEY, null); }catch(e){}
-      LS.set('mcsCodev', null); LS.set('mcsAgent', null); LS.set('mcsAuth', null); LS.set('mcsAuthTmp', null); LS.set('mcsGuest', null);
-      try{ adminRestoring = false; isAdminSignedIn = false; }catch(e){}
-      try{ var FB = window.MCSFirebase; if(FB && FB.signOut) await Promise.race([FB.signOut(FB.auth), new Promise(function(r){ setTimeout(r, 2500); })]); }catch(e){}
-      try{ isAdminSignedIn = false; adminRestoring = false; if(typeof updateAdminBadge === 'function') updateAdminBadge(); }catch(e){}
-      try{ ['agModal','portalModal','recViewModal'].forEach(function(id){ var m=$(id); if(m) m.classList.remove('active'); }); }catch(e){}
-      return _logout(true);   /* سرور لاگ آؤٹ + صفحے تازہ + لاگ اِن صفحہ */
-    };
-  }
-
   /* ---------- (2) ہر فارم کی لکھائی خود محفوظ (رجسٹریشن، ممبرشپ، ایجنٹ فارم سمیت) ---------- */
   var DK = 'mcsDraftV2', CK = 'mcsCnicByPhone';
   function dAll(){ try{ return JSON.parse(LS.get(DK) || '{}') || {}; }catch(e){ return {}; } }
@@ -22999,14 +22984,6 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
 
 
   /* ---------- لاگ آؤٹ: ہر لاگ آؤٹ بٹن (ہوم کی پٹی، سیٹنگز، پورٹل) ایک ہی پورا لاگ آؤٹ کرے ---------- */
-  var _fullOut = window.mcsLogoutAll;
-  window.mcsLogoutAll = async function(skip){
-    var r = await _fullOut.apply(this, arguments);
-    LS.set('mcsAgOwnPin', null); LS.set('mcsDevDevice', null);   /* بالکل صاف: اس فون سے ایڈمن بٹن اور ایجنٹ کی خودکار PIN بھی ختم */
-    try{ if(typeof showAdminPop === 'function') showAdminPop(false); }catch(e){}
-    try{ if(typeof h2Sync === 'function') h2Sync(); }catch(e){}
-    return r;
-  };
   window.h2Logout = function(){ return window.mcsLogoutAll(); };
   window.cdLogout = function(){ return window.mcsLogoutAll(); };
   window.addEventListener('load', function(){ setTimeout(function(){ window.h2Logout = function(){ return window.mcsLogoutAll(); }; }, 2500); });
@@ -26201,7 +26178,7 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
 
 <style id="mcsC453css">
 /* MCS1511SU453 (مالک کا حکم) */
-html body #h2Out, html body .h2-out { display: none !important; }   /* سر والا سرخ Log Out ختم — صرف My Account میں */
+
 .mx-out { display: block; width: calc(100% - 4px); margin: 14px 2px 4px; padding: 14px; border-radius: 16px; border: 2px solid #ef4444; background: #fff5f5; color: #b91c1c; font: 900 18px 'Segoe UI', Selawik, Arial, sans-serif; cursor: pointer; }
 .mx-out.in { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
 .cnx-wrap { margin-top: 8px; }
@@ -28186,6 +28163,40 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
   }
   function hook(){ wrap('renderServiceList', 'serviceListWrap'); wrap('renderDoctorList', 'doctorListWrap'); }
   hook(); setTimeout(hook, 1500); setTimeout(hook, 5000);
+})();
+</script>
+<style id="mcsOne571css">
+html body #h2Out{display:none!important}
+#mcsPwr{position:fixed;top:5px;left:5px;z-index:900;display:none;place-items:center;width:34px;height:34px;padding:0;border-radius:50%;background:#e30613;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);cursor:pointer}
+#mcsPwr.on{display:grid}
+#mcsPwr svg{width:19px;height:19px}
+</style>
+<script id="mcsOne571">
+/* MCS1911TH571 (مالک کا حکم): ایک لال پاور لاگ آؤٹ بٹن؛ بیک بٹن کی درست گنتی */
+(function(){
+  'use strict';
+  var PW = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.6 6.6a8 8 0 1 0 10.8 0"/></svg>';
+  function loggedIn(){ try{ if(isAdminSignedIn) return true; if(codevOn()) return true; var a = agMe(); if(a && a.phone && (a.pin || a.code)) return true; if(window.uaMe && window.uaMe()) return true; }catch(e){} return false; }
+  function outSync(){ var b = document.getElementById('mcsPwr');
+    if(!b){ if(!document.body) return; b = document.createElement('button'); b.type = 'button'; b.id = 'mcsPwr'; b.innerHTML = PW; b.setAttribute('aria-label', 'Log out'); b.title = 'Log out'; b.onclick = function(e){ e.stopPropagation(); window.mcsLogoutAll(); }; document.body.appendChild(b); }
+    var ua = document.getElementById('uaOv'), on = false;
+    try{ on = loggedIn() && currentScreen === 'home' && !(ua && ua.classList.contains('on')); }catch(e){}
+    b.classList.toggle('on', on); }
+  setInterval(outSync, 500); document.addEventListener('DOMContentLoaded', outSync);
+
+  /* ---- بیک بٹن: history میں اصل گہرائی کی گنتی، تاکہ ہوم پر جاتے ہی صحیح تعداد پیچھے جائے (نہ زیادہ بچے، نہ ایپ بند) ---- */
+  function nOf(st){ return st ? (st.n != null ? st.n : (st.root ? 0 : 1)) : 0; }
+  var op = history.pushState.bind(history);
+  history.pushState = function(s, t, u){ return op(Object.assign({}, s || {}, { n: nOf(history.state) + 1 }), t, u); };
+  window.goHome = function(){
+    fwdStack = [];
+    document.querySelectorAll('.modal-overlay.active').forEach(function(m){ m.classList.remove('active'); });
+    navStack.length = 0; navStack.push('home');
+    goScreen('home', true);
+    var steps = nOf(history.state) - 1; if(steps > 0){ try{ history.go(-steps); }catch(e){} }
+  };
+  window.__mcsHistDepth = function(){ return nOf(history.state); };
+
 })();
 </script>
 </body>
