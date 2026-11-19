@@ -4767,13 +4767,14 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH552";
+const APP_VERSION = "MCS1911TH553";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS1911TH552": "Removed the in-app «Account Access — give / extend membership» page (activation only from the Help Desk)",
+  "MCS1911TH553": "My Account (new design) now opens for Admin 1 / Admin 2 too — old admin portal inside as «🛠️ Admin Portal» • no activation messages in the app",
+  "MCS1911TH552": "Removed the old in-app «Account Access — give / extend membership» page",
   "MCS1911TH551": "My Account: new ID card (Account ID, Full Name, Agent ID) + Personal and Referral Registered Business lists with Subscription IDs + Invite / View My Referrals",
-  "MCS1911TH550": "Test mode: activation from Help Desk now reaches the phone — business goes live with congratulations and dates • Help Desk shows the real business type",
+  "MCS1911TH550": "Test mode: once activated, the business goes live on the phone with congratulations and dates",
   "MCS1911TH549": "Each category has its own icon on the business card: 🏪 Business, 👔 Professional, 🎓 Education, 🏥 Healthcare, 🏛️ Government, 🤝 Organization, 📌 Other",
   "MCS1911TH548": "Business card: Profile Type lists for Education, Healthcare, Government, Organization and Other • write your own type if not in the list",
   "MCS1811WE547": "Login screen stays still when the keyboard opens (no up/down jumping)",
@@ -4782,12 +4783,12 @@ const UPDATE_NOTES = {
   "MCS1811WE544": "Home: the prayer times strip is removed",
   "MCS1811WE543": "Login: a phone with an MCS ID opens on Registered User (MCS ID + PIN) • «New? Create account» on the User login • no test-mode label",
   "MCS1811WE542": "The bottom bar (◀ ▶ 🏠 and tabs) stays on every page • on Home, back (app or phone) asks to log out — press back again to log out",
-  "MCS1811WE541": "Test mode: the test account now shows in the Help Desk (🧪) — activate it there for 1 year and check the full registration; ending test mode clears it from the server too",
+  "MCS1811WE541": "Test mode: the test account can be activated for 1 year to check the full registration; ending test mode clears it too",
   "MCS1811WE541": "New login system: Login As (User / Registered User / Agent / Admin) • User = one big LOGIN button, no PIN • new Sign Up (locality + date of birth + confirm PIN) • Forgot PIN (birth year + last 3 digits) • Change PIN screen",
   "MCS1811WE540": "Welcome Back: only your name, MCS ID and PIN • every log out (admin too) goes straight to Welcome Back • ⎋ Log Out in the admin tools • test-mode strip removed",
   "MCS1811WE539": "Test mode: nothing is sent to the Help Desk (a yellow test pop-up shows what would have been sent) — leaving test mode now leaves no trace anywhere",
   "MCS1811WE538": "Membership: only Google Play — no promo code and no «send details for verification» anywhere",
-  "MCS1811WE537": "No more activation codes: the Activation Key box is gone; the business is activated for 1 year straight from our Help Desk by MCS ID — the owner gets a congratulations message and the business goes live",
+  "MCS1811WE537": "No more activation codes: the Activation Key box is gone — when the business is activated the owner gets a congratulations message and the business goes live",
   "MCS1811WE536": "Home header: the red role tag under your photo is removed (the yellow role name beside the photo already shows it)",
   "MCS1811WE535": "Agent screen: «Earn with MCS» is now «➕ Invite & Register New Businesses» — it opens a list of signed-up people (MCS ID with name); tap one and that person's registration form opens so you can register the business as an agent",
   "MCS1811WE534": "Home header: the red corner ribbon is gone — a small role tag now sits under your photo (ADMIN 1, ADMIN 2, AGENT, MEMBER or USER); admin's own selfie shows in the header; long city names shrink to fit instead of being cut",
@@ -4816,7 +4817,7 @@ const UPDATE_NOTES = {
   "MCS1711TU511": "ADMIN 1 / ADMIN 2 ribbon moved to the right corner (nothing hidden); the small Admin label is gone when the ribbon shows",
   "MCS1711TU510": "Red ADMIN ribbon in the corner while in the admin account; change your account name in My Account (shown at the top)",
   "MCS1711TU509": "Updates install quietly in the background — no card for customers; only Admin 1 sees a thin progress bar and what changed",
-  "MCS1711TU508": "🧪 Test activation key without dashes — same as Help Desk keys",
+  "MCS1711TU508": "🧪 Test key without dashes",
   "MCS1711TU507": "🧪 Admin 1 test mode: full sign-up, form, Google Play (test) and activation key as a new customer — only on this phone, nothing reaches the live app",
   "MCS1711TU506": "Forgot PIN: only mobile number + year of birth + new PIN — set at once, no Help Desk step",
   "MCS1711TU505": "Form: sub-type list taps now select (locked box opens in place) • clean labels without blurry hints • every registered card (home + lists) in the same blue design • full business page: Edit only for admin",
@@ -6295,7 +6296,7 @@ function adRequestSend(){
 /* ---- ایڈمن: 👤 Account Access — ہیلپ ڈیسک کا پیغام پیسٹ → ممبرشپ کی مدت (prof.until، /padmin) ---- */
 let aaCur = null;
 /* MCS1911TH552 (مالک کا حکم — «یہ صفحہ کیوں آ رہا ہے، پلے اسٹور کا خطرہ»): ایپ کے اندر ممبرشپ دینے / بڑھانے کا صفحہ ختم — ایکٹیویشن صرف ہیلپ ڈیسک «✅ Activate business» سے */
-function aaOpen(){ try{ showToast('Activation is done only from the Help Desk — Activate business'); }catch(e){} }
+function aaOpen(){}   /* MCS1911TH553 (مالک کا حکم): کوئی پیغام بھی نہیں */
 function aaOpenOld552(){
   agModal(`<div class="ag-hd">👤 Account Access <small>ممبرشپ کی مدت دیں / بڑھائیں</small></div>
     <div class="ag-f">
@@ -14750,7 +14751,7 @@ async function agWaFinish(rec, o){
       <div class="ag-codeL">ریفرل کوڈ</div><div class="ag-code" dir="ltr" style="font-size:22px" onclick="agCopy('${escapeAttr(a.code)}')">${escapeHtml(a.code)} <small>📋</small></div>
       <div class="ag-codeL">🔑 PIN</div><div class="ag-code" dir="ltr" onclick="agCopy('${escapeAttr(a.pin)}')">${escapeHtml(a.pin)} <small>📋</small></div>
       <a class="btn block ag-send" style="text-align:center;margin-top:8px" target="_blank" rel="noopener" href="https://wa.me/${escapeAttr(a.phone)}?text=${encodeURIComponent(msg)}">💬 ایجنٹ کو واٹس ایپ پر بھیجیں</a>`);
-  }catch(x){ agModal(`<div class="ag-st">⚠️ کاروبار محفوظ ہو گیا، مگر آگے کا کام نہیں ہوا: ${escapeHtml(x.message||'')}<br>ہیلپ ڈیسک ← «✅ Activate business» اور «➕ خود ایجنٹ بنائیں» سے مکمل کریں۔</div>`); }
+  }catch(x){ agModal(`<div class="ag-st">⚠️ کاروبار محفوظ ہو گیا، مگر آگے کا کام نہیں ہوا: ${escapeHtml(x.message||'')}<br>دوبارہ کوشش کریں۔</div>`); }
 }
 async function agAdminOpen(){
   agModal('<div class="ag-st">⏳ لوڈ ہو رہا ہے…</div>');
@@ -21805,6 +21806,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     h += '<div class="mx-sec pl">More</div><div class="mx-card mx-list">'
       + L.map(function(x, i){ try{ if(fpIsBasic(x.p.kind, x.rec)) return ''; var r = recOf(x); }catch(e){ return ''; } return '<button type="button" class="mx-li" onclick="mxGo(\'' + ID + '\',\'mxFp\',' + i + ')"><i class="c3">📄</i><span>My Profile<small>' + esc(r.nameUr || r.name || '') + '</small></span></button>'; }).join('')
       + (rl === 'agent' ? row('🤝', 'Agent Portal', ID, 'mxAgentOld', 'c3', 'ایجنٹ پورٹل — رجسٹریشن، کاروبار') : '')
+      + (rlNow === 'dev' || rlNow === 'codev' ? row('🛠️', 'Admin Portal', ID, 'mxAgentOld', 'c3', 'ایڈمن پورٹل — ٹولز، روزانہ، بزنس / ایجنٹ') : '')
       + (me.code ? row('🤝', 'Referral &amp; Agent', ID, 'agOpen', 'c3', 'ریفرل کوڈ: ' + esc(me.code)) : '')   /* MCS1411SA423: Earn with MCS صرف ہوم پر */
       + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn() && cdCan('accounts')) || (me && (me.code || me.pin)) ? row('📊', 'Accounts Portal', ID, 'mcsPortalOpen', 'c3', 'حساب، کاروبار، ایجنٹ، ادائیگیاں') : '')   /* MCS1511SU457 */
       + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? row('👥', 'Admins & Permissions', ID, 'mcsAdmins', 'c4', 'ایڈمن بنائیں، اجازتیں دیں') + row('⚖️', 'Share Rates', ID, 'mcsRates', 'c3', 'تقسیم کی شرحیں — صرف آگے کی فروخت پر') + row('🛡️', 'Approvals', ID, 'mcsPend', 'c4', 'ایڈمن 2 کی درخواستیں: منظور / رد') + row('📊', 'Reports', ID, 'mcsReports', 'c3', 'ایجنٹ وار، حساب کی جانچ') : '')   /* MCS1511SU460 */
@@ -21830,7 +21832,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
         var m0 = document.getElementById('portalModal');
         if(!(m0 && m0.classList.contains('active'))) window._mxOld = 0;
         var rl = ptRole(), ua = (typeof uaMe === 'function' && uaMe()) || null;
-        if(!window._mxOld && (rl === 'user' || rl === 'biz' || rl === 'prof' || (rl === 'agent' && ua))){
+        if(!window._mxOld && (rl === 'user' || rl === 'biz' || rl === 'prof' || rl === 'dev' || rl === 'codev' || (rl === 'agent' && ua))){   /* MCS1911TH553 (مالک کا حکم): ایڈمن کو بھی نیا My Account؛ پرانا ایڈمن پورٹل اندر «🛠️ Admin Portal» سے */
           try{ mxAccOpen(rl); return; }catch(e){ console.error(e); }
           try{ mxAccOpen(rl, true); return; }catch(e2){ console.error(e2); }
         }
