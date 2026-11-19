@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH556";
+const APP_VERSION = "MCS1911TH557";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH557": "Agent «Forgot PIN»: no Help Desk — last 3 digits of mobile + birth year, then New PIN / Confirm PIN (with a real eye icon to show / hide)",
   "MCS1911TH556": "Smart search: type a category name and that category shows on top; MCS number, name, any part of the shop name, any part of a mobile number (all saved numbers), any part of the address / city (e.g. Fateh Pur, 214, 93)",
   "MCS1911TH555": "Speed: the app no longer hangs — no re-measuring every second, Registered / MCS Agents filters show 40 cards at a time (Show more), faster search",
   "MCS1911TH554": "Speed: no more hanging — the app no longer re-measures every card each second; the moving strip and text-fitting pause while you scroll or type; faster search",
@@ -18397,7 +18398,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       secret = `<label class="uaF">${IC.lock}<input id="uaPw" class="uaMask" type="text" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Admin password" autocomplete="off" name="mcs_admin_secret" oninput="lgErr('')"><button type="button" class="uaEye" onclick="uaEyeA('uaPw', this)">🙈</button></label>`;
     }
     if(role === 'reg') links = `<div class="lgLinks"><a onclick="uaForgot()">Forgot PIN ?</a><a onclick="uaSignup()">New? Create account</a></div>${pk ? `<div class="lgLinks c"><a onclick="lgUseOther()">Use another account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>` : ''}`;
-    else if(role === 'agent') links = `<div class="lgLinks"><a onclick="uaHelp()">Forgot PIN ? — Help Desk</a>${agM ? '<a onclick="lgUseOther()">Other agent</a>' : '<span></span>'}</div>`;
+    else if(role === 'agent') links = `<div class="lgLinks"><a onclick="uaAgForgot()">Forgot PIN ?</a>${agM ? '<a onclick="lgUseOther()">Other agent</a>' : '<span></span>'}</div>`;
     else if(role === 'admin' && admG) links = `<div class="lgLinks c"><a onclick="lgUseOther()">Other Gmail / <span data-noen>دوسرا Gmail</span></a></div>`;
     const dd = `<div class="lgLbl">Login As</div><div class="lgDd" id="lgDd"><button type="button" class="lgDdB" onclick="lgDdTog(event)">${LGI[role]}<span>${rl[1]}</span><i class="cv">${LGI.chev}</i></button><div class="lgDdL">${LG_ROLES.map(x => `<button type="button" class="${x[0] === role ? 'on' : ''}" onclick="uaSetRole('${x[0]}')">${LGI[x[0]]}<span>${x[1]} <u data-noen>${x[2]}</u></span>${x[0] === role ? LGI.check : ''}</button>`).join('')}</div></div>`;
     const body = role === 'user'
@@ -18547,6 +18548,42 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     let r = null; try{ r = await api({ op:'forgot', id: (typeof mcsSidSrv === 'function' ? mcsSidSrv(who) : who), yob, last3: l3, pw }); }finally{ lgBusy = false; busy(0); }
     if(!r || !r.ok) return lgErr((r && r.reason) || 'net');
     lgOther = false; uaClearOthers('user'); done(r, '✅ New PIN saved — welcome back');
+  };
+  /* ---------- MCS1911TH557 (مالک کا حکم): ایجنٹ کا Forgot PIN — ہیلپ ڈیسک نہیں؛ موبائل کے آخری 3 ہندسے + پیدائش کا سال → نیا PIN (سرور /pplogin forgot، غلط کوشش پر روک) ---------- */
+  window.uaAgForgot = function(){
+    lgCss(); const agM = String(ls.get('mcsLastAgMob') || ''), idv = String((($('uaId') || {}).value) || '').trim(), m0 = nd(agM || idv);
+    const eye = id => `<label class="uaF">${IC.lock}<input id="${id}" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" autocomplete="new-password"><button type="button" class="uaEye" onclick="uaEye('${id}', this)" aria-label="Show / hide PIN"></button></label>`;
+    show(`<button type="button" class="lgBack" onclick="uaLogin()" aria-label="Back">${LGI.back}</button>${lgHead()}<div class="uaCard">
+      <div class="uaHd"><i>${IC.lock}</i><h2 style="font-size:23px">Forgot PIN ?</h2></div><div class="uaSub">Agent — verify your details and set a new PIN.</div>
+      ${agM ? `<div class="lgIdBox"><div class="t">Agent</div><div class="lgChip sm" dir="ltr">${esc(lgMobFmt(agM))}</div></div>` : lgLbl('Agent mobile number') + lgField('uaFId', 'phone', '03XXXXXXXXX', { im:'tel', ac:'username', v: m0.length >= 10 ? m0 : '' })}
+      ${lgLbl('Last 3 Digits of Registered Mobile No.')}${lgField('uaL3', 'phone', 'e.g. 725', { im:'numeric', ac:'off' })}
+      ${lgLbl('Enter Birth Year')}${lgField('uaYob', 'cal', 'e.g. 1985', { im:'numeric', ac:'bday-year' })}
+      ${lgLbl('New PIN <small>(6 Digits)</small>')}${eye('uaFNew')}
+      ${lgLbl('Confirm New PIN')}${eye('uaFNew2')}
+      <div class="uaErr" id="uaErr"></div>
+      <div class="lgTwo"><button class="uaBtn bG" onclick="uaDoAgForgot()">${LGI.ok}SAVE</button><button class="uaBtn bX" onclick="uaLogin()">${LGI.x}CANCEL</button></div></div>`);
+    [['uaFId', 11], ['uaL3', 3], ['uaYob', 4], ['uaFNew', 6], ['uaFNew2', 6]].forEach(a => { const p = $(a[0]); if(p){ p.maxLength = a[1]; p.addEventListener('input', () => { const v = nd(p.value).slice(0, a[1]); if(p.value !== v) p.value = v; lgErr(''); }); } });
+    setTimeout(() => { try{ ($('uaFId') || $('uaL3')).focus(); }catch(e){} }, 300);
+  };
+  window.uaDoAgForgot = async function(){
+    if(lgBusy) return;
+    const d = nd(String(ls.get('mcsLastAgMob') || '') || (($('uaFId') || {}).value) || '').slice(-10), l3 = nd($('uaL3').value), yob = uaYobVal($('uaYob')), pw = nd($('uaFNew').value), pw2 = nd($('uaFNew2').value);
+    if(d.length !== 10) return lgErr('mobile');
+    if(l3.length !== 3) return lgErr('Write the last 3 digits of your mobile number — موبائل نمبر کے آخری 3 ہندسے لکھیں');
+    if(d.slice(-3) !== l3) return lgErr('Mobile number or year of birth does not match — موبائل یا پیدائش کا سال درست نہیں');
+    if(!yob) return lgErr('yob');
+    if(!/^\d{6}$/.test(pw)) return lgErr('pw6'); if(pw !== pw2) return lgErr('PINs do not match — دونوں PIN ایک جیسے لکھیں');
+    lgBusy = true; busy(1); lgErr(''); let r = null;
+    try{ const ac = (typeof AbortController === 'function') ? new AbortController() : null, tm = ac ? setTimeout(() => ac.abort(), 15000) : 0;
+      try{ r = await (await fetch(AG_API + '/pplogin', { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ op:'forgot', role:'agent', phone: '0' + d, yob, newpin: pw, dev: agDev() }), signal: ac ? ac.signal : undefined })).json(); }catch(e){ r = null; } finally { if(tm) clearTimeout(tm); }
+    } finally { lgBusy = false; busy(0); }
+    if(!r) return lgErr('net');
+    if(!r.ok){ const M = { yob:'Mobile number or year of birth does not match — موبائل یا پیدائش کا سال درست نہیں', wait:'Too many wrong tries — try again tomorrow · کئی غلط کوششیں، کل دوبارہ کوشش کریں',
+        newpin:'Choose a stronger PIN (not 123456 / 111111) — آسان PIN نہیں چلے گا', taken:'This PIN is used by another agent — choose a different PIN · دوسرا PIN چنیں',
+        noyob:'Year of birth is not saved for this agent yet — please contact Help Desk once · پیدائش کا سال محفوظ نہیں، ایک بار ہیلپ ڈیسک سے رابطہ کریں' };
+      return lgErr(M[r.reason] || r.reason || 'net'); }
+    try{ showToast('✅ New PIN saved — نیا PIN محفوظ ہو گیا'); }catch(e){}
+    busy(1); try{ if(!(await lgAgentSignIn(d, pw))) uaLogin(); } finally { busy(0); }
   };
   /* ---------- Change PIN ---------- */
   window.uaPwForm = function(){
@@ -27913,6 +27950,17 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
 .sr-cathits button{display:inline-flex;align-items:center;gap:4px;border:1.5px solid #0f766e;background:#ecfdf5;color:#065f46;border-radius:999px;padding:5px 11px;font:700 13px 'Segoe UI',Selawik,Arial,sans-serif;cursor:pointer;max-width:100%}
 .sr-cathits button span{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif;font-weight:400;font-size:14px}
 </style>
+<style id="mcsEye557">
+/* MCS1911TH557 (مالک کا حکم): PIN / پاس ورڈ کے خانوں میں بندر نہیں — اصل آنکھ کا نشان (بند = لکیر والی آنکھ، کھلا = آنکھ) */
+#uaOv .uaEye{font-size:0!important;width:34px;height:30px;flex:0 0 34px;background:center/22px 22px no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b4a6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94'/%3E%3Cpath d='M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19'/%3E%3Cpath d='M14.12 14.12a3 3 0 1 1-4.24-4.24'/%3E%3Cline x1='1' y1='1' x2='23' y2='23'/%3E%3C/svg%3E")!important}
+#uaOv .uaEye[data-on="1"]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230d6efd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")!important}
+</style>
+<script id="mcsEye557js">
+(function(){ function wrap(n, shown){ const f = window[n]; if(typeof f !== 'function' || f.__e) return; const w = function(id, b){ const r = f.apply(this, arguments); try{ const i = document.getElementById(id); if(b && i) b.dataset.on = shown(i) ? '1' : '0'; }catch(e){} return r; }; w.__e = 1; window[n] = w; }
+  function go(){ wrap('uaEye', i => i.type !== 'password'); wrap('uaEyeA', i => !i.classList.contains('uaMask')); }
+  go(); setTimeout(go, 1500); setTimeout(go, 5000);
+})();
+</script>
 </body>
 
 </html>
