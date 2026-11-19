@@ -4772,10 +4772,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR575";
+const APP_VERSION = "MCS2011FR576";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR576": "Smooth scrolling and touch on every page — app-wide touch catchers only where needed • pages no longer freeze after a popup closes • category tiles always A–Z, re-order buttons removed",
   "MCS2011FR575": "One login, one PIN: MCS ID / mobile + PIN opens your highest role (Admin / Agent / Registered) with all lower roles; the same PIN now works everywhere; Admin 1 password asked only once per phone",
   "MCS2011FR574": "Lists: «Registered business», «MCS Agents» and sort buttons respond instantly again",
   "MCS2011FR573": "New login page: your photo, MCS ID, name and highest role (Admin / Agent / Registered User) — just enter the PIN • Log Out goes straight to the login page • bigger Log Out button • home no longer jumps (counts remembered, no layout shift)",
@@ -20867,9 +20868,11 @@ function mcInitAv(x, fb){
   document.addEventListener('pointermove', e => { if(e.pointerType === 'mouse') drag(e.clientX, e.clientY, e); });
   document.addEventListener('pointerup', e => { if(e.pointerType === 'mouse') finish(); });
   /* انگلی */
-  document.addEventListener('touchstart', e => { if(e.touches.length !== 1) return; const t0 = e.touches[0]; begin(t0.clientX, t0.clientY, e.target); }, {passive: true});
-  document.addEventListener('touchmove', e => { if(!sw) return; const t0 = e.touches[0]; drag(t0.clientX, t0.clientY, e); }, {passive: false});
-  document.addEventListener('touchend', finish); document.addEventListener('touchcancel', finish);
+  /* MCS2011FR576: سرکانے والا (passive:false) touchmove صرف تب جب چیٹ کی قطار پر انگلی ہو — باقی ایپ کا سکرول کبھی نہ رکے */
+  const tmv = e => { if(!sw){ document.removeEventListener('touchmove', tmv, {passive: false}); return; } const t0 = e.touches[0]; drag(t0.clientX, t0.clientY, e); };
+  document.addEventListener('touchstart', e => { if(e.touches.length !== 1) return; const t0 = e.touches[0]; begin(t0.clientX, t0.clientY, e.target); if(sw) document.addEventListener('touchmove', tmv, {passive: false}); }, {passive: true});
+  const tend = () => { document.removeEventListener('touchmove', tmv, {passive: false}); finish(); };
+  document.addEventListener('touchend', tend, {passive: true}); document.addEventListener('touchcancel', tend, {passive: true});
   document.addEventListener('contextmenu', e => { if(e.target && e.target.closest && e.target.closest('#mcModal .mc-row.wa, #mcModal .mc-b')) e.preventDefault(); });
   document.addEventListener('click', e => { if(window._mcSwiped){ e.stopPropagation(); e.preventDefault(); window._mcSwiped = false; } }, true);
 })();
@@ -27543,7 +27546,7 @@ body.adx-on::before{content:'';position:fixed;inset:0;background:rgba(15,23,42,.
     window.addEventListener('pointerdown', down, { capture: true, passive: false });
     window.addEventListener('pointermove', move, { capture: true, passive: false });
     ['pointerup', 'pointercancel'].forEach(t => window.addEventListener(t, up, { capture: true, passive: false }));
-    ['touchstart', 'touchmove', 'touchend', 'mousedown', 'mouseup'].forEach(t => window.addEventListener(t, stop, { capture: true, passive: false }));
+    ['touchstart', 'touchmove', 'touchend', 'mousedown', 'mouseup'].forEach(t => window.addEventListener(t, stop, { capture: true, passive: true }));   /* MCS2011FR576: passive — پوری ایپ کا سکرول / ٹچ نہ رکے */
     window.addEventListener('click', clk, true);
   })();
   window.adxReset = function(){ if(!D || !confirm('Reset this ad to the plain style?')) return; D.sx = Object.assign({}, DEF); apply(); adxDraw(); };
@@ -28331,6 +28334,45 @@ html body #screen-home #hdr2.h229 .x-who{min-height:11cqw}
       try{ const pin = window.__mcsOnePin || ''; if(pin) await mcsAdmVaultSave(pin, email, pw); }catch(e){} return r; };
     w.__v575 = 1; FB.signInWithEmailAndPassword = w; }
   hook(); window.addEventListener('mcs-firebase-ready', hook); setTimeout(hook, 2000); setTimeout(hook, 6000);
+})();
+</script>
+<style id="mcsCat576">
+/* MCS2011FR576 (مالک کا حکم): ٹائلوں کی ترتیب والے بٹن (اصل / ا↓ / ی↑ / ✋ کھینچنا) ختم — ٹائلیں ہمیشہ A سے Z */
+.cat-sort-pick, .cb-drag{display:none !important}
+body.cat-drag-on .cat-grid .cat-item{touch-action:auto !important;animation:none !important;cursor:pointer !important}
+</style>
+<script id="mcsCat576js">
+(function(){
+  document.body.classList.remove('cat-drag-on');
+  window.toggleCatDrag = function(){ document.body.classList.remove('cat-drag-on'); };
+  window.catSortGet = function(){ return 'az'; };
+  const nameOf = el => { const t = String(el.innerText || el.textContent || ''); const m = t.match(/[A-Za-z][A-Za-z0-9 &\/.'()-]*/); return (m ? m[0] : t).trim().toLowerCase(); };   /* ٹائل پر جو انگلش نام نظر آتا ہے اسی سے A–Z */
+  window.applyCatSort = function(){
+    document.querySelectorAll('.cat-grid').forEach(g => { if(g.id === 'ubCatGrid') return;
+      Array.from(g.querySelectorAll('.cat-item')).map(el => ({ el, n: nameOf(el) })).sort((a, b) => a.n.localeCompare(b.n, 'en')).forEach((o, i) => { o.el.style.order = String(i); }); });
+  };
+  try{ localStorage.setItem('mcsCatSort', 'az'); }catch(e){}
+  let sig = ''; setInterval(() => { try{ const g = document.querySelectorAll('.cat-grid .cat-item'); const s2 = g.length + ':' + (g[0] && g[0].style.order); if(s2 !== sig){ applyCatSort(); sig = document.querySelectorAll('.cat-grid .cat-item').length + ':' + ((document.querySelector('.cat-grid .cat-item') || {}).style || {}).order; } }catch(e){} }, 1500);
+  setTimeout(() => { try{ applyCatSort(); }catch(e){} }, 300);
+})();
+</script>
+<script id="mcsScroll576">
+/* MCS2011FR576 (مالک: «نیچے کا ریکارڈ کہاں گیا»): کوئی پاپ اپ بند ہوتے ہوئے body پر overflow:hidden چھوڑ جائے تو ہر صفحہ جم جاتا تھا —
+   ہر سیکنڈ: کوئی پورے صفحے والا پاپ اپ کھلا نہ ہو اور سکرول بند ہو تو خود کھول دیں */
+(function(){
+  function blocking(){
+    const vw = innerWidth, vh = innerHeight;
+    for(const el of document.querySelectorAll('body > *, .modal-overlay, .screen-overlay')){
+      if(el.id === 'catDragBar' || el.classList.contains('bnav')) continue;
+      const cs = getComputedStyle(el); if(cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0 || cs.pointerEvents === 'none') continue;
+      const r = el.getBoundingClientRect(); if(r.width >= vw * .7 && r.height >= vh * .6) return true;
+    }
+    return false;
+  }
+  setInterval(() => { try{ const b = document.body;
+    if(b.style.overflow === 'hidden' && !blocking()) b.style.overflow = '';
+    const h = document.documentElement; if(h.style.overflow === 'hidden' && !blocking()) h.style.overflow = '';
+  }catch(e){} }, 1000);
 })();
 </script>
 </body>
