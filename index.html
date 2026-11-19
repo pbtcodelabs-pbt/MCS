@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH562";
+const APP_VERSION = "MCS1911TH563";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH563": "Bad words list is hidden — admin opens it by tapping the «My Chat» title 7 times",
   "MCS1911TH562": "My Chats → Customer Help → 🚫 Bad words: see the full built-in list and add / remove your own words right there",
   "MCS1911TH561": "«💬 Ask us» on the login page is now the app's own chat (name only, no phone) • Admin: My Chats → 🙋 Customer Help — read replies turn grey, delete one or many, block, bad-word filter",
   "MCS1911TH560": "Login page: «🎬 Intro video» (play / download / share) and «💬 Ask us» — questions by chat only, answer inside the app",
@@ -22319,7 +22320,7 @@ function render(){
   let bz = []; if(q){ bz = bizFind(q); rows = rows.filter(x => rowMatch(x, ql, d, bz)); }
   window._mc2Bz = bz;
   let h = rows.map(x => row(x, mcList.indexOf(x))).join('');
-  if(staff && mcTab === 'guest'){ const rd = rows.filter(x => x.seen).length; h = `<div class="mc2-gt"><button type="button" ${rd ? '' : 'disabled'} onclick="mc2GDelRead()">🗑️ Delete read (${rd})</button><button type="button" onclick="mc2Words()">🚫 Bad words</button></div>` + h; }   /* MCS1911TH561 */
+  if(staff && mcTab === 'guest'){ const rd = rows.filter(x => x.seen).length; h = `<div class="mc2-gt"><button type="button" ${rd ? '' : 'disabled'} onclick="mc2GDelRead()">🗑️ Delete read (${rd})</button></div>` + h; }   /* MCS1911TH561 */
   if(bz.length) h += `<div class="mc2-h">${t('biz')}</div>` + bz.map((b, i) => `<div class="mc2-r" onclick="mc2BizGo(${i})"><div class="mc2-av">${recAv(b.r) || '<span class="mc2-em">🏪</span>'}</div><div class="mc2-m"><div class="mc2-l1"><b dir="auto">${E(b.shop)}</b></div><div class="mc2-l2"><span class="mc2-pv" dir="auto">${E([b.owner, b.ph ? '0' + b.ph : ''].filter(Boolean).join(' • '))}</span></div></div>${MST_IC.chev.replace('class="mst-ch"', 'class="mc2-cv"')}</div>`).join('');
   if(!h) h = `<div class="mc2-e">${f === 'groups' && !q ? t('noGroup') : t('noChat')}</div>`;
   if(!staff && !q) h += `<div class="mc2-note">🔒 ${t('priv')}</div>`;
@@ -22334,6 +22335,9 @@ window.mc2GDelRead = function(){ mc2GDel(mcList.filter(x => x.seen && String(x.t
 window.mc2GBlock = async function(th){ const x = mcList.find(y => y.th === th), bl = /blocked/.test((x && x.sub) || '');
   if(!confirm(bl ? 'Unblock this person?' : 'Block this person? They cannot send messages any more.')) return;
   const r = await mcCall({op:'block', thr: th, text: bl ? 'un' : ''}).catch(() => null); showToast(r && r.ok ? (r.blocked ? '🚫 Blocked' : '✅ Unblocked') : '⚠️'); mcLoadList(); };
+/* MCS1911TH563 (مالک کا حکم): «Bad words» کا بٹن نہیں — My Chat کے عنوان پر 7 بار ٹچ (صرف ایڈمن، پاس ورڈ نہیں) */
+(function(){ let n = 0, t0 = 0; document.addEventListener('click', e => { const h = e.target.closest && e.target.closest('#mcModal .mst-tp'); if(!h) return;
+  const now = Date.now(); if(now - t0 > 3000) n = 0; t0 = now; n++; if(n >= 7){ n = 0; if(mcStaff) mc2Words(); } }, true); })();
 window.mc2Words = async function(){   /* MCS1911TH562 (مالک کا حکم): پوری فہرست دکھائیں + وہیں جوڑیں / ہٹائیں */
   const r = await mcCall({op:'words'}).catch(() => null); if(!r || !r.ok){ showToast('⚠️ ' + ((r && r.reason) || 'net')); return; }
   let mine = (r.words || []).slice(); const base = r.baseList || [];
