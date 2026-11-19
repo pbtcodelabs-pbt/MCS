@@ -4772,10 +4772,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH572";
+const APP_VERSION = "MCS2011FR573";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR573": "New login page: your photo, MCS ID, name and highest role (Admin / Agent / Registered User) — just enter the PIN • Log Out goes straight to the login page • bigger Log Out button • home no longer jumps (counts remembered, no layout shift)",
   "MCS1911TH572": "Log Out power button now sits inside the green header, centred under the clock • digital time strip removed • clock moved up slightly",
   "MCS1911TH571": "One red power Log Out button on the home header (nowhere else) • Log out always lands on the Login page • MCS ID shows by itself on this phone • Continue as Guest on Login • Back button no longer needs several presses",
   "MCS1911TH570": "One simple login: no Login As list • first time shows only Sign Up (+ Continue as Guest) • log out opens a fresh Login page • My Account shows Log Out only when logged in",
@@ -17733,7 +17734,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     ['mcsAuth','mcsAuthTmp','mcsGuest','mcsCodev','mcsAgent','mcsAgOwnPin','mcsDevDevice','mcsAdminLast','mcsAdminEmail','mcsFreshOut'].forEach(k => ls.set(k, null));
     window.__uwUser = false; lgOther = false;
     try{ isAdminSignedIn = false; adminRestoring = false; }catch(e){}
-    try{ const FB = window.MCSFirebase; if(FB && FB.signOut) await Promise.race([FB.signOut(FB.auth), new Promise(r => setTimeout(r, 2500))]); }catch(e){}
+    try{ const FB = window.MCSFirebase; if(FB && FB.signOut) Promise.resolve(FB.signOut(FB.auth)).catch(() => {}); }catch(e){}   /* MCS2011FR573: انتظار نہیں — فوراً لاگ اِن صفحہ */
     try{ isAdminSignedIn = false; adminRestoring = false; if(typeof updateAdminBadge === 'function') updateAdminBadge(); if(typeof showAdminPop === 'function') showAdminPop(false); }catch(e){}
     try{ uaSync(); h2Sync(); cdBar(); mpRender(); hlRenderSoon(); }catch(e){}
     try{ uaLogin(); }catch(e){}
@@ -18388,6 +18389,22 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     if(lgRole() === 'reg' && lgPk() && v.length === 6 && /^\d+$/.test(el.value)) lgGo();
     else if(lgRole() === 'agent' && !lgOther && ls.get('mcsLastAgMob') && v.length === 6 && /^\d+$/.test(el.value)) lgGo();
   };
+  const lgCrown = '<svg viewBox="0 0 24 24" fill="#fbbf24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>';
+  function lgProfile(role, pk, agM, admG){
+    let mob = '', name = '', id = '';
+    try{ if(pk){ mob = String(pk.mobile || '').replace(/\D/g, '').slice(-10); name = pk.name || ''; id = lgSidFmt(pk.sid); } }catch(e){}
+    if(!mob){ try{ const a = JSON.parse(ls.get('mcsAuth') || 'null'); if(a && a.user){ mob = String(a.user.mobile || '').replace(/\D/g, '').slice(-10); name = name || a.user.name || ''; } }catch(e){} }
+    if(role === 'agent'){ if(!mob) mob = String(agM || '').replace(/\D/g, '').slice(-10); if(!id) id = lgMobFmt(agM); }
+    if(role === 'admin' && !id) id = admG;
+    const lastAg = String(ls.get('mcsLastAgMob') || '').replace(/\D/g, '').slice(-10);
+    const isAdm = mob === '3206793793' || mob === '3138469706' || role === 'admin';
+    const isAg = role === 'agent' || (!!lastAg && (!mob || lastAg === mob));
+    let isReg = false; try{ isReg = mpListReal().length > 0; }catch(e){}
+    let k = 'user', label = 'User';
+    if(isAdm){ k = 'admin'; label = 'Admin'; } else if(isAg){ k = 'agent'; label = 'Agent'; } else if(isReg){ k = 'reg'; label = 'Registered User'; }
+    let photo = ''; try{ photo = ptSelfieGet(k === 'admin' ? 'dev' : (k === 'agent' ? 'agent' : 'user')) || ptSelfieGet('user') || ''; }catch(e){}
+    return { id, name, role: label, k, photo, sm: role === 'admin' };
+  }
   window.uaLogin = function(msg){
     const role = lgRole();
     if(role === 'new') return uaSignup();   /* پہلی بار: صرف Sign Up */
@@ -18404,6 +18421,15 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     const other = role === 'any' ? '' : `<div class="lgLinks c"><a onclick="lgUseOther()">Use another account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>`;
     const fg = role === 'agent' ? 'uaAgForgot()' : (role === 'admin' ? 'lgAdmForgot()' : 'uaForgot()');
     links = `<div class="lgLinks"><a onclick="${fg}">Forgot PIN ?</a><a onclick="uaSignup()">New? Sign Up</a></div>${other}`;
+    if(role !== 'any'){
+      const P = lgProfile(role, pk, agM, admG);
+      const fgp = role === 'admin' ? 'lgAdmForgot()' : (role === 'agent' ? 'uaAgForgot()' : 'uaForgot()');
+      const ph = P.photo ? `<img src="${String(P.photo).replace(/"/g, '')}" alt="">` : IC.user;
+      show(`${lgHead()}<div class="uaCard uaLg lgNew"><div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div><div class="lgProf"><div class="lgPh">${ph}</div><div class="lgPi"><div class="t">My City Shines ID</div><div class="lgChip${P.sm ? ' sm' : ''}" id="lgChip" dir="ltr">${esc(P.id)}</div>${P.name ? `<div class="lgNm2" data-noen>${esc(P.name)}</div>` : ''}<div class="lgBadge r${P.k}">${P.k === 'admin' ? lgCrown : ''}${esc(P.role)}</div></div></div>${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}${secret}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB" onclick="lgGo()">${IC.login}LOGIN</button><div class="lgLinks c"><a class="lgFp" onclick="${fgp}">${IC.lock}Forgot PIN ?</a></div></div>`);
+      const pw0 = $('uaPw'); if(pw0) pw0.addEventListener('keydown', e => { if(e.key === 'Enter') lgGo(); });
+      setTimeout(() => { try{ const t = $('uaPw'); if(t) t.focus(); }catch(e){} }, 300);
+      return;
+    }
     show(`${lgHead()}<div class="uaCard uaLg"><div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}${idBox}${idIn}${secret}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB" onclick="lgGo()">${IC.login}LOGIN</button><button type="button" class="uaBtn bX" onclick="uaGuest()">${IC.user}Continue as Guest</button>${links}</div>`);
     const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') lgGo(); });
     const id0 = $('uaId'); if(id0) id0.addEventListener('keydown', e => { if(e.key === 'Enter'){ const p = $('uaPw'); if(p) p.focus(); } });
@@ -28173,8 +28199,8 @@ html body #h2Out{display:none!important}
 .x229 .x-clk{display:none!important}
 .x229 .xm{position:relative}
 .x229 .xm .x-ana{transform:translateY(-10px) scale(.84);transform-origin:50% 0}
-.x229 .xm #mcsPwr{position:absolute;top:77%;left:50%;margin:0 0 0 -14px;width:28px;height:28px}
-.x229 .xm #mcsPwr svg{width:16px;height:16px}
+.x229 .xm #mcsPwr{position:absolute;top:81%;left:50%;margin:0 0 0 -21px;width:42px;height:42px;border-width:3px}
+.x229 .xm #mcsPwr svg{width:25px;height:25px}
 #mcsPwr svg{width:19px;height:19px}
 </style>
 <script id="mcsOne571">
@@ -28204,6 +28230,55 @@ html body #h2Out{display:none!important}
   };
   window.__mcsHistDepth = function(){ return nOf(history.state); };
 
+})();
+</script>
+
+<style id="mcs573css">
+/* MCS2011FR573 — نیا لاگ اِن صفحہ: تصویر + MCS ID + نام + سب سے اونچا رول + صرف PIN */
+#uaOv .uaX, #uaOv .lgx560{display:none !important}
+#uaOv .lgNew .lgProf{display:flex;gap:14px;align-items:center;margin:8px 0 14px;direction:ltr}
+#uaOv .lgPh{flex:none;width:104px;height:118px;border-radius:18px;border:3px solid #2563eb;overflow:hidden;background:#e8f0ff;display:grid;place-items:center}
+#uaOv .lgPh img{width:100%;height:100%;object-fit:cover;display:block}
+#uaOv .lgPh svg{width:56px;height:56px;color:#3b4a6b}
+#uaOv .lgPi{flex:1;min-width:0;border-left:1.5px solid #d5deee;padding-left:12px;text-align:left}
+#uaOv .lgPi .t{font-size:14px;font-weight:800;color:#5b6b8c}
+#uaOv .lgPi .lgChip{margin:4px 0 0;display:block;min-width:0;font-size:26px;padding:4px 8px;text-align:center}
+#uaOv .lgPi .lgChip.sm{font-size:13px}
+#uaOv .lgNm2{font-weight:900;font-size:17px;color:#0f172a;margin:6px 0}
+#uaOv .lgBadge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:999px;color:#fff;font:800 17px Arial,sans-serif;background:linear-gradient(90deg,#7c3aed,#a21caf)}
+#uaOv .lgBadge.rreg{background:linear-gradient(90deg,#059669,#047857)}
+#uaOv .lgBadge.ragent{background:linear-gradient(90deg,#ea580c,#c2410c)}
+#uaOv .lgBadge.ruser{background:linear-gradient(90deg,#64748b,#475569)}
+#uaOv .lgBadge svg{width:20px;height:20px}
+#uaOv .lgFp{display:inline-flex;align-items:center;gap:8px;border:1.5px solid #1546c0;border-radius:999px;padding:8px 22px;font-weight:800;color:#0b2f8f;background:#fff;cursor:pointer}
+#uaOv .lgFp svg{width:22px;height:22px}
+/* ہوم کا ہلنا بند */
+html, body, #screen-home, #screen-home *{overflow-anchor:none}
+html body #screen-home #hdr2.h229 .x-who{min-height:11cqw}
+.qt-n, .hm-cnt{min-width:2.4em;text-align:center;font-variant-numeric:tabular-nums}
+</style>
+<script id="mcsOne573">
+(function(){
+  'use strict';
+  var t0 = Date.now();
+  /* (1) ہوم کی گنتی: پچھلی گنتی فوراً دکھے، 1800 → 3500 کی چھلانگ نہ ہو */
+  var K = 'mcsCnt573', IDS = ['business', 'professional', 'total', 'emg'];
+  function cached(){ try{ return JSON.parse(localStorage.getItem(K) || '{}'); }catch(e){ return {}; } }
+  function paint(){ var c = cached(); IDS.forEach(function(i){ var e = document.getElementById('homeCount_' + i); if(e && c[i] != null && (+e.textContent || 0) < c[i] && Date.now() - t0 < 30000) e.textContent = c[i]; }); }
+  function save(){ if(Date.now() - t0 < 20000) return; var o = {}; IDS.forEach(function(i){ var e = document.getElementById('homeCount_' + i); if(e) o[i] = +e.textContent || 0; }); try{ localStorage.setItem(K, JSON.stringify(o)); }catch(e){} }
+  var u = window.updateCategoryCounts;
+  if(typeof u === 'function' && !u.__c573){ var w = function(){ var r = u.apply(this, arguments); try{ paint(); }catch(e){} return r; }; w.__c573 = 1; window.updateCategoryCounts = w; }
+  document.addEventListener('DOMContentLoaded', paint); setTimeout(paint, 300);
+  setInterval(save, 5000);
+  /* (2) ایڈمن نمبر MCS001 پر PIN سے داخل ہو کر ایڈمن اختیار نہ ہوں تو ایک بار ایڈمن پاس ورڈ کا ڈبہ */
+  var asked = false;
+  setInterval(function(){ try{
+    var a = JSON.parse(localStorage.getItem('mcsAuth') || 'null'); if(!a){ asked = false; return; }
+    if(Date.now() - t0 < 6000) return;
+    var m = String((a.user && a.user.mobile) || '').replace(/\D/g, '').slice(-10);
+    if(m === '3206793793' && !isAdminSignedIn && !adminRestoring && !asked){ asked = true; showAdminPop(true);
+      var em = document.getElementById('adminEmail'); if(em && !em.value) em.value = localStorage.getItem('mcsAdmGmail') || 'pbtcodelabs@gmail.com'; }
+  }catch(e){} }, 1500);
 })();
 </script>
 </body>
