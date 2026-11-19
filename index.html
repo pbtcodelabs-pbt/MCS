@@ -4772,10 +4772,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR574";
+const APP_VERSION = "MCS2011FR575";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR575": "One login, one PIN: MCS ID / mobile + PIN opens your highest role (Admin / Agent / Registered) with all lower roles; the same PIN now works everywhere; Admin 1 password asked only once per phone",
   "MCS2011FR574": "Lists: «Registered business», «MCS Agents» and sort buttons respond instantly again",
   "MCS2011FR573": "New login page: your photo, MCS ID, name and highest role (Admin / Agent / Registered User) — just enter the PIN • Log Out goes straight to the login page • bigger Log Out button • home no longer jumps (counts remembered, no layout shift)",
   "MCS1911TH572": "Log Out power button now sits inside the green header, centred under the clock • digital time strip removed • clock moved up slightly",
@@ -18470,6 +18471,19 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     if(g && g.ok) return fin(g.name);
     return false;
   }
+  /* MCS2011FR575: سرور کے «one» جواب سے سب رول ایک ساتھ — رجسٹرڈ (mcsAuth)، ایجنٹ (mcsAgent)، ایڈمن 2 (mcsCodev)، ایڈمن 1 (فائربیس — پاس ورڈ ہر فون پر صرف ایک بار، پھر اسی PIN سے) */
+  window.mcsOneApply = async function(r, pin){
+    const ph10 = String(r.phone || (r.user && r.user.mobile) || '').replace(/\D/g, '').slice(-10);
+    window.__mcsOnePin = pin;
+    try{ if(r.agent){ ls.set('mcsAgent', JSON.stringify({ phone: '92' + ph10, name: r.agent.name || '', pin, code: r.agent.code || '', at: Date.now() })); localStorage.setItem('mcsLastAgMob', '0' + ph10); } }catch(e){}
+    try{ if(r.codev){ localStorage.setItem('mcsCodev', JSON.stringify({ phone: '92' + ph10, pin, name: r.codev.name || '', perms: r.codev.perms || null, at: Date.now() })); } }catch(e){}
+    if(r.admin1 && !(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn)){ try{ await mcsAdmVaultOpen(pin); }catch(e){} }
+    const top = r.top || 'reg', nm = (r.user && r.user.name) || (r.codev && r.codev.name) || (r.agent && r.agent.name) || '';
+    if(r.tok && r.user) done(r, '✅ ' + (top === 'dev' || top === 'codev' ? 'Admin' : top === 'agent' ? 'Agent' : 'Welcome') + (nm ? ' — ' + nm : ''));
+    else uaRoleDone(top === 'codev' ? 'codev' : top === 'agent' ? 'agent' : 'user', nm);
+    try{ cdBar(); }catch(e){} try{ mpRender(); hlRenderSoon(); }catch(e){} try{ uaSync(); h2Sync(); }catch(e){}
+    if(r.synced && r.synced.length) try{ setTimeout(() => showToast('🔑 One PIN now works for all your roles', 4000), 1500); }catch(e){}
+  };
   window.lgGo = async function(){
     if(lgBusy) return;
     { const ov = $('uaOv'); if(ov && !ov.classList.contains('on')) return; }   /* MCS1811WE545: 6 ہندسوں پر خود لاگ اِن ہو چکا ہو تو Enter دوبارہ نہ بھیجے */
@@ -18489,6 +18503,17 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
         const am = uaAdmGmail();
         if(am && raw){ if(await lgAdminSignIn(am, raw)) return; if($('uaErr').textContent) return; }
         lgErr(role === 'agent' ? 'agent' : 'login'); return;
+      }
+      /* MCS2011FR575 (مالک کا حکم): ایک لاگ اِن، ایک PIN — سرور خود دیکھے: ایڈمن 2 / ایجنٹ / رجسٹرڈ یوزر؛ سب سے اونچا رول کھلے، نیچے والے سب ساتھ */
+      { const pk1 = lgPk(), who1 = role === 'agent' ? nd((lgOther ? '' : ls.get('mcsLastAgMob')) || idv) : (pk1 ? pk1.sid : idv);
+        if(!who1){ lgErr('who'); return; }
+        if(pin.length < 4){ lgErr('pw6'); return; }
+        let r1 = await api({ op:'one', id: (typeof mcsSidSrv === 'function' && /mcs/i.test(String(who1)) ? mcsSidSrv(who1) : who1), pw: pin });
+        if(!r1 || r1.reason === 'net'){ await new Promise(z => setTimeout(z, 1200)); r1 = await api({ op:'one', id: (typeof mcsSidSrv === 'function' && /mcs/i.test(String(who1)) ? mcsSidSrv(who1) : who1), pw: pin }); }
+        if(r1 && r1.ok){ lgOther = false; await window.mcsOneApply(r1, pin); return; }
+        if(r1 && r1.reason !== 'login' && r1.reason !== 'net'){ lgErr(r1.reason); return; }
+        if(!r1 || r1.reason === 'net'){ lgErr('net'); return; }
+        /* پرانا راستہ (سرور پر نیا op نہ ہو تو) */
       }
       if(role === 'agent'){
         const d = nd((lgOther ? '' : ls.get('mcsLastAgMob')) || idv);
@@ -28280,6 +28305,32 @@ html body #screen-home #hdr2.h229 .x-who{min-height:11cqw}
     if(m === '3206793793' && !isAdminSignedIn && !adminRestoring && !asked){ asked = true; showAdminPop(true);
       var em = document.getElementById('adminEmail'); if(em && !em.value) em.value = localStorage.getItem('mcsAdmGmail') || 'pbtcodelabs@gmail.com'; }
   }catch(e){} }, 1500);
+})();
+</script>
+<script id="mcsAdmVault575">
+/* MCS2011FR575 (مالک کا حکم — «ایک ہی PIN»): ایڈمن 1 کا فائربیس پاس ورڈ اسی فون پر ایک بار لکھا جائے تو PIN سے تالا لگا کر یہیں محفوظ (AES-GCM، PBKDF2)؛
+   اگلی بار MCS001 + PIN سے لاگ اِن پر خود ایڈمن — پاس ورڈ دوبارہ نہیں۔ PIN غلط ہو تو تالا نہیں کھلتا۔ کسی اور فون پر کچھ نہیں جاتا۔ */
+(function(){
+  const K = 'mcsAdmVault', enc = new TextEncoder(), dec = new TextDecoder();
+  const b64 = u => btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(u)))), ub = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function keyOf(pin, salt){ const base = await crypto.subtle.importKey('raw', enc.encode('MCSADM|' + pin), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 210000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']); }
+  window.mcsAdmVaultSave = async function(pin, email, pw){ try{ if(!/^\d{4,6}$/.test(String(pin || '')) || !email || !pw) return;
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    const c = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await keyOf(pin, salt), enc.encode(JSON.stringify({ e: email, p: pw })));
+    localStorage.setItem(K, JSON.stringify({ s: b64(salt), i: b64(iv), c: b64(c) })); }catch(e){} };
+  window.mcsAdmVaultOpen = async function(pin){
+    let v = null; try{ v = JSON.parse(localStorage.getItem(K) || 'null'); }catch(e){} if(!v) return false;
+    let o; try{ const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: ub(v.i) }, await keyOf(pin, ub(v.s)), ub(v.c)); o = JSON.parse(dec.decode(pt)); }catch(e){ return false; }
+    const FB = window.MCSFirebase; if(!(FB && FB.signInWithEmailAndPassword)) return false;
+    try{ await FB.signInWithEmailAndPassword(FB.auth, o.e, o.p); try{ localStorage.setItem('mcsAdmGmail', o.e); }catch(e){} return true; }catch(e){ if(/wrong-password|invalid-credential/.test(String(e && e.code))) localStorage.removeItem(K); return false; }
+  };
+  /* ایڈمن پاس ورڈ کسی بھی خانے سے کامیاب ہو تو اسی PIN کے تالے میں رکھ دیں */
+  function hook(){ const FB = window.MCSFirebase; if(!FB || !FB.signInWithEmailAndPassword || FB.signInWithEmailAndPassword.__v575) return;
+    const f = FB.signInWithEmailAndPassword; const w = async function(auth, email, pw){ const r = await f.apply(this, arguments);
+      try{ const pin = window.__mcsOnePin || ''; if(pin) await mcsAdmVaultSave(pin, email, pw); }catch(e){} return r; };
+    w.__v575 = 1; FB.signInWithEmailAndPassword = w; }
+  hook(); window.addEventListener('mcs-firebase-ready', hook); setTimeout(hook, 2000); setTimeout(hook, 6000);
 })();
 </script>
 </body>
