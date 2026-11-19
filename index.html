@@ -4772,10 +4772,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR577";
+const APP_VERSION = "MCS2011FR578";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR578": "One role everywhere: your highest role (Admin 1 / Admin 2 / Agent / Registered) stays fixed with all lower roles included — no switching, Add New always there for admins and agents, login no longer jumps to another page; login card shows Admin 1 / Admin 2",
   "MCS2011FR577": "Categories page: «Registered business» and «MCS Agents» buttons work again — they show the list in place of the tiles; tap again to go back",
   "MCS2011FR576": "Smooth scrolling and touch on every page — app-wide touch catchers only where needed • pages no longer freeze after a popup closes • category tiles always A–Z, re-order buttons removed",
   "MCS2011FR575": "One login, one PIN: MCS ID / mobile + PIN opens your highest role (Admin / Agent / Registered) with all lower roles; the same PIN now works everywhere; Admin 1 password asked only once per phone",
@@ -17705,7 +17706,7 @@ html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noor
     const M = PT_META[role]; ls.set('mcsGuest', null); const o = $('uaOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; uaPending = null;
     try{ showToast(M[0] + ' ' + (name || '') + ' — ' + M[1] + ' کھل گیا', 3500); }catch(e){}
     try{ uaSync(); h2Sync(); cdBar(); mpRender(); hlRenderSoon(); }catch(e){}
-    let n = 0; const t = setInterval(() => { if(role !== 'dev' || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || ++n > 20){ clearInterval(t); try{ ptOpen(); }catch(e){} } }, role === 'dev' ? 150 : 350);
+    try{ localStorage.setItem('mcsRoleTop', role === 'biz' || role === 'prof' ? 'reg' : role); }catch(e){}   /* MCS2011FR578: لاگ اِن کے بعد صفحہ نہیں بدلتا (پورٹل خود نہیں کھلتا)؛ رول یاد */
   }
   window.uaDoLogin = async function(){
     const id = mcsSidSrv(($('uaId').value || '').trim()), pw = $('uaPw').value || '';
@@ -18406,7 +18407,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     const isAg = role === 'agent' || (!!lastAg && (!mob || lastAg === mob));
     let isReg = false; try{ isReg = mpListReal().length > 0; }catch(e){}
     let k = 'user', label = 'User';
-    if(isAdm){ k = 'admin'; label = 'Admin'; } else if(isAg){ k = 'agent'; label = 'Agent'; } else if(isReg){ k = 'reg'; label = 'Registered User'; }
+    if(isAdm){ k = 'admin'; label = mob === '3138469706' ? 'Admin 2' : 'Admin 1'; }   /* MCS2011FR578 */ else if(isAg){ k = 'agent'; label = 'Agent'; } else if(isReg){ k = 'reg'; label = 'Registered User'; }
     let photo = ''; try{ photo = ptSelfieGet(k === 'admin' ? 'dev' : (k === 'agent' ? 'agent' : 'user')) || ptSelfieGet('user') || ''; }catch(e){}
     return { id, name, role: label, k, photo, sm: role === 'admin' };
   }
@@ -18482,6 +18483,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     try{ if(r.codev){ localStorage.setItem('mcsCodev', JSON.stringify({ phone: '92' + ph10, pin, name: r.codev.name || '', perms: r.codev.perms || null, at: Date.now() })); } }catch(e){}
     if(r.admin1 && !(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn)){ try{ await mcsAdmVaultOpen(pin); }catch(e){} }
     const top = r.top || 'reg', nm = (r.user && r.user.name) || (r.codev && r.codev.name) || (r.agent && r.agent.name) || '';
+    try{ localStorage.setItem('mcsRoleTop', top); localStorage.removeItem('mcsLoggedOut'); }catch(e){}   /* MCS2011FR578 */
     if(r.tok && r.user) done(r, '✅ ' + (top === 'dev' || top === 'codev' ? 'Admin' : top === 'agent' ? 'Agent' : 'Welcome') + (nm ? ' — ' + nm : ''));
     else uaRoleDone(top === 'codev' ? 'codev' : top === 'agent' ? 'agent' : 'user', nm);
     try{ cdBar(); }catch(e){} try{ mpRender(); hlRenderSoon(); }catch(e){} try{ uaSync(); h2Sync(); }catch(e){}
@@ -28375,6 +28377,41 @@ body.cat-drag-on .cat-grid .cat-item{touch-action:auto !important;animation:none
     if(b.style.overflow === 'hidden' && !blocking()) b.style.overflow = '';
     const h = document.documentElement; if(h.style.overflow === 'hidden' && !blocking()) h.style.overflow = '';
   }catch(e){} }, 1000);
+})();
+</script>
+<style id="mcsRole578">
+/* MCS2011FR578: ایڈمن / ایڈمن 2 / ایجنٹ پر «Add New» ہمیشہ — نیچے کی پٹی 5 / 6 نہ بدلے */
+html body.d2.mcsStaffRole.mcs1biz .bnav #d2nAddNew, html body.mcsStaffRole.mcs1biz .bnav #d2nAddNew{display:flex !important}
+html body.mcsStaffRole.mcs1biz .mpx-add{display:inline-flex !important}
+</style>
+<script id="mcsRole578js">
+/* MCS2011FR578 (مالک کا حکم): پوری ایپ میں ایک رول — سب سے اونچا (ایڈمن 1 > ایڈمن 2 > ایجنٹ > رجسٹرڈ)، نیچے والا سب خود شامل۔
+   لاگ اِن پر سرور کا بتایا «top» فون میں (mcsRoleTop) — ایپ کھلتے وقت فائربیس کے دیر سے آنے پر رول نہ بدلے۔ لاگ آؤٹ پر صاف۔ */
+(function(){
+  const LS = { g(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, d(k){ try{ localStorage.removeItem(k); }catch(e){} } };
+  const agentIn = () => { try{ const m = agMe(); return !!(m && m.phone && (m.pin || m.code)); }catch(e){ return false; } };
+  const cdIn = () => { try{ return typeof codevOn === 'function' && codevOn(); }catch(e){ return false; } };
+  const loggedIn = () => { try{ return !!(uaMe() || agentIn() || cdIn() || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn)); }catch(e){ return false; } };
+  function hook(){
+    const f = window.ptRole; if(typeof f !== 'function' || f.__r578) return;
+    const w = function(){
+      try{
+        if(LS.g('mcsLoggedOut') === '1') return f.apply(this, arguments);
+        if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'dev';
+        const top = LS.g('mcsRoleTop');
+        if(top && !loggedIn()){ LS.d('mcsRoleTop'); return f.apply(this, arguments); }
+        if(top === 'dev' && ((typeof adminWasIn === 'function' && adminWasIn()) || (typeof adminRestoring !== 'undefined' && adminRestoring))) return 'dev';
+        if((top === 'dev' || top === 'codev') && cdIn()) return 'codev';
+        if(cdIn()) return 'codev';
+        if(agentIn()) return 'agent';
+      }catch(e){}
+      return f.apply(this, arguments);
+    };
+    w.__r578 = 1; window.ptRole = w;
+  }
+  hook(); setTimeout(hook, 1000); setTimeout(hook, 4000);
+  /* لاگ آؤٹ پر رول بھی صاف */
+  setInterval(() => { try{ if(LS.g('mcsLoggedOut') === '1') LS.d('mcsRoleTop'); const r = window.ptRole && ptRole(); document.body.classList.toggle('mcsStaffRole', r === 'dev' || r === 'codev' || r === 'agent'); }catch(e){} }, 1200);
 })();
 </script>
 </body>
