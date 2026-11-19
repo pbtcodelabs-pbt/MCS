@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH561";
+const APP_VERSION = "MCS1911TH562";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH562": "My Chats → Customer Help → 🚫 Bad words: see the full built-in list and add / remove your own words right there",
   "MCS1911TH561": "«💬 Ask us» on the login page is now the app's own chat (name only, no phone) • Admin: My Chats → 🙋 Customer Help — read replies turn grey, delete one or many, block, bad-word filter",
   "MCS1911TH560": "Login page: «🎬 Intro video» (play / download / share) and «💬 Ask us» — questions by chat only, answer inside the app",
   "MCS1911TH559": "Admin login: «Forgot password ?» sends a secure reset link to the admin Gmail; agents AG001 / AG002 / AG003 open again",
@@ -22333,11 +22334,25 @@ window.mc2GDelRead = function(){ mc2GDel(mcList.filter(x => x.seen && String(x.t
 window.mc2GBlock = async function(th){ const x = mcList.find(y => y.th === th), bl = /blocked/.test((x && x.sub) || '');
   if(!confirm(bl ? 'Unblock this person?' : 'Block this person? They cannot send messages any more.')) return;
   const r = await mcCall({op:'block', thr: th, text: bl ? 'un' : ''}).catch(() => null); showToast(r && r.ok ? (r.blocked ? '🚫 Blocked' : '✅ Unblocked') : '⚠️'); mcLoadList(); };
-window.mc2Words = async function(){
-  const r = await mcCall({op:'words'}).catch(() => null); if(!r || !r.ok){ showToast('⚠️'); return; }
-  const v = prompt('🚫 Your own bad words (one per line or comma) — they show as ••• in chats.\n' + r.base + ' common Urdu / Roman / English words are already built in.\nاپنے الفاظ لکھیں (ہر لفظ الگ لائن یا کومے سے):', (r.words || []).join(', '));
-  if(v === null) return; const words = v.split(/[\n,،]+/).map(x => x.trim()).filter(Boolean);
-  const r2 = await mcCall({op:'words', words}).catch(() => null); showToast(r2 && r2.ok ? '✅ Saved (' + (r2.words || []).length + ')' : '⚠️'); };
+window.mc2Words = async function(){   /* MCS1911TH562 (مالک کا حکم): پوری فہرست دکھائیں + وہیں جوڑیں / ہٹائیں */
+  const r = await mcCall({op:'words'}).catch(() => null); if(!r || !r.ok){ showToast('⚠️ ' + ((r && r.reason) || 'net')); return; }
+  let mine = (r.words || []).slice(); const base = r.baseList || [];
+  const old = document.getElementById('mc2Bw'); if(old) old.remove();
+  const o = document.createElement('div'); o.id = 'mc2Bw'; o.setAttribute('data-noen', ''); document.body.appendChild(o);
+  const isUr = w => /[؀-ۿ]/.test(w);
+  const chips = (L, rm) => L.map((w, i) => `<span class="bw-c${isUr(w) ? ' ur' : ''}">${E(w)}${rm ? `<button type="button" onclick="mc2BwRm(${i})">✕</button>` : ''}</span>`).join('') || '<i class="bw-e">—</i>';
+  const draw = () => { o.innerHTML = `<div class="bw-b"><div class="bw-h"><b>🚫 Bad words</b><button type="button" class="bw-x" onclick="document.getElementById('mc2Bw').remove()">✕</button></div>
+      <div class="bw-s">These words show as ••• in every chat. <span dir="rtl">یہ الفاظ ہر چیٹ میں ••• بن جاتے ہیں۔</span></div>
+      <div class="bw-add"><input id="bwIn" maxlength="40" placeholder="Add a word… / نیا لفظ لکھیں" enterkeyhint="done"><button type="button" onclick="mc2BwAdd()">＋ Add</button></div>
+      <div class="bw-t">✍️ Your words (${mine.length})</div><div class="bw-l">${chips(mine, 1)}</div>
+      <div class="bw-t">📋 Built-in (${base.length})</div><div class="bw-l">${chips(base, 0)}</div></div>`;
+    const inp = document.getElementById('bwIn'); if(inp) inp.addEventListener('keydown', e => { if(e.key === 'Enter') mc2BwAdd(); }); };
+  const save = async () => { const r2 = await mcCall({op:'words', words: mine}).catch(() => null); if(r2 && r2.ok){ mine = r2.words || mine; showToast('✅ Saved'); } else showToast('⚠️'); draw(); };
+  window.mc2BwAdd = () => { const inp = document.getElementById('bwIn'); const L = String((inp && inp.value) || '').split(/[\n,،]+/).map(x => x.trim()).filter(Boolean);
+    if(!L.length) return; L.forEach(w => { const lw = w.toLowerCase(); if(!mine.some(x => x.toLowerCase() === lw) && !base.some(x => x.toLowerCase() === lw)) mine.push(w); }); save(); };
+  window.mc2BwRm = i => { const w = mine[i]; if(w == null || !confirm('Remove «' + w + '»?')) return; mine.splice(i, 1); save(); };
+  draw(); setTimeout(() => { try{ document.getElementById('bwIn').focus(); }catch(e){} }, 200);
+};
 window.mc2BizGo = async function(i){
   const b = (window._mc2Bz || [])[i]; if(!b) return;
   const ex = (mcList || []).find(x => b.ph && String((x.title || '') + (x.sub || '')).replace(/\D/g, '').includes(b.ph));
@@ -28102,6 +28117,22 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
     const r = await call({ op: 'list' }); const x = r && r.ok && r.list && r.list[0]; dot(!!(x && x.nw)); }, 3000);
 })();
 </script>
+<style id="mcsBw562">
+/* MCS1911TH562: 🚫 Bad words — پوری فہرست + وہیں جوڑیں */
+#mc2Bw{position:fixed;inset:0;z-index:2147483400;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center}
+#mc2Bw .bw-b{background:#fff;width:min(560px,100%);max-height:88vh;overflow:auto;border-radius:20px 20px 0 0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));font-family:'Segoe UI',Selawik,Arial,sans-serif;box-sizing:border-box}
+#mc2Bw .bw-h{display:flex;align-items:center;justify-content:space-between}#mc2Bw .bw-h b{font-size:19px;color:#0f172a}
+#mc2Bw .bw-x{border:0;background:#f1f5f9;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer}
+#mc2Bw .bw-s{font-size:13px;color:#475569;margin:4px 0 10px;line-height:1.7}
+#mc2Bw .bw-add{display:flex;gap:8px}#mc2Bw .bw-add input{flex:1;min-width:0;border:1.5px solid #cbd5e1;border-radius:12px;padding:10px 12px;font:15px 'Segoe UI',Selawik,Arial,sans-serif;unicode-bidi:plaintext}
+#mc2Bw .bw-add button{border:0;border-radius:12px;padding:0 16px;background:#16a34a;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+#mc2Bw .bw-t{font-weight:800;font-size:14px;color:#0f172a;margin:14px 0 6px}
+#mc2Bw .bw-l{display:flex;flex-wrap:wrap;gap:6px}
+#mc2Bw .bw-c{display:inline-flex;align-items:center;gap:4px;background:#fee2e2;color:#7f1d1d;border-radius:999px;padding:3px 10px;font-size:13.5px;line-height:1.6}
+#mc2Bw .bw-c.ur{font-family:'Jameel Noori Nastaleeq Regular','Jameel Noori Nastaleeq',serif;font-size:16px}
+#mc2Bw .bw-c button{border:0;background:rgba(127,29,29,.15);color:#7f1d1d;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;padding:0}
+#mc2Bw .bw-e{color:#94a3b8;font-size:13px}
+</style>
 </body>
 
 </html>
