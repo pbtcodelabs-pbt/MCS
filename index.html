@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH555";
+const APP_VERSION = "MCS1911TH556";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH556": "Smart search: type a category name and that category shows on top; MCS number, name, any part of the shop name, any part of a mobile number (all saved numbers), any part of the address / city (e.g. Fateh Pur, 214, 93)",
   "MCS1911TH555": "Speed: the app no longer hangs — no re-measuring every second, Registered / MCS Agents filters show 40 cards at a time (Show more), faster search",
   "MCS1911TH554": "Speed: no more hanging — the app no longer re-measures every card each second; the moving strip and text-fitting pause while you scroll or type; faster search",
   "MCS1911TH554": "Home screen tidied (Help Desk #303): smaller tiles and buttons, one-line Business Promotion bar, clock time in a dark pill — same content and colours",
@@ -6476,9 +6477,10 @@ function hlRender(){
   const where = q ? 'تمام شہروں' : (hf.area || hf.city || hf.district || hf.province || 'سب شہر');
   const tags = q ? ['🔎 ' + q] : [hf.group ? (hf.group==='business' ? '🏪 بزنس' : '👔 پروفیشنلز') : '', hf.cat ? ubCatMeta(hf.cat).emoji + ' ' + ubCatMeta(hf.cat).ur : '', q ? '🔎 ' + q : ''].filter(Boolean);
   const head = `<div class="hl-h"><b>📋 ${escapeHtml(where)} کے ریکارڈ<small>Records</small></b><span>${list.length}</span></div>` + (tags.length ? `<div class="hl-tags">${tags.map(t=>`<i>${escapeHtml(t)}</i>`).join('')}${q ? '' : `<i style="cursor:pointer;background:#fee2e2;color:#b91c1c" onclick="Object.keys(hf).forEach(k=>hf[k]='');hfRender()">✖ صاف</i>`}</div>` : '');
-  if(!list.length){ box.innerHTML = head + `<div class="hl-none">🔎 کچھ نہیں ملا — فلٹر بدلیں یا کچھ اور لکھیں<br><small>No records found</small></div>`; return; }
+  const catH = q ? srCatChips(q) : '';   /* MCS1911TH556 */
+  if(!list.length){ box.innerHTML = head + catH + `<div class="hl-none">🔎 کچھ نہیں ملا — فلٹر بدلیں یا کچھ اور لکھیں<br><small>No records found</small></div>`; return; }
   box.classList.toggle('hl-one', !!q);
-  box.innerHTML = head + list.slice(0, hlShown).map(hlCap).join('') + (list.length > hlShown ? `<button type="button" class="hl-more" onclick="hlShown+=30;hlRender()">▼ مزید دکھائیں (${list.length - hlShown} باقی) • Show more</button>` : '');
+  box.innerHTML = head + catH + list.slice(0, hlShown).map(hlCap).join('') + (list.length > hlShown ? `<button type="button" class="hl-more" onclick="hlShown+=30;hlRender()">▼ مزید دکھائیں (${list.length - hlShown} باقی) • Show more</button>` : '');
 }
 function hlOpen(kind, id){
   const rec = kind==='doctor' ? store.doctors.find(x=>x.id===id) : store.services.find(x=>x.id===id); if(!rec) return;
@@ -6554,7 +6556,7 @@ function srRender(){
   document.getElementById('srClr').style.visibility = q ? 'visible' : 'hidden';
   const any = SR_KINDS.some(([k])=>srF[k]);
   document.getElementById('srChips').innerHTML = SR_KINDS.map(([k, ic, t])=>`<button type="button" class="${srF[k] ? 'on' : ''}" onclick="srPick('${k}')">${srF[k] ? escapeHtml(srLabel(k, srF[k])) + ' ✖' : ic + ' ' + t + ' ▾'}</button>`).join('') + (any ? `<button type="button" class="clr" onclick="srReset()">🔄 سب فلٹر صاف</button>` : '');
-  document.getElementById('srCnt').innerHTML = `<span dir="ltr" data-noen="1"><b>${list.length}</b> records found${q ? ` — “${escapeHtml(q)}”` : ''}</span>`;
+  document.getElementById('srCnt').innerHTML = (q ? srCatChips(q) : '') + `<span dir="ltr" data-noen="1"><b>${list.length}</b> records found${q ? ` — “${escapeHtml(q)}”` : ''}</span>`;
   const box = document.getElementById('srList');
   if(!list.length){ box.innerHTML = '<div class="hl-none">🔎 کچھ نہیں ملا — کچھ اور لکھیں یا فلٹر ہٹائیں<br><small>No records found</small></div>'; return; }
   box.innerHTML = list.slice(0, srShown).map(it => it.kind==='doctor' ? docCardHtml(fhDoc(it.rec), 'list') : svcCardHtml(fhSvc(it.rec), CATEGORY_META[it.rec.category])).join('')   /* MCS1011TU297: تلاش میں بھی وہی پورا وزٹنگ کارڈ جو بزنس / پروفیشن فہرست میں ہوتا ہے */ + (list.length > srShown ? `<button type="button" class="hl-more" onclick="srShown+=40;srRender()">▼ مزید دکھائیں (${list.length - srShown} باقی)</button>` : '');
@@ -6882,7 +6884,7 @@ function ubParseQuery(raw){
   const only = /^[0-9+\s-]+$/.test(n.replace(/ /g,' ')) || /^[0-9+\s-]+$/.test(String(raw).trim());
   const dg = ubDigits(raw);
   const phone = (only && dg.length>=4) ? ubPhoneKey(dg) : '';
-  return {empty:false, tokens:n.split(' ').filter(Boolean), phone};
+  return {empty:false, tokens:n.split(' ').filter(Boolean), phone, raw: String(raw || '')};
 }
 /* ===== رومن اردو / انگلش / اردو — تینوں میں تلاش =====
    ہر لفظ کو "آواز کا ڈھانچہ" (حروفِ صحیح، حروفِ علت کے بغیر) بنا کر ملاتے ہیں:
@@ -6938,14 +6940,17 @@ function ubFuzzyHit(q, hay, fz, i){
 }
 function ubMatch(q, fields, whatsapp){
   if(q.empty) return true;
-  const wa = ubDigits(whatsapp);
-  if(q.phone) return ubPhoneKey(wa).includes(q.phone) || wa.includes(q.phone);
+  /* MCS1911TH556 (مالک کا حکم — «سمارٹ تلاش»): کئی نمبر (واٹس ایپ، فون، دوسرا نمبر) — ہر ایک الگ، 0 / 92 کے ساتھ اور بغیر */
+  const nums = (Array.isArray(whatsapp) ? whatsapp : [whatsapp]).map(ubDigits).filter(Boolean);
+  const wa = nums.join(' ');
+  const numHit = d => nums.some(n => n.includes(d) || ubPhoneKey(n).includes(ubPhoneKey(d) || d));
   const hay = ubNorm(fields.filter(Boolean).join(' '));
+  if(q.phone){ const d = ubDigits(q.raw || q.phone); return numHit(q.phone) || numHit(d) || hay.replace(/ /g,'').includes(d); }   /* نمبر کا کوئی حصہ — یا پتہ / MCS نمبر میں وہی ہندسے */
   const fz = ubFuzzyTokens(q);
   return q.tokens.every((t,i)=>{
     if(hay.includes(t)) return true;
     if(t.length>=3 && hay.replace(/ /g,'').includes(t)) return true;   /* خالی جگہ کے فرق کے بغیر بھی (فتحپور / فتح پور) */
-    if(/^[0-9]{5,}$/.test(t)) return ubPhoneKey(wa).includes(ubPhoneKey(t));
+    if(/^[0-9]{4,}$/.test(t)) return numHit(t);   /* MCS1911TH556: لفظ کے ساتھ نمبر کا حصہ (4+ ہندسے) */
     return ubFuzzyHit(q, hay, fz, i);
   });
 }
@@ -7352,14 +7357,34 @@ function mcsIdHit(kind, rec, dg){
   const pk = 'mcs' + dg.padStart(3, '0');
   return id.startsWith(k) || id === pk || (id.length === pk.length + 2 && id.startsWith(pk));
 }
+/* MCS1911TH556 (مالک کا حکم): تلاش میں کیٹگری کا نام آئے تو وہ کیٹگری اوپر بٹن بن کر سامنے */
+function srCatHits(qRaw){
+  const q = ubNorm(qRaw); if(!q || q.length < 2 || /^[0-9\s]+$/.test(q)) return [];
+  const EN = window.MCS_EN || {}, out = [];
+  const keys = Object.keys(CATEGORY_META).concat(['doctor']);
+  keys.forEach(k => { const cm = k === 'doctor' ? {emoji:'🩺', ur:'ڈاکٹر', listTitle:'ڈاکٹرز'} : CATEGORY_META[k]; if(!cm || !cm.ur) return;
+    const names = [cm.ur, cm.listTitle, EN[cm.ur], k === 'doctor' ? 'doctor dr' : ''].filter(Boolean).map(ubNorm);
+    const hit = names.some(n => n.includes(q) || (q.length >= 3 && n.replace(/ /g, '').includes(q.replace(/ /g, '')))) || q.split(' ').every(t => t.length >= 3 && names.some(n => n.split(' ').some(w => w.startsWith(t))));
+    if(hit) out.push({k, cm, en: EN[cm.ur] || ''}); });
+  return out.slice(0, 6);
+}
+function srCatOpen(k){ ['srModal'].forEach(id => { try{ closeModal(id); }catch(e){} }); setTimeout(() => { try{ if(k === 'doctor') goScreen('doctor-list'); else openServiceCategory(k); }catch(e){} }, 120); }
+function srCatChips(qRaw){ const L = srCatHits(qRaw); if(!L.length) return '';
+  return '<div class="sr-cathits">' + L.map(x => `<button type="button" onclick="srCatOpen('${x.k}')">${x.cm.emoji || '🗂️'} <b>${escapeHtml(x.en || x.cm.ur)}</b>${x.en ? ' <span data-noen="1">' + escapeHtml(x.cm.ur) + '</span>' : ''} ›</button>`).join('') + '</div>'; }
+/* MCS1911TH556: تلاش میں ہر نمبر اور ہر ID */
+function srNums(r){ const m = (r && r.more) || {}; return [r.whatsapp, r.phone, r.phone2, r.mobile, m.wa2, m.phone2, m.mobile, m.phone].filter(Boolean); }
+function srIdBits(r){ const m = (r && r.more) || {}, out = []; [m.sid, m.subid, m.agCode, m.mcsId].forEach(v => { if(v){ const t = String(v); out.push(t, t.replace(/[\s\-_]/g, '')); } });
+  try{ const k = pfKeyOf(r, r && r.specialty !== undefined ? 'doctor' : 'service'), a = k && typeof pfAct !== 'undefined' && pfAct[k]; if(a){ if(a.sid) out.push(String(a.sid).replace(/-/g, '')); if(a.subid) out.push(String(a.subid).replace(/-/g, '')); } }catch(e){}
+  return out; }
 function searchAllRecords(qRaw){
   const srch = ubParseQuery(qRaw);
   if(srch.empty) return [];
   const _mid = mcsIdQ(qRaw);
-  if(_mid) return store.doctors.filter(d=>dupVis(d) && mcsIdHit('doctor', d, _mid)).map(rec=>({kind:'doctor', rec}))
+  if(_mid){ const hit = store.doctors.filter(d=>dupVis(d) && mcsIdHit('doctor', d, _mid)).map(rec=>({kind:'doctor', rec}))
     .concat(store.services.filter(x=>dupVis(x) && mcsIdHit('service', x, _mid)).map(rec=>({kind:'service', rec})));
-  let docs = store.doctors.filter(d=> dupVis(d) && ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d)], d.whatsapp));
-  let svcs = store.services.filter(x=>{ if(!dupVis(x)) return false; const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.nameEn, ubOwnerEn(x), x.type, ...clsBits(x), x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, shortRecordId('service', x)], x.whatsapp); });
+    if(hit.length) return hit; }   /* MCS1911TH556: نہ ملے تو عام تلاش (Subscription ID وغیرہ) */
+  let docs = store.doctors.filter(d=> dupVis(d) && ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d), ...srIdBits(d)], srNums(d)));
+  let svcs = store.services.filter(x=>{ if(!dupVis(x)) return false; const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.name, x.nameEn, ubOwnerEn(x), x.more && x.more.owner, x.owner, x.type, ...clsBits(x), x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, cm.en, shortRecordId('service', x), ...srIdBits(x)], srNums(x)); });
   const idQ = idKey(qRaw);
   if(/^[a-z]{2,4}[0-9]{5}$/.test(idQ)){
     const dh = docs.filter(d=>idKey(shortRecordId('doctor', d))===idQ), sh = svcs.filter(x=>idKey(shortRecordId('service', x))===idQ);
@@ -27882,6 +27907,11 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
 #screen-home #bizPromo .bp-hd>.bp-on{order:2;flex:0 0 auto}
 #screen-home #bizPromo .bp-hd>span{order:3;flex:1 1 auto!important;min-width:0!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;text-align:center;border-left:1px solid rgba(255,255,255,.4);padding-left:8px}
 @media (max-width:420px){#screen-home #bizPromo .bp-hd>b{font-size:13px!important}#screen-home #bizPromo .bp-hd>span{font-size:13px!important}#screen-home #bizPromo .bp-hd{padding:6px 8px!important;gap:6px!important}}
+</style>
+<style id="mcsSrCat556">
+.sr-cathits{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px;direction:ltr}
+.sr-cathits button{display:inline-flex;align-items:center;gap:4px;border:1.5px solid #0f766e;background:#ecfdf5;color:#065f46;border-radius:999px;padding:5px 11px;font:700 13px 'Segoe UI',Selawik,Arial,sans-serif;cursor:pointer;max-width:100%}
+.sr-cathits button span{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif;font-weight:400;font-size:14px}
 </style>
 </body>
 
