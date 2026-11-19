@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH566";
+const APP_VERSION = "MCS1911TH567";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH567": "Money accounts (revenue, payouts, commissions, share rates, reports) no longer open inside the app — only in the separate MCS Agents portal",
   "MCS1911TH566": "Admin «Forgot password»: works for the admin Gmail only and says so; reminds to check Spam",
   "MCS1911TH565": "Business lists: smooth touch and scroll — the list no longer rebuilds itself while your finger is on the screen",
   "MCS1911TH564": "Welcome card after registration fits one screen (nothing cut at top or bottom) with fresh colours",
@@ -14477,7 +14478,7 @@ function cdBar(){
     + (cdCan('biz') ? `<button type="button" onclick="d2AddOpen()">➕ Add business</button>` : '')
     + (cdCan('agents') ? `<button type="button" onclick="agEarnOpen()">🤝 Agents</button>` : '')
     + (cdCan('chat') ? `<button type="button" onclick="mcOpen()">💬 Chats</button>` : '')
-    + (cdCan('accounts') ? `<button type="button" onclick="mcsPortalOpen()">📊 My Portal</button>` : '')
+    + ''   /* MCS1911TH567: حساب صرف الگ MCS Agents پورٹل پر */
     + (cdCan('help') ? `<button type="button" onclick="cdReport()">❓ Help Desk</button>` : '')
     + `<button type="button" class="x" onclick="cdLogout()">✖</button>`;
 }
@@ -21916,8 +21917,8 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
       + (rl === 'agent' ? row('🤝', 'Agent Portal', ID, 'mxAgentOld', 'c3', 'ایجنٹ پورٹل — رجسٹریشن، کاروبار') : '')
       + (rlNow === 'dev' || rlNow === 'codev' ? row('🛠️', 'Admin Portal', ID, 'mxAgentOld', 'c3', 'ایڈمن پورٹل — ٹولز، روزانہ، بزنس / ایجنٹ') : '')
       + (me.code ? row('🤝', 'Referral &amp; Agent', ID, 'agOpen', 'c3', 'ریفرل کوڈ: ' + esc(me.code)) : '')   /* MCS1411SA423: Earn with MCS صرف ہوم پر */
-      + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn() && cdCan('accounts')) || (me && (me.code || me.pin)) ? row('📊', 'Accounts Portal', ID, 'mcsPortalOpen', 'c3', 'حساب، کاروبار، ایجنٹ، ادائیگیاں') : '')   /* MCS1511SU457 */
-      + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? row('👥', 'Admins & Permissions', ID, 'mcsAdmins', 'c4', 'ایڈمن بنائیں، اجازتیں دیں') + row('⚖️', 'Share Rates', ID, 'mcsRates', 'c3', 'تقسیم کی شرحیں — صرف آگے کی فروخت پر') + row('🛡️', 'Approvals', ID, 'mcsPend', 'c4', 'ایڈمن 2 کی درخواستیں: منظور / رد') + row('📊', 'Reports', ID, 'mcsReports', 'c3', 'ایجنٹ وار، حساب کی جانچ') : '')   /* MCS1511SU460 */
+      /* MCS1911TH567 (مالک کا حکم): پیسوں کا حساب ایپ میں نہیں — صرف الگ MCS Agents پورٹل (ویب سائٹ) پر */   /* MCS1511SU457 */
+      + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? '' + '' + '' + '' : '')   /* MCS1511SU460 */
       + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? row('👥', 'Admin 2 — PIN', ID, 'cdAdminOpen', 'c4', 'عمران بھائی کا PIN بنائیں / بھیجیں') : (typeof codevOn === 'function' && codevOn()) ? row('👥', 'Admin 2 — Log out', ID, 'cdLogout', 'c4', 'ایڈمن 2 سے باہر') : (/3138469706$/.test(String(u.mobile || '').replace(/\D/g, '')) ? row('👥', 'Admin 2 Login', ID, 'cdLoginOpen', 'c4', 'ایڈمن 2 — موبائل + PIN') : ''))
       + row('📤', 'Share this app', ID, 'openPromoText', 'c2', 'Send My City Shines to friends')   /* MCS1811WE532 (مالک کا حکم): ہیڈر کا شیئر بٹن اب یہاں */
       + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
@@ -26306,7 +26307,10 @@ html body #h2Out, html body .h2-out { display: none !important; }   /* سر وا
 /* MCS1511SU457 (مالک کا حکم): حساب کا پورٹل اب MCS ایپ کے اندر — ایڈمن 1 (#admin)، ایڈمن 2 (#codev)، ایجنٹ (#agent)؛ وہی MCS Agent پورٹل (../agent/) پورے صفحے میں، اسی ویب سائٹ پر (لاگ اِن یاد رہتا ہے)۔
    ایڈمن 2 کو کمپنی کا حساب نہیں — صرف اپنا حصہ، اپنے لائے کاروبار، ادائیگیاں (پورٹل AGP1511SU037)؛ حساب کی ہر بات سرور (/fin2) پر، ایپ کچھ نہیں گنتی۔ عام صارف کو یہ بٹن نظر ہی نہیں آتا۔ */
 (function(){
-  window.mcsPortalOpen = function(go){
+  window.mcsPortalOpen = function(){   /* MCS1911TH567 (مالک کا حکم): الگ MCS Agents پورٹل ایپ کے اندر نہیں کھلتا — حساب کتاب صرف وہیں */
+    try{ showToast('📊 Accounts and payouts are in the separate MCS Agents portal — not inside this app', 6000); }catch(e){}
+  };
+  window.mcsPortalOpenOld = function(go){
     let hash = '', t = '📊 Accounts Portal';
     try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){ hash = '#admin'; t = '📊 Admin 1 — Accounts Portal'; if(typeof go === 'string' && /^(admins|rates|pend|reports)$/.test(go)){ hash += '?go=' + go; t = ({admins: '👥 Admins & Permissions', rates: '⚖️ Share Rates', pend: '🛡️ Approvals', reports: '📊 Reports'})[go]; } } else if(typeof codevOn === 'function' && codevOn()){ hash = '#codev'; t = '📊 Admin 2 — My Portal'; } else { const a = typeof agMe === 'function' && agMe(); if(a && (a.code || a.pin)){ hash = '#agent'; t = '📊 Agent — My Portal'; } } }catch(e){}
     if(!hash){ try{ showToast('This portal is only for admins and agents'); }catch(e){} return; }
