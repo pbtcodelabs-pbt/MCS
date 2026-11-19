@@ -3213,6 +3213,13 @@ html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !im
 </style>
 </head>
 <body class="d2">
+<script id="mcsUiBusy554">
+/* MCS1911TH554: انگلی / اسکرول چل رہا ہو تو بھاری ناپ تول رکے — صفحہ اٹکے نہیں */
+(function(){ var at = 0; function m(){ at = Date.now(); }
+  ['touchstart','touchmove','pointerdown','wheel','scroll'].forEach(function(e){ window.addEventListener(e, m, { passive: true, capture: true }); });
+  window.mcsUiBusy = function(){ return Date.now() - at < 650; }; })();
+</script>
+
 <div class="mcs-ticker" id="mcsTicker" onclick="tickerTap()">
   <div class="mcs-ticker-middle" id="tickerMiddle"><div class="mcs-ticker-track" id="tickerTrack"></div></div>
 </div>
@@ -4771,6 +4778,7 @@ const APP_VERSION = "MCS1911TH554";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH554": "Speed: no more hanging — the app no longer re-measures every card each second; the moving strip and text-fitting pause while you scroll or type; faster search",
   "MCS1911TH554": "Home screen tidied (Help Desk #303): smaller tiles and buttons, one-line Business Promotion bar, clock time in a dark pill — same content and colours",
   "MCS1911TH553": "My Account (new design) now opens for Admin 1 / Admin 2 too — old admin portal inside as «🛠️ Admin Portal» • no activation messages in the app",
   "MCS1911TH552": "Removed the old in-app «Account Access — give / extend membership» page",
@@ -6535,7 +6543,7 @@ function srItems(){
   if(srTab!=='all') list = list.filter(srTabPass);
   const _pq = q ? ubParseQuery(q) : null;
   const nameHit = it => { if(!_pq || _pq.empty || _pq.phone) return 0; const r = it.rec; return ubMatch(_pq, [r.nameUr, r.name, r.nameEn, it.kind==='doctor' ? '' : ubOwnerEn(r), r.more && r.more.owner, r.owner], '') ? 1 : 0; };   /* MCS1011TU297: نام والے نتائج پہلے */
-  list = list.map((it,i)=>[it,i,nameHit(it)]).sort((a,b)=>b[2]-a[2] || (pfActive(b[0].rec)?1:0)-(pfActive(a[0].rec)?1:0) || a[1]-b[1]).map(x=>x[0]);
+  list = list.map((it,i)=>[it,i,nameHit(it),(pfActive(it.rec)?1:0)]).sort((a,b)=>b[2]-a[2] || b[3]-a[3] || a[1]-b[1]).map(x=>x[0]);   /* MCS1911TH554: pfActive ایک بار */
   return {q, list};
 }
 function srLabel(k, v){ if(k==='group') return v==='business' ? '🏪 بزنس' : '👔 پروفیشنلز'; if(k==='cat'){ const m = ubCatMeta(v); return m.emoji + ' ' + m.ur; } return v; }
@@ -10700,7 +10708,7 @@ function svcMemOpen(id, kind){
 function agIsRec(kind, rec){
   if(!rec) return false;
   if(rec.mcsAgent) return true;
-  try{ const k = agKnownOf(kind, rec.id); if(k && k !== 'pending') return true; }catch(_){}
+  try{ const k = agKnownOf(kind, rec.id, rec); if(k && k !== 'pending') return true; }catch(_){}
   try{ const me = agMe(), p = String(rec.whatsapp||'').replace(/\D/g,'').slice(-10); if(me && me.phone && p.length===10 && String(me.phone).replace(/\D/g,'').slice(-10)===p) return true; }catch(_){}
   return false;
 }
@@ -10734,7 +10742,7 @@ async function refInfoOpen(c){
 function agMarkRecords(){
   const FB = window.MCSFirebase; if(!FB || !isAdminSignedIn) return;
   [['doctors','doctor'],['services','service']].forEach(([col,kind])=>{ (store[col]||[]).forEach(r=>{
-    if(!r.fsId) return; let k = ''; try{ k = agKnownOf(kind, r.id); }catch(_){}
+    if(!r.fsId) return; let k = ''; try{ k = agKnownOf(kind, r.id, r); }catch(_){}
     /* MCS1211TH357 (مالک کا حکم): ایجنٹ غیر فعال / ختم ہو تو کارڈ سے «MCS Agent» نشان بھی ہٹے (صرف جب ایجنٹ فہرست پوری آ چکی ہو) */
     if(r.mcsAgent){ if(!(k && k !== 'pending') && (agList || []).length && r.category !== 'mcsAgent'){ r.mcsAgent = false; try{ FB.updateDoc(FB.doc(FB.db, col, r.fsId), {mcsAgent: false}).catch(()=>{}); }catch(_){} } return; }
     if(k && k !== 'pending'){ r.mcsAgent = true; try{ FB.updateDoc(FB.doc(FB.db, col, r.fsId), {mcsAgent: true}).catch(()=>{}); }catch(_){} }
@@ -14390,8 +14398,8 @@ function agKnownSave(){ try{ localStorage.setItem('mcsAgKnown', JSON.stringify(a
 function agKnownAdd(phone, code, st){ const p = String(phone||'').replace(/\D/g,'').slice(-10); st = st || 'approved'; if(p.length === 10) agKnown.phones[p] = st; if(code) agKnown.codes[code] = st; agKnownSave(); agKnownRefresh(); }
 function agKnownBuild(list){ try{ if((list||[]).length) agList = list; }catch(_){} const k = {codes:{}, phones:{}}; (list||[]).forEach(a=>{ if(!a || a.status === 'rejected' || a.off) return;   /* MCS1211TH357: غیر فعال ایجنٹ ایجنٹ نہیں */ const p = String(a.phone||'').replace(/\D/g,'').slice(-10); if(p.length === 10) k.phones[p] = a.status || 'approved'; if(a.code) k.codes[a.code] = a.status || 'approved'; if(a.bizRk) k.codes[a.bizRk] = a.status || 'approved'; }); agKnown = k; agKnownSave(); try{ agMarkRecords(); }catch(_){} agKnownRefresh(); }
 function agKnownRefresh(){ try{ if(currentScreen==='doctor-list') renderDoctorList('list'); if(currentScreen==='service-list' && currentServiceCategory) renderServiceList('list'); hlRenderSoon(); }catch(e){} }
-function agKnownOf(kind, id){
-  const rec = kind==='doctor' ? (store.doctors||[]).find(x=>x.id===id) : (store.services||[]).find(x=>x.id===id); if(!rec) return '';
+function agKnownOf(kind, id, rec0){   /* MCS1911TH554: ریکارڈ ساتھ ملے تو پوری فہرست میں تلاش نہیں (پہلے ہزاروں بار) */
+  const rec = (rec0 && rec0.id === id) ? rec0 : (kind==='doctor' ? (store.doctors||[]).find(x=>x.id===id) : (store.services||[]).find(x=>x.id===id)); if(!rec) return '';
   let rk = ''; try{ rk = pfKeyOf(rec, kind); }catch(e){}
   const p = String(rec.whatsapp || rec.phone || '').replace(/\D/g,'').slice(-10);
   return (rk && agKnown.codes[rk]) || (p.length === 10 && agKnown.phones[p]) || '';
@@ -15569,6 +15577,7 @@ function fitCardText(){
   fitQueued = false;
   document.querySelectorAll(FIT_SEL).forEach(el=>{
     if(!el.offsetParent) return;                 /* چھپی ہوئی اسکرین چھوڑ دیں */
+    { const fk = (el.textContent || '').length + ':' + (el.textContent || '').slice(0, 24) + ':' + (el.parentElement ? el.parentElement.clientWidth : 0) + ':' + getZoom(); if(el.dataset.fk === fk) return; el.dataset.fk = fk; }   /* MCS1911TH554: پہلے سے ناپا ہوا کارڈ دوبارہ نہیں */
     el.style.fontSize = '';
     el.style.removeProperty('white-space'); el.style.removeProperty('overflow');
     if(el.clientWidth < 5) return;
@@ -15588,10 +15597,15 @@ function fitCardText(){
     }
   });
 }
-function queueFitCards(){
+/* MCS1911TH554 (مالک کا حکم — «ایپ ہینگ، انگلی اٹکتی ہے»): پہلے گھڑی کی ہر سیکنڈ تبدیلی پر سارے کارڈ ناپے جاتے تھے —
+   اب: صرف اصل کارڈ / فہرست کی تبدیلی پر، زیادہ سے زیادہ ہر 1.2 سیکنڈ، اور انگلی / اسکرول چلتے وقت بالکل نہیں */
+let fitLastAt = 0, fitTm = 0;
+function queueFitCards(recs){
   if(mcsTyping()) return;
+  if(Array.isArray(recs) && recs.length && !recs.some(r => { const t = r.target && (r.target.nodeType === 1 ? r.target : r.target.parentElement); if(!t || !t.closest) return false; if(t.closest('#homeAds,.d2-clock,.h2-clock,#oaStrip,.oa-strip,.tk-wrap,[data-noobs]')) return false; return r.type !== 'childList' || [...r.addedNodes].some(n => n.nodeType === 1); })) return;
   if(fitQueued) return; fitQueued = true;
-  requestAnimationFrame(fitCardText);
+  const wait = Math.max(0, 1200 - (Date.now() - fitLastAt), (window.mcsUiBusy && mcsUiBusy()) ? 700 : 0);
+  clearTimeout(fitTm); fitTm = setTimeout(function go(){ if(window.mcsUiBusy && mcsUiBusy()){ fitTm = setTimeout(go, 500); return; } fitLastAt = Date.now(); requestAnimationFrame(fitCardText); }, wait);
 }
 (function(){
   const app = document.getElementById('app');
@@ -16652,9 +16666,11 @@ function oaInit(){
   ['touchstart','pointerdown','wheel'].forEach(ev=>strip.addEventListener(ev, pause, {passive:true}));
   strip.addEventListener('mouseenter', ()=>{ hold = Infinity; });
   strip.addEventListener('mouseleave', ()=>{ hold = Date.now() + 800; });
+  let vis = true, visAt = 0;   /* MCS1911TH554: ہر فریم پر offsetParent (پورا صفحہ ناپنا) نہیں — آدھے سیکنڈ میں ایک بار؛ انگلی چلتے وقت پٹی رکی */
   const step = t=>{
     const dt = last ? Math.min(64, t - last) : 16; last = t;
-    if(Date.now() > hold && strip.offsetParent){
+    if(t - visAt > 500){ visAt = t; vis = !!strip.offsetParent && !document.hidden; }
+    if(Date.now() > hold && vis && !(window.mcsUiBusy && mcsUiBusy())){
       acc += dt * 0.03;
       if(acc >= 1){ const px = Math.floor(acc); acc -= px; strip.scrollLeft += px; }
       const half = strip.scrollWidth / 2;
@@ -22558,13 +22574,18 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
     let f = parseFloat(getComputedStyle(el).fontSize) || 12, g = 0;
     while(f > min && need(el) > a + 0.5 && g++ < 40){ f -= 0.5; el.style.setProperty('font-size', f + 'px', 'important'); }
   }
-  let busy = false;
+  let busy = false, lastRun = 0;
   function run(){
-    if(busy) return; busy = true;
+    if(busy) return;
+    if(window.mcsUiBusy && mcsUiBusy()){ later(800); return; }   /* MCS1911TH554: انگلی / اسکرول کے وقت ناپ تول نہیں */
+    if(Date.now() - lastRun < 2500){ later(2600 - (Date.now() - lastRun)); return; }
+    busy = true; lastRun = Date.now();
     try{
       T.forEach(([sel, csel, min]) => document.querySelectorAll(sel).forEach(el => {
         if(!el.offsetParent && el.getClientRects().length === 0) return;
-        const c = csel ? el.closest(csel) : el; if(c) fit(el, c, min);
+        const c = csel ? el.closest(csel) : el; if(!c) return;
+        const fk = (el.textContent || '') + '|' + c.clientWidth; if(el.dataset.fk2 === fk) return; el.dataset.fk2 = fk;   /* MCS1911TH554: وہی متن، وہی چوڑائی = دوبارہ نہیں */
+        fit(el, c, min);
       }));
     }catch(e){}
     busy = false;
@@ -25830,6 +25851,7 @@ html body .ur-cap{display:none !important}
     el.dataset.dd439 = el.textContent;
   }
   function fixCard(c){
+    const ck = c.textContent.length + ':' + c.childElementCount; if(c.dataset.dd439c === ck) return; c.dataset.dd439c = ck;   /* MCS1911TH554: وہی کارڈ دوبارہ نہیں */
     const seen = []; c.querySelectorAll('.rc-ty,.rc-pr,.doc-sub,.b236-type,.rc-ow').forEach(el => {
       const t = N(el.textContent); if(!t) return;
       if(seen.some(s => s === t)){ el.style.display = 'none'; return; } seen.push(t);
@@ -25837,7 +25859,7 @@ html body .ur-cap{display:none !important}
   }
   let tm = 0;
   function run(){ tm = 0; try{ if(typeof mcsUniq !== 'function') return; document.querySelectorAll(LINE).forEach(fixLine); document.querySelectorAll(CARD).forEach(fixCard); }catch(e){} }
-  const kick = () => { if(!tm) tm = setTimeout(run, 120); };
+  const kick = recs => { if(Array.isArray(recs) && !recs.some(r => Array.prototype.some.call(r.addedNodes, n => n.nodeType === 1))) return; if(!tm) tm = setTimeout(run, 160); };   /* MCS1911TH554: گھڑی کی ہر سیکنڈ والی متن تبدیلی پر نہیں — صرف نئے کارڈ / حصے */
   try{ new MutationObserver(kick).observe(document.documentElement, { childList: true, subtree: true }); }catch(e){}
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
