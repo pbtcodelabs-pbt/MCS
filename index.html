@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH568";
+const APP_VERSION = "MCS1911TH569";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH569": "Log out now opens a fresh Login page (no old MCS ID / admin Gmail shown) • My Account shows Log Out only when logged in, otherwise only Log In",
   "MCS1911TH568": "One simple login: no Login As list • first time on a phone shows only Sign Up (with Continue as Guest) • after sign up: MCS ID + PIN, the app recognises user / registered / agent / admin by itself",
   "MCS1911TH567": "Money accounts (revenue, payouts, commissions, share rates, reports) no longer open inside the app — only in the separate MCS Agents portal",
   "MCS1911TH566": "Admin «Forgot password»: works for the admin Gmail only and says so; reminds to check Spam",
@@ -17468,7 +17469,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   };
   function setErr(r){ const e = $('uaErr'); if(e) e.textContent = r ? (ERR[r] || ('خرابی: ' + r)) : ''; }
   function busy(b){ document.querySelectorAll('#uaOv .uaBtn').forEach(x => x.disabled = !!b); }
-  function done(r, msg){
+  function done(r, msg){ ls.set('mcsFreshOut', null);
     const next = uaPending; uaPending = null;
     ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); ls.set('mcsGuest', null); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){}
     ls.set('mcsAuthTmp', null); ls.set('mcsLoggedOut', null); try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}
@@ -17633,7 +17634,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function uaClearOthers(keep){ try{ if(keep !== 'dev' && keep !== 'user' && typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) adminLogout();   /* MCS1611MO485: اپنے کاروبار والے اکاؤنٹ سے لاگ اِن پر ایڈمن کبھی باہر نہیں */ if(keep !== 'codev') ls.set('mcsCodev', null); if(keep !== 'agent') ls.set('mcsAgent', null); if(keep !== 'user') {} }catch(e){} }
   function uaRoleBanner(){ try{ const rl = ptRole(); if(rl === 'user' && !uaMe() && !staff()) return ''; const M = PT_META[rl];
     return `<div class="uaMsg" style="background:#eef4ff;border-color:#93b4f0;color:#1e3a8a;font-weight:800">${M[0]} آپ اس وقت <b>${M[1]}</b> میں داخل ہیں<div style="display:flex;gap:6px;margin-top:6px"><button class="uaBtn bW" style="margin:0" onclick="uaHide();ptOpen()">↩️ اپنا پورٹل</button><button class="uaBtn bO" style="margin:0" onclick="mcsLogoutAll()">⎋ لاگ آؤٹ</button></div></div>`; }catch(e){ return ''; } }
-  function uaRoleDone(role, name){
+  function uaRoleDone(role, name){ ls.set('mcsFreshOut', null);
     const M = PT_META[role]; ls.set('mcsGuest', null); const o = $('uaOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; uaPending = null;
     try{ showToast(M[0] + ' ' + (name || '') + ' — ' + M[1] + ' کھل گیا', 3500); }catch(e){}
     try{ uaSync(); h2Sync(); cdBar(); mpRender(); hlRenderSoon(); }catch(e){}
@@ -17669,7 +17670,8 @@ body.d2 #homeAds .ad-ribbon{display:none}
     const wasUser = !!window.__uwUser || !!uaMe(); window.__uwUser = false;
     uaClearOthers('none'); ls.set('mcsAuth', null); ls.set('mcsGuest', null);
     try{ uaSync(); h2Sync(); cdBar(); mpRender(); }catch(e){}
-    setTimeout(() => { try{ (uwMyPk() ? uaWelcome : uaLogin)(); }catch(e){ uaLogin(); } }, 250);   /* MCS1811WE540 (مالک کا حکم): ایڈمن ہو یا عام — لاگ آؤٹ کے بعد سیدھا Welcome Back */
+    ls.set('mcsFreshOut', '1');   /* MCS1911TH569: لاگ آؤٹ کے بعد بالکل نیا لاگ اِن صفحہ — پرانا MCS نمبر / ایڈمن Gmail سامنے نہیں */
+    setTimeout(() => { try{ uaLogin(); }catch(e){} }, 250);   /* MCS1811WE540 (مالک کا حکم): ایڈمن ہو یا عام — لاگ آؤٹ کے بعد سیدھا Welcome Back */
   };
   window.uaDoSignup = async function(){
     const name = ($('uaName').value || '').trim(), mobile = ($('uaMob').value || '').trim(), pw = ($('uaPw2').value || '').trim();
@@ -18259,7 +18261,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     agent: 'Agent mobile or PIN is wrong — ایجنٹ کا موبائل یا PIN غلط ہے'
   });
   /* MCS1911TH568: ڈراپ ڈاؤن ختم — فون میں پہچان ہو تو سیدھا MCS نمبر + PIN؛ پہلی بار صرف Sign Up */
-  const lgRole = () => { try{ if(lgOther) return 'any'; if(uwMyPk()) return 'reg'; if(ls.get('mcsLastAgMob')) return 'agent'; if(uaAdmGmail()) return 'admin'; }catch(e){} return 'new'; };
+  const lgRole = () => { try{ if(ls.get('mcsFreshOut') === '1'){ if(uaMe() || staff()) ls.set('mcsFreshOut', null); else { lgOther = true; return 'any'; } } if(lgOther) return 'any'; if(uwMyPk()) return 'reg'; if(ls.get('mcsLastAgMob')) return 'agent'; if(uaAdmGmail()) return 'admin'; }catch(e){} return 'new'; };
   let lgOther = false, lgBusy = false;
   const lgPk = () => (lgOther ? null : uwMyPk());
   const lgMobFmt = m => { try{ return mcsMobFmt(m); }catch(e){ return String(m || ''); } };
@@ -21871,7 +21873,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
       + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
       + '</div>';
     /* MCS1511SU453 (مالک کا حکم): لاگ آؤٹ صرف یہاں — My Account کا آخری بٹن (سر والا سرخ Log Out ختم) */
-    h += (ua || rl) ? '<button type="button" class="mx-out" onclick="mxGo(\'' + ID + '\',\'h2Logout\')">⎋ Log Out</button>' : '<button type="button" class="mx-out in" onclick="mxGo(\'' + ID + '\',\'uaLogin\')">🔐 Log In</button>';
+    h += (ua || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || sf(function(){ return codevOn(); }, false) || (me && me.pin)) ? '<button type="button" class="mx-out" onclick="mxGo(\'' + ID + '\',\'h2Logout\')">⎋ Log Out</button>' : '<button type="button" class="mx-out in" onclick="mxGo(\'' + ID + '\',\'uaLogin\')">🔐 Log In</button>';
     h += '<div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
     shell(ID, h);
   };
