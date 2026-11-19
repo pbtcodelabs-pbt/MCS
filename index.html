@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH554";
+const APP_VERSION = "MCS1911TH555";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH555": "Speed: the app no longer hangs — no re-measuring every second, Registered / MCS Agents filters show 40 cards at a time (Show more), faster search",
   "MCS1911TH554": "Speed: no more hanging — the app no longer re-measures every card each second; the moving strip and text-fitting pause while you scroll or type; faster search",
   "MCS1911TH554": "Home screen tidied (Help Desk #303): smaller tiles and buttons, one-line Business Promotion bar, clock time in a dark pill — same content and colours",
   "MCS1911TH553": "My Account (new design) now opens for Admin 1 / Admin 2 too — old admin portal inside as «🛠️ Admin Portal» • no activation messages in the app",
@@ -9570,7 +9571,9 @@ function catTabPass(tab, kind, rec){
   if(tab==='agent') return !!agIsRec(kind, rec);
   return true;
 }
-function catTabSet(grp, v){ catTab[grp] = (catTab[grp]===v) ? 'all' : v; catTabRender(grp); }
+var catShown = {};   /* MCS1911TH555: ایک بار میں 40 کارڈ — سب ایک ساتھ بنانے سے فون اٹکتا تھا */
+function catTabSet(grp, v){ catTab[grp] = (catTab[grp]===v) ? 'all' : v; catShown[grp] = 40; catTabRender(grp); }
+function catTabMore(grp){ catShown[grp] = (catShown[grp] || 40) + 40; catTabRender(grp); }
 function catTabRender(grp){
   const res = document.getElementById('catFltRes_' + grp); if(!res) return;
   const grid = res.nextElementSibling, tab = catTab[grp] || 'all';
@@ -9582,7 +9585,8 @@ function catTabRender(grp){
   const items = sortRecords(docs.concat(svcs));
   let h = `<div class="cr-h">${tab==='reg' ? '✅' : '🤝'} ${items.length} ${tab==='reg' ? 'رجسٹرڈ' : 'ایم سی ایس ایجنٹ'} — تمام کیٹگریز میں سے</div>`;
   if(!items.length) h += tab==='reg' ? '<div class="empty-state"><span class="e-emoji">✅</span>ابھی کوئی رجسٹرڈ اندراج نہیں</div>' : '<div class="empty-state"><span class="e-emoji">🤝</span>ابھی کوئی ایم سی ایس ایجنٹ نہیں</div>';
-  else h += items.map(r => docs.includes(r) ? docCardHtml(fhDoc(r), 'list') : svcCardHtml(fhSvc(r), CATEGORY_META[r.category])).join('');
+  else { const lim = catShown[grp] || 40, dset = new Set(docs); h += items.slice(0, lim).map(r => dset.has(r) ? docCardHtml(fhDoc(r), 'list') : svcCardHtml(fhSvc(r), CATEGORY_META[r.category])).join('')
+    + (items.length > lim ? `<button type="button" class="btn block secondary" style="margin:8px 0 14px" onclick="catTabMore('${grp}')">⬇️ Show more (${items.length - lim})</button>` : ''); }
   res.innerHTML = h; res.style.display = ''; if(grid) grid.style.display = 'none';
 }
 function filterEmptyMsg(emoji, dflt){
