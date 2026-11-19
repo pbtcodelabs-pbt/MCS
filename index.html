@@ -4772,10 +4772,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH571";
+const APP_VERSION = "MCS1911TH572";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH572": "Log Out power button now sits inside the green header, centred under the clock • digital time strip removed • clock moved up slightly",
   "MCS1911TH571": "One red power Log Out button on the home header (nowhere else) • Log out always lands on the Login page • MCS ID shows by itself on this phone • Continue as Guest on Login • Back button no longer needs several presses",
   "MCS1911TH570": "One simple login: no Login As list • first time shows only Sign Up (+ Continue as Guest) • log out opens a fresh Login page • My Account shows Log Out only when logged in",
   "MCS1911TH567": "Money accounts (revenue, payouts, commissions, share rates, reports) no longer open inside the app — only in the separate MCS Agents portal",
@@ -28167,8 +28168,13 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
 </script>
 <style id="mcsOne571css">
 html body #h2Out{display:none!important}
-#mcsPwr{position:fixed;top:5px;left:5px;z-index:900;display:none;place-items:center;width:34px;height:34px;padding:0;border-radius:50%;background:#e30613;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);cursor:pointer}
+#mcsPwr{position:fixed;top:128px;left:8px;z-index:900;display:none;place-items:center;width:30px;height:30px;padding:0;border-radius:50%;background:#e30613;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);cursor:pointer}
 #mcsPwr.on{display:grid}
+.x229 .x-clk{display:none!important}
+.x229 .xm{position:relative}
+.x229 .xm .x-ana{transform:translateY(-10px) scale(.84);transform-origin:50% 0}
+.x229 .xm #mcsPwr{position:absolute;top:77%;left:50%;margin:0 0 0 -14px;width:28px;height:28px}
+.x229 .xm #mcsPwr svg{width:16px;height:16px}
 #mcsPwr svg{width:19px;height:19px}
 </style>
 <script id="mcsOne571">
@@ -28179,6 +28185,7 @@ html body #h2Out{display:none!important}
   function loggedIn(){ try{ if(isAdminSignedIn) return true; if(codevOn()) return true; var a = agMe(); if(a && a.phone && (a.pin || a.code)) return true; if(window.uaMe && window.uaMe()) return true; }catch(e){} return false; }
   function outSync(){ var b = document.getElementById('mcsPwr');
     if(!b){ if(!document.body) return; b = document.createElement('button'); b.type = 'button'; b.id = 'mcsPwr'; b.innerHTML = PW; b.setAttribute('aria-label', 'Log out'); b.title = 'Log out'; b.onclick = function(e){ e.stopPropagation(); window.mcsLogoutAll(); }; document.body.appendChild(b); }
+    try{ var slot = document.querySelector('.x229 .xm'); if(slot && b.parentNode !== slot) slot.appendChild(b); }catch(e){}
     var ua = document.getElementById('uaOv'), on = false;
     try{ on = loggedIn() && currentScreen === 'home' && !(ua && ua.classList.contains('on')); }catch(e){}
     b.classList.toggle('on', on); }
