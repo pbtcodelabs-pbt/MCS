@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH560";
+const APP_VERSION = "MCS1911TH561";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH561": "«💬 Ask us» on the login page is now the app's own chat (name only, no phone) • Admin: My Chats → 🙋 Customer Help — read replies turn grey, delete one or many, block, bad-word filter",
   "MCS1911TH560": "Login page: «🎬 Intro video» (play / download / share) and «💬 Ask us» — questions by chat only, answer inside the app",
   "MCS1911TH559": "Admin login: «Forgot password ?» sends a secure reset link to the admin Gmail; agents AG001 / AG002 / AG003 open again",
   "MCS1911TH558": "Forgot PIN: the birth year is checked from the date of birth you filled in the form (users and agents) — 4 digits of the year only",
@@ -22290,8 +22291,9 @@ window.mc2Role = function(r){ mcTab = r; try{ if(r === 'cd'){ const cd = mcList.
 window.mc2Bell = function(){ const x = (mcList || []).find(y => y.nw && y.th && !y.off); if(x) mcGoObj(x); else showToast(P().lang === 'ur' ? '🔔 کوئی نیا پیغام نہیں' : '🔔 No new messages'); };
 function row(x, i){
   const c = CL(), cleared = x.th && c[x.th] && (x.last || 0) <= c[x.th], pv = cleared ? '' : (x.lt || x.sub || '');
-  return `<div class="mc2-r ${x.off ? 'off' : ''}" ${x.off ? '' : `onclick="mcGoObj(mcList[${i}])"`}><div class="mc2-av">${avOf(x)}</div><div class="mc2-m"><div class="mc2-l1"><b dir="auto">${E(String(x.title || '').replace(/^🤝\s*/, ''))}</b>${x.last && !cleared ? `<span class="mc2-tm">${mcTime(x.last)}</span>` : ''}</div>`
-    + `<div class="mc2-l2"><span class="mc2-pv" dir="auto">${!cleared && x.lt && x.mine ? '<i class="tk">✓✓</i>' : ''}${E(pv)}</span>${x.nw && !cleared ? `<span class="mc2-nw">${x.nw}</span>` : ''}</div></div>${MST_IC.chev.replace('class="mst-ch"', 'class="mc2-cv"')}</div>`;
+  const gx = mcStaff && String(x.th || '').startsWith('G-') ? `<span class="mc2-gx"><button type="button" title="Delete" onclick="event.stopPropagation();mc2GDel(['${E(x.th)}'])">🗑️</button><button type="button" title="Block" onclick="event.stopPropagation();mc2GBlock('${E(x.th)}')">🚫</button></span>` : '';   /* MCS1911TH561 */
+  return `<div class="mc2-r ${x.off ? 'off' : ''} ${x.seen ? 'seen' : ''}" ${x.off ? '' : `onclick="mcGoObj(mcList[${i}])"`}><div class="mc2-av">${avOf(x)}</div><div class="mc2-m"><div class="mc2-l1"><b dir="auto">${E(String(x.title || '').replace(/^🤝\s*/, ''))}</b>${x.last && !cleared ? `<span class="mc2-tm">${mcTime(x.last)}</span>` : ''}</div>`
+    + `<div class="mc2-l2"><span class="mc2-pv" dir="auto">${!cleared && x.lt && x.mine ? '<i class="tk">✓✓</i>' : ''}${E(pv)}</span>${x.nw && !cleared ? `<span class="mc2-nw">${x.nw}</span>` : ''}</div>${x.seen ? '<div class="mc2-sn">✓✓ Reply read — you can delete</div>' : ''}</div>${gx}${MST_IC.chev.replace('class="mst-ch"', 'class="mc2-cv"')}</div>`;
 }
 function rowMatch(x, ql, d, bz){
   if([x.title, x.sub, x.lt].join(' ').toLowerCase().includes(ql)) return true;
@@ -22308,7 +22310,7 @@ function render(){
   const CH = document.getElementById('mc2Ch'); if(CH) CH.innerHTML = chip('all', 'all', IC.chat) + chip('direct', 'direct', IC.person) + chip('groups', 'groups', IC.users) + chip('support', 'support', IC.head);
   const C2 = document.getElementById('mc2Ch2');
   if(C2){ if(staff){ const isCd = (mcWho() || {}).as === 'cd', cdx = mcList.filter(x => x.k === 'cd');
-      const rs = [['all', 'All'], ['user', 'Users'], ['agent', 'Agents'], ['cd', isCd ? 'Admin' : 'Admin'], ['biz', 'Agent ↔ Business']].filter(r => r[0] !== 'cd' || cdx.length);
+      const rs = [['all', 'All'], ['guest', '🙋 Customer Help'], ['user', 'Users'], ['agent', 'Agents'], ['cd', isCd ? 'Admin' : 'Admin'], ['biz', 'Agent ↔ Business']].filter(r => r[0] !== 'cd' || cdx.length);
       C2.hidden = false; C2.innerHTML = rs.map(r => `<button type="button" class="mc2-c sm ${mcTab === r[0] ? 'on' : ''}" onclick="mc2Role('${r[0]}')">${r[1]}</button>`).join(''); } else C2.hidden = true; }
   let rows = mcList.slice();
   if(f === 'direct') rows = rows.filter(x => x.k !== 'pbt' && x.k !== 'group'); else if(f === 'groups') rows = rows.filter(x => x.k === 'group'); else if(f === 'support') rows = rows.filter(x => x.k === 'pbt');
@@ -22316,12 +22318,26 @@ function render(){
   let bz = []; if(q){ bz = bizFind(q); rows = rows.filter(x => rowMatch(x, ql, d, bz)); }
   window._mc2Bz = bz;
   let h = rows.map(x => row(x, mcList.indexOf(x))).join('');
+  if(staff && mcTab === 'guest'){ const rd = rows.filter(x => x.seen).length; h = `<div class="mc2-gt"><button type="button" ${rd ? '' : 'disabled'} onclick="mc2GDelRead()">🗑️ Delete read (${rd})</button><button type="button" onclick="mc2Words()">🚫 Bad words</button></div>` + h; }   /* MCS1911TH561 */
   if(bz.length) h += `<div class="mc2-h">${t('biz')}</div>` + bz.map((b, i) => `<div class="mc2-r" onclick="mc2BizGo(${i})"><div class="mc2-av">${recAv(b.r) || '<span class="mc2-em">🏪</span>'}</div><div class="mc2-m"><div class="mc2-l1"><b dir="auto">${E(b.shop)}</b></div><div class="mc2-l2"><span class="mc2-pv" dir="auto">${E([b.owner, b.ph ? '0' + b.ph : ''].filter(Boolean).join(' • '))}</span></div></div>${MST_IC.chev.replace('class="mst-ch"', 'class="mc2-cv"')}</div>`).join('');
   if(!h) h = `<div class="mc2-e">${f === 'groups' && !q ? t('noGroup') : t('noChat')}</div>`;
   if(!staff && !q) h += `<div class="mc2-note">🔒 ${t('priv')}</div>`;
   L.innerHTML = h; lazy(L);
   const n = unreadN(), bl = document.querySelector('#mc2Bl i'); if(bl){ bl.hidden = !n; bl.textContent = n > 99 ? '99+' : String(n); }
 }
+
+/* ===== MCS1911TH561 (مالک کا حکم): 🙋 Customer Help — عملہ: جواب پڑھی ہوئی چیٹ گرے، ایک / کئی حذف، بلاک، گندے الفاظ کی فہرست ===== */
+window.mc2GDel = async function(thrs){ if(!thrs || !thrs.length || !confirm(thrs.length > 1 ? 'Delete ' + thrs.length + ' chats?' : 'Delete this chat?')) return;
+  const r = await mcCall({op:'del', thrs}).catch(() => null); if(r && r.ok){ showToast('🗑️ Deleted (' + r.n + ')'); mcList = mcList.filter(x => !thrs.includes(x.th)); window._mcLastR = null; render(); mcLoadList(); } else showToast('⚠️ ' + ((r && r.reason) || 'net')); };
+window.mc2GDelRead = function(){ mc2GDel(mcList.filter(x => x.seen && String(x.th || '').startsWith('G-')).map(x => x.th)); };
+window.mc2GBlock = async function(th){ const x = mcList.find(y => y.th === th), bl = /blocked/.test((x && x.sub) || '');
+  if(!confirm(bl ? 'Unblock this person?' : 'Block this person? They cannot send messages any more.')) return;
+  const r = await mcCall({op:'block', thr: th, text: bl ? 'un' : ''}).catch(() => null); showToast(r && r.ok ? (r.blocked ? '🚫 Blocked' : '✅ Unblocked') : '⚠️'); mcLoadList(); };
+window.mc2Words = async function(){
+  const r = await mcCall({op:'words'}).catch(() => null); if(!r || !r.ok){ showToast('⚠️'); return; }
+  const v = prompt('🚫 Your own bad words (one per line or comma) — they show as ••• in chats.\n' + r.base + ' common Urdu / Roman / English words are already built in.\nاپنے الفاظ لکھیں (ہر لفظ الگ لائن یا کومے سے):', (r.words || []).join(', '));
+  if(v === null) return; const words = v.split(/[\n,،]+/).map(x => x.trim()).filter(Boolean);
+  const r2 = await mcCall({op:'words', words}).catch(() => null); showToast(r2 && r2.ok ? '✅ Saved (' + (r2.words || []).length + ')' : '⚠️'); };
 window.mc2BizGo = async function(i){
   const b = (window._mc2Bz || [])[i]; if(!b) return;
   const ex = (mcList || []).find(x => b.ph && String((x.title || '') + (x.sub || '')).replace(/\D/g, '').includes(b.ph));
@@ -28014,6 +28030,76 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
   function hook(){ const f = window.uaLogin; if(typeof f !== 'function' || f.__x560) return; const w = function(){ const r = f.apply(this, arguments); try{ add(); }catch(e){} return r; }; w.__x560 = 1; window.uaLogin = w; }
   hook(); setTimeout(hook, 1500); setTimeout(hook, 5000);
   setInterval(() => { try{ const ov = document.getElementById('uaOv'); if(ov && ov.classList.contains('on')) add(); }catch(e){} }, 1500);
+})();
+</script>
+<style id="mcsGc561">
+/* MCS1911TH561 (مالک کا حکم): «💬 Ask us» — لاگ اِن کے بغیر سوال، ایپ کی اپنی چیٹ (ہیلپ ڈیسک نہیں)؛ صرف نام؛ جواب یہیں */
+#mcs-gc{position:fixed;inset:0;z-index:2147483500;background:#e9edf2;display:flex;flex-direction:column;font-family:'Segoe UI',Selawik,Arial,sans-serif}
+#mcs-gc .h{display:flex;align-items:center;gap:10px;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top,0px));background:linear-gradient(135deg,#0f766e,#0d3b66);color:#fff}
+#mcs-gc .h img{width:38px;height:38px;border-radius:50%;background:#fff}
+#mcs-gc .h b{display:block;font-size:17px}#mcs-gc .h small{opacity:.85;font-size:12px}
+#mcs-gc .h button{margin-inline-start:auto;border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer}
+#mcs-gc .b{flex:1;overflow:auto;padding:12px 10px;display:flex;flex-direction:column;gap:8px}
+#mcs-gc .m{max-width:82%;padding:8px 11px 5px;border-radius:14px;font-size:15px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 1px 1px rgba(0,0,0,.08);unicode-bidi:plaintext;text-align:start}
+#mcs-gc .m.me{align-self:flex-end;background:#d9fdd3;border-bottom-right-radius:4px}
+#mcs-gc .m.th{align-self:flex-start;background:#fff;border-bottom-left-radius:4px}
+#mcs-gc .m small{display:block;text-align:end;font-size:10.5px;color:#64748b;margin-top:2px}
+#mcs-gc .m .nm{display:block;font-weight:800;color:#0f766e;font-size:12px;margin-bottom:2px}
+#mcs-gc .hi{align-self:center;background:#fff7d6;color:#7a5600;border-radius:12px;padding:8px 12px;font-size:13px;text-align:center;max-width:92%;line-height:1.6}
+#mcs-gc .f{display:flex;flex-direction:column;gap:6px;padding:8px 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));background:#f8fafc;border-top:1px solid #e2e8f0}
+#mcs-gc .f input,#mcs-gc .f textarea{width:100%;box-sizing:border-box;border:1.5px solid #cbd5e1;border-radius:14px;padding:9px 12px;font:15px 'Segoe UI',Selawik,Arial,sans-serif;background:#fff;unicode-bidi:plaintext}
+#mcs-gc .f textarea{resize:none;height:46px}
+#mcs-gc .f .r{display:flex;gap:8px;align-items:flex-end}
+#mcs-gc .f .s{flex:none;width:48px;height:46px;border:0;border-radius:50%;background:#16a34a;color:#fff;font-size:20px;cursor:pointer}
+#mcs-gc .f .e{color:#b91c1c;font-size:13px;min-height:0}
+#uaOv .lgx560 .q{position:relative}#uaOv .lgx560 .q i.d{position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:#ef4444;border:2px solid #fff}
+/* عملہ: Customer Help */
+.mc2-r.seen{background:#eceff3!important;filter:grayscale(1);opacity:.8}
+.mc2-sn{font-size:11.5px;color:#475569;margin-top:2px}
+.mc2-gx{display:flex;gap:4px;flex:none;margin-inline-start:4px}.mc2-gx button{border:0;background:#f1f5f9;border-radius:10px;width:34px;height:34px;font-size:16px;cursor:pointer}
+.mc2-gt{display:flex;gap:8px;padding:6px 4px 10px}.mc2-gt button{flex:1;border:0;border-radius:12px;padding:9px 6px;font:700 14px 'Segoe UI',Selawik,Arial,sans-serif;color:#fff;background:#dc2626;cursor:pointer}.mc2-gt button+button{background:#475569}.mc2-gt button:disabled{opacity:.45}
+</style>
+<script id="mcsGc561js">
+(function(){
+  const API = (typeof AG_API !== 'undefined' ? AG_API : 'https://aio-pos-verify.pbtcodelabs.workers.dev') + '/mcschat';
+  const E = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const LS = { g(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } }, s(k, v){ try{ localStorage.setItem(k, v); }catch(e){} } };
+  function gid(){ let g = LS.g('mcsGuestId'); if(!/^[a-z0-9]{16,40}$/.test(g)){ g = Array.from(crypto.getRandomValues(new Uint8Array(12))).map(x => x.toString(16).padStart(2, '0')).join(''); LS.s('mcsGuestId', g); } return g; }
+  async function call(body){ try{ const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(Object.assign({ as: 'guest', gid: gid() }, body)) }); return await r.json(); }catch(e){ return { ok: false, reason: 'net' }; } }
+  const tm = ts => { try{ const d = new Date(ts); return d.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); }catch(e){ return ''; } };
+  const ERR = { name: 'Write your name first — پہلے اپنا نام لکھیں', empty: 'Write your question', wait: 'Too many messages — please wait a little · تھوڑی دیر بعد لکھیں', blocked: 'You cannot send messages', net: 'Check your internet' };
+  let timer = 0;
+  function draw(msgs){
+    const b = document.querySelector('#mcs-gc .b'); if(!b) return; const atEnd = b.scrollTop + b.clientHeight >= b.scrollHeight - 30;
+    b.innerHTML = '<div class="hi">👋 Ask anything about My City Shines — registering your business, ads, membership.<br><span dir="rtl">اپنا سوال لکھیں — جواب یہیں اسی چیٹ میں ملے گا۔ کوئی فون نمبر نہیں چاہیے۔</span></div>'
+      + (msgs || []).map(m => `<div class="m ${m.mine ? 'me' : 'th'}">${m.mine ? '' : '<span class="nm">My City Shines</span>'}${E(m.text)}<small>${tm(m.ts)}${m.mine ? ' ✓' : ''}</small></div>`).join('');
+    if(atEnd || !draw._d){ b.scrollTop = b.scrollHeight; draw._d = 1; }
+  }
+  async function load(){ const r = await call({ op: 'thread' }); if(r && r.ok){ draw(r.msgs); LS.s('mcsGuestSeen', String(Date.now())); dot(0); } }
+  window.mcsGuestChat = function(){
+    let o = document.getElementById('mcs-gc'); if(o) o.remove(); draw._d = 0;
+    o = document.createElement('div'); o.id = 'mcs-gc'; o.setAttribute('data-noen', '');
+    const nm = LS.g('mcsGuestName');
+    o.innerHTML = `<div class="h"><img src="icons/icon-192.png" alt=""><div><b>My City Shines</b><small>Customer Help · chat only</small></div><button type="button" aria-label="Close">✕</button></div><div class="b"></div>
+      <div class="f"><input class="n" maxlength="40" placeholder="Your name / آپ کا نام" value="${E(nm)}" ${nm ? 'style="display:none"' : ''}><div class="e"></div><div class="r"><textarea maxlength="500" placeholder="Write your question… / اپنا سوال لکھیں"></textarea><button type="button" class="s" aria-label="Send">➤</button></div></div>`;
+    document.body.appendChild(o);
+    o.querySelector('.h button').onclick = () => { clearInterval(timer); o.remove(); };
+    const ta = o.querySelector('textarea'), ni = o.querySelector('.n'), er = o.querySelector('.e'), sb = o.querySelector('.s');
+    sb.onclick = async () => {
+      const name = ni.value.trim(), text = ta.value.trim(); er.textContent = '';
+      if(!name){ ni.style.display = ''; ni.focus(); er.textContent = ERR.name; return; } if(!text){ ta.focus(); return; }
+      sb.disabled = true; const r = await call({ op: 'send', gname: name, text }); sb.disabled = false;
+      if(r && r.ok){ LS.s('mcsGuestName', name); ni.style.display = 'none'; ta.value = ''; draw(r.msgs); const b = o.querySelector('.b'); b.scrollTop = b.scrollHeight; }
+      else er.textContent = ERR[(r && r.reason) || 'net'] || ERR.net;
+    };
+    draw([]); load(); clearInterval(timer); timer = setInterval(() => { if(document.getElementById('mcs-gc') && document.visibilityState === 'visible') load(); else if(!document.getElementById('mcs-gc')) clearInterval(timer); }, 12000);
+  };
+  /* لاگ اِن ہو تو اپنی My Chats؛ ورنہ یہ مہمان چیٹ */
+  window.mcsAskUs = function(){ try{ if(typeof mcWho === 'function' && mcWho()){ try{ uaClose && uaClose(); }catch(e){} mcOpen(); return; } }catch(e){} mcsGuestChat(); };
+  function dot(on){ const q = document.querySelector('#uaOv .lgx560 .q'); if(!q) return; let d = q.querySelector('i.d'); if(on && !d) q.insertAdjacentHTML('beforeend', '<i class="d"></i>'); else if(!on && d) d.remove(); }
+  /* لاگ اِن پیج پر: جواب آیا ہو تو «Ask us» پر سرخ نشان */
+  let chk = 0; setInterval(async () => { const ov = document.getElementById('uaOv'); if(!ov || !ov.classList.contains('on') || !LS.g('mcsGuestId') || Date.now() - chk < 60000) return; chk = Date.now();
+    const r = await call({ op: 'list' }); const x = r && r.ok && r.list && r.list[0]; dot(!!(x && x.nw)); }, 3000);
 })();
 </script>
 </body>
