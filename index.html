@@ -247,20 +247,27 @@
   var TTK = ''; try{ TTK = rGet.call(LS, 'mcsT540ttk') || ''; }catch(e){}
   var TAPI = 'https://' + W + '/mcstest';
   function tPost(o){ return rFetch.call(window, TAPI, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(Object.assign({ ttk: TTK }, o)), keepalive: o.op === 'wipe' }); }
+  /* MCS1911TH550: ویزرڈ والے کارڈ کی قسم «cat_unassigned» کی بجائے اصل ٹائپ / سب ٹائپ */
+  function catOf(r){ var m = (r && r.more) || {}, c = String((r && r.category) || ''); if(c && c !== 'cat_unassigned') return c; return [m.mcat, (m.subs || []).slice(0, 2).join(', ')].filter(Boolean).join(' — ') || m.ptype || ''; }
+  window.mcsCatOf550 = catOf;
   function tSync(){
     if(!TTK || window.__t507end) return; var S = srv(), items = [];
     Object.keys(S.u).forEach(function(id){ var u = S.u[id], sd = String(sidOf(u.mobile) || '').replace(/-/g, ''); if(!sd) return;
       var rec = Object.keys(S.prof).filter(function(k){ return recMob(k) === u.mobile; })[0] || '', reg = { owner: u.name || '' };
       try{ var m10 = String(u.mobile).slice(-10), L = (typeof store !== 'undefined' && store && store.services) || [], r = L.filter(function(x){ return x && String(x.whatsapp || '').replace(/\D/g, '').slice(-10) === m10; })[0];
-        if(r){ reg.biz = r.nameEn || r.name || r.nameUr || ''; reg.cat = r.category || ''; reg.addr = r.address || ''; reg.city = r.city || r.district || ''; } }catch(e){}
+        if(r){ reg.biz = r.nameEn || r.name || r.nameUr || ''; reg.cat = catOf(r); reg.addr = r.address || ''; reg.city = r.city || r.district || '';
+          if(!rec){ try{ rec = (typeof pfKeyOf === 'function' && pfKeyOf(r, 'service')) || ''; }catch(e){} } } }catch(e){}   /* MCS1911TH550: کارڈ بنا ہو تو اس کی چابی بھی */
       items.push({ sid: sd, name: u.name || '', mobile: '0' + String(u.mobile).slice(2), rec: rec, reg: reg }); });
     if(items.length) tPost({ op: 'put', items: items }).catch(function(){});
     tPost({ op: 'status' }).then(function(r){ return r.json(); }).then(function(j){
       if(!j || !j.ok) return; var ch = false, now = Date.now();
       (j.list || []).forEach(function(x){ if(!(x.until > now)) return;
         var rec = x.rec || Object.keys(S.prof).filter(function(k){ return String(sidOf(recMob(k)) || '').replace(/-/g, '') === x.sid; })[0];
+        /* MCS1911TH550 (مالک کا حکم — «ٹیسٹ میں ایکٹیو کیا مگر فون وہیں کھڑا»): سبسکرپشن کا قدم شروع نہ ہوا ہو تو نقلی سرور میں پروفائل تھی ہی نہیں — اب یہیں بن جاتی ہے */
+        if(rec && !S.prof[rec]) S.prof[rec] = { data: {}, key: '', since: now, until: 0, ts: now, pend: 0 };
         var r = rec && S.prof[rec]; if(!r || (r.until || 0) >= x.until) return;
-        r.until = x.until; r.kind = r.kind || 'code'; if(!r.subid) r.subid = x.sid + 'M1'; ch = true; });
+        r.until = x.until; r.ts = now; r.kind = r.kind || 'code'; if(!r.subid) r.subid = x.sid + 'M1'; ch = true; });
+      if(ch){ try{ setTimeout(function(){ try{ if(typeof window.mcsAct537Tick === 'function') window.mcsAct537Tick(); }catch(e){} }, 1500); }catch(e){} }
       if(ch){ save(); try{ if(typeof pfLoadList === 'function') pfLoadList(); }catch(e){} }
     }).catch(function(){});
   }
@@ -4761,10 +4768,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH549";
+const APP_VERSION = "MCS1911TH550";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH550": "Test mode: activation from Help Desk now reaches the phone — business goes live with congratulations and dates • Help Desk shows the real business type",
   "MCS1911TH549": "Each category has its own icon on the business card: 🏪 Business, 👔 Professional, 🎓 Education, 🏥 Healthcare, 🏛️ Government, 🤝 Organization, 📌 Other",
   "MCS1911TH548": "Business card: Profile Type lists for Education, Healthcare, Government, Organization and Other • write your own type if not in the list",
   "MCS1811WE547": "Login screen stays still when the keyboard opens (no up/down jumping)",
@@ -27687,7 +27695,7 @@ html body #screen-home #hdr2.h229 .x-rl{display:none !important}
     var r = o.rec, m = r.more || {}, cn = '';
     try{ cn = (JSON.parse(lsG('mcsRegCnic') || '{}') || {})[r.id] || ''; }catch(e){}
     var rk = ''; try{ rk = pfKeyOf(r, o.kind) || ''; }catch(e){}
-    var reg = { biz: r.nameEn || r.name || r.nameUr || '', cat: r.category || '', addr: r.address || '', area: r.area || '', city: r.city || '', dist: r.district || '', owner: m.ownerEn || r.owner || m.owner || (a.user && a.user.name) || '', cnic: cn, wa: r.whatsapp || '', rec: rk, step: r.stage || '' };
+    var reg = { biz: r.nameEn || r.name || r.nameUr || '', cat: (typeof window.mcsCatOf550 === 'function' ? window.mcsCatOf550(r) : (function(){ var c = String(r.category || ''), mm = r.more || {}; return (c && c !== 'cat_unassigned') ? c : [mm.mcat, (mm.subs || []).slice(0, 2).join(', ')].filter(Boolean).join(' — ') || mm.ptype || ''; })()), addr: r.address || '', area: r.area || '', city: r.city || '', dist: r.district || '', owner: m.ownerEn || r.owner || m.owner || (a.user && a.user.name) || '', cnic: cn, wa: r.whatsapp || '', rec: rk, step: r.stage || '' };
     var sel = ''; try{ sel = m.selfie || (typeof ptSelfieGet === 'function' ? (ptSelfieGet('user') || ptSelfieGet('agent')) : '') || ''; }catch(e){}
     var key = JSON.stringify(reg) + '|' + sel.length; if(lsG('mcsRegSum537') === key) return;
     busy = true;
@@ -27697,32 +27705,35 @@ html body #screen-home #hdr2.h229 .x-rl{display:none !important}
         .then(function(j){ if(j && j.ok) lsS('mcsRegSum537', key); }).catch(function(){}).then(function(){ busy = false; });
     });
   }
-  function congrats(sid){
+  function congrats(sid, until){
     if(document.getElementById('act537Ov')) return;
+    try{ if(document.body.classList.contains('wz-on') && typeof mcsWizClose === 'function') mcsWizClose(); }catch(e){}   /* MCS1911TH550: رجسٹریشن والا صفحہ خود بند */
+    var dt = ''; try{ if(until > Date.now()){ var d = new Date(until); dt = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear(); } }catch(e){}
     var o = document.createElement('div'); o.id = 'act537Ov';
     o.innerHTML = '<div class="bx"><div class="big">🎉</div><h3>Congratulations!</h3>'
       + '<p>Your registration is complete — you are now an active business and a Registered Member of My City Shines.</p>'
       + (sid ? '<div class="id" data-noen="1">' + esc(sid) + '</div>' : '')
+      + (dt ? '<p><b>✅ Active till ' + esc(dt) + '</b></p>' : '')
       + '<p>Your business card, profile and portal are now live for everyone.</p>'
       + '<p>Want to earn with My City Shines? Apply to become an MCS Agent.</p>'
       + '<button type="button" class="g" id="act537Ag">🤝 Become an MCS Agent</button><button type="button" class="w" id="act537Ok">OK</button></div>';
     document.body.appendChild(o);
-    document.getElementById('act537Ok').onclick = function(){ o.remove(); };
+    document.getElementById('act537Ok').onclick = function(){ o.remove(); try{ if(typeof mpoOpen === 'function') mpoOpen(); }catch(e){} };   /* MCS1911TH550: سیدھا My Portal */
     document.getElementById('act537Ag').onclick = function(){ o.remove(); try{ if(typeof agEarnOpen === 'function') agEarnOpen(); }catch(e){} };
   }
   function watch(){
     var L = []; try{ L = typeof mpListReal === 'function' ? (mpListReal() || []) : []; }catch(e){}
     var seen = {}; try{ seen = JSON.parse(lsG('mcsAct537') || '{}') || {}; }catch(e){}
-    var ch = false, fire = '';
+    var ch = false, fire = '', fireU = 0;
     L.forEach(function(x){ try{
       var rk = x.p && x.p.rk; if(!rk) return; var on = !!pfActive(x.rec);
       if(on && x.rec && x.rec.mcsLive !== true){ try{ mcsGoLive(rk); }catch(e){} }
       if(seen[rk] === undefined){ seen[rk] = on ? 1 : 0; ch = true; }
-      else if(on && !seen[rk]){ seen[rk] = 1; ch = true; fire = rk; }
+      else if(on && !seen[rk]){ seen[rk] = 1; ch = true; fire = rk; fireU = (x.p && x.p.until) || 0; }
       else if(!on && seen[rk]){ seen[rk] = 0; ch = true; }
     }catch(e){} });
     if(ch) lsS('mcsAct537', JSON.stringify(seen));
-    if(fire){ var sid = ''; try{ var a = me(); sid = a && a.user ? mcsSidFmt(a.user.sid || a.user.id || '') : ''; }catch(e){} congrats(/^MCS\d+$/.test(sid) ? sid : ''); }
+    if(fire){ var sid = ''; try{ var a = me(); sid = a && a.user ? mcsSidFmt(a.user.sid || a.user.id || '') : ''; }catch(e){} congrats(/^MCS\d+$/.test(sid) ? sid : '', fireU); }
     return L.some(function(x){ try{ return !pfActive(x.rec); }catch(e){ return false; } });
   }
   var n = 0;
@@ -27734,6 +27745,8 @@ html body #screen-home #hdr2.h229 .x-rl{display:none !important}
   function go(){ setTimeout(tick, 6000); setInterval(tick, 60000); }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
   window.mcsAct537Congrats = congrats;
+  /* MCS1911TH550: ٹیسٹ / ہیلپ ڈیسک سے ایکٹیو ہوتے ہی فوراً جانچ (60 سیکنڈ انتظار نہیں) */
+  window.mcsAct537Tick = function(){ try{ if(typeof pfLoadList === 'function') pfLoadList().then(function(){ try{ watch(); }catch(e){} }); else watch(); }catch(e){} };
 })();
 </script>
 <style id="mcsT540css">
