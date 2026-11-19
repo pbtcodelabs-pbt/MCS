@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH567";
+const APP_VERSION = "MCS1911TH568";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH568": "One simple login: no Login As list • first time on a phone shows only Sign Up (with Continue as Guest) • after sign up: MCS ID + PIN, the app recognises user / registered / agent / admin by itself",
   "MCS1911TH567": "Money accounts (revenue, payouts, commissions, share rates, reports) no longer open inside the app — only in the separate MCS Agents portal",
   "MCS1911TH566": "Admin «Forgot password»: works for the admin Gmail only and says so; reminds to check Spam",
   "MCS1911TH565": "Business lists: smooth touch and scroll — the list no longer rebuilds itself while your finger is on the screen",
@@ -17531,87 +17532,26 @@ body.d2 #homeAds .ad-ribbon{display:none}
   window.uaSetRole = function(r){ ls.set('mcsLoginRole', r === 'dev' ? 'dev' : 'biz'); uaLogin(); };
   window.uaEyeA = function(id, b){ const i = $(id); if(!i) return; const hid = i.classList.toggle('uaMask'); b.textContent = hid ? '🙈' : '👁️'; };
   window.uaLogin = function(msg){
-    const dev = uaLRole() === 'dev', am = dev ? uaAdmGmail() : '';
-    let bg = ''; if(!dev){ try{ bg = localStorage.getItem('mcsLastG') || ''; }catch(e){} }
-    const tabs = `<div class="uaRoleTabs"><button type="button" class="${dev ? '' : 'on'}" onclick="uaSetRole('biz')">👤 User / Business<u data-noen>یوزر / کاروبار</u></button><button type="button" class="dev ${dev ? 'on' : ''}" onclick="uaSetRole('dev')">🛠️ Admin<u data-noen>ایڈمن</u></button></div>`;
-    const body = dev ? `
-      <div class="uaSub" style="margin:0 0 10px">Admin Gmail + password<u data-noen style="display:block;text-decoration:none;direction:rtl;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif;font-size:15px;line-height:1.7">ایڈمن جی میل اور پاس ورڈ</u></div>
-      ${am ? `<button type="button" class="uaGmCard dev" id="uaAdmCard" onclick="uaAdmTap()"><span class="g" dir="ltr">🛠️ ${esc(am)}</span><u data-noen>یہاں ٹچ کریں — پھر ایڈمن پاس ورڈ لکھیں</u></button>` : ''}
-      <div id="uaAdmEm" style="${am ? 'display:none' : ''}"><label class="uaF">${IC.mail}<input id="uaId" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Admin Gmail" autocomplete="username" value="${esc(am)}"></label></div>
-      <div id="uaAdmPw" style="${am ? 'display:none' : ''}"><label class="uaF">${IC.lock}<input id="uaPw" class="uaMask" type="text" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Admin password (ABC / 123)" autocomplete="off" name="mcs_admin_secret"><button type="button" class="uaEye" onclick="uaEyeA('uaPw', this)">🙈</button></label>
-      <div class="uaErr" id="uaErr"></div>
-      <button class="uaBtn bB" onclick="uaDoLogin()">${IC.login}ADMIN LOGIN</button></div>
-      ${am ? `<div class="uaRow" style="text-align:center;margin:2px 0 8px"><a onclick="uaAdmOther()">Other Gmail / <span data-noen>دوسرا Gmail</span></a></div>` : ''}
-      <button class="uaBtn bO" onclick="uaExit()">${IC.exit}EXIT</button>` : `
-      ${(bg && uwMyPk()) ? `<button type="button" class="uaGmCard" id="uaBizCard" onclick="uaBizTap()"><span class="g" dir="ltr">🟢 ${esc(bg)}</span><u data-noen>یہاں ٹچ کریں — پھر اپنا PIN لکھیں</u></button>
-      <div id="uaBizBox" style="display:none"><div class="uaSub" dir="ltr" style="margin:0 0 6px">${esc(uwMyPk().name || '')} · ${esc(typeof mcsSidFmt === 'function' ? mcsSidFmt(uwMyPk().sid) : String(uwMyPk().sid))}</div>
-        <label class="uaF">${IC.lock}<input id="uaBizPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="6-digit PIN" autocomplete="current-password" oninput="uaBizPinIn(this)"><button type="button" class="uaEye" onclick="uaEye('uaBizPin', this)">🙈</button></label>
-        <div class="uaErr" id="uaBizErr"></div>
-        <button class="uaBtn bB" onclick="uaBizGo()">${IC.login}LOGIN</button></div>
-      <div class="uaSub" style="margin:10px 0 6px">— or —</div>` : ''}
-      ${field('uaId', 'user', 'Mobile No. / Account ID (MCS001)', { ac:'username' })}
-      ${field('uaPw', 'lock', 'PIN / Password', { type:'password', ac:'current-password' })}
-      <div class="uaRow" style="justify-content:space-between;display:flex;align-items:center"><span></span><a onclick="uaForgot()">Forgot PIN?</a></div>
-      <div class="uaErr" id="uaErr"></div>
-      <button class="uaBtn bB" onclick="uaDoLogin()">${IC.login}LOGIN</button>
-      <button class="uaBtn bO" onclick="uaExit()">${IC.exit}EXIT</button>
-      <button class="uaBtn bG" onclick="uaSignup()">${IC.add}CREATE NEW ACCOUNT</button>
-      <div class="uaSub" style="margin:10px 0 6px">— or —</div>${(bg && !uwMyPk()) ? `<div class="uaGmChip" dir="ltr">🟢 ${esc(bg)}</div>` : ''}<div id="uaGBox" style="display:flex;justify-content:center;min-height:44px"></div>
-      ${pkLoginBox()}`;   /* MCS1511SU440 (مالک کا حکم): «ایجنٹ سے ملا کوڈ» ختم — رجسٹریشن اب گوگل پلے خریداری سے مکمل ہوتی ہے */
-    show(`${head()}<div class="uaCard uaLg">
-      <div class="uaHd"><i>${dev ? IC.lock : IC.user}</i><h2>Login</h2></div>
-      ${tabs}${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}${body}</div>`);
-    const pw = $('uaPw'); if(pw){ pw.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoLogin(); }); if(!dev) pw.addEventListener('input', () => { if(/^\d{6}$/.test(pw.value) && ($('uaId').value || '').replace(/\D/g, '').length >= 6) uaDoLogin(); }); }   /* MCS1611MO477: 6 ہندسے مکمل ہوتے ہی خود (ایڈمن میں نہیں — اس کا پاس ورڈ ABC بھی ہو سکتا ہے) */
-    if(dev){ if(!am) setTimeout(() => { try{ const t = $('uaId'); if(t) t.focus(); }catch(e){} }, 300); }
-    else gBtn('uaGBox', 'continue_with', bg);   /* MCS1511SU445: Continue with Google — MCS1711TU496: پچھلا کاروبار والا Gmail */
+    const role = lgRole();
+    if(role === 'new') return uaSignup();   /* پہلی بار: صرف Sign Up */
+    lgCss();
+    const pk = role === 'reg' ? lgPk() : null, agM = role === 'agent' ? String(ls.get('mcsLastAgMob') || '') : '', admG = role === 'admin' ? uaAdmGmail() : '';
+    const master = role === 'any' || !!uaAdmGmail();
+    let idBox = '', idIn = '', secret = '', links = '';
+    if(role === 'reg') idBox = `<div class="lgIdBox"><div class="t">My City Shines ID</div><div class="lgChip" id="lgChip" dir="ltr">${esc(lgSidFmt(pk.sid))}</div>${pk.name ? `<div class="lgNm" data-noen>${esc(pk.name)}</div>` : ''}</div>`;
+    else if(role === 'agent') idBox = `<div class="lgIdBox"><div class="t">My City Shines ID</div><div class="lgChip sm" dir="ltr">${esc(lgMobFmt(agM))}</div></div>`;
+    else if(role === 'admin') idBox = `<div class="lgIdBox"><div class="t">My City Shines ID</div><div class="lgChip sm" dir="ltr">${esc(admG)}</div></div>`;
+    else idIn = lgField('uaId', 'user', 'MCS ID or Mobile No. (e.g. MCS002)', { ac:'username' });
+    if(role === 'admin') secret = `<label class="uaF">${IC.lock}<input id="uaPw" class="uaMask" type="text" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Enter PIN" autocomplete="off" name="mcs_admin_secret" oninput="lgErr('')"><button type="button" class="uaEye" onclick="uaEyeA('uaPw', this)">🙈</button></label>`;
+    else secret = `<label class="uaF">${IC.lock}<input id="uaPw" type="password" ${master ? '' : 'inputmode="numeric" pattern="[0-9]*" maxlength="6"'} autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Enter PIN" autocomplete="off" name="mcs_pin_${role}" oninput="lgPinIn(this)"><button type="button" class="uaEye" onclick="uaEye('uaPw', this)">🙈</button></label>`;
+    const other = role === 'any' ? '' : `<div class="lgLinks c"><a onclick="lgUseOther()">Use another account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>`;
+    const fg = role === 'agent' ? 'uaAgForgot()' : (role === 'admin' ? 'lgAdmForgot()' : 'uaForgot()');
+    links = `<div class="lgLinks"><a onclick="${fg}">Forgot PIN ?</a><a onclick="uaSignup()">New? Sign Up</a></div>${other}`;
+    show(`${lgHead()}<div class="uaCard uaLg"><div class="uaHd"><i>${IC.user}</i><h2>Login</h2></div>${uaRoleBanner()}${msg ? `<div class="uaMsg">${esc(msg)}</div>` : ''}${idBox}${idIn}${secret}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB" onclick="lgGo()">${IC.login}LOGIN</button>${links}</div>`);
+    const pw = $('uaPw'); if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') lgGo(); });
+    const id0 = $('uaId'); if(id0) id0.addEventListener('keydown', e => { if(e.key === 'Enter'){ const p = $('uaPw'); if(p) p.focus(); } });
+    setTimeout(() => { try{ const t = $('uaId') || $('uaPw'); if(t) t.focus(); }catch(e){} }, 300);
   };
-  /* MCS1711TU497 (مالک کا حکم): Admin ٹیب — محفوظ Gmail پر ٹچ → پاس ورڈ کا خانہ؛ Business ٹیب — محفوظ Gmail پر ٹچ → PIN مانگے، لکھتے ہی اکاؤنٹ میں داخل */
-  window.uaAdmTap = function(){ const b = $('uaAdmPw'); if(b) b.style.display = 'block'; const c = $('uaAdmCard'); if(c) c.classList.add('open'); setTimeout(() => { try{ const p = $('uaPw'); if(p) p.focus(); }catch(e){} }, 120); };
-  window.uaAdmOther = function(){ const e = $('uaAdmEm'), b = $('uaAdmPw'); if(e) e.style.display = 'block'; if(b) b.style.display = 'block'; const i = $('uaId'); if(i){ i.value = ''; setTimeout(() => { try{ i.focus(); }catch(x){} }, 120); } };
-  window.uaBizTap = function(){ const b = $('uaBizBox'); if(b) b.style.display = 'block'; const c = $('uaBizCard'); if(c) c.classList.add('open'); setTimeout(() => { try{ const p = $('uaBizPin'); if(p) p.focus(); }catch(e){} }, 120); };
-  let uaBizBusy = false;
-  window.uaBizPinIn = function(el){
-    const v = String(el.value || '').replace(/[۰-۹٠-٩]/g, c => { const i = '۰۱۲۳۴۵۶۷۸۹'.indexOf(c); return String(i >= 0 ? i : '٠١٢٣٤٥٦٧٨٩'.indexOf(c)); }).replace(/\D/g, '').slice(0, 6);
-    if(el.value !== v) el.value = v;
-    const e = $('uaBizErr'); if(e) e.textContent = '';
-    if(v.length === 6) uaBizGo();
-  };
-  window.uaBizGo = async function(){
-    if(uaBizBusy) return;
-    const o = uwMyPk(), inp = $('uaBizPin'), er = $('uaBizErr'); if(!o || !inp) return;
-    const pin = String(inp.value || '').replace(/\D/g, '');
-    if(pin.length < 5){ if(er) er.textContent = ERR.pw || 'PIN لکھیں'; return; }
-    uaBizBusy = true; busy(1); if(er) er.textContent = '';
-    const id = (typeof mcsSidSrv === 'function' ? mcsSidSrv(o.sid) : o.sid);
-    let r = null; try{ r = await api({ op:'login', id, pw: pin }); }catch(e){}
-    uaBizBusy = false; busy(0);
-    if(!r || !r.ok){ if(er) er.textContent = (r && (ERR[r.reason] || r.reason)) || ERR.net || 'انٹرنیٹ نہیں ہے'; try{ inp.value = ''; inp.focus(); }catch(e){} return; }
-    uaClearOthers('user'); done(r);
-  };
-  /* MCS1411SA411: لاگ آؤٹ کے بعد "خوش آمدید" صفحہ — اپنا MCS نمبر نظر آئے اور صرف 6 ہندسوں کا PIN مانگے (سائن اپ صفحہ دوبارہ نہ کھلے) */
-  function uwMyPk(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); return o && o.sid ? o : null; }catch(e){ return null; } }
-  function uwCss(){
-    if($('uwCss')) return;
-    const s = document.createElement('style'); s.id = 'uwCss';
-    s.textContent = `#uaOv .uwCard{margin-top:14px;border-radius:26px;padding:22px 18px 18px;text-align:center;color:#fff;background:linear-gradient(160deg,#0f766e 0%,#0d3b66 55%,#0f1f45 100%);box-shadow:0 18px 48px rgba(13,59,102,.35);border:2px solid #fde68a}
-#uaOv .uwHi{font-size:15px;font-weight:700;color:#fde68a;letter-spacing:.3px}
-#uaOv .uwHi u{display:block;text-decoration:none;font-family:MCSDigits,"Jameel Noori Nastaleeq Kasheeda","Jameel Noori Nastaleeq Regular",serif;font-size:24px;line-height:1.7;direction:rtl;margin-top:2px}
-#uaOv .uwName{font-size:20px;font-weight:800;margin:6px 0 2px;word-break:break-word}
-#uaOv .uwLbl{font-size:12.5px;font-weight:700;color:#bfdbfe;margin-top:14px;letter-spacing:.3px}
-#uaOv .uwLbl u{display:block;text-decoration:none;font-family:MCSDigits,"Jameel Noori Nastaleeq Kasheeda","Jameel Noori Nastaleeq Regular",serif;font-size:17px;line-height:1.7;direction:rtl;color:#e0f2fe}
-#uaOv .uwId{margin:8px auto 0;background:rgba(255,255,255,.12);border:1.5px solid rgba(253,230,138,.7);border-radius:18px;padding:12px 8px;font:900 clamp(22px,7.4vw,32px) Arial,sans-serif;letter-spacing:1.5px;color:#fff;overflow-wrap:anywhere;direction:ltr}
-#uaOv .uwPinRow{position:relative;margin:10px auto 0;max-width:300px}
-#uaOv .uwPin{width:100%;box-sizing:border-box;height:62px;border-radius:18px;border:2px solid #fde68a;background:#fff;color:#0b2f8f;text-align:center;font:900 30px Arial,sans-serif;letter-spacing:.42em;padding:0 44px 0 calc(44px + .42em);outline:none}
-#uaOv .uwPin::placeholder{letter-spacing:.3em;color:#94a3b8}
-#uaOv .uwEye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:40px;height:40px;border:0;background:transparent;font-size:20px;color:#475569}
-#uaOv .uwCard .uaErr{color:#fecaca;margin-top:10px}
-#uaOv .uwCard .uaBtn{margin-top:12px}
-#uaOv .uwLinks{display:flex;justify-content:space-between;gap:10px;margin-top:14px;font-size:13.5px}
-#uaOv .uwLinks a{color:#bfdbfe;text-decoration:underline;cursor:pointer;font-weight:700}
-html body #uaOv .uwCard u,html body #uaOv .uwLinks span{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif !important}
-#uaOv .uwMsg{background:#fef3c7;color:#78350f;border-radius:12px;padding:8px 10px;font-weight:800;font-size:14px;margin-bottom:6px}`;
-    document.head.appendChild(s);
-  }
   window.uaWelcome = function(msg){
     const o = uwMyPk(); if(!o) return uaLogin(msg);
     uwCss();
@@ -18318,9 +18258,8 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     nomatch: 'Birth year or mobile digits do not match — پیدائش کا سال یا موبائل کے ہندسے نہیں ملے',
     agent: 'Agent mobile or PIN is wrong — ایجنٹ کا موبائل یا PIN غلط ہے'
   });
-  const lgRole = () => { let r = ls.get('mcsLoginRole2'); if(!r) r = ls.get('mcsLoginRole') === 'dev' ? 'admin' : 'user'; r = LG_ROLES.some(x => x[0] === r) ? r : 'user';
-    if(r === 'user' && !window.__lgUserPicked){ try{ if(!lgOther && uwMyPk()) r = 'reg'; }catch(e){} }   /* MCS1811WE545: صفحہ اور LOGIN بٹن ایک ہی انتخاب — فون میں MCS نمبر ہو تو Registered User */
-    return r; };
+  /* MCS1911TH568: ڈراپ ڈاؤن ختم — فون میں پہچان ہو تو سیدھا MCS نمبر + PIN؛ پہلی بار صرف Sign Up */
+  const lgRole = () => { try{ if(lgOther) return 'any'; if(uwMyPk()) return 'reg'; if(ls.get('mcsLastAgMob')) return 'agent'; if(uaAdmGmail()) return 'admin'; }catch(e){} return 'new'; };
   let lgOther = false, lgBusy = false;
   const lgPk = () => (lgOther ? null : uwMyPk());
   const lgMobFmt = m => { try{ return mcsMobFmt(m); }catch(e){ return String(m || ''); } };
@@ -18376,7 +18315,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   window.uaSetRole = function(r){ window.__lgUserPicked = (r === 'user'); r = r === 'dev' ? 'admin' : (r === 'biz' ? 'reg' : r); if(!LG_ROLES.some(x => x[0] === r)) r = 'user'; ls.set('mcsLoginRole2', r); ls.set('mcsLoginRole', r === 'admin' ? 'dev' : 'biz'); lgOther = false; uaLogin(); };
   window.lgUseOther = function(){ lgOther = true; uaLogin(); };
   window.lgPinIn = function(el){
-    const adm = lgRole() === 'admin' || !!uaAdmGmail();   /* ایڈمن فون پر حروف والا کی بورڈ — پاس ورڈ ABC ہو سکتا ہے */
+    const adm = lgRole() === 'admin' || lgRole() === 'any' || !!uaAdmGmail();   /* ایڈمن فون پر حروف والا کی بورڈ — پاس ورڈ ABC ہو سکتا ہے */
     if(!adm){ const v = nd(el.value).slice(0, 6); if(el.value !== v) el.value = v; }
     lgErr('');
     const v = nd(el.value);
@@ -18457,11 +18396,11 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     if(lgBusy) return;
     { const ov = $('uaOv'); if(ov && !ov.classList.contains('on')) return; }   /* MCS1811WE545: 6 ہندسوں پر خود لاگ اِن ہو چکا ہو تو Enter دوبارہ نہ بھیجے */
     const role = lgRole();
-    if(role === 'user') return uaGuest();
+    if(role === 'new') return;
     const raw = String(($('uaPw') || {}).value || ''), idv = String((($('uaId') || {}).value) || '').trim();
     lgErr(''); lgBusy = true; busy(1);
     try{
-      if(role === 'admin'){
+      if(role === 'admin' || /@/.test(idv)){
         const email = (lgOther ? '' : uaAdmGmail()) || idv.toLowerCase();
         if(!email || !raw){ lgErr('adm'); return; }
         if(!(await lgAdminSignIn(email, raw)) && !$('uaErr').textContent) lgErr('adm');
@@ -18484,7 +18423,13 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       if(!who){ lgErr('who'); return; }
       if(pin.length < 5){ lgErr('pw6'); return; }
       const r = await api({ op:'login', id: (typeof mcsSidSrv === 'function' ? mcsSidSrv(who) : who), pw: pin });
-      if(!r || !r.ok){ lgErr((r && r.reason) || 'net'); const p = $('uaPw'); if(p){ p.value = ''; p.focus(); } return; }
+      if(!r || !r.ok){
+        if(r && r.reason === 'login'){   /* ایک ہی خانہ: رجسٹرڈ نہ نکلے تو ایجنٹ، پھر ایڈمن آزمائیں */
+          const agD = role === 'any' ? ((nd(idv).length >= 10 && !/mcs/i.test(idv)) ? nd(idv) : '') : nd(ls.get('mcsLastAgMob') || '');
+          if(agD.length >= 10){ if(await lgAgentSignIn(agD, pin)) return; if($('uaErr').textContent) return; }
+          const am2 = uaAdmGmail(); if(am2 && await lgAdminSignIn(am2, raw)) return;
+        }
+        lgErr((r && r.reason) || 'net'); const p = $('uaPw'); if(p){ p.value = ''; p.focus(); } return; }
       try{ const c = $('lgChip'), sid = r.user && (r.user.sid || r.user.id); if(c && sid){ const was = c.style.display !== 'none' && c.textContent === lgSidFmt(sid); c.textContent = lgSidFmt(sid); c.style.display = 'table'; c.classList.add('pop'); if(!was) await new Promise(res => setTimeout(res, 350)); } }catch(e){}   /* MCS1811WE545: نمبر پہلے سے دکھ رہا ہو تو انتظار نہیں */   /* سرپرائز: اوپر MCS نمبر ظاہر */
       lgOther = false; uaClearOthers('user'); done(r);
     } finally { lgBusy = false; busy(0); }
@@ -18510,7 +18455,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   window.uaSignup = function(){
     lgCss(); const cy = new Date().getFullYear();
     show(`${lgHead()}<div class="uaCard">
-      <div class="uaHd"><i>${IC.add}</i><h2>Sign Up</h2></div><div class="uaSub">Create a new account to join My City Shines</div>
+      <div class="uaHd"><i>${IC.add}</i><h2>Sign Up</h2></div><div class="uaSub">Enter your details</div>
       ${lgLbl('Full Name')}${lgField('uaName', 'user', 'Enter your full name', { ac:'name' })}
       ${lgLbl('Mobile Number')}${lgField('uaMob', 'phone', '03XXXXXXXXX', { im:'tel', ac:'tel' })}
       ${lgLbl('Select District')}<label class="uaF" data-noen>${IC.pin}<select id="uaDist" class="lgSel" onchange="lgDistChg(this)">${distOpts('').replace('ضلع منتخب کریں — Select District', 'Select District')}</select></label>
@@ -18520,8 +18465,10 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       ${lgLbl('Confirm 6-digit PIN')}${lgField('uaPw3', 'lock', '••••••', { type:'password', im:'numeric', ac:'new-password' })}
       <label class="uaChk"><input type="checkbox" id="uaAgree"><span>I agree to the <a href="privacy.html#terms" target="_blank">Terms &amp; Conditions</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>.</span></label>
       <div class="uaErr" id="uaErr"></div>
-      <button class="uaBtn bG" onclick="uaDoSignup()">${IC.add}CREATE ACCOUNT</button>
-      <div class="uaFoot">Already have an account? &nbsp;<a onclick="uaLogin()" style="text-decoration:underline">Log in</a></div></div>`);
+      <button class="uaBtn bG" onclick="uaDoSignup()">${IC.add}SIGN UP</button>
+      <button type="button" class="uaBtn bX" onclick="uaGuest()">${IC.user}Continue as Guest</button>
+      <div class="uaSub" style="font-size:12.5px;margin:2px 0 6px" data-noen>بغیر اکاؤنٹ کے ایپ دیکھیں اور کال کریں</div>
+      ${lgRole() === 'new' ? '<div class="uaFoot" style="font-size:12px;opacity:.75"><a onclick="lgUseOther()" style="text-decoration:underline">MCS ID سے داخل ہوں</a></div>' : '<div class="uaFoot">Already have an account? &nbsp;<a onclick="uaLogin()" style="text-decoration:underline">Log in</a></div>'}</div></div>`);
     ['uaPw2', 'uaPw3'].forEach(i => { const p = $(i); if(p){ p.maxLength = 6; p.addEventListener('input', () => { const v = nd(p.value).slice(0, 6); if(p.value !== v) p.value = v; lgErr(''); }); } });
     const p3 = $('uaPw3'); if(p3) p3.addEventListener('keydown', e => { if(e.key === 'Enter') uaDoSignup(); });
     gPend = null;
