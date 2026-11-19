@@ -4252,7 +4252,6 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
       <div class="backup-card" id="adminPanelBox" style="display:none;">
         <div class="backup-card-title">🛡️ زیر منظوری اندراجات</div>
         <div id="pendingApprovalsWrap"></div>
-        <button class="btn block" style="margin-top:10px;background:linear-gradient(135deg,#7c3aed,#4c1d95);color:#fff" onclick="aaOpen()">👤 Account Access <small>— ممبرشپ کی مدت دیں</small></button>
         <button class="btn block" style="margin-top:8px;background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff" onclick="pfPendOpen()">⏳ نئے کاروبار کی منظوری <b id="pfPendN"></b> <small>— دکانداروں کی خود بنائی</small></button>
         <button class="btn block" style="margin-top:10px;background:linear-gradient(135deg,#0f766e,#0d3b66);color:#fff" onclick="agAdminOpen()">🤝 ایجنٹ اور ریفرل کوڈ <small id="agAdminCount"></small></button>
         <button class="btn block secondary" style="margin-top:10px;" onclick="mcsLogoutAll()">لاگ آؤٹ</button>
@@ -4768,10 +4767,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH551";
+const APP_VERSION = "MCS1911TH552";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH552": "Removed the in-app «Account Access — give / extend membership» page (activation only from the Help Desk)",
   "MCS1911TH551": "My Account: new ID card (Account ID, Full Name, Agent ID) + Personal and Referral Registered Business lists with Subscription IDs + Invite / View My Referrals",
   "MCS1911TH550": "Test mode: activation from Help Desk now reaches the phone — business goes live with congratulations and dates • Help Desk shows the real business type",
   "MCS1911TH549": "Each category has its own icon on the business card: 🏪 Business, 👔 Professional, 🎓 Education, 🏥 Healthcare, 🏛️ Government, 🤝 Organization, 📌 Other",
@@ -6294,7 +6294,9 @@ function adRequestSend(){
 }
 /* ---- ایڈمن: 👤 Account Access — ہیلپ ڈیسک کا پیغام پیسٹ → ممبرشپ کی مدت (prof.until، /padmin) ---- */
 let aaCur = null;
-function aaOpen(){
+/* MCS1911TH552 (مالک کا حکم — «یہ صفحہ کیوں آ رہا ہے، پلے اسٹور کا خطرہ»): ایپ کے اندر ممبرشپ دینے / بڑھانے کا صفحہ ختم — ایکٹیویشن صرف ہیلپ ڈیسک «✅ Activate business» سے */
+function aaOpen(){ try{ showToast('Activation is done only from the Help Desk — Activate business'); }catch(e){} }
+function aaOpenOld552(){
   agModal(`<div class="ag-hd">👤 Account Access <small>ممبرشپ کی مدت دیں / بڑھائیں</small></div>
     <div class="ag-f">
       <textarea id="aaPaste" rows="3" placeholder="📋 ہیلپ ڈیسک سے کاپی کی ہوئی تفصیل یہاں پیسٹ کریں — ممبرشپ، نام، نمبر، Gmail خود" oninput="aaFill(this.value)"></textarea>
@@ -13592,7 +13594,7 @@ function ptOpen(editProf, prev){
     const G = {
       tools: [['🎨','کسی بھی کاروبار کا صفحہ','تلاش ← 🎨 Design / ایڈٹ','abeOpen'],['🔤','کارڈ کی لکھائی','کاروبار چنیں ← اس کے کارڈ پر 🔤','cuOpen'],['🧪','ٹیسٹ موڈ','نئے گاہک کی طرح آزمائیں','mxTestGo'],['⎋','لاگ آؤٹ','','mcsLogoutAll'],['📢','اشتہار','✏️ ہر اشتہار پر ایڈیٹر','adOpenAdmin']],
       day: [['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['❓','غیر مختص','کیٹگری بدلیں','unOpen'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
-      biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['👤','Account Access','مدت دیں','aaOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen']],
+      biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen']],
       cod: [['👥','ایڈمنز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','ایڈمن پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
       rep: [['📊','سرور کا استعمال','Firebase / Cloudflare — آج کتنا ٪','usOpen'],['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
       more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen'],['🗂️','کیٹگری / امپورٹ','ایڈمن پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel'],['⎋','لاگ آؤٹ','','mcsLogoutAll','', 'red']]
@@ -14748,7 +14750,7 @@ async function agWaFinish(rec, o){
       <div class="ag-codeL">ریفرل کوڈ</div><div class="ag-code" dir="ltr" style="font-size:22px" onclick="agCopy('${escapeAttr(a.code)}')">${escapeHtml(a.code)} <small>📋</small></div>
       <div class="ag-codeL">🔑 PIN</div><div class="ag-code" dir="ltr" onclick="agCopy('${escapeAttr(a.pin)}')">${escapeHtml(a.pin)} <small>📋</small></div>
       <a class="btn block ag-send" style="text-align:center;margin-top:8px" target="_blank" rel="noopener" href="https://wa.me/${escapeAttr(a.phone)}?text=${encodeURIComponent(msg)}">💬 ایجنٹ کو واٹس ایپ پر بھیجیں</a>`);
-  }catch(x){ agModal(`<div class="ag-st">⚠️ کاروبار محفوظ ہو گیا، مگر آگے کا کام نہیں ہوا: ${escapeHtml(x.message||'')}<br>کنٹرول پینل ← 👤 Account Access اور «➕ خود ایجنٹ بنائیں» سے ہاتھ سے مکمل کریں۔</div>`); }
+  }catch(x){ agModal(`<div class="ag-st">⚠️ کاروبار محفوظ ہو گیا، مگر آگے کا کام نہیں ہوا: ${escapeHtml(x.message||'')}<br>ہیلپ ڈیسک ← «✅ Activate business» اور «➕ خود ایجنٹ بنائیں» سے مکمل کریں۔</div>`); }
 }
 async function agAdminOpen(){
   agModal('<div class="ag-st">⏳ لوڈ ہو رہا ہے…</div>');
