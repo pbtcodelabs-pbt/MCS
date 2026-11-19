@@ -242,3 +242,4 @@
 - **MCS1911TH557 (مالک کا حکم، ہیلپ ڈیسک #310):** ایجنٹ کا «Forgot PIN ?» اب ہیلپ ڈیسک نہیں کھولتا — `uaAgForgot`: موبائل کے آخری 3 ہندسے (ایپ میں ملاتی ہے) + پیدائش کا سال + New / Confirm PIN → سرور `/pplogin` `op:forgot role:agent` (ppyob سے سال، دن میں 5 غلط = روک) → سیدھا لاگ اِن؛ PIN خانوں میں 🙈 کی جگہ اصل آنکھ کا SVG (`#mcsEye557`، `data-on`)۔
 - **MCS1911TH558:** Forgot PIN کا سال سرور اب فارم کی تاریخِ پیدائش سے بھی لیتا ہے (AIO `mcsYobOf`)؛ ایجنٹ صفحے پر «Birth Year (from your date of birth)»، `noagent` پیغام۔
 - 19 Nov 2026: CLAUDE.md — reply opening line changed to the owner's new sentence.
+- **MCS1911TH559 (مالک کا حکم):** ایڈمن لاگ اِن پر «Forgot password ?» (`lgAdmForgot`) — اسی ایڈمن Gmail پر فائربیس کا محفوظ ری سیٹ لنک (`sendPasswordResetEmail`)؛ Gmail سے نیا پاس ورڈ، پھر LOGIN۔

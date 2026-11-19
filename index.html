@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH558";
+const APP_VERSION = "MCS1911TH559";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH559": "Admin login: «Forgot password ?» sends a secure reset link to the admin Gmail; agents AG001 / AG002 / AG003 open again",
   "MCS1911TH558": "Forgot PIN: the birth year is checked from the date of birth you filled in the form (users and agents) — 4 digits of the year only",
   "MCS1911TH557": "Agent «Forgot PIN»: no Help Desk — last 3 digits of mobile + birth year, then New PIN / Confirm PIN (with a real eye icon to show / hide)",
   "MCS1911TH556": "Smart search: type a category name and that category shows on top; MCS number, name, any part of the shop name, any part of a mobile number (all saved numbers), any part of the address / city (e.g. Fateh Pur, 214, 93)",
@@ -17200,7 +17201,7 @@ if('serviceWorker' in navigator){
     onSnapshot, query, where, serverTimestamp, getDocs, getDoc, writeBatch, getDocsFromServer
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
   import {
-    initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, signInWithEmailAndPassword, signOut, onAuthStateChanged
+    initializeAuth, indexedDBLocalPersistence, browserLocalPersistence, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
   const firebaseConfig = {
@@ -17230,7 +17231,7 @@ if('serviceWorker' in navigator){
     window.MCSFirebase = {
       db, auth, collection, addDoc: aD, doc, setDoc: sD, updateDoc: uD, deleteDoc: dD,
       onSnapshot: oS, query, where, serverTimestamp, getDocs: gDs, getDoc: gD, writeBatch: wB, getDocsFromServer: async (...a) => { const x = await getDocsFromServer(...a); cR(x.size); return x; },   /* MCS1611MO466 */
-      signInWithEmailAndPassword, signOut, onAuthStateChanged
+      signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail   /* MCS1911TH559: ایڈمن «Forgot password» */
     };
     window.dispatchEvent(new Event('mcs-firebase-ready'));
   }catch(e){ /* no internet on first load, or SDK blocked — app keeps working fully offline */ }
@@ -18400,7 +18401,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     }
     if(role === 'reg') links = `<div class="lgLinks"><a onclick="uaForgot()">Forgot PIN ?</a><a onclick="uaSignup()">New? Create account</a></div>${pk ? `<div class="lgLinks c"><a onclick="lgUseOther()">Use another account / <span data-noen>دوسرا اکاؤنٹ</span></a></div>` : ''}`;
     else if(role === 'agent') links = `<div class="lgLinks"><a onclick="uaAgForgot()">Forgot PIN ?</a>${agM ? '<a onclick="lgUseOther()">Other agent</a>' : '<span></span>'}</div>`;
-    else if(role === 'admin' && admG) links = `<div class="lgLinks c"><a onclick="lgUseOther()">Other Gmail / <span data-noen>دوسرا Gmail</span></a></div>`;
+    else if(role === 'admin') links = `<div class="lgLinks${admG ? '' : ' c'}"><a onclick="lgAdmForgot()">Forgot password ?</a>${admG ? `<a onclick="lgUseOther()">Other Gmail / <span data-noen>دوسرا Gmail</span></a>` : ''}</div>`;   /* MCS1911TH559 */
     const dd = `<div class="lgLbl">Login As</div><div class="lgDd" id="lgDd"><button type="button" class="lgDdB" onclick="lgDdTog(event)">${LGI[role]}<span>${rl[1]}</span><i class="cv">${LGI.chev}</i></button><div class="lgDdL">${LG_ROLES.map(x => `<button type="button" class="${x[0] === role ? 'on' : ''}" onclick="uaSetRole('${x[0]}')">${LGI[x[0]]}<span>${x[1]} <u data-noen>${x[2]}</u></span>${x[0] === role ? LGI.check : ''}</button>`).join('')}</div></div>`;
     const body = role === 'user'
       ? `${dd}<div class="uaErr" id="uaErr"></div><button class="uaBtn bB lgBig" onclick="lgGo()">${IC.login}LOGIN</button><div class="lgLinks c"><a onclick="uaSignup()">New? Create account / <span data-noen>نیا اکاؤنٹ بنائیں</span></a></div>`
@@ -18412,6 +18413,19 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   };
   window.uaWelcome = function(msg){ return uaLogin(msg); };
   window.uaEnter = function(msg){ return uaLogin(msg); };
+  /* MCS1911TH559 (مالک کا حکم): ایڈمن «Forgot password ?» — اسی Gmail پر گوگل (فائربیس) کا محفوظ لنک؛ Gmail کھول کر لنک سے نیا پاس ورڈ (آنکھ والے خانے میں)، پھر یہیں LOGIN */
+  window.lgAdmForgot = async function(){
+    if(lgBusy) return;
+    const email = String((lgOther ? '' : uaAdmGmail()) || (($('uaId') || {}).value) || '').trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ lgErr('Write your admin Gmail first, then tap «Forgot password ?» — پہلے ایڈمن Gmail لکھیں'); try{ $('uaId').focus(); }catch(e){} return; }
+    const FB = window.MCSFirebase; if(!(FB && FB.sendPasswordResetEmail)){ lgErr('net'); return; }
+    lgBusy = true; busy(1); let ok = false;
+    try{ await FB.sendPasswordResetEmail(FB.auth, email); ok = true; }catch(e){ ok = /user-not-found|invalid-email/.test(String(e && e.code)) ? false : null; }
+    finally { lgBusy = false; busy(0); }
+    const el = $('uaErr');
+    if(ok){ if(el){ el.style.color = '#15803d'; el.innerHTML = '<div dir="ltr">✅ Reset link sent to <b>' + esc(email) + '</b> — open Gmail, tap the link, set a new password, then LOGIN here</div><div dir="rtl" data-noen>Gmail میں آیا لنک کھول کر نیا پاس ورڈ لگائیں، پھر یہاں LOGIN کریں</div>'; setTimeout(() => { try{ el.style.color = ''; }catch(_){} }, 20000); } }
+    else lgErr(ok === null ? 'net' : 'This Gmail is not an admin account — یہ Gmail ایڈمن نہیں');
+  };
   async function lgAdminSignIn(email, secret){
     const FB = window.MCSFirebase;
     if(!(FB && FB.signInWithEmailAndPassword)){ lgErr('net'); return false; }
