@@ -243,3 +243,4 @@
 - **MCS1911TH558:** Forgot PIN کا سال سرور اب فارم کی تاریخِ پیدائش سے بھی لیتا ہے (AIO `mcsYobOf`)؛ ایجنٹ صفحے پر «Birth Year (from your date of birth)»، `noagent` پیغام۔
 - 19 Nov 2026: CLAUDE.md — reply opening line changed to the owner's new sentence.
 - **MCS1911TH559 (مالک کا حکم):** ایڈمن لاگ اِن پر «Forgot password ?» (`lgAdmForgot`) — اسی ایڈمن Gmail پر فائربیس کا محفوظ ری سیٹ لنک (`sendPasswordResetEmail`)؛ Gmail سے نیا پاس ورڈ، پھر LOGIN۔
+- **MCS1911TH560 (مالک کا حکم، ہیلپ ڈیسک #313):** لاگ اِن پیج پر «🎬 Intro video» (`mcsIntroVideo` — ہیلپ ڈیسک کی `media/mcs-intro-ur.mp4`: چلائیں / ڈاؤن لوڈ / شیئر) اور «💬 Ask us» (`mcsAskUs` → ہیلپ ڈیسک، صرف چیٹ، جواب ایپ میں) — `#mcsLgx560`۔ ایجنٹ کمیشن والی ویڈیو ایپ کے اندر نہیں۔

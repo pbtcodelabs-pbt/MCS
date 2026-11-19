@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH559";
+const APP_VERSION = "MCS1911TH560";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH560": "Login page: «🎬 Intro video» (play / download / share) and «💬 Ask us» — questions by chat only, answer inside the app",
   "MCS1911TH559": "Admin login: «Forgot password ?» sends a secure reset link to the admin Gmail; agents AG001 / AG002 / AG003 open again",
   "MCS1911TH558": "Forgot PIN: the birth year is checked from the date of birth you filled in the form (users and agents) — 4 digits of the year only",
   "MCS1911TH557": "Agent «Forgot PIN»: no Help Desk — last 3 digits of mobile + birth year, then New PIN / Confirm PIN (with a real eye icon to show / hide)",
@@ -27975,6 +27976,44 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
 (function(){ function wrap(n, shown){ const f = window[n]; if(typeof f !== 'function' || f.__e) return; const w = function(id, b){ const r = f.apply(this, arguments); try{ const i = document.getElementById(id); if(b && i) b.dataset.on = shown(i) ? '1' : '0'; }catch(e){} return r; }; w.__e = 1; window[n] = w; }
   function go(){ wrap('uaEye', i => i.type !== 'password'); wrap('uaEyeA', i => !i.classList.contains('uaMask')); }
   go(); setTimeout(go, 1500); setTimeout(go, 5000);
+})();
+</script>
+<style id="mcsLgx560">
+/* MCS1911TH560 (مالک کا حکم): لاگ اِن پیج پر «🎬 Intro video» + «💬 Ask us» (فون نہیں — صرف چیٹ، جواب ایپ ہی میں) */
+#uaOv .lgx560{display:flex;gap:8px;margin-top:10px}
+#uaOv .lgx560 button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:14px;padding:10px 6px;font:800 15px 'Segoe UI',Selawik,Arial,sans-serif;cursor:pointer;border:0;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+#uaOv .lgx560 .v{background:linear-gradient(135deg,#0f766e,#0d3b66)}#uaOv .lgx560 .q{background:linear-gradient(135deg,#7c3aed,#4c1d95)}
+#lgVid560{position:fixed;inset:0;z-index:2147483600;background:rgba(2,6,23,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;gap:10px}
+#lgVid560 video{width:min(100%,420px);max-height:76vh;border-radius:16px;background:#000}
+#lgVid560 .r{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#lgVid560 .r a,#lgVid560 .r button{border:0;border-radius:12px;padding:10px 16px;font:800 15px 'Segoe UI',Selawik,Arial,sans-serif;color:#fff;background:#16a34a;text-decoration:none;cursor:pointer}
+#lgVid560 .r .x{background:#475569}
+</style>
+<script id="mcsLgx560js">
+(function(){
+  const VURL = 'https://pbtcodelabs-pbt.github.io/help/media/mcs-intro-ur.mp4', VPOST = 'https://pbtcodelabs-pbt.github.io/help/media/mcs-intro-ur.jpg', VNAME = 'My-City-Shines-Intro-Urdu.mp4';
+  let vFile = null;
+  window.mcsIntroVideo = function(){
+    let o = document.getElementById('lgVid560'); if(o) o.remove();
+    o = document.createElement('div'); o.id = 'lgVid560';
+    o.innerHTML = '<video src="' + VURL + '" poster="' + VPOST + '" controls autoplay playsinline></video><div class="r"><a href="' + VURL + '" download="' + VNAME + '">⬇️ Download</a><button type="button" class="s">📤 Share</button><button type="button" class="x">✕ Close</button></div>';
+    document.body.appendChild(o);
+    o.querySelector('.x').onclick = () => o.remove();
+    o.querySelector('.s').onclick = async function(){
+      const b = this, txt = 'My City Shines — your city, your business, your identity\nhttps://play.google.com/store/apps/details?id=com.pbtcodelabs.mycityshines';
+      try{
+        if(!vFile){ b.textContent = '⏳ …'; const bl = await (await fetch(VURL)).blob(); vFile = new File([bl], VNAME, { type: 'video/mp4' }); b.textContent = '📤 Share now'; return; }
+        if(navigator.canShare && navigator.canShare({ files: [vFile] })) await navigator.share({ files: [vFile], text: txt });
+        else if(navigator.share) await navigator.share({ text: txt + '\n' + VURL });
+      }catch(e){ if(!vFile) b.textContent = '📤 Share'; }
+    };
+  };
+  window.mcsAskUs = function(){ try{ PBTHelp.open({ app: 'MCS', type: 'ask' }); }catch(e){ try{ openHelpDesk(); }catch(_){} } };
+  function add(){ const c = document.querySelector('#uaOv .uaCard.uaLg'); if(!c || c.querySelector('.lgx560')) return;
+    c.insertAdjacentHTML('beforeend', '<div class="lgx560"><button type="button" class="v" onclick="mcsIntroVideo()">🎬 Intro video</button><button type="button" class="q" onclick="mcsAskUs()">💬 Ask us</button></div>'); }
+  function hook(){ const f = window.uaLogin; if(typeof f !== 'function' || f.__x560) return; const w = function(){ const r = f.apply(this, arguments); try{ add(); }catch(e){} return r; }; w.__x560 = 1; window.uaLogin = w; }
+  hook(); setTimeout(hook, 1500); setTimeout(hook, 5000);
+  setInterval(() => { try{ const ov = document.getElementById('uaOv'); if(ov && ov.classList.contains('on')) add(); }catch(e){} }, 1500);
 })();
 </script>
 </body>
