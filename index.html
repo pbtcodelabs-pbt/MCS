@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH564";
+const APP_VERSION = "MCS1911TH565";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH565": "Business lists: smooth touch and scroll — the list no longer rebuilds itself while your finger is on the screen",
   "MCS1911TH564": "Welcome card after registration fits one screen (nothing cut at top or bottom) with fresh colours",
   "MCS1911TH563": "Bad words list is hidden — admin opens it by tapping the «My Chat» title 7 times",
   "MCS1911TH562": "My Chats → Customer Help → 🚫 Bad words: see the full built-in list and add / remove your own words right there",
@@ -28148,6 +28149,44 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
 #mc2Bw .bw-c button{border:0;background:rgba(127,29,29,.15);color:#7f1d1d;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;padding:0}
 #mc2Bw .bw-e{color:#94a3b8;font-size:13px}
 </style>
+<script id="mcsLag565">
+/* MCS1911TH565 (مالک کا حکم، ہیلپ ڈیسک #316): فہرست کے صفحے پر ٹچ دیر سے / سکرول اچھلنا / آئیکن نہ کھلنا —
+   وجہ: سرور / فائربیس سے ہر نیا ریکارڈ آتے ہی پوری فہرست (renderServiceList / renderDoctorList) دوبارہ بنتی تھی، عین اس وقت جب انگلی اسکرین پر ہو۔
+   اب: صارف چھو / سکرول کر رہا ہو تو پس منظر والی دوبارہ بناوٹ رک کر انگلی ہٹنے کے بعد ایک ہی بار؛ تلاش لکھنے / صفحہ کھلنے پر فوراً؛ سکرول کی جگہ وہی رہے؛ ایک جیسا نتیجہ ہو تو صفحہ نہیں چھیڑا جاتا۔ */
+(function(){
+  let touchAt = 0, down = false, typeAt = 0;
+  const mark = () => { touchAt = Date.now(); };
+  ['touchstart', 'pointerdown'].forEach(ev => window.addEventListener(ev, () => { down = true; mark(); }, { passive: true, capture: true }));
+  ['touchend', 'touchcancel', 'pointerup', 'pointercancel'].forEach(ev => window.addEventListener(ev, () => { down = false; mark(); }, { passive: true, capture: true }));
+  ['scroll', 'wheel', 'touchmove'].forEach(ev => window.addEventListener(ev, mark, { passive: true, capture: true }));
+  window.addEventListener('input', e => { if(e.target && /SearchBox$/.test(e.target.id || '')) typeAt = Date.now(); }, true);
+  const busy = () => down || Date.now() - touchAt < 900;
+  function wrap(name, wrapId){
+    const f = window[name]; if(typeof f !== 'function' || f.__lag) return;
+    let pend = null, tmr = 0;
+    const run = function(self, args){
+      const w = document.getElementById(wrapId), se = document.scrollingElement || document.documentElement;
+      const scr = w && w.closest('.screen'), y1 = se.scrollTop, y2 = scr ? scr.scrollTop : 0, before = w ? w.innerHTML : null;
+      const keep = w ? Array.from(w.childNodes) : null;
+      const r = f.apply(self, args);
+      try{
+        if(w && before !== null && w.innerHTML === before && keep){ w.replaceChildren(...keep); }   /* کچھ نہیں بدلا — پرانے بٹن ہی رہیں (ٹچ ضائع نہ ہو) */
+        if(Math.abs(se.scrollTop - y1) > 2) se.scrollTop = y1; if(scr && Math.abs(scr.scrollTop - y2) > 2) scr.scrollTop = y2;
+      }catch(e){}
+      return r;
+    };
+    const g = function(){
+      const args = arguments, user = Date.now() - typeAt < 600 || !document.getElementById(wrapId) || !document.getElementById(wrapId).childElementCount;
+      if(user || !busy()){ clearTimeout(tmr); pend = null; return run(this, args); }
+      pend = args; clearTimeout(tmr);
+      (function wait(){ tmr = setTimeout(() => { if(busy()) return wait(); const a = pend; pend = null; if(a) run(window, a); }, 350); })();
+    };
+    g.__lag = 1; window[name] = g;
+  }
+  function hook(){ wrap('renderServiceList', 'serviceListWrap'); wrap('renderDoctorList', 'doctorListWrap'); }
+  hook(); setTimeout(hook, 1500); setTimeout(hook, 5000);
+})();
+</script>
 </body>
 
 </html>
