@@ -4772,10 +4772,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR573";
+const APP_VERSION = "MCS2011FR574";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR574": "Lists: «Registered business», «MCS Agents» and sort buttons respond instantly again",
   "MCS2011FR573": "New login page: your photo, MCS ID, name and highest role (Admin / Agent / Registered User) — just enter the PIN • Log Out goes straight to the login page • bigger Log Out button • home no longer jumps (counts remembered, no layout shift)",
   "MCS1911TH572": "Log Out power button now sits inside the green header, centred under the clock • digital time strip removed • clock moved up slightly",
   "MCS1911TH571": "One red power Log Out button on the home header (nowhere else) • Log out always lands on the Login page • MCS ID shows by itself on this phone • Continue as Guest on Login • Back button no longer needs several presses",
@@ -28181,7 +28182,7 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
       return r;
     };
     const g = function(){
-      const args = arguments, user = Date.now() - typeAt < 600 || !document.getElementById(wrapId) || !document.getElementById(wrapId).childElementCount;
+      const ev = window.event, args = arguments, user = (ev && /^(click|input|change|keyup|keydown|submit|pointerup|touchend)$/.test(ev.type)) || Date.now() - typeAt < 600 || !document.getElementById(wrapId) || !document.getElementById(wrapId).childElementCount;   /* MCS2011FR574: بٹن دبانا (Registered / Agents فلٹر، ترتیب) = فوراً */
       if(user || !busy()){ clearTimeout(tmr); pend = null; return run(this, args); }
       pend = args; clearTimeout(tmr);
       (function wait(){ tmr = setTimeout(() => { if(busy()) return wait(); const a = pend; pend = null; if(a) run(window, a); }, 350); })();
