@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH557";
+const APP_VERSION = "MCS1911TH558";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH558": "Forgot PIN: the birth year is checked from the date of birth you filled in the form (users and agents) — 4 digits of the year only",
   "MCS1911TH557": "Agent «Forgot PIN»: no Help Desk — last 3 digits of mobile + birth year, then New PIN / Confirm PIN (with a real eye icon to show / hide)",
   "MCS1911TH556": "Smart search: type a category name and that category shows on top; MCS number, name, any part of the shop name, any part of a mobile number (all saved numbers), any part of the address / city (e.g. Fateh Pur, 214, 93)",
   "MCS1911TH555": "Speed: the app no longer hangs — no re-measuring every second, Registered / MCS Agents filters show 40 cards at a time (Show more), faster search",
@@ -18557,7 +18558,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
       <div class="uaHd"><i>${IC.lock}</i><h2 style="font-size:23px">Forgot PIN ?</h2></div><div class="uaSub">Agent — verify your details and set a new PIN.</div>
       ${agM ? `<div class="lgIdBox"><div class="t">Agent</div><div class="lgChip sm" dir="ltr">${esc(lgMobFmt(agM))}</div></div>` : lgLbl('Agent mobile number') + lgField('uaFId', 'phone', '03XXXXXXXXX', { im:'tel', ac:'username', v: m0.length >= 10 ? m0 : '' })}
       ${lgLbl('Last 3 Digits of Registered Mobile No.')}${lgField('uaL3', 'phone', 'e.g. 725', { im:'numeric', ac:'off' })}
-      ${lgLbl('Enter Birth Year')}${lgField('uaYob', 'cal', 'e.g. 1985', { im:'numeric', ac:'bday-year' })}
+      ${lgLbl('Birth Year <small>(from your date of birth, 4 digits)</small>')}${lgField('uaYob', 'cal', 'e.g. 1985', { im:'numeric', ac:'bday-year' })}
       ${lgLbl('New PIN <small>(6 Digits)</small>')}${eye('uaFNew')}
       ${lgLbl('Confirm New PIN')}${eye('uaFNew2')}
       <div class="uaErr" id="uaErr"></div>
@@ -18580,7 +18581,8 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     if(!r) return lgErr('net');
     if(!r.ok){ const M = { yob:'Mobile number or year of birth does not match — موبائل یا پیدائش کا سال درست نہیں', wait:'Too many wrong tries — try again tomorrow · کئی غلط کوششیں، کل دوبارہ کوشش کریں',
         newpin:'Choose a stronger PIN (not 123456 / 111111) — آسان PIN نہیں چلے گا', taken:'This PIN is used by another agent — choose a different PIN · دوسرا PIN چنیں',
-        noyob:'Year of birth is not saved for this agent yet — please contact Help Desk once · پیدائش کا سال محفوظ نہیں، ایک بار ہیلپ ڈیسک سے رابطہ کریں' };
+        noyob:'No date of birth on this account yet — please contact Help Desk once · تاریخِ پیدائش محفوظ نہیں، ایک بار ہیلپ ڈیسک سے رابطہ کریں',
+        noagent:'This mobile number is not an active agent · یہ نمبر فعال ایجنٹ نہیں' };
       return lgErr(M[r.reason] || r.reason || 'net'); }
     try{ showToast('✅ New PIN saved — نیا PIN محفوظ ہو گیا'); }catch(e){}
     busy(1); try{ if(!(await lgAgentSignIn(d, pw))) uaLogin(); } finally { busy(0); }
