@@ -229,3 +229,4 @@
 - MCS1811WE546 (18 Nov 2026, #298): reloadWhenSafe no longer waits forever on the open login screen (update applies unless something typed); api()/agent fetch 12–15s timeout so login never hangs.
 - MCS1811WE547 (18 Nov 2026, #298): login jitter root fix — uaKbFit no longer follows visualViewport scroll/offsetTop (feedback loop), height only on 60px+ change, no uaCity hide / 55vh padding on keyboard, single reveal.
 - MCS1911TH548 (19 Nov 2026, #300): business card wizard — CLS_MASTER_X adds Education / Healthcare / Government / Organization / Other categories + 108 bilingual subtypes (were empty); Profile Type «➕ Other — write your own» (saved to store.clsCat); clearer empty subtype hint.
+- MCS1911TH549 (19 Nov 2026): per-category icon (clsPtIcon / clsRecIcon) — wizard preview, agent list button, registration message; 🏪 Business, 👔 Professional, 🎓 Education, 🏥 Healthcare, 🏛️ Government, 🤝 Organization, 📌 Other, 🩺 doctor.
