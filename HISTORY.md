@@ -228,3 +228,4 @@
 - MCS1811WE545 (18 Nov 2026, #298): login role default fixed (lgRole = Registered User when MCS ID is on phone, so LOGIN/Enter work), uaKbReveal scrolls only when field hidden (no jumping), no duplicate login on Enter, shorter chip wait, SW update check every 3 min.
 - MCS1811WE546 (18 Nov 2026, #298): reloadWhenSafe no longer waits forever on the open login screen (update applies unless something typed); api()/agent fetch 12–15s timeout so login never hangs.
 - MCS1811WE547 (18 Nov 2026, #298): login jitter root fix — uaKbFit no longer follows visualViewport scroll/offsetTop (feedback loop), height only on 60px+ change, no uaCity hide / 55vh padding on keyboard, single reveal.
+- MCS1911TH548 (19 Nov 2026, #300): business card wizard — CLS_MASTER_X adds Education / Healthcare / Government / Organization / Other categories + 108 bilingual subtypes (were empty); Profile Type «➕ Other — write your own» (saved to store.clsCat); clearer empty subtype hint.
