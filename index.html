@@ -4774,10 +4774,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH565";
+const APP_VERSION = "MCS1911TH566";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH566": "Admin «Forgot password»: works for the admin Gmail only and says so; reminds to check Spam",
   "MCS1911TH565": "Business lists: smooth touch and scroll — the list no longer rebuilds itself while your finger is on the screen",
   "MCS1911TH564": "Welcome card after registration fits one screen (nothing cut at top or bottom) with fresh colours",
   "MCS1911TH563": "Bad words list is hidden — admin opens it by tapping the «My Chat» title 7 times",
@@ -18424,12 +18425,14 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     if(lgBusy) return;
     const email = String((lgOther ? '' : uaAdmGmail()) || (($('uaId') || {}).value) || '').trim().toLowerCase();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ lgErr('Write your admin Gmail first, then tap «Forgot password ?» — پہلے ایڈمن Gmail لکھیں'); try{ $('uaId').focus(); }catch(e){} return; }
+    /* MCS1911TH566: My City Shines کا ایڈمن Gmail صرف ایک (سرور MCS_ADMIN_EMAILS) — کوئی اور Gmail ہو تو گوگل لنک نہیں بھیجتا، اس لیے یہیں بتا دیں */
+    if(email !== 'pbtcodelabs@gmail.com'){ lgErr('This Gmail is not the My City Shines admin account — use the admin Gmail (p••••••••s@gmail.com) · یہ Gmail ایڈمن نہیں — ایڈمن والا Gmail لکھیں'); return; }
     const FB = window.MCSFirebase; if(!(FB && FB.sendPasswordResetEmail)){ lgErr('net'); return; }
     lgBusy = true; busy(1); let ok = false;
     try{ await FB.sendPasswordResetEmail(FB.auth, email); ok = true; }catch(e){ ok = /user-not-found|invalid-email/.test(String(e && e.code)) ? false : null; }
     finally { lgBusy = false; busy(0); }
     const el = $('uaErr');
-    if(ok){ if(el){ el.style.color = '#15803d'; el.innerHTML = '<div dir="ltr">✅ Reset link sent to <b>' + esc(email) + '</b> — open Gmail, tap the link, set a new password, then LOGIN here</div><div dir="rtl" data-noen>Gmail میں آیا لنک کھول کر نیا پاس ورڈ لگائیں، پھر یہاں LOGIN کریں</div>'; setTimeout(() => { try{ el.style.color = ''; }catch(_){} }, 20000); } }
+    if(ok){ if(el){ el.style.color = '#15803d'; el.innerHTML = '<div dir="ltr">✅ Reset link sent to <b>' + esc(email) + '</b> — open Gmail (check Spam too; sender: noreply@my-city-shines.firebaseapp.com), tap the link, set a new password, then LOGIN here</div><div dir="rtl" data-noen>Gmail میں آیا لنک کھول کر نیا پاس ورڈ لگائیں، پھر یہاں LOGIN کریں</div>'; setTimeout(() => { try{ el.style.color = ''; }catch(_){} }, 20000); } }
     else lgErr(ok === null ? 'net' : 'This Gmail is not an admin account — یہ Gmail ایڈمن نہیں');
   };
   async function lgAdminSignIn(email, secret){
