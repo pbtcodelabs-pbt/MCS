@@ -4768,10 +4768,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS1911TH550";
+const APP_VERSION = "MCS1911TH551";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS1911TH551": "My Account: new ID card (Account ID, Full Name, Agent ID) + Personal and Referral Registered Business lists with Subscription IDs + Invite / View My Referrals",
   "MCS1911TH550": "Test mode: activation from Help Desk now reaches the phone — business goes live with congratulations and dates • Help Desk shows the real business type",
   "MCS1911TH549": "Each category has its own icon on the business card: 🏪 Business, 👔 Professional, 🎓 Education, 🏥 Healthcare, 🏛️ Government, 🤝 Organization, 📌 Other",
   "MCS1911TH548": "Business card: Profile Type lists for Education, Healthcare, Government, Organization and Other • write your own type if not in the list",
@@ -21751,16 +21752,35 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     var best = null; L.forEach(function(x){ var lf = sf(function(){ return mpLeftOf(x.p); }, null); if(lf != null && (best == null || lf > best.lf)) best = {lf: lf, p: x.p}; });
     var active = !!(best && best.lf > 0);
     var h = top(ID, 'My Account', 'Personal Account &amp; Membership', '👤') + '<div class="mx-in">';
-    h += '<div class="mx-card mx-prof"><div class="mx-av" onclick="ptSelfieAsk()">' + (sv ? '<img src="' + escapeAttr(sv) + '" alt="">' : '👤') + '</div>'
-      + '<div class="mx-pi"><b>' + esc(nm) + '</b>' + (acid ? '<div class="id">Account ID: <span>' + esc(acid) + '</span></div>' : '')
-      + (function(){   /* MCS1811WE521 (مالک کا حکم): درجہ — ADMIN 1 / ADMIN 2 / MCS Agent / Registered Member / User */
-          var r = sf(ptRole, rl) || rl, ag = me && (me.pin || me.code), t, c;
-          if(r === 'dev'){ t = 'ADMIN 1'; c = 'a1'; } else if(r === 'codev'){ t = 'ADMIN 2'; c = 'a2'; }
-          else if(ag || L.some(function(x){ return sf(function(){ return agIsRec(x.p.kind, x.rec); }, false); })){ t = '🤝 MCS Agent'; c = 'ag'; }
-          else if(active || L.some(function(x){ return sf(function(){ return pfActive(x.rec); }, false); })){ t = '✅ Registered Member'; c = 'rm'; }
-          else { t = '👤 User'; c = 'us'; }
-          return '<div class="mx-role ' + c + '">' + t + '</div>'; })() + '</div>'
-      + '<button type="button" class="mx-edit" onclick="ptSelfieAsk()" aria-label="تصویر بدلیں">✏️</button></div>';
+    /* MCS1911TH551 (مالک کا حکم — تصویر والا ڈیزائن «بالکل ایسا»): اوپر تصویر + درجہ، Account ID / Full Name / Agent ID؛
+       پھر «Personal Registered Business List» اور «Referral Registered Business List» (Subscription ID + نام)، نیچے Invite / View My Referrals */
+    var rlNow = sf(ptRole, rl) || rl, agc = me && (me.pin || me.code), rT, rC;
+    if(rlNow === 'dev'){ rT = '⚙ Admin 1'; rC = 'a1'; } else if(rlNow === 'codev'){ rT = '⚙ Admin 2'; rC = 'a2'; }
+    else if(agc || L.some(function(x){ return sf(function(){ return agIsRec(x.p.kind, x.rec); }, false); })){ rT = '🤝 MCS Agent'; rC = 'ag'; }
+    else if(active || L.some(function(x){ return sf(function(){ return pfActive(x.rec); }, false); })){ rT = '✅ Member'; rC = 'rm'; }
+    else { rT = '👤 User'; rC = 'us'; }
+    var agId = rlNow === 'dev' ? 'AG001' : rlNow === 'codev' ? 'AG002' : (me && me.code ? sf(function(){ return agNormCode(me.code); }, String(me.code)) : '');
+    var subOf = function(rec, kind, p){ var k = sf(function(){ return pfKeyOf(rec, kind === 'doctor' ? 'doctor' : 'service'); }, ''), a = (k && typeof pfAct !== 'undefined' && pfAct[k]) || {}; var v = (p && p.subid) || a.subid || ''; return String(v).replace(/-/g, ''); };
+    var own = L.map(function(x){ var r = sf(function(){ return recOf(x); }, x.rec) || x.rec; return { sub: subOf(x.rec, x.p.kind, x.p), nm: r.nameEn || r.name || r.nameUr || '', ur: r.nameUr || '', on: sf(function(){ return pfActive(x.rec); }, false) }; });
+    var ownMob = {}; L.forEach(function(x){ var d = String((x.rec && x.rec.whatsapp) || '').replace(/\D/g, '').slice(-10); if(d) ownMob[d] = 1; }); { var um = String(mob || '').replace(/\D/g, '').slice(-10); if(um) ownMob[um] = 1; }
+    var myRefs = (function(){ var mine = rlNow === 'dev' ? ['ADMIN1', 'AG001'] : rlNow === 'codev' ? ['ADMIN2', 'AG002'] : (agId ? [agId] : []); if(!mine.length) return [];
+      var seen = {}; return ((store.services || []).concat(store.doctors || [])).filter(function(r){ if(!r || !r.more || !r.more.ref) return false; var a = sf(function(){ return refN(r.more.ref); }, ''), b = sf(function(){ return agNormCode(r.more.ref); }, '');
+        if(mine.indexOf(a) < 0 && mine.indexOf(b) < 0) return false; if(ownMob[String(r.whatsapp || '').replace(/\D/g, '').slice(-10)]) return false; var reg = r.mcsLive === true || r.stage === 'registered' || sf(function(){ return pfActive(r); }, false); if(!reg) return false; var k = (r.fsId || r.id); if(seen[k]) return false; seen[k] = 1; return true; })
+        .map(function(r){ var kd = store.doctors && store.doctors.indexOf(r) >= 0 ? 'doctor' : 'service'; return { sub: subOf(r, kd), nm: r.nameEn || r.name || r.nameUr || '', ur: r.nameUr || '', on: sf(function(){ return pfActive(r); }, false) }; }); })();
+    var tbl = function(cls, ic, title, rows, empty){ return '<div class="mi-box ' + cls + '"><div class="mi-bh"><i>' + ic + '</i><b>' + title + '</b><span>Total: ' + rows.length + '</span></div>'
+      + '<table class="mi-t"><thead><tr><th>S.No</th><th>Subscription ID</th><th>Business Name</th></tr></thead><tbody>'
+      + (rows.length ? rows.map(function(x, i){ return '<tr><td>' + (i + 1) + '</td><td><em data-noen="1">' + esc(x.sub || '—') + '</em></td><td data-noen="1">' + esc(x.nm) + (x.ur && x.ur !== x.nm ? '<small>' + esc(x.ur) + '</small>' : '') + '</td></tr>'; }).join('') : '<tr><td colspan="3" class="mi-empty">' + empty + '</td></tr>')
+      + '</tbody></table></div>'; };
+    h += '<div class="mi-id"><div class="mi-l"><div class="mi-ph" onclick="ptSelfieAsk()">' + (sv ? '<img src="' + escapeAttr(sv) + '" alt="">' : '<span>👤</span>') + '</div><div class="mi-rb ' + rC + '">' + rT + '</div></div>'
+      + '<div class="mi-r">'
+      + '<div class="mi-row"><i>👤</i><b>Account ID</b><u>:</u><span data-noen="1">' + esc(acid || '—') + '</span></div>'
+      + '<div class="mi-row"><i>🧑</i><b>Full Name</b><u>:</u><span class="w" data-noen="1">' + esc(nm) + '</span></div>'
+      + (agId ? '<div class="mi-row"><i>🪪</i><b>Agent ID</b><u>:</u><span data-noen="1">' + esc(agId) + '</span></div>' : '')
+      + '</div><button type="button" class="mi-ed" onclick="ptSelfieAsk()" aria-label="تصویر بدلیں">✏️</button></div>';
+    h += tbl('p', '💼', 'Personal Registered Business List', own, 'No business yet — Register your business');
+    h += tbl('r', '👥', 'Referral Registered Business List', myRefs, agId ? 'No referral business yet' : 'Become an MCS Agent to refer businesses');
+    h += '<div class="mi-btns"><button type="button" class="mi-b1" onclick="mxGo(\'' + ID + '\',\'d2AddOpen\')"><i>➕</i>Invite &amp; Register New Business</button>'
+      + '<button type="button" class="mi-b2" onclick="mxGo(\'' + ID + '\',\'' + (agId ? 'mxRefsOpen' : 'agEarnOpen') + '\')"><i>📄</i>View My Referrals</button></div>';
     if(false && L.length){   /* MCS1811WE521 (مالک کا حکم): «My Membership» کا بڑا ڈبہ ختم */
       var st = best ? (best.lf > 0 ? ['Active', ''] : ['Expired', 'r']) : (L.some(function(x){ return x.p.pend; }) ? ['Pending', 'w'] : ['Not started', 'w']);
       h += '<div class="mx-card mx-mem"><div class="mx-mb"><i>🏅</i>My<br>Membership</div><div class="mx-mr">'
@@ -21795,6 +21815,9 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     h += '<div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
     shell(ID, h);
   };
+  /* MCS1911TH551: «View My Referrals» — ایڈمن کو اپنا ریفرل (ADMIN1/ADMIN2)، ایجنٹ کو اس کا کوڈ */
+  window.mxRefsOpen = function(){ var r = sf(ptRole, ''), me = sf(agMe, {}) || {}; var c = r === 'dev' ? 'AG001' : r === 'codev' ? 'AG002' : (me.code || '');
+    if(!c){ try{ agEarnOpen(); }catch(e){} return; } if(r !== 'dev' && r !== 'codev' && typeof agOpen === 'function'){ agOpen(); return; } try{ refInfoOpen(c); }catch(e){ try{ agOpen(); }catch(e2){} } };
   var _po = window.ptOpen;
   /* MCS1211TH346 (مالک کا حکم): سائن اِن بندے کو ہمیشہ نیا انگلش «My Account» — ایرر آئے تو بھی پرانا اردو پورٹل نہیں؛
      ایجنٹ (جو سائن اِن بھی ہو) کو بھی یہی صفحہ، اور اس میں «Agent Portal» کی قطار سے ایجنٹ کا پورٹل */
@@ -27777,6 +27800,42 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
 <style id="mcsPray544css">
 /* MCS1811WE544 (مالک کا حکم): ہوم سے نمازوں کے اوقات والی پٹی ختم */
 #d2Prays,#ccPrays{display:none !important}
+</style>
+
+<style id="mcsAcc551">
+/* MCS1911TH551 (مالک کا حکم): My Account — تصویر والا ڈیزائن */
+.mx .mi-id{display:flex;align-items:center;gap:12px;direction:ltr;background:#fff;border:1.5px solid #bfdbfe;border-radius:20px;padding:12px;margin:0 0 12px;box-shadow:0 4px 14px rgba(30,64,175,.12);position:relative}
+.mx .mi-l{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:0;padding-right:12px;border-right:2px solid #cbd5e1}
+.mx .mi-ph{width:92px;height:96px;border-radius:14px;border:3px solid #1d4ed8;overflow:hidden;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:44px;cursor:pointer}
+.mx .mi-ph img{width:100%;height:100%;object-fit:cover}
+.mx .mi-rb{margin-top:-6px;position:relative;padding:3px 10px;border-radius:8px;font:900 13px/1.4 'Segoe UI',Selawik,Arial,sans-serif;color:#fff;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.mx .mi-rb.a1{background:linear-gradient(180deg,#dc2626,#991b1b)}.mx .mi-rb.a2{background:linear-gradient(180deg,#16a34a,#15803d)}.mx .mi-rb.ag{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fde047}.mx .mi-rb.rm{background:linear-gradient(180deg,#0d9488,#0f766e)}.mx .mi-rb.us{background:#64748b}
+.mx .mi-r{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.mx .mi-row{display:flex;align-items:center;gap:6px;min-width:0}
+.mx .mi-row i{flex:0 0 26px;height:26px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:14px}
+.mx .mi-row b{flex:0 0 auto;font:800 13.5px 'Segoe UI',Selawik,Arial,sans-serif;color:#0f172a;white-space:nowrap}
+.mx .mi-row u{text-decoration:none;font-weight:900;color:#0f172a}
+.mx .mi-row span{min-width:0;flex:0 1 auto;background:linear-gradient(90deg,#dbeafe,#eff6ff);color:#0b2f6b;border-radius:10px;padding:3px 10px;font:900 14.5px 'Segoe UI',Selawik,Arial,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mx .mi-row span.w{flex:1 1 auto;white-space:normal;overflow-wrap:break-word;line-height:1.3}
+.mx .mi-ed{position:absolute;top:6px;right:6px;border:none;background:none;font-size:14px;cursor:pointer;opacity:.6}
+.mx .mi-box{background:#fff;border-radius:18px;padding:8px;margin:0 0 12px;box-shadow:0 3px 12px rgba(15,23,42,.10);direction:ltr}
+.mx .mi-bh{display:flex;align-items:center;gap:8px;color:#fff;border-radius:12px;padding:8px 10px;margin-bottom:6px}
+.mx .mi-box.p .mi-bh{background:linear-gradient(90deg,#1d4ed8,#1e40af)}.mx .mi-box.r .mi-bh{background:linear-gradient(90deg,#0f766e,#0d9488)}
+.mx .mi-bh i{font-style:normal;font-size:20px}.mx .mi-bh b{flex:1;min-width:0;font:800 14.5px/1.25 'Segoe UI',Selawik,Arial,sans-serif}
+.mx .mi-bh span{flex:0 0 auto;background:#fff;color:#0f172a;border-radius:999px;padding:3px 10px;font:900 13px 'Segoe UI',Selawik,Arial,sans-serif;border-left:2px solid rgba(255,255,255,.6)}
+.mx .mi-t{width:100%;border-collapse:collapse;font:600 13px 'Segoe UI',Selawik,Arial,sans-serif;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}
+.mx .mi-t th{background:#dbeafe;color:#0f172a;font-weight:800;padding:6px 5px;border:1px solid #cbd5e1;text-align:left;white-space:nowrap}
+.mx .mi-t th:first-child,.mx .mi-t td:first-child{text-align:center;width:38px}
+.mx .mi-t td{padding:6px 5px;border:1px solid #e2e8f0;color:#0f172a;vertical-align:middle}
+.mx .mi-t td em{font-style:normal;display:inline-block;background:#dbeafe;color:#1d4ed8;font-weight:900;border-radius:8px;padding:2px 7px;white-space:nowrap}
+.mx .mi-t td small{display:block;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif;direction:rtl;text-align:left;color:#475569;font-size:13px;line-height:1.6}
+.mx .mi-t td.mi-empty{text-align:center !important;color:#64748b;padding:10px}
+.mx .mi-btns{display:flex;gap:8px;margin:0 0 14px;direction:ltr}
+.mx .mi-btns button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:16px;padding:11px 6px;font:800 12.5px/1.25 'Segoe UI',Selawik,Arial,sans-serif;cursor:pointer}
+.mx .mi-btns i{font-style:normal;font-size:17px}
+.mx .mi-b1{background:linear-gradient(180deg,#2563eb,#1e40af);color:#fff;border:none;box-shadow:0 4px 12px rgba(37,99,235,.35)}
+.mx .mi-b2{background:#fff;color:#0b2f6b;border:2px solid #1d4ed8}
+@media (max-width:370px){ .mx .mi-id{gap:8px;padding:10px} .mx .mi-l{padding-right:8px} .mx .mi-row i{flex-basis:22px;height:22px;font-size:12px} .mx .mi-ph{width:72px;height:78px} .mx .mi-row b{font-size:12.5px} .mx .mi-row span{font-size:13px;padding:2px 7px} .mx .mi-bh b{font-size:13px} .mx .mi-t{font-size:12px} }
 </style>
 </body>
 
