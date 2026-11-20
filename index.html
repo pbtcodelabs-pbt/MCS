@@ -4818,10 +4818,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR583";
+const APP_VERSION = "MCS2011FR584";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR584": "Speed: old (basic) records now live in a separate store inside the phone, so saving no longer rewrites thousands of records • lists stop re-checking every record on every scroll • Registered business / MCS Agents pages open without hanging",
   "MCS2011FR583": "Play Store users no longer see «app is not from Play Store» — the message now only asks to update Play Store / Chrome and reopen the app",
   "MCS2011FR582": "Category pages: top «Already Registered Businesses on MCS», below it «Already Registered Professionals on MCS», then «MCS Agents» — one tap shows all agents from business and professionals together",
   "MCS2011FR581": "Touch fix everywhere: long lists (Registered business, MCS Agents, category lists, doctors) now draw the first cards at once and the rest while you scroll — no more freezing • background work pauses while your finger is on the screen • Log Out on Home now asks «Do you want to logout?» (Yes / Cancel)",
@@ -5312,7 +5313,36 @@ function loadStoreFallback(){
 }
 /* MCS0811SU241: فون کی جگہ (localStorage) بھر جائے تو پہلے ایسے ہی کام رک جاتا تھا — setItem کی غلطی سے آگے کی گنتی (ہوم کے نمبر) اور فہرستوں کی تازگی بھی رک جاتی تھی۔
    اب غلطی پکڑ کر ہلکا ورژن محفوظ کرتے ہیں (جو رکارڈ سرور سے ہر بار خود آ جاتے ہیں وہ فون میں دہرا نہیں رکھتے) اور گنتی ہر حال میں تازہ ہوتی ہے */
-function saveStore(){
+/* MCS2011FR584 (مالک کا حکم): پرانے / بنیادی ریکارڈ ایپ کے مرکزی ڈیٹا (mcsData) سے الگ خانے (IndexedDB «mcsVault») میں۔
+   • ہر ٹچ / تبدیلی پر اب ہزاروں ریکارڈ دوبارہ نہیں لکھے جاتے — مرکزی ڈیٹا ہلکا (رجسٹرڈ، اپنے، زیرِ منظوری)
+   • الگ خانہ صرف تب لکھا جاتا ہے جب اس کے ریکارڈ سچ مچ بدلیں؛ ایپ کھلنے کے بعد پس منظر میں لوڈ ہوتا ہے
+   • ریکارڈ ویسے ہی کارڈ پر ٹچ کرنے سے کھلتے ہیں — کچھ نہیں ہٹتا، سب سرور سے بھی آتے رہتے ہیں
+   • IndexedDB نہ ہو یا کوئی غلطی آئے تو پرانا طریقہ (سب کچھ mcsData میں) خود واپس */
+var _storeVer = 0, _svTimer = 0, _svBusy = false, _svDirty = false, _svSeq = 0, _vaultLoaded = false, _vaultSig = '';
+function _vOpen(){ return new Promise(function(res, rej){ try{ var r = indexedDB.open('mcsVault', 1); r.onupgradeneeded = function(){ try{ r.result.createObjectStore('v'); }catch(e){} }; r.onsuccess = function(){ res(r.result); }; r.onerror = function(){ rej(r.error || new Error('idb')); }; r.onblocked = function(){ rej(new Error('blocked')); }; }catch(e){ rej(e); } }); }
+function _vPut(str){ return _vOpen().then(function(db){ return new Promise(function(res, rej){ try{ var tx = db.transaction('v', 'readwrite'); tx.objectStore('v').put(str, 'all'); tx.oncomplete = function(){ try{ db.close(); }catch(e){} res(); }; tx.onerror = tx.onabort = function(){ try{ db.close(); }catch(e){} rej(tx.error || new Error('tx')); }; }catch(e){ try{ db.close(); }catch(_){} rej(e); } }); }); }
+function _vGet(){ return _vOpen().then(function(db){ return new Promise(function(res, rej){ try{ var rq = db.transaction('v', 'readonly').objectStore('v').get('all'); rq.onsuccess = function(){ try{ db.close(); }catch(e){} res(rq.result || ''); }; rq.onerror = function(){ try{ db.close(); }catch(e){} rej(rq.error || new Error('get')); }; }catch(e){ try{ db.close(); }catch(_){} rej(e); } }); }); }
+/* کون سا ریکارڈ «الگ خانے» میں جا سکتا ہے: سرور سے آیا، منظور، بنیادی، لائیو / رجسٹرڈ نہیں، اس فون پر بدلا ہوا نہیں، اپنا نہیں */
+function _vaultIs(){
+  var mine = new Set();
+  try{ (Array.isArray(store.myProfiles) ? store.myProfiles : []).forEach(function(q){ if(q && q.id) mine.add(q.id); if(q && q.fsId) mine.add(q.fsId); }); }catch(e){}
+  try{ JSON.parse(localStorage.getItem('mcsMyBasic') || '[]').forEach(function(id){ mine.add(id); }); }catch(e){}
+  var me10 = ''; try{ var u = window.uaMe && window.uaMe(); me10 = String((u && u.user && u.user.mobile) || '').replace(/\D/g, '').slice(-10); }catch(e){}
+  return function(x){
+    if(!x || !x.fsId || x.synced !== true || x.approved !== true || x.stage === 'registered' || x._reg2 || x.mcsLive === true || x._locAt || x.localOnly) return false;
+    if(mine.has(x.id) || mine.has(x.fsId)) return false;
+    if(me10 && String(x.whatsapp || '').replace(/\D/g, '').slice(-10) === me10) return false;
+    return true;
+  };
+}
+function _vaultSigOf(a, b){
+  var h = 0, n = 0;
+  function f(x){ n++; var s = (x.fsId || '') + '|' + (x.nameUr || x.name || '') + '|' + (x.nameEn || '') + '|' + (x.whatsapp || '') + '|' + (x.address || '') + '|' + (x.city || '') + '|' + (x.area || '') + '|' + (x.type || '') + '|' + (x.category || '') + '|' + ((x.updatedAt && x.updatedAt.seconds) || x.updatedAt || '') + '|' + String(x.intro || '').length;
+    for(var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; }
+  a.forEach(f); b.forEach(f); return n + ':' + h;
+}
+/* پرانا طریقہ: سارا ڈیٹا ایک ہی خانے میں */
+function _svFull(){
   try{ localStorage.setItem('mcsData', JSON.stringify(store)); }
   catch(e){
     try{
@@ -5321,9 +5351,88 @@ function saveStore(){
       localStorage.setItem('mcsData', JSON.stringify(lean));
     }catch(e2){ try{ console.warn('saveStore failed', e2); }catch(_){} }
   }
+}
+function _svCounts(){
   try{ if(typeof updateCategoryCounts==='function') updateCategoryCounts(); }catch(e){}
   try{ if(typeof updateFavCount==='function') updateFavCount(); }catch(e){}
 }
+function _svSplit(){
+  var isV = _vaultIs(), vs = [], vd = [], ks = [], kd = [];
+  (store.services || []).forEach(function(x){ (isV(x) ? vs : ks).push(x); });
+  (store.doctors || []).forEach(function(x){ (isV(x) ? vd : kd).push(x); });
+  return { vs: vs, vd: vd, sig: _vaultSigOf(vs, vd), lean: JSON.stringify(Object.assign({}, store, { services: ks, doctors: kd })) };
+}
+function _svRun(){
+  _svTimer = 0;
+  if(_svBusy){ _svDirty = true; return; }
+  if(!_svDirty) return;
+  _svDirty = false; var seq = ++_svSeq;
+  _svCounts();
+  if(!(_vaultLoaded && window.indexedDB)){ _svFull(); return; }
+  var sp; try{ sp = _svSplit(); }catch(e){ _svFull(); return; }
+  if(sp.sig === _vaultSig){ try{ localStorage.setItem('mcsData', sp.lean); }catch(e){ _svFull(); } return; }
+  _svBusy = true;
+  _vPut(JSON.stringify({ services: sp.vs, doctors: sp.vd })).then(function(){
+    _vaultSig = sp.sig; try{ localStorage.setItem('mcsVaultN', String(sp.vs.length + sp.vd.length)); }catch(e){}
+    if(seq === _svSeq){ try{ localStorage.setItem('mcsData', sp.lean); }catch(e){ _svFull(); } }
+  }).catch(function(){ _vaultLoaded = false; _svFull(); }).then(function(){
+    _svBusy = false; if(_svDirty && !_svTimer) _svTimer = setTimeout(_svRun, 350);
+  });
+}
+/* ایپ پس منظر میں جائے تو فوراً (بغیر انتظار) محفوظ — کوئی تبدیلی گم نہ ہو */
+function _svFlushNow(){
+  if(_svTimer){ clearTimeout(_svTimer); _svTimer = 0; }
+  if(!_svDirty) return;
+  _svDirty = false; _svSeq++;
+  _svCounts();
+  if(_vaultLoaded && window.indexedDB && !_svBusy){
+    try{ var sp = _svSplit(); if(sp.sig === _vaultSig){ localStorage.setItem('mcsData', sp.lean); return; } }catch(e){}
+  }
+  _svFull(); _svDirty = true;
+}
+function saveStore(){
+  _storeVer++; _svDirty = true;
+  if(!_svTimer && !_svBusy) _svTimer = setTimeout(_svRun, 350);
+}
+try{ var _SP = Storage.prototype, _si = _SP.setItem, _ri = _SP.removeItem;
+  _SP.setItem = function(k){ if(k === 'mcsAgent' || k === 'mcsCodev'){ try{ _agMeC.t = 0; _cdMeC.t = 0; _dupC.t = 0; }catch(e){} } return _si.apply(this, arguments); };
+  _SP.removeItem = function(k){ if(k === 'mcsAgent' || k === 'mcsCodev'){ try{ _agMeC.t = 0; _cdMeC.t = 0; _dupC.t = 0; }catch(e){} } return _ri.apply(this, arguments); };
+}catch(e){}
+try{
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ _svFlushNow(); }
+    else if(_svDirty && !_svTimer && !_svBusy){ _svTimer = setTimeout(_svRun, 350); }
+  });
+  window.addEventListener('pagehide', _svFlushNow);
+}catch(e){}
+/* الگ خانہ ایپ کھلنے کے بعد پس منظر میں لوڈ ہو کر فہرستوں میں مل جاتا ہے */
+function _vaultLoad(){
+  if(!window.indexedDB || _vaultLoaded) return;
+  _vGet().then(function(str){
+    var n = 0;
+    if(str){
+      try{
+        var o = JSON.parse(str);
+        [['services', o.services], ['doctors', o.doctors]].forEach(function(p){
+          var list = p[1]; if(!Array.isArray(list) || !list.length) return;
+          var arr = localArrayFor(p[0]), have = new Set();
+          arr.forEach(function(y){ if(y.fsId) have.add(y.fsId); if(y.id) have.add(y.id); });
+          list.forEach(function(x){ if(!x || (x.fsId && have.has(x.fsId)) || (x.id && have.has(x.id))) return; arr.push(x); n++; });
+        });
+      }catch(e){ n = 0; }
+    }
+    /* الگ خانہ خالی نکلا حالانکہ پہلے بھرا تھا (فون نے صاف کر دیا) — سرور کی نقل دوبارہ منگوائیں */
+    try{ if(!str && parseInt(localStorage.getItem('mcsVaultN') || '0', 10) > 0){ localStorage.removeItem('mcsDirV'); setTimeout(function(){ try{ if(window.mcsDirCheck) window.mcsDirCheck(); }catch(e){} }, 1500); } }catch(e){}
+    _vaultLoaded = true; _svDirty = true; if(!_svTimer && !_svBusy) _svTimer = setTimeout(_svRun, 600);
+    if(n){
+      try{ _svCounts(); }catch(e){}
+      try{ if(typeof updateHomeCounts === 'function') updateHomeCounts(); }catch(e){}
+      try{ refreshVisibleLists(); }catch(e){}
+      try{ hlRenderSoon(); mpRender(); }catch(e){}
+    }
+  }).catch(function(){ /* الگ خانہ نہیں کھلا — پرانا طریقہ چلتا رہے گا */ });
+}
+try{ if(document.readyState === 'complete') setTimeout(_vaultLoad, 300); else window.addEventListener('load', function(){ setTimeout(_vaultLoad, 300); }, { once: true }); }catch(e){}
 let store = loadStore();
 
 /* ---------- Navigation ---------- */
@@ -5488,7 +5597,7 @@ function pfActive(rec){
   const x = pfAct[k]; return !!(x && (x.until||0) > Date.now());
 }
 async function pfLoadList(){
-  try{ const r = await fetch(PF_API + '/plist'); const j = await r.json(); if(j && typeof j === 'object' && !j.error){ pfAct = j; localStorage.setItem('mcsPfList', JSON.stringify(j));
+  try{ const r = await fetch(PF_API + '/plist'); const j = await r.json(); if(j && typeof j === 'object' && !j.error){ pfAct = j; try{ _dupC.t = 0; }catch(_){} localStorage.setItem('mcsPfList', JSON.stringify(j));
     let ch = false; mpAll().forEach(p=>{ if(p.rk && j[p.rk]){ p.until = j[p.rk].until; p.since = j[p.rk].since; p.pend = j[p.rk].pend ? 1 : 0; ch = true; } }); if(ch) saveStore();
     try{ const pn = document.getElementById('pfPendN'); if(pn){ const n = Object.values(j).filter(x=>x && x.pend).length; pn.textContent = n ? '(' + n + ')' : ''; } }catch(e){}
     try{ if(typeof pendingHomeListRender === 'function') pendingHomeListRender(); }catch(e){}
@@ -6772,12 +6881,12 @@ const UB_PALETTE = [['#0f766e','#e3f4f1'],['#c2740a','#fff1dc'],['#1d4ed8','#e6e
   ['#6d28d9','#f0e8ff'],['#15803d','#e4f6e0'],['#c2410c','#ffeadb'],['#0369a1','#e0f1fb']];
 /* MCS1211TH341 (مالک کا حکم): ایک ہی موبائل نمبر کے دو کارڈ — جس پر ایم سی ایس نمبر لگ چکا وہی اصل؛ بغیر ایم سی ایس والا پرانا کارڈ
    صرف ایڈمن کو لال کراس کے ساتھ نظر آئے (حذف کا بٹن)، باقی سب (یوزر، ایجنٹ، ایڈمن) سے چھپا رہے */
-let _dupC = { t: 0, n: -1, m: null };
+let _dupC = { t: 0, n: -1, v: -1, m: null };
 function dupMap(){
   const n = (store.services || []).length + (store.doctors || []).length, now = Date.now();
-  if(_dupC.m && _dupC.n === n && now - _dupC.t < 1500) return _dupC.m;
+  if(_dupC.m && _dupC.n === n && _dupC.v === _storeVer && now - _dupC.t < 12000) return _dupC.m;   /* MCS2011FR584: ہر ڈیڑھ سیکنڈ پر سب ریکارڈ دوبارہ جانچنا — سکرول اٹکنے کی وجہ؛ اب ڈیٹا بدلے تو ہی */
   const has = {}, old = new Set(), all = [];
-  const add = (k, r) => { if(!r) return; const d = String(r.whatsapp || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10); if(d.length < 10) return; let m = false; try{ m = /^MCS\d/i.test(String(shortRecordId(k, r) || '')) && !!pfActive(r); }catch(e){}   /* MCS1411SA408: نئی ID میں ڈیش نہیں (MCS002M1) تھا اس لیے پرانا کارڈ کبھی چھپتا ہی نہیں تھا؛ اب پیکج لے کر لائیو ہونے والا MCS کارڈ ہی اصل */ all.push([d, r, m]); if(m) has[d] = 1; };
+  const add = (k, r) => { if(!r) return; const d = String(r.whatsapp || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/\D/g, '').slice(-10); if(d.length < 10) return; let m = false; try{ m = !!pfActive(r) && /^MCS\d/i.test(String(shortRecordId(k, r) || '')); }catch(e){}   /* MCS1411SA408: نئی ID میں ڈیش نہیں (MCS002M1) تھا اس لیے پرانا کارڈ کبھی چھپتا ہی نہیں تھا؛ اب پیکج لے کر لائیو ہونے والا MCS کارڈ ہی اصل */ all.push([d, r, m]); if(m) has[d] = 1; };
   (store.services || []).forEach(r => add('service', r)); (store.doctors || []).forEach(r => add('doctor', r));
   all.forEach(a => { if(has[a[0]] && !a[2]) old.add(a[1]); });
   /* MCS1711TU488: ایک ہی موبائل + قسم + نام کے کئی رجسٹرڈ کارڈ — ایک اصل (جو میرے فون سے جڑا ہو)، باقی «پرانا کارڈ» */
@@ -6785,7 +6894,7 @@ function dupMap(){
     mpAll().forEach(q => { if(q.id) mine.add(q.id); if(q.fsId) mine.add(q.fsId); });
     all.forEach(a => { if(!a[2]) return; const r = a[1], k = a[0] + '|' + (r.category || 'doctor') + '|' + z(r.nameUr || r.name || r.nameEn); (grp[k] = grp[k] || []).push(r); });
     Object.keys(grp).forEach(k => { const g = grp[k]; if(g.length < 2) return; const keep = g.find(r => mine.has(r.id) || (r.fsId && mine.has(r.fsId))) || g.find(r => r.more && r.more.selfie) || g[0]; g.forEach(r => { if(r !== keep) old.add(r); }); }); }catch(e){}
-  _dupC = { t: now, n, m: old }; return old;
+  _dupC = { t: now, n, v: _storeVer, m: old }; return old;
 }
 function dupOld(r){ try{ return !!r && dupMap().has(r); }catch(e){ return false; } }
 function dupSeer(){ try{ return !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn())); }catch(e){ return false; } }   /* MCS1211TH341: ایڈمن دونوں کو پرانا کارڈ نظر آئے */
@@ -13539,7 +13648,8 @@ function agRefPost(rec){
 /* MCS0511TH141 (مالک کا حکم): لمبی کاروبار ID کی جگہ ریفرل نمبر = ایجنٹ کا اپنا موبائل نمبر (سرور `/agref` نمبر سے ایجنٹ ڈھونڈتا ہے) */
 function agRefNo(p){ const d = String(p||'').replace(/\D/g,'').slice(-10); return d.length === 10 ? '0' + d.slice(0,3) + '-' + d.slice(3) : ''; }
 function agDev(){ let d = ''; try{ d = localStorage.getItem('mcsAgDev') || ''; if(!d){ d = 'AG' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); localStorage.setItem('mcsAgDev', d); } }catch(e){ d = 'AGtmp' + Math.random().toString(36).slice(2,10); } return d; }
-function agMe(){ try{ return JSON.parse(localStorage.getItem('mcsAgent')||'null'); }catch(e){ return null; } }
+var _agMeC = { t: 0, v: null };   /* MCS2011FR584: ہر کارڈ پر فون کی میموری پڑھ کر کھولنا (ہزاروں بار) بند */
+function agMe(){ var now = Date.now(); if(now - _agMeC.t < 1500) return _agMeC.v; var v = null; try{ v = JSON.parse(localStorage.getItem('mcsAgent')||'null'); }catch(e){ v = null; } _agMeC = { t: now, v: v }; return v; }
 function agModal(html){
   let m = document.getElementById('agModal');
   if(!m){ m = document.createElement('div'); m.className = 'modal-overlay'; m.id = 'agModal'; m.innerHTML = '<div class="modal-box ag-box"><button class="modal-close" onclick="closeModal(\'agModal\')">×</button><div style="clear:both"></div><div id="agBody"></div></div>'; document.body.appendChild(m); }
@@ -14519,7 +14629,8 @@ function agRefRecs(code){ return code ? (store.services||[]).filter(x=> x.more &
 /* ===== MCS0511TH136 (مالک کا حکم): 👥 ایڈمن جانچ موڈ — مانی بھائی / عمران بھائی اپنے کاروبار کے بغیر ہر چیز کھول کر دیکھ سکیں
    (ممبرشپ، پوسٹر / تفصیل، ایجنٹ فارم، اشتہار، فارم بھرنا)؛ کچھ محفوظ / منظور / بھیجا نہیں جاتا؛ ادائیگی، Account Access، منظوری صرف مالک (ایڈمن)۔
    ان کا ہر مسئلہ / تجویز ہیلپ ڈیسک سے مالک کے پاس۔ لاگ اِن: موبائل + PIN (سرور `/codev`، مالک ایڈمن پینل `/codevadmin` سے بناتا / ہٹاتا ہے) */
-function codevMe(){ try{ const m = JSON.parse(localStorage.getItem('mcsCodev') || 'null'); return m && m.phone && m.pin ? m : null; }catch(e){ return null; } }   /* MCS1511SU457 (مالک کا حکم): ایڈمن 2 (عمران، MCS002) کا کردار واپس — موبائل + PIN */
+var _cdMeC = { t: 0, v: null };
+function codevMe(){ var now = Date.now(); if(now - _cdMeC.t < 1500) return _cdMeC.v; var v = null; try{ const m = JSON.parse(localStorage.getItem('mcsCodev') || 'null'); v = m && m.phone && m.pin ? m : null; }catch(e){ v = null; } _cdMeC = { t: now, v: v }; return v; }   /* MCS1511SU457 (مالک کا حکم): ایڈمن 2 (عمران، MCS002) کا کردار واپس — موبائل + PIN */
 function codevOn(){ const m = codevMe(); return !!(m && m.phone && !isAdminSignedIn); }
 function codevBlock(){ return false;   /* MCS1511SU457: ایڈمن 2 سب کام کرے؛ آخری منظوری / حساب / حذف سرور پر صرف ایڈمن 1 (verifyFirebaseAdmin) */
   if(!codevOn()) return false; showToast('👥 جانچ موڈ — یہ کام اصل میں محفوظ / بھیجا نہیں ہوتا۔ کچھ غلط لگے تو اوپر «❓ Help Desk» دبائیں', 5000); return true; }
@@ -26456,14 +26567,15 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
     if(!obj) return 0; let ch = 0; const mine = mineIds();
     ['services', 'doctors'].forEach(col => {
       const list = obj[col]; if(!Array.isArray(list)) return; const arr = localArrayFor(col); const ids = new Set(list.map(x => x.fsId));
+      const byFs = new Map(), byId = new Map(); arr.forEach(y => { if(y.fsId && !byFs.has(y.fsId)) byFs.set(y.fsId, y); if(y.id && !byId.has(y.id)) byId.set(y.id, y); });   /* MCS2011FR584: ہر ریکارڈ کے لیے پوری فہرست میں تلاش (ہزاروں × ہزاروں) ختم */
       list.forEach(x => {
-        const ex = arr.find(y => y.fsId === x.fsId) || (x.id ? arr.find(y => y.id === x.id) : null);
+        const ex = byFs.get(x.fsId) || (x.id ? byId.get(x.id) : null);
         if(ex){ if(ex.mcsLive === true || ex._reg2) return;   /* MCS1611MO486: رجسٹرڈ کارڈ لائیو آتا ہے — پرانی نقل نہیں چھیڑتی */
           /* MCS1611MO485: اس فون پر حال ہی میں بدلا / بنایا ریکارڈ (7 دن) پرانی نقل سے نہیں بدلتا؛ رجسٹرڈ کبھی واپس «بنیادی» نہیں بنتا */
           if(ex._locAt && Date.now() - ex._locAt < 7 * 864e5) return;
           const keepStage = (ex.stage === 'registered' && x.stage !== 'registered') ? ex.stage : null;
           Object.assign(ex, x, { fsId: x.fsId, approved: true, synced: true }); if(keepStage) ex.stage = keepStage; }
-        else arr.push(Object.assign({}, x, { fsId: x.fsId, approved: true, synced: true, id: x.id || ('fs_' + x.fsId) }));
+        else { const nr = Object.assign({}, x, { fsId: x.fsId, approved: true, synced: true, id: x.id || ('fs_' + x.fsId) }); arr.push(nr); if(nr.fsId) byFs.set(nr.fsId, nr); if(nr.id) byId.set(nr.id, nr); }
         ch++;
       });
       for(let i = arr.length - 1; i >= 0; i--){ const y = arr[i];   /* نقل میں نہیں = سرور سے حذف ہو چکا (لائیو، اپنا اور ابھی منظوری والا کبھی نہیں) */
