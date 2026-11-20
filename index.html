@@ -4818,10 +4818,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR582";
+const APP_VERSION = "MCS2011FR583";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR583": "Play Store users no longer see «app is not from Play Store» — the message now only asks to update Play Store / Chrome and reopen the app",
   "MCS2011FR582": "Category pages: top «Already Registered Businesses on MCS», below it «Already Registered Professionals on MCS», then «MCS Agents» — one tap shows all agents from business and professionals together",
   "MCS2011FR581": "Touch fix everywhere: long lists (Registered business, MCS Agents, category lists, doctors) now draw the first cards at once and the rest while you scroll — no more freezing • background work pauses while your finger is on the screen • Log Out on Home now asks «Do you want to logout?» (Yes / Cancel)",
   "MCS2011FR580": "Categories page touch fix: Registered business / MCS Agents and the bottom buttons respond at once — hidden ticker no longer runs in the background, heavy re-measuring only when the finger is off the screen",
@@ -6227,7 +6228,7 @@ async function mcsPlayFinish(token, sku, rk){
 }
 async function mcsPlayBuy(rk){
   if(codevBlock()) return;
-  if(!mcsPlayOk()){ alert('یہ خریداری صرف پلے اسٹور سے انسٹال ایپ میں ہوتی ہے۔'); return; }
+  if(!mcsPlayOk()){ alert('اس وقت اس فون پر Google Play کی ادائیگی کھل نہیں رہی۔\n\nاگر ایپ پلے اسٹور ہی سے انسٹال کی ہے تو:\n1) Play Store اور Chrome (Android System WebView) اپڈیٹ کریں\n2) ایپ مکمل بند کر کے دوبارہ کھولیں\n3) پھر دوبارہ دبائیں'); return; }
   const hold = mcsGpaHoldGet(); if(hold && hold.token && hold.rk === rk){ await mcsPlayFinish(hold.token, hold.sku, rk); return; }   /* پرانی رکی ہوئی خریداری — اب خود مکمل */
   const pend = (() => { try{ return JSON.parse(localStorage.getItem('mcsPlayPending') || 'null'); }catch(e){ return null; } })();
   if(pend && pend.token && pend.rk === rk){ await mcsPlayFinish(pend.token, pend.sku, rk); return; }
@@ -6252,7 +6253,7 @@ async function mcsPlayBuy(rk){
     } else {
       token = await mcsPlayFindNew(sku, owned);
       if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
-        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\nوجہ: یہ ایپ Play Store سے انسٹال والی نہیں ہے (براؤزر، «Add to Home Screen» یا APK فائل سے کھلی ہے)۔\n\nحل:\n1) فون سے موجودہ ایپ / شارٹ کٹ ہٹا دیں\n2) Play Store کھول کر «My City Shines» وہیں سے انسٹال کریں (ٹیسٹ لنک ہو تو اسی لنک سے، اسی Gmail میں جو ٹیسٹر ہے)\n3) Play Store ایپ اپڈیٹ ہو اور اسی Gmail سے لاگ ان ہو\n4) پھر ایپ کھول کر دوبارہ دبائیں\n\nفی الحال ایڈمن کو تفصیل بھیجنا چاہتے ہیں؟ (OK = تفصیل بھیجیں)')) mpSubscribe(rk, true);
+        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\nوجہ: Play Store کی ادائیگی ابھی اس ایپ میں کھل نہیں سکی۔ اگر ایپ پلے اسٹور ہی سے انسٹال کی ہے تو عام طور پر Play Store / Chrome پرانا ہوتا ہے یا ایپ پوری طرح بند نہیں ہوئی تھی۔\n\nحل:\n1) Play Store اور Chrome (Android System WebView) اپڈیٹ کریں\n2) ایپ مکمل بند کر کے دوبارہ کھولیں\n3) Play Store میں اسی Gmail سے لاگ ان ہو جس سے ادائیگی کرنی ہے\n4) پھر دوبارہ دبائیں\n\nفی الحال ایڈمن کو تفصیل بھیجنا چاہتے ہیں؟ (OK = تفصیل بھیجیں)')) mpSubscribe(rk, true);
         return;
       }
       if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
@@ -25424,7 +25425,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     box.innerHTML = [MCS_PLAY_SKUS.find(k => owned.includes(k)) || next || MCS_PLAY_SKUS[0]].map((k, i) => { const d = det && det[k], own = owned.includes(k), on = k === next;   /* MCS1511SU455 */
       const pr = d ? esc(mcsPlayPrice(d.p)) + (typeof mcsPlayPer === 'function' ? mcsPlayPer(d.per) : '') : '';
       return `<div class="wzPl ${own ? 'ok' : on ? 'on' : 'lk'}"><div class="n"><b>Membership — 1 year</b><small dir="ltr">${k}</small></div>${pr ? `<span class="pr">${pr}</span>` : ''}${own ? '<span class="tg">✓ Purchased · <span class="u">خرید لیا</span></span>' : on ? '<button type="button" id="wzPay" onclick="wzDo3()">Subscribe <span class="u">سبسکرائب</span></button>' : '<span class="tg">🔒 Locked · <span class="u">مقفل</span></span>'}</div>`; }).join('')
-      + (!mcsPlayOk() ? '<div class="wzNote">Google Play payment opens only in My City Shines installed from the Google Play Store.</div>' : (det ? '' : '<div class="wzNote u">قیمت Play سے نہیں آئی — انٹرنیٹ / ٹیسٹر Gmail چیک کریں۔</div>'));
+      + (!mcsPlayOk() ? '<div class="wzNote">Google Play payment could not open right now. Please update the Play Store and Chrome (Android System WebView), fully close My City Shines and open it again.</div>' : (det ? '' : '<div class="wzNote u">قیمت Play سے نہیں آئی — انٹرنیٹ / ٹیسٹر Gmail چیک کریں۔</div>'));
   }
   function ok3(rec, tries){
     const sub = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || '', m = rec.more || {};
@@ -25505,7 +25506,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   function altPath(rec){   /* جو بندہ Google Play سے ادائیگی نہیں کر سکتا — صرف اکاؤنٹ کی تفصیل تصدیق کے لیے */
     const a = $('wzAlt'); if(!a) return;
     /* MCS1811WE538 (مالک کا حکم): «تفصیل تصدیق کے لیے بھیجیں» ختم — صرف Google Play؛ ایکٹیویشن ہیلپ ڈیسک سے MCS نمبر پر */
-    a.innerHTML = `<div class="wzNote">Google Play payment could not open on this phone. Please install <b>My City Shines</b> from the Google Play Store and buy the membership there.</div>`;
+    a.innerHTML = `<div class="wzNote">Google Play payment could not open on this phone. Please update the Play Store and Chrome (Android System WebView), fully close <b>My City Shines</b>, open it again and tap the membership button once more.</div>`;
     try{ a.scrollIntoView({block: 'center'}); }catch(e){} }
   window.wzSendVer = function(){ const rec = myCard(); if(!rec) return; try{ saveP(rec); memAutoSend('service', rec); S.p.sentVer = Date.now(); save(); flash('✅ محفوظ', 1); }catch(e){} };
 
@@ -26246,7 +26247,7 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
 
   /* (3) کاروبار کی ممبرشپ = صرف Google Play */
   const buy = rk => { if(!rk){ const x = mine()[0]; rk = x && x.p.rk; } if(!rk) return;
-    if(typeof mcsPlayOk === 'function' && !mcsPlayOk()){ try{ agModal(`<div style="text-align:center;font-size:46px">⭐</div><div class="ag-hd" style="text-align:center">Membership is bought on Google Play</div><div class="cp-hint" style="text-align:center;margin:8px 0">Open <b>My City Shines</b> installed from the <b>Google Play Store</b> on your phone and tap «Get membership». Your business goes live at once — no waiting, no approval.</div><button type="button" class="mem-alt" onclick="closeModal('agModal')">OK</button>`); }catch(e){} return; }
+    if(typeof mcsPlayOk === 'function' && !mcsPlayOk()){ try{ agModal(`<div style="text-align:center;font-size:46px">⭐</div><div class="ag-hd" style="text-align:center">Membership is bought on Google Play</div><div class="cp-hint" style="text-align:center;margin:8px 0">Google Play payment could not open right now. Update the <b>Play Store</b> and <b>Chrome</b> (Android System WebView), fully close <b>My City Shines</b>, open it again and tap «Get membership». Your business goes live at once — no waiting, no approval.</div><button type="button" class="mem-alt" onclick="closeModal('agModal')">OK</button>`); }catch(e){} return; }
     try{ memFlowRk(rk); }catch(e){} };
   const rkOfRec = (kind, rec) => { try{ return pfKeyOf(rec, kind || 'service'); }catch(e){ return ''; } };
   const oSub = window.mpSubscribe;
@@ -26767,7 +26768,7 @@ html body #screen-home #homeAds .ad-card.big::before{display:none !important}
   const own = rec => { try{ return !!rec && myMobs().has(d10(rec.whatsapp)); }catch(e){ return false; } };
   window.mcsIsOwnRec = own;
   function play(kind, rec){ kind = kind || 'service'; try{ if(!mpEntry(rec)) mpAdd(kind, rec, true); }catch(e){} const rk = pfKeyOf(rec, kind);
-    if(typeof mcsPlayOk === 'function' && !mcsPlayOk()){ try{ showToast('⭐ Membership is bought in My City Shines installed from Google Play', 5000); }catch(e){} return; }
+    if(typeof mcsPlayOk === 'function' && !mcsPlayOk()){ try{ showToast('⭐ Google Play payment could not open — update Play Store and Chrome, then reopen the app', 5000); }catch(e){} return; }
     try{ memFlowRk(rk); }catch(e){} }
   const recOfRk = rk => { try{ return [].concat((store.services || []).map(r => ['service', r]), (store.doctors || []).map(r => ['doctor', r])).find(([k, r]) => pfKeyOf(r, k) === rk) || null; }catch(e){ return null; } };
   const oF = window.memFlowOpen;
