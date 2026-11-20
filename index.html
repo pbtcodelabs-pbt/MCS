@@ -4772,10 +4772,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR578";
+const APP_VERSION = "MCS2011FR579";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR579": "After Change PIN or Forgot PIN (user and agent) you now see «PIN changed successfully» and then the Login screen — no automatic login to the home screen",
   "MCS2011FR578": "One role everywhere: your highest role (Admin 1 / Admin 2 / Agent / Registered) stays fixed with all lower roles included — no switching, Add New always there for admins and agents, login no longer jumps to another page; login card shows Admin 1 / Admin 2",
   "MCS2011FR577": "Categories page: «Registered business» and «MCS Agents» buttons work again — they show the list in place of the tiles; tap again to go back",
   "MCS2011FR576": "Smooth scrolling and touch on every page — app-wide touch catchers only where needed • pages no longer freeze after a popup closes • category tiles always A–Z, re-order buttons removed",
@@ -18627,7 +18628,11 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     lgBusy = true; busy(1); lgErr('');
     let r = null; try{ r = await api({ op:'forgot', id: (typeof mcsSidSrv === 'function' ? mcsSidSrv(who) : who), yob, last3: l3, pw }); }finally{ lgBusy = false; busy(0); }
     if(!r || !r.ok) return lgErr((r && r.reason) || 'net');
-    lgOther = false; uaClearOthers('user'); done(r, '✅ New PIN saved — welcome back');
+    lgOther = false;
+    /* MCS2011FR579 (مالک کا حکم): Forgot PIN کے بعد خود لاگ اِن نہیں — پیغام، پھر لاگ اِن صفحہ */
+    try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){}
+    try{ showToast('✅ PIN changed successfully', 3500); }catch(e){}
+    uaLogin();
   };
   /* ---------- MCS1911TH557 (مالک کا حکم): ایجنٹ کا Forgot PIN — ہیلپ ڈیسک نہیں؛ موبائل کے آخری 3 ہندسے + پیدائش کا سال → نیا PIN (سرور /pplogin forgot، غلط کوشش پر روک) ---------- */
   window.uaAgForgot = function(){
@@ -18663,8 +18668,10 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
         noyob:'No date of birth on this account yet — please contact Help Desk once · تاریخِ پیدائش محفوظ نہیں، ایک بار ہیلپ ڈیسک سے رابطہ کریں',
         noagent:'This mobile number is not an active agent · یہ نمبر فعال ایجنٹ نہیں' };
       return lgErr(M[r.reason] || r.reason || 'net'); }
-    try{ showToast('✅ New PIN saved — نیا PIN محفوظ ہو گیا'); }catch(e){}
-    busy(1); try{ if(!(await lgAgentSignIn(d, pw))) uaLogin(); } finally { busy(0); }
+    try{ showToast('✅ PIN changed successfully', 3500); }catch(e){}
+    /* MCS2011FR579 (مالک کا حکم): ایجنٹ Forgot PIN کے بعد خود لاگ اِن نہیں — سیدھا لاگ اِن صفحہ */
+    try{ localStorage.setItem('mcsLastAgMob', '0' + d); }catch(e){}
+    uaLogin();
   };
   /* ---------- Change PIN ---------- */
   window.uaPwForm = function(){
@@ -18689,7 +18696,9 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     lgBusy = true; busy(1); let r = null;
     try{ r = await api({ op:'setpw', tok: a.tok, pw, old, yob }); }finally{ lgBusy = false; busy(0); }
     if(!r || !r.ok){ if(r && r.reason === 'session') return uaDrop(); return lgErr((r && r.reason) || 'net'); }
-    a.user.hasPw = true; if(yob) a.user.hasYob = true; ls.set('mcsAuth', JSON.stringify(a)); try{ showToast('✅ PIN saved — PIN محفوظ ہو گیا'); }catch(e){} uaAccount();
+    a.user.hasPw = true; if(yob) a.user.hasYob = true; ls.set('mcsAuth', JSON.stringify(a)); try{ showToast('✅ PIN changed successfully', 3500); }catch(e){}
+    /* MCS2011FR579 (مالک کا حکم): PIN بدلنے کے بعد ہوم نہیں — لاگ آؤٹ ہو کر سیدھا لاگ اِن صفحہ */
+    setTimeout(() => { try{ window.mcsLogoutAll(); }catch(e){ try{ uaLogin(); }catch(e2){} } }, 500);
   };
 
   function boot(){
