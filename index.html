@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR587";
+const APP_VERSION = "MCS2011FR588";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR588": "Category pages: three buttons in one row (Registered Business, Registered Professionals, MCS Agents) with a count on each (dash when none); one is always open and lists records line by line below (photo, MCS ID, profession, shop, owner)",
   "MCS2011FR587": "⏳ Waiting for registration (counted in Home and category totals, button inside each category list): thousands of bulk-imported old records now sit outside the app lists in their own phone store — opened from a button on the category pages (admin), shown 10 / 12 / 20 per page with search, call and «Bring into app» • records you fed by hand stay in the app as before",
   "MCS2011FR584": "Speed: old (basic) records now live in a separate store inside the phone, so saving no longer rewrites thousands of records • lists stop re-checking every record on every scroll • Registered business / MCS Agents pages open without hanging",
   "MCS2011FR583": "Play Store users no longer see «app is not from Play Store» — the message now only asks to update Play Store / Chrome and reopen the app",
@@ -7609,7 +7610,7 @@ function catColsInit(){
     const grp = g.closest('#screen-business-categories') ? 'business' : 'professional';
     /* MCS1810SU013: بکھرے فلٹر ایک چھوٹی پٹی میں، اوپر کیٹگری تلاش */
     /* MCS1511SU442 (مالک کا حکم): «Registered business / MCS Agents» سب سے اوپر — تلاش کے نتیجے انہیں نیچے نہ دھکیلیں */
-    g.insertAdjacentHTML('beforebegin', `<div class="flt-bar" data-for="cat-${grp}"><button type="button" data-f="regbiz" data-noen="1" onclick="catTabSet('${grp}','regbiz')">✅ Already Registered Businesses on MCS<small>پہلے سے رجسٹرڈ کاروبار</small></button><button type="button" data-f="regpro" data-noen="1" onclick="catTabSet('${grp}','regpro')">✅ Already Registered Professionals on MCS<small>پہلے سے رجسٹرڈ پروفیشنلز</small></button><button type="button" data-f="agent" data-noen="1" onclick="catTabSet('${grp}','agent')">🤝 MCS Agents — Business + Professionals<small>ایم سی ایس ایجنٹس — سب اکٹھے</small></button></div>` +
+    g.insertAdjacentHTML('beforebegin', `<div class="flt-bar" data-for="cat-${grp}"><button type="button" data-f="regbiz" data-noen="1" onclick="catTabSet('${grp}','regbiz')"><b class="mcsTL">✅ Registered Business</b><small>رجسٹرڈ کاروبار</small><i class="mcsN588">–</i></button><button type="button" data-f="regpro" data-noen="1" onclick="catTabSet('${grp}','regpro')"><b class="mcsTL">✅ Registered Professionals</b><small>رجسٹرڈ پروفیشنلز</small><i class="mcsN588">–</i></button><button type="button" data-f="agent" data-noen="1" onclick="catTabSet('${grp}','agent')"><b class="mcsTL">🤝 MCS Agents</b><small>ایم سی ایس ایجنٹس</small><i class="mcsN588">–</i></button></div>` +
       catToolsHtml() +
       `<div class="adm-only adm-catbar"><button type="button" onclick="quickAddCategory('${grp}')">➕ نئی کیٹگری یہاں بنائیں</button></div>` +
       `<div class="cat-flt-res" id="catFltRes_${grp}" style="display:none"></div>`);
@@ -28826,6 +28827,111 @@ html body.mcsStaffRole.mcs1biz .mpx-add{display:inline-flex !important}
   /* گھر سے نکلتے وقت ادھورا انتظار رد: کوئی پرانا ٹیپ بعد میں نہ کھلے */
   const og = window.goScreen;
   if(typeof og === 'function' && !og.__t580){ const g = function(){ try{ const r = window.catTabRender; if(r && r._t) clearTimeout(r._t); }catch(e){} return og.apply(this, arguments); }; g.__t580 = 1; window.goScreen = g; }
+})();
+</script>
+<style id="mcsTabs588css">
+/* MCS2011FR588 (مالک کا حکم): کیٹگری صفحے کے تین بٹن ایک ہی قطار میں — رجسٹرڈ بزنس | رجسٹرڈ پروفیشنلز | ایم سی ایس ایجنٹس؛ ہر بٹن پر گنتی (خالی ہو تو ڈیش) */
+html body #screen-business-categories .flt-bar[data-for^="cat-"],html body #screen-specialist-categories .flt-bar[data-for^="cat-"],html body .flt-bar[data-for^="cat-"]{flex-direction:row;flex-wrap:nowrap;gap:6px;margin:0 0 12px}
+html body .flt-bar[data-for^="cat-"] button{flex:1 1 0;width:auto;min-width:0;min-height:68px;padding:6px 3px;border-radius:14px;overflow:hidden;font-size:12.5px;line-height:1.2;gap:1px}
+html body .flt-bar[data-for^="cat-"] button .mcsTL{display:block;font-size:12.5px;font-weight:800;line-height:1.2;overflow-wrap:anywhere}
+html body .flt-bar[data-for^="cat-"] button small{font-size:11px;margin-top:0}
+html body .flt-bar[data-for^="cat-"] button .mcsN588{font-style:normal;display:inline-block;min-width:24px;padding:1px 8px;margin-top:3px;border-radius:99px;background:#0f766e;color:#fff;font-size:13px;font-weight:900;line-height:1.35}
+html body .flt-bar button[data-f="agent"] .mcsN588{background:#1e40af}
+html body .flt-bar[data-for^="cat-"] button.on .mcsN588{background:#fff;color:#14532d}
+html body .flt-bar[data-for^="cat-"] button[data-f="agent"].on .mcsN588{background:#fcd34d;color:#0b2a5b}
+html body .flt-bar[data-for^="cat-"] button .fb-n{display:none}
+.mcsRows588{margin:0 0 10px;display:flex;flex-direction:column;gap:5px}
+.mcsRw588{display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid #bcd3f5;border-radius:12px;padding:6px 9px;min-height:46px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.mcsRw588 .rp{flex:none;width:38px;height:38px;border-radius:50%;overflow:hidden;background:#e6f1ff;display:flex;align-items:center;justify-content:center;font-size:20px}
+.mcsRw588 .rp img{width:100%;height:100%;object-fit:cover}
+.mcsRw588 .rt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.mcsRw588 .r1{display:flex;align-items:center;gap:6px;min-width:0;font-size:11.5px;color:#475569}
+.mcsRw588 .rid{font:900 12px 'Segoe UI',Arial,sans-serif;color:#0f766e;direction:ltr;flex:none}
+.mcsRw588 .rpf{font-weight:800;color:#12206b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcsRw588 .r2{display:flex;align-items:center;gap:8px;min-width:0;font-size:13.5px;color:#0b1f4b}
+.mcsRw588 .r2 b{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%}
+.mcsRw588 .ro{font-size:12px;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcsEm588{text-align:center;color:#64748b;font-weight:900;font-size:20px;padding:8px 0}
+.mcsMore588{border:1.5px solid #0f766e;background:#f0fdfa;color:#0f766e;border-radius:12px;padding:9px;font:inherit;font-weight:800}
+/* MCS2011FR588: دی گئی تصویر کا سٹائل — اوپر نیلی پٹی (لوگو + عنوان) اور سبز Add New بٹن */
+html body #screen-business-categories .screen-head,html body #screen-specialist-categories .screen-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;background:linear-gradient(105deg,#0a3270 0%,#1456b8 62%,#2f86dc 100%);border-radius:0 0 22px 22px;padding:10px 14px 12px;margin:-16px -16px 12px;box-shadow:0 3px 10px rgba(10,50,112,.28)}
+html body .screen-head .mcsLg588{flex:none;width:46px;height:46px;border-radius:14px;background:#fff;padding:3px;object-fit:contain;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+html body #screen-business-categories .screen-head h2,html body #screen-specialist-categories .screen-head h2{flex:1;min-width:0;color:#fff;text-align:start;font:800 22px/1.25 'Segoe UI',Selawik,Arial,sans-serif;border-inline-start:2px solid rgba(255,255,255,.55);padding-inline-start:10px;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padding:9px 14px;background:linear-gradient(180deg,#22a846,#0f6b2a);color:#fff;font:800 17px 'Segoe UI',Selawik,Arial,sans-serif;box-shadow:0 3px 0 #0a4a1c,0 4px 10px rgba(0,0,0,.25);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+</style>
+<script id="mcsTabs588">
+/* MCS2011FR588 (مالک کا حکم): کیٹگری صفحے پر تین بٹن ایک قطار میں؛ ایک بٹن ہر وقت کھلا (بزنس صفحے پر رجسٹرڈ بزنس، پروفیشنل صفحے پر رجسٹرڈ پروفیشنلز)، اس کے نیچے ایک ایک سطر میں ریکارڈ: تصویر، MCS نمبر، پروفیشن، دکان، مالک */
+(function(){
+  let busy = false, last = 0, sig = '', cache = null;
+  const E = s => (typeof escapeHtml === 'function' ? escapeHtml(s) : String(s == null ? '' : s));
+  const dflt = grp => grp === 'business' ? 'regbiz' : 'regpro';
+  function build(){
+    const D = (typeof store !== 'undefined' && store.doctors) || [], S = (typeof store !== 'undefined' && store.services) || [];
+    const key = D.length + ':' + S.length, now = Date.now();
+    if(cache && key === sig && now - last < 8000) return cache;
+    const grpOf = k => (CATEGORY_META[k] && CATEGORY_META[k].group) || 'professional';
+    const out = {regbiz: [], regpro: [], agent: []};
+    const oAg = window.agMe; let raw = null, val = null;
+    try{
+      window.agMe = function(){ const r = localStorage.getItem('mcsAgent'); if(r !== raw){ raw = r; try{ val = JSON.parse(r || 'null'); }catch(e){ val = null; } } return val; };
+      D.forEach(d => { try{ if(!dupVis(d)) return; if(agIsRec('doctor', d)) out.agent.push(d); if(catTabPass('regpro', 'doctor', d)) out.regpro.push(d); }catch(e){} });
+      S.forEach(x => { try{ if(!dupVis(x)) return; if(agIsRec('service', x)) out.agent.push(x); if(catTabPass('reg', 'service', x)) (grpOf(x.category) === 'business' ? out.regbiz : out.regpro).push(x); }catch(e){} });
+    } finally { window.agMe = oAg; }
+    sig = key; last = now; cache = out; return out;
+  }
+  function row(r){
+    const isDoc = r && r.specialty !== undefined && !r.category && (store.doctors || []).indexOf(r) > -1, kind = isDoc ? 'doctor' : 'service';
+    const meta = (!isDoc && CATEGORY_META[r.category]) || {};
+    const name = isDoc ? (r.nameUr || r.name || '') : (r.nameUr || r.nameEn || r.name || '');
+    let owner = '', prof = '', shop = name;
+    if(isDoc){ shop = r.hospital || ''; owner = name; prof = r.specialty || r.dept || 'ڈاکٹر'; }
+    else { try{ owner = splitOwnerIntro(r.intro).owner || ''; }catch(e){} prof = meta.ur || r.type || ''; }
+    let id = ''; try{ id = shortRecordId(kind, r) || ''; }catch(e){}
+    const sf = r.more && r.more.selfie;
+    const av = sf ? '<img src="' + E(sf) + '" alt="" loading="lazy">' : '<span>' + (isDoc ? '🩺' : (meta.emoji || '🏪')) + '</span>';
+    const tap = r.id ? ' onclick="pfCardTap(event,\'' + kind + '\',\'' + String(r.id).replace(/['\\<>"&]/g, '') + '\')"' : '';
+    return '<div class="mcsRw588"' + tap + ' data-noen="1"><span class="rp">' + av + '</span><span class="rt">'
+      + '<span class="r1"><bdi dir="ltr" class="rid">' + E(id || '—') + '</bdi>' + (prof ? '<span class="rpf">' + E(prof) + '</span>' : '') + '</span>'
+      + '<span class="r2">' + (shop ? '<b>' + E(shop) + '</b>' : '<b>—</b>') + (owner ? '<span class="ro">👤 ' + E(owner) + '</span>' : '') + '</span></span></div>';
+  }
+  window.mcsRowsMore588 = function(grp){ catShown[grp] = (catShown[grp] || 15) + 30; window.catTabRender(grp); };
+  function render(grp){
+    const bar = document.querySelector('.flt-bar[data-for="cat-' + grp + '"]'); if(!bar) return;
+    let tab = catTab[grp]; if(tab !== 'regbiz' && tab !== 'regpro' && tab !== 'agent') tab = catTab[grp] = dflt(grp);
+    bar.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.f === tab));
+    const res = document.getElementById('catFltRes_' + grp); if(res){ res.style.display = 'none'; res.innerHTML = ''; }
+    const par = bar.parentNode, grid = par.querySelector('.cat-grid'), sec = par.querySelector('.sec-wrap'); if(grid) grid.style.display = ''; if(sec) sec.style.display = '';
+    let box = document.getElementById('mcsRows588_' + grp);
+    if(!box){ box = document.createElement('div'); box.id = 'mcsRows588_' + grp; box.className = 'mcsRows588'; bar.insertAdjacentElement('afterend', box); }
+    const c = build(), items = (typeof sortRecords === 'function' ? sortRecords(c[tab].slice()) : c[tab]), lim = catShown[grp] || 15;
+    let h = '';
+    if(!items.length) h = '<div class="mcsEm588">–</div>';
+    else h = items.slice(0, lim).map(row).join('') + (items.length > lim ? '<button type="button" class="mcsMore588" onclick="mcsRowsMore588(\'' + grp + '\')">⬇️ Show more (' + (items.length - lim) + ')</button>' : '');
+    box.innerHTML = h;
+    bar.querySelectorAll('button[data-f]').forEach(b => { const e = b.querySelector('.mcsN588'), n = c[b.dataset.f] ? c[b.dataset.f].length : 0, t = n ? String(n) : '–'; if(e && e.textContent !== t) e.textContent = t; });
+  }
+  function head(){
+    [['screen-business-categories', 'Businesses Profiles', 'Add New Business Profile'], ['screen-specialist-categories', 'Professional Profiles', 'Add New Professional Profile']].forEach(x => {
+      const sc = document.getElementById(x[0]), h = sc && sc.querySelector('.screen-head'); if(!h || h.querySelector('.mcsAdd588')) return;
+      const h2 = h.querySelector('h2'); if(h2){ h2.textContent = x[1]; h2.setAttribute('data-noen', '1'); }
+      const im = document.createElement('img'); im.className = 'mcsLg588'; im.src = 'icons/icon-192.png'; im.alt = ''; h.insertBefore(im, h.firstChild);
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'mcsAdd588'; b.setAttribute('data-noen', '1'); b.textContent = '＋ ' + x[2];
+      b.onclick = function(){ try{ d2AddOpen(); }catch(e){} }; h.appendChild(b);
+    });
+  }
+  head();
+  const oR = window.catTabRender;
+  window.catTabRender = function(grp){ try{ render(grp); }catch(e){ try{ if(typeof oR === 'function') return oR.apply(this, arguments); }catch(_){} } };
+  window.catTabSet = function(grp, v){ catTab[grp] = v; catShown[grp] = 15; window.catTabRender(grp); };
+  function paint(){
+    if(busy) return; busy = true;
+    try{ ['business', 'professional'].forEach(g => { const bar = document.querySelector('.flt-bar[data-for="cat-' + g + '"]'); if(bar && bar.offsetParent !== null) render(g); }); }catch(e){}
+    busy = false;
+  }
+  const og = window.goScreen;
+  if(typeof og === 'function' && !og.__t588){ const g = function(){ const r = og.apply(this, arguments); try{ setTimeout(paint, 200); setTimeout(paint, 1500); }catch(e){} return r; }; g.__t588 = 1; window.goScreen = g; }
+  setInterval(() => { if(!document.hidden) paint(); }, 8000);
+  setTimeout(paint, 900);
 })();
 </script>
 </body>
