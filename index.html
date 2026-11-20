@@ -3514,6 +3514,7 @@ html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !im
       </div>
       <div class="sort-bar" data-for="doctor"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" class="cs-open sm" onclick="openCardStyle()" aria-label="کارڈ کا رنگ اور انداز">🎨</button></div>
       <div class="flt-bar" data-for="doctor"><button type="button" data-f="reg" onclick="setListFilter('reg')">✅ رجسٹرڈ پروفیشن</button><button type="button" data-f="agent" onclick="setListFilter('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
+      <button type="button" class="waitCatBtn" data-k="doctor" onclick="waitOpen('doctor')" style="display:none;width:100%;margin:6px 0;border:1.5px solid #0f766e;background:#f0fdfa;color:#0f766e;border-radius:12px;padding:9px 10px;font:inherit;font-weight:800;font-size:14px">⏳ ویٹنگ فار رجسٹریشن — کھول کر دیکھیں <b class="wcn"></b></button>
       <div id="doctorListWrap"></div>
     </div>
     <button class="fab" onclick="openDoctorForm()">➕ نیا ڈاکٹر شامل کریں</button>
@@ -3585,6 +3586,7 @@ html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !im
       </div>
       <div class="sort-bar" data-for="service"><span class="sort-lbl">ترتیب:</span><button type="button" data-s="new" onclick="setListSort('new')">🆕 نیا اوپر</button><button type="button" data-s="old" onclick="setListSort('old')">⏳ پرانا اوپر</button><button type="button" data-s="name" onclick="setListSort('name')">ا-ی نام</button><button type="button" class="cs-open sm" onclick="openCardStyle()" aria-label="کارڈ کا رنگ اور انداز">🎨</button></div>
       <div class="flt-bar" data-for="service"><button type="button" data-f="reg" onclick="setListFilter('reg')">✅ رجسٹرڈ بزنس</button><button type="button" data-f="agent" onclick="setListFilter('agent')">🤝 ایم سی ایس ایجنٹس</button></div>
+      <button type="button" class="waitCatBtn" data-k="service" onclick="waitOpen(currentServiceCategory)" style="display:none;width:100%;margin:6px 0;border:1.5px solid #0f766e;background:#f0fdfa;color:#0f766e;border-radius:12px;padding:9px 10px;font:inherit;font-weight:800;font-size:14px">⏳ ویٹنگ فار رجسٹریشن — کھول کر دیکھیں <b class="wcn"></b></button>
       <div id="emgQuick" class="emg-quick" style="display:none;">
         <a href="tel:15"><b>15</b><span>پولیس</span></a>
         <a href="tel:1122"><b>1122</b><span>ریسکیو</span></a>
@@ -4818,11 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR586";
+const APP_VERSION = "MCS2011FR587";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS2011FR586": "⏳ Waiting for registration (counted in Home and category totals): thousands of bulk-imported old records now sit outside the app lists in their own phone store — opened from a button on the category pages (admin), shown 10 / 12 / 20 per page with search, call and «Bring into app» • records you fed by hand stay in the app as before",
+  "MCS2011FR587": "⏳ Waiting for registration (counted in Home and category totals, button inside each category list): thousands of bulk-imported old records now sit outside the app lists in their own phone store — opened from a button on the category pages (admin), shown 10 / 12 / 20 per page with search, call and «Bring into app» • records you fed by hand stay in the app as before",
   "MCS2011FR584": "Speed: old (basic) records now live in a separate store inside the phone, so saving no longer rewrites thousands of records • lists stop re-checking every record on every scroll • Registered business / MCS Agents pages open without hanging",
   "MCS2011FR583": "Play Store users no longer see «app is not from Play Store» — the message now only asks to update Play Store / Chrome and reopen the app",
   "MCS2011FR582": "Category pages: top «Already Registered Businesses on MCS», below it «Already Registered Professionals on MCS», then «MCS Agents» — one tap shows all agents from business and professionals together",
@@ -5370,7 +5372,7 @@ function _svRun(){
   _svDirty = false; var seq = ++_svSeq;
   var _wm = 0; try{ _wm = _waitEvict(); }catch(e){ _wm = 0; }
   if(_wm){ try{ refreshVisibleLists(); }catch(e){} try{ waitBtnSync(); }catch(e){} }
-  if(WAIT.loaded && WAIT.ver !== WAIT.saved){   /* MCS2011FR586: پہلے ویٹنگ فہرست الگ خانے میں پکی، پھر باقی */
+  if(WAIT.loaded && WAIT.ver !== WAIT.saved){   /* MCS2011FR587: پہلے ویٹنگ فہرست الگ خانے میں پکی، پھر باقی */
     _svBusy = true; var _wv = WAIT.ver;
     _waitPut().then(function(){ WAIT.saved = _wv; }).catch(function(){ _waitRevert(); }).then(function(){ _svBusy = false; _svDirty = true; if(!_svTimer) _svTimer = setTimeout(_svRun, 60); });
     return;
@@ -5441,7 +5443,7 @@ function _vaultLoad(){
   }).catch(function(){ /* الگ خانہ نہیں کھلا — پرانا طریقہ چلتا رہے گا */ });
 }
 try{ if(document.readyState === 'complete') setTimeout(_vaultLoad, 300); else window.addEventListener('load', function(){ setTimeout(_vaultLoad, 300); }, { once: true }); }catch(e){}
-/* MCS2011FR586 (مالک کا حکم): «ویٹنگ فار رجسٹریشن» — ایک ساتھ امپورٹ کیے ہوئے ہزاروں پرانے (بنیادی) ریکارڈ ایپ کی فہرستوں / تلاش / گنتی سے باہر، فون کے الگ خانے میں۔
+/* MCS2011FR587 (مالک کا حکم): «ویٹنگ فار رجسٹریشن» — ایک ساتھ امپورٹ کیے ہوئے ہزاروں پرانے (بنیادی) ریکارڈ ایپ کی فہرستوں / تلاش / گنتی سے باہر، فون کے الگ خانے میں۔
    • صرف وہ جو امپورٹ سے آئے (source = import)، رجسٹرڈ / لائیو / اپنے نہیں؛ ایڈمن کے اپنے ہاتھ سے فیڈ کیے ریکارڈ ایپ میں ہی رہتے ہیں
    • اس فہرست کا الگ صفحہ: ایک وقت میں صرف 10 / 12 / 20 ریکارڈ، تلاش، کال، اور «ایپ میں لائیں» بٹن
    • الگ خانہ نہ کھلے یا لکھنے میں غلطی آئے تو سب ریکارڈ ایپ میں واپس (پرانا طریقہ) */
@@ -5505,33 +5507,45 @@ function _waitLoad(){
 }
 try{ if(document.readyState === 'complete') setTimeout(_waitLoad, 450); else window.addEventListener('load', function(){ setTimeout(_waitLoad, 450); }, { once: true }); }catch(e){}
 function _wE(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function _wn(n){ try{ return typeof urduDigits === 'function' ? urduDigits(String(n)) : String(n); }catch(e){ return String(n); } }
 function waitBtnSync(){
   try{
-    var show = (typeof isAdminSignedIn !== 'undefined' && !!isAdminSignedIn) && _waitCount() > 0, n = _waitCount();
-    document.querySelectorAll('.waitBtn').forEach(function(b){ b.style.display = show ? '' : 'none'; var t = b.querySelector('.wn'); if(t) t.textContent = n.toLocaleString('en-US'); });
+    var n = _waitCount(), show = n > 0;
+    document.querySelectorAll('.waitBtn').forEach(function(b){ b.style.display = show ? '' : 'none'; var t = b.querySelector('.wn'); if(t) t.textContent = _wn(n); });
+    document.querySelectorAll('.waitCatBtn').forEach(function(b){
+      var k = b.getAttribute('data-k'), c = 0;
+      if(k === 'doctor') c = WAIT.doctors.length;
+      else { var cc = (typeof currentServiceCategory !== 'undefined') ? currentServiceCategory : ''; WAIT.services.forEach(function(x){ if(x && x.category === cc) c++; }); }
+      b.style.display = c > 0 ? '' : 'none'; var t2 = b.querySelector('.wcn'); if(t2) t2.textContent = '(' + _wn(c) + ')';
+    });
   }catch(e){}
 }
-var _wst = { q: '', page: 0, size: 12, t: 0 };
+var _wst = { q: '', page: 0, size: 12, t: 0, cat: '' };
 function _waitRows(){
   var q = _wst.q.trim().toLowerCase(), out = [];
   ['services', 'doctors'].forEach(function(col){ WAIT[col].forEach(function(x){ if(!x) return;
+    if(_wst.cat === 'doctor' && col !== 'doctors') return;
+    if(_wst.cat && _wst.cat !== 'doctor' && (col !== 'services' || x.category !== _wst.cat)) return;
     if(q){ var h = [x.nameUr, x.name, x.nameEn, x.owner, x.whatsapp, x.address, x.city, x.area, x.type, x.category].join(' ').toLowerCase(); if(h.indexOf(q) < 0) return; }
     out.push({ col: col, x: x }); }); });
   return out;
 }
-function waitOpen(){
+function waitOpen(cat){
+  _wst.cat = (typeof cat === 'string') ? cat : ''; _wst.q = '';
   var ov = document.getElementById('waitOv');
   if(!ov){
     ov = document.createElement('div'); ov.id = 'waitOv';
     ov.style.cssText = 'position:fixed;inset:0;z-index:100050;background:#f8fafc;display:flex;flex-direction:column;direction:rtl;font-family:inherit';
-    ov.innerHTML = '<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#0f766e;color:#fff"><b style="flex:1;font-size:16px">⏳ ویٹنگ فار رجسٹریشن <span id="waitN" style="font:800 13px Arial,sans-serif;direction:ltr;display:inline-block"></span></b><button type="button" onclick="waitClose()" style="border:0;background:#fff;color:#0f766e;border-radius:10px;font-size:18px;font-weight:800;padding:2px 12px">×</button></div>'
+    ov.innerHTML = '<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#0f766e;color:#fff"><b style="flex:1;font-size:16px">⏳ ویٹنگ فار رجسٹریشن<span id="waitTitle"></span> <span id="waitN" style="font:800 13px Arial,sans-serif;direction:ltr;display:inline-block"></span></b><button type="button" onclick="waitClose()" style="border:0;background:#fff;color:#0f766e;border-radius:10px;font-size:18px;font-weight:800;padding:2px 12px">×</button></div>'
       + '<div style="padding:8px 12px;display:flex;gap:6px;align-items:center;background:#fff;border-bottom:1px solid #e2e8f0"><input id="waitQ" type="search" placeholder="نام، نمبر، شہر یا پتہ تلاش کریں…" autocomplete="off" style="flex:1;min-width:0;border:1.5px solid #cbd5e1;border-radius:10px;padding:8px 10px;font:inherit;font-size:14px" oninput="waitSearch(this.value)"><select id="waitSz" onchange="waitSize(this.value)" style="border:1.5px solid #cbd5e1;border-radius:10px;padding:8px 6px;font:inherit;font-size:14px"><option>10</option><option selected>12</option><option>20</option></select></div>'
-      + '<div id="waitInfo" style="padding:6px 12px;font-size:12px;color:#475569;line-height:1.7">یہ پرانے امپورٹ شدہ ریکارڈ ہیں جو ابھی رجسٹر نہیں ہوئے — ایپ کی فہرستوں میں نہیں آتے۔ رجسٹریشن کے لیے «ایپ میں لائیں» دبائیں۔</div>'
+      + '<div id="waitInfo" style="padding:6px 12px;font-size:12px;color:#475569;line-height:1.7">یہ پرانے امپورٹ شدہ ریکارڈ ہیں جو ابھی رجسٹر نہیں ہوئے — ایپ کی فہرستوں میں نہیں آتے۔ رجسٹریشن کے لیے «رجسٹر کریں» دبائیں — ریکارڈ ایپ میں آ جائے گا اور رجسٹریشن کھل جائے گی۔</div>'
       + '<div id="waitList" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:4px 10px 10px"></div>'
       + '<div id="waitPg" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#fff;border-top:1px solid #e2e8f0"></div>';
     document.body.appendChild(ov);
   }
-  ov.style.display = 'flex'; _wst.page = 0; waitDraw();
+  ov.style.display = 'flex'; _wst.page = 0;
+  try{ var qi = document.getElementById('waitQ'); if(qi) qi.value = ''; var tt = document.getElementById('waitTitle'); if(tt){ var mm = (_wst.cat && _wst.cat !== 'doctor' && typeof CATEGORY_META !== 'undefined') ? CATEGORY_META[_wst.cat] : null; tt.textContent = _wst.cat === 'doctor' ? ' — ڈاکٹرز' : (mm ? ' — ' + (mm.ur || '') : ''); } }catch(e){}
+  waitDraw();
 }
 function waitClose(){ var ov = document.getElementById('waitOv'); if(ov) ov.style.display = 'none'; }
 function waitSearch(v){ clearTimeout(_wst.t); _wst.t = setTimeout(function(){ _wst.q = String(v || ''); _wst.page = 0; waitDraw(); }, 250); }
@@ -5541,14 +5555,14 @@ function waitDraw(){
   var rows = _waitRows(), tot = rows.length, sz = _wst.size, pages = Math.max(1, Math.ceil(tot / sz));
   if(_wst.page >= pages) _wst.page = pages - 1; if(_wst.page < 0) _wst.page = 0;
   var cur = rows.slice(_wst.page * sz, _wst.page * sz + sz);
-  var n = document.getElementById('waitN'); if(n) n.textContent = tot.toLocaleString('en-US') + ' / ' + _waitCount().toLocaleString('en-US');
+  var n = document.getElementById('waitN'); if(n) n.textContent = _wn(tot);
   var l = document.getElementById('waitList'); if(!l) return;
   l.innerHTML = cur.length ? cur.map(function(r){ var x = r.x, nm = x.nameUr || x.name || x.nameEn || '—', mob = String(x.whatsapp || '').replace(/\D/g, ''), cap = [x.type || x.category, x.owner, x.city, x.area].filter(Boolean);
     return '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin:6px 0"><div style="font-weight:800;font-size:15px;color:#0f172a;line-height:1.5">' + _wE(nm) + (x.nameEn && x.nameEn !== nm ? ' <small style="font:700 12px Arial,sans-serif;color:#64748b;direction:ltr;display:inline-block">' + _wE(x.nameEn) + '</small>' : '') + '</div>'
       + (cap.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0">' + cap.map(function(c){ return '<span style="background:#ecfeff;border:1px solid #a5f3fc;color:#155e75;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:700">' + _wE(c) + '</span>'; }).join('') + '</div>' : '')
       + (x.address ? '<div style="font-size:12.5px;color:#475569;line-height:1.6">📍 ' + _wE(x.address) + '</div>' : '')
       + '<div style="display:flex;gap:6px;margin-top:6px">' + (mob ? '<a href="tel:' + _wE(mob) + '" style="flex:1;text-align:center;text-decoration:none;background:#f1f5f9;border-radius:10px;padding:7px 4px;font:800 13px Arial,sans-serif;color:#0f172a;direction:ltr">📞 ' + _wE(mob) + '</a>' : '')
-      + '<button type="button" onclick="waitRestore(\'' + r.col + '\',\'' + _wE(x.fsId) + '\')" style="flex:1;border:0;border-radius:10px;padding:7px 4px;background:#0f766e;color:#fff;font:inherit;font-weight:800;font-size:13px">📥 ایپ میں لائیں</button></div></div>'; }).join('')
+      + '<button type="button" onclick="waitRestore(\'' + r.col + '\',\'' + _wE(x.fsId) + '\')" style="flex:1;border:0;border-radius:10px;padding:7px 4px;background:#0f766e;color:#fff;font:inherit;font-weight:800;font-size:13px">📥 رجسٹر کریں</button></div></div>'; }).join('')
     : '<div style="text-align:center;color:#64748b;padding:30px 10px;font-weight:700">کوئی ریکارڈ نہیں</div>';
   var pg = document.getElementById('waitPg'); if(pg) pg.innerHTML = '<button type="button" onclick="waitPage(-1)" ' + (_wst.page <= 0 ? 'disabled' : '') + ' style="border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:10px;padding:7px 14px;font:inherit;font-weight:800;' + (_wst.page <= 0 ? 'opacity:.4' : '') + '">◀ پچھلے</button><span style="font:800 13px Arial,sans-serif;direction:ltr">' + (_wst.page + 1) + ' / ' + pages + '</span><button type="button" onclick="waitPage(1)" ' + (_wst.page >= pages - 1 ? 'disabled' : '') + ' style="border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:10px;padding:7px 14px;font:inherit;font-weight:800;' + (_wst.page >= pages - 1 ? 'opacity:.4' : '') + '">اگلے ▶</button>';
 }
@@ -5559,7 +5573,8 @@ function waitRestore(col, fsId){
   localArrayFor(col).push(x); WAIT.ver++;
   try{ saveStore(); refreshVisibleLists(); }catch(e){} try{ _svCounts(); }catch(e){}
   waitDraw(); waitBtnSync();
-  try{ showToast('✅ ایپ میں آ گیا — اب اسے رجسٹر کریں'); }catch(e){}
+  try{ showToast('✅ ایپ میں آ گیا'); }catch(e){}
+  if(col === 'services'){ try{ waitClose(); if(typeof svcRegClick === 'function') setTimeout(function(){ try{ svcRegClick(x.id); }catch(e){} }, 150); }catch(e){} }
 }
 let store = loadStore();
 
@@ -9935,6 +9950,7 @@ function setListSort(v){
 }
 function newBadge(x){ const t = recTime(x); return (t && Date.now()-t < 48*3600*1000) ? '<span class="new-badge">🆕 نیا</span>' : ''; }
 function renderDoctorList(mode){
+  try{ waitBtnSync(); }catch(e){}
   const listWrap = mode==='list' ? document.getElementById('doctorListWrap') : document.getElementById('searchResultsWrap');
   let items = store.doctors.filter(dupVis);
   if(mode==='search'){
@@ -10347,7 +10363,7 @@ function renderCustomCategoryTiles(){
 }
 function updateCategoryCounts(){
   try{ mpRender(); hlRenderSoon(); }catch(e){}   /* MCS0211MO113 */
-  /* MCS2011FR586: ویٹنگ فار رجسٹریشن کے ریکارڈ فہرستوں سے باہر ہیں مگر ہوم / کیٹگری کی گنتی میں شامل */
+  /* MCS2011FR587: ویٹنگ فار رجسٹریشن کے ریکارڈ فہرستوں سے باہر ہیں مگر ہوم / کیٹگری کی گنتی میں شامل */
   const wc = {}; let wd = 0, wcn = 0;
   try{ if(WAIT.loaded){ WAIT.services.forEach(x=>{ if(x){ wc[x.category] = (wc[x.category] || 0) + 1; } }); wd = WAIT.doctors.length; wcn = 1; } }catch(e){}
   const dc = document.getElementById('catCount_doctor');
@@ -11465,6 +11481,7 @@ function deleteFromForm(mid){
   else if(editingDoctorId) deleteDoctor(editingDoctorId);
 }
 function renderServiceList(mode){
+  try{ waitBtnSync(); }catch(e){}
   const wrap = document.getElementById('serviceListWrap');
   const meta = CATEGORY_META[currentServiceCategory];
   let items = store.services.filter(x=>x.category===currentServiceCategory && dupVis(x));
@@ -26702,7 +26719,7 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
     if(!obj) return 0; let ch = 0; const mine = mineIds();
     ['services', 'doctors'].forEach(col => {
       const list = obj[col]; if(!Array.isArray(list)) return; const arr = localArrayFor(col); const ids = new Set(list.map(x => x.fsId));
-      try{ if(WAIT.loaded){ const w0 = WAIT[col].length; WAIT[col] = WAIT[col].filter(y => y && ids.has(y.fsId)); if(WAIT[col].length !== w0){ WAIT.ver++; ch++; } } }catch(e){}   /* MCS2011FR586: سرور سے حذف شدہ ویٹنگ ریکارڈ */
+      try{ if(WAIT.loaded){ const w0 = WAIT[col].length; WAIT[col] = WAIT[col].filter(y => y && ids.has(y.fsId)); if(WAIT[col].length !== w0){ WAIT.ver++; ch++; } } }catch(e){}   /* MCS2011FR587: سرور سے حذف شدہ ویٹنگ ریکارڈ */
       const byFs = new Map(), byId = new Map(); arr.forEach(y => { if(y.fsId && !byFs.has(y.fsId)) byFs.set(y.fsId, y); if(y.id && !byId.has(y.id)) byId.set(y.id, y); });   /* MCS2011FR584: ہر ریکارڈ کے لیے پوری فہرست میں تلاش (ہزاروں × ہزاروں) ختم */
       list.forEach(x => {
         const ex = byFs.get(x.fsId) || (x.id ? byId.get(x.id) : null);
@@ -26717,7 +26734,7 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
       for(let i = arr.length - 1; i >= 0; i--){ const y = arr[i];   /* نقل میں نہیں = سرور سے حذف ہو چکا (لائیو، اپنا اور ابھی منظوری والا کبھی نہیں) */
         if(y.fsId && y.approved === true && y.mcsLive !== true && !ids.has(y.fsId) && !mine.has(y.id) && !mine.has(y.fsId) && !(y._locAt && Date.now() - y._locAt < 7 * 864e5) && y.stage !== 'registered') { arr.splice(i, 1); ch++; } }
     });
-    try{ if(_waitEvict()) ch++; }catch(e){}   /* MCS2011FR586: ویٹنگ فار رجسٹریشن */
+    try{ if(_waitEvict()) ch++; }catch(e){}   /* MCS2011FR587: ویٹنگ فار رجسٹریشن */
     if(ch){ try{ saveStore(); }catch(e){} try{ refreshVisibleLists(); }catch(e){} try{ if(typeof updateHomeCounts === 'function') updateHomeCounts(); }catch(e){} try{ hlRenderSoon(); mpRender(); }catch(e){} try{ waitBtnSync(); }catch(e){} }
     if(v) LS.set('mcsDirV', String(v));
     return ch;
