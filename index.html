@@ -2,6 +2,52 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
+<script id="mcsPerf581">
+/* MCS2011FR581 (مالک کا حکم: «پوری ایپ میں کہیں ٹچ نہ اٹکے»): انگلی لگی ہو یا اسکرول چل رہا ہو تو پس منظر کے بھاری کام (MutationObserver / setInterval) رک جاتے ہیں اور انگلی ہٹنے کے فوراً بعد ایک بار چلتے ہیں */
+(function(){
+  var busyTo = 0, now = function(){ return performance.now(); };
+  function mark(){ busyTo = now() + 380; }
+  ['touchstart','touchmove','pointerdown','wheel','scroll'].forEach(function(t){ try{ window.addEventListener(t, mark, {capture:true, passive:true}); }catch(e){} });
+  window.mcsTouchBusy = function(){ return now() < busyTo; };
+  var OMO = window.MutationObserver;
+  if(OMO && !OMO.__p581){
+    var MO = function(cb){
+      var self = this, q = [], tm = 0;
+      var flush = function(){ tm = 0; if(window.mcsTouchBusy()){ tm = setTimeout(flush, 220); return; } var r = q; q = []; try{ cb.call(self, r, obs); }catch(e){ try{ console.error(e); }catch(_){} } };
+      var obs = new OMO(function(recs, o){
+        if(!tm && !window.mcsTouchBusy()){ return cb.call(self, recs, o); }
+        for(var i = 0; i < recs.length; i++) q.push(recs[i]); if(q.length > 400) q.splice(0, q.length - 400);
+        if(!tm) tm = setTimeout(flush, 220);
+      });
+      return obs;
+    };
+    MO.prototype = OMO.prototype; MO.__p581 = 1; window.MutationObserver = MO;
+  }
+  var OSI = window.setInterval;
+  window.setInterval = function(fn, ms){
+    if(typeof fn !== 'function' || !(ms < 20000)) return OSI.apply(this, arguments);
+    var skips = 0, rest = Array.prototype.slice.call(arguments, 2);
+    return OSI.call(this, function(){ if(window.mcsTouchBusy() && skips < 4){ skips++; return; } skips = 0; return fn.apply(this, rest); }, ms);
+  };
+  /* لمبی فہرستیں ٹکڑوں میں: پہلے 14 کارڈ فوراً، باقی انگلی سے نیچے جاتے ہی */
+  window.mcsChunk = function(wrap, items, fn){
+    try{ if(wrap.__io){ wrap.__io.disconnect(); wrap.__io = null; } }catch(e){}
+    var PAGE = 14, n = 0, tok = (wrap.__tok = (wrap.__tok || 0) + 1);
+    var sen = document.createElement('div'); sen.className = 'mcs-more'; sen.style.cssText = 'height:2px;width:100%;pointer-events:none';
+    wrap.innerHTML = '';
+    function more(){
+      if(wrap.__tok !== tok) return;
+      var end = Math.min(items.length, n + PAGE), h = '';
+      for(; n < end; n++){ try{ h += fn(items[n]); }catch(e){} }
+      if(sen.parentNode) sen.parentNode.removeChild(sen);
+      wrap.insertAdjacentHTML('beforeend', h);
+      if(n < items.length){ wrap.appendChild(sen); if(!wrap.__io && 'IntersectionObserver' in window){ wrap.__io = new IntersectionObserver(function(es){ if(es.some(function(e){ return e.isIntersecting; })) more(); }, {rootMargin:'700px 0px'}); } if(wrap.__io){ wrap.__io.disconnect(); wrap.__io.observe(sen); } else { setTimeout(more, 60); } }
+      else if(wrap.__io){ wrap.__io.disconnect(); }
+    }
+    more();
+  };
+})();
+</script>
 <script id="mcsTest507">
 /* MCS1711TU507 (مالک کا حکم): 🧪 ٹیسٹ موڈ — صرف Admin 1 (ڈویلپر پینل + ایڈمن پاس ورڈ)۔ اسی اصل فارم / اکاؤنٹ / ممبرشپ کا پورا راستہ «نئے گاہک» کی طرح:
    • فون کا الگ خانہ: ہر localStorage / sessionStorage کلید `mcsT~` کے ساتھ، ہر IndexedDB نام `T507_` کے ساتھ — اصل لاگ اِن / کاروبار / ممبرشپ کو ہاتھ نہیں لگتا۔
@@ -4772,10 +4818,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR579";
+const APP_VERSION = "MCS2011FR581";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR581": "Touch fix everywhere: long lists (Registered business, MCS Agents, category lists, doctors) now draw the first cards at once and the rest while you scroll — no more freezing • background work pauses while your finger is on the screen • Log Out on Home now asks «Do you want to logout?» (Yes / Cancel)",
+  "MCS2011FR580": "Categories page touch fix: Registered business / MCS Agents and the bottom buttons respond at once — hidden ticker no longer runs in the background, heavy re-measuring only when the finger is off the screen",
   "MCS2011FR579": "After Change PIN or Forgot PIN (user and agent) you now see «PIN changed successfully» and then the Login screen — no automatic login to the home screen",
   "MCS2011FR578": "One role everywhere: your highest role (Admin 1 / Admin 2 / Agent / Registered) stays fixed with all lower roles included — no switching, Add New always there for admins and agents, login no longer jumps to another page; login card shows Admin 1 / Admin 2",
   "MCS2011FR577": "Categories page: «Registered business» and «MCS Agents» buttons work again — they show the list in place of the tiles; tap again to go back",
@@ -9590,7 +9638,7 @@ function sortRecords(items){
   else if(listSort==='old') arr.sort((a,b)=>recTime(a)-recTime(b));
   else arr.sort((a,b)=>recTime(b)-recTime(a));
   let out = arr; try{ out = ccCityFirst(arr); }catch(e){}
-  try{ out = out.map((x,i)=>[x,i]).sort((a,b)=>(pfActive(b[0])?1:0)-(pfActive(a[0])?1:0) || a[1]-b[1]).map(p=>p[0]); }catch(e){}   /* MCS0211MO116 */
+  try{ const pf = new Map(); out.forEach(x=>pf.set(x, pfActive(x)?1:0)); out = out.map((x,i)=>[x,i]).sort((a,b)=>pf.get(b[0])-pf.get(a[0]) || a[1]-b[1]).map(p=>p[0]); }catch(e){}   /* MCS0211MO116 */
   return out;
 }
 function syncSortBars(){ document.querySelectorAll('.sort-bar button').forEach(b=>b.classList.toggle('on', b.dataset.s===listSort)); try{ syncFilterBars(); }catch(e){} }
@@ -9616,8 +9664,8 @@ function catTabPass(tab, kind, rec){
   return true;
 }
 var catShown = {};   /* MCS1911TH555: ایک بار میں 40 کارڈ — سب ایک ساتھ بنانے سے فون اٹکتا تھا */
-function catTabSet(grp, v){ catTab[grp] = (catTab[grp]===v) ? 'all' : v; catShown[grp] = 40; catTabRender(grp); }
-function catTabMore(grp){ catShown[grp] = (catShown[grp] || 40) + 40; catTabRender(grp); }
+function catTabSet(grp, v){ catTab[grp] = (catTab[grp]===v) ? 'all' : v; catShown[grp] = 12; catTabRender(grp); }
+function catTabMore(grp){ catShown[grp] = (catShown[grp] || 12) + 24; catTabRender(grp); }
 function catTabRender(grp){
   const res = document.getElementById('catFltRes_' + grp); if(!res) return;
   const grid = res.parentNode.querySelector('.cat-grid'), sec = res.parentNode.querySelector('.sec-wrap'), tab = catTab[grp] || 'all';   /* MCS2011FR577: بیچ میں «Select sector» آ گیا تھا — گرڈ اپنے نام سے ڈھونڈیں */
@@ -9629,10 +9677,10 @@ function catTabRender(grp){
   const items = sortRecords(docs.concat(svcs));
   let h = `<div class="cr-h">${tab==='reg' ? '✅' : '🤝'} ${items.length} ${tab==='reg' ? 'رجسٹرڈ' : 'ایم سی ایس ایجنٹ'} — تمام کیٹگریز میں سے</div>`;
   if(!items.length) h += tab==='reg' ? '<div class="empty-state"><span class="e-emoji">✅</span>ابھی کوئی رجسٹرڈ اندراج نہیں</div>' : '<div class="empty-state"><span class="e-emoji">🤝</span>ابھی کوئی ایم سی ایس ایجنٹ نہیں</div>';
-  else { const lim = catShown[grp] || 40, dset = new Set(docs); h += items.slice(0, lim).map(r => dset.has(r) ? docCardHtml(fhDoc(r), 'list') : svcCardHtml(fhSvc(r), CATEGORY_META[r.category])).join('')
+  else { const lim = catShown[grp] || 12, dset = new Set(docs); h += items.slice(0, lim).map(r => dset.has(r) ? docCardHtml(fhDoc(r), 'list') : svcCardHtml(fhSvc(r), CATEGORY_META[r.category])).join('')
     + (items.length > lim ? `<button type="button" class="btn block secondary" style="margin:8px 0 14px" onclick="catTabMore('${grp}')">⬇️ Show more (${items.length - lim})</button>` : ''); }
   res.innerHTML = h; res.style.display = ''; if(grid) grid.style.display = 'none'; if(sec) sec.style.display = 'none';
-  try{ res.scrollIntoView({ block: 'start', behavior: 'smooth' }); }catch(e){}
+  try{ const y = res.getBoundingClientRect().top + (window.pageYOffset || 0) - 90; if(Math.abs(y - (window.pageYOffset || 0)) > 40) window.scrollTo(0, Math.max(0, y)); }catch(e){}
 }
 function filterEmptyMsg(emoji, dflt){
   if(listFilter==='reg') return `<div class="empty-state"><span class="e-emoji">✅</span>ابھی کوئی رجسٹرڈ اندراج نہیں</div>`;
@@ -9680,7 +9728,7 @@ function renderDoctorList(mode){
     listWrap.innerHTML = filterEmptyMsg('🩺','ابھی کوئی ڈاکٹر شامل نہیں کیا گیا');
     return;
   }
-  listWrap.innerHTML = items.map(fhDoc).map(d=>docCardHtml(d, mode)).join('');
+  mcsChunk(listWrap, items, d=>docCardHtml(fhDoc(d), mode));
 }
 function docCardHtml(d, mode){
     const num = normalizePkNumber(d.whatsapp||'');
@@ -11198,7 +11246,7 @@ function renderServiceList(mode){
     wrap.innerHTML = filterEmptyMsg(meta.emoji,'ابھی کوئی اندراج شامل نہیں کیا گیا');
     return;
   }
-  wrap.innerHTML = items.map(fhSvc).map(s=>svcCardHtml(s, meta)).join('');
+  mcsChunk(wrap, items, s=>svcCardHtml(fhSvc(s), meta));
 }
 /* MCS2310FR041: کارڈ کا HTML الگ — فہرست اور شیئر تصویر (ہو بہو وہی کارڈ) دونوں یہی استعمال کرتے ہیں */
 function mcsOwnDup(o, ...n){ const z = x => String(x == null ? '' : x).replace(/[\s\u200c\u200e\u200f]+/g, '').toLowerCase(); const a = z(o); return !a || n.some(x => { const b = z(x); return b && (a === b || a.includes(b) || b.includes(a)); }); }   /* MCS1411SA409: مالک کا نام کاروبار کے نام جیسا ہو تو دوبارہ نہیں */
@@ -23053,9 +23101,9 @@ body.d2 .qt .qt-t b,body .hm3 b{overflow-wrap:normal !important;word-break:norma
 
 
   /* ---------- لاگ آؤٹ: ہر لاگ آؤٹ بٹن (ہوم کی پٹی، سیٹنگز، پورٹل) ایک ہی پورا لاگ آؤٹ کرے ---------- */
-  window.h2Logout = function(){ return window.mcsLogoutAll(); };
+  window.h2Logout = function(){ return window.mcsLogoutAsk ? window.mcsLogoutAsk() : window.mcsLogoutAll(); };
   window.cdLogout = function(){ return window.mcsLogoutAll(); };
-  window.addEventListener('load', function(){ setTimeout(function(){ window.h2Logout = function(){ return window.mcsLogoutAll(); }; }, 2500); });
+  window.addEventListener('load', function(){ setTimeout(function(){ window.h2Logout = function(){ return window.mcsLogoutAsk ? window.mcsLogoutAsk() : window.mcsLogoutAll(); }; }, 2500); });
 
   function install(){ wrapOpen('openServiceForm','serviceFormModal'); wrapOpen('openDoctorForm','doctorFormModal'); wrapAgModal(); wrapOpenSvc(); }
   install(); window.addEventListener('load', function(){ setTimeout(install, 1800); });   /* ایجنٹ-فیڈ والا ریپر 1.5s پر لگتا ہے؛ ہم اس کے اوپر */
@@ -23091,7 +23139,8 @@ html body select.rpk-sel[dir=ltr], html body select.rpk-sel[dir=ltr] option, htm
 <script id="mcsCatSq325js">
 /* MCS1111WE325: ہر کیٹگری کارڈ کی لکھائی ناپ کر چوکور ڈبے میں فِٹ (پہلے کارڈ لمبا ہو جاتا تھا) */
 (function(){
-  function fitTile(t){
+  function fitTile(t){ const fk = t.clientWidth + 'x' + t.clientHeight + '|' + t.textContent + '|' + document.documentElement.getAttribute('data-cat-cols'); if(t.__fk581 === fk) return; fitTile0(t); t.__fk581 = t.clientWidth + 'x' + t.clientHeight + '|' + t.textContent + '|' + document.documentElement.getAttribute('data-cat-cols'); }
+  function fitTile0(t){
     const kids = Array.from(t.children).filter(x => !x.classList.contains('cat-count') && getComputedStyle(x).position !== 'absolute' && getComputedStyle(x).display !== 'none');
     const txt = kids.filter(x => x.textContent.trim());
     if(!txt.length || !(t.clientHeight > 0)) return;
@@ -23103,11 +23152,11 @@ html body select.rpk-sel[dir=ltr], html body select.rpk-sel[dir=ltr] option, htm
     while(over() && g++ < 40){ txt.forEach(x => { const f = parseFloat(getComputedStyle(x).fontSize) || 12, em = x.classList.contains('emoji'), mn = em ? 14 : 7; if(f > mn) x.style.setProperty('font-size', Math.max(mn, f - (em ? 1.5 : 0.5)) + 'px', 'important'); }); }
   }
   let q = 0;
-  function all(){ cancelAnimationFrame(q); q = requestAnimationFrame(() => document.querySelectorAll('.cat-grid .cat-item').forEach(fitTile)); }
+  function all(){ cancelAnimationFrame(q); q = requestAnimationFrame(() => { /* MCS2011FR580: انگلی لگی ہو یا صفحہ چھپا ہو تو بھاری کام نہیں */ if(window.mcsUiBusy && mcsUiBusy()){ clearTimeout(all._t); all._t = setTimeout(all, 700); return; } const a = document.querySelector('.screen.active'); if(!a || !a.querySelector('.cat-grid')) return; a.querySelectorAll('.cat-grid .cat-item').forEach(fitTile); }); }
   new MutationObserver(m => { if(m.some(r => r.target.closest && (r.target.closest('.cat-grid') || (r.target.querySelector && r.target.querySelector('.cat-grid'))))) all(); }).observe(document.documentElement, {childList:true, subtree:true});
   new MutationObserver(all).observe(document.documentElement, {attributes:true, attributeFilter:['data-cat-cols']});
   new MutationObserver(m => { if(m.some(r => r.target.classList && r.target.classList.contains('screen'))) setTimeout(all, 30); }).observe(document.body || document.documentElement, {attributes:true, attributeFilter:['class'], subtree:true});
-  addEventListener('resize', all); document.addEventListener('click', () => setTimeout(all, 80), true);
+  addEventListener('resize', all);
   if(document.readyState !== 'loading') all(); else document.addEventListener('DOMContentLoaded', all);
 })();
 </script>
@@ -24020,7 +24069,7 @@ html body .fm-body .cbx .field>input,html body .fm-body .cbx .field>select,html 
   /* MCS1211TH352 (مالک کا حکم): ایجنٹ کوڈ دکھنے میں بغیر ڈیش — AG001، AG002 (اندر سرور پر AG-001 ہی؛ لکھا ہوا AG001 خود پہچانا جاتا ہے) */
   const AGRX = /\bAG-(\d{3,5})\b/g, SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1 };
   function agFix(root){ try{ const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT); let n; while((n = w.nextNode())){ const v = n.nodeValue; if(v && v.indexOf('AG-') >= 0 && !(n.parentNode && SKIP[n.parentNode.nodeName])){ const t = v.replace(AGRX, 'AG$1'); if(t !== v) n.nodeValue = t; } } }catch(e){} }
-  let agT = 0; const agMo = new MutationObserver(() => { if(agT) return; agT = setTimeout(() => { agT = 0; agFix(document.body); }, 120); });
+  let agT = 0; const agMo = new MutationObserver(() => { if(agT) return; agT = setTimeout(function go(){ if(window.mcsUiBusy && mcsUiBusy()){ agT = setTimeout(go, 600); return; } agT = 0; agFix(document.body); }, 400); });
   const agBoot = () => { agFix(document.body); agMo.observe(document.body, { childList: true, subtree: true, characterData: true }); };
   if(document.body) agBoot(); else document.addEventListener('DOMContentLoaded', agBoot);
   ['agCopy'].forEach(fn => { const o = window[fn]; if(typeof o === 'function') window[fn] = function(v){ return o.call(this, typeof v === 'string' ? v.replace(AGRX, 'AG$1') : v); }; });
@@ -28234,6 +28283,49 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
   hook(); setTimeout(hook, 1500); setTimeout(hook, 5000);
 })();
 </script>
+<style id="mcsLo581css">
+#mcsLo581{position:fixed;inset:0;z-index:2147483300;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(15,23,42,.58);-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#mcsLo581.on{display:flex}
+#mcsLo581 .lo-card{position:relative;overflow:hidden;width:100%;max-width:520px;box-sizing:border-box;display:flex;align-items:center;gap:0;padding:16px 14px 20px 8px;border:3px solid #1f6fe0;border-radius:28px;background:linear-gradient(180deg,#fbfdff 0%,#eaf2fd 100%);box-shadow:0 14px 40px rgba(15,23,42,.35),0 0 0 4px rgba(31,111,224,.12);font-family:"Segoe UI",Selawik,Arial,sans-serif}
+#mcsLo581 .lo-logo{flex:0 0 27%;max-width:112px;display:flex;align-items:center;justify-content:center;padding-right:8px;border-right:2px solid #cfdcf0;align-self:stretch}
+#mcsLo581 .lo-logo img{width:100%;height:auto;mix-blend-mode:multiply;display:block}
+#mcsLo581 .lo-main{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:10px;padding-left:10px}
+#mcsLo581 .lo-pill{display:flex;align-items:center;gap:8px;padding:5px 22px 5px 6px;border-radius:999px;background:#fbd9da}
+#mcsLo581 .lo-pill svg{width:34px;height:34px;flex:none}
+#mcsLo581 .lo-pill b{font-size:27px;line-height:1.1;font-weight:800;color:#b30d12}
+#mcsLo581 .lo-q{font-size:18px;line-height:1.25;font-weight:800;color:#13206b;text-align:center;white-space:nowrap}
+#mcsLo581 .lo-btns{display:flex;gap:10px;width:100%;justify-content:center}
+#mcsLo581 .lo-btns button{flex:1;min-width:0;max-width:150px;height:46px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;font-size:18px;font-weight:800;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;font-family:inherit}
+#mcsLo581 .lo-yes{border:0;color:#fff;background:linear-gradient(180deg,#ee2a2f,#bb0b10);box-shadow:0 4px 10px rgba(200,20,25,.35)}
+#mcsLo581 .lo-no{color:#13206b;background:#fff;border:3px solid #1f6fe0}
+#mcsLo581 .lo-btns svg{width:22px;height:22px;flex:none}
+#mcsLo581 .lo-sw1,#mcsLo581 .lo-sw2{position:absolute;bottom:0;width:90px;height:38px;pointer-events:none}
+#mcsLo581 .lo-sw1{left:0;background:linear-gradient(115deg,#fbbf24 0 38%,#1f6fe0 38% 100%);clip-path:polygon(0 100%,0 30%,100% 100%)}
+#mcsLo581 .lo-sw2{right:0;background:linear-gradient(245deg,#fbbf24 0 38%,#1f6fe0 38% 100%);clip-path:polygon(100% 100%,100% 30%,0 100%)}
+@media (max-width:380px){#mcsLo581 .lo-pill b{font-size:23px}#mcsLo581 .lo-q{font-size:15.5px}#mcsLo581 .lo-btns button{height:42px;font-size:16px}#mcsLo581 .lo-pill svg{width:30px;height:30px}}
+</style>
+<script id="mcsLo581js">
+/* MCS2011FR581 (مالک کا حکم): ہوم پر لاگ آؤٹ بٹن دبائیں تو بھیجی ہوئی تصویر جیسا کارڈ — Yes = لاگ آؤٹ (لاگ اِن صفحہ)، Cancel = واپس */
+(function(){
+  var DOOR = '<svg viewBox="0 0 48 48" fill="none"><rect x="20" y="5" width="22" height="38" rx="5" fill="#d3120f"/><path d="M3 24h22M17 15l9 9-9 9" stroke="#d3120f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var DOORW = '<svg viewBox="0 0 48 48" fill="none"><path d="M24 6h12a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H24" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M4 24h22M17 15l9 9-9 9" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var XI = '<svg viewBox="0 0 24 24" fill="none" stroke="#13206b" stroke-width="3.4" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>';
+  function close(){ var o = document.getElementById('mcsLo581'); if(o) o.classList.remove('on'); }
+  window.mcsLogoutAsk = function(){
+    var o = document.getElementById('mcsLo581');
+    if(!o){
+      o = document.createElement('div'); o.id = 'mcsLo581'; o.setAttribute('data-noen', '1'); o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', 'Logout');
+      o.innerHTML = '<div class="lo-card"><div class="lo-logo"><img alt="My City Shines" src="data:image/webp;base64,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"></div><div class="lo-main"><div class="lo-pill">' + DOOR + '<b>Logout</b></div><div class="lo-q">Do you want to logout ?</div><div class="lo-btns"><button type="button" class="lo-yes" id="mcsLoYes">' + DOORW + 'Yes</button><button type="button" class="lo-no" id="mcsLoNo">' + XI + 'Cancel</button></div></div><i class="lo-sw1"></i><i class="lo-sw2"></i></div>';
+      document.body.appendChild(o);
+      o.addEventListener('click', function(e){ if(e.target === o) close(); });
+      document.getElementById('mcsLoNo').addEventListener('click', function(e){ e.stopPropagation(); close(); });
+      document.getElementById('mcsLoYes').addEventListener('click', function(e){ e.stopPropagation(); close(); try{ window.mcsLogoutAll(); }catch(x){ try{ uaLogin(); }catch(y){} } });
+    }
+    o.classList.add('on');
+  };
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
+})();
+</script>
 <style id="mcsOne571css">
 html body #h2Out{display:none!important}
 #mcsPwr{position:fixed;top:128px;left:8px;z-index:900;display:none;place-items:center;width:30px;height:30px;padding:0;border-radius:50%;background:#e30613;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);cursor:pointer}
@@ -28252,7 +28344,7 @@ html body #h2Out{display:none!important}
   var PW = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.6 6.6a8 8 0 1 0 10.8 0"/></svg>';
   function loggedIn(){ try{ if(isAdminSignedIn) return true; if(codevOn()) return true; var a = agMe(); if(a && a.phone && (a.pin || a.code)) return true; if(window.uaMe && window.uaMe()) return true; }catch(e){} return false; }
   function outSync(){ var b = document.getElementById('mcsPwr');
-    if(!b){ if(!document.body) return; b = document.createElement('button'); b.type = 'button'; b.id = 'mcsPwr'; b.innerHTML = PW; b.setAttribute('aria-label', 'Log out'); b.title = 'Log out'; b.onclick = function(e){ e.stopPropagation(); window.mcsLogoutAll(); }; document.body.appendChild(b); }
+    if(!b){ if(!document.body) return; b = document.createElement('button'); b.type = 'button'; b.id = 'mcsPwr'; b.innerHTML = PW; b.setAttribute('aria-label', 'Log out'); b.title = 'Log out'; b.onclick = function(e){ e.stopPropagation(); window.mcsLogoutAsk(); }; document.body.appendChild(b); }
     try{ var slot = document.querySelector('.x229 .xm'); if(slot && b.parentNode !== slot) slot.appendChild(b); }catch(e){}
     var ua = document.getElementById('uaOv'), on = false;
     try{ on = loggedIn() && currentScreen === 'home' && !(ua && ua.classList.contains('on')); }catch(e){}
@@ -28421,6 +28513,41 @@ html body.mcsStaffRole.mcs1biz .mpx-add{display:inline-flex !important}
   hook(); setTimeout(hook, 1000); setTimeout(hook, 4000);
   /* لاگ آؤٹ پر رول بھی صاف */
   setInterval(() => { try{ if(LS.g('mcsLoggedOut') === '1') LS.d('mcsRoleTop'); const r = window.ptRole && ptRole(); document.body.classList.toggle('mcsStaffRole', r === 'dev' || r === 'codev' || r === 'agent'); }catch(e){} }, 1200);
+})();
+</script>
+
+<script id="mcsTouch580">
+/* MCS2011FR580 (مالک کا حکم): کیٹگری صفحے پر ٹچ جام — وجوہات: (1) چھپی ہوئی ٹِکر ہر فریم چلتی رہتی تھی؛ (2) «Registered / Agents» دباتے ہی ہزاروں ریکارڈ پر بھاری حساب + smooth scroll؛ (3) ہر کلک پر سب ٹائلیں دوبارہ ناپی جاتی تھیں */
+(function(){
+  /* 1) ٹِکر چھپی ہو (ہوم پر نہ ہوں) تو اینیمیشن کا کام نہیں */
+  try{ const of = window.tickerFrame; if(typeof of === 'function' && !of.__t580){
+    const w = function(ts){ try{ if(document.body.classList.contains('tkr-hidden') && !document.querySelector('#tickerAdminModal.active')){ if(typeof tkEng !== 'undefined'){ tkEng.t = 0; tkEng.raf = requestAnimationFrame(window.tickerFrame); return; } } }catch(e){} return of.apply(this, arguments); };
+    w.__t580 = 1; window.tickerFrame = w; } }catch(e){}
+  /* 2) Registered / Agents: فوراً بٹن بدلے، بھاری کام اگلی باری میں، حساب کے دوران کیش، اور smooth scroll کی جگہ سیدھا */
+  function wrapTab(){
+    const of = window.catTabRender; if(typeof of !== 'function' || of.__t580) return;
+    const w = function(grp){
+      const self = this, args = arguments, tab = (typeof catTab !== 'undefined' && catTab[grp]) || 'all';
+      if(tab === 'all') return of.apply(self, args);
+      try{ document.querySelectorAll('.flt-bar[data-for="cat-' + grp + '"] button').forEach(b => b.classList.toggle('on', b.dataset.f === tab)); }catch(e){}
+      clearTimeout(w._t);
+      w._t = setTimeout(() => {
+        const oAg = window.agMe, oPf = window.pfActive, oSc = Element.prototype.scrollIntoView;
+        let raw = null, val = null; const memo = new Map();
+        try{
+          window.agMe = function(){ const r = localStorage.getItem('mcsAgent'); if(r !== raw){ raw = r; try{ val = JSON.parse(r || 'null'); }catch(e){ val = null; } } return val; };
+          if(typeof oPf === 'function') window.pfActive = function(rec){ if(rec && typeof rec === 'object'){ if(memo.has(rec)) return memo.get(rec); const v = oPf.call(this, rec); memo.set(rec, v); return v; } return oPf.call(this, rec); };
+          Element.prototype.scrollIntoView = function(o){ try{ return oSc.call(this, (o && typeof o === 'object') ? Object.assign({}, o, { behavior:'auto' }) : o); }catch(e){ return oSc.call(this); } };
+          of.apply(self, args);
+        } finally { window.agMe = oAg; if(oPf) window.pfActive = oPf; Element.prototype.scrollIntoView = oSc; }
+      }, 30);
+    };
+    w.__t580 = 1; window.catTabRender = w;
+  }
+  wrapTab();
+  /* گھر سے نکلتے وقت ادھورا انتظار رد: کوئی پرانا ٹیپ بعد میں نہ کھلے */
+  const og = window.goScreen;
+  if(typeof og === 'function' && !og.__t580){ const g = function(){ try{ const r = window.catTabRender; if(r && r._t) clearTimeout(r._t); }catch(e){} return og.apply(this, arguments); }; g.__t580 = 1; window.goScreen = g; }
 })();
 </script>
 </body>
