@@ -4818,10 +4818,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2011FR581";
+const APP_VERSION = "MCS2011FR582";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2011FR582": "Category pages: top «Already Registered Businesses on MCS», below it «Already Registered Professionals on MCS», then «MCS Agents» — one tap shows all agents from business and professionals together",
   "MCS2011FR581": "Touch fix everywhere: long lists (Registered business, MCS Agents, category lists, doctors) now draw the first cards at once and the rest while you scroll — no more freezing • background work pauses while your finger is on the screen • Log Out on Home now asks «Do you want to logout?» (Yes / Cancel)",
   "MCS2011FR580": "Categories page touch fix: Registered business / MCS Agents and the bottom buttons respond at once — hidden ticker no longer runs in the background, heavy re-measuring only when the finger is off the screen",
   "MCS2011FR579": "After Change PIN or Forgot PIN (user and agent) you now see «PIN changed successfully» and then the Login screen — no automatic login to the home screen",
@@ -7355,7 +7356,7 @@ function catColsInit(){
     const grp = g.closest('#screen-business-categories') ? 'business' : 'professional';
     /* MCS1810SU013: بکھرے فلٹر ایک چھوٹی پٹی میں، اوپر کیٹگری تلاش */
     /* MCS1511SU442 (مالک کا حکم): «Registered business / MCS Agents» سب سے اوپر — تلاش کے نتیجے انہیں نیچے نہ دھکیلیں */
-    g.insertAdjacentHTML('beforebegin', `<div class="flt-bar" data-for="cat-${grp}"><button type="button" data-f="reg" onclick="catTabSet('${grp}','reg')">✅ ${grp==='business' ? 'رجسٹرڈ بزنس' : 'رجسٹرڈ پروفیشن'}</button><button type="button" data-f="agent" onclick="catTabSet('${grp}','agent')">🤝 ایم سی ایس ایجنٹس</button></div>` +
+    g.insertAdjacentHTML('beforebegin', `<div class="flt-bar" data-for="cat-${grp}"><button type="button" data-f="regbiz" data-noen="1" onclick="catTabSet('${grp}','regbiz')">✅ Already Registered Businesses on MCS<small>پہلے سے رجسٹرڈ کاروبار</small></button><button type="button" data-f="regpro" data-noen="1" onclick="catTabSet('${grp}','regpro')">✅ Already Registered Professionals on MCS<small>پہلے سے رجسٹرڈ پروفیشنلز</small></button><button type="button" data-f="agent" data-noen="1" onclick="catTabSet('${grp}','agent')">🤝 MCS Agents — Business + Professionals<small>ایم سی ایس ایجنٹس — سب اکٹھے</small></button></div>` +
       catToolsHtml() +
       `<div class="adm-only adm-catbar"><button type="button" onclick="quickAddCategory('${grp}')">➕ نئی کیٹگری یہاں بنائیں</button></div>` +
       `<div class="cat-flt-res" id="catFltRes_${grp}" style="display:none"></div>`);
@@ -9659,7 +9660,7 @@ function setListFilter(v){
 /* MCS0911MO279b (مالک کا حکم): کیٹگری چننے والے صفحے پر ہی دو ٹیب — دبائیں تو تمام کیٹگریز میں سے رجسٹرڈ / ایجنٹ کارڈ ایک ساتھ سامنے */
 const catTab = {business:'all', professional:'all'};
 function catTabPass(tab, kind, rec){
-  if(tab==='reg') return !!pfActive(rec) || !!agIsRec(kind, rec);
+  if(tab==='reg' || tab==='regbiz' || tab==='regpro') return !!pfActive(rec) || !!agIsRec(kind, rec);
   if(tab==='agent') return !!agIsRec(kind, rec);
   return true;
 }
@@ -9672,11 +9673,12 @@ function catTabRender(grp){
   document.querySelectorAll('.flt-bar[data-for="cat-' + grp + '"] button').forEach(b=>b.classList.toggle('on', b.dataset.f===tab));
   if(tab==='all'){ res.style.display = 'none'; res.innerHTML = ''; if(grid) grid.style.display = ''; if(sec) sec.style.display = ''; return; }
   const grpOf = k => (CATEGORY_META[k] && CATEGORY_META[k].group) || 'professional';
-  const docs = grp==='business' ? [] : store.doctors.filter(d=>dupVis(d) && catTabPass(tab, 'doctor', d));
-  const svcs = store.services.filter(x=>dupVis(x) && (grpOf(x.category)==='business') === (grp==='business') && catTabPass(tab, 'service', x));
+  const scope = tab==='regbiz' ? 'business' : (tab==='regpro' ? 'professional' : 'both');   /* MCS2011FR582: بزنس / پروفیشنل الگ الگ، ایجنٹس دونوں اکٹھے */
+  const docs = scope==='business' ? [] : store.doctors.filter(d=>dupVis(d) && catTabPass(tab, 'doctor', d));
+  const svcs = store.services.filter(x=>dupVis(x) && (scope==='both' || (grpOf(x.category)==='business') === (scope==='business')) && catTabPass(tab, 'service', x));
   const items = sortRecords(docs.concat(svcs));
-  let h = `<div class="cr-h">${tab==='reg' ? '✅' : '🤝'} ${items.length} ${tab==='reg' ? 'رجسٹرڈ' : 'ایم سی ایس ایجنٹ'} — تمام کیٹگریز میں سے</div>`;
-  if(!items.length) h += tab==='reg' ? '<div class="empty-state"><span class="e-emoji">✅</span>ابھی کوئی رجسٹرڈ اندراج نہیں</div>' : '<div class="empty-state"><span class="e-emoji">🤝</span>ابھی کوئی ایم سی ایس ایجنٹ نہیں</div>';
+  let h = `<div class="cr-h" data-noen="1">${tab==='agent' ? '🤝' : '✅'} ${items.length} ${tab==='regbiz' ? 'Registered Businesses' : (tab==='regpro' ? 'Registered Professionals' : 'MCS Agents (Business + Professionals)')} — all categories</div>`;
+  if(!items.length) h += tab!=='agent' ? '<div class="empty-state"><span class="e-emoji">✅</span>ابھی کوئی رجسٹرڈ اندراج نہیں</div>' : '<div class="empty-state"><span class="e-emoji">🤝</span>ابھی کوئی ایم سی ایس ایجنٹ نہیں</div>';
   else { const lim = catShown[grp] || 12, dset = new Set(docs); h += items.slice(0, lim).map(r => dset.has(r) ? docCardHtml(fhDoc(r), 'list') : svcCardHtml(fhSvc(r), CATEGORY_META[r.category])).join('')
     + (items.length > lim ? `<button type="button" class="btn block secondary" style="margin:8px 0 14px" onclick="catTabMore('${grp}')">⬇️ Show more (${items.length - lim})</button>` : ''); }
   res.innerHTML = h; res.style.display = ''; if(grid) grid.style.display = 'none'; if(sec) sec.style.display = 'none';
@@ -21763,7 +21765,7 @@ function pgCounts(forKey){
   else items = D.map(r=>['doctor', r]).concat(S.map(r=>['service', r]));
   let reg = 0, ag = 0;
   items.forEach(([k, r])=>{ let a = false; try{ a = !!agIsRec(k, r); }catch(e){} if(a){ ag++; reg++; } else { try{ if(pfActive(r)) reg++; }catch(e){} } });
-  return {reg, agent: ag};
+  return {reg, agent: ag, regbiz: reg, regpro: reg};
 }
 var pgBusy = false;
 function pgBadges(){
@@ -28283,6 +28285,15 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
   hook(); setTimeout(hook, 1500); setTimeout(hook, 5000);
 })();
 </script>
+<style id="mcsTabs582">
+/* MCS2011FR582 (مالک کا حکم): کیٹگری صفحے پر اوپر رجسٹرڈ بزنس، اس کے نیچے رجسٹرڈ پروفیشنلز، پھر ایم سی ایس ایجنٹس (سب اکٹھے) */
+html body .flt-bar[data-for^="cat-"]{flex-direction:column;gap:7px;margin:0 0 12px}
+html body .flt-bar[data-for^="cat-"] button{flex:none;width:100%;min-height:50px;padding:6px 10px;border-radius:16px;white-space:normal;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15.5px;line-height:1.25;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+html body .flt-bar[data-for^="cat-"] button small{display:block;font-size:12px;font-weight:700;opacity:.85;margin-top:1px}
+html body .flt-bar button[data-f="regbiz"],html body .flt-bar button[data-f="regpro"]{background:linear-gradient(180deg,#e6f1ff,#c9defa);border:1.5px solid #8db4ea;color:#12206b;box-shadow:0 2px 0 rgba(31,111,224,.22)}
+html body .flt-bar button[data-f="regbiz"].on,html body .flt-bar button[data-f="regpro"].on{background:linear-gradient(180deg,#16a34a,#14532d);border-color:#14532d;color:#fff}
+html body .flt-bar button[data-f="regbiz"] .fb-n,html body .flt-bar button[data-f="regpro"] .fb-n{display:none}
+</style>
 <style id="mcsLo581css">
 #mcsLo581{position:fixed;inset:0;z-index:2147483300;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(15,23,42,.58);-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 #mcsLo581.on{display:flex}
