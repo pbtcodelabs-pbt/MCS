@@ -4819,10 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA602";
+const APP_VERSION = "MCS2111SA603";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2111SA603": "Admin delete now removes the record from every phone (including the owner's own copy) • a member who paid through Google Play can never be deleted — a warning shows and the record stays • delete is now a choice: full delete or suspend.",
   "MCS2111SA602": "When Google Play cannot open, the message now also shows the exact browser error and how many membership packages Play returned, so the cause is visible in one screenshot.",
   "MCS2111SA601": "Google Play membership button fixed at the root: Play is now prepared in the background and opens the instant the button is tapped (the phone was cancelling the payment screen because of the wait before it) • clear message if it still fails.",
   "MCS2111SA600": "One status everywhere: a business whose membership is active now shows as registered on the card, welcome, portal and wizard (no more «Register Now» / «Complete registration» beside a congratulations message, even after the admin changes its category) • Google Play error now shows the exact cause at the TOP of the message • Need-assistance card shows the phone diagnosis and last Play error.",
@@ -8701,9 +8702,11 @@ function deleteFromFirebase(col, item){
 async function deleteDoctor(id){
   const item = store.doctors.find(x=>x.id===id); if(!item) return;
   /* MCS0111SU109: نام کے ساتھ تصدیق؛ حذف کے بعد جو صفحہ کھلا ہو (فہرست، تلاش، خاص نمبر) وہی تازہ */
+  const _ch = await mcsRemoveFlow('doctor', item); if(_ch === 'suspend'){ await mcsSuspendRecord('doctors', item); return; } if(_ch !== 'delete') return;   /* MCS2111SA603: ادائیگی شدہ نہیں حذف ہوگا؛ حذف / معطل کا انتخاب */
   if(!(await askAdminPassword(`«${item.nameUr||item.name||''}» ${item.whatsapp?'(\u2066'+item.whatsapp+'\u2069) ':''}کا ریکارڈ ہمیشہ کے لیے حذف ہو جائے گا — یہ واپس نہیں آئے گا۔`))) return;
   deleteFromFirebase('doctors', item).then(ok=>{
     if(!ok) return;
+    try{ mcsTombAdd('doctor', item); }catch(e){}
     store.doctors = store.doctors.filter(x=>x.id!==id);
     if(Array.isArray(store.favs)) store.favs = store.favs.filter(f=>f!=='doctor:'+id);
     saveStore();
@@ -11496,9 +11499,11 @@ function saveService(approve){
 async function deleteService(id){
   const item = store.services.find(x=>x.id===id); if(!item) return;
   /* MCS0111SU109: نام کے ساتھ تصدیق؛ حذف کے بعد جو صفحہ کھلا ہو (فہرست، تلاش، خاص نمبر) وہی تازہ */
+  const _ch = await mcsRemoveFlow('service', item); if(_ch === 'suspend'){ await mcsSuspendRecord('services', item); return; } if(_ch !== 'delete') return;   /* MCS2111SA603: ادائیگی شدہ نہیں حذف ہوگا؛ حذف / معطل کا انتخاب */
   if(!(await askAdminPassword(`«${item.nameUr||item.name||''}» ${item.whatsapp?'(\u2066'+item.whatsapp+'\u2069) ':''}کا ریکارڈ ہمیشہ کے لیے حذف ہو جائے گا — یہ واپس نہیں آئے گا۔`))) return;
   deleteFromFirebase('services', item).then(ok=>{
     if(!ok) return;
+    try{ mcsTombAdd('service', item); }catch(e){}
     store.services = store.services.filter(x=>x.id!==id);
     if(Array.isArray(store.favs)) store.favs = store.favs.filter(f=>f!=='service:'+id);
     saveStore();
@@ -29165,6 +29170,76 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
       setTimeout(() => { try{ if(k === 'doctor') openDoctorForm(id); else openServiceForm(id);
         setTimeout(() => { try{ const bx = document.getElementById('svcPfBox'); if(bx && k !== 'doctor'){ bx.hidden = false; bx.style.display = ''; bx.open = true; } }catch(e){} }, 400); }catch(e){} }, 150);
     }; g.__rn588 = 1; window.pfEditOpen = g; }
+})();
+</script>
+
+<script id="mcsTomb603">
+/* MCS2111SA603 (مالک کا حکم): (1) ایڈمن جو ریکارڈ حذف کرے وہ ہر فون سے مٹے (سرور پر «حذف شدہ» نشان، ہر فون ایپ کھلنے پر دیکھ کر اپنی کاپی صاف کرتا ہے — اپنا کارڈ بھی)
+   (2) Google Play سے ادائیگی والا ممبر کبھی حذف نہیں ہو سکتا — وارننگ آ کر ریکارڈ رہتا ہے (3) حذف کی جگہ «معطل / روکیں» کا انتخاب */
+(function(){
+  const API = 'https://aio-pos-verify.pbtcodelabs.workers.dev', TK = 'mcsTombKeys', PK = 'mcsTombPend';
+  const ls = { g(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, s(k, v){ try{ localStorage.setItem(k, v); }catch(e){} } };
+  const post = async (path, body, hdr) => { try{ return await (await fetch(API + path, { method: 'POST', headers: hdr || { 'Content-Type': 'text/plain' }, body: JSON.stringify(body) })).json(); }catch(e){ return null; } };
+  const keysOf = r => { const k = []; if(r && r.fsId) k.push('fs:' + r.fsId); if(r && r.id) k.push('id:' + r.id); return k; };
+  const jget = (k, d) => { try{ return JSON.parse(ls.g(k) || 'null') || d; }catch(e){ return d; } };
+  async function sendPending(){
+    const P = jget(PK, []); if(!P.length) return;
+    let h = null; try{ h = await vfAdminHdr(); }catch(e){} if(!h) return;
+    const r = await post('/mcsdir', { op: 'tadd', keys: P.slice(0, 20) }, h);
+    if(r && r.ok){ ls.s(PK, JSON.stringify(P.slice(20))); }
+  }
+  window.mcsTombAdd = function(kind, item){
+    const k = keysOf(item); if(!k.length) return;
+    ls.s(PK, JSON.stringify(Array.from(new Set(jget(PK, []).concat(k)))));
+    sendPending().then(() => { try{ tombCheck(true); }catch(e){} });
+  };
+  function tombApply(set){
+    let ch = 0;
+    [['services', 'service'], ['doctors', 'doctor']].forEach(([col, kind]) => {
+      const arr = localArrayFor(col);
+      for(let i = arr.length - 1; i >= 0; i--){ if(keysOf(arr[i]).some(x => set.has(x))){ arr.splice(i, 1); ch++; } }
+    });
+    if(ch){ try{ saveStore(); }catch(e){} try{ refreshVisibleLists(); }catch(e){} try{ if(typeof updateHomeCounts === 'function') updateHomeCounts(); }catch(e){} try{ mpRender(); hlRenderSoon(); }catch(e){} }
+    return ch;
+  }
+  let busy = false;
+  async function tombCheck(force){
+    if(busy || !navigator.onLine) return; busy = true;
+    try{
+      try{ if(isAdminSignedIn) await sendPending(); }catch(e){}
+      const r = await post('/mcsdir', { op: 'tget' });
+      if(r && r.ok && Array.isArray(r.keys)){ ls.s(TK, JSON.stringify(r.keys)); }
+      tombApply(new Set(jget(TK, [])));
+    }catch(e){} finally { busy = false; }
+  }
+  window.mcsTombCheck = tombCheck;
+  setTimeout(tombCheck, 4000); setInterval(tombCheck, 10 * 60e3);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) tombCheck(); });
+
+  window.mcsRemoveFlow = async function(kind, item){
+    let rk = ''; try{ rk = pfKeyOf(item, kind); }catch(e){}
+    let p = null; try{ p = await post('/mcsdir', { op: 'paid', rec: rk }, await vfAdminHdr()); }catch(e){}
+    if(!p || !p.ok){ alert('⚠️ سرور سے ادائیگی کی جانچ نہیں ہو سکی — اس لیے حذف روک دیا گیا ہے۔\n\nانٹرنیٹ اور ایڈمن لاگ اِن دیکھ کر دوبارہ کوشش کریں۔'); return 'no'; }
+    if(p.paid){ const d = p.exp ? new Date(p.exp).toLocaleDateString('en-GB') : '';
+      alert('⛔ یہ ممبر Google Play سے ادائیگی کر چکا ہے' + (d ? ' (ممبرشپ ' + d + ' تک)' : '') + '۔\n\nاس کا ریکارڈ حذف نہیں ہو سکتا — ریکارڈ رہے گا۔'); return 'no'; }
+    return await new Promise(res => {
+      window._mcsRmRes = res;
+      agModal('<div class="ag-hd">«' + escapeHtml(item.nameUr || item.name || '') + '» — کیا کرنا ہے؟</div>'
+        + '<div class="cp-hint">اس نے Google Play سے ادائیگی نہیں کی۔</div>'
+        + '<button type="button" class="btn block" style="margin-bottom:8px;background:#b91c1c" onclick="closeModal(\'agModal\');window._mcsRmRes(\'delete\')">🗑️ مکمل حذف — ہر فون سے مٹ جائے</button>'
+        + '<button type="button" class="btn block" style="margin-bottom:8px" onclick="closeModal(\'agModal\');window._mcsRmRes(\'suspend\')">⏸️ معطل / روکیں — عوام سے چھپ جائے، ریکارڈ رہے</button>'
+        + '<button type="button" class="btn block secondary" onclick="closeModal(\'agModal\');window._mcsRmRes(\'no\')">لغو</button>');
+    });
+  };
+  window.mcsSuspendRecord = async function(col, item){
+    if(!(await askAdminPassword('«' + (item.nameUr || item.name || '') + '» معطل ہو جائے گا — عوام سے چھپ جائے گا، ریکارڈ رہے گا۔'))) return;
+    const FB = window.MCSFirebase; let ok = true;
+    try{ if(FB && FB.updateDoc && item.fsId) await FB.updateDoc(FB.doc(FB.db, col, item.fsId), { approved: false, suspended: true, mcsLive: false }); }catch(e){ ok = false; alert('سرور پر معطل نہیں ہو سکا۔\nوجہ: ' + ((e && (e.code || e.message)) || '؟')); }
+    if(!ok) return;
+    item.suspended = true; item.approved = false; item.mcsLive = false; try{ saveStore(); }catch(e){}
+    try{ refreshVisibleLists(); }catch(e){} try{ mpRender(); }catch(e){}
+    showToast('⏸️ معطل کر دیا گیا — ریکارڈ موجود ہے');
+  };
 })();
 </script>
 </body>
