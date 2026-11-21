@@ -4819,10 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA595";
+const APP_VERSION = "MCS2111SA596";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2111SA596": "New \"Need assistance\" checkbox on the membership step: if the Google Play purchase gives trouble, the shopkeeper ticks it and the admin gets a Need-assistance card (name, mobile, WhatsApp, MCS ID) with Call / WhatsApp to guide him — membership still starts only with the Google Play payment",
   "MCS2111SA595": "Sub-type is now fully optional — a form saves with just the name and number",
   "MCS2011FR592": "Save button always visible at the bottom of every edit form and saves for real; on an error the form jumps to the exact field — editing an existing record is no longer blocked by the Sub-type field",
   "MCS2011FR591": "All hint / helper captions removed from buttons and fields — only the button caption remains",
@@ -23461,7 +23462,9 @@ async function mrqLoad(force){
   try{ const cd = mrqIsCd() ? codevMe() : null; const hdr = cd ? {'Content-Type':'text/plain'} : await vfAdminHdr(); const bd = cd ? {op:'list', as:'cd', phone: cd.phone, pin: cd.pin} : {op:'list'}; const j = await (await fetch(PF_API + '/preq', {method:'POST', headers: hdr, body: JSON.stringify(bd)})).json(); if(j && j.ok){ MRQ = j.list || []; _mrqAt = Date.now(); try{ pendingHomeListRender(); }catch(e){} } }catch(e){}
   _mrqBusy = false;
 }
-const mrqOpenList = () => MRQ.filter(x => x.st === 'new' || x.st === 'pend' || x.st === 'info');
+const mrqIsHelp = x => !!(x && x.data && x.data.kind === 'help');
+const mrqOpenList = () => MRQ.filter(x => !mrqIsHelp(x) && (x.st === 'new' || x.st === 'pend' || x.st === 'info'));
+const mrqHelpList = () => MRQ.filter(x => mrqIsHelp(x) && (x.st === 'new' || x.st === 'pend' || x.st === 'info'));
 (function(){
   const _old = window.pendingHomeListRender;
   window.pendingHomeListRender = function(){
@@ -23476,9 +23479,57 @@ const mrqOpenList = () => MRQ.filter(x => x.st === 'new' || x.st === 'pend' || x
     box.style.display = 'flex'; if(box.firstChild !== s) box.insertBefore(s, box.firstChild);
   };
 })();
+
+/* ===== MCS2111SA596 (مالک کا حکم): «رہنمائی درکار ہے» — دکاندار کو Play Store سے خریداری میں مشکل ہو تو ایڈمن کے ہوم پر پٹی + پاپ اپ؛ کال / واٹس ایپ کے بٹن ساتھ ===== */
+function mrqHelpCard(x, i){
+  const E = escapeHtml, d = x.data || {}, ph = String(d.mobile || '').replace(/\D/g, '').slice(-10), wa = String(d.wa || d.mobile || '').replace(/\D/g, '').slice(-10);
+  const nm = d.name || d.prof || '';
+  const msg = 'السلام علیکم! ' + nm + ' صاحب، مائی سٹی شائنز (MCS) کی طرف سے رابطہ۔ آپ کو ایپ میں پلے سٹور سے ممبرشپ لینے میں مشکل آ رہی ہے، ہم آپ کی رہنمائی کرنا چاہتے ہیں۔ براہِ کرم بتائیں کیا ایرر آ رہا ہے؟';
+  const row = (k, v) => v ? `<div class="mrq-r"><span>${k}</span><b dir="auto">${v}</b></div>` : '';
+  let f = null; try{ const b = stKey(d.mobile); if(b){ const r = (store.services || []).find(z => z && stKey(z.whatsapp) === b); if(r) f = r; } }catch(e){}
+  return `<div class="mrq-c" data-st="${x.st}">
+    <div class="mrq-h"><b>🙋 رہنمائی درکار ہے</b><i class="mrq-tg ${x.st === 'new' ? 'n' : 'p'}">${x.st === 'new' ? '🆕' : '⏸️'}</i></div>
+    <div class="mrq-sm">📩 ${mrqAgo(x.ts)}</div>
+    <div class="mrq-tx" dir="rtl">${mrqIsDev() ? 'محترم عبدالحفیظ' : 'محترم ایڈمن'}! مائی سٹی شائنز (MCS) کا ایک کسٹمر رجسٹریشن مکمل کرنا چاہتا ہے — پلے سٹور سے ممبرشپ لینے میں اسے رہنمائی چاہیے۔</div>
+    ${row('👤 نام', E(nm))}${row('🏪 کاروبار', E(d.prof))}${row('🆔 MCS ID', d.uid ? `<bdi dir="ltr">${E(d.uid)}</bdi>` : '')}${row('📱 موبائل', ph ? `<a href="tel:0${ph}">0${ph}</a>` : '')}${row('💬 واٹس ایپ', wa ? `0${wa}` : '')}${row('✉️ Gmail', E(d.gmail))}${row('📍 شہر', E([d.area, d.city].filter(Boolean).join('، ')))}
+    <div class="mrq-b">
+      ${ph ? `<a class="ca" href="tel:0${ph}">📞 کال</a>` : ''}${wa ? `<a class="wa" target="_blank" rel="noopener" href="https://wa.me/92${wa}?text=${encodeURIComponent(msg)}">💬 واٹس ایپ</a>` : ''}
+      ${ph ? `<button type="button" class="ch" onclick="mrqChat(${i})">💬 چیٹ</button>` : ''}
+      ${f ? `<button type="button" class="vw" onclick="try{closeModal('agModal');pfOpen('service','${escapeAttr(f.id)}')}catch(e){}">👁️ فارم</button>` : ''}
+      ${mrqIsCd() ? '' : `<button type="button" class="ok" onclick="mrqHelpDone(${i})">✅ مسئلہ حل ہو گیا</button>`}
+    </div></div>`;
+}
+function mrqHelpOpen(){
+  const L = mrqHelpList(); window._mrqShown = L;
+  agModal(`<div class="ag-hd">🙋 رہنمائی درکار ہے <small>Need assistance (${L.length})</small></div>
+    <button type="button" class="btn block secondary" style="margin:0 0 8px" onclick="mrqLoad(true).then(mrqHelpOpen)">🔄 تازہ کریں</button>
+    ${L.length ? L.map((x, i) => mrqHelpCard(x, i)).join('') : '<div class="cp-hint" style="text-align:center">✅ ابھی کوئی نہیں</div>'}`);
+}
+async function mrqHelpDone(i){
+  const ok = await mrqSet(i, 'done', 'رہنمائی مکمل'); if(ok === false) return;   /* دکاندار کے فون پر ٹِک خود ختم ہو جاتا ہے */
+  setTimeout(mrqHelpOpen, 200);
+}
+(function(){
+  const _o = window.pendingHomeListRender;
+  window.pendingHomeListRender = function(){
+    try{ _o && _o(); }catch(e){}
+    const box = document.getElementById('pendingHomeList'); if(!box) return;
+    let s = document.getElementById('mrqHelpStrip');
+    const L = mrqCan() ? mrqHelpList() : [];
+    if(!L.length){ if(s) s.remove(); return; }
+    if(!s){ s = document.createElement('button'); s.type = 'button'; s.id = 'mrqHelpStrip'; s.className = 'mrq-strip'; s.style.cssText = 'background:linear-gradient(135deg,#fff7ed,#ffedd5);border-color:#fb923c'; s.onclick = () => mrqHelpOpen(); }
+    s.innerHTML = `<span class="mrq-ic">🙋</span><span class="mrq-t"><b>🙋 رہنمائی درکار ہے — ${L.length}</b><small>${L.slice(0, 3).map(x => escapeHtml((x.data && (x.data.name || x.data.prof)) || x.rec)).join(' • ')}</small></span><span class="mrq-go">›</span>`;
+    box.style.display = 'flex'; if(box.firstChild !== s) box.insertBefore(s, box.firstChild);
+    try{   /* مالک کے ہوم پر نیا پیغام آئے تو ایک بار خود پاپ اپ */
+      if(!mrqIsDev()) return;
+      const seen = JSON.parse(localStorage.getItem('mcsHlpSeen') || '{}'); const nw = L.find(x => x.st === 'new' && String(seen[x.rec]) !== String(x.ts));
+      if(nw){ seen[nw.rec] = String(nw.ts); localStorage.setItem('mcsHlpSeen', JSON.stringify(seen)); setTimeout(mrqHelpOpen, 600); }
+    }catch(e){}
+  };
+})();
 function mrqAgo(t){ const m = Math.round((Date.now() - t) / 60000); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' days ago'; }
 function mrqOpen(){
-  const E = escapeHtml, L = mrqOpenList(), done = MRQ.filter(x => x.st === 'done' || x.st === 'rej');
+  const E = escapeHtml, L = mrqOpenList(), done = MRQ.filter(x => !mrqIsHelp(x) && (x.st === 'done' || x.st === 'rej'));
   const tag = st => st === 'new' ? '<i class="mrq-tg n">🆕 New</i>' : st === 'pend' ? '<i class="mrq-tg p">⏸️ Pending</i>' : st === 'info' ? '<i class="mrq-tg i">❓ Details asked</i>' : st === 'done' ? '<i class="mrq-tg d">✅ Reviewed</i>' : '<i class="mrq-tg r">❌ Not approved</i>';
   const row = (k, v) => v ? `<div class="mrq-r"><span>${k}</span><b dir="auto">${v}</b></div>` : '';
   const card = (x, i) => { const d = x.data || {}, ph = String(d.mobile || '').replace(/\D/g, '').slice(-10), mem = !x.has ? '⚠️ Not on server yet' : x.pend ? '⏳ Waiting (shopkeeper made it)' : (x.until > Date.now() ? '✅ Active till ' + new Date(x.until).toLocaleDateString('en-GB') : '⛔ Expired / not active');
@@ -25709,10 +25760,11 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       ${st === 'pend' ? `<div class="wzGreen" style="text-align:center"><div class="wzSpin"></div><b class="u" style="font-size:18px">تصدیق ہو رہی ہے</b><div id="wzPendT" dir="ltr" style="font:800 22px/1.4 Arial,sans-serif;color:#166534">0:00</div></div>` : ''}
       ${st === 'act' ? `<div class="wzGreen"><b>🎉 Payment Successful! Your Business is Now Public!</b><div class="u">ادائیگی کامیاب! اب آپ کا کاروبار عوام کے لیے ظاہر ہے۔</div></div><button class="wzBtn bG" onclick="mcsWizClose()">Finish<small class="u">مکمل</small></button>` : ''}
       ${(function(){ try{ return mcsGpaHeld(null, pfKeyOf(rec, 'service')) ? `<div class="wzGreen"><b>⏳ Payment done — finishing verification</b><div class="u">ادائیگی ہو گئی — تصدیق مکمل کریں۔</div></div><button class="wzBtn bB" onclick="mcsPlayBuy(pfKeyOf(myCard(), 'service'))">✅ Finish verification<small class="u">تصدیق مکمل کریں</small></button>` : ''; }catch(e){ return ''; } })()}
+      ${st !== 'act' ? `<label id="wzHelpL" style="display:flex;align-items:center;gap:8px;margin:10px 2px 2px;font-weight:700;cursor:pointer"><input type="checkbox" id="wzHelpC" style="width:20px;height:20px;flex:0 0 auto" onchange="wzHelpToggle(this)"><span>🙋 Need assistance <span class="u">رہنمائی درکار ہے</span></span></label><div id="wzHelpM" class="u" style="font-size:14px;font-weight:700;color:#047857;margin:2px 4px"></div>` : ''}
       <div id="wzAlt"></div>
       ${st !== 'act' ? `<button class="wzBtn bW" onclick="wzDel()" style="color:#b42318;border-color:#fda29b;margin-top:6px">🗑️ Delete this business card<small class="u">یہ بزنس کارڈ حذف کریں</small></button>` : ''}
       <button class="wzBtn bW" onclick="wzGo(2)" style="margin-top:6px">← Back</button></div>`);
-    wzRefInit(); const n = $('wzRef'); if(n && p.ref) n.value = p.ref; wzRefNm(); if(st === 'none') plansLoad();
+    wzRefInit(); const n = $('wzRef'); if(n && p.ref) n.value = p.ref; wzRefNm(); if(st === 'none') plansLoad(); try{ wzHelpInit(); }catch(e){}
     /* MCS1611MO478: زیرِ تصدیق — گھومتا نشان + گزرا وقت؛ ہر 20 سیکنڈ سرور سے دوبارہ جانچ، تصدیق ہوتے ہی صفحہ خود اگلا */
     if(st === 'pend'){ let at = Date.now(); try{ at = (JSON.parse(lsG('mcsPlayPending') || 'null') || {}).at || at; }catch(e){}
       clearInterval(window._wzPendT); let k = 0;
@@ -25807,6 +25859,35 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     try{ const FB = window.MCSFirebase; if(FB && FB.updateDoc && rec.fsId) await FB.updateDoc(FB.doc(FB.db, 'services', rec.fsId), {approved: true}); }catch(e){}
     try{ renderServiceList('list'); mpRender(); }catch(e){} }
   window.wzResend = function(){ const rec = myCard(); if(rec) try{ memAutoSend('service', rec); }catch(e){} };
+
+  /* MCS2111SA596 (مالک کا حکم): «رہنمائی درکار ہے» — Play Store سے خریداری میں مشکل ہو تو دکاندار ٹِک لگائے؛ ایڈمن کو کال / واٹس ایپ والا کارڈ ملتا ہے تاکہ اس کی رہنمائی کی جائے۔ ممبرشپ پھر بھی صرف Google Play کی ادائیگی سے شروع ہوتی ہے؛ اس ٹِک کا خریداری کے بٹن سے کوئی تعلق نہیں۔ */
+  function hlpKey(rec){ const k = stKey((rec && rec.whatsapp) || (me() && me().user && me().user.mobile) || (S.a && S.a.mobile) || ''); return k ? k + '_help' : ''; }
+  function hlpGet(){ try{ return JSON.parse(lsG('mcsNeedHelp') || '{}') || {}; }catch(e){ return {}; } }
+  function hlpPut(m){ try{ lsS('mcsNeedHelp', JSON.stringify(m)); }catch(e){} }
+  function hlpData(rec){
+    const m = rec.more || {}, u = (me() && me().user) || {}; let cat = '', sid = '';
+    try{ cat = ubCatMeta(rec.category).ur || ''; }catch(e){}
+    try{ sid = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || (m.sid ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(m.sid) : m.sid) : ''); }catch(e){}
+    return {name: u.name || rec.nameUr || '', mobile: rec.whatsapp || u.mobile || '', wa: m.wa2 || '', gmail: ((S.p && S.p.email) || m.email || ''), prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', uid: String(sid || ''), kind: 'help', text: 'Need assistance — Google Play membership step' + (sid ? ' · MCS ID ' + sid : '')};
+  }
+  function hlpShow(on){ const c = $('wzHelpC'), m = $('wzHelpM'); if(c){ c.checked = !!on; c.disabled = !!on; } if(m) m.textContent = on ? '✅ آپ کا پیغام پہنچ گیا — ہماری ٹیم جلد رابطہ کرے گی' : ''; }
+  window.wzHelpToggle = async function(el){
+    const rec = myCard(); if(!rec){ el.checked = false; return; }
+    const key = hlpKey(rec), m = hlpGet();
+    if(!el.checked){ el.checked = !!m[key]; return; }
+    if(!/^p\d{10}_help$/.test(key)){ el.checked = false; return err('موبائل نمبر نہیں ملا'); }
+    el.disabled = true; let ok = false;
+    try{ const j = await (await fetch(PF_API + '/preq', {method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify({op: 'add', rec: key, data: hlpData(rec)})})).json(); ok = !!(j && j.ok); }catch(e){}
+    if(!ok){ el.checked = false; el.disabled = false; return err('پیغام نہیں گیا — انٹرنیٹ دیکھ کر دوبارہ ٹِک لگائیں'); }
+    m[key] = Date.now(); hlpPut(m); hlpShow(true);
+  };
+  async function wzHelpInit(){
+    const rec = myCard(), c = $('wzHelpC'); if(!rec || !c) return;
+    const key = hlpKey(rec), m = hlpGet(); if(!m[key]) return; hlpShow(true);
+    try{ const j = await (await fetch(PF_API + '/preq', {method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify({op: 'mine', rec: key})})).json();
+      if(j && j.ok && j.st === 'done'){ delete m[key]; hlpPut(m); hlpShow(false); }   /* ایڈمن نے مسئلہ حل کر دیا — ٹِک خود ختم، کوئی نشان نہیں */
+      else if(j && j.ok && !j.st){ fetch(PF_API + '/preq', {method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify({op: 'add', rec: key, data: hlpData(rec)})}).catch(() => {}); } }catch(e){}
+  }
   function altPath(rec){   /* جو بندہ Google Play سے ادائیگی نہیں کر سکتا — صرف اکاؤنٹ کی تفصیل تصدیق کے لیے */
     const a = $('wzAlt'); if(!a) return;
     /* MCS1811WE538 (مالک کا حکم): «تفصیل تصدیق کے لیے بھیجیں» ختم — صرف Google Play؛ ایکٹیویشن ہیلپ ڈیسک سے MCS نمبر پر */
