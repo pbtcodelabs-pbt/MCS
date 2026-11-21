@@ -4819,10 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA601";
+const APP_VERSION = "MCS2111SA602";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2111SA602": "When Google Play cannot open, the message now also shows the exact browser error and how many membership packages Play returned, so the cause is visible in one screenshot.",
   "MCS2111SA601": "Google Play membership button fixed at the root: Play is now prepared in the background and opens the instant the button is tapped (the phone was cancelling the payment screen because of the wait before it) • clear message if it still fails.",
   "MCS2111SA600": "One status everywhere: a business whose membership is active now shows as registered on the card, welcome, portal and wizard (no more «Register Now» / «Complete registration» beside a congratulations message, even after the admin changes its category) • Google Play error now shows the exact cause at the TOP of the message • Need-assistance card shows the phone diagnosis and last Play error.",
   "MCS2111SA599": "Admin Need-assistance card now shows the whole finished business form: business name (Urdu + English), owner name, organisation, full address, category, sub-types, products, CNIC / expiry filled, referral.",
@@ -6579,7 +6580,9 @@ async function mcsPlayBuy(rk){
         return;
       }
       if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
-        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\n' + mcsPlayWhy() + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں، Play Store میں وہی Gmail ہو جس سے ادائیگی کرنی ہے۔\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
+        let dg = ''; try{ await mcsPlayDetails(); dg = mcsPlayDiag || ''; }catch(_){}   /* MCS2111SA602: اصل وجہ + Play کا جواب ڈائیلاگ میں */
+        try{ localStorage.setItem('mcsPlayLastErr', ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 120) + ' | ' + dg.slice(0, 90) + ' @' + new Date().toISOString().slice(0, 16)); }catch(_){}
+        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\n' + mcsPlayWhy() + '\n\n⚙️ ' + ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 160) + '\n📦 ' + dg + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں، Play Store میں وہی Gmail ہو جس سے ادائیگی کرنی ہے۔\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
         return;
       }
       if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
