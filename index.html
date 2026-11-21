@@ -4819,10 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA604";
+const APP_VERSION = "MCS2111SA605";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2111SA605":"💬 لاگ اِن اور سائن اپ پر «Ask us» واپس — سائن اپ کے بغیر سوال • 📩 ویٹنگ فار رجسٹریشن میں «اطلاع بھیجیں» — خوبصورت دعوتی کارڈ (QR اور پلے اسٹور) سیدھا اسی کے واٹس ایپ پر، اطلاع ہو چکی تو کارڈ کا رنگ بدلتا ہے • «🗑️ حذف» ایڈمن پاس ورڈ کے بعد",
   "MCS2111SA604":"🇵🇰 اپڈیٹ مکمل کی پرچی اب پوری اردو میں — لیبل اور «کیا کام ہوا» دونوں اردو میں، دائیں سے بائیں",
   "MCS2111SA603": "🗑️ ایڈمن کا حذف اب ہر فون سے مٹاتا ہے (مالک کی اپنی کاپی سمیت) • جس نے Google Play سے ادائیگی کی ہو وہ کبھی حذف نہیں ہوتا — وارننگ آتی ہے اور ریکارڈ رہتا ہے • حذف کی جگہ اب انتخاب: مکمل حذف یا معطل",
   "MCS2111SA602": "🛠️ Google Play نہ کھلے تو پیغام میں اب براؤزر کا اصل ایرر اور «Play نے کتنے پیکج لوٹائے» بھی لکھا آتا ہے تاکہ ایک تصویر میں وجہ پتا چل جائے",
@@ -5569,14 +5570,168 @@ function waitDraw(){
   var cur = rows.slice(_wst.page * sz, _wst.page * sz + sz);
   var n = document.getElementById('waitN'); if(n) n.textContent = _wn(tot);
   var l = document.getElementById('waitList'); if(!l) return;
-  l.innerHTML = cur.length ? cur.map(function(r){ var x = r.x, nm = x.nameUr || x.name || x.nameEn || '—', mob = String(x.whatsapp || '').replace(/\D/g, ''), cap = [x.type || x.category, x.owner, x.city, x.area].filter(Boolean);
-    return '<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:8px 10px;margin:6px 0"><div style="font-weight:800;font-size:15px;color:#0f172a;line-height:1.5">' + _wE(nm) + (x.nameEn && x.nameEn !== nm ? ' <small style="font:700 12px Arial,sans-serif;color:#64748b;direction:ltr;display:inline-block">' + _wE(x.nameEn) + '</small>' : '') + '</div>'
+  var _inf = _wInfMap();
+  l.innerHTML = cur.length ? cur.map(function(r){ var x = r.x, nm = x.nameUr || x.name || x.nameEn || '—', mob = String(x.whatsapp || '').replace(/\D/g, ''), cap = [x.type || x.category, x.owner, x.city, x.area].filter(Boolean), inf = _inf[x.fsId] || 0, q = '\'' + r.col + '\',\'' + _wE(x.fsId) + '\'';
+    return '<div style="background:' + (inf ? '#fef3c7' : '#fff') + ';border:1.5px solid ' + (inf ? '#f59e0b' : '#e2e8f0') + ';border-radius:12px;padding:8px 10px;margin:6px 0">'
+      + '<div style="display:flex;gap:8px;align-items:flex-start"><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:15px;color:#0f172a;line-height:1.5">' + _wE(nm) + (x.nameEn && x.nameEn !== nm ? ' <small style="font:700 12px Arial,sans-serif;color:#64748b;direction:ltr;display:inline-block">' + _wE(x.nameEn) + '</small>' : '') + '</div>'
       + (cap.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0">' + cap.map(function(c){ return '<span style="background:#ecfeff;border:1px solid #a5f3fc;color:#155e75;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:700">' + _wE(c) + '</span>'; }).join('') + '</div>' : '')
       + (x.address ? '<div style="font-size:12.5px;color:#475569;line-height:1.6">📍 ' + _wE(x.address) + '</div>' : '')
-      + '<div style="display:flex;gap:6px;margin-top:6px">' + (mob ? '<a href="tel:' + _wE(mob) + '" style="flex:1;text-align:center;text-decoration:none;background:#f1f5f9;border-radius:10px;padding:7px 4px;font:800 13px Arial,sans-serif;color:#0f172a;direction:ltr">📞 ' + _wE(mob) + '</a>' : '')
-      + '<button type="button" onclick="waitRestore(\'' + r.col + '\',\'' + _wE(x.fsId) + '\')" style="flex:1;border:0;border-radius:10px;padding:7px 4px;background:#0f766e;color:#fff;font:inherit;font-weight:800;font-size:13px">📥 رجسٹر کریں</button></div></div>'; }).join('')
+      + (inf ? '<div style="margin-top:4px;display:inline-block;background:#f59e0b;color:#fff;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:800">✅ اطلاع ہو چکی — <span style="font-family:Arial,sans-serif;direction:ltr;display:inline-block">' + new Date(inf).toLocaleDateString('en-GB') + '</span></div>' : '') + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:5px;flex:none"><button type="button" onclick="waitInvite(' + q + ')" style="border:0;border-radius:10px;padding:6px 9px;background:' + (inf ? '#d97706' : '#16a34a') + ';color:#fff;font:inherit;font-weight:800;font-size:12.5px;white-space:nowrap">' + (inf ? '📩 دوبارہ بھیجیں' : '📩 اطلاع بھیجیں') + '</button>'
+      + '<button type="button" onclick="waitDelete(' + q + ')" style="border:1.5px solid #dc2626;border-radius:10px;padding:5px 9px;background:#fff;color:#dc2626;font:inherit;font-weight:800;font-size:12.5px;white-space:nowrap">🗑️ حذف</button></div></div>'
+      + '<div style="display:flex;gap:6px;margin-top:6px">' + (mob ? '<a href="tel:' + _wE(mob) + '" style="flex:1;text-align:center;text-decoration:none;background:' + (inf ? '#fde68a' : '#f1f5f9') + ';border-radius:10px;padding:7px 4px;font:800 13px Arial,sans-serif;color:#0f172a;direction:ltr">📞 ' + _wE(mob) + '</a>' : '')
+      + '<button type="button" onclick="waitRestore(' + q + ')" style="flex:1;border:0;border-radius:10px;padding:7px 4px;background:#0f766e;color:#fff;font:inherit;font-weight:800;font-size:13px">📥 رجسٹر کریں</button></div></div>'; }).join('')
     : '<div style="text-align:center;color:#64748b;padding:30px 10px;font-weight:700">کوئی ریکارڈ نہیں</div>';
   var pg = document.getElementById('waitPg'); if(pg) pg.innerHTML = '<button type="button" onclick="waitPage(-1)" ' + (_wst.page <= 0 ? 'disabled' : '') + ' style="border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:10px;padding:7px 14px;font:inherit;font-weight:800;' + (_wst.page <= 0 ? 'opacity:.4' : '') + '">◀ پچھلے</button><span style="font:800 13px Arial,sans-serif;direction:ltr">' + (_wst.page + 1) + ' / ' + pages + '</span><button type="button" onclick="waitPage(1)" ' + (_wst.page >= pages - 1 ? 'disabled' : '') + ' style="border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:10px;padding:7px 14px;font:inherit;font-weight:800;' + (_wst.page >= pages - 1 ? 'opacity:.4' : '') + '">اگلے ▶</button>';
+}
+/* MCS2111SA605 (مالک کا حکم): ویٹنگ فار رجسٹریشن — (۱) «📩 اطلاع» = خوبصورت دعوتی کارڈ (نوری نستعلیق کشیدہ، QR، پلے اسٹور) سیدھا اسی کے واٹس ایپ پر، (۲) اطلاع ہو چکی تو کارڈ کا رنگ بدلے، (۳) «🗑️ حذف» = ایڈمن پاس ورڈ کے بعد ہمیشہ کے لیے۔ پوسٹر پر ذاتی نمبر نہیں — رابطہ صرف Help Desk سے */
+/* MCS2111SA605: چھوٹا QR کوڈ بنانے والا (بغیر انٹرنیٹ) — بائٹ موڈ، ECC درجہ M، ورژن 1 تا 10 */
+function mcsQrMatrix(text){
+  var data = Array.from(new TextEncoder().encode(String(text)));
+  var ECC = [0,10,16,26,18,24,16,18,22,22,26], BLK = [0,1,1,1,2,2,4,4,4,5,5];
+  function rawMods(v){ var r = (16*v+128)*v+64; if(v >= 2){ var n = Math.floor(v/7)+2; r -= (25*n-10)*n-55; if(v >= 7) r -= 36; } return r; }
+  var ver, dc;
+  for(ver = 1; ver <= 10; ver++){ dc = Math.floor(rawMods(ver)/8) - ECC[ver]*BLK[ver]; if(4 + (ver < 10 ? 8 : 16) + data.length*8 <= dc*8) break; }
+  if(ver > 10) return null;
+  var bits = [];
+  function put(v, n){ for(var i = n-1; i >= 0; i--) bits.push((v >>> i) & 1); }
+  put(4, 4); put(data.length, ver < 10 ? 8 : 16); data.forEach(function(b){ put(b, 8); });
+  var cap = dc*8; put(0, Math.min(4, cap - bits.length)); while(bits.length % 8) bits.push(0);
+  for(var pad = 0xEC; bits.length < cap; pad ^= 0xEC ^ 0x11) put(pad, 8);
+  var cw = []; for(var i = 0; i < bits.length; i += 8){ var b = 0; for(var j = 0; j < 8; j++) b = (b << 1) | bits[i+j]; cw.push(b); }
+  function mul(x, y){ var z = 0; for(var i = 7; i >= 0; i--){ z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> i) & 1) * x; } return z; }
+  function divisor(d){ var r = []; for(var i = 0; i < d-1; i++) r.push(0); r.push(1); var root = 1; for(i = 0; i < d; i++){ for(var j = 0; j < r.length; j++){ r[j] = mul(r[j], root); if(j+1 < r.length) r[j] ^= r[j+1]; } root = mul(root, 2); } return r; }
+  function remainder(d, div){ var r = div.map(function(){ return 0; }); d.forEach(function(b){ var f = b ^ r.shift(); r.push(0); div.forEach(function(c, i){ r[i] ^= mul(c, f); }); }); return r; }
+  var nb = BLK[ver], el = ECC[ver], raw = Math.floor(rawMods(ver)/8), ns = nb - raw % nb, sl = Math.floor(raw/nb), dv = divisor(el), blocks = [], k = 0;
+  for(i = 0; i < nb; i++){ var dd = cw.slice(k, k + sl - el + (i < ns ? 0 : 1)); k += dd.length; var ec = remainder(dd, dv); if(i < ns) dd.push(0); blocks.push(dd.concat(ec)); }
+  var all = []; for(i = 0; i < blocks[0].length; i++) blocks.forEach(function(bl, j){ if(i != sl - el || j >= ns) all.push(bl[i]); });
+  var size = ver*4 + 17, M = [], F = [];
+  for(i = 0; i < size; i++){ M.push(new Array(size).fill(false)); F.push(new Array(size).fill(false)); }
+  function set(x, y, v){ M[y][x] = !!v; F[y][x] = true; }
+  for(i = 0; i < size; i++){ set(6, i, i % 2 == 0); set(i, 6, i % 2 == 0); }
+  function finder(x, y){ for(var dy = -4; dy <= 4; dy++) for(var dx = -4; dx <= 4; dx++){ var d = Math.max(Math.abs(dx), Math.abs(dy)), xx = x+dx, yy = y+dy; if(xx >= 0 && xx < size && yy >= 0 && yy < size) set(xx, yy, d != 2 && d != 4); } }
+  finder(3, 3); finder(size-4, 3); finder(3, size-4);
+  var ap = []; if(ver > 1){ var na = Math.floor(ver/7)+2, st = Math.ceil((ver*4+4)/(na*2-2))*2; ap = [6]; for(var p = size-7; ap.length < na; p -= st) ap.splice(1, 0, p); }
+  ap.forEach(function(a, ia){ ap.forEach(function(b, ib){ if((ia == 0 && ib == 0) || (ia == 0 && ib == ap.length-1) || (ia == ap.length-1 && ib == 0)) return; for(var dy = -2; dy <= 2; dy++) for(var dx = -2; dx <= 2; dx++) set(a+dx, b+dy, Math.max(Math.abs(dx), Math.abs(dy)) != 1); }); });
+  function fmt(mask){
+    var d = mask, r = d; for(var i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537);
+    var bt = ((d << 10) | r) ^ 0x5412, g = function(n){ return (bt >>> n) & 1; };
+    for(i = 0; i <= 5; i++) set(8, i, g(i)); set(8, 7, g(6)); set(8, 8, g(7)); set(7, 8, g(8)); for(i = 9; i < 15; i++) set(14-i, 8, g(i));
+    for(i = 0; i < 8; i++) set(size-1-i, 8, g(i)); for(i = 8; i < 15; i++) set(8, size-15+i, g(i)); set(8, size-8, true);
+  }
+  fmt(0);
+  if(ver >= 7){ var rr = ver; for(i = 0; i < 12; i++) rr = (rr << 1) ^ ((rr >>> 11) * 0x1F25); var vb = (ver << 12) | rr; for(i = 0; i < 18; i++){ var bit = (vb >>> i) & 1, a = size-11 + i % 3, bb = Math.floor(i/3); set(a, bb, bit); set(bb, a, bit); } }
+  var n = 0;
+  for(var right = size-1; right >= 1; right -= 2){ if(right == 6) right = 5; for(var vert = 0; vert < size; vert++) for(var j2 = 0; j2 < 2; j2++){ var x = right - j2, up = ((right+1) & 2) == 0, y = up ? size-1-vert : vert; if(!F[y][x] && n < all.length*8){ M[y][x] = ((all[n >>> 3] >>> (7 - (n & 7))) & 1) == 1; n++; } } }
+  function apply(mask){ for(var y = 0; y < size; y++) for(var x = 0; x < size; x++){ var inv; switch(mask){ case 0: inv = (x+y) % 2 == 0; break; case 1: inv = y % 2 == 0; break; case 2: inv = x % 3 == 0; break; case 3: inv = (x+y) % 3 == 0; break; case 4: inv = (Math.floor(x/3)+Math.floor(y/2)) % 2 == 0; break; case 5: inv = x*y % 2 + x*y % 3 == 0; break; case 6: inv = (x*y % 2 + x*y % 3) % 2 == 0; break; default: inv = ((x+y) % 2 + x*y % 3) % 2 == 0; } if(inv && !F[y][x]) M[y][x] = !M[y][x]; } }
+  function penalty(){
+    var s = 0, dark = 0, x, y, rows = [], cols = [];
+    for(y = 0; y < size; y++){ var rs = '', run = 1; for(x = 0; x < size; x++){ rs += M[y][x] ? '1' : '0'; if(M[y][x]) dark++; if(x > 0 && M[y][x] == M[y][x-1]){ run++; if(run == 5) s += 3; else if(run > 5) s++; } else run = 1; } rows.push(rs); }
+    for(x = 0; x < size; x++){ var cs = '', run2 = 1; for(y = 0; y < size; y++){ cs += M[y][x] ? '1' : '0'; if(y > 0 && M[y][x] == M[y-1][x]){ run2++; if(run2 == 5) s += 3; else if(run2 > 5) s++; } else run2 = 1; } cols.push(cs); }
+    for(y = 0; y < size-1; y++) for(x = 0; x < size-1; x++) if(M[y][x] == M[y][x+1] && M[y][x] == M[y+1][x] && M[y][x] == M[y+1][x+1]) s += 3;
+    rows.concat(cols).forEach(function(t){ var q = -1; while((q = t.indexOf('10111010000', q+1)) >= 0) s += 40; q = -1; while((q = t.indexOf('00001011101', q+1)) >= 0) s += 40; });
+    s += Math.floor(Math.abs(dark*20 - size*size*10) / (size*size)) * 10;
+    return s;
+  }
+  var best = 0, bp = 1e9;
+  for(var m = 0; m < 8; m++){ apply(m); fmt(m); var pn = penalty(); if(pn < bp){ bp = pn; best = m; } apply(m); }
+  apply(best); fmt(best);
+  return M;
+}
+function mcsQrDraw(ctx, text, x, y, px){
+  var M = mcsQrMatrix(text); if(!M) return false;
+  var n = M.length, q = 4, cell = Math.floor(px / (n + q*2)), tot = cell * (n + q*2), ox = x + Math.floor((px - tot)/2), oy = y + Math.floor((px - tot)/2);
+  ctx.save(); ctx.fillStyle = '#fff'; ctx.fillRect(ox, oy, tot, tot); ctx.fillStyle = '#000';
+  for(var r = 0; r < n; r++) for(var c = 0; c < n; c++) if(M[r][c]) ctx.fillRect(ox + (c+q)*cell, oy + (r+q)*cell, cell, cell);
+  ctx.restore(); return true;
+}
+
+function _wInfMap(){ try{ return JSON.parse(localStorage.getItem('mcsWaitInf') || '{}') || {}; }catch(e){ return {}; } }
+function _wInfSet(fsId, on){ try{ var m = _wInfMap(); if(on) m[fsId] = Date.now(); else delete m[fsId]; localStorage.setItem('mcsWaitInf', JSON.stringify(m)); }catch(e){} }
+function _wFind(col, fsId){ var w = WAIT[col] || []; for(var k = 0; k < w.length; k++){ if(w[k] && w[k].fsId === fsId) return w[k]; } return null; }
+function waitInviteCaption(x){
+  var nm = x.nameUr || x.name || x.nameEn || '';
+  return ['السلام علیکم! 🌟', '', 'بھائی، آپ کے اپنے شہر کی ایپ *My City Shines* میں آپ کا بنیادی ریکارڈ بن چکا ہے:', '🏪 ' + nm, '',
+    '📲 پلے اسٹور سے ڈاؤن لوڈ کریں — استعمال بالکل مفت ہے:', MCS_PLAY_URL, '🔍 یا پلے اسٹور میں *pbtcodelabs* سرچ کریں۔', '',
+    '🚀 اپنا کاروبار رجسٹر کریں تو آپ کا بزنس پورے پاکستان میں ہر جگہ پہنچے گا، اور ایسے نئے گاہک بھی ملیں گے جنہیں آپ جانتے تک نہیں۔',
+    '✍️ رجسٹریشن یا کوئی سوال ہو تو ایپ کھولیں اور *💬 Ask us* دبا کر لکھ دیں (سائن اپ ضروری نہیں)۔',
+    '🌐 ڈاؤن لوڈ نہیں کرنا تو براؤزر میں کھولیں اور وہاں بھی *Ask us* دبائیں:', MCS_APP_URL,
+    '🗑️ ریکارڈ ہٹوانا ہو تو بھی *Ask us* میں لکھ دیں — ہٹا دیں گے۔', '', '💙 — *pbtcodelabs*'].join('\n');
+}
+function waitInvitePoster(x){
+  var FF = 'Jameel Noori Nastaleeq Kasheeda';
+  return Promise.all([document.fonts.load('800 48px "' + FF + '"'), document.fonts.load('700 34px "' + FF + '"')]).catch(function(){}).then(function(){
+    var W = 880, H = 1240, c = document.createElement('canvas'); c.width = W; c.height = H; var ctx = c.getContext('2d');
+    var g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0a2e52'); g.addColorStop(.5, '#0d3b66'); g.addColorStop(1, '#081f39'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    var gl = ctx.createRadialGradient(W/2, 110, 10, W/2, 110, 480); gl.addColorStop(0, 'rgba(244,213,141,.25)'); gl.addColorStop(1, 'rgba(244,213,141,0)'); ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+    ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    var hg = ctx.createLinearGradient(0, 50, 0, 100); hg.addColorStop(0, '#fff2c9'); hg.addColorStop(.5, '#f4d58d'); hg.addColorStop(1, '#c99a34');
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = 5; ctx.shadowOffsetY = 3; ctx.fillStyle = hg; ctx.font = '800 58px "' + FF + '", sans-serif'; ctx.fillText('مائی سٹی شائنز', W/2, 92); ctx.restore();
+    /* درمیانی پینل */
+    var top = 130, ph = 640;
+    var pg = ctx.createLinearGradient(0, top, 0, top + ph); pg.addColorStop(0, '#ffffff'); pg.addColorStop(1, '#fff4d6');
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 26; ctx.shadowOffsetY = 12; ctx.fillStyle = pg; shareRoundRect(ctx, 50, top, W - 100, ph, 30); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.strokeStyle = '#c99a34'; ctx.lineWidth = 5; shareRoundRect(ctx, 62, top + 12, W - 124, ph - 24, 22); ctx.stroke(); ctx.lineWidth = 1.5; shareRoundRect(ctx, 72, top + 22, W - 144, ph - 44, 16); ctx.stroke(); ctx.restore();
+    function fitLines(txt, maxW, fs0, fsMin, maxH, weight){
+      var fs = fs0, lines, lh;
+      while(fs >= fsMin){ ctx.font = (weight || 700) + ' ' + fs + 'px "' + FF + '", sans-serif'; lines = shareWrapLines(ctx, txt, maxW); lh = fs * 1.7; var wd = Math.max.apply(null, lines.map(function(l){ return ctx.measureText(l).width; })); if(lines.length * lh <= maxH && wd <= maxW) break; fs--; }
+      return { lines: lines, lh: lh, fs: fs };
+    }
+    /* نام کی گولی */
+    var nm = x.nameUr || x.name || x.nameEn || '';
+    var nf = fitLines(nm, W - 280, 54, 26, 130, 800);
+    var nH = Math.max(88, nf.lines.length * nf.lh + 24), nY = top + 44;
+    var ng = ctx.createLinearGradient(0, nY, 0, nY + nH); ng.addColorStop(0, '#0f766e'); ng.addColorStop(1, '#0a4f4a');
+    ctx.save(); ctx.fillStyle = ng; shareRoundRect(ctx, 110, nY, W - 220, nH, nH / 2 > 44 ? 30 : nH / 2); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.fillStyle = '#fff2c9'; ctx.font = '800 ' + nf.fs + 'px "' + FF + '", sans-serif'; nf.lines.forEach(function(l, i){ ctx.fillText(l, W/2, nY + 12 + nf.fs * 1.15 + i * nf.lh - (nf.lines.length > 1 ? 6 : 0)); }); ctx.restore();
+    /* پیغام */
+    var body = 'بھائی! آپ کے اپنے شہر کی ایپ «مائی سٹی شائنز» میں آپ کا بنیادی ریکارڈ بن چکا ہے۔\nایپ پلے اسٹور سے ڈاؤن لوڈ کریں اور استعمال کریں — بالکل مفت!\nاپنا کاروبار رجسٹر کریں تاکہ آپ کا بزنس پورے پاکستان میں ہر جگہ پہنچے، اور ایسے نئے گاہک بھی متوجہ ہوں جنہیں آپ جانتے نہیں۔';
+    var bTop = nY + nH + 22, bH = top + ph - 150 - bTop, maxW = W - 220, fs = 46, lines, lh;
+    var paras = body.split('\n');
+    while(fs >= 22){ ctx.font = '700 ' + fs + 'px "' + FF + '", sans-serif'; lines = []; paras.forEach(function(p){ shareWrapLines(ctx, p, maxW).forEach(function(l){ lines.push(l); }); }); lh = fs * 1.75; var w2 = Math.max.apply(null, lines.map(function(l){ return ctx.measureText(l).width; })); if(lines.length * lh <= bH && w2 <= maxW) break; fs--; }
+    ctx.save(); ctx.fillStyle = '#1b2733'; ctx.font = '700 ' + fs + 'px "' + FF + '", sans-serif'; var sy = bTop + Math.max(0, (bH - lines.length * lh) / 2) + fs * 1.1; lines.forEach(function(l, i){ ctx.fillText(l, W/2, sy + i * lh); }); ctx.restore();
+    /* Help Desk کی گولی */
+    var hy = top + ph - 128, hw = 640, hh = 78;
+    var hgg = ctx.createLinearGradient(0, hy, 0, hy + hh); hgg.addColorStop(0, '#fde047'); hgg.addColorStop(1, '#f59e0b');
+    ctx.save(); ctx.shadowColor = 'rgba(120,70,0,.4)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4; ctx.fillStyle = hgg; shareRoundRect(ctx, W/2 - hw/2, hy, hw, hh, hh/2); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.fillStyle = '#2a1800'; ctx.direction = 'rtl'; ctx.font = '800 32px "' + FF + '", sans-serif'; ctx.font = '800 29px "' + FF + '", sans-serif'; ctx.fillText('سوال یا رجسٹریشن — ایپ میں «Ask us» دبائیں', W/2, hy + hh/2 + 13); ctx.restore();
+    /* نچلی پٹی: QR + پلے اسٹور */
+    var fY = 800, fH = 400, fg = ctx.createLinearGradient(0, fY, 0, fY + fH); fg.addColorStop(0, '#f7dd9c'); fg.addColorStop(1, '#c99a34');
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 6; ctx.fillStyle = fg; shareRoundRect(ctx, 60, fY, W - 120, fH, 26); ctx.fill(); ctx.restore();
+    var qs = 250, qx = 90, qy = fY + 60;
+    ctx.save(); ctx.fillStyle = '#fff'; shareRoundRect(ctx, qx - 8, qy - 8, qs + 16, qs + 16, 14); ctx.fill(); ctx.restore();
+    try{ mcsQrDraw(ctx, MCS_PLAY_URL, qx, qy, qs); }catch(e){}
+    ctx.save(); ctx.fillStyle = '#3a2600'; ctx.direction = 'rtl'; ctx.font = '800 26px "' + FF + '", sans-serif'; ctx.fillText('کیمرے سے سکین کریں', qx + qs/2, qy + qs + 56); ctx.restore();
+    var cx = qx + qs + 40 + (W - 60 - (qx + qs + 40)) / 2;
+    sharePlayBadge(ctx, cx, fY + 70, FF, true);
+    ctx.save(); ctx.fillStyle = '#3a2600'; ctx.direction = 'rtl'; ctx.font = '800 32px "' + FF + '", sans-serif'; ctx.fillText('یا پلے اسٹور میں', cx, fY + 220); ctx.restore();
+    ctx.save(); ctx.fillStyle = '#0a2e52'; shareRoundRect(ctx, cx - 160, fY + 244, 320, 64, 32); ctx.fill(); ctx.fillStyle = '#fff2c9'; ctx.direction = 'ltr'; ctx.font = '800 36px Arial, sans-serif'; ctx.fillText('pbtcodelabs', cx, fY + 289); ctx.restore();
+    ctx.save(); ctx.fillStyle = '#3a2600'; ctx.direction = 'rtl'; ctx.font = '800 28px "' + FF + '", sans-serif'; ctx.fillText('سرچ کریں اور ایپ ڈاؤن لوڈ کریں', cx, fY + 352); ctx.restore();
+    ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.direction = 'ltr'; ctx.font = '700 22px Arial, sans-serif'; ctx.fillText('— pbtcodelabs —', W/2, H - 18); ctx.restore();
+    return c;
+  });
+}
+function waitInvite(col, fsId){
+  var x = _wFind(col, fsId); if(!x) return;
+  if(!ownerWaList(x).length){ showToast('اس کا واٹس ایپ نمبر درست نہیں — نمبر دیکھ لیں'); return; }
+  showToast('کارڈ بن رہا ہے...');
+  waitInvitePoster(x).then(function(c){
+    c.toBlob(function(blob){
+      if(!blob){ showToast('کارڈ نہیں بن سکا — دوبارہ کوشش کریں'); return; }
+      _wInfSet(x.fsId, true); waitDraw();
+      sendCardToOwnerChat(blob, waitInviteCaption(x), x);
+    }, 'image/png');
+  }).catch(function(){ showToast('کارڈ نہیں بن سکا — دوبارہ کوشش کریں'); });
+}
+async function waitDelete(col, fsId){
+  var x = _wFind(col, fsId); if(!x) return;
+  if(!(await askAdminPassword('«' + (x.nameUr || x.name || x.nameEn || '') + '» ' + (x.whatsapp ? '(⁦' + x.whatsapp + '⁩) ' : '') + 'کا ریکارڈ ہمیشہ کے لیے حذف ہو جائے گا — یہ واپس نہیں آئے گا۔'))) return;
+  var ok = await deleteFromFirebase(col, x); if(!ok) return;
+  try{ mcsTombAdd(col === 'doctors' ? 'doctor' : 'service', x); }catch(e){}
+  var w = WAIT[col]; for(var k = w.length - 1; k >= 0; k--){ if(w[k] && w[k].fsId === fsId) w.splice(k, 1); }
+  _wInfSet(fsId, false); WAIT.ver++;
+  try{ _svDirty = true; if(!_svTimer && !_svBusy) _svTimer = setTimeout(_svRun, 100); }catch(e){}
+  waitDraw(); waitBtnSync(); showToast('🗑️ حذف کر دیا گیا');
 }
 function waitRestore(col, fsId){
   var w = WAIT[col] || [], i = -1; for(var k = 0; k < w.length; k++){ if(w[k] && w[k].fsId === fsId){ i = k; break; } }
@@ -9092,7 +9247,7 @@ function shareCaptionText(kind, item){
   return lines.join('\n');
 }
 /* MCS2310FR041: پوسٹر پر "GET IT ON Google Play" کا بٹن اور سرچ کی لائن — cx درمیان، y بٹن کا اوپر */
-function sharePlayBadge(ctx, cx, y, FF){
+function sharePlayBadge(ctx, cx, y, FF, noLine){
   const bw = 300, bh = 64, bx = cx - bw/2;
   ctx.save();
   ctx.fillStyle = '#000'; shareRoundRect(ctx, bx, y, bw, bh, 14); ctx.fill();
@@ -9107,6 +9262,7 @@ function sharePlayBadge(ctx, cx, y, FF){
   ctx.font = '600 13px sans-serif'; ctx.fillText('GET IT ON', bx + 74, y + 24);
   ctx.font = '700 29px sans-serif'; ctx.fillText('Google Play', bx + 72, y + 53);
   ctx.restore();
+  if(noLine) return;
   ctx.save();
   ctx.direction = 'rtl'; ctx.textAlign = 'center'; ctx.fillStyle = '#3a2600';
   ctx.font = `800 25px "${FF}", sans-serif`;
@@ -28633,8 +28789,8 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
     };
   };
   window.mcsAskUs = function(){ try{ PBTHelp.open({ app: 'MCS', type: 'ask' }); }catch(e){ try{ openHelpDesk(); }catch(_){} } };
-  function add(){ const c = document.querySelector('#uaOv .uaCard.uaLg'); if(!c || c.querySelector('.lgx560')) return;
-    c.insertAdjacentHTML('beforeend', '<div class="lgx560"><button type="button" class="v" onclick="mcsIntroVideo()">🎬 Intro video</button><button type="button" class="q" onclick="mcsAskUs()">💬 Ask us</button></div>'); }
+  function add(){ const c = document.querySelector('#uaOv .uaCard'); if(!c || c.querySelector('.lgx560')) return;   /* MCS2111SA605 (مالک کا حکم): سائن اپ / لاگ اِن کے بغیر سوال — صرف «Ask us» (ایپ کی اپنی چیٹ، صرف نام) */
+    c.insertAdjacentHTML('beforeend', '<div class="lgx560"><button type="button" class="q" onclick="mcsAskUs()">💬 Ask us — <span data-noen>سوال پوچھیں (سائن اپ کے بغیر)</span></button></div>'); }
   function hook(){ const f = window.uaLogin; if(typeof f !== 'function' || f.__x560) return; const w = function(){ const r = f.apply(this, arguments); try{ add(); }catch(e){} return r; }; w.__x560 = 1; window.uaLogin = w; }
   hook(); setTimeout(hook, 1500); setTimeout(hook, 5000);
   setInterval(() => { try{ const ov = document.getElementById('uaOv'); if(ov && ov.classList.contains('on')) add(); }catch(e){} }, 1500);
@@ -28859,7 +29015,7 @@ html body #h2Out{display:none!important}
 
 <style id="mcs573css">
 /* MCS2011FR573 — نیا لاگ اِن صفحہ: تصویر + MCS ID + نام + سب سے اونچا رول + صرف PIN */
-#uaOv .uaX, #uaOv .lgx560{display:none !important}
+#uaOv .uaX{display:none !important}   /* MCS2111SA605: «💬 Ask us» لاگ اِن اور سائن اپ دونوں پر واپس */
 #uaOv .lgNew .lgProf{display:flex;gap:14px;align-items:center;margin:8px 0 14px;direction:ltr}
 #uaOv .lgPh{flex:none;width:104px;height:118px;border-radius:18px;border:3px solid #2563eb;overflow:hidden;background:#e8f0ff;display:grid;place-items:center}
 #uaOv .lgPh img{width:100%;height:100%;object-fit:cover;display:block}
