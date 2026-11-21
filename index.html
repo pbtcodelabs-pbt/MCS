@@ -4819,10 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA598";
+const APP_VERSION = "MCS2111SA599";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2111SA599": "Admin Need-assistance card now shows the whole finished business form: business name (Urdu + English), owner name, organisation, full address, category, sub-types, products, CNIC / expiry filled, referral.",
   "MCS2111SA598": "Google Play payment error now ends with a one-line diagnosis (Chrome version, whether the app runs as the Play Store app or as a shortcut/browser page) so the exact cause is visible in one screenshot.",
   "MCS2111SA597": "Registration: after «Need assistance» is sent the business card is locked (no Edit button) until the admin marks it solved; the edit screen no longer reopens by itself after closing. Admin Need-assistance card now shows the finished form summary (steps, category, sub-types, products, CNIC/expiry filled, referral) and no longer opens the editor.",
   "MCS2111SA596": "New \"Need assistance\" checkbox on the membership step: if the Google Play purchase gives trouble, the shopkeeper ticks it and the admin gets a Need-assistance card (name, mobile, WhatsApp, MCS ID) with Call / WhatsApp to guide him — membership still starts only with the Google Play payment",
@@ -23490,6 +23491,7 @@ function mrqHelpForm(d, row, E){
   const f = d.form || {}, t = String(f.s || ''); if(!t) return '';
   const ok = t[1] === '1';
   return `<div class="mrq-r"><span>📋 فارم</span><b>${t[0] === '1' ? '✅' : '⬜'} اکاؤنٹ · ${ok ? '✅' : '⬜'} بزنس کارڈ · ${t[2] === '1' ? '✅ لائیو' : '⏳ سبسکرپشن باقی'}</b></div>`
+    + row('🏪 نام (اردو)', E(f.nu)) + row('🏪 Name (English)', E(f.ne)) + row('👤 مالک', E(f.ow)) + row('🏢 ادارہ / برانڈ', E(f.org)) + row('📍 مکمل پتہ', E(f.ad))
     + row('🗂️ قسم', E([f.pt, f.mc].filter(Boolean).join(' / '))) + row('🏷️ سب ٹائپ', E(f.subs)) + row('🛒 خدمات / چیزیں', E(f.prods))
     + row('🪪 شناختی کارڈ', f.cn ? '✅ بھرا ہوا' + (f.exp ? ' · میعاد ' + E(f.exp) : '') : '⬜ باقی') + row('🤝 ریفرل', E(f.ref))
     + (ok ? '<div class="mrq-tx" dir="rtl" style="background:#ecfdf5">✅ فارم مکمل ہے — صرف Google Play خریداری میں رہنمائی درکار ہے۔ فارم ایڈٹ کرنے کی ضرورت نہیں۔</div>' : '');
@@ -25880,7 +25882,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   function hlpData(rec){
     const m = rec.more || {}, u = (me() && me().user) || {}; let cat = '', sid = '';
     try{ cat = ubCatMeta(rec.category).ur || ''; }catch(e){}
-    let fm = {}; try{ const c = S.c || {}, pp = S.p || {}, ar = v => Array.isArray(v) ? v.filter(Boolean).join('، ') : String(v || ''); fm = {pt: m.ptype || c.ptype || '', mc: m.mcat || c.mcat || '', subs: ar(m.subs && m.subs.length ? m.subs : c.subs), prods: ar(m.prods && m.prods.length ? m.prods : c.prods), cn: dg(pp.cnic).replace(/\D/g, '').length === 13 ? 1 : 0, exp: pp.expTxt || '', ref: pp.ref || '', s: [doneOf(1) ? 1 : 0, doneOf(2) ? 1 : 0, doneOf(3) ? 1 : 0].join('')}; }catch(e){}   /* MCS2111SA597: ایڈمن کو مکمل فارم کا خلاصہ */
+    let fm = {}; try{ const c = S.c || {}, pp = S.p || {}, ar = v => Array.isArray(v) ? v.filter(Boolean).join('، ') : String(v || ''); fm = {nu: rec.nameUr || c.nameUr || '', ne: rec.nameEn || c.nameEn || '', ow: [c.ownUr, c.ownEn, m.ownerEn].filter(Boolean).filter((x, i, a) => a.indexOf(x) === i).join(' / '), org: m.org || c.org || '', ad: rec.address || c.addr || '', pt: m.ptype || c.ptype || '', mc: m.mcat || c.mcat || '', subs: ar(m.subs && m.subs.length ? m.subs : c.subs), prods: ar(m.prods && m.prods.length ? m.prods : c.prods), cn: dg(pp.cnic).replace(/\D/g, '').length === 13 ? 1 : 0, exp: pp.expTxt || '', ref: pp.ref || '', s: [doneOf(1) ? 1 : 0, doneOf(2) ? 1 : 0, doneOf(3) ? 1 : 0].join('')}; }catch(e){}   /* MCS2111SA597: ایڈمن کو مکمل فارم کا خلاصہ */
     try{ sid = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || (m.sid ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(m.sid) : m.sid) : ''); }catch(e){}
     return {name: u.name || rec.nameUr || '', mobile: rec.whatsapp || u.mobile || '', wa: m.wa2 || '', gmail: ((S.p && S.p.email) || m.email || ''), prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', uid: String(sid || ''), kind: 'help', form: fm, text: 'Need assistance — Google Play membership step' + (sid ? ' · MCS ID ' + sid : '')};
   }
