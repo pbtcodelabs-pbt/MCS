@@ -3136,7 +3136,7 @@ html body .doc-card.rc .rc-mcs{display:none !important}
   function css(){ if(document.getElementById('u509css')) return; var s = document.createElement('style'); s.id = 'u509css';
     s.textContent = '#u509bar{position:fixed;left:0;top:env(safe-area-inset-top,0px);height:3px;width:0;z-index:2147483647;background:linear-gradient(90deg,#f59e0b,#fde047,#10b981);box-shadow:0 0 6px rgba(245,158,11,.8);transition:width .4s ease,opacity .6s;pointer-events:none}'
       + '#u509bar i{position:absolute;right:4px;top:4px;font:800 10px/1 Arial,sans-serif;color:#fff;background:rgba(13,59,102,.85);padding:2px 6px;border-radius:8px;white-space:nowrap;font-style:normal}'
-      + '#u509ok{position:fixed;left:50%;top:calc(8px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:2147483647;width:min(360px,calc(100vw - 20px));background:#ecfdf5;border:2px solid #10b981;border-radius:14px;padding:8px 12px;box-shadow:0 8px 22px rgba(0,0,0,.25);font:600 13px/1.6 Arial,sans-serif;color:#065f46;cursor:pointer;animation:u509in .3s ease}'
+      + '#u509ok{position:fixed;left:50%;top:calc(8px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:2147483647;width:min(360px,calc(100vw - 20px));background:#ecfdf5;border:2px solid #10b981;border-radius:14px;padding:8px 12px;box-shadow:0 8px 22px rgba(0,0,0,.25);font-size:14px;line-height:1.8;font-weight:600;color:#065f46;cursor:pointer;text-align:right;animation:u509in .3s ease}'
       + '#u509ok b{direction:ltr;unicode-bidi:isolate}#u509ok s{color:#9ca3af}#u509ok .n{display:block;color:#78350f;font-weight:700;margin-top:2px;max-height:30vh;overflow:auto;overflow-wrap:anywhere}'
       + '@keyframes u509in{from{transform:translate(-50%,-120%)}to{transform:translate(-50%,0)}}';
     document.head.appendChild(s); }
@@ -3149,8 +3149,8 @@ html body .doc-card.rc .rc-mcs{display:none !important}
   A.isWaiting = function(){ return on; };
   A.done = function(oldV, newV, note){ on = false; if(!own()){ stop(false); return; } bar(); stop(true);
     if(!note && A._peekNote && A._peekV === newV) note = A._peekNote;
-    css(); var o = document.getElementById('u509ok'); if(o) o.remove(); o = document.createElement('div'); o.id = 'u509ok'; o.setAttribute('data-noen', '1');
-    o.innerHTML = '✅ Updated: ' + (oldV ? '<s><b>' + E(oldV) + '</b></s> → ' : '') + '<b>' + E(newV) + '</b>' + (note ? '<span class="n">🛠️ ' + E(note) + '</span>' : '');
+    css(); var o = document.getElementById('u509ok'); if(o) o.remove(); o = document.createElement('div'); o.id = 'u509ok'; o.setAttribute('data-noen', '1'); o.setAttribute('dir', 'rtl'); o.style.fontFamily = 'inherit';   /* MCS2111SA604: اردو لیبل، دائیں سے بائیں */
+    o.innerHTML = '✅ اپڈیٹ مکمل: ' + (oldV ? '<s><b>' + E(oldV) + '</b></s> ← ' : '') + '<b>' + E(newV) + '</b>' + (note ? '<span class="n">' + E(note) + '</span>' : '');
     o.onclick = function(){ o.remove(); }; document.body.appendChild(o); setTimeout(function(){ if(o.parentNode) o.remove(); }, 10000); };
 })();
 </script>
@@ -4819,19 +4819,20 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA603";
+const APP_VERSION = "MCS2111SA604";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
-/* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
+/* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS2111SA603": "Admin delete now removes the record from every phone (including the owner's own copy) • a member who paid through Google Play can never be deleted — a warning shows and the record stays • delete is now a choice: full delete or suspend.",
-  "MCS2111SA602": "When Google Play cannot open, the message now also shows the exact browser error and how many membership packages Play returned, so the cause is visible in one screenshot.",
-  "MCS2111SA601": "Google Play membership button fixed at the root: Play is now prepared in the background and opens the instant the button is tapped (the phone was cancelling the payment screen because of the wait before it) • clear message if it still fails.",
-  "MCS2111SA600": "One status everywhere: a business whose membership is active now shows as registered on the card, welcome, portal and wizard (no more «Register Now» / «Complete registration» beside a congratulations message, even after the admin changes its category) • Google Play error now shows the exact cause at the TOP of the message • Need-assistance card shows the phone diagnosis and last Play error.",
-  "MCS2111SA599": "Admin Need-assistance card now shows the whole finished business form: business name (Urdu + English), owner name, organisation, full address, category, sub-types, products, CNIC / expiry filled, referral.",
-  "MCS2111SA598": "Google Play payment error now ends with a one-line diagnosis (Chrome version, whether the app runs as the Play Store app or as a shortcut/browser page) so the exact cause is visible in one screenshot.",
-  "MCS2111SA597": "Registration: after «Need assistance» is sent the business card is locked (no Edit button) until the admin marks it solved; the edit screen no longer reopens by itself after closing. Admin Need-assistance card now shows the finished form summary (steps, category, sub-types, products, CNIC/expiry filled, referral) and no longer opens the editor.",
-  "MCS2111SA596": "New \"Need assistance\" checkbox on the membership step: if the Google Play purchase gives trouble, the shopkeeper ticks it and the admin gets a Need-assistance card (name, mobile, WhatsApp, MCS ID) with Call / WhatsApp to guide him — membership still starts only with the Google Play payment",
-  "MCS2111SA595": "Sub-type is now fully optional — a form saves with just the name and number",
+  "MCS2111SA604":"🇵🇰 اپڈیٹ مکمل کی پرچی اب پوری اردو میں — لیبل اور «کیا کام ہوا» دونوں اردو میں، دائیں سے بائیں",
+  "MCS2111SA603": "🗑️ ایڈمن کا حذف اب ہر فون سے مٹاتا ہے (مالک کی اپنی کاپی سمیت) • جس نے Google Play سے ادائیگی کی ہو وہ کبھی حذف نہیں ہوتا — وارننگ آتی ہے اور ریکارڈ رہتا ہے • حذف کی جگہ اب انتخاب: مکمل حذف یا معطل",
+  "MCS2111SA602": "🛠️ Google Play نہ کھلے تو پیغام میں اب براؤزر کا اصل ایرر اور «Play نے کتنے پیکج لوٹائے» بھی لکھا آتا ہے تاکہ ایک تصویر میں وجہ پتا چل جائے",
+  "MCS2111SA601": "🛠️ Google Play ممبرشپ بٹن کی جڑ کی خرابی ٹھیک: بٹن دبانے سے پہلے Play کی تیاری پس منظر میں ہو جاتی ہے اور بٹن دبتے ہی فوراً کھلتا ہے (پہلے انتظار کی وجہ سے فون ادائیگی کی سکرین منسوخ کر دیتا تھا) • پھر بھی نہ کھلے تو صاف پیغام",
+  "MCS2111SA600": "✅ ہر جگہ ایک ہی حالت: جس کاروبار کی ممبرشپ فعال ہے وہ کارڈ، ویلکم، پورٹل اور وزرڈ میں رجسٹرڈ دکھتا ہے (مبارکباد کے ساتھ «Register Now» نہیں آتا) • Google Play کا ایرر اب پیغام کے سب سے اوپر اصل وجہ کے ساتھ • «رہنمائی درکار» کارڈ میں فون کی تشخیص اور آخری Play ایرر",
+  "MCS2111SA599": "📋 ایڈمن کے «رہنمائی درکار» کارڈ میں اب پورا مکمل فارم: کاروبار کا نام (اردو + انگلش)، مالک، ادارہ، پورا پتا، کیٹگری، ذیلی قسمیں، مصنوعات، شناختی کارڈ / تاریخ، ریفرل",
+  "MCS2111SA598": "🔎 Google Play ادائیگی کے ایرر کے آخر میں ایک سطر کی تشخیص (Chrome ورژن، Play Store ایپ یا شارٹ کٹ) تاکہ ایک تصویر میں وجہ نظر آئے",
+  "MCS2111SA597": "🔒 «رہنمائی درکار» بھیجنے کے بعد کارڈ ایڈمن کے حل کرنے تک لاک (Edit بٹن نہیں)؛ ایڈٹ سکرین خود دوبارہ نہیں کھلتی • ایڈمن کارڈ میں مکمل فارم کا خلاصہ",
+  "MCS2111SA596": "🆘 ممبرشپ کے مرحلے پر نیا «رہنمائی درکار» ٹِک: Google Play میں مشکل ہو تو دکاندار ٹِک لگائے، ایڈمن کو نام، موبائل، واٹس ایپ، MCS ID کے ساتھ Call / WhatsApp والا کارڈ ملتا ہے — ممبرشپ پھر بھی صرف Google Play کی ادائیگی سے شروع ہوتی ہے",
+  "MCS2111SA595": "📝 ذیلی قسم (Sub-type) اب مکمل اختیاری — صرف نام اور نمبر سے بھی فارم محفوظ ہو جاتا ہے",
   "MCS2011FR592": "Save button always visible at the bottom of every edit form and saves for real; on an error the form jumps to the exact field — editing an existing record is no longer blocked by the Sub-type field",
   "MCS2011FR591": "All hint / helper captions removed from buttons and fields — only the button caption remains",
   "MCS2011FR590": "Category pages: three buttons in one row with counts, one always open with the normal cards below; diagonal red Register Now ribbon on unregistered cards; admin Edit in the full file now opens the complete form; blue header with Add New button",
