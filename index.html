@@ -4819,11 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA594";
+const APP_VERSION = "MCS2111SA595";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS2111SA594": "Sub-type is now fully optional — a form saves with just the name and number",
+  "MCS2111SA595": "Sub-type is now fully optional — a form saves with just the name and number",
   "MCS2011FR592": "Save button always visible at the bottom of every edit form and saves for real; on an error the form jumps to the exact field — editing an existing record is no longer blocked by the Sub-type field",
   "MCS2011FR591": "All hint / helper captions removed from buttons and fields — only the button caption remains",
   "MCS2011FR590": "Category pages: three buttons in one row with counts, one always open with the normal cards below; diagonal red Register Now ribbon on unregistered cards; admin Edit in the full file now opens the complete form; blue header with Add New button",
@@ -22190,7 +22190,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
 .mx .mx-bzr .s{border-radius:9px;padding:3px 9px;font:800 12.5px Arial,sans-serif;white-space:nowrap}
 .mx .mx-bzr .s.g{background:#15803d;color:#fff}.mx .mx-bzr .s.o{background:#fbbf24;color:#fff}.mx .mx-bzr .s.r{background:#dc2626;color:#fff}.mx .mx-bzr .s.n{background:#94a3b8;color:#fff}
 .mx .mx-bzr u{text-decoration:none;font-size:26px;color:#1e293b;line-height:1}
-/* MCS2111SA594 (Help Desk #323): کارڈ منظور ≠ ادا شدہ ممبرشپ — «Business Card Approved» + سبز Get Subscription بٹن + نوٹ */
+/* MCS2111SA595 (Help Desk #323): کارڈ منظور ≠ ادا شدہ ممبرشپ — «Business Card Approved» + سبز Get Subscription بٹن + نوٹ */
 .mx .mx-bz{flex-wrap:wrap}
 .mx .mx-bzp.cd{flex-direction:column;gap:3px;background:#e0f2ee;border:1px solid #bfe3dc;position:relative;font-size:30px;text-align:center;line-height:1.1}
 .mx .mx-bzp.cd small{font:800 11px/1.15 Arial,sans-serif;color:#0b2a4a;padding:0 4px}
@@ -22199,6 +22199,8 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
 .mx .mx-bzr.sb{gap:10px}
 .mx .mx-note{box-sizing:border-box;flex:0 0 100%;order:9;margin-top:2px;padding:9px 12px;border-radius:12px;background:#fff4dc;border:1px solid #f6dfae;color:#334155;font:600 13px/1.4 Arial,sans-serif;direction:ltr;text-align:left}
 .mx .mx-note b{color:#15803d}
+.mx .mx-hl{display:inline-block;margin-top:5px;color:#1d4ed8;font-weight:800;text-decoration:underline;cursor:pointer}
+.mx .gs small{font:600 11px Arial,sans-serif;opacity:.95}
 .mx .mx-big{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:none;border-radius:30px;padding:12px;margin:2px 0 14px;background:linear-gradient(135deg,#0d7a68,#12907a);color:#fff;font:800 18px Arial,sans-serif;direction:ltr;box-shadow:0 3px 10px rgba(15,107,95,.3);cursor:pointer}
 .mx .mx-big i{width:30px;height:30px;border:2px solid #fff;border-radius:50%;font-style:normal;line-height:26px;text-align:center;font-size:22px}
 .mx .mx-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;direction:ltr}
@@ -22340,7 +22342,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
   /* ---------- 🏪 My Portal ---------- */
   window.mpoOpen = function(){
     var ID = 'myPortalModal', rl = mpoRole(), L = mpListReal();
-    /* MCS2111SA594 (Help Desk #323): «Approved Businesses» = صرف وہ جن کی Google Play / سرور سے تصدیق شدہ ادا شدہ ممبرشپ فعال ہے (until > اب، pend نہیں)؛
+    /* MCS2111SA595 (Help Desk #323): «Approved Businesses» = صرف وہ جن کی Google Play / سرور سے تصدیق شدہ ادا شدہ ممبرشپ فعال ہے (until > اب، pend نہیں)؛
        ایڈمن سے منظور مگر بغیر ادائیگی والا، یا میعاد ختم — شمار میں نہیں۔ کارڈ کی منظوری (pend) اور ممبرشپ (until) الگ فیلڈ ہی رہتے ہیں۔ */
     var isPaid = function(p){ var l = mpLeftOf(p); return !p.pend && l != null && l > 0; };
     var appr = L.filter(function(x){ return isPaid(x.p); }).length;
@@ -22358,8 +22360,9 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
         var bzpCls = 'mx-bzp';
         if(cardOnly && !selfie){ img = '🪪<em>✓</em><small>Business Card<br>Approved</small>'; bzpCls += ' cd'; }
         var sub = cardOnly ? '🏪 Business Card Approved' : (x.p.kind === 'doctor' ? '👔 پروفیشن' : '🏪 کاروبار') + (meta.ur ? ' · ' + esc(meta.ur) : '') + (left != null && left > 0 && !x.p.pend ? ' · ' + left + ' دن باقی' : '');
-        var getBtn = (cardOnly || expired) ? '<button type="button" class="gs" onclick="mpoSub(' + i + ')">🛒 ' + (expired ? 'Renew<br>Subscription' : 'Get<br>Subscription') + '</button>' : '';
-        var note = cardOnly ? '<div class="mx-note">ℹ️ Your business card is approved. Get a subscription (Paid) to make it an <b>Approved Business.</b></div>' : expired ? '<div class="mx-note">ℹ️ Your subscription has ended. Renew it (Paid) to be an <b>Approved Business</b> again.</div>' : '';
+        var getBtn = (cardOnly || expired) ? '<button type="button" class="gs" onclick="mpoSub(' + i + ')">🛒 ' + (expired ? 'Renew on<br>Google Play' : 'Get Play Store<br>Subscription<br><small>for 1 year</small>') + '</button>' : '';
+        var hlp = '<br><a class="mx-hl" onclick="try{openHelpDesk()}catch(e){}">❓ Need help or guidance? Ask your question in Help Desk</a>';
+        var note = cardOnly ? '<div class="mx-note">ℹ️ Your business card is approved. Get the Google Play Store subscription for one year to make it an <b>Approved Business.</b>' + hlp + '</div>' : expired ? '<div class="mx-note">ℹ️ Your subscription has ended. Renew it on Google Play to be an <b>Approved Business</b> again.' + hlp + '</div>' : '';
         return '<div class="mx-bz"><div class="' + bzpCls + '" onclick="mpoView(' + i + ')">' + img + '</div><div class="mx-bzi"><b>' + esc(r.nameUr || r.name || '') + '</b><small>' + sub + '</small>'
           + '<div class="ic"><button type="button" onclick="mpoView(' + i + ')" aria-label="دیکھیں">👁️</button><button type="button" onclick="mpoEdit(' + i + ')" aria-label="تفصیل">✏️</button>' + (fpIsBasic(x.p.kind, x.rec) ? '' : '<button type="button" onclick="mxFp(' + i + ')" aria-label="مکمل پروفائل">📄</button>') + (x.p.pend ? '' : '<button type="button" onclick="mpoSub(' + i + ')" aria-label="ممبرشپ">⭐</button>') + '</div></div>'
           + '<div class="mx-bzr' + (getBtn ? ' sb' : '') + '">' + (getBtn ? getBtn : '<span class="s ' + s[0] + '">' + s[1] + '</span>') + '<u onclick="mpoView(' + i + ')">›</u></div>' + note + '</div>';
@@ -24960,7 +24963,8 @@ html body #secModal .sec-ti .ur{font-size:19px !important;line-height:1.8 !impor
       <button type="button" class="btn block secondary" style="margin-top:8px" onclick="closeModal('agModal')">ٹھیک ہے</button>`);
   };
   /* MCS1211TH380: «رجسٹریشن مکمل ہونے کی تصدیق ایڈمن کو» — الگ جگہ (My Portal میں ہر کاروبار کے نیچے)، Play بٹن کے ساتھ نہیں */
-  function needConf(x){ try{ if(x.p.pend) return false; if(x.rec && (x.rec.approved === true || (typeof pfActive === 'function' && pfActive(x.rec)))) return false;   /* MCS1511SU450: منظور / فعال پر «دوبارہ بھیجیں» نہیں */ if(typeof fpIsBasic === 'function' && fpIsBasic(x.p.kind, x.rec)) return false; const left = mpLeftOf(x.p); return !(left != null && left > 30); }catch(e){ return false; } }
+  function needConf(x){ try{ return false;   /* MCS2111SA595 (مالک کا حکم): ایپ میں ایڈمن کو بھیجنے / منظوری مانگنے کا کوئی میسج بٹن نہیں — ممبرشپ صرف Google Play سے؛ مشکل ہو تو Help Desk میں سوال */
+      if(x.p.pend) return false; if(x.rec && (x.rec.approved === true || (typeof pfActive === 'function' && pfActive(x.rec)))) return false;   /* MCS1511SU450: منظور / فعال پر «دوبارہ بھیجیں» نہیں */ if(typeof fpIsBasic === 'function' && fpIsBasic(x.p.kind, x.rec)) return false; const left = mpLeftOf(x.p); return !(left != null && left > 30); }catch(e){ return false; } }
   const _po = window.mpoOpen;
   if(typeof _po === 'function') window.mpoOpen = function(){ const r = _po.apply(this, arguments);
     try{ const L = mpListReal(), rows = document.querySelectorAll('#myPortalModal .mx-bz');
