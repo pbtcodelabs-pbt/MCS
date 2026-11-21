@@ -4819,10 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2211SU610";
+const APP_VERSION = "MCS2211SU611";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU611":"🧭 My Portal سے «رجسٹریشن کے مراحل» ہٹا — صرف کارڈ کا «رجسٹریشن مکمل کریں» • 🗑️ غلط محفوظ ہوئی نوعیت / شعبہ / ٹائٹل فہرست سے ہٹانے کا بٹن (ایڈمن پاس ورڈ) • ✍️ «اپنا لکھیں» اب فارم کے اندر ڈبے میں (پرانا prompt ختم) • 📩 «اطلاع ہو چکی» کا نشان اب سرور پر بھی محفوظ • ⬇️ وزرڈ کا آگے / محفوظ کریں بٹن ہر وقت نیچے نظر آتا ہے • 🔎 Google Play ایرر میں canMakePayment کی تشخیص",
   "MCS2211SU610":"🧭 رجسٹریشن کا ایک ہی راستہ — کارڈ، My Portal اور ➕ سب ایک جگہ؛ مرحلہ اپنی اصل حالت سے خود چنا جاتا ہے",
   "MCS2211SU609":"📝 ریویو میں نامکمل خانے سرخ — دبائیں تو فارم میں اسی خانے پر • فارم مکمل ہو چکا ہو تو دوبارہ کھولنے پر خالی فارم نہیں، سیدھا پلے اسٹور کا مرحلہ اور سارا ڈیٹا موجود",
   "MCS2211SU608":"📋 مین کیٹگری (کاروبار / پروفیشنل …) ہر وقت فہرست کی شکل میں • نیا نام لکھ کر اگلے خانے پر جائیں تو خود محفوظ (وقت پر نہیں)؛ ملتا جلتا ہو تو سامنے آ کر ٹک کے لیے",
@@ -5326,7 +5327,7 @@ function emptyServiceTypes(){
   return obj;
 }
 function loadStoreFallback(){
-  return { doctors:[], departments:[], specialties:[], hospitals:[], cities:[], areas:[], orgs:[], clsPT:[], clsCat:[], clsTit:[],
+  return { doctors:[], departments:[], specialties:[], hospitals:[], cities:[], areas:[], orgs:[], clsPT:[], clsCat:[], clsTit:[], clsDel:[],
     services:[], serviceTypes:emptyServiceTypes(),
     customCategories:[],
     contact:{...DEFAULT_CONTACT}, lastLocation:null };
@@ -5575,7 +5576,7 @@ function waitDraw(){
   var n = document.getElementById('waitN'); if(n) n.textContent = _wn(tot);
   var l = document.getElementById('waitList'); if(!l) return;
   var _inf = _wInfMap();
-  l.innerHTML = cur.length ? cur.map(function(r){ var x = r.x, nm = x.nameUr || x.name || x.nameEn || '—', mob = String(x.whatsapp || '').replace(/\D/g, ''), cap = [x.type || x.category, x.owner, x.city, x.area].filter(Boolean), inf = _inf[x.fsId] || 0, q = '\'' + r.col + '\',\'' + _wE(x.fsId) + '\'';
+  l.innerHTML = cur.length ? cur.map(function(r){ var x = r.x, nm = x.nameUr || x.name || x.nameEn || '—', mob = String(x.whatsapp || '').replace(/\D/g, ''), cap = [x.type || x.category, x.owner, x.city, x.area].filter(Boolean), inf = Math.max(_inf[x.fsId] || 0, x.waInfAt || 0), q = '\'' + r.col + '\',\'' + _wE(x.fsId) + '\'';
     return '<div style="background:' + (inf ? '#fef3c7' : '#fff') + ';border:1.5px solid ' + (inf ? '#f59e0b' : '#e2e8f0') + ';border-radius:12px;padding:8px 10px;margin:6px 0">'
       + '<div style="display:flex;gap:8px;align-items:flex-start"><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:15px;color:#0f172a;line-height:1.5">' + _wE(nm) + (x.nameEn && x.nameEn !== nm ? ' <small style="font:700 12px Arial,sans-serif;color:#64748b;direction:ltr;display:inline-block">' + _wE(x.nameEn) + '</small>' : '') + '</div>'
       + (cap.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0">' + cap.map(function(c){ return '<span style="background:#ecfeff;border:1px solid #a5f3fc;color:#155e75;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:700">' + _wE(c) + '</span>'; }).join('') + '</div>' : '')
@@ -5651,7 +5652,13 @@ function mcsQrDraw(ctx, text, x, y, px){
 }
 
 function _wInfMap(){ try{ return JSON.parse(localStorage.getItem('mcsWaitInf') || '{}') || {}; }catch(e){ return {}; } }
-function _wInfSet(fsId, on){ try{ var m = _wInfMap(); if(on) m[fsId] = Date.now(); else delete m[fsId]; localStorage.setItem('mcsWaitInf', JSON.stringify(m)); }catch(e){} }
+function _wInfSet(fsId, on, col){ try{ var m = _wInfMap(); if(on) m[fsId] = Date.now(); else delete m[fsId]; localStorage.setItem('mcsWaitInf', JSON.stringify(m)); }catch(e){}
+  /* MCS2211SU611 (مالک کا حکم): «اطلاع ہو چکی» اب سرور پر بھی (ریکارڈ کا waInfAt) — دوسرے فون / ایڈمن کو بھی نظر آئے */
+  if(!col) return;
+  try{ var x = _wFind(col, fsId), t = on ? Date.now() : 0;
+    if(x){ x.waInfAt = t; WAIT.ver++; try{ _svDirty = true; if(!_svTimer && !_svBusy) _svTimer = setTimeout(_svRun, 300); }catch(e){} }
+    var FB = window.MCSFirebase; if(FB && FB.updateDoc && fsId) FB.updateDoc(FB.doc(FB.db, col, fsId), { waInfAt: t }).catch(function(){ try{ showToast('⚠️ اطلاع کا نشان سرور پر محفوظ نہیں ہو سکا — صرف اس فون میں ہے'); }catch(e){} });
+  }catch(e){} }
 function _wFind(col, fsId){ var w = WAIT[col] || []; for(var k = 0; k < w.length; k++){ if(w[k] && w[k].fsId === fsId) return w[k]; } return null; }
 function waitInviteCaption(x){
   var nm = x.nameUr || x.name || x.nameEn || '';
@@ -5722,7 +5729,7 @@ function waitInvite(col, fsId){
   waitInvitePoster(x).then(function(c){
     c.toBlob(function(blob){
       if(!blob){ showToast('کارڈ نہیں بن سکا — دوبارہ کوشش کریں'); return; }
-      _wInfSet(x.fsId, true); waitDraw();
+      _wInfSet(x.fsId, true, col); waitDraw();
       sendCardToOwnerChat(blob, waitInviteCaption(x), x);
     }, 'image/png');
   }).catch(function(){ showToast('کارڈ نہیں بن سکا — دوبارہ کوشش کریں'); });
@@ -6518,7 +6525,7 @@ function mcsPlayGo(){
 function mcsPlayOk(){ return typeof window.getDigitalGoodsService === 'function'; }
 function mcsPlayWhy(){ try{ const ua = navigator.userAgent || '', cv = (ua.match(/Chrome\/(\d+)/) || [])[1] || '?', ref = document.referrer || '', twa = /^android-app:\/\//.test(ref), sa = !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches), wv = /; wv\)/.test(ua);
   const why = wv ? 'یہ Chrome نہیں، WebView میں چل رہی ہے' : (twa ? 'Play Store والی ایپ ہے — Chrome / Play Billing اس فون پر نہیں ملا' : 'Play Store والی ایپ نہیں — یہ شارٹ کٹ / براؤزر صفحہ ہے');
-  return '🔎 ' + why + '\nChrome ' + cv + ' | standalone: ' + (sa ? 'yes' : 'no') + ' | TWA: ' + (twa ? 'yes' : 'no') + ' | WebView: ' + (wv ? 'yes' : 'no') + '\nreferrer: ' + (ref || '—').slice(0, 60) + '\nAPI: ' + typeof window.getDigitalGoodsService; }catch(e){ return ''; } }
+  return '🔎 ' + why + '\nChrome ' + cv + ' | standalone: ' + (sa ? 'yes' : 'no') + ' | TWA: ' + (twa ? 'yes' : 'no') + ' | WebView: ' + (wv ? 'yes' : 'no') + '\nreferrer: ' + (ref || '—').slice(0, 60) + '\nAPI: ' + typeof window.getDigitalGoodsService + (function(){ const P = window._mcsPrep; return P ? '\nlistPurchases: ' + (P.ok ? 'ok' : (P.err || 'no')) + ' | canMakePayment: ' + (P.can === true ? 'true' : P.can === false ? 'false' : (P.canErr || '?')) : ''; })(); }catch(e){ return ''; } }
 async function mcsPlaySvc(){ return await window.getDigitalGoodsService('https://play.google.com/billing'); }
 /* MCS1411SA403: کارڈ کا Firestore پتہ (col + id) — سرور Play کی تصدیق کے بعد خود approved:true لکھتا ہے */
 function mcsFsOf(rk){
@@ -6685,7 +6692,8 @@ function mcsPlayPrep(force){
     try{
       if(!mcsPlayOk()) return out;
       let ownedL = [];
-      try{ const svc = await mcsPlaySvc(); ownedL = ((await svc.listPurchases()) || []); out.ok = true; }catch(e){ out.err = (e && e.name) || '?'; }
+      try{ const svc = await mcsPlaySvc(); ownedL = ((await svc.listPurchases()) || []); out.ok = true; }catch(e){ out.err = ((e && e.name) || '?') + ': ' + String((e && e.message) || '').slice(0, 50); }
+      try{ const rq = new PaymentRequest([{supportedMethods: 'https://play.google.com/billing', data: {sku: MCS_PLAY_SKUS[0]}}], {total: {label: 'Total', amount: {currency: 'USD', value: '0'}}}); out.can = await rq.canMakePayment(); }catch(e){ out.canErr = ((e && e.name) || '?') + ': ' + String((e && e.message) || '').slice(0, 50); }   /* MCS2211SU611: تشخیص — Play بلنگ اس فون پر ملتی ہے یا نہیں (بغیر کوئی سکرین کھولے) */
       out.owned = ownedL.map(x => x.itemId);
       try{
         for(const x of ownedL){ if(!x || !MCS_PLAY_SKUS.includes(x.itemId) || !x.purchaseToken) continue;
@@ -11108,7 +11116,7 @@ function clsSubCustom(keepFocus){ const inp = clsEl('svcSubIn'); if(!inp) return
     if(clsSubs.length < 30 && !clsHasSub(v)) clsSubs.push(v); inp.value = ''; clsRenderSubs(); });
   /* نیا ٹائٹل سب کی فہرست میں — بھاری کام بعد میں، فارم کو چھیڑے بغیر */
   setTimeout(()=>{ try{ const pt = (clsEl('svcPType') || {}).value, mc = (clsEl('svcMCat') || {}).value, cc = CLS_CATS[pt + '|' + mc];
-    if(cc && !cc.titles.some(t=>t.en.toLowerCase() === v.toLowerCase() || (t.ur || '').toLowerCase() === v.toLowerCase())){ store.clsTit = store.clsTit || []; store.clsTit.push(pt + '|' + mc + '|' + v + '|'); saveStore(); clsSyncCfg(); clsRebuild(); } }catch(e){} }, 400);
+    if(cc && !cc.titles.some(t=>t.en.toLowerCase() === v.toLowerCase() || (t.ur || '').toLowerCase() === v.toLowerCase())){ store.clsTit = store.clsTit || []; clsPushRaw('clsTit', pt + '|' + mc + '|' + v + '|'); saveStore(); clsSyncCfg(); clsRebuild(); } }catch(e){} }, 400);
   if(keepFocus === true){ try{ inp.focus({preventScroll:true}); }catch(e){} } }
 function clsRenderProds(){ const box = clsEl('svcProds'); if(!box) return;
   box.innerHTML = clsProds.map((v, i)=>`<span class="cls-chip pr">${escapeHtml(v)} <i onclick="clsProdDel(${i})">✖</i></span>`).join(''); }
@@ -11158,13 +11166,16 @@ function clsBits(x){ const m = (x && x.more) || {}; const pt = CLS_PTYPES.find(t
    اور ایڈمن / ایجنٹ کے لیے «📚 تمام فہرستیں» — پوری شاخ دار فہرست دیکھنا، تلاش، نیا شامل کرنا، فارم میں لگانا، کاپی ===== */
 const CLS_PT_BASE = CLS_PTYPES.length;
 let clsAddCtx = null;
+/* MCS2211SU611: فہرست سے حذف — حذف شدہ اندراج کی اصل سطر clsDel میں رہتی ہے (سرور کی union-merge پرانی سطر واپس لائے تو بھی چھپی رہے) */
+function clsPushRaw(k, raw){ store[k] = store[k] || []; if((store.clsDel || []).includes(raw)) raw += '|r' + Date.now().toString(36); store[k].push(raw); }
 function clsRebuild(){
   try{
+    const _dead = new Set(store.clsDel || []);
     CLS_PTYPES.length = CLS_PT_BASE;
-    (store.clsPT || []).forEach(x=>{ const a = String(x).split('|'); if(a[0] && a[1] && !CLS_PTYPES.some(t=>t[0] === a[0])) CLS_PTYPES.push([a[0], '🔖 ' + a[1], a[2] || a[1]]); });
+    (store.clsPT || []).forEach(x=>{ if(_dead.has(String(x))) return; const a = String(x).split('|'); if(a[0] && a[1] && !CLS_PTYPES.some(t=>t[0] === a[0])) CLS_PTYPES.push([a[0], '🔖 ' + a[1], a[2] || a[1]]); });
     Object.keys(CLS_CATS).forEach(k=>{ const c = CLS_CATS[k]; if(c.custom) delete CLS_CATS[k]; else c.titles = c.titles.filter(t=>!t.custom); });
-    (store.clsCat || []).forEach(x=>{ const a = String(x).split('|'); if(!a[0] || !a[1]) return; const k = a[0] + '|' + a[1]; if(!CLS_CATS[k]) CLS_CATS[k] = {pt:a[0], en:a[1], ur:a[2] || a[1], titles:[], custom:true}; });
-    (store.clsTit || []).forEach(x=>{ const a = String(x).split('|'); const c = CLS_CATS[a[0] + '|' + a[1]]; if(!c || !a[2]) return;
+    (store.clsCat || []).forEach(x=>{ if(_dead.has(String(x))) return; const a = String(x).split('|'); if(!a[0] || !a[1]) return; const k = a[0] + '|' + a[1]; if(!CLS_CATS[k]) CLS_CATS[k] = {pt:a[0], en:a[1], ur:a[2] || a[1], titles:[], custom:true}; });
+    (store.clsTit || []).forEach(x=>{ if(_dead.has(String(x))) return; const a = String(x).split('|'); const c = CLS_CATS[a[0] + '|' + a[1]]; if(!c || !a[2]) return;
       if(!c.titles.some(t=>t.en.toLowerCase() === a[2].toLowerCase())){ c.titles.push({en:a[2], ur:a[3] || '', custom:true}); if(a[3] && !CLS_TITLE_UR[a[2].toLowerCase()]) CLS_TITLE_UR[a[2].toLowerCase()] = a[3]; } });
   }catch(e){}
 }
@@ -11173,7 +11184,7 @@ function clsFillPTypes(val){ const ps = clsEl('svcPType'); if(!ps) return;
   ps.innerHTML = CLS_PTYPES.map(t=>`<option value="${escapeAttr(t[0])}" data-en="${escapeAttr(t[2])}">${escapeHtml(t[1])}</option>`).join('');
   ps.value = val || ''; enhanceCapsuleSelect('svcPType'); resyncCapsuleSelect('svcPType'); }
 function clsSyncCfg(){ const FB = window.MCSFirebase; if(!FB) return;
-  const p = {clsPT: store.clsPT || [], clsCat: store.clsCat || [], clsTit: store.clsTit || []}, ro = FB.doc(FB.db, 'appConfig', 'dropdowns');
+  const p = {clsPT: store.clsPT || [], clsCat: store.clsCat || [], clsTit: store.clsTit || [], clsDel: store.clsDel || []}, ro = FB.doc(FB.db, 'appConfig', 'dropdowns');
   try{ FB.updateDoc(ro, p).catch(()=> FB.setDoc(ro, p, {merge:true}).catch(()=>{})); }catch(e){} }
 function clsAddAsk(level, pt, cat){
   clsRebuild();
@@ -11200,10 +11211,10 @@ function clsAddDo(val){
     if(ex){ existed = true; newKey = ex[0]; } else { newKey = 'c' + Date.now().toString(36); store.clsPT.push(newKey + '|' + val + '|' + val); }
   } else if(c.level === 'cat'){
     const ex = clsCatsFor(c.pt).find(x=>x.ur.toLowerCase() === low || x.en.toLowerCase() === low);
-    if(ex){ existed = true; newKey = ex.en; } else { newKey = val; store.clsCat.push(c.pt + '|' + val + '|' + val); }
+    if(ex){ existed = true; newKey = ex.en; } else { newKey = val; clsPushRaw('clsCat', c.pt + '|' + val + '|' + val); }
   } else if(c.level === 'title'){
     const cc = CLS_CATS[c.pt + '|' + c.cat], ex = cc && cc.titles.find(t=>t.en.toLowerCase() === low || (t.ur || '').toLowerCase() === low);
-    if(ex){ existed = true; newKey = ex.en; } else { newKey = val; store.clsTit.push(c.pt + '|' + c.cat + '|' + val + '|'); }
+    if(ex){ existed = true; newKey = ex.en; } else { newKey = val; clsPushRaw('clsTit', c.pt + '|' + c.cat + '|' + val + '|'); }
   } else return;
   if(existed) msg = 'یہ پہلے سے فہرست میں ہے — وہی چن لیا';
   else { saveStore(); clsSyncCfg(); }
@@ -11218,6 +11229,23 @@ function clsAddDo(val){
   try{ if(clsEl('clsBrowseModal') && clsEl('clsBrowseModal').classList.contains('active')) clsBrowseRender(); }catch(e){}
 }
 /* ---- تمام فہرستیں ---- */
+/* MCS2211SU611 (مالک کا حکم): غلط محفوظ ہو جانے والی نوعیت / شعبہ / ٹائٹل فہرست سے ہٹانا — صرف خود لکھ کر بنائے گئے (custom) اندراج؛ ایڈمن پاس ورڈ لازمی (فہرست سب کی مشترک ہے) */
+async function clsDelItem(level, pt, cat, en){
+  let nm = ''; try{ if(level === 'pt'){ const t = CLS_PTYPES.find(x=>x[0] === pt); nm = t ? clsPTLabel(t) : pt; } else if(level === 'cat'){ const c = CLS_CATS[pt + '|' + cat]; nm = c ? c.ur : cat; } else nm = en; }catch(e){ nm = en || cat || pt || ''; }
+  const what = level === 'pt' ? 'نوعیت' : level === 'cat' ? 'شعبہ' : 'ٹائٹل';
+  const ok = await askAdminPassword('🗑️ «' + nm + '» (' + what + ') فہرست سے سب کے لیے ہٹ جائے گا۔ جن کاروباروں میں یہ پہلے سے لکھا ہے وہ اپنی جگہ رہیں گے۔ ایڈمن پاس ورڈ لکھیں۔', '🗑️ فہرست سے ہٹائیں', true);
+  if(!ok) return false;
+  store.clsDel = store.clsDel || []; let hit = 0;
+  const strip = (k, fn)=>{ store[k] = (store[k] || []).filter(x=>{ const a = String(x).split('|'); if(fn(a)){ if(!store.clsDel.includes(String(x))) store.clsDel.push(String(x)); hit++; return false; } return true; }); };
+  if(level === 'pt'){ strip('clsPT', a=>a[0] === pt); strip('clsCat', a=>a[0] === pt); strip('clsTit', a=>a[0] === pt); }
+  else if(level === 'cat'){ strip('clsCat', a=>a[0] === pt && a[1] === cat); strip('clsTit', a=>a[0] === pt && a[1] === cat); }
+  else strip('clsTit', a=>a[0] === pt && a[1] === cat && String(a[2]).toLowerCase() === String(en).toLowerCase());
+  if(!hit){ showToast('یہ بنیادی فہرست کا حصہ ہے — ہٹایا نہیں جا سکتا'); return false; }
+  clsRebuild(); try{ saveStore(); }catch(e){} try{ clsSyncCfg(); }catch(e){}
+  try{ if(clsEl('clsBrowseModal') && clsEl('clsBrowseModal').classList.contains('active')) clsBrowseRender(); }catch(e){}
+  try{ if(clsEl('svcPType')){ const ps = clsEl('svcPType'); clsFillPTypes(CLS_PTYPES.some(t=>t[0] === ps.value) ? ps.value : ''); clsFillCats(''); clsSubs = []; clsRenderSubs(); } }catch(e){}
+  showToast('🗑️ فہرست سے ہٹا دیا'); return true;
+}
 function clsBrowseOpen(){ clsRebuild(); const q = clsEl('clsbQ'); if(q) q.value = ''; clsBrowseRender(); openModal('clsBrowseModal'); }
 function clsFormOpen(){ const f = document.getElementById('serviceFormModal'); return !!(f && f.classList.contains('active') && clsEl('svcPType')); }
 function clsBrowseRender(){
@@ -11231,14 +11259,14 @@ function clsBrowseRender(){
       const tl = c.titles.filter(x=>catHit || x.en.toLowerCase().includes(q) || (x.ur || '').toLowerCase().includes(q));
       if(q && !catHit && !tl.length) return;
       shown++; nC++; nT += c.titles.length;
-      const chips = tl.map(x=>`<span class="cls-chip${x.custom ? ' cu' : ''}">${x.ur ? E(x.ur) + ' <small>' + E(x.en) + '</small>' : E(x.en)}</span>`).join('') || '<small class="cls-sh">ابھی کوئی ٹائٹل نہیں — ➕ دبا کر لکھیں</small>';
-      inner += `<details class="clsb-cat"${q ? ' open' : ''}><summary>${E(c.ur)} <small>${E(c.en)}</small> <b>${c.titles.length}</b>
+      const chips = tl.map(x=>`<span class="cls-chip${x.custom ? ' cu' : ''}">${x.ur ? E(x.ur) + ' <small>' + E(x.en) + '</small>' : E(x.en)}${x.custom ? `<i class="cls-x" data-pt="${A(t[0])}" data-cat="${A(c.en)}" data-en="${A(x.en)}" onclick="clsDelItem('title',this.dataset.pt,this.dataset.cat,this.dataset.en)">✖</i>` : ''}</span>`).join('') || '<small class="cls-sh">ابھی کوئی ٹائٹل نہیں — ➕ دبا کر لکھیں</small>';
+      inner += `<details class="clsb-cat"${q ? ' open' : ''}><summary>${E(c.ur)} <small>${E(c.en)}</small> <b>${c.titles.length}</b>${c.custom ? `<button type="button" class="clsb-add clsb-del" data-pt="${A(t[0])}" data-cat="${A(c.en)}" onclick="event.preventDefault();event.stopPropagation();clsDelItem('cat',this.dataset.pt,this.dataset.cat)">🗑️</button>` : ''}
         <button type="button" class="clsb-add alt" data-pt="${A(t[0])}" data-cat="${A(c.en)}" onclick="event.preventDefault();event.stopPropagation();clsAddAsk('title',this.dataset.pt,this.dataset.cat)">➕ ٹائٹل</button>${fo ? `
         <button type="button" class="clsb-add pk" data-pt="${A(t[0])}" data-cat="${A(c.en)}" onclick="event.preventDefault();event.stopPropagation();clsBrowsePick(this.dataset.pt,this.dataset.cat)">✔ فارم میں لگائیں</button>` : ''}</summary>
         <div class="cls-chips">${chips}</div></details>`;
     });
     if(q && !shown) return; nP++;
-    html += `<details class="clsb-pt"${q ? ' open' : ''}><summary>${E(clsPTLabel(t) === t[1] ? t[1] : t[1])} <small>${E(t[2])}</small> <b>${cats.length} شعبے</b>
+    html += `<details class="clsb-pt"${q ? ' open' : ''}><summary>${E(clsPTLabel(t) === t[1] ? t[1] : t[1])} <small>${E(t[2])}</small> <b>${cats.length} شعبے</b>${CLS_PTYPES.indexOf(t) >= CLS_PT_BASE ? `<button type="button" class="clsb-add clsb-del" data-pt="${A(t[0])}" onclick="event.preventDefault();event.stopPropagation();clsDelItem('pt',this.dataset.pt)">🗑️</button>` : ''}
       <button type="button" class="clsb-add" data-pt="${A(t[0])}" onclick="event.preventDefault();event.stopPropagation();clsAddAsk('cat',this.dataset.pt)">➕ شعبہ</button></summary>${inner || '<small class="cls-sh">اس نوعیت میں ابھی کوئی شعبہ نہیں — ➕ شعبہ دبائیں</small>'}</details>`;
   });
   box.innerHTML = html || '<small class="cls-sh">کچھ نہیں ملا</small>';
@@ -13792,8 +13820,8 @@ function initFirebaseSync(){
     const d = snap.data();
     let changed = false;
     if(!store.orgs) store.orgs = [];
-    ['clsPT','clsCat','clsTit'].forEach(k=>{ if(!Array.isArray(store[k])) store[k] = []; });   /* MCS1211TH370 */
-    ['departments','specialties','hospitals','cities','areas','orgs','clsPT','clsCat','clsTit'].forEach(k=>{
+    ['clsPT','clsCat','clsTit','clsDel'].forEach(k=>{ if(!Array.isArray(store[k])) store[k] = []; });   /* MCS1211TH370 */
+    ['departments','specialties','hospitals','cities','areas','orgs','clsPT','clsCat','clsTit','clsDel'].forEach(k=>{
       if(Array.isArray(d[k])){ const merged = unionMerge(store[k], d[k]); if(merged.length!==store[k].length){ store[k]=merged; changed=true; } }
     });
     if(d.serviceTypes){
@@ -25586,6 +25614,15 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
 #wzOv #wzPv{position:fixed;left:0;right:0;top:0;bottom:0;z-index:40;background:rgba(15,23,42,.55);display:grid;place-items:center;padding:14px}
 #wzOv #wzPv .wzCard{max-width:420px;width:100%;max-height:88vh;overflow:auto;background:#fff!important}
 </style>
+<style id="mcsWizSticky611">
+/* MCS2211SU611 (مالک کا حکم): وزرڈ کا «آگے / محفوظ کریں / ممبرشپ» بٹن لمبے فارم میں بھی ہر وقت نیچے نظر آئے */
+#wzOv .wzCard>.wzBtn.bG:not([onclick*="mcsWizClose"]),#wzOv .wzCard>.wzBtn[onclick*="mcsPlayBuy"]{position:sticky !important;bottom:10px;z-index:20;box-shadow:0 6px 18px rgba(15,23,42,.35)}
+#wzOv .wzOwn{margin:8px 0 2px;padding:10px;border:1.5px dashed #1d4ed8;border-radius:10px;background:#eff6ff}
+#wzOv .wzOwnB{display:flex;gap:8px}#wzOv .wzOwnB .wzBtn{margin-top:8px;min-height:42px;font-size:14px}
+#wzOv .wzDelLink{display:block;margin:6px 0 0;background:none;border:0;color:#b42318;font-size:13px;font-weight:700;padding:4px 0;cursor:pointer}
+.cls-x,#wzOv .cls-x{font-style:normal;margin-inline-start:6px;color:#b91c1c;font-weight:900;cursor:pointer;padding:0 4px}
+.clsb-del{background:#fee2e2 !important;color:#b91c1c !important;border-color:#fca5a5 !important}
+</style>
 <div id="wzOv" data-noen aria-modal="true" role="dialog"><div class="wzW" id="wzW"></div></div>
 
 <script id="mcsRes416">
@@ -25873,7 +25910,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   function subAll(){ const cats = catsFor(S.c.ptype), cur = (cats.find(x => x.en === S.c.mcat) || {titles: []}); const L = cur.titles.map(t => t.en);
     (S.c.subs || []).forEach(v => { if(!L.some(x => x.toLowerCase() === String(v).toLowerCase())) L.push(v); }); return L.sort(az); }
   function subRowsHtml(){ const L = subAll(); if(!L.length) return S.c.mcat ? '<div class="wzDdEmpty u">اوپر والے خانے میں لکھ کر «➕» سے شامل کریں — Type above and add</div>' : '<div class="wzDdEmpty u">پہلے کیٹگری اور ٹائپ منتخب کریں</div>';
-    return L.map(v => `<label class="wzDdRow" data-q="${esc(String(v).toLowerCase() + ' ' + subUr(v))}"><input type="checkbox" data-v="${esc(v)}" ${isOn(v) ? 'checked' : ''} onchange="wzSubChk(this)"><span class="en">${esc(v)}</span><span class="u">${esc(subUr(v))}</span></label>`).join(''); }
+    return L.map(v => `<label class="wzDdRow" data-q="${esc(String(v).toLowerCase() + ' ' + subUr(v))}"><input type="checkbox" data-v="${esc(v)}" ${isOn(v) ? 'checked' : ''} onchange="wzSubChk(this)"><span class="en">${esc(v)}</span><span class="u">${esc(subUr(v))}</span>${isCustomT(v) ? `<i class="cls-x" data-v="${esc(v)}" onclick="event.preventDefault();event.stopPropagation();wzDelSub(this.dataset.v)">✖</i>` : ''}</label>`).join(''); }
   function subChipsHtml(){ const a = (S.c.subs || []).slice().sort(az); return a.length ? a.map(v => `<span class="wzChip on">${esc(v)}<i data-v="${esc(v)}" onclick="wzSub(this.dataset.v)">✖</i></span>`).join('') : '<small class="u" style="color:#64748b">ابھی کچھ منتخب نہیں</small>'; }
   const subLbl = () => { const n = (S.c.subs || []).length; return n ? '✔ ' + n + ' selected — منتخب' : 'Select SubType(s) — منتخب کریں'; };
   function prChipsHtml(){ return (S.c.prods || []).map((v, i) => `<span class="wzChip on">${esc(v)}<i onclick="wzProdDel(${i})">✖</i></span>`).join(''); }
@@ -25886,13 +25923,16 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     const ex = subAll().find(x => String(x).toLowerCase() === q.toLowerCase() || subUr(x) === q);
     if(ex) return `<div class="wzDdHint u">✔ «${esc(ex)}» پہلے سے فہرست میں موجود ہے</div><button type="button" class="wzDdPlus" data-v="${esc(ex)}" onclick="wzSubPick(this.dataset.v)">☑️ <span class="u">یہی چنیں</span></button>`;
     return `<button type="button" class="wzDdPlus" data-v="${esc(q)}" onclick="wzSubNew(this.dataset.v)">➕ <span class="u">«${esc(q)}» نیا شامل کریں اور چنیں</span></button>`; }
+  const ownMcBox = () => S.ownMc ? `<div class="wzOwn"><input class="wzI u" id="wzOwnMc" maxlength="60" autocomplete="off" placeholder="اپنی پروفائل ٹائپ لکھیں (مثلاً: ڈاک خانہ)" onkeydown="if(event.key==='Enter'){event.preventDefault();wzOwnMcOk()}"><div class="wzOwnB"><button type="button" class="wzBtn bB" onclick="wzOwnMcOk()">✔ شامل کریں</button><button type="button" class="wzBtn bW" onclick="wzOwnMcNo()">✖ منسوخ</button></div></div>` : '';
+  const delMcBtn = (c, cats) => { const cur = cats.find(x => x.en === c.mcat); return (cur && cur.custom) ? `<button type="button" class="wzDelLink u" onclick="wzDelMc()">🗑️ یہ پروفائل ٹائپ فہرست سے ہٹائیں</button>` : ''; };
+  const isCustomT = v => { const cur = catsFor(S.c.ptype).find(x => x.en === S.c.mcat), t = cur && cur.titles.find(x => x.en.toLowerCase() === String(v).toLowerCase()); return !!(t && t.custom); };
   const ddClear = () => { const i = $('wzDdQ'); if(i) i.value = ''; wzDdFilter(''); };
   window.wzDdFocus = function(){ const i = $('wzDdQ'); if(i) i.focus(); };
   window.wzSubPick = function(v){ if(!isOn(v) && (S.c.subs || []).length < 30) S.c.subs.push(v); wzC('t'); ddClear(); wzSubRefresh(false); };
   window.wzSubNew = function(v){   /* MCS1511SU449 (مالک کا حکم): فہرست میں نہ ملے تو «+» — فوراً چنا بھی جائے اور سب کی فہرست میں آئندہ کے لیے بھی محفوظ (پرانا clsTit نظام: فون + Firestore) */
     v = String(v || '').replace(/\|/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60); if(!v) return; const c = S.c; if(!c.ptype || !c.mcat) return err('پہلے پروفائل ٹائپ منتخب کریں');
     const ex = subAll().find(x => String(x).toLowerCase() === v.toLowerCase()); const nm = ex || v;
-    if(!ex){ try{ store.clsTit = store.clsTit || []; store.clsTit.push(c.ptype + '|' + c.mcat + '|' + v + '|'); clsRebuild(); }catch(e){} setTimeout(() => { try{ saveStore(); clsSyncCfg(); }catch(e){} }, 200); }
+    if(!ex){ try{ store.clsTit = store.clsTit || []; clsPushRaw('clsTit', c.ptype + '|' + c.mcat + '|' + v + '|'); clsRebuild(); }catch(e){} setTimeout(() => { try{ saveStore(); clsSyncCfg(); }catch(e){} }, 200); }
     if(!isOn(nm) && (c.subs || []).length < 30) c.subs.push(nm); wzC('t'); ddClear(); wzSubRefresh(true); flash('✔ ' + nm + (ex ? '' : ' — فہرست میں شامل ہو گیا'), 1); };
   window.wzDdEnter = function(){ const i = $('wzDdQ'), q = ((i && i.value) || '').trim(); if(!q) return; const ex = subAll().find(x => String(x).toLowerCase() === q.toLowerCase() || subUr(x) === q); if(ex) wzSubPick(ex); else wzSubNew(q); };
   window.wzDdFilter = function(q){ q = String(q || '').trim().toLowerCase(); document.querySelectorAll('#wzDdRows .wzDdRow').forEach(r => { const hit = !q || (r.dataset.q || '').indexOf(q) >= 0; r.style.display = hit ? '' : 'none'; r.classList.toggle('hit', !!q && hit); }); const a = $('wzDdAdd'); if(a) a.innerHTML = addRowHtml(q); };
@@ -25911,7 +25951,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     const cities = (function(){ const T = new Set(); try{ (store.services || []).forEach(r => r.city && !isBlankVal(r.city) && T.add(r.city)); }catch(e){} return Array.from(T).slice(0, 300); })();
     frame(`<div class="wzCard"><div class="wzHd"><i>🪪</i><b>Create Your Business Card</b><span class="u">اپنا بزنس کارڈ بنائیں</span></div>
       ${LBL('Profile Category', 'پروفائل کیٹگری', 1)}<select class="wzI" id="wzPt" onchange="wzC('pt')"><option value="">Select Category — کیٹگری منتخب کریں</option>${PT().map(t => `<option value="${esc(t[0])}" ${c.ptype === t[0] ? 'selected' : ''}>${esc(t[2] + ' — ' + t[1].replace(/^\S+\s/, ''))}</option>`).join('')}</select>
-      ${LBL('Profile Type', 'پروفائل ٹائپ', 1)}<select class="wzI" id="wzMc" onchange="wzC('mc')"><option value="">Select Profile Type — پروفائل ٹائپ منتخب کریں</option>${cats.map(x => `<option value="${esc(x.en)}" ${c.mcat === x.en ? 'selected' : ''}>${esc(x.en + ' — ' + x.ur)}</option>`).join('')}${c.mcat && !cats.some(x => x.en === c.mcat) ? `<option value="${esc(c.mcat)}" selected>${esc(c.mcat)}</option>` : ''}${c.ptype ? `<option value="__own">➕ Other — write your own / خود لکھیں</option>` : ''}</select>
+      ${LBL('Profile Type', 'پروفائل ٹائپ', 1)}<select class="wzI" id="wzMc" onchange="wzC('mc')"><option value="">Select Profile Type — پروفائل ٹائپ منتخب کریں</option>${cats.map(x => `<option value="${esc(x.en)}" ${c.mcat === x.en ? 'selected' : ''}>${esc(x.en + ' — ' + x.ur)}</option>`).join('')}${c.mcat && !cats.some(x => x.en === c.mcat) ? `<option value="${esc(c.mcat)}" selected>${esc(c.mcat)}</option>` : ''}${c.ptype ? `<option value="__own">➕ Other — write your own / خود لکھیں</option>` : ''}</select>${ownMcBox()}${delMcBtn(c, cats)}
       ${LBL('Profile SubType(s) — multi-select', 'پروفائل سب ٹائپ (ایک سے زیادہ)', 1)}<div class="wzDd"><button type="button" class="wzDdBtn" onclick="wzDdToggle()"><span id="wzDdLbl">${subLbl()}</span><i id="wzDdAr">${ddOpen ? '▴' : '▾'}</i></button><div class="wzDdList" id="wzDdList" style="display:${ddOpen ? 'block' : 'none'}"><input class="wzI wzDdQ" id="wzDdQ" placeholder="لکھیں — تلاش / نیا شامل کریں (Search or add)" oninput="wzDdFilter(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();wzDdEnter()}" autocomplete="off"><div class="wzDdRows" id="wzDdRows">${subRowsHtml()}</div><div id="wzDdAdd">${addRowHtml('')}</div><button type="button" class="wzBtn bB wzDdDone" onclick="wzDdToggle()">Done — مکمل</button></div></div>
       <div class="wzChips" id="wzSubChips">${subChipsHtml()}</div>
       ${LBL('Products &amp; Services (multiple)', 'مصنوعات و خدمات (ایک سے زیادہ)')}<div><input class="wzI" id="wzPrIn" placeholder="Enter products and services — لکھیں، Enter دبائیں یا اگلے خانے پر جائیں" value="${esc(c.prRaw)}" oninput="wzRaw()" onkeydown="if(event.key==='Enter'||event.key===','){event.preventDefault();wzProdAdd()}" onblur="wzBlur(event,'prod')"></div>
@@ -25932,13 +25972,21 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   }
   window.wzC = function(w){
     const c = S.c, g = i => ($(i) || {}).value || '';
-    if(w === 'pt'){ c.ptype = g('wzPt'); c.mcat = ''; c.subs = []; save(); return s2(); }
+    if(w === 'pt'){ c.ptype = g('wzPt'); c.mcat = ''; c.subs = []; S.ownMc = 0; save(); return s2(); }
     if(w === 'mc'){ let v = g('wzMc');
-      if(v === '__own'){ let t = ''; try{ t = (prompt('Write your Profile Type\nاپنی پروفائل ٹائپ لکھیں (مثلاً: ڈاک خانہ)') || '').trim().replace(/[<>"|]/g, '').slice(0, 60); }catch(e){} if(!t){ return s2(); } v = t; if(!catsFor(c.ptype).some(x => x.en.toLowerCase() === t.toLowerCase())){ try{ store.clsCat = store.clsCat || []; store.clsCat.push(c.ptype + '|' + t + '|' + t); clsRebuild(); }catch(e){} setTimeout(() => { try{ saveStore(); clsSyncCfg(); }catch(e){} }, 200); } }   /* MCS1911TH548: فہرست میں نہ ہو تو خود لکھیں */
+      if(v === '__own'){ S.ownMc = 1; save(); s2(); setTimeout(() => { const i = $('wzOwnMc'); if(i){ try{ i.focus(); i.scrollIntoView({block: 'center'}); }catch(e){} } }, 80); return; }   /* MCS2211SU611 (مالک کا حکم): prompt ختم — فارم کے اندر ڈبہ */
       c.mcat = v; c.subs = []; save(); return s2(); }
     if(w === 'org'){ c.org = g('wzOrg'); }
     if($('wzOEn')) c.ownEn = g('wzOEn'); if($('wzOUr')) c.ownUr = g('wzOUr'); if($('wzNEn')) c.nameEn = g('wzNEn'); if($('wzNUr')) c.nameUr = g('wzNUr'); if($('wzCity')) c.city = g('wzCity'); if($('wzAddr')) c.addr = g('wzAddr');
     save(); };
+  window.wzOwnMcOk = function(){ const i = $('wzOwnMc'), c = S.c; let t = ((i && i.value) || '').replace(/[<>"|]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
+    if(!t){ err('پروفائل ٹائپ کا نام لکھیں'); return; } if(!c.ptype){ err('پہلے پروفائل کیٹگری منتخب کریں'); return; }
+    const ex = catsFor(c.ptype).find(x => x.en.toLowerCase() === t.toLowerCase() || String(x.ur || '').toLowerCase() === t.toLowerCase());
+    if(ex) t = ex.en; else { try{ clsPushRaw('clsCat', c.ptype + '|' + t + '|' + t); clsRebuild(); }catch(e){} setTimeout(() => { try{ saveStore(); clsSyncCfg(); }catch(e){} }, 200); }
+    c.mcat = t; c.subs = []; S.ownMc = 0; save(); s2(); flash('✔ ' + t + (ex ? '' : ' — فہرست میں شامل ہو گیا'), 1); };
+  window.wzOwnMcNo = function(){ S.ownMc = 0; save(); s2(); };
+  window.wzDelMc = async function(){ const c = S.c; if(!c.mcat) return; if(await clsDelItem('cat', c.ptype, c.mcat)){ c.mcat = ''; c.subs = []; save(); s2(); } };
+  window.wzDelSub = async function(v){ const c = S.c; if(await clsDelItem('title', c.ptype, c.mcat, v)){ c.subs = (c.subs || []).filter(x => String(x).toLowerCase() !== String(v).toLowerCase()); wzC('t'); wzSubRefresh(true); } };
   window.wzSub = function(v){ const k = String(v).toLowerCase(), i = (S.c.subs || []).findIndex(x => String(x).toLowerCase() === k); if(i < 0) S.c.subs.push(v); else S.c.subs.splice(i, 1); wzC('t'); wzSubRefresh(false); };   /* MCS1511SU448: پورا صفحہ دوبارہ نہیں بنتا — صرف ڈبہ */
   window.wzSubChk = function(el){ wzSub(el.dataset.v); };
   window.wzRaw = function(){ if($('wzSubIn')) S.c.subRaw = $('wzSubIn').value; if($('wzPrIn')) S.c.prRaw = $('wzPrIn').value; save(); };
@@ -26249,13 +26297,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     if(typeof rc === 'function') window.svcRegClick = function(id){
       try{ const r = (store.services || []).find(x => x.id === id); const mc9 = (typeof myCard === 'function') ? myCard() : null; if(r && me() && (pfAcctOwns(r) || (mc9 && mc9.id === r.id))){ try{ closeModal('agModal'); }catch(e){} mcsWizOpen(((r.more || {}).ptype || S.cardDone) ? 3 : 2); return; } }catch(e){}
       return rc.apply(this, arguments); };
-    const pm = window.mpoOpen;
-    if(typeof pm === 'function') window.mpoOpen = function(){ const r = pm.apply(this, arguments);
-      try{ const box = document.querySelector('#myPortalModal .mx-in') || document.querySelector('#myPortalModal .modal-box'); if(box && !box.querySelector('.wzEnt') && me()){
-        const b = document.createElement('button'); b.type = 'button'; b.className = 'wzEnt btn block'; b.style.cssText = 'margin:10px 0 12px;font-size:14px;line-height:1.5;background:#0b3b8f;color:#fff;border:0;border-radius:12px;padding:10px;font-weight:800;width:100%';
-        b.innerHTML = '🧭 رجسٹریشن کے مراحل — Registration Steps'; b.onclick = () => { try{ closeModal('myPortalModal'); }catch(e){} mcsWizOpen(); };
-        const n = box.querySelector('.mx-big') || box.querySelector('.mpo-note'); if(n) n.insertAdjacentElement('afterend', b); else box.appendChild(b); } }catch(e){}   /* MCS1311FR394: نئے My Portal میں بٹن صفحے کے اندر (پہلے ڈبے کے باہر لگ کر آدھا صفحہ دبا دیتا تھا) */
-      return r; };
+    /* MCS2211SU611 (مالک کا حکم): My Portal سے «رجسٹریشن کے مراحل» بٹن ہٹا دیا — رجسٹریشن کا راستہ صرف کارڈ کا «رجسٹریشن مکمل کریں» */
   });
 })();
 </script>
