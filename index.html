@@ -4819,10 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA600";
+const APP_VERSION = "MCS2111SA601";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2111SA601": "Google Play membership button fixed at the root: Play is now prepared in the background and opens the instant the button is tapped (the phone was cancelling the payment screen because of the wait before it) • clear message if it still fails.",
   "MCS2111SA600": "One status everywhere: a business whose membership is active now shows as registered on the card, welcome, portal and wizard (no more «Register Now» / «Complete registration» beside a congratulations message, even after the admin changes its category) • Google Play error now shows the exact cause at the TOP of the message • Need-assistance card shows the phone diagnosis and last Play error.",
   "MCS2111SA599": "Admin Need-assistance card now shows the whole finished business form: business name (Urdu + English), owner name, organisation, full address, category, sub-types, products, CNIC / expiry filled, referral.",
   "MCS2111SA598": "Google Play payment error now ends with a one-line diagnosis (Chrome version, whether the app runs as the Play Store app or as a shortcut/browser page) so the exact cause is visible in one screenshot.",
@@ -6510,33 +6511,73 @@ async function mcsPlayFinish(token, sku, rk){
   setTimeout(() => { try{ mcsPlaySync(true); }catch(e){} }, 20000);
   return false;
 }
+/* MCS2111SA601 (مالک کا حکم): Google Play کھلنے سے پہلے انتظار والے کام (listPurchases + سرور probe) ہوتے تھے — اتنی دیر میں فون بٹن دبانے کی اجازت (user gesture, ~5 سیکنڈ) ختم کر دیتا ہے اور PaymentRequest.show() SecurityError دیتا ہے۔
+   اب تمام تیاری پہلے (جب بٹن سکرین پر آئے) ہو جاتی ہے؛ بٹن دبتے ہی show() فوراً۔ */
+window._mcsPrep = null; window._mcsPrepBusy = null;
+function mcsPlayPrep(force){
+  const P = window._mcsPrep;
+  if(!force && P && Date.now() - P.at < 120000) return Promise.resolve(P);
+  if(window._mcsPrepBusy) return window._mcsPrepBusy;
+  window._mcsPrepBusy = (async () => {
+    const out = {at: Date.now(), sku: '', owned: [], orphan: null, ok: false};
+    try{
+      if(!mcsPlayOk()) return out;
+      let ownedL = [];
+      try{ const svc = await mcsPlaySvc(); ownedL = ((await svc.listPurchases()) || []); out.ok = true; }catch(e){ out.err = (e && e.name) || '?'; }
+      out.owned = ownedL.map(x => x.itemId);
+      try{
+        for(const x of ownedL){ if(!x || !MCS_PLAY_SKUS.includes(x.itemId) || !x.purchaseToken) continue;
+          const pj = await mcsPlayProbe(x.purchaseToken);
+          if(pj && pj.ok && pj.linked === false){ out.orphan = {token: x.purchaseToken, sku: x.itemId}; break; } }
+      }catch(e){}
+      out.sku = MCS_PLAY_SKUS.find(k => !out.owned.includes(k)) || '';
+      out.at = Date.now();
+    }catch(e){}
+    window._mcsPrep = out; return out;
+  })().finally(() => { window._mcsPrepBusy = null; });
+  return window._mcsPrepBusy;
+}
+/* جیسے ہی صفحے پر کوئی «Google Play» خریداری کا بٹن آئے، تیاری شروع */
+(function(){ let t = 0;
+  function kick(){ try{ if(Date.now() - t < 15000) return; if(!document.querySelector('[onclick*="mcsPlayBuy"]')) return; t = Date.now(); mcsPlayPrep(); }catch(e){} }
+  try{ new MutationObserver(kick).observe(document.documentElement, {childList: true, subtree: true}); }catch(e){}
+})();
 async function mcsPlayBuy(rk){
   if(codevBlock()) return;
+  const t0 = Date.now();
   if(!mcsPlayOk()){ alert('اس وقت اس فون پر Google Play کی ادائیگی کھل نہیں رہی۔\n\n' + mcsPlayWhy() + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں۔'); return; }
-  const hold = mcsGpaHoldGet(); if(hold && hold.token && hold.rk === rk){ await mcsPlayFinish(hold.token, hold.sku, rk); return; }   /* پرانی رکی ہوئی خریداری — اب خود مکمل */
+  const hold = mcsGpaHoldGet(); if(hold && hold.token && hold.rk === rk){ await mcsPlayFinish(hold.token, hold.sku, rk); window._mcsPrep = null; return; }   /* پرانی رکی ہوئی خریداری — اب خود مکمل */
   const pend = (() => { try{ return JSON.parse(localStorage.getItem('mcsPlayPending') || 'null'); }catch(e){ return null; } })();
-  if(pend && pend.token && pend.rk === rk){ await mcsPlayFinish(pend.token, pend.sku, rk); return; }
-  let owned = [], ownedL = [];
-  try{ const svc = await mcsPlaySvc(); ownedL = ((await svc.listPurchases()) || []); owned = ownedL.map(x => x.itemId); }catch(e){}
-  try{
-    for(const x of ownedL){ if(!x || !MCS_PLAY_SKUS.includes(x.itemId) || !x.purchaseToken) continue;
-      const pj = await mcsPlayProbe(x.purchaseToken);
-      if(pj && pj.ok && pj.linked === false){ showToast('🎁 Play Store میں پہلے سے لی ہوئی ممبرشپ ملی — اسی کاروبار سے جوڑ رہے ہیں…', 5000); await mcsPlayFinish(x.purchaseToken, x.itemId, rk); return; } }
-  }catch(e){}
-  const sku = MCS_PLAY_SKUS.find(k => !owned.includes(k));
+  if(pend && pend.token && pend.rk === rk){ await mcsPlayFinish(pend.token, pend.sku, rk); window._mcsPrep = null; return; }
+  let P = window._mcsPrep;
+  if(!(P && Date.now() - P.at < 120000)){   /* تیاری نہیں ہوئی — ابھی کرتے ہیں */
+    try{ showToast('⏳ Google Play تیار ہو رہا ہے…', 3000); }catch(e){}
+    P = await mcsPlayPrep(true);
+  }
+  if(P.orphan){ const o = P.orphan; window._mcsPrep = null; try{ showToast('🎁 Play Store میں پہلے سے لی ہوئی ممبرشپ ملی — اسی کاروبار سے جوڑ رہے ہیں…', 5000); }catch(e){} await mcsPlayFinish(o.token, o.sku, rk); return; }
+  const owned = P.owned || [], sku = P.sku;
   if(!sku){ alert('⚠️ اس گوگل اکاؤنٹ پر 5 ممبرشپس پہلے سے فعال ہیں — زیادہ سے زیادہ یہی۔ نئی ممبرشپ کسی دوسرے گوگل اکاؤنٹ سے لیں، یا Help Desk پر بتائیں۔'); return; }
+  if(Date.now() - t0 > 3500){ try{ alert('✅ Google Play تیار ہے — اب ایک بار پھر وہی بٹن دبائیں۔'); }catch(e){} return; }   /* بٹن کی اجازت ختم ہو چکی — دوبارہ دبانا ہوگا، اب تیاری ہو چکی */
   let token = '';
   try{
     const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }], { total: { label: 'Total', amount: { currency: 'USD', value: '0' } } });   /* MCS1611MO473: details (total) لازمی ہے — گوگل کی ہدایت */
-    const res = await req.show();
+    const showP = req.show();   /* MCS2111SA601: بٹن دبتے ہی فوراً — بیچ میں کوئی await نہیں */
+    window._mcsPrep = null;
+    const res = await showP;
     token = res.details && res.details.purchaseToken;
     try{ await res.complete('success'); }catch(e){}
   }catch(e){
+    window._mcsPrep = null;
     try{ localStorage.setItem('mcsPlayLastErr', ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 120) + ' @' + new Date().toISOString().slice(0, 16)); }catch(_){}   /* MCS2111SA600: آخری ایرر ایڈمن کو بھی جائے */
     if(e && e.name === 'AbortError'){   /* منسوخ — مگر کبھی ادائیگی ہو کر بھی AbortError آتا ہے: فہرست دیکھیں */
       token = await mcsPlayFindNew(sku, owned); if(!token) return;
     } else {
       token = await mcsPlayFindNew(sku, owned);
+      if(!token && e && e.name === 'SecurityError'){   /* MCS2111SA601: بٹن کی اجازت کا مسئلہ — تیاری اب پھر کر لیتے ہیں، اگلا دباؤ فوراً چلے گا */
+        mcsPlayPrep(true);
+        alert('⚠️ Google Play ایک لمحے کے لیے نہیں کھل سکا۔\nوجہ: ' + e.name + ' — ' + (e.message || '') + '\n\nکوئی بات نہیں، پیسے نہیں کٹے — بٹن دوبارہ دبائیں۔');
+        return;
+      }
       if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
         if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\n' + mcsPlayWhy() + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں، Play Store میں وہی Gmail ہو جس سے ادائیگی کرنی ہے۔\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
         return;
@@ -6546,6 +6587,7 @@ async function mcsPlayBuy(rk){
   }
   if(!token){ token = await mcsPlayFindNew(sku, owned); if(!token){ alert('❌ خریداری کا ٹوکن نہیں ملا — دوبارہ دبائیں۔'); return; } }
   await mcsPlayFinish(token, sku, rk);
+  window._mcsPrep = null; try{ mcsPlayPrep(true); }catch(e){}
 }
 async function mcsPlayFindNew(sku, owned){   /* خریداری کے بعد Play کی فہرست — نئی (پہلے نہ والی) ممبرشپ کا ٹوکن */
   for(let i = 0; i < 3; i++){
