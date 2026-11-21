@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU612";
+const APP_VERSION = "MCS2211SU613";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU613":"✂️ Google Play ایرر کا پیغام مختصر — ایرر، Play کا جواب، تشخیص کی سطریں اور ایک حل",
   "MCS2211SU612":"🛠️ Google Play: ایپ کے اندر ری لوڈ کے بعد «شارٹ کٹ» کی غلط تشخیص ٹھیک • «NotSupported» پر خود ایک بار دوبارہ کوشش • ایرر میں اصل مرحلے (Play Store کیش / ری سٹارٹ)",
   "MCS2211SU611":"🧭 My Portal سے «رجسٹریشن کے مراحل» ہٹا — صرف کارڈ کا «رجسٹریشن مکمل کریں» • 🗑️ غلط محفوظ ہوئی نوعیت / شعبہ / ٹائٹل فہرست سے ہٹانے کا بٹن (ایڈمن پاس ورڈ) • ✍️ «اپنا لکھیں» اب فارم کے اندر ڈبے میں (پرانا prompt ختم) • 📩 «اطلاع ہو چکی» کا نشان اب سرور پر بھی محفوظ • ⬇️ وزرڈ کا آگے / محفوظ کریں بٹن ہر وقت نیچے نظر آتا ہے • 🔎 Google Play ایرر میں canMakePayment کی تشخیص",
   "MCS2211SU610":"🧭 رجسٹریشن کا ایک ہی راستہ — کارڈ، My Portal اور ➕ سب ایک جگہ؛ مرحلہ اپنی اصل حالت سے خود چنا جاتا ہے",
@@ -6760,7 +6761,7 @@ async function mcsPlayBuy(rk){
       if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
         let dg = ''; try{ await mcsPlayDetails(); dg = mcsPlayDiag || ''; }catch(_){}   /* MCS2111SA602: اصل وجہ + Play کا جواب ڈائیلاگ میں */
         try{ localStorage.setItem('mcsPlayLastErr', ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 120) + ' | ' + dg.slice(0, 90) + ' @' + new Date().toISOString().slice(0, 16)); }catch(_){}
-        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\n' + mcsPlayWhy() + '\n\n⚙️ ' + ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 160) + '\n📦 ' + dg + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں، Play Store میں وہی Gmail ہو جس سے ادائیگی کرنی ہے۔' + (/clientAppUnavailable|NotSupported/i.test(String(dg) + ' ' + String((e && e.name) || '')) ? '\n\n👉 Play Store سے رابطہ نہیں ہو سکا۔ ترتیب سے کریں:\n۱) ایپ Recent Apps سے جھاڑ کر بند کریں، پھر Play Store والے آئیکن سے کھولیں (Chrome کا شارٹ کٹ نہیں)\n۲) Play Store کھول کر دیکھیں Gmail لاگ اِن ہے\n۳) Settings ← Apps ← Google Play Store اور Google Play services ← Storage ← Clear cache\n۴) فون ری سٹارٹ کریں\n۵) پھر بھی نہ ہو تو ایپ ان انسٹال کر کے Play Store سے دوبارہ انسٹال کریں' : '') + '\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
+        if(confirm('❌ Google Play سے رابطہ نہیں ہو سکا\n\n' + ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 70) + '\n📦 ' + String(dg).slice(0, 90) + '\n' + (function(){ try{ const w = mcsPlayWhy().split('\n'); return w.slice(1).join('\n'); }catch(_){ return ''; } })() + '\n\nحل: Play Store کھول کر My City Shines کو Update کریں، پھر ایپ بند کر کے دوبارہ کھولیں۔\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
         return;
       }
       if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
