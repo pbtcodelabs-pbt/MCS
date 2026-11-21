@@ -4819,10 +4819,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA599";
+const APP_VERSION = "MCS2111SA600";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2111SA600": "One status everywhere: a business whose membership is active now shows as registered on the card, welcome, portal and wizard (no more «Register Now» / «Complete registration» beside a congratulations message, even after the admin changes its category) • Google Play error now shows the exact cause at the TOP of the message • Need-assistance card shows the phone diagnosis and last Play error.",
   "MCS2111SA599": "Admin Need-assistance card now shows the whole finished business form: business name (Urdu + English), owner name, organisation, full address, category, sub-types, products, CNIC / expiry filled, referral.",
   "MCS2111SA598": "Google Play payment error now ends with a one-line diagnosis (Chrome version, whether the app runs as the Play Store app or as a shortcut/browser page) so the exact cause is visible in one screenshot.",
   "MCS2111SA597": "Registration: after «Need assistance» is sent the business card is locked (no Edit button) until the admin marks it solved; the edit screen no longer reopens by itself after closing. Admin Need-assistance card now shows the finished form summary (steps, category, sub-types, products, CNIC/expiry filled, referral) and no longer opens the editor.",
@@ -5741,10 +5742,31 @@ function mpLeftOf(p){ return p && p.until && !p.pend ? Math.ceil((p.until - Date
 function mpLeft(){ const x = mpList().find(x=>x.p.until); return x ? mpLeftOf(x.p) : 0; }
 function pfAcctOwns(rec){ try{ const a = typeof uaMe === 'function' ? uaMe() : null; const m = a && a.user && String(a.user.mobile || '').replace(/\D/g, '').slice(-10); const w = String((rec && rec.whatsapp) || '').replace(/\D/g, '').slice(-10); return !!(m && m.length === 10 && m === w); }catch(e){ return false; } }
 function pfIsOwner(rec){ if(rec && codevOn()) return true; if(rec && pfAcctOwns(rec)) return true; const e = rec && mpEntry(rec); return !!(e && e.key); }
+/* MCS2111SA600 (مالک کا حکم): ایک ہی حالت ہر جگہ — ممبرشپ کی چابی موبائل + کیٹیگری سے بنتی ہے؛ ایڈمن کیٹگری بدلے (یا ریکارڈ سروس ↔ پروفیشنل میں جائے) تو چابی بدل جاتی تھی اور فعال ممبرشپ «Register Now» بن جاتی تھی۔
+   اب: اگر اس موبائل نمبر کا پورے ڈیٹا میں ایک ہی ریکارڈ ہو تو اسی نمبر کی فعال ممبرشپ اسی کی مانی جائے؛ ایک سے زیادہ ریکارڈ ہوں تو پرانا اصول (نمبر + قسم) ہی رہے۔ */
+let _pfIx = null, _pfIxT = 0, _pfIxA = null, _pfIxS = -1, _pfIxD = -1;
+function pfIdx(){
+  try{
+    const ns = (store.services||[]).length, nd = (store.doctors||[]).length, now = Date.now();
+    if(_pfIx && _pfIxA === pfAct && _pfIxS === ns && _pfIxD === nd && now - _pfIxT < 1500) return _pfIx;
+    const cnt = {}, act = {};
+    (store.services||[]).concat(store.doctors||[]).forEach(r=>{ const k = r ? stKey(r.whatsapp) : ''; if(k) cnt[k] = (cnt[k]||0) + 1; });
+    Object.keys(pfAct||{}).forEach(rk=>{ const m = /^(p\d{10})_/.exec(rk); const x = pfAct[rk]; if(!m || !x || !x.until) return; if(!act[m[1]] || x.until > act[m[1]].until) act[m[1]] = x; });
+    _pfIx = {cnt, act}; _pfIxT = now; _pfIxA = pfAct; _pfIxS = ns; _pfIxD = nd; return _pfIx;
+  }catch(e){ return {cnt:{}, act:{}}; }
+}
+function pfActEntry(rec, kind){
+  const k = rec ? pfKeyOf(rec, kind) : ''; const x = k ? pfAct[k] : null;
+  if(x && (x.until||0) > Date.now()) return x;
+  try{ const ph = rec ? stKey(rec.whatsapp) : ''; if(ph){ const ix = pfIdx(); if(ix.cnt[ph] === 1){ const y = ix.act[ph]; if(y && (y.until||0) > Date.now()) return y; } } }catch(e){}
+  return x || null;
+}
 function pfActive(rec){
   const k = pfKeyOf(rec); if(!k) return false;
-  const e = mpAll().find(p=>p.rk === k && p.key); if(e && (e.until||0) > Date.now()) return true;
-  const x = pfAct[k]; return !!(x && (x.until||0) > Date.now());
+  const now = Date.now();
+  const e = mpAll().find(p=>p.rk === k && p.key); if(e && (e.until||0) > now) return true;
+  try{ const e2 = mpEntry(rec); if(e2 && e2.key && !e2.pend && (e2.until||0) > now) return true; }catch(_){}
+  const x = pfActEntry(rec); return !!(x && (x.until||0) > now);
 }
 async function pfLoadList(){
   try{ const r = await fetch(PF_API + '/plist'); const j = await r.json(); if(j && typeof j === 'object' && !j.error){ pfAct = j; try{ _dupC.t = 0; }catch(_){} localStorage.setItem('mcsPfList', JSON.stringify(j));
@@ -6490,7 +6512,7 @@ async function mcsPlayFinish(token, sku, rk){
 }
 async function mcsPlayBuy(rk){
   if(codevBlock()) return;
-  if(!mcsPlayOk()){ alert('اس وقت اس فون پر Google Play کی ادائیگی کھل نہیں رہی۔\n\nاگر ایپ پلے اسٹور ہی سے انسٹال کی ہے تو:\n1) Play Store اور Chrome (Android System WebView) اپڈیٹ کریں\n2) ایپ مکمل بند کر کے دوبارہ کھولیں\n3) پھر دوبارہ دبائیں\n\n' + mcsPlayWhy()); return; }
+  if(!mcsPlayOk()){ alert('اس وقت اس فون پر Google Play کی ادائیگی کھل نہیں رہی۔\n\n' + mcsPlayWhy() + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں۔'); return; }
   const hold = mcsGpaHoldGet(); if(hold && hold.token && hold.rk === rk){ await mcsPlayFinish(hold.token, hold.sku, rk); return; }   /* پرانی رکی ہوئی خریداری — اب خود مکمل */
   const pend = (() => { try{ return JSON.parse(localStorage.getItem('mcsPlayPending') || 'null'); }catch(e){ return null; } })();
   if(pend && pend.token && pend.rk === rk){ await mcsPlayFinish(pend.token, pend.sku, rk); return; }
@@ -6510,12 +6532,13 @@ async function mcsPlayBuy(rk){
     token = res.details && res.details.purchaseToken;
     try{ await res.complete('success'); }catch(e){}
   }catch(e){
+    try{ localStorage.setItem('mcsPlayLastErr', ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 120) + ' @' + new Date().toISOString().slice(0, 16)); }catch(_){}   /* MCS2111SA600: آخری ایرر ایڈمن کو بھی جائے */
     if(e && e.name === 'AbortError'){   /* منسوخ — مگر کبھی ادائیگی ہو کر بھی AbortError آتا ہے: فہرست دیکھیں */
       token = await mcsPlayFindNew(sku, owned); if(!token) return;
     } else {
       token = await mcsPlayFindNew(sku, owned);
       if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
-        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\nوجہ: Play Store کی ادائیگی ابھی اس ایپ میں کھل نہیں سکی۔ اگر ایپ پلے اسٹور ہی سے انسٹال کی ہے تو عام طور پر Play Store / Chrome پرانا ہوتا ہے یا ایپ پوری طرح بند نہیں ہوئی تھی۔\n\nحل:\n1) Play Store اور Chrome (Android System WebView) اپڈیٹ کریں\n2) ایپ مکمل بند کر کے دوبارہ کھولیں\n3) Play Store میں اسی Gmail سے لاگ ان ہو جس سے ادائیگی کرنی ہے\n4) پھر دوبارہ دبائیں\n\nفی الحال ایڈمن کو تفصیل بھیجنا چاہتے ہیں؟ (OK = تفصیل بھیجیں)\n\n' + mcsPlayWhy())) mpSubscribe(rk, true);
+        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\n' + mcsPlayWhy() + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں، Play Store میں وہی Gmail ہو جس سے ادائیگی کرنی ہے۔\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
         return;
       }
       if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
@@ -23506,7 +23529,7 @@ function mrqHelpCard(x, i){
     <div class="mrq-h"><b>🙋 رہنمائی درکار ہے</b><i class="mrq-tg ${x.st === 'new' ? 'n' : 'p'}">${x.st === 'new' ? '🆕' : '⏸️'}</i></div>
     <div class="mrq-sm">📩 ${mrqAgo(x.ts)}</div>
     <div class="mrq-tx" dir="rtl">${mrqIsDev() ? 'محترم عبدالحفیظ' : 'محترم ایڈمن'}! مائی سٹی شائنز (MCS) کا ایک کسٹمر رجسٹریشن مکمل کرنا چاہتا ہے — پلے سٹور سے ممبرشپ لینے میں اسے رہنمائی چاہیے۔</div>
-    ${row('👤 نام', E(nm))}${row('🏪 کاروبار', E(d.prof))}${row('🆔 MCS ID', d.uid ? `<bdi dir="ltr">${E(d.uid)}</bdi>` : '')}${row('📱 موبائل', ph ? `<a href="tel:0${ph}">0${ph}</a>` : '')}${row('💬 واٹس ایپ', wa ? `0${wa}` : '')}${row('✉️ Gmail', E(d.gmail))}${row('📍 شہر', E([d.area, d.city].filter(Boolean).join('، ')))}${mrqHelpForm(d, row, E)}
+    ${row('👤 نام', E(nm))}${row('🏪 کاروبار', E(d.prof))}${row('🆔 MCS ID', d.uid ? `<bdi dir="ltr">${E(d.uid)}</bdi>` : '')}${row('📱 موبائل', ph ? `<a href="tel:0${ph}">0${ph}</a>` : '')}${row('💬 واٹس ایپ', wa ? `0${wa}` : '')}${row('✉️ Gmail', E(d.gmail))}${row('📍 شہر', E([d.area, d.city].filter(Boolean).join('، ')))}${mrqHelpForm(d, row, E)}${row('🔎 فون کی تشخیص', E(d.dx || '').replace(/\n/g, '<br>'))}
     <div class="mrq-b">
       ${ph ? `<a class="ca" href="tel:0${ph}">📞 کال</a>` : ''}${wa ? `<a class="wa" target="_blank" rel="noopener" href="https://wa.me/92${wa}?text=${encodeURIComponent(msg)}">💬 واٹس ایپ</a>` : ''}
       ${ph ? `<button type="button" class="ch" onclick="mrqChat(${i})">💬 چیٹ</button>` : ''}
@@ -24118,7 +24141,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
       for(var gi = 0; gi < groups.length; gi++){ var kind = groups[gi][0], arr = groups[gi][1];
         for(var i = 0; i < arr.length; i++){ var r = arr[i];
           if(!r || r.approved === false || d10(r.whatsapp) !== k || r.category === 'emergencyNumbers' || r.category === 'govOffices') continue;
-          var act = pfAct[pfKeyOf(r, kind)]; if(!act || !act.until || act.until <= Date.now() || mpIsTrialSpan(act.since, act.until)) continue;
+          var act = pfActEntry(r, kind); if(!act || !act.until || act.until <= Date.now() || mpIsTrialSpan(act.since, act.until)) continue;
           if((act.until - Date.now()) / 864e5 < 300) continue;   /* تازہ ایک سال کی ممبرشپ ہی */
           var flag = 'mcsWelcomed:' + pfKeyOf(r, kind); if(LS.get(flag)) continue;
           LS.set(flag, '1'); return showWel(r, kind, a.user, act);
@@ -25409,7 +25432,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     const m = me(); const u = m && m.user; const s = (u && (u.sid || u.id)) || S.sid || ''; return s ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(s) : s) : ''; };
   const admMob = () => { try{ return (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? DEFAULT_CONTACT.whatsapp : ''; }catch(e){ return ''; } };   /* MCS1611MO485: ایڈمن = مالک — اپنا کاروبار 0320 والا */
   const myCard0 = () => { try{ const mob = d10(admMob() || (me() && me().user && me().user.mobile) || S.a.mobile); if(!mob) return null;   /* MCS1811WE533: ایڈمن ہو تو اپنا کاروبار، پرانا ٹیسٹ اکاؤنٹ نہیں */
-    const L = (store.services || []).filter(x => d10(x.whatsapp) === mob); if(!L.length) return null;
+    let L = (store.services || []).filter(x => d10(x.whatsapp) === mob); if(!L.length) L = (store.doctors || []).filter(x => d10(x.whatsapp) === mob); if(!L.length) return null;   /* MCS2111SA600: ایڈمن نے پروفیشنل میں بدلا ہو تو بھی وہی کارڈ */
     L.sort((a, b) => (((b.more || {}).ptype ? 1 : 0) - ((a.more || {}).ptype ? 1 : 0)) || ((b.updatedAt || 0) - (a.updatedAt || 0)));   /* MCS1411SA399: سب سے مکمل / تازہ کارڈ */
     return L[0]; }catch(e){ return null; } };
   let _mcK = '', _mcT = 0, _mcV = null;   /* MCS1511SU448: ہر ڈرائنگ میں دسیوں بار ہزاروں ریکارڈ چھانتا تھا — اب مختصر یادداشت */
@@ -25884,7 +25907,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     try{ cat = ubCatMeta(rec.category).ur || ''; }catch(e){}
     let fm = {}; try{ const c = S.c || {}, pp = S.p || {}, ar = v => Array.isArray(v) ? v.filter(Boolean).join('، ') : String(v || ''); fm = {nu: rec.nameUr || c.nameUr || '', ne: rec.nameEn || c.nameEn || '', ow: [c.ownUr, c.ownEn, m.ownerEn].filter(Boolean).filter((x, i, a) => a.indexOf(x) === i).join(' / '), org: m.org || c.org || '', ad: rec.address || c.addr || '', pt: m.ptype || c.ptype || '', mc: m.mcat || c.mcat || '', subs: ar(m.subs && m.subs.length ? m.subs : c.subs), prods: ar(m.prods && m.prods.length ? m.prods : c.prods), cn: dg(pp.cnic).replace(/\D/g, '').length === 13 ? 1 : 0, exp: pp.expTxt || '', ref: pp.ref || '', s: [doneOf(1) ? 1 : 0, doneOf(2) ? 1 : 0, doneOf(3) ? 1 : 0].join('')}; }catch(e){}   /* MCS2111SA597: ایڈمن کو مکمل فارم کا خلاصہ */
     try{ sid = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || (m.sid ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(m.sid) : m.sid) : ''); }catch(e){}
-    return {name: u.name || rec.nameUr || '', mobile: rec.whatsapp || u.mobile || '', wa: m.wa2 || '', gmail: ((S.p && S.p.email) || m.email || ''), prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', uid: String(sid || ''), kind: 'help', form: fm, text: 'Need assistance — Google Play membership step' + (sid ? ' · MCS ID ' + sid : '')};
+    return {name: u.name || rec.nameUr || '', mobile: rec.whatsapp || u.mobile || '', wa: m.wa2 || '', gmail: ((S.p && S.p.email) || m.email || ''), prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', uid: String(sid || ''), kind: 'help', form: fm, dx: (function(){ try{ return (mcsPlayWhy() + '\nلاسٹ ایرر: ' + (localStorage.getItem('mcsPlayLastErr') || '—')).slice(0, 600); }catch(e){ return ''; } })(), text: 'Need assistance — Google Play membership step' + (sid ? ' · MCS ID ' + sid : '')};
   }
   function hlpShow(on){ const c = $('wzHelpC'), m = $('wzHelpM'); if(c){ c.checked = !!on; c.disabled = !!on; } if(m) m.textContent = on ? '✅ آپ کا پیغام پہنچ گیا — ہماری ٹیم جلد رابطہ کرے گی' : ''; }
   window.wzHelpToggle = async function(el){
