@@ -4819,10 +4819,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2111SA596";
+const APP_VERSION = "MCS2111SA598";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2111SA598": "Google Play payment error now ends with a one-line diagnosis (Chrome version, whether the app runs as the Play Store app or as a shortcut/browser page) so the exact cause is visible in one screenshot.",
+  "MCS2111SA597": "Registration: after «Need assistance» is sent the business card is locked (no Edit button) until the admin marks it solved; the edit screen no longer reopens by itself after closing. Admin Need-assistance card now shows the finished form summary (steps, category, sub-types, products, CNIC/expiry filled, referral) and no longer opens the editor.",
   "MCS2111SA596": "New \"Need assistance\" checkbox on the membership step: if the Google Play purchase gives trouble, the shopkeeper ticks it and the admin gets a Need-assistance card (name, mobile, WhatsApp, MCS ID) with Call / WhatsApp to guide him — membership still starts only with the Google Play payment",
   "MCS2111SA595": "Sub-type is now fully optional — a form saves with just the name and number",
   "MCS2011FR592": "Save button always visible at the bottom of every edit form and saves for real; on an error the form jumps to the exact field — editing an existing record is no longer blocked by the Sub-type field",
@@ -6328,6 +6330,9 @@ function mcsPlayGo(){
   agModal(`<div class="ag-hd">کس کاروبار کی ممبرشپ؟</div>` + pick.map(x => `<button type="button" class="btn block" style="margin-bottom:8px" onclick="closeModal('agModal');mpSubscribe('${escapeAttr(x.p.rk)}')">${escapeHtml(x.rec.nameUr || x.rec.name || '')}</button>`).join(''));
 }
 function mcsPlayOk(){ return typeof window.getDigitalGoodsService === 'function'; }
+function mcsPlayWhy(){ try{ const ua = navigator.userAgent || '', cv = (ua.match(/Chrome\/(\d+)/) || [])[1] || '?', ref = document.referrer || '', twa = /^android-app:\/\//.test(ref), sa = !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches), wv = /; wv\)/.test(ua);
+  const why = wv ? 'یہ Chrome نہیں، WebView میں چل رہی ہے' : (twa ? 'Play Store والی ایپ ہے — Chrome / Play Billing اس فون پر نہیں ملا' : 'Play Store والی ایپ نہیں — یہ شارٹ کٹ / براؤزر صفحہ ہے');
+  return '🔎 ' + why + '\nChrome ' + cv + ' | standalone: ' + (sa ? 'yes' : 'no') + ' | TWA: ' + (twa ? 'yes' : 'no') + ' | WebView: ' + (wv ? 'yes' : 'no') + '\nreferrer: ' + (ref || '—').slice(0, 60) + '\nAPI: ' + typeof window.getDigitalGoodsService; }catch(e){ return ''; } }
 async function mcsPlaySvc(){ return await window.getDigitalGoodsService('https://play.google.com/billing'); }
 /* MCS1411SA403: کارڈ کا Firestore پتہ (col + id) — سرور Play کی تصدیق کے بعد خود approved:true لکھتا ہے */
 function mcsFsOf(rk){
@@ -6484,7 +6489,7 @@ async function mcsPlayFinish(token, sku, rk){
 }
 async function mcsPlayBuy(rk){
   if(codevBlock()) return;
-  if(!mcsPlayOk()){ alert('اس وقت اس فون پر Google Play کی ادائیگی کھل نہیں رہی۔\n\nاگر ایپ پلے اسٹور ہی سے انسٹال کی ہے تو:\n1) Play Store اور Chrome (Android System WebView) اپڈیٹ کریں\n2) ایپ مکمل بند کر کے دوبارہ کھولیں\n3) پھر دوبارہ دبائیں'); return; }
+  if(!mcsPlayOk()){ alert('اس وقت اس فون پر Google Play کی ادائیگی کھل نہیں رہی۔\n\nاگر ایپ پلے اسٹور ہی سے انسٹال کی ہے تو:\n1) Play Store اور Chrome (Android System WebView) اپڈیٹ کریں\n2) ایپ مکمل بند کر کے دوبارہ کھولیں\n3) پھر دوبارہ دبائیں\n\n' + mcsPlayWhy()); return; }
   const hold = mcsGpaHoldGet(); if(hold && hold.token && hold.rk === rk){ await mcsPlayFinish(hold.token, hold.sku, rk); return; }   /* پرانی رکی ہوئی خریداری — اب خود مکمل */
   const pend = (() => { try{ return JSON.parse(localStorage.getItem('mcsPlayPending') || 'null'); }catch(e){ return null; } })();
   if(pend && pend.token && pend.rk === rk){ await mcsPlayFinish(pend.token, pend.sku, rk); return; }
@@ -6509,7 +6514,7 @@ async function mcsPlayBuy(rk){
     } else {
       token = await mcsPlayFindNew(sku, owned);
       if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
-        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\nوجہ: Play Store کی ادائیگی ابھی اس ایپ میں کھل نہیں سکی۔ اگر ایپ پلے اسٹور ہی سے انسٹال کی ہے تو عام طور پر Play Store / Chrome پرانا ہوتا ہے یا ایپ پوری طرح بند نہیں ہوئی تھی۔\n\nحل:\n1) Play Store اور Chrome (Android System WebView) اپڈیٹ کریں\n2) ایپ مکمل بند کر کے دوبارہ کھولیں\n3) Play Store میں اسی Gmail سے لاگ ان ہو جس سے ادائیگی کرنی ہے\n4) پھر دوبارہ دبائیں\n\nفی الحال ایڈمن کو تفصیل بھیجنا چاہتے ہیں؟ (OK = تفصیل بھیجیں)')) mpSubscribe(rk, true);
+        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\nوجہ: Play Store کی ادائیگی ابھی اس ایپ میں کھل نہیں سکی۔ اگر ایپ پلے اسٹور ہی سے انسٹال کی ہے تو عام طور پر Play Store / Chrome پرانا ہوتا ہے یا ایپ پوری طرح بند نہیں ہوئی تھی۔\n\nحل:\n1) Play Store اور Chrome (Android System WebView) اپڈیٹ کریں\n2) ایپ مکمل بند کر کے دوبارہ کھولیں\n3) Play Store میں اسی Gmail سے لاگ ان ہو جس سے ادائیگی کرنی ہے\n4) پھر دوبارہ دبائیں\n\nفی الحال ایڈمن کو تفصیل بھیجنا چاہتے ہیں؟ (OK = تفصیل بھیجیں)\n\n' + mcsPlayWhy())) mpSubscribe(rk, true);
         return;
       }
       if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
@@ -23481,6 +23486,14 @@ const mrqHelpList = () => MRQ.filter(x => mrqIsHelp(x) && (x.st === 'new' || x.s
 })();
 
 /* ===== MCS2111SA596 (مالک کا حکم): «رہنمائی درکار ہے» — دکاندار کو Play Store سے خریداری میں مشکل ہو تو ایڈمن کے ہوم پر پٹی + پاپ اپ؛ کال / واٹس ایپ کے بٹن ساتھ ===== */
+function mrqHelpForm(d, row, E){
+  const f = d.form || {}, t = String(f.s || ''); if(!t) return '';
+  const ok = t[1] === '1';
+  return `<div class="mrq-r"><span>📋 فارم</span><b>${t[0] === '1' ? '✅' : '⬜'} اکاؤنٹ · ${ok ? '✅' : '⬜'} بزنس کارڈ · ${t[2] === '1' ? '✅ لائیو' : '⏳ سبسکرپشن باقی'}</b></div>`
+    + row('🗂️ قسم', E([f.pt, f.mc].filter(Boolean).join(' / '))) + row('🏷️ سب ٹائپ', E(f.subs)) + row('🛒 خدمات / چیزیں', E(f.prods))
+    + row('🪪 شناختی کارڈ', f.cn ? '✅ بھرا ہوا' + (f.exp ? ' · میعاد ' + E(f.exp) : '') : '⬜ باقی') + row('🤝 ریفرل', E(f.ref))
+    + (ok ? '<div class="mrq-tx" dir="rtl" style="background:#ecfdf5">✅ فارم مکمل ہے — صرف Google Play خریداری میں رہنمائی درکار ہے۔ فارم ایڈٹ کرنے کی ضرورت نہیں۔</div>' : '');
+}
 function mrqHelpCard(x, i){
   const E = escapeHtml, d = x.data || {}, ph = String(d.mobile || '').replace(/\D/g, '').slice(-10), wa = String(d.wa || d.mobile || '').replace(/\D/g, '').slice(-10);
   const nm = d.name || d.prof || '';
@@ -23491,11 +23504,10 @@ function mrqHelpCard(x, i){
     <div class="mrq-h"><b>🙋 رہنمائی درکار ہے</b><i class="mrq-tg ${x.st === 'new' ? 'n' : 'p'}">${x.st === 'new' ? '🆕' : '⏸️'}</i></div>
     <div class="mrq-sm">📩 ${mrqAgo(x.ts)}</div>
     <div class="mrq-tx" dir="rtl">${mrqIsDev() ? 'محترم عبدالحفیظ' : 'محترم ایڈمن'}! مائی سٹی شائنز (MCS) کا ایک کسٹمر رجسٹریشن مکمل کرنا چاہتا ہے — پلے سٹور سے ممبرشپ لینے میں اسے رہنمائی چاہیے۔</div>
-    ${row('👤 نام', E(nm))}${row('🏪 کاروبار', E(d.prof))}${row('🆔 MCS ID', d.uid ? `<bdi dir="ltr">${E(d.uid)}</bdi>` : '')}${row('📱 موبائل', ph ? `<a href="tel:0${ph}">0${ph}</a>` : '')}${row('💬 واٹس ایپ', wa ? `0${wa}` : '')}${row('✉️ Gmail', E(d.gmail))}${row('📍 شہر', E([d.area, d.city].filter(Boolean).join('، ')))}
+    ${row('👤 نام', E(nm))}${row('🏪 کاروبار', E(d.prof))}${row('🆔 MCS ID', d.uid ? `<bdi dir="ltr">${E(d.uid)}</bdi>` : '')}${row('📱 موبائل', ph ? `<a href="tel:0${ph}">0${ph}</a>` : '')}${row('💬 واٹس ایپ', wa ? `0${wa}` : '')}${row('✉️ Gmail', E(d.gmail))}${row('📍 شہر', E([d.area, d.city].filter(Boolean).join('، ')))}${mrqHelpForm(d, row, E)}
     <div class="mrq-b">
       ${ph ? `<a class="ca" href="tel:0${ph}">📞 کال</a>` : ''}${wa ? `<a class="wa" target="_blank" rel="noopener" href="https://wa.me/92${wa}?text=${encodeURIComponent(msg)}">💬 واٹس ایپ</a>` : ''}
       ${ph ? `<button type="button" class="ch" onclick="mrqChat(${i})">💬 چیٹ</button>` : ''}
-      ${f ? `<button type="button" class="vw" onclick="try{closeModal('agModal');pfOpen('service','${escapeAttr(f.id)}')}catch(e){}">👁️ فارم</button>` : ''}
       ${mrqIsCd() ? '' : `<button type="button" class="ok" onclick="mrqHelpDone(${i})">✅ مسئلہ حل ہو گیا</button>`}
     </div></div>`;
 }
@@ -25464,7 +25476,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       const r = o.getBoundingClientRect(), vh = window.innerHeight || document.documentElement.clientHeight;
       if(Math.abs(r.top) > 1 || r.height < vh - 2 || Math.abs(r.left) > 1){ o.style.top = '0'; o.style.left = '0'; o.style.height = '100%'; window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
     }catch(e){} }, 400); }
-  window.mcsWizClose = function(){ wzGuard(0); const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('wz-on'); if(wzDirty){ wzDirty = 0; setTimeout(() => { try{ renderServiceList('list'); mpRender(); }catch(e){} }, 80); } };
+  window.mcsWizClose = function(){ try{ if(S.edit2){ S.edit2 = 0; save(); } }catch(e){} wzGuard(0); const o = $('wzOv'); if(o) o.classList.remove('on'); document.body.style.overflow = ''; document.body.classList.remove('wz-on'); if(wzDirty){ wzDirty = 0; setTimeout(() => { try{ renderServiceList('list'); mpRender(); }catch(e){} }, 80); } };
   window.mcsWizOpen = function(step){
     const m = me(); if(m && !S.sid) S.sid = (m.user.sid || m.user.id || '');
     let st = step || S.step || 1;
@@ -25489,7 +25501,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       <button class="wzBtn bW" onclick="wzEditMine()">✏️ Edit my business</button>` : ''}
       <button class="wzBtn bW" onclick="mcsWizClose()">Close</button></div>`);
   }
-  window.wzEditMine = function(){ S.step = 2; S.edit2 = 1; save(); draw(); };   /* صرف بٹن دبانے پر ترمیم */
+  window.wzEditMine = function(){ if(wzHelpSent()) return; S.step = 2; S.edit2 = 1; save(); draw(); };   /* صرف بٹن دبانے پر ترمیم */
   const draw = () => { if(S.step > 3) S.step = 3;
     const admX = (() => { try{ const X = window.mcsMyShow && window.mcsMyShow(); return !!(X && X.adm); }catch(e){ return false; } })();   /* MCS1811WE533: ایڈمن کو مرحلے نہیں، اپنا خلاصہ */
     if(S.step > 1 && !S.edit2 && (admX || doneOf(3) || (doneOf(2) && doneOf(4)))) return sLive();   /* MCS1711TU503: کاروبار مکمل (لائیو، یا رجسٹرڈ + ایجنٹ) — فارم نہیں، صرف خلاصہ؛ ترمیم صرف «✏️ Edit» سے */
@@ -25511,7 +25523,7 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
       <button class="wzBtn bG" onclick="wzGo(${nx})">Next: ${esc(STEPS[nx - 1][0])}<small class="u">اگلا: ${esc(STEPS[nx - 1][1])}</small></button></div>`);
   }
   window.wzNewAcct = function(){ S.newAcct = 1; save(); draw(); };
-  window.wzEdit2 = function(){ if(doneOf(3)) return; S.edit2 = 1; save(); draw(); };   /* MCS1511SU427: پرانا محفوظ «مرحلہ 4» ہو تو بھی 3 پر */
+  window.wzEdit2 = function(){ if(doneOf(3) || wzHelpSent()) return; S.edit2 = 1; save(); draw(); };   /* MCS1511SU427: پرانا محفوظ «مرحلہ 4» ہو تو بھی 3 پر */
   window.wzGo = function(n){
     if(!canGo(n)){ if(n > 1 && !me()){ S.step = 1; save(); return draw(); } try{ flash('پہلے مرحلہ ' + (n === 4 ? 2 : n - 1) + ' مکمل کریں — Complete step ' + (n === 4 ? 2 : n - 1) + ' first'); }catch(e){} return; }   /* MCS1511SU447: ترتیب وار */
     if(n > 1 && n < 4 && doneOf(3)){ try{ flash('✅ یہ مرحلہ مکمل ہو چکا — آپ کا کاروبار لائیو ہے', 1); }catch(e){} return; }   /* MCS1611MO482: لائیو کے بعد کارڈ / سبسکرپشن کا صفحہ دوبارہ نہیں کھلتا */
@@ -25730,13 +25742,14 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
     wzDirty = 1;
     setTimeout(() => { try{ svcMyBasicAdd(rec.id); }catch(e){} try{ saveStore(); }catch(e){} try{ mpAdd('service', rec, true); }catch(e){} }, 150);
   };
+  function wzHelpSent(){ try{ const r = myCard(); return !!(r && hlpGet()[hlpKey(r)]); }catch(e){ return false; } }   /* MCS2111SA597: رہنمائی بھیجی جا چکی — کارڈ لاک، ایڈمن حل کرے تو کھلے */
   function ok2(rec){
     const sid = sidNow();
     frame(`<div class="wzCard"><div class="wzOk"><div class="big">✅</div><b style="font-size:20px;color:#166534">Your Business Card is Created!</b><div class="u" style="font-size:19px;color:#166534">آپ کا بزنس کارڈ بن گیا!</div>
       <div class="wzId" dir="ltr">${esc(sid)}</div><div style="font-weight:700">Card ID (permanent) — <span class="u">کارڈ کی ایک ہی پکی ID</span></div>
       <div style="margin-top:8px"><span class="wzSt st-none">🔒 Private – Not Publicly Listed · <span class="u">فی الحال نجی — عوامی فہرست میں نہیں</span></span></div></div>
       <button class="wzBtn bG" onclick="wzGo(3)">Next: Get Paid Subscription<small class="u">اگلا: پیڈ سبسکرپشن</small></button>
-      <button class="wzBtn bW" onclick="wzEdit2()">✏️ Edit card — کارڈ میں ترمیم</button></div>`);
+      ${wzHelpSent() ? '<div class="wzNote u" style="text-align:center">🔒 فارم مکمل ہو کر ایڈمن کے پاس جا چکا — ترمیم بند ہے۔ مسئلہ حل ہوتے ہی کھل جائے گی۔</div>' : '<button class="wzBtn bW" onclick="wzEdit2()">✏️ Edit card — کارڈ میں ترمیم</button>'}</div>`);
   }
 
   /* ================= مرحلہ ۳: پیڈ سبسکرپشن (Google Play) ================= */
@@ -25867,8 +25880,9 @@ body.wz-on .screen,body.wz-on .bnav{display:none!important}   /* MCS1411SA418: �
   function hlpData(rec){
     const m = rec.more || {}, u = (me() && me().user) || {}; let cat = '', sid = '';
     try{ cat = ubCatMeta(rec.category).ur || ''; }catch(e){}
+    let fm = {}; try{ const c = S.c || {}, pp = S.p || {}, ar = v => Array.isArray(v) ? v.filter(Boolean).join('، ') : String(v || ''); fm = {pt: m.ptype || c.ptype || '', mc: m.mcat || c.mcat || '', subs: ar(m.subs && m.subs.length ? m.subs : c.subs), prods: ar(m.prods && m.prods.length ? m.prods : c.prods), cn: dg(pp.cnic).replace(/\D/g, '').length === 13 ? 1 : 0, exp: pp.expTxt || '', ref: pp.ref || '', s: [doneOf(1) ? 1 : 0, doneOf(2) ? 1 : 0, doneOf(3) ? 1 : 0].join('')}; }catch(e){}   /* MCS2111SA597: ایڈمن کو مکمل فارم کا خلاصہ */
     try{ sid = (typeof shortRecordId === 'function' && shortRecordId('service', rec)) || (m.sid ? (typeof mcsSidFmt === 'function' ? mcsSidFmt(m.sid) : m.sid) : ''); }catch(e){}
-    return {name: u.name || rec.nameUr || '', mobile: rec.whatsapp || u.mobile || '', wa: m.wa2 || '', gmail: ((S.p && S.p.email) || m.email || ''), prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', uid: String(sid || ''), kind: 'help', text: 'Need assistance — Google Play membership step' + (sid ? ' · MCS ID ' + sid : '')};
+    return {name: u.name || rec.nameUr || '', mobile: rec.whatsapp || u.mobile || '', wa: m.wa2 || '', gmail: ((S.p && S.p.email) || m.email || ''), prof: (rec.nameUr || rec.name || '') + (cat ? ' (' + cat + ')' : ''), cat, city: rec.city || '', area: rec.area || '', uid: String(sid || ''), kind: 'help', form: fm, text: 'Need assistance — Google Play membership step' + (sid ? ' · MCS ID ' + sid : '')};
   }
   function hlpShow(on){ const c = $('wzHelpC'), m = $('wzHelpM'); if(c){ c.checked = !!on; c.disabled = !!on; } if(m) m.textContent = on ? '✅ آپ کا پیغام پہنچ گیا — ہماری ٹیم جلد رابطہ کرے گی' : ''; }
   window.wzHelpToggle = async function(el){
