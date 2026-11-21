@@ -4819,10 +4819,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS1110SU001; the serial never resets) — used in the code AND shown on the
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
-const APP_VERSION = "MCS2211SU611";
+try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
+const APP_VERSION = "MCS2211SU612";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU612":"🛠️ Google Play: ایپ کے اندر ری لوڈ کے بعد «شارٹ کٹ» کی غلط تشخیص ٹھیک • «NotSupported» پر خود ایک بار دوبارہ کوشش • ایرر میں اصل مرحلے (Play Store کیش / ری سٹارٹ)",
   "MCS2211SU611":"🧭 My Portal سے «رجسٹریشن کے مراحل» ہٹا — صرف کارڈ کا «رجسٹریشن مکمل کریں» • 🗑️ غلط محفوظ ہوئی نوعیت / شعبہ / ٹائٹل فہرست سے ہٹانے کا بٹن (ایڈمن پاس ورڈ) • ✍️ «اپنا لکھیں» اب فارم کے اندر ڈبے میں (پرانا prompt ختم) • 📩 «اطلاع ہو چکی» کا نشان اب سرور پر بھی محفوظ • ⬇️ وزرڈ کا آگے / محفوظ کریں بٹن ہر وقت نیچے نظر آتا ہے • 🔎 Google Play ایرر میں canMakePayment کی تشخیص",
   "MCS2211SU610":"🧭 رجسٹریشن کا ایک ہی راستہ — کارڈ، My Portal اور ➕ سب ایک جگہ؛ مرحلہ اپنی اصل حالت سے خود چنا جاتا ہے",
   "MCS2211SU609":"📝 ریویو میں نامکمل خانے سرخ — دبائیں تو فارم میں اسی خانے پر • فارم مکمل ہو چکا ہو تو دوبارہ کھولنے پر خالی فارم نہیں، سیدھا پلے اسٹور کا مرحلہ اور سارا ڈیٹا موجود",
@@ -6523,8 +6525,8 @@ function mcsPlayGo(){
   agModal(`<div class="ag-hd">کس کاروبار کی ممبرشپ؟</div>` + pick.map(x => `<button type="button" class="btn block" style="margin-bottom:8px" onclick="closeModal('agModal');mpSubscribe('${escapeAttr(x.p.rk)}')">${escapeHtml(x.rec.nameUr || x.rec.name || '')}</button>`).join(''));
 }
 function mcsPlayOk(){ return typeof window.getDigitalGoodsService === 'function'; }
-function mcsPlayWhy(){ try{ const ua = navigator.userAgent || '', cv = (ua.match(/Chrome\/(\d+)/) || [])[1] || '?', ref = document.referrer || '', twa = /^android-app:\/\//.test(ref), sa = !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches), wv = /; wv\)/.test(ua);
-  const why = wv ? 'یہ Chrome نہیں، WebView میں چل رہی ہے' : (twa ? 'Play Store والی ایپ ہے — Chrome / Play Billing اس فون پر نہیں ملا' : 'Play Store والی ایپ نہیں — یہ شارٹ کٹ / براؤزر صفحہ ہے');
+function mcsPlayWhy(){ try{ const ua = navigator.userAgent || '', cv = (ua.match(/Chrome\/(\d+)/) || [])[1] || '?', ref = document.referrer || '', twa = /^android-app:\/\//.test(ref) || (function(){ try{ return sessionStorage.getItem('mcsTwaRef') === '1'; }catch(e){ return false; } })(), sa = !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches), wv = /; wv\)/.test(ua);
+  const why = wv ? 'یہ Chrome نہیں، WebView میں چل رہی ہے' : (twa ? 'Play Store والی ایپ ہے — مگر Play Store / Play services نے جواب نہیں دیا' : 'ممکن ہے یہ Play Store والی ایپ نہ ہو (یا ایپ کے اندر ری لوڈ سے نشان مٹ گیا) — یقین کے لیے ایپ بند کر کے Play Store کے آئیکن سے کھولیں');
   return '🔎 ' + why + '\nChrome ' + cv + ' | standalone: ' + (sa ? 'yes' : 'no') + ' | TWA: ' + (twa ? 'yes' : 'no') + ' | WebView: ' + (wv ? 'yes' : 'no') + '\nreferrer: ' + (ref || '—').slice(0, 60) + '\nAPI: ' + typeof window.getDigitalGoodsService + (function(){ const P = window._mcsPrep; return P ? '\nlistPurchases: ' + (P.ok ? 'ok' : (P.err || 'no')) + ' | canMakePayment: ' + (P.can === true ? 'true' : P.can === false ? 'false' : (P.canErr || '?')) : ''; })(); }catch(e){ return ''; } }
 async function mcsPlaySvc(){ return await window.getDigitalGoodsService('https://play.google.com/billing'); }
 /* MCS1411SA403: کارڈ کا Firestore پتہ (col + id) — سرور Play کی تصدیق کے بعد خود approved:true لکھتا ہے */
@@ -6712,6 +6714,14 @@ function mcsPlayPrep(force){
   function kick(){ try{ if(Date.now() - t < 15000) return; if(!document.querySelector('[onclick*="mcsPlayBuy"]')) return; t = Date.now(); mcsPlayPrep(); }catch(e){} }
   try{ new MutationObserver(kick).observe(document.documentElement, {childList: true, subtree: true}); }catch(e){}
 })();
+/* MCS2211SU612: Play سے پہلا رابطہ کبھی کبھی عارضی طور پر ناکام (NotSupportedError / clientAppUnavailable) — ایک بار فوراً دوبارہ */
+async function mcsPlayShow(sku){
+  const mk = () => new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }], { total: { label: 'Total', amount: { currency: 'USD', value: '0' } } });
+  try{ return await mk().show(); }
+  catch(e){ if(!(e && e.name === 'NotSupportedError')) throw e;
+    await new Promise(r => setTimeout(r, 700));
+    try{ return await mk().show(); }catch(e2){ throw (e2 && e2.name === 'SecurityError') ? e : e2; } }
+}
 async function mcsPlayBuy(rk){
   if(codevBlock()) return;
   const t0 = Date.now();
@@ -6730,8 +6740,7 @@ async function mcsPlayBuy(rk){
   if(Date.now() - t0 > 3500){ try{ alert('✅ Google Play تیار ہے — اب ایک بار پھر وہی بٹن دبائیں۔'); }catch(e){} return; }   /* بٹن کی اجازت ختم ہو چکی — دوبارہ دبانا ہوگا، اب تیاری ہو چکی */
   let token = '';
   try{
-    const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }], { total: { label: 'Total', amount: { currency: 'USD', value: '0' } } });   /* MCS1611MO473: details (total) لازمی ہے — گوگل کی ہدایت */
-    const showP = req.show();   /* MCS2111SA601: بٹن دبتے ہی فوراً — بیچ میں کوئی await نہیں */
+    const showP = mcsPlayShow(sku);   /* MCS2111SA601: بٹن دبتے ہی فوراً — بیچ میں کوئی await نہیں */
     window._mcsPrep = null;
     const res = await showP;
     token = res.details && res.details.purchaseToken;
@@ -6751,7 +6760,7 @@ async function mcsPlayBuy(rk){
       if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
         let dg = ''; try{ await mcsPlayDetails(); dg = mcsPlayDiag || ''; }catch(_){}   /* MCS2111SA602: اصل وجہ + Play کا جواب ڈائیلاگ میں */
         try{ localStorage.setItem('mcsPlayLastErr', ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 120) + ' | ' + dg.slice(0, 90) + ' @' + new Date().toISOString().slice(0, 16)); }catch(_){}
-        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\n' + mcsPlayWhy() + '\n\n⚙️ ' + ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 160) + '\n📦 ' + dg + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں، Play Store میں وہی Gmail ہو جس سے ادائیگی کرنی ہے۔' + (/clientAppUnavailable|NotSupported/i.test(String(dg) + ' ' + String((e && e.name) || '')) ? '\n\n👉 سب سے ممکنہ وجہ: ایپ Play Store سے انسٹال نہیں ہوئی (APK / فائل / شیئر سے لی ہے) یا اس فون کے Play Store میں Gmail لاگ اِن نہیں۔\n۱) ایپ ان انسٹال کریں\n۲) Play Store کھول کر Gmail لاگ اِن کریں اور Play Store اپڈیٹ کریں\n۳) Play Store سے My City Shines دوبارہ انسٹال کریں (ٹیسٹنگ میں ہو تو ٹیسٹر Gmail اور ٹیسٹنگ لنک سے)' : '') + '\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
+        if(confirm('❌ اس فون پر Google Play سے ادائیگی نہیں ہو سکتی۔\n\n' + mcsPlayWhy() + '\n\n⚙️ ' + ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 160) + '\n📦 ' + dg + '\n\nحل: Play Store اور Android System WebView / Chrome اپڈیٹ کریں، ایپ مکمل بند کر کے دوبارہ کھولیں، Play Store میں وہی Gmail ہو جس سے ادائیگی کرنی ہے۔' + (/clientAppUnavailable|NotSupported/i.test(String(dg) + ' ' + String((e && e.name) || '')) ? '\n\n👉 Play Store سے رابطہ نہیں ہو سکا۔ ترتیب سے کریں:\n۱) ایپ Recent Apps سے جھاڑ کر بند کریں، پھر Play Store والے آئیکن سے کھولیں (Chrome کا شارٹ کٹ نہیں)\n۲) Play Store کھول کر دیکھیں Gmail لاگ اِن ہے\n۳) Settings ← Apps ← Google Play Store اور Google Play services ← Storage ← Clear cache\n۴) فون ری سٹارٹ کریں\n۵) پھر بھی نہ ہو تو ایپ ان انسٹال کر کے Play Store سے دوبارہ انسٹال کریں' : '') + '\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
         return;
       }
       if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
