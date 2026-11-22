@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU619";
+const APP_VERSION = "MCS2211SU620";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU620":"📩 دعوتی پیغام کا بٹن اب Admin 1 اور Admin 2 دونوں کو ہوم پر نظر آتا ہے",
   "MCS2211SU619":"⌨️ اردو کی بورڈ نہ ہو تو بھی رجسٹریشن: مالک کا انگلش نام خود اردو میں، اردو خانے میں انگلش لکھیں تو بھی اردو؛ باقی خانے جیسے لکھیں ویسے محفوظ",
   "MCS2211SU618":"📩 Invitation Message: ہوم پر اوپر ایک بٹن (ایڈمن) + کتنوں کو اطلاع گئی؛ اطلاع ہو چکی کارڈ سلیٹی اور آخر میں؛ نیا دعوتی پوسٹر (پلے اسٹور میں تلاش کی تصویر) + پیغام",
   "MCS2211SU617": "Admin: Delete button on cards waiting for approval; a deleted card is removed from Firebase, the server and every phone at once",
@@ -29707,7 +29708,7 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
   var FF = 'Jameel Noori Nastaleeq Kasheeda';
   function infOf(x){ var m = {}; try{ m = _wInfMap(); }catch(e){} return Math.max(m[x.fsId] || 0, x.waInfAt || 0); }
   function counts(){ var t = 0, s = 0; ['services', 'doctors'].forEach(function(col){ (WAIT[col] || []).forEach(function(x){ if(!x) return; t++; if(infOf(x)) s++; }); }); return { t: t, s: s }; }
-  function isAdm(){ try{ return typeof isAdminSignedIn !== 'undefined' && !!isAdminSignedIn; }catch(e){ return false; } }
+  function isAdm(){ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return true; }catch(e){} try{ return typeof codevOn === 'function' && codevOn(); }catch(e){ return false; } }   /* MCS2211SU620: Admin 1 اور Admin 2 دونوں */
   function btnSync(){
     try{
       var home = document.getElementById('screen-home'); if(!home) return;
