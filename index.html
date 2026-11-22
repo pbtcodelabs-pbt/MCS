@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU620";
+const APP_VERSION = "MCS2211SU621";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU621":"🗑️ دعوتی فہرست: Delete فوراً — نہ پاس ورڈ نہ سوال، کارڈ دھوئیں کی طرح اڑ کر غائب (واٹس ایپ پر نہ ہونے والے نمبر)",
   "MCS2211SU620":"📩 دعوتی پیغام کا بٹن اب Admin 1 اور Admin 2 دونوں کو ہوم پر نظر آتا ہے",
   "MCS2211SU619":"⌨️ اردو کی بورڈ نہ ہو تو بھی رجسٹریشن: مالک کا انگلش نام خود اردو میں، اردو خانے میں انگلش لکھیں تو بھی اردو؛ باقی خانے جیسے لکھیں ویسے محفوظ",
   "MCS2211SU618":"📩 Invitation Message: ہوم پر اوپر ایک بٹن (ایڈمن) + کتنوں کو اطلاع گئی؛ اطلاع ہو چکی کارڈ سلیٹی اور آخر میں؛ نیا دعوتی پوسٹر (پلے اسٹور میں تلاش کی تصویر) + پیغام",
@@ -29914,6 +29915,53 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     ur.insertAdjacentElement('afterend', d);
   }
   setInterval(hint, 1200);
+})();
+</script>
+<!-- MCS2211SU621 (مالک کا حکم): دعوتی فہرست — «🗑️ Delete» فوراً (نہ پاس ورڈ نہ تصدیق)، کارڈ دھوئیں کی طرح اڑ کر غائب؛ سرور سے حذف پیچھے خاموشی سے (Admin 1)، Admin 2 کے فون پر چھپا -->
+<style id="mcsSmoke621">
+@keyframes smk621{0%{filter:blur(0);opacity:1;transform:none;letter-spacing:0}60%{filter:blur(3px);opacity:.55;transform:translateY(-10px) scale(1.03);letter-spacing:2px}100%{filter:blur(10px);opacity:0;transform:translateY(-34px) scale(1.08);letter-spacing:6px}}
+@keyframes puf621{0%{opacity:.75;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--dx),-90px) scale(2.6)}}
+.smk621{animation:smk621 .85s ease-in forwards;pointer-events:none;position:relative}
+.puf621{position:fixed;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle,rgba(148,163,184,.85),rgba(148,163,184,0) 70%);pointer-events:none;z-index:100100;animation:puf621 1s ease-out forwards}
+</style>
+<script id="mcsSmoke621js">
+(function(){
+  function hid(){ try{ return JSON.parse(localStorage.getItem('mcsWaitDel') || '[]') || []; }catch(e){ return []; } }
+  function hide(id){ try{ var a = hid(); if(a.indexOf(id) < 0){ a.push(id); localStorage.setItem('mcsWaitDel', JSON.stringify(a.slice(-5000))); } }catch(e){} }
+  var _rows = window._waitRows;
+  window._waitRows = _waitRows = function(){ var h = hid(); var r = _rows.apply(this, arguments); return h.length ? r.filter(function(o){ return h.indexOf(o.x && o.x.fsId) < 0; }) : r; };
+  function cardOf(fsId){
+    var l = document.getElementById('waitList'); if(!l) return null;
+    var bs = l.querySelectorAll('button[onclick^="waitDelete("]');
+    for(var i = 0; i < bs.length; i++){ if(bs[i].getAttribute('onclick').indexOf("'" + fsId + "'") >= 0){ var c = bs[i]; while(c && c.parentElement !== l) c = c.parentElement; return c; } }
+    return null;
+  }
+  function smoke(el){
+    var r = el.getBoundingClientRect();
+    for(var i = 0; i < 14; i++){ var p = document.createElement('div'); p.className = 'puf621';
+      p.style.left = (r.left + Math.random() * r.width - 13) + 'px'; p.style.top = (r.top + Math.random() * r.height - 13) + 'px';
+      p.style.setProperty('--dx', (Math.random() * 60 - 30) + 'px'); p.style.animationDelay = (Math.random() * .25) + 's';
+      document.body.appendChild(p); setTimeout(function(q){ return function(){ q.remove(); }; }(p), 1400); }
+    el.classList.add('smk621');
+  }
+  function serverDel(col, x){
+    var FB = window.MCSFirebase;
+    if(!FB || typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn || !x.fsId) return;
+    FB.deleteDoc(FB.doc(FB.db, col, x.fsId)).then(function(){ try{ mcsTombAdd(col === 'doctors' ? 'doctor' : 'service', x); }catch(e){} })
+      .catch(function(){ try{ showToast('⚠️ سرور سے حذف نہیں ہوا — اس فون سے ہٹ گیا ہے'); }catch(e){} });
+  }
+  window.waitDelete = waitDelete = function(col, fsId){
+    var x = _wFind(col, fsId); if(!x) return;
+    var el = cardOf(fsId);
+    var done = function(){
+      var w = WAIT[col]; for(var k = w.length - 1; k >= 0; k--){ if(w[k] && w[k].fsId === fsId) w.splice(k, 1); }
+      hide(fsId); try{ _wInfSet(fsId, false); }catch(e){} WAIT.ver++;
+      try{ _svDirty = true; if(!_svTimer && !_svBusy) _svTimer = setTimeout(_svRun, 100); }catch(e){}
+      waitDraw(); try{ waitBtnSync(); }catch(e){}
+    };
+    serverDel(col, x);
+    if(el){ smoke(el); setTimeout(done, 850); } else done();
+  };
 })();
 </script>
 </body>
