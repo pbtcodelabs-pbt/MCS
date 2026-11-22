@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU613";
+const APP_VERSION = "MCS2211SU614";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU614":"🔎 Google Play تشخیص: getDetails کا الگ نتیجہ (listPurchases / canMakePayment کے ساتھ) • clientAppUnavailable پر ٹیسٹ ٹریک / Dual Apps / Play Store کیش کے مختصر مرحلے",
   "MCS2211SU613":"✂️ Google Play ایرر کا پیغام مختصر — ایرر، Play کا جواب، تشخیص کی سطریں اور ایک حل",
   "MCS2211SU612":"🛠️ Google Play: ایپ کے اندر ری لوڈ کے بعد «شارٹ کٹ» کی غلط تشخیص ٹھیک • «NotSupported» پر خود ایک بار دوبارہ کوشش • ایرر میں اصل مرحلے (Play Store کیش / ری سٹارٹ)",
   "MCS2211SU611":"🧭 My Portal سے «رجسٹریشن کے مراحل» ہٹا — صرف کارڈ کا «رجسٹریشن مکمل کریں» • 🗑️ غلط محفوظ ہوئی نوعیت / شعبہ / ٹائٹل فہرست سے ہٹانے کا بٹن (ایڈمن پاس ورڈ) • ✍️ «اپنا لکھیں» اب فارم کے اندر ڈبے میں (پرانا prompt ختم) • 📩 «اطلاع ہو چکی» کا نشان اب سرور پر بھی محفوظ • ⬇️ وزرڈ کا آگے / محفوظ کریں بٹن ہر وقت نیچے نظر آتا ہے • 🔎 Google Play ایرر میں canMakePayment کی تشخیص",
@@ -6528,7 +6529,7 @@ function mcsPlayGo(){
 function mcsPlayOk(){ return typeof window.getDigitalGoodsService === 'function'; }
 function mcsPlayWhy(){ try{ const ua = navigator.userAgent || '', cv = (ua.match(/Chrome\/(\d+)/) || [])[1] || '?', ref = document.referrer || '', twa = /^android-app:\/\//.test(ref) || (function(){ try{ return sessionStorage.getItem('mcsTwaRef') === '1'; }catch(e){ return false; } })(), sa = !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches), wv = /; wv\)/.test(ua);
   const why = wv ? 'یہ Chrome نہیں، WebView میں چل رہی ہے' : (twa ? 'Play Store والی ایپ ہے — مگر Play Store / Play services نے جواب نہیں دیا' : 'ممکن ہے یہ Play Store والی ایپ نہ ہو (یا ایپ کے اندر ری لوڈ سے نشان مٹ گیا) — یقین کے لیے ایپ بند کر کے Play Store کے آئیکن سے کھولیں');
-  return '🔎 ' + why + '\nChrome ' + cv + ' | standalone: ' + (sa ? 'yes' : 'no') + ' | TWA: ' + (twa ? 'yes' : 'no') + ' | WebView: ' + (wv ? 'yes' : 'no') + '\nreferrer: ' + (ref || '—').slice(0, 60) + '\nAPI: ' + typeof window.getDigitalGoodsService + (function(){ const P = window._mcsPrep; return P ? '\nlistPurchases: ' + (P.ok ? 'ok' : (P.err || 'no')) + ' | canMakePayment: ' + (P.can === true ? 'true' : P.can === false ? 'false' : (P.canErr || '?')) : ''; })(); }catch(e){ return ''; } }
+  return '🔎 ' + why + '\nChrome ' + cv + ' | standalone: ' + (sa ? 'yes' : 'no') + ' | TWA: ' + (twa ? 'yes' : 'no') + ' | WebView: ' + (wv ? 'yes' : 'no') + '\nreferrer: ' + (ref || '—').slice(0, 60) + '\nAPI: ' + typeof window.getDigitalGoodsService + (function(){ const P = window._mcsPrep; return P ? '\nlistPurchases: ' + (P.ok ? 'ok' : (P.err || 'no')) + ' | canMakePayment: ' + (P.can === true ? 'true' : P.can === false ? 'false' : (P.canErr || '?')) + ' | getDetails: ' + (P.det || '?') + ' | ' + APP_VERSION : ''; })(); }catch(e){ return ''; } }
 async function mcsPlaySvc(){ return await window.getDigitalGoodsService('https://play.google.com/billing'); }
 /* MCS1411SA403: کارڈ کا Firestore پتہ (col + id) — سرور Play کی تصدیق کے بعد خود approved:true لکھتا ہے */
 function mcsFsOf(rk){
@@ -6697,6 +6698,7 @@ function mcsPlayPrep(force){
       let ownedL = [];
       try{ const svc = await mcsPlaySvc(); ownedL = ((await svc.listPurchases()) || []); out.ok = true; }catch(e){ out.err = ((e && e.name) || '?') + ': ' + String((e && e.message) || '').slice(0, 50); }
       try{ const rq = new PaymentRequest([{supportedMethods: 'https://play.google.com/billing', data: {sku: MCS_PLAY_SKUS[0]}}], {total: {label: 'Total', amount: {currency: 'USD', value: '0'}}}); out.can = await rq.canMakePayment(); }catch(e){ out.canErr = ((e && e.name) || '?') + ': ' + String((e && e.message) || '').slice(0, 50); }   /* MCS2211SU611: تشخیص — Play بلنگ اس فون پر ملتی ہے یا نہیں (بغیر کوئی سکرین کھولے) */
+      try{ const svc2 = await mcsPlaySvc(); const d2 = await svc2.getDetails([MCS_PLAY_SKUS[0]]); out.det = 'ok(' + ((d2 && d2.length) || 0) + ')'; }catch(e){ out.det = ((e && e.name) || '?') + ': ' + String((e && e.message) || '').slice(0, 50); }   /* MCS2211SU614: getDetails کا الگ نتیجہ */
       out.owned = ownedL.map(x => x.itemId);
       try{
         for(const x of ownedL){ if(!x || !MCS_PLAY_SKUS.includes(x.itemId) || !x.purchaseToken) continue;
@@ -6761,7 +6763,7 @@ async function mcsPlayBuy(rk){
       if(!token && e && e.name === 'NotSupportedError'){   /* MCS1611MO473: فون پر Play بلنگ کھلتی ہی نہیں — ایپ Play Store سے انسٹال والی نہیں */
         let dg = ''; try{ await mcsPlayDetails(); dg = mcsPlayDiag || ''; }catch(_){}   /* MCS2111SA602: اصل وجہ + Play کا جواب ڈائیلاگ میں */
         try{ localStorage.setItem('mcsPlayLastErr', ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 120) + ' | ' + dg.slice(0, 90) + ' @' + new Date().toISOString().slice(0, 16)); }catch(_){}
-        if(confirm('❌ Google Play سے رابطہ نہیں ہو سکا\n\n' + ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 70) + '\n📦 ' + String(dg).slice(0, 90) + '\n' + (function(){ try{ const w = mcsPlayWhy().split('\n'); return w.slice(1).join('\n'); }catch(_){ return ''; } })() + '\n\nحل: Play Store کھول کر My City Shines کو Update کریں، پھر ایپ بند کر کے دوبارہ کھولیں۔\n\nOK = تفصیل ایڈمن کو بھیجیں')) mpSubscribe(rk, true);
+        if(confirm('❌ Google Play سے رابطہ نہیں ہو سکا\n\n' + ((e && e.name) || '?') + ' — ' + String((e && e.message) || '').slice(0, 70) + '\n📦 ' + String(dg).slice(0, 90) + '\n' + (function(){ try{ const w = mcsPlayWhy().split('\n'); return w.slice(1).join('\n'); }catch(_){ return ''; } })() + (/clientAppUnavailable/.test(dg + ((window._mcsPrep && window._mcsPrep.det) || '')) ? '\n\nمطلب: Play Store اس انسٹال شدہ ایپ سے جڑ نہیں پا رہا۔\n۱) Play Store میں My City Shines کھولیں: «Open» ہو، ٹیسٹر / بیٹا کا نشان نہ ہو\n۲) Play Store اور Google Play services کا کیش صاف کریں، اپڈیٹ کریں\n۳) Dual Apps / Second Space / Work پروفائل میں ایپ نہ ہو\n\nOK = تفصیل ایڈمن کو بھیجیں' : '\n\nحل: Play Store کھول کر My City Shines کو Update کریں، پھر ایپ بند کر کے دوبارہ کھولیں۔\n\nOK = تفصیل ایڈمن کو بھیجیں'))) mpSubscribe(rk, true);
         return;
       }
       if(!token){ alert('❌ Google Play نے خریداری مکمل نہیں کی۔\nوجہ: ' + ((e && (e.name + ' — ' + (e.message || ''))) || '?') + '\n\n• انٹرنیٹ اور Play Store میں ادائیگی کا طریقہ (کارڈ / JazzCash / Easypaisa) چیک کریں\n• Play Store ایپ اپڈیٹ کریں\n• پھر دوبارہ دبائیں — پیسے نہیں کٹے۔'); return; }
