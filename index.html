@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU621";
+const APP_VERSION = "MCS2211SU622";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU622":"🤝 Admin 2 can now make anyone an MCS Agent — the MCS ID list loads with Admin 2 mobile + PIN",
   "MCS2211SU621":"🗑️ دعوتی فہرست: Delete فوراً — نہ پاس ورڈ نہ سوال، کارڈ دھوئیں کی طرح اڑ کر غائب (واٹس ایپ پر نہ ہونے والے نمبر)",
   "MCS2211SU620":"📩 دعوتی پیغام کا بٹن اب Admin 1 اور Admin 2 دونوں کو ہوم پر نظر آتا ہے",
   "MCS2211SU619":"⌨️ اردو کی بورڈ نہ ہو تو بھی رجسٹریشن: مالک کا انگلش نام خود اردو میں، اردو خانے میں انگلش لکھیں تو بھی اردو؛ باقی خانے جیسے لکھیں ویسے محفوظ",
@@ -14406,7 +14407,7 @@ function agFullForm(){
   /* MCS1511SU430 (مالک کا حکم): فارم کے سب سے اوپر MCS ID کی پکی ڈراپ ڈاؤن (لکھنے کی گنجائش نہیں)؛ چنتے ہی اس کا نام، موبائل، ضلع آ جائے اور باقی فارم کھل جائے؛ آخر میں ریفرل کوڈ بھی فہرست سے (نام کے ساتھ) */
   const cities = [...new Set((store.services||[]).map(r=>r.city).filter(c=>c && !isBlankVal(c)))].slice(0, 400).map(c=>`<option value="${escapeAttr(c)}">`).join('');
   const F = (id, ic, en, ur, attrs, val) => `<div class="agx-f"><label class="agx-l" for="${id}">${ic} ${en} <i>*</i></label><input id="${id}" ${attrs||''} value="${escapeAttr(val||'')}"></div>`;
-  const staffF = isAdminSignedIn; window._agxRk = ''; window._agxBiz = ''; window._agxSid = '';
+  const staffF = isAdminSignedIn || (typeof codevOn === 'function' && codevOn()); window._agxRk = '';   /* MCS2211SU622: Admin 2 بھی کسی کو ایجنٹ بنا سکے */ window._agxBiz = ''; window._agxSid = '';
   agModal(`<div class="ag-hd">🤝 MCS Agent Registration Form <small>First choose your MCS ID</small></div>
     <div class="ag-f agx">
       <div class="agx-f"><label class="agx-l" for="agxSid">🆔 MCS ID <i>*</i></label>
@@ -14461,7 +14462,10 @@ async function agxSidLoad(staff){
     if(e0 && (window._agxList || []).some(x => x.sid === e0.sid)){ const sel0 = document.getElementById('agxSid'); if(sel0){ sel0.value = e0.sid; agxSidPick(e0.sid); if(!staff){ const row = sel0.closest('.agx-f'); if(row) row.style.display = 'none'; const hd = document.querySelector('.ag-hd small'); if(hd) hd.style.display = 'none'; } } } }catch(e){}
   if(!staff) return;
   try{
-    const hdr = await vfAdminHdr(), r = await (await fetch(AG_API + '/mcsauth', {method:'POST', headers: hdr, body: JSON.stringify({op:'reglist'})})).json();
+    /* MCS2211SU622 (مالک کا حکم): Admin 2 — سرور اپنے موبائل + PIN سے فہرست دیتا ہے (cdAuth، اجازت biz) */
+    const cm = (!isAdminSignedIn && typeof codevMe === 'function') ? codevMe() : null;
+    const hdr = cm ? {'Content-Type': 'text/plain'} : await vfAdminHdr(), r = await (await fetch(AG_API + '/mcsauth', {method:'POST', headers: hdr, body: JSON.stringify(cm ? {op:'reglist', phone: cm.phone, pin: cm.pin} : {op:'reglist'})})).json();
+    if(r && !r.ok && cm){ try{ showToast('⚠️ Admin 2: MCS ID list not allowed — Admin 1 should tick «Businesses» permission for you', 6000); }catch(e){} }
     if(r && r.ok && Array.isArray(r.list)){ try{ localStorage.setItem('mcsRegList', JSON.stringify(r.list.slice(0, 5000))); }catch(e){} r.list.forEach(add); draw(); }
   }catch(e){}
 }
