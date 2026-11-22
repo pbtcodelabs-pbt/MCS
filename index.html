@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU629";
+const APP_VERSION = "MCS2211SU630";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU630":"✉️ Invitation list: one-tap SMS with the same message (number and text filled in) — button on every card, and a bar when you come back from WhatsApp",
   "MCS2211SU629":"🛡️ Invitation list: short random first message (no link), 2.5 min gap, 5/day per phone and 10/day in total; detailed card only after a reply; «No WhatsApp» mark keeps the card at the end",
   "MCS2211SU628":"🕒 ہوم کی گھڑی: رنگ ایمبر (سبز پر نمایاں)، ہندسے بالکل سالڈ — چمک / دھندلاہٹ ختم، اور فونٹ ذرا بڑا",
   "MCS2211SU627":"🕒 ہوم کے اوپر گھڑی واپس — ریڈیم رنگ کی چمکتی ڈیجیٹل گھڑی، Arial فونٹ، سیکنڈ چلتے ہوئے، درمیانے سائز میں • غائب ہونے کی اصل وجہ: پرانا گھڑیال صرف 10 سیکنڈ ہیڈر کا انتظار کرتا تھا، سست فون پر کبھی بنتا ہی نہیں تھا؛ اب ہر سیکنڈ خود بن جاتی ہے • ہوم ساکن ہی ہے، گھڑی کی جگہ اور سائز طے شدہ ہے",
@@ -30142,7 +30143,8 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     if(inf) return window.waitCard629(col, fsId);
     if(!guard(true)) return;
     lgAdd(); _wInfSet(x.fsId, true, col); waitDraw();
-    waOpen(L[0].intl, pick(x));
+    var txt = pick(x); PEND = { col: col, fsId: fsId, txt: txt, num: L[0].intl, t: Date.now() };
+    waOpen(L[0].intl, txt);
     showToast('✅ مختصر پیغام لکھا ہے — بھیج دیں۔ جواب آئے تو «📩 تفصیلی کارڈ» دبائیں', 6000);
   };
   /* 📩 جس نے جواب دیا — پرانا مکمل کارڈ + پیغام (روزانہ حد میں نہیں، وقفہ وہی) */
@@ -30152,6 +30154,36 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     lgAdd(); try{ x.waCardAt = Date.now(); }catch(e){}
     if(typeof _oldInvite === 'function') _oldInvite(col, fsId);
   };
+  /* ✉️ MCS2211SU630 (مالک کا حکم): واٹس ایپ نہ ہو تو وہی پیغام SMS میں — ایک ٹچ: SMS ایپ نمبر + پیغام کے ساتھ کھلتی ہے، بس Send دبائیں
+     (اینڈرائیڈ خود بخود SMS بھیجنے نہیں دیتا، اور واٹس ایپ کا «Invite» ہماری ایپ کو نظر نہیں آتا — اس لیے واپس آتے ہی نیچے پٹی) */
+  var PEND = null;
+  function smsOpen(num, txt){ var n = '+' + String(num).replace(/\D/g, ''); var u = 'sms:' + n + '?body=' + encodeURIComponent(txt); try{ location.href = u; }catch(e){ window.open(u, '_blank'); } }
+  function markNw(col, fsId){ var x = _wFind(col, fsId); if(!x || isNw(x)) return; var m = nwMap(); m[fsId] = Date.now(); try{ localStorage.setItem(NWK, JSON.stringify(m)); }catch(e){} x.waNoWa = Date.now();
+    try{ var FB = window.MCSFirebase; if(FB && FB.updateDoc) FB.updateDoc(FB.doc(FB.db, col, fsId), { waNoWa: x.waNoWa }).catch(function(){}); }catch(e){} }
+  window.waitSms630 = function(col, fsId){
+    var x = _wFind(col, fsId); if(!x) return;
+    var L = ownerWaList(x); if(!L.length){ showToast('نمبر درست نہیں — نمبر دیکھ لیں'); return; }
+    var inf = Math.max((_wInfMap()[x.fsId] || 0), x.waInfAt || 0);
+    var same = PEND && PEND.fsId === fsId && Date.now() - PEND.t < 30 * 60e3;
+    if(!same && !guard(!inf)) return;
+    var txt = same ? PEND.txt : pick(x);
+    if(!same){ lgAdd(); if(!inf) _wInfSet(x.fsId, true, col); }
+    markNw(col, fsId); PEND = null; hideBar(); waitDraw();
+    smsOpen(L[0].intl, txt);
+    showToast('✉️ SMS میں نمبر اور پیغام لکھا ہے — Send دبائیں (دوسری سم چنیں، 0320 نہیں)', 6000);
+  };
+  function hideBar(){ var b = document.getElementById('ws630Bar'); if(b) b.remove(); }
+  function showBar(){
+    if(!PEND || Date.now() - PEND.t > 10 * 60e3) return; hideBar();
+    var x = _wFind(PEND.col, PEND.fsId), nm = x ? (x.nameUr || x.name || x.nameEn || '') : '';
+    var b = document.createElement('div'); b.id = 'ws630Bar';
+    b.style.cssText = 'position:fixed;left:10px;right:10px;bottom:84px;z-index:100200;background:#0b3d2e;color:#fff;border-radius:16px;padding:10px 12px;box-shadow:0 6px 24px rgba(0,0,0,.35);display:flex;gap:8px;align-items:center;direction:rtl;font-family:inherit';
+    b.innerHTML = '<div style="flex:1;font-size:14px;line-height:1.6;font-weight:700">' + _wE(nm) + ' — واٹس ایپ نہیں ملا؟</div>'
+      + '<button type="button" onclick="waitSms630(\'' + PEND.col + '\',\'' + PEND.fsId + '\')" style="background:#facc15;color:#3a2600;border:0;border-radius:12px;padding:10px 14px;font:inherit;font-weight:900;font-size:15px">✉️ SMS بھیجیں</button>'
+      + '<button type="button" aria-label="بند" onclick="document.getElementById(\'ws630Bar\').remove()" style="background:none;border:0;color:#fff;font-size:20px;padding:4px 8px">✕</button>';
+    document.body.appendChild(b); setTimeout(function(){ try{ b.remove(); }catch(e){} }, 3 * 60e3);
+  }
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible' && PEND && Date.now() - PEND.t > 1500) setTimeout(showBar, 400); });
   /* 📵 واٹس ایپ نہیں — حذف نہیں، سلیٹی ہو کر آخر میں */
   window.waitNoWa629 = function(col, fsId){
     var x = _wFind(col, fsId); if(!x) return;
@@ -30186,6 +30218,11 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
         nb.style.cssText = 'border:1.5px solid #64748b;border-radius:10px;padding:5px 9px;background:#fff;color:#334155;font:inherit;font-weight:800;font-size:12px;white-space:nowrap';
         nb.textContent = nw ? '↩️ واٹس ایپ ہے' : '📵 واٹس ایپ نہیں';
         btn.insertAdjacentElement('afterend', nb);
+        var sb = document.createElement('button'); sb.type = 'button'; sb.className = 'ws630Sms';
+        sb.setAttribute('onclick', "waitSms630('" + m[1] + "','" + m[2] + "')");
+        sb.style.cssText = 'border:0;border-radius:10px;padding:6px 9px;background:#facc15;color:#3a2600;font:inherit;font-weight:900;font-size:12.5px;white-space:nowrap';
+        sb.textContent = '✉️ SMS';
+        nb.insertAdjacentElement('afterend', sb);
       }
       var card = btn; while(card && card.parentElement !== l) card = card.parentElement;
       if(card && nw && !card.classList.contains('ws629Nw')){ card.classList.add('ws629Nw'); var tg = document.createElement('div'); tg.className = 'ws629Tag'; tg.textContent = '📵 واٹس ایپ نہیں — کارڈ ایپ میں رہے گا، کال ہو سکتی ہے'; card.appendChild(tg); }
