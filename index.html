@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU623";
+const APP_VERSION = "MCS2211SU624";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU624":"🌟 Sign-up / login page: new My City Shines intro video (play, download, WhatsApp share) above the How-to-register video",
   "MCS2211SU623":"🏪 My Portal: new horizontal Business Profile card — photo, name, services, approval status, Get Subscription button and location / phone in one card",
   "MCS2211SU622":"🤝 Admin 2 can now make anyone an MCS Agent — the MCS ID list loads with Admin 2 mobile + PIN",
   "MCS2211SU621":"🗑️ دعوتی فہرست: Delete فوراً — نہ پاس ورڈ نہ سوال، کارڈ دھوئیں کی طرح اڑ کر غائب (واٹس ایپ پر نہ ہونے والے نمبر)",
@@ -27358,33 +27359,45 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
   new MutationObserver(() => { if(qmPlace._t) return; qmPlace._t = setTimeout(() => { qmPlace._t = 0; qmPlace(); }, 150); }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
   setInterval(() => { if(document.querySelector('.mcsQm') && !document.hidden) qmLoad(false); }, 60e3);
 
-  /* ---------- 🎬 سائن اپ صفحے پر ویڈیو ---------- */
-  const VID = '../help/media/mcs-signup-ur.mp4', POST = '../help/media/mcs-signup-ur.jpg', VNAME = 'My-City-Shines-Register-Business.mp4';
-  const SHARE_TXT = '🏪 My City Shines — register your business and go LIVE\n✅ Sign up → free business card → membership\nhttps://play.google.com/store/apps/details?id=com.pbtcodelabs.mycityshines';
-  let VFILE = null;
+  /* ---------- 🎬 سائن اپ / لاگ اِن صفحے پر ویڈیوز (MCS2211SU624: تعارفی پلے اسٹور ویڈیو بھی — مالک کا حکم) ---------- */
+  const PLAY = 'https://play.google.com/store/apps/details?id=com.pbtcodelabs.mycityshines';
+  const VIDS = [
+    { k: 'intro', wide: 1, vid: '../help/media/mcs-playstore.mp4', post: '../help/media/mcs-playstore.jpg', name: 'My-City-Shines-Intro.mp4',
+      t: '🌟 What is My City Shines? — intro video',
+      txt: '🌟 My City Shines — your city, your identity\n🏪 Every business of your city in one app — call & WhatsApp in one touch\n🆓 Free download\n' + PLAY },
+    { k: 'signup', vid: '../help/media/mcs-signup-ur.mp4', post: '../help/media/mcs-signup-ur.jpg', name: 'My-City-Shines-Register-Business.mp4',
+      t: '🎬 How to register your business — watch the video', signup: 1,
+      txt: '🏪 My City Shines — register your business and go LIVE\n✅ Sign up → free business card → membership\n' + PLAY }
+  ];
+  const VFILE = {};
+  const vRow = (v, i) => `<div class="sv-one${v.wide ? ' wide' : ''}"><div class="sv-t">${v.t}</div>
+      <div class="sv-row"><button type="button" class="sv-pl" onclick="mcsSuVidPlay(${i})"><img src="${v.post}" alt=""><i>▶</i></button>
+      <div class="sv-bt"><a class="sv-b dl" href="${v.vid}" download="${v.name}">⬇️ Download</a><button type="button" class="sv-b wa" data-v="${i}" onclick="mcsSuVidShare(this,${i})">💬 WhatsApp share</button></div></div></div>`;
   function suVidPlace(){
-    const ov = document.getElementById('uaOv'); if(!ov || !ov.querySelector('#uaName')) return; const card = ov.querySelector('.uaCard'); if(!card || card.querySelector('.suVid')) return;
-    const d = document.createElement('div'); d.className = 'suVid'; d.innerHTML = `<div class="sv-t">🎬 How to register your business — watch the video</div>
-      <div class="sv-row"><button type="button" class="sv-pl" onclick="mcsSuVidPlay()"><img src="${POST}" alt=""><i>▶</i></button>
-      <div class="sv-bt"><a class="sv-b dl" href="${VID}" download="${VNAME}">⬇️ Download</a><button type="button" class="sv-b wa" id="svShare" onclick="mcsSuVidShare()">💬 WhatsApp share</button></div></div>`;
+    const ov = document.getElementById('uaOv'); if(!ov) return; const card = ov.querySelector('.uaCard'); if(!card) return;
+    const signup = !!ov.querySelector('#uaName'), want = signup ? 'su' : 'lg', old = card.querySelector('.suVid');
+    if(old && old.dataset.m === want) return; if(old) old.remove();
+    const d = document.createElement('div'); d.className = 'suVid'; d.dataset.m = want;
+    d.innerHTML = VIDS.map((v, i) => (signup || !v.signup) ? vRow(v, i) : '').join('');
     card.appendChild(d);
   }
   new MutationObserver(() => { if(suVidPlace._t) return; suVidPlace._t = setTimeout(() => { suVidPlace._t = 0; suVidPlace(); }, 120); }).observe(document.documentElement, { subtree: true, childList: true });
-  window.mcsSuVidPlay = function(){ let o = document.getElementById('svOv'); if(!o){ o = document.createElement('div'); o.id = 'svOv'; o.onclick = e => { if(e.target === o) mcsSuVidClose(); }; document.body.appendChild(o); }
-    o.innerHTML = `<div class="sv-box"><button type="button" class="sv-x" onclick="mcsSuVidClose()">✕</button><video src="${VID}" poster="${POST}" controls autoplay playsinline></video>
-      <div class="sv-bt"><a class="sv-b dl" href="${VID}" download="${VNAME}">⬇️ Download</a><button type="button" class="sv-b wa" onclick="mcsSuVidShare(this)">💬 WhatsApp share</button></div></div>`; o.classList.add('on'); };
+  window.mcsSuVidPlay = function(i){ const v = VIDS[i | 0]; let o = document.getElementById('svOv'); if(!o){ o = document.createElement('div'); o.id = 'svOv'; o.onclick = e => { if(e.target === o) mcsSuVidClose(); }; document.body.appendChild(o); }
+    o.innerHTML = `<div class="sv-box${v.wide ? ' wide' : ''}"><button type="button" class="sv-x" onclick="mcsSuVidClose()">✕</button><video src="${v.vid}" poster="${v.post}" controls autoplay playsinline></video>
+      <div class="sv-bt"><a class="sv-b dl" href="${v.vid}" download="${v.name}">⬇️ Download</a><button type="button" class="sv-b wa" data-v="${i | 0}" onclick="mcsSuVidShare(this,${i | 0})">💬 WhatsApp share</button></div></div>`; o.classList.add('on'); };
   window.mcsSuVidClose = function(){ const o = document.getElementById('svOv'); if(o){ o.classList.remove('on'); o.innerHTML = ''; } };
-  const waText = () => window.open('https://wa.me/?text=' + encodeURIComponent(SHARE_TXT + '\n🎬 ' + new URL(VID, location.href).href), '_blank');
+  window.mcsIntroVideo = function(){ mcsSuVidPlay(0); };
+  const waText = v => window.open('https://wa.me/?text=' + encodeURIComponent(v.txt + '\n🎬 ' + new URL(v.vid, location.href).href), '_blank');
   /* فون کی شیئر کی اجازت صرف بٹن دباتے ہی — اس لیے پہلے ویڈیو لا کر یاد، پھر «Share now» (HD1611SU060 / AIO0811SU188 والا سبق) */
-  window.mcsSuVidShare = async function(btn){
-    btn = btn || document.getElementById('svShare');
-    if(VFILE){ try{ await navigator.share({ files: [VFILE], text: SHARE_TXT }); }catch(e){ if(e && e.name !== 'AbortError') waText(); } return; }
-    if(!(navigator.canShare && window.File)) return waText();
+  window.mcsSuVidShare = async function(btn, i){
+    i = i | 0; const v = VIDS[i], all = () => document.querySelectorAll('.sv-b.wa[data-v="' + i + '"]');
+    if(VFILE[i]){ try{ await navigator.share({ files: [VFILE[i]], text: v.txt }); }catch(e){ if(e && e.name !== 'AbortError') waText(v); } return; }
+    if(!(navigator.canShare && window.File)) return waText(v);
     if(btn){ btn.disabled = true; btn.textContent = '⏳ Preparing video…'; }
-    try{ const bl = await (await fetch(VID)).blob(); const f = new File([bl], VNAME, { type: 'video/mp4' });
-      if(!navigator.canShare({ files: [f] })){ if(btn){ btn.disabled = false; btn.textContent = '💬 WhatsApp share'; } return waText(); }
-      VFILE = f; document.querySelectorAll('.sv-b.wa').forEach(b => { b.disabled = false; b.textContent = '📤 Share now ✓'; });
-    }catch(e){ if(btn){ btn.disabled = false; btn.textContent = '💬 WhatsApp share'; } waText(); }
+    try{ const bl = await (await fetch(v.vid)).blob(); const f = new File([bl], v.name, { type: 'video/mp4' });
+      if(!navigator.canShare({ files: [f] })){ if(btn){ btn.disabled = false; btn.textContent = '💬 WhatsApp share'; } return waText(v); }
+      VFILE[i] = f; all().forEach(b => { b.disabled = false; b.textContent = '📤 Share now ✓'; });
+    }catch(e){ if(btn){ btn.disabled = false; btn.textContent = '💬 WhatsApp share'; } waText(v); }
   };
 
   /* ---------- شروع ---------- */
@@ -27416,6 +27429,9 @@ html body.d2.mcs1biz .bnav #d2nAddNew, html body.mcs1biz .bnav #d2nAddNew, html 
 #svOv .sv-box{position:relative;width:min(380px,100%);background:#0f172a;border-radius:16px;padding:10px}
 #svOv video{width:100%;max-height:72vh;border-radius:10px;background:#000;display:block}
 #svOv .sv-bt{flex-direction:row;margin-top:8px}#svOv .sv-b{flex:1}
+.suVid .sv-one+.sv-one{margin-top:10px;padding-top:10px;border-top:1px dashed #e2e8f0}
+.suVid .sv-one.wide .sv-pl{flex:0 0 128px;height:72px}
+#svOv .sv-box.wide{width:min(720px,100%)}
 #svOv .sv-x{position:absolute;top:-12px;right:-6px;width:34px;height:34px;border-radius:50%;border:0;background:#fff;font-weight:900;font-size:16px;z-index:2}
 </style>
 
