@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU615";
+const APP_VERSION = "MCS2211SU616";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU616": "District and locality lists: English only, A to Z, one clean column right under the box, with search",
   "MCS2211SU615":"🗑️ ایڈمن ڈیلیٹ کرے تو ممبرشپ، سائن اپ اکاؤنٹ اور MCS ID سرور سے بھی صاف اور ہر فون سے کارڈ مٹے • 🔢 نئی ID ہمیشہ سب سے پہلی خالی • 🔎 MCS015 جیسی ID نہ ملے تو دوسرے ریکارڈ نہیں آتے",
   "MCS2211SU614":"🔎 Google Play تشخیص: getDetails کا الگ نتیجہ (listPurchases / canMakePayment کے ساتھ) • clientAppUnavailable پر ٹیسٹ ٹریک / Dual Apps / Play Store کیش کے مختصر مرحلے",
   "MCS2211SU613":"✂️ Google Play ایرر کا پیغام مختصر — ایرر، Play کا جواب، تشخیص کی سطریں اور ایک حل",
@@ -29564,6 +29565,65 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
       if(typeof wzDdEnter === 'function') wzDdEnter();
     }catch(x){} }, 250);
   }, true);
+})();
+</script>
+
+<style id="mcsDist496css">
+/* MCS2211SU616 (مالک کا حکم): سائن اپ / ہوم کی ضلع اور علاقے کی فہرست — صرف انگلش، A→Z، خانے کے نیچے ایک کالم (دو کالم / اردو نہیں)، ایپ کا انگلش فونٹ */
+.dd496{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:6px;height:100%;border:0;background:transparent;padding:0 6px;font:600 16px 'Segoe UI',Selawik,Arial,sans-serif !important;color:#0f1f45;text-align:left;direction:ltr;cursor:pointer}
+.dd496 span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd496 span.ph{color:#94a3b8;font-weight:500}
+.dd496 b{flex:none;color:#64748b;font-size:13px}
+.dd496:disabled{cursor:not-allowed;opacity:.6}
+.dp496{direction:ltr;margin:4px 0 10px;border:1.5px solid #c7d2fe;border-radius:14px;background:#fff;box-shadow:0 8px 20px rgba(15,31,69,.14);overflow:hidden}
+.dp496 input{display:block;width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #e2e8f0;padding:10px 12px;font:500 15px 'Segoe UI',Selawik,Arial,sans-serif !important;outline:0;direction:ltr}
+.dp496 .ls{max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.dp496 button{display:block;width:100%;border:0;border-bottom:1px solid #f1f5f9;background:#fff;padding:11px 14px;text-align:left;font:500 15.5px 'Segoe UI',Selawik,Arial,sans-serif !important;color:#0f1f45;cursor:pointer}
+.dp496 button:active,.dp496 button.on{background:#e0e7ff;color:#1e3a8a;font-weight:700 !important}
+.dp496 .none{padding:12px;color:#94a3b8;font:14px 'Segoe UI',Arial,sans-serif}
+</style>
+<script id="mcsDist496">
+(function(){
+  'use strict';
+  var RM = {'ا':'a','آ':'aa','ب':'b','پ':'p','ت':'t','ٹ':'t','ث':'s','ج':'j','چ':'ch','ح':'h','خ':'kh','د':'d','ڈ':'d','ذ':'z','ر':'r','ڑ':'r','ز':'z','ژ':'zh','س':'s','ش':'sh','ص':'s','ض':'z','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ک':'k','گ':'g','ل':'l','م':'m','ن':'n','ں':'n','و':'o','ہ':'h','ھ':'h','ء':'','ی':'i','ے':'e','ئ':'i','ۃ':'h','ؤ':'o','ۓ':'e','ي':'i','ك':'k'};
+  const roman = u => String(u || '').split(/\s+/).map(w => { let r = ''; for(const c of w) r += (c in RM) ? RM[c] : (/[ً-ٰٟ‌‍]/.test(c) ? '' : c); return r ? r.charAt(0).toUpperCase() + r.slice(1) : ''; }).join(' ').trim();
+  const E = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const UR = /[؀-ۿ]/;
+  function en(o){ const v = o.value, t = String(o.textContent || '').trim();
+    if(v === '__other') return '✏️ Other — type the name';
+    let x = o.getAttribute('data-en') || ''; try{ x = x || (typeof LOCATION_EN !== 'undefined' && LOCATION_EN[v]) || ''; }catch(e){}
+    try{ x = x || (window.MCS_EN || {})[v] || ''; }catch(e){}
+    if(!x){ const m = t.split(/\s+[—-]\s+/).find(p => p && !UR.test(p)); x = m || ''; }
+    return x || (UR.test(v) ? roman(v) : (v || t)); }
+  const IDS = ['uaDist', 'uaCity', 'wzDist'];
+  function items(sel){ const L = []; Array.from(sel.options).forEach(o => { if(!o.value) return; L.push({ v: o.value, t: en(o), o: o.value === '__other' }); });
+    return L.filter(x => !x.o).sort((a, b) => a.t.localeCompare(b.t, 'en', { sensitivity: 'base' })).concat(L.filter(x => x.o)); }
+  function ph(sel){ const o = sel.options[0]; const t = o && !o.value ? String(o.textContent || '') : ''; const m = t.split(/\s+[—-]\s+/).find(p => p && !UR.test(p)); return m || (sel.id === 'uaCity' ? 'Select City / Town / Village' : 'Select District'); }
+  function close(){ document.querySelectorAll('.dp496').forEach(p => p.remove()); }
+  function open(sel, host){
+    const was = host.nextElementSibling && host.nextElementSibling.classList.contains('dp496'); close(); if(was || sel.disabled) return;
+    const L = items(sel), p = document.createElement('div'); p.className = 'dp496'; p.setAttribute('data-noen', '');
+    p.innerHTML = (L.length > 8 ? '<input type="search" placeholder="🔍 Search…" autocomplete="off">' : '') + '<div class="ls"></div>';
+    const ls = p.querySelector('.ls'), q = p.querySelector('input');
+    const draw = () => { const k = q ? q.value.trim().toLowerCase() : ''; const M = L.filter(x => !k || x.t.toLowerCase().includes(k) || x.v.includes(k));
+      ls.innerHTML = M.length ? M.map(x => '<button type="button" data-v="' + E(x.v) + '"' + (x.v === sel.value ? ' class="on"' : '') + '>' + E(x.t) + '</button>').join('') : '<div class="none">Not found</div>'; };
+    draw(); if(q) q.addEventListener('input', draw);
+    ls.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; sel.value = b.dataset.v; try{ sel.dispatchEvent(new Event('change', { bubbles: true })); }catch(_){} close(); paint(sel); try{ window.mcsCityBanRefresh && window.mcsCityBanRefresh(); }catch(_){} });
+    host.insertAdjacentElement('afterend', p);
+    const on = ls.querySelector('.on'); if(on) on.scrollIntoView({ block: 'center' });
+    try{ p.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }catch(e){}
+  }
+  function paint(sel){ const b = sel.__dd496; if(!b) return; const o = sel.selectedOptions && sel.selectedOptions[0];
+    const h = o && o.value ? '<span>' + E(en(o)) + '</span><b>▾</b>' : '<span class="ph">' + E(ph(sel)) + '</span><b>▾</b>';
+    if(b.__h !== h){ b.__h = h; b.innerHTML = h; } b.disabled = !!sel.disabled; }
+  function wire(){ IDS.forEach(id => { const sel = document.getElementById(id); if(!sel || sel.tagName !== 'SELECT') return;
+    if(!sel.__dd496 || !sel.__dd496.isConnected){ const b = document.createElement('button'); b.type = 'button'; b.className = 'dd496'; b.setAttribute('data-noen', '');
+      sel.insertAdjacentElement('afterend', b); sel.style.display = 'none'; sel.__dd496 = b;
+      const host = sel.closest('label') || sel.parentElement;
+      b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); open(sel, host); }); }
+    paint(sel); }); }
+  document.addEventListener('click', e => { if(!e.target.closest('.dp496,.dd496')) close(); });
+  setInterval(wire, 400); if(document.readyState !== 'loading') wire(); else document.addEventListener('DOMContentLoaded', wire);
 })();
 </script>
 
