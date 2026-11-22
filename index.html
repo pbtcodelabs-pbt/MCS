@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU614";
+const APP_VERSION = "MCS2211SU615";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU615":"🗑️ ایڈمن ڈیلیٹ کرے تو ممبرشپ، سائن اپ اکاؤنٹ اور MCS ID سرور سے بھی صاف اور ہر فون سے کارڈ مٹے • 🔢 نئی ID ہمیشہ سب سے پہلی خالی • 🔎 MCS015 جیسی ID نہ ملے تو دوسرے ریکارڈ نہیں آتے",
   "MCS2211SU614":"🔎 Google Play تشخیص: getDetails کا الگ نتیجہ (listPurchases / canMakePayment کے ساتھ) • clientAppUnavailable پر ٹیسٹ ٹریک / Dual Apps / Play Store کیش کے مختصر مرحلے",
   "MCS2211SU613":"✂️ Google Play ایرر کا پیغام مختصر — ایرر، Play کا جواب، تشخیص کی سطریں اور ایک حل",
   "MCS2211SU612":"🛠️ Google Play: ایپ کے اندر ری لوڈ کے بعد «شارٹ کٹ» کی غلط تشخیص ٹھیک • «NotSupported» پر خود ایک بار دوبارہ کوشش • ایرر میں اصل مرحلے (Play Store کیش / ری سٹارٹ)",
@@ -7120,7 +7121,7 @@ function srItems(){
     const nid = v => String(v || '').replace(/[\s\-_]/g, '').toUpperCase();
     const hit = ubAllRecords().filter(it => { const r = it.rec, m = r.more || {}; let sid = ''; try{ sid = shortRecordId(it.kind === 'doctor' ? 'doctor' : 'service', r); }catch(e){}
       return [sid, m.sid, m.subid, m.agCode, m.ref && /^AG/i.test(m.ref) ? '' : ''].some(v => v && nid(v).indexOf(_idq) === 0); });
-    if(hit.length) list = hit;
+    list = hit;   /* MCS2211SU615: ID نہ ملے تو خالی — دوسرے ریکارڈ نہیں */
   }
   list = list.filter(it=>ubPassF(it, ['group','cat','city','area'], srF));
   if(srTab!=='all') list = list.filter(srTabPass);
@@ -7960,7 +7961,7 @@ function searchAllRecords(qRaw){
   const _mid = mcsIdQ(qRaw);
   if(_mid){ const hit = store.doctors.filter(d=>dupVis(d) && mcsIdHit('doctor', d, _mid)).map(rec=>({kind:'doctor', rec}))
     .concat(store.services.filter(x=>dupVis(x) && mcsIdHit('service', x, _mid)).map(rec=>({kind:'service', rec})));
-    if(hit.length) return hit; }   /* MCS1911TH556: نہ ملے تو عام تلاش (Subscription ID وغیرہ) */
+    return hit; }   /* MCS2211SU615 (مالک کا حکم): MCS015 جیسی ID نہ ملے تو کوئی اور ریکارڈ نہیں — عام تلاش نہیں چلتی */
   let docs = store.doctors.filter(d=> dupVis(d) && ubMatch(srch, [d.nameUr, d.name, d.nameEn, d.address, d.dept, d.specialty, d.hospital, d.intro, d.city, d.area, d.district, d.province, 'ڈاکٹر doctor dr ڈاکٹرز', shortRecordId('doctor', d), ...srIdBits(d)], srNums(d)));
   let svcs = store.services.filter(x=>{ if(!dupVis(x)) return false; const cm = CATEGORY_META[x.category]||{}; return ubMatch(srch, [x.nameUr, x.name, x.nameEn, ubOwnerEn(x), x.more && x.more.owner, x.owner, x.type, ...clsBits(x), x.address, x.intro, x.city, x.area, x.district, x.province, cm.ur, cm.listTitle, cm.en, shortRecordId('service', x), ...srIdBits(x)], srNums(x)); });
   const idQ = idKey(qRaw);
@@ -13799,9 +13800,15 @@ function initFirebaseSync(){
     FB.onSnapshot(regQ, (snap)=>{
       if(window._impBusy) return;
       const arr = localArrayFor(col);
+      /* MCS2211SU615 (مالک کا حکم — «ایڈمن نے ڈیلیٹ کیا مگر دوسرے کے موبائل پر آ رہا ہے»): رجسٹرڈ کارڈ سرور سے مٹے تو اس فون سے بھی مٹے (پہلے صرف نشان ہٹتا تھا، کارڈ رہ جاتا تھا) */
+      if(!snap.metadata.fromCache){
+        const live2 = new Set(snap.docs.map(d=>d.id));
+        for(let i=arr.length-1;i>=0;i--){ const x = arr[i]; if(x && x._reg2 && x.fsId && x.mcsLive!==true && x.approved===true && !live2.has(x.fsId)) arr.splice(i,1); }
+      }
       snap.docChanges().forEach(change=>{
         const fsId = change.doc.id;
-        if(change.type==='removed'){ const idx = arr.findIndex(x=>x.fsId===fsId); if(idx>-1 && arr[idx].mcsLive!==true && arr[idx]._reg2) delete arr[idx]._reg2; return; }
+        if(change.type==='removed'){ const idx = arr.findIndex(x=>x.fsId===fsId); if(idx>-1 && arr[idx].mcsLive!==true && arr[idx]._reg2){ delete arr[idx]._reg2;
+          try{ FB.getDoc(FB.doc(FB.db, col, fsId)).then(sn=>{ if(!sn.exists()){ const j = arr.findIndex(x=>x.fsId===fsId); if(j>-1){ arr.splice(j,1); saveStore(); try{ refreshVisibleLists(); }catch(e){} try{ if(typeof updateHomeCounts === 'function') updateHomeCounts(); }catch(e){} } } }).catch(()=>{}); }catch(e){} } return; }
         const data = change.doc.data();
         let existing = arr.find(x=>x.fsId===fsId) || arr.find(x=>x.id===fsId || (data.id && x.id===data.id));
         if(existing){ if(existing.approved===false) noteApproved(existing); Object.assign(existing, data, {fsId, approved:true, synced:true, _reg2:1}); }
@@ -24742,10 +24749,10 @@ setTimeout(function(){ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdmin
       if(ok && item && typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn){
         const kind = col === 'doctors' ? 'doctor' : 'service', rk = pfKeyOf(item, kind);
         const others = [].concat(store.services || [], store.doctors || []).some(x => x && x.id !== item.id && pfKeyOf(x, x.category ? 'service' : 'doctor') === rk);
-        if(rk && pfAct && pfAct[rk] && !others){
+        if(rk && !others){   /* MCS2211SU615: pfAct میں ہونا لازم نہیں — ڈیلیٹ پر سرور کی ممبرشپ، اکاؤنٹ، شناختی کارڈ اور ID ہر حال میں صاف */
           const hdr = await vfAdminHdr();
           const j = await (await fetch(PF_API + '/padmin', { method: 'POST', headers: hdr, body: JSON.stringify({ rec: rk, act: 'del' }) })).json();
-          if(j && j.ok){ delete pfAct[rk]; try{ localStorage.setItem('mcsPfList', JSON.stringify(pfAct)); }catch(e){} try{ showToast('🗑️ ممبرشپ اور اس کی MCS ID بھی ختم', 3500); }catch(e){} try{ pfLoadList(); }catch(e){} }
+          if(j && j.ok){ try{ delete pfAct[rk]; localStorage.setItem('mcsPfList', JSON.stringify(pfAct)); }catch(e){} try{ showToast('🗑️ ممبرشپ، اکاؤنٹ اور MCS ID ختم — ID اب خالی ہے', 4000); }catch(e){} try{ pfLoadList(); }catch(e){} }
         }
       }
     }catch(e){}
