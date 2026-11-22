@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU625";
+const APP_VERSION = "MCS2211SU626";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU626":"🧊 ہوم پیج کا اوپر نیچے ہلنا (آدھے سیکنڈ میں اوپر، نیچے، برابر) ختم — اصل وجہ: ہوم کا کوئی حصہ دوبارہ بنتا تو نئی لکھائی پہلے چھوٹی پینٹ ہوتی اور 60 ملی سیکنڈ بعد بڑی؛ اب لکھائی پہلی پینٹ سے پہلے ہی پوری لگتی ہے (ہیلپ ڈیسک #340)",
   "MCS2211SU625":"🧊 ہوم پیج اب بالکل ساکن — اصل وجہ ملی: ہوم کو اسکرین میں بٹھانے والا خودکار زوم ہر کلک، ہر 10 سیکنڈ اور ہر ری سائز پر بدل کر ہوم کو اوپر نیچے ہلاتا تھا؛ اب زوم چند پکے قدموں میں ہی رہتا ہے، آگے پیچھے نہیں ہوتا، اور پچھلا زوم ایپ کھلتے ہی لگ جاتا ہے (ہیلپ ڈیسک #340)",
   "MCS2211SU624":"🌟 Sign-up / login page: new My City Shines intro video (play, download, WhatsApp share) above the How-to-register video",
   "MCS2211SU623":"🏪 My Portal: new horizontal Business Profile card — photo, name, services, approval status, Get Subscription button and location / phone in one card",
@@ -24090,21 +24091,40 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     if(!sheet){ var st = document.createElement('style'); st.id = 'mcsHomeFont225css'; document.head.appendChild(st); sheet = st.sheet; }
     try{ sheet.insertRule('html.fs225 #screen-home [data-fs="' + v + '"][data-fk="' + k + '"]{font-size:' + (Math.round(v * KF[k] * 10) / 10) + 'px !important}', sheet.cssRules.length); }catch(e){}
   }
+  var EXCL = ':not([data-fs]):not(script):not(style):not(svg *):not(#hdr2):not(#hdr2 *)';
+  function apply(list){
+    if(!list.length) return;
+    busy = true;
+    var H = document.documentElement;
+    try{
+      H.classList.remove('fs225');
+      var vals = []; for(var i = 0; i < list.length; i++){ var fs = parseFloat(getComputedStyle(list[i]).fontSize) || 0; vals.push(Math.round(fs * 2) / 2); }
+      for(var j = 0; j < list.length; j++){ if(vals[j] > 0){ var k = fk(list[j]); list[j].setAttribute('data-fk', k); list[j].setAttribute('data-fs', vals[j]); rule(vals[j], k); } else list[j].setAttribute('data-fs', '0'); }
+    }finally{ H.classList.add('fs225'); busy = false; }
+  }
   function run(){
     tmr = null; root = root || document.getElementById('screen-home'); if(!root || busy) return;
-    var list = root.querySelectorAll('*:not([data-fs]):not(script):not(style):not(svg *):not(#hdr2):not(#hdr2 *)');   /* MCS1611MO482: سر اپنے cqw سائز سے — ناپ تول نہیں (ہلنا بند) */ if(!list.length) return;
-    busy = true;
-    var H = document.documentElement; H.classList.remove('fs225');
-    var vals = []; for(var i = 0; i < list.length; i++){ var fs = parseFloat(getComputedStyle(list[i]).fontSize) || 0; vals.push(Math.round(fs * 2) / 2); }
-    for(var j = 0; j < list.length; j++){ if(vals[j] > 0){ var k = fk(list[j]); list[j].setAttribute('data-fk', k); list[j].setAttribute('data-fs', vals[j]); rule(vals[j], k); } else list[j].setAttribute('data-fs', '0'); }
-    H.classList.add('fs225');
-    setTimeout(function(){ busy = false; }, 0);
+    apply([].slice.call(root.querySelectorAll('*' + EXCL)));   /* MCS1611MO482: سر اپنے cqw سائز سے — ناپ تول نہیں (ہلنا بند) */
   }
-  function kick(){ if(!tmr) tmr = setTimeout(run, 60); }
+  /* MCS2211SU626 (مالک کا حکم، ہیلپ ڈیسک #340 — «ہوم آدھے سیکنڈ میں اوپر نیچے ہوتا ہے»): اصل وجہ — ہوم کا کوئی حصہ دوبارہ بنتا (گنتی، نماز، اشتہار، میرا کاروبار…)
+     تو نئے ٹکڑے پہلے بغیر 20٪ بڑی لکھائی کے پینٹ ہوتے، 60 ملی سیکنڈ بعد (setTimeout) بڑی لکھائی لگتی — ہر بار ڈبے کی اونچائی چند پکسل گھٹ بڑھ کر نیچے کا سارا ہوم اوپر نیچے کرتی (اوپر، نیچے، برابر)۔
+     اب نئے ٹکڑوں کی لکھائی اسی لمحے (MutationObserver کے اندر، پہلی پینٹ سے پہلے) لگتی ہے اور صرف نئے ٹکڑے ناپے جاتے ہیں — کوئی ایسا فریم نہیں بنتا جس میں لکھائی غلط ہو */
+  function onAdded(ms){
+    if(busy || !root) return;
+    var list = [];
+    for(var i = 0; i < ms.length; i++){
+      var an = ms[i].addedNodes; if(!an || !an.length) continue;
+      var tg = ms[i].target; if(tg && tg.closest && tg.closest('#hdr2')) continue;
+      for(var q = 0; q < an.length; q++){ var n = an[q]; if(n.nodeType !== 1 || !root.contains(n)) continue;
+        if(n.matches(EXCL)) list.push(n);
+        var d = n.querySelectorAll('*' + EXCL); for(var w = 0; w < d.length; w++) list.push(d[w]); }
+    }
+    if(list.length) apply(list);
+  }
   function init(){
     root = document.getElementById('screen-home'); if(!root) return;
     run();
-    try{ new MutationObserver(function(ms){ if(busy) return; for(var i = 0; i < ms.length; i++){ if(ms[i].addedNodes && ms[i].addedNodes.length && !(ms[i].target.closest && ms[i].target.closest('#hdr2'))){ kick(); return; } } }).observe(root, { childList: true, subtree: true }); }catch(e){}
+    try{ new MutationObserver(onAdded).observe(root, { childList: true, subtree: true }); }catch(e){}
     try{ document.fonts && document.fonts.ready && document.fonts.ready.then(function(){ document.querySelectorAll('#screen-home [data-fs]').forEach(function(e){ e.removeAttribute('data-fs'); }); run(); }); }catch(e){}
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
