@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU616";
+const APP_VERSION = "MCS2211SU617";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU617": "Admin: Delete button on cards waiting for approval; a deleted card is removed from Firebase, the server and every phone at once",
   "MCS2211SU616": "District and locality lists: English only, A to Z, one clean column right under the box, with search",
   "MCS2211SU615":"🗑️ ایڈمن ڈیلیٹ کرے تو ممبرشپ، سائن اپ اکاؤنٹ اور MCS ID سرور سے بھی صاف اور ہر فون سے کارڈ مٹے • 🔢 نئی ID ہمیشہ سب سے پہلی خالی • 🔎 MCS015 جیسی ID نہ ملے تو دوسرے ریکارڈ نہیں آتے",
   "MCS2211SU614":"🔎 Google Play تشخیص: getDetails کا الگ نتیجہ (listPurchases / canMakePayment کے ساتھ) • clientAppUnavailable پر ٹیسٹ ٹریک / Dual Apps / Play Store کیش کے مختصر مرحلے",
@@ -29624,6 +29625,69 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     paint(sel); }); }
   document.addEventListener('click', e => { if(!e.target.closest('.dp496,.dd496')) close(); });
   setInterval(wire, 400); if(document.readyState !== 'loading') wire(); else document.addEventListener('DOMContentLoaded', wire);
+})();
+</script>
+
+<script id="mcsDel617">
+/* MCS2211SU617 (مالک کا حکم): (1) منظوری کے لیے آئے فارم (pendingFormCtx) میں بھی ایڈمن کو «🗑️ Delete — from everywhere»؛
+   (2) ایڈمن جو کارڈ حذف کرے (منظوری والا، رد، یا عام 🗑️) وہ فائربیس (اسی نام + نمبر کے دہرے بھی)، سرور کی ممبرشپ اور **ہر فون** سے فوراً ہٹے —
+   حذف کی فہرست AIO worker `/mcsdel` (لکھنا صرف ایڈمن)؛ ہر فون کھلنے پر، ہر 10 منٹ اور سامنے آنے پر پڑھ کر اپنے پاس سے بھی ہٹاتا ہے (اپنا کارڈ ہو تب بھی)۔ */
+(function(){
+  'use strict';
+  const API = 'https://aio-pos-verify.pbtcodelabs.workers.dev';
+  const post = async (path, b, h) => { const r = await fetch(API + path, { method: 'POST', headers: Object.assign({ 'Content-Type': 'text/plain' }, h || {}), body: JSON.stringify(b) }); return r.json(); };
+  const LS = { g(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, s(k, v){ try{ localStorage.setItem(k, v); }catch(e){} } };
+  const adm = () => { try{ return !!isAdminSignedIn; }catch(e){ return false; } };
+  async function tomb(rec){ try{ const ids = [rec.fsId, rec.id].filter(Boolean); if(!ids.length) return;
+    let h; try{ h = await vfAdminHdr(); }catch(e){ return; } await post('/mcsdel', { op: 'add', ids, mob: rec.whatsapp || '', nm: rec.nameUr || rec.name || '' }, h); }catch(e){} }
+  window.mcsTomb = tomb;
+  /* ===== (۱) ہر فون: حذف کی فہرست پڑھ کر اپنے پاس سے ہٹانا ===== */
+  function apply(list){
+    const S = new Set(); (list || []).forEach(x => { if(x && x.id){ S.add(x.id); S.add('fs_' + x.id); } }); if(!S.size) return 0;
+    let n = 0; const hit = r => r && (S.has(r.fsId) || S.has(r.id));
+    try{ ['services', 'doctors'].forEach(k => { const A = store[k] || []; const B = A.filter(r => !hit(r)); if(B.length !== A.length){ n += A.length - B.length; store[k] = B; } }); }catch(e){}
+    try{ if(Array.isArray(store.myProfiles)){ const B = store.myProfiles.filter(p => !(S.has(p.id) || S.has(p.fsId))); if(B.length !== store.myProfiles.length){ store.myProfiles = B; n++; } } }catch(e){}
+    try{ if(Array.isArray(store.favs)){ const B = store.favs.filter(f => !S.has(String(f).split(':').slice(1).join(':'))); if(B.length !== store.favs.length){ store.favs = B; n++; } } }catch(e){}
+    try{ if(typeof pendingApprovals !== 'undefined'){ pendingApprovals = pendingApprovals.filter(x => !S.has(x.fsId)); } }catch(e){}
+    if(n){ try{ saveStore(); }catch(e){} try{ refreshVisibleLists(); }catch(e){} try{ mpRender(); }catch(e){} try{ hlRenderSoon(); }catch(e){} }
+    return n;
+  }
+  let busy = false;
+  async function pull(){ if(busy) return; busy = true;
+    try{ const since = +(LS.g('mcsDelSince') || 0); const j = await post('/mcsdel', { op: 'list', since });
+      if(j && j.ok){ if((j.list || []).length) apply(j.list); const mx = (j.list || []).reduce((m, x) => Math.max(m, x.ts || 0), since); LS.s('mcsDelSince', String(mx)); } }catch(e){} busy = false; }
+  window.mcsDelPull = pull;
+  setTimeout(pull, 2500); setInterval(() => { if(!document.hidden) pull(); }, 10 * 60e3);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden) pull(); });
+  /* ===== (۲) منظوری والے فارم میں حذف کا بٹن ===== */
+  const oM = window.setFormMode;
+  if(typeof oM === 'function') window.setFormMode = setFormMode = function(mid){ const r = oM.apply(this, arguments);
+    try{ const ov = document.getElementById(mid), del = ov && ov.querySelector('.fm-del-btn');
+      if(del && adm() && pendingFormCtx){ del.style.display = ''; del.textContent = '🗑️ Delete — from everywhere'; } else if(del) del.textContent = '🗑️ یہ ریکارڈ حذف کریں'; }catch(e){}
+    return r; };
+  async function delPending(ctx){
+    if(!adm()){ showToast('🔒 Only admin can delete'); return; }
+    const d = ctx.d || {}, col = ctx.col, fsId = ctx.fsId, nm = d.nameUr || d.name || '';
+    if(!(await askAdminPassword(`«${nm}» ${d.whatsapp ? '(⁦' + d.whatsapp + '⁩) ' : ''}— will be deleted forever, from every phone and the server.`))) return;
+    const rec = Object.assign({}, d, { fsId }); delete rec._col;
+    let ok = false; try{ ok = await deleteFromFirebase(col, rec); }catch(e){}
+    if(!ok){ showToast('⚠️ Not deleted on the server — check internet and try again', 5000); return; }
+    try{ pendingApprovals = pendingApprovals.filter(x => x.fsId !== fsId); if(pendingByCollection[col]) pendingByCollection[col] = pendingByCollection[col].filter(x => x.fsId !== fsId); }catch(e){}
+    apply([{ id: fsId }].concat(d.id ? [{ id: d.id }] : []));
+    try{ pendingFormCtx = null; }catch(e){} try{ closeModal(col === 'doctors' ? 'doctorFormModal' : 'serviceFormModal'); }catch(e){}
+    try{ renderPendingApprovals(); }catch(e){}
+    showToast('🗑️ Deleted — removed from every phone', 3500);
+    tomb(rec);
+  }
+  const oDF = window.deleteFromForm;
+  if(typeof oDF === 'function') window.deleteFromForm = deleteFromForm = function(mid){ try{ if(pendingFormCtx && adm()) return delPending(pendingFormCtx); }catch(e){} return oDF.apply(this, arguments); };
+  /* ===== (۳) عام حذف (🗑️ کارڈ) اور رد بھی ہر فون سے ===== */
+  ['deleteService', 'deleteDoctor'].forEach(fn => { const o = window[fn]; if(typeof o !== 'function') return;
+    const arr = fn === 'deleteDoctor' ? 'doctors' : 'services';
+    window[fn] = async function(id){ const rec = Object.assign({}, (store[arr] || []).find(x => x.id === id) || {}); const r = await o.apply(this, arguments);
+      try{ if(rec.id && !(store[arr] || []).some(x => x.id === id)) tomb(rec); }catch(e){} return r; };
+    try{ if(fn === 'deleteService') deleteService = window[fn]; else deleteDoctor = window[fn]; }catch(e){} });
+  if(typeof window.rejectPending === 'function') window.rejectPending = rejectPending = function(fsId, col){ const d = (pendingApprovals || []).find(x => x.fsId === fsId) || {}; return delPending({ d, col, fsId }); };
 })();
 </script>
 
