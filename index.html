@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU617";
+const APP_VERSION = "MCS2211SU618";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU618":"📩 Invitation Message: ہوم پر اوپر ایک بٹن (ایڈمن) + کتنوں کو اطلاع گئی؛ اطلاع ہو چکی کارڈ سلیٹی اور آخر میں؛ نیا دعوتی پوسٹر (پلے اسٹور میں تلاش کی تصویر) + پیغام",
   "MCS2211SU617": "Admin: Delete button on cards waiting for approval; a deleted card is removed from Firebase, the server and every phone at once",
   "MCS2211SU616": "District and locality lists: English only, A to Z, one clean column right under the box, with search",
   "MCS2211SU615":"🗑️ ایڈمن ڈیلیٹ کرے تو ممبرشپ، سائن اپ اکاؤنٹ اور MCS ID سرور سے بھی صاف اور ہر فون سے کارڈ مٹے • 🔢 نئی ID ہمیشہ سب سے پہلی خالی • 🔎 MCS015 جیسی ID نہ ملے تو دوسرے ریکارڈ نہیں آتے",
@@ -5584,14 +5585,14 @@ function waitDraw(){
   var l = document.getElementById('waitList'); if(!l) return;
   var _inf = _wInfMap();
   l.innerHTML = cur.length ? cur.map(function(r){ var x = r.x, nm = x.nameUr || x.name || x.nameEn || '—', mob = String(x.whatsapp || '').replace(/\D/g, ''), cap = [x.type || x.category, x.owner, x.city, x.area].filter(Boolean), inf = Math.max(_inf[x.fsId] || 0, x.waInfAt || 0), q = '\'' + r.col + '\',\'' + _wE(x.fsId) + '\'';
-    return '<div style="background:' + (inf ? '#fef3c7' : '#fff') + ';border:1.5px solid ' + (inf ? '#f59e0b' : '#e2e8f0') + ';border-radius:12px;padding:8px 10px;margin:6px 0">'
+    return '<div style="background:' + (inf ? '#eef1f4' : '#fff') + ';border:1.5px solid ' + (inf ? '#cbd5e1' : '#e2e8f0') + ';border-radius:12px;padding:8px 10px;margin:6px 0' + (inf ? ';opacity:.72;filter:grayscale(.85)' : '') + '">'
       + '<div style="display:flex;gap:8px;align-items:flex-start"><div style="flex:1;min-width:0"><div style="font-weight:800;font-size:15px;color:#0f172a;line-height:1.5">' + _wE(nm) + (x.nameEn && x.nameEn !== nm ? ' <small style="font:700 12px Arial,sans-serif;color:#64748b;direction:ltr;display:inline-block">' + _wE(x.nameEn) + '</small>' : '') + '</div>'
       + (cap.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin:4px 0">' + cap.map(function(c){ return '<span style="background:#ecfeff;border:1px solid #a5f3fc;color:#155e75;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:700">' + _wE(c) + '</span>'; }).join('') + '</div>' : '')
       + (x.address ? '<div style="font-size:12.5px;color:#475569;line-height:1.6">📍 ' + _wE(x.address) + '</div>' : '')
-      + (inf ? '<div style="margin-top:4px;display:inline-block;background:#f59e0b;color:#fff;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:800">✅ اطلاع ہو چکی — <span style="font-family:Arial,sans-serif;direction:ltr;display:inline-block">' + new Date(inf).toLocaleDateString('en-GB') + '</span></div>' : '') + '</div>'
-      + '<div style="display:flex;flex-direction:column;gap:5px;flex:none"><button type="button" onclick="waitInvite(' + q + ')" style="border:0;border-radius:10px;padding:6px 9px;background:' + (inf ? '#d97706' : '#16a34a') + ';color:#fff;font:inherit;font-weight:800;font-size:12.5px;white-space:nowrap">' + (inf ? '📩 دوبارہ بھیجیں' : '📩 اطلاع بھیجیں') + '</button>'
+      + (inf ? '<div style="margin-top:4px;display:inline-block;background:#94a3b8;color:#fff;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:800">✅ اطلاع ہو چکی — <span style="font-family:Arial,sans-serif;direction:ltr;display:inline-block">' + new Date(inf).toLocaleDateString('en-GB') + '</span></div>' : '') + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:5px;flex:none"><button type="button" onclick="waitInvite(' + q + ')" style="border:0;border-radius:10px;padding:6px 9px;background:' + (inf ? '#64748b' : '#16a34a') + ';color:#fff;font:inherit;font-weight:800;font-size:12.5px;white-space:nowrap">' + (inf ? '📩 دوبارہ بھیجیں' : '📩 اطلاع بھیجیں') + '</button>'
       + '<button type="button" onclick="waitDelete(' + q + ')" style="border:1.5px solid #dc2626;border-radius:10px;padding:5px 9px;background:#fff;color:#dc2626;font:inherit;font-weight:800;font-size:12.5px;white-space:nowrap">🗑️ حذف</button></div></div>'
-      + '<div style="display:flex;gap:6px;margin-top:6px">' + (mob ? '<a href="tel:' + _wE(mob) + '" style="flex:1;text-align:center;text-decoration:none;background:' + (inf ? '#fde68a' : '#f1f5f9') + ';border-radius:10px;padding:7px 4px;font:800 13px Arial,sans-serif;color:#0f172a;direction:ltr">📞 ' + _wE(mob) + '</a>' : '')
+      + '<div style="display:flex;gap:6px;margin-top:6px">' + (mob ? '<a href="tel:' + _wE(mob) + '" style="flex:1;text-align:center;text-decoration:none;background:' + (inf ? '#e2e8f0' : '#f1f5f9') + ';border-radius:10px;padding:7px 4px;font:800 13px Arial,sans-serif;color:#0f172a;direction:ltr">📞 ' + _wE(mob) + '</a>' : '')
       + '<button type="button" onclick="waitRestore(' + q + ')" style="flex:1;border:0;border-radius:10px;padding:7px 4px;background:#0f766e;color:#fff;font:inherit;font-weight:800;font-size:13px">📥 رجسٹر کریں</button></div></div>'; }).join('')
     : '<div style="text-align:center;color:#64748b;padding:30px 10px;font-weight:700">کوئی ریکارڈ نہیں</div>';
   var pg = document.getElementById('waitPg'); if(pg) pg.innerHTML = '<button type="button" onclick="waitPage(-1)" ' + (_wst.page <= 0 ? 'disabled' : '') + ' style="border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:10px;padding:7px 14px;font:inherit;font-weight:800;' + (_wst.page <= 0 ? 'opacity:.4' : '') + '">◀ پچھلے</button><span style="font:800 13px Arial,sans-serif;direction:ltr">' + (_wst.page + 1) + ' / ' + pages + '</span><button type="button" onclick="waitPage(1)" ' + (_wst.page >= pages - 1 ? 'disabled' : '') + ' style="border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:10px;padding:7px 14px;font:inherit;font-weight:800;' + (_wst.page >= pages - 1 ? 'opacity:.4' : '') + '">اگلے ▶</button>';
@@ -29688,6 +29689,151 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
       try{ if(rec.id && !(store[arr] || []).some(x => x.id === id)) tomb(rec); }catch(e){} return r; };
     try{ if(fn === 'deleteService') deleteService = window[fn]; else deleteDoctor = window[fn]; }catch(e){} });
   if(typeof window.rejectPending === 'function') window.rejectPending = rejectPending = function(fsId, col){ const d = (pendingApprovals || []).find(x => x.fsId === fsId) || {}; return delPending({ d, col, fsId }); };
+})();
+</script>
+
+<!-- MCS2211SU618 (مالک کا حکم): «📩 Invitation Message» — ہوم پر سب کاروبار / پروفیشنل سے باہر اوپر ایک بٹن (صرف ایڈمن) + «N / کل کو اطلاع» کی گولی؛
+     کیٹگری کے اندر والا ویٹنگ بٹن ختم؛ اطلاع ہو جائے تو کارڈ ہلکا سلیٹی اور فہرست کے آخر میں؛ نیا دعوتی پوسٹر (پلے اسٹور میں تلاش کی تصویر سب سے پہلے) + پیغام۔ -->
+<style id="mcsInv618">
+.waitCatBtn,.waitBtn{display:none!important}
+#inv618{display:none;width:calc(100% - 24px);margin:10px 12px 4px;border:0;border-radius:16px;padding:11px 14px;background:linear-gradient(135deg,#0f766e,#0a4f4a);color:#fff;font:inherit;font-weight:800;font-size:15px;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(15,118,110,.35);direction:rtl;text-align:right}
+#inv618 .t{flex:1;line-height:1.35}
+#inv618 .t small{display:block;font:700 11.5px Arial,sans-serif;opacity:.9;direction:ltr;text-align:right}
+#inv618 .b{flex:none;background:#fde047;color:#3a2600;border-radius:999px;padding:4px 11px;font:900 13px Arial,sans-serif;direction:ltr;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+</style>
+<script id="mcsInv618js">
+(function(){
+  var FF = 'Jameel Noori Nastaleeq Kasheeda';
+  function infOf(x){ var m = {}; try{ m = _wInfMap(); }catch(e){} return Math.max(m[x.fsId] || 0, x.waInfAt || 0); }
+  function counts(){ var t = 0, s = 0; ['services', 'doctors'].forEach(function(col){ (WAIT[col] || []).forEach(function(x){ if(!x) return; t++; if(infOf(x)) s++; }); }); return { t: t, s: s }; }
+  function isAdm(){ try{ return typeof isAdminSignedIn !== 'undefined' && !!isAdminSignedIn; }catch(e){ return false; } }
+  function btnSync(){
+    try{
+      var home = document.getElementById('screen-home'); if(!home) return;
+      var b = document.getElementById('inv618');
+      if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'inv618'; b.onclick = function(){ invOpen618(); };
+        var hero = home.querySelector('header.hero'); if(hero && hero.nextSibling) home.insertBefore(b, hero.nextSibling); else home.insertBefore(b, home.firstChild); }
+      var c = counts();
+      b.style.display = (isAdm() && c.t > 0) ? 'flex' : 'none';
+      b.innerHTML = '<span style="font-size:22px">📩</span><span class="t">دعوتی پیغام<small>Invitation Message</small></span><span class="b">' + c.s.toLocaleString() + ' / ' + c.t.toLocaleString() + ' ✓</span>';
+      var tt = document.getElementById('waitTitle');
+      if(tt && tt.getAttribute('data-inv') === '1') tt.textContent = ' — 📩 دعوتی پیغام · ' + c.s + ' / ' + c.t + ' ✓';
+    }catch(e){}
+  }
+  window.invOpen618 = function(){
+    waitOpen('');
+    var tt = document.getElementById('waitTitle'); if(tt) tt.setAttribute('data-inv', '1');
+    btnSync();
+  };
+  /* کیٹگری سے کھلے تو عنوان ویسا */
+  var _wo = window.waitOpen;
+  window.waitOpen = waitOpen = function(cat){ var r = _wo.apply(this, arguments); var tt = document.getElementById('waitTitle'); if(tt) tt.removeAttribute('data-inv'); return r; };
+  /* اطلاع نہ گئے اوپر، اطلاع ہو چکی سب سے آخر */
+  var _wr = window._waitRows;
+  window._waitRows = _waitRows = function(){ var r = _wr.apply(this, arguments); var a = [], b = []; r.forEach(function(o){ (infOf(o.x) ? b : a).push(o); }); return a.concat(b); };
+  var _wd = window.waitDraw;
+  window.waitDraw = waitDraw = function(){ var r = _wd.apply(this, arguments); btnSync(); return r; };
+  setInterval(btnSync, 4000);
+  try{ if(document.readyState === 'complete') setTimeout(btnSync, 1500); else window.addEventListener('load', function(){ setTimeout(btnSync, 1500); }); }catch(e){}
+
+  /* 📩 پیغام */
+  window.waitInviteCaption = waitInviteCaption = function(x){
+    var nm = x.nameUr || x.name || x.nameEn || '';
+    return ['📩 *Invitation Message — دعوتی پیغام*', '', 'السلام علیکم! 🌟', '',
+      'آپ کے اپنے شہر کی ایپ *My City Shines* میں آپ کا ریکارڈ پہلے سے موجود ہے:', '🏪 ' + nm, '',
+      '📱 یہ ایپ آپ کے شہر کے تمام کاروباروں کو ڈیجیٹل طریقے سے آپس میں جوڑتی ہے۔',
+      '✅ اب کسی بھی دکان یا کاروبار کا نمبر اپنے موبائل میں سیو کرنے کی ضرورت نہیں — سب ایک ایپ میں۔',
+      '🆓 فری ڈاؤن لوڈ کریں — استعمال ہمیشہ فری۔ اپنے مسائل حل کریں، لوگوں سے رابطہ کریں۔', '',
+      '🚀 اگر آپ چاہتے ہیں کہ آپ کا کارڈ مزید اچھا بنے اور آپ کا بزنس ہزاروں لوگوں اور پورے پاکستان تک پہنچے، تو ایپ استعمال کرنے کے بعد اپنا بزنس رجسٹر کرائیں — ایپ میں اپنا اشتہار بھی دے سکتے ہیں۔', '',
+      '🔍 پلے اسٹور میں *My City Shines* سرچ کریں، یا اس لنک سے ڈاؤن لوڈ کریں:', MCS_PLAY_URL, '',
+      '💬 کوئی سوال ہو تو ایپ میں *Ask us* دبائیں۔', '', '💙 — *My City Shines*'].join('\n');
+  };
+
+  /* 🖼️ پوسٹر — سب سے پہلے پلے اسٹور میں تلاش کی تصویر */
+  function loadImg(src){ return new Promise(function(res){ var i = new Image(); i.onload = function(){ res(i); }; i.onerror = function(){ res(null); }; i.src = src; }); }
+  function playShot(ctx, x, y, w, icon){
+    var h = 290;
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 8; ctx.fillStyle = '#fff'; shareRoundRect(ctx, x, y, w, h, 26); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2; shareRoundRect(ctx, x, y, w, h, 26); ctx.stroke(); ctx.restore();
+    /* اوپر «Google Play» */
+    ctx.save(); ctx.direction = 'ltr'; ctx.textAlign = 'left';
+    var px = x + 28, py = y + 22;
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + 30, py + 17); ctx.lineTo(px, py + 34); ctx.closePath();
+    var tg = ctx.createLinearGradient(px, py, px + 30, py + 34); tg.addColorStop(0, '#00d7fe'); tg.addColorStop(.5, '#00f076'); tg.addColorStop(1, '#ffd500'); ctx.fillStyle = tg; ctx.fill();
+    ctx.fillStyle = '#5f6368'; ctx.font = '700 26px Arial, sans-serif'; ctx.fillText('Google Play', px + 42, py + 27);
+    /* تلاش کی پٹی */
+    var sx = x + 24, sy = y + 72, sw = w - 48, sh = 62;
+    ctx.fillStyle = '#f1f3f4'; shareRoundRect(ctx, sx, sy, sw, sh, 31); ctx.fill();
+    ctx.strokeStyle = '#5f6368'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(sx + 36, sy + 28, 11, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(sx + 44, sy + 36); ctx.lineTo(sx + 53, sy + 45); ctx.stroke();
+    ctx.fillStyle = '#202124'; ctx.font = '700 28px Arial, sans-serif'; ctx.fillText('My City Shines', sx + 72, sy + 41);
+    var tw = ctx.measureText('My City Shines').width; ctx.fillStyle = '#1a73e8'; ctx.fillRect(sx + 76 + tw, sy + 16, 3, 32);
+    /* نتیجہ */
+    var ry = sy + sh + 22, is = 104;
+    if(icon){ ctx.save(); shareRoundRect(ctx, x + 28, ry, is, is, 24); ctx.clip(); ctx.drawImage(icon, x + 28, ry, is, is); ctx.restore(); }
+    else { ctx.fillStyle = '#0d3b66'; shareRoundRect(ctx, x + 28, ry, is, is, 24); ctx.fill(); }
+    var tx = x + 28 + is + 22;
+    ctx.fillStyle = '#202124'; ctx.font = '800 32px Arial, sans-serif'; ctx.fillText('My City Shines', tx, ry + 36);
+    ctx.fillStyle = '#01875f'; ctx.font = '700 22px Arial, sans-serif'; ctx.fillText('PBT Code Labs', tx, ry + 68);
+    ctx.fillStyle = '#5f6368'; ctx.font = '600 21px Arial, sans-serif'; ctx.fillText('Free  •  Business directory', tx, ry + 98);
+    var bw = 150, bx = x + w - bw - 26, by = ry + 28;
+    ctx.fillStyle = '#01875f'; shareRoundRect(ctx, bx, by, bw, 52, 26); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = '800 24px Arial, sans-serif'; ctx.fillText('Install', bx + bw / 2, by + 35);
+    ctx.restore();
+    return h;
+  }
+  window.waitInvitePoster = waitInvitePoster = function(x){
+    return Promise.all([document.fonts.load('800 48px "' + FF + '"'), document.fonts.load('700 34px "' + FF + '"'), loadImg('icons/icon-192.png')]).catch(function(){ return []; }).then(function(res){
+      var icon = res && res[2];
+      var W = 880, H = 1720, c = document.createElement('canvas'); c.width = W; c.height = H; var ctx = c.getContext('2d');
+      var g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0a2e52'); g.addColorStop(.55, '#0d3b66'); g.addColorStop(1, '#081f39'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      var gl = ctx.createRadialGradient(W / 2, 90, 10, W / 2, 90, 520); gl.addColorStop(0, 'rgba(244,213,141,.28)'); gl.addColorStop(1, 'rgba(244,213,141,0)'); ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+      /* سر */
+      ctx.save(); ctx.fillStyle = '#fde047'; shareRoundRect(ctx, W / 2 - 230, 26, 460, 54, 27); ctx.fill();
+      ctx.fillStyle = '#3a2600'; ctx.direction = 'ltr'; ctx.font = '900 28px Arial, sans-serif'; ctx.fillText('📩  INVITATION MESSAGE', W / 2, 63); ctx.restore();
+      var hg = ctx.createLinearGradient(0, 100, 0, 160); hg.addColorStop(0, '#fff2c9'); hg.addColorStop(.5, '#f4d58d'); hg.addColorStop(1, '#c99a34');
+      ctx.save(); ctx.direction = 'rtl'; ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = 5; ctx.shadowOffsetY = 3; ctx.fillStyle = hg; ctx.font = '800 60px "' + FF + '", sans-serif'; ctx.fillText('مائی سٹی شائنز', W / 2, 160); ctx.restore();
+      ctx.save(); ctx.direction = 'rtl'; ctx.fillStyle = '#e2e8f0'; ctx.font = '700 30px "' + FF + '", sans-serif'; ctx.fillText('آپ کے اپنے شہر کی ایپ', W / 2, 212); ctx.restore();
+      /* پلے اسٹور کی تصویر */
+      ctx.save(); ctx.direction = 'rtl'; ctx.fillStyle = '#fde047'; ctx.font = '800 32px "' + FF + '", sans-serif'; ctx.fillText('پلے اسٹور میں سرچ کریں — ایپ ایسے نظر آئے گی:', W / 2, 272); ctx.restore();
+      var shotH = playShot(ctx, 60, 296, W - 120, icon);
+      /* پیغام کا پینل */
+      var top = 296 + shotH + 34, ph = 830;
+      var pg = ctx.createLinearGradient(0, top, 0, top + ph); pg.addColorStop(0, '#ffffff'); pg.addColorStop(1, '#fff4d6');
+      ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 10; ctx.fillStyle = pg; shareRoundRect(ctx, 50, top, W - 100, ph, 30); ctx.fill(); ctx.restore();
+      ctx.save(); ctx.strokeStyle = '#c99a34'; ctx.lineWidth = 4; shareRoundRect(ctx, 62, top + 12, W - 124, ph - 24, 22); ctx.stroke(); ctx.restore();
+      /* نام */
+      var nm = x.nameUr || x.name || x.nameEn || '';
+      ctx.save(); ctx.direction = 'rtl';
+      var nf = 46; do { ctx.font = '800 ' + nf + 'px "' + FF + '", sans-serif'; nf--; } while(nf > 24 && ctx.measureText(nm).width > W - 300);
+      var nY = top + 40, nH = 92, ng = ctx.createLinearGradient(0, nY, 0, nY + nH); ng.addColorStop(0, '#0f766e'); ng.addColorStop(1, '#0a4f4a');
+      ctx.fillStyle = ng; shareRoundRect(ctx, 110, nY, W - 220, nH, 46); ctx.fill();
+      ctx.fillStyle = '#fff2c9'; ctx.fillText(nm, W / 2, nY + 62);
+      ctx.fillStyle = '#0f766e'; ctx.font = '700 28px "' + FF + '", sans-serif'; ctx.fillText('آپ کا ریکارڈ ایپ میں پہلے سے موجود ہے ✓', W / 2, nY + nH + 46);
+      ctx.restore();
+      var paras = [
+        '📱 یہ ایپ آپ کے شہر کے تمام کاروباروں کو ڈیجیٹل طریقے سے آپس میں جوڑتی ہے۔',
+        '✅ اب کسی دکان یا کاروبار کا نمبر اپنے موبائل میں سیو کرنے کی ضرورت نہیں۔',
+        '🆓 فری ڈاؤن لوڈ کریں — استعمال ہمیشہ فری۔ اپنے مسائل حل کریں، لوگوں سے رابطہ کریں۔',
+        '🚀 اپنا کارڈ مزید اچھا بنائیں اور اپنا بزنس ہزاروں لوگوں اور پورے پاکستان تک پہنچائیں — اپنا بزنس رجسٹر کرائیں، اشتہار بھی دے سکتے ہیں۔'
+      ];
+      var bTop = nY + nH + 80, bH = top + ph - 40 - bTop, maxW = W - 200, fs = 40, lines, lh;
+      while(fs >= 22){ ctx.font = '700 ' + fs + 'px "' + FF + '", sans-serif'; ctx.direction = 'rtl'; lines = []; paras.forEach(function(p, i){ shareWrapLines(ctx, p, maxW).forEach(function(l){ lines.push(l); }); if(i < paras.length - 1) lines.push(''); }); lh = fs * 1.7; if(lines.length * lh <= bH) break; fs--; }
+      ctx.save(); ctx.direction = 'rtl'; ctx.fillStyle = '#1b2733'; ctx.font = '700 ' + fs + 'px "' + FF + '", sans-serif';
+      var sy = bTop + Math.max(0, (bH - lines.length * lh) / 2) + fs; lines.forEach(function(l, i){ if(l) ctx.fillText(l, W / 2, sy + i * lh); }); ctx.restore();
+      /* نیچے: QR + پلے اسٹور */
+      var fY = top + ph + 30, fH = H - fY - 50, fg = ctx.createLinearGradient(0, fY, 0, fY + fH); fg.addColorStop(0, '#f7dd9c'); fg.addColorStop(1, '#c99a34');
+      ctx.save(); ctx.fillStyle = fg; shareRoundRect(ctx, 60, fY, W - 120, fH, 26); ctx.fill(); ctx.restore();
+      var qs = Math.min(200, fH - 40), qx = 90, qy = fY + (fH - qs) / 2;
+      ctx.save(); ctx.fillStyle = '#fff'; shareRoundRect(ctx, qx - 8, qy - 8, qs + 16, qs + 16, 14); ctx.fill(); ctx.restore();
+      try{ mcsQrDraw(ctx, MCS_PLAY_URL, qx, qy, qs); }catch(e){}
+      var cx = qx + qs + 30 + (W - 60 - (qx + qs + 30)) / 2;
+      try{ sharePlayBadge(ctx, cx, fY + 26, FF, true); }catch(e){}
+      ctx.save(); ctx.fillStyle = '#3a2600'; ctx.direction = 'rtl'; ctx.font = '800 28px "' + FF + '", sans-serif'; ctx.fillText('پیغام میں دیے لنک سے ڈاؤن لوڈ کریں', cx, fY + fH - 30); ctx.restore();
+      ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.direction = 'ltr'; ctx.font = '700 22px Arial, sans-serif'; ctx.fillText('— My City Shines —', W / 2, H - 16); ctx.restore();
+      return c;
+    });
+  };
 })();
 </script>
 
