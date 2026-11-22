@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU624";
+const APP_VERSION = "MCS2211SU625";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU625":"🧊 ہوم پیج اب بالکل ساکن — اصل وجہ ملی: ہوم کو اسکرین میں بٹھانے والا خودکار زوم ہر کلک، ہر 10 سیکنڈ اور ہر ری سائز پر بدل کر ہوم کو اوپر نیچے ہلاتا تھا؛ اب زوم چند پکے قدموں میں ہی رہتا ہے، آگے پیچھے نہیں ہوتا، اور پچھلا زوم ایپ کھلتے ہی لگ جاتا ہے (ہیلپ ڈیسک #340)",
   "MCS2211SU624":"🌟 Sign-up / login page: new My City Shines intro video (play, download, WhatsApp share) above the How-to-register video",
   "MCS2211SU623":"🏪 My Portal: new horizontal Business Profile card — photo, name, services, approval status, Get Subscription button and location / phone in one card",
   "MCS2211SU622":"🤝 Admin 2 can now make anyone an MCS Agent — the MCS ID list loads with Admin 2 mobile + PIN",
@@ -19496,40 +19497,66 @@ body:has(#screen-home.active){position:relative;touch-action:pan-x;}
 </style>
 
 <script>
-/* MCS0711SA211 (مالک کا حکم): ہوم پیج سکرول کے بغیر — اوپر کا حصہ، نماز، ٹائلز، سرچ، اشتہار سب ایک اسکرین میں؛ جگہ کم ہو تو پورا ہوم خود چھوٹا ہو کر فِٹ بیٹھتا ہے */
+/* MCS2211SU625 (مالک کا حکم، ہیلپ ڈیسک #340 — «ہوم ناچتا کودتا ہے، جڑ دیکھیں، بالکل ساکن ہو»):
+   اصل وجہ — ہوم کو اسکرین میں بٹھانے والا «خودکار زوم» (پرانا MCS0711SA211) ہر کلک کے بعد، ہر 10 سیکنڈ، ہر resize اور ہر لوڈ پر
+   پورا ہوم دوبارہ ناپ کر اس کا zoom بدلتا تھا؛ ہوم کا مواد (نماز، اشتہار، گنتی، بینر، فونٹ) اسکرین کی اونچائی کے بالکل قریب ہوتا ہے، اس لیے چند پکسل کے فرق
+   پر zoom 1 ↔ 0.97 ↔ 0.94 کے بیچ اوپر نیچے کودتا اور پورا ہوم سکڑتا پھیلتا دکھتا تھا؛ ہوم سے دوسرے صفحے پر جا کر واپس آنے پر بھی zoom مٹ کر دوبارہ بنتا تھا۔
+   اب: (۱) zoom صرف چند طے شدہ قدموں (1، .98، .96 … .5) میں سے ایک چنا جاتا ہے، (۲) سکڑنا صرف تب جب مواد واقعی نیچے کی پٹی سے ٹکرائے،
+   پھیلنا صرف تب جب بڑا قدم 14 پکسل کی کھلی گنجائش کے ساتھ آئے (ہسٹریسس) — اس لیے دو قدموں کے بیچ آگے پیچھے ہونا ممکن نہیں، (۳) کلک پر صرف «سکڑنے کی ضرورت» دیکھی جاتی ہے، کبھی پھیلاؤ نہیں،
+   (۴) کی بورڈ کھلا ہو، نیچے کی پٹی چھپی ہو یا ہوم سامنے نہ ہو تو کچھ نہیں بدلتا، (۵) پچھلا zoom فون میں محفوظ رہتا ہے اور ایپ کھلتے ہی پہلے پینٹ سے پہلے لگ جاتا ہے، ہوم سے باہر جانے پر مٹتا نہیں */
 (function(){
-  var busy=false;
-  function fit(){
-    if(busy || document.body.classList.contains('wz-on')) return; busy=true;
+  var busy=false, KEY='mcsHomeZ625';
+  var STEP=.02, MINZ=.5, SLACK=14;
+  function qz(z){ return Math.max(MINZ, Math.min(1, Math.round(z/STEP)*STEP)); }
+  function sig(){ return Math.round(window.innerWidth)+'x'+Math.round(window.innerHeight); }
+  function saved(){ try{ var o=JSON.parse(localStorage.getItem(KEY)||'null'); if(o && o.k===sig() && o.z>=MINZ && o.z<=1) return o.z; }catch(e){} return 0; }
+  function save(z){ try{ localStorage.setItem(KEY, JSON.stringify({k:sig(), z:z})); }catch(e){} }
+  function setZ(sc, z){ var v = z>=1 ? '1' : z.toFixed(2); if(sc.style.zoom!==v) sc.style.zoom=v; document.documentElement.classList.toggle('home-fit', z<1); }
+  /* پہلی پینٹ سے پہلے پچھلا محفوظ zoom */
+  (function(){ var sc=document.getElementById('screen-home'), z=saved(); if(sc && z) setZ(sc, z); })();
+  function canMeasure(sc){
+    if(!sc || !sc.classList.contains('active')) return null;
+    if(document.body.classList.contains('wz-on') || document.body.classList.contains('kbd')) return null;
+    try{ var a=document.activeElement; if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return null; }catch(e){}
+    var nav=document.querySelector('.bnav'); if(!nav) return null;
+    var cs=getComputedStyle(nav); if(cs.display==='none' || cs.visibility==='hidden') return null;
+    var r=nav.getBoundingClientRect(); if(!(r.height>0) || r.top<=0) return null;
+    return Math.max(200, r.top - 2);
+  }
+  function fit(grow){
+    if(busy) return; busy=true;
     try{
-      var sc=document.getElementById('screen-home'); if(!sc) return;
-      if(!sc.classList.contains('active')){ sc.style.zoom=''; return; }
-      var nav=document.querySelector('.bnav');
-      var navTop = nav ? nav.getBoundingClientRect().top : window.innerHeight-76;
-      var avail = Math.max(200, navTop - 2);
-      var pz = parseFloat(sc.style.zoom) || 1;   /* MCS1511SU425: پچھلا زوم یاد */
+      var sc=document.getElementById('screen-home');
+      var avail=canMeasure(sc); if(avail===null) return;
+      var old=sc.style.zoom, cur=parseFloat(old)||1;
+      /* ہوم کی قدرتی اونچائی — zoom ہٹا کر ناپتے ہیں اور اسی لمحے (پینٹ سے پہلے) واپس لگا دیتے ہیں، اس لیے آنکھ کو کچھ نہیں دکھتا */
       sc.style.zoom=''; sc.style.minHeight='0';
-      var z=1;
-      var ch=function(){ var top=sc.getBoundingClientRect().top, mx=top; for(var k=0;k<sc.children.length;k++){ var r=sc.children[k].getBoundingClientRect(); if(r.height>0 && r.bottom>mx) mx=r.bottom; } return mx-top+4; };
-      for(var i=0;i<6;i++){
-        var h=ch();
-        if(h<=avail+1) break;
-        z=Math.max(.5, z*(avail/h)*0.995);
-        sc.style.zoom=z.toFixed(3);
-        if(z<=.5) break;
+      var top=sc.getBoundingClientRect().top, mx=top;
+      for(var k=0;k<sc.children.length;k++){ var r=sc.children[k].getBoundingClientRect(); if(r.height>0 && r.bottom>mx) mx=r.bottom; }
+      var h1=Math.max(1, mx-top+4);
+      if(old) sc.style.zoom=old;
+      var need = qz(Math.min(1, (avail-1)/h1));            /* سب سے بڑا قدم جس میں مواد سما جائے */
+      if(need > (avail-1)/h1 + 1e-6) need = qz(need - STEP);  /* گول کرنے سے اوپر نہ نکل جائے */
+      need = Math.max(MINZ, Math.min(1, need));
+      var z = cur;
+      if(h1*cur > avail + 1) z = need;                      /* مواد ٹکرا رہا ہے — صرف سکڑیں */
+      else if(grow && need > cur + 1e-6){                   /* بڑا قدم تبھی جب 14px کھلی جگہ بچے */
+        var big = need; while(big > cur + 1e-6 && h1*big > avail - SLACK) big = qz(big - STEP);
+        if(big > cur + 1e-6) z = big;
       }
-      if(z < 1 && Math.abs(z - pz) < 0.02){ z = pz; sc.style.zoom = pz.toFixed(3); }   /* MCS1511SU425: معمولی فرق پر ہوم نہ ہلے */
-      sc.style.minHeight='0';
-      document.documentElement.classList.toggle('home-fit', z<1);
+      z = qz(z);
+      if(Math.abs(z-cur) > 1e-6 || !old){ setZ(sc, z); } else { document.documentElement.classList.toggle('home-fit', z<1); }
+      save(z);
     }catch(e){} finally{ busy=false; }
   }
-  var t=null; function q(){ clearTimeout(t); t=setTimeout(fit,60); }
-  window.mcsFitHome=q;
-  window.addEventListener('resize',q); window.addEventListener('orientationchange',q);
-  window.addEventListener('load',function(){ q(); setTimeout(q,800); setTimeout(q,2500); });
-  document.addEventListener('click',function(){ setTimeout(q,120); },true);
-  setInterval(function(){ if(!document.hidden) q(); },10000);
-  var oz=window.applyZoom; if(typeof oz==='function'){ window.applyZoom=function(){ var r=oz.apply(this,arguments); q(); return r; }; }
+  var t=null, g=false;
+  function q(grow){ g = g || !!grow; clearTimeout(t); t=setTimeout(function(){ var gg=g; g=false; fit(gg); },80); }
+  window.mcsFitHome=function(){ q(false); };
+  window.addEventListener('resize',function(){ q(true); }); window.addEventListener('orientationchange',function(){ q(true); });
+  window.addEventListener('load',function(){ q(true); setTimeout(function(){ q(true); },800); setTimeout(function(){ q(true); },2500); });
+  document.addEventListener('click',function(){ setTimeout(function(){ q(false); },150); },true);   /* کلک پر صرف سکڑاؤ، پھیلاؤ نہیں */
+  setInterval(function(){ if(!document.hidden) q(true); },10000);
+  var oz=window.applyZoom; if(typeof oz==='function'){ window.applyZoom=function(){ var r=oz.apply(this,arguments); q(true); return r; }; }
 })();
 </script>
 
