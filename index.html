@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO644";
+const APP_VERSION = "MCS2311MO645";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO645":"✅ Invitation list: after sending, a tick box appears on the card (stays even if the app reloads) — tick it and the card fades like smoke, turns grey and moves to the Sent list; SMS-sent cards now count as Sent; new Today box (e.g. 1 / 5) with next message number",
   "MCS2311MO644":"🕒 Home clock: all seven day backgrounds removed — only emerald-green text (day, time, date), no box or background",
   "MCS2311MO643":"🪪 Agent card: CNIC number, expiry and photos open only after your PIN, show only while you press and hold, carry a watermark and close by themselves",
   "MCS2311MO642":"📅 My Account: full date of birth (day-month-year) now shows and can be added or edited — not just the year; only the first business is shown for now",
@@ -30371,10 +30372,32 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
 /* MCS2211SU633 (مالک کا حکم): سلیٹی صرف نام / تفصیل — «📥 رجسٹر کریں» اور 📞 اپنے اصل رنگ میں (یقین رہے کہ بٹن کام کرے گا) */
 .ws629Nw{background:#eef1f4!important}.ws629Nw>div:first-child>div:first-child{opacity:.55;filter:grayscale(1)}
 .ws629Tag{display:inline-block;margin-top:4px;background:#475569;color:#fff;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:800}
+/* MCS2311MO645 (مالک کا حکم): پیغام بھیجنے کے بعد کارڈ پر ٹک والا خانہ — ٹک لگے تو کارڈ دھوئیں کی طرح گرے ہو کر غائب، «پیغام جا چکا» میں چلا جائے؛ اوپر «آج» کا ڈبہ */
+.ws645Tick{display:flex;align-items:center;gap:8px;margin:2px 0;background:#fef9c3;border:2px dashed #eab308;border-radius:10px;padding:6px 8px;color:#713f12;font-weight:900;font-size:12.5px;line-height:1.4;cursor:pointer;direction:rtl;animation:ws645Pulse 1.6s ease-in-out infinite}
+.ws645Tick input{width:26px;height:26px;flex:none;accent-color:#16a34a;margin:0}
+.ws645Tick .x{margin-inline-start:auto;border:0;background:none;color:#7f1d1d;font:900 15px Arial,sans-serif;padding:0 4px}
+@keyframes ws645Pulse{0%,100%{box-shadow:0 0 0 0 rgba(234,179,8,.55)}50%{box-shadow:0 0 0 6px rgba(234,179,8,0)}}
+.ws645Go{pointer-events:none;overflow:hidden;animation:ws645Smoke 1.15s ease-in forwards}
+@keyframes ws645Smoke{
+ 0%{opacity:1;filter:grayscale(0) blur(0);transform:none;max-height:700px}
+ 30%{opacity:.85;filter:grayscale(1) blur(.5px);background:#e5e7eb;transform:none;max-height:700px}
+ 70%{opacity:.35;filter:grayscale(1) blur(5px);transform:translateY(-22px) scale(1.04);max-height:700px}
+ 100%{opacity:0;filter:grayscale(1) blur(10px);transform:translateY(-40px) scale(1.08);max-height:0;margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-width:0}}
+.ic640 .p.t b{color:#86efac}
+.ic640 .p.t.full b{color:#fca5a5}
+.ic640 .p.pop645{animation:ws645Pop .7s ease}
+@keyframes ws645Pop{0%{transform:scale(1)}35%{transform:scale(1.3);box-shadow:0 0 0 6px rgba(253,224,71,.6)}100%{transform:scale(1)}}
+.ws645Tag{display:inline-block;margin:4px 4px 0 0;background:#0f766e;color:#fff;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:800}
 </style>
 <script id="mcsWaSafe629js">
 (function(){
-  var GAP = 150e3, PHONE_DAY = 5, ALL_DAY = 10, LOGK = 'pbtWaSafeLog', NWK = 'mcsWaitNoWa';
+  var GAP = 150e3, PHONE_DAY = 5, ALL_DAY = 10, LOGK = 'pbtWaSafeLog', NWK = 'mcsWaitNoWa', PNDK = 'mcsWaitPend645';
+  /* MCS2311MO645: «بھیجنے کے بعد تصدیق باقی» کا نشان فون میں محفوظ (ایپ ری لوڈ ہو تو بھی ٹک والا خانہ رہے) — 24 گھنٹے */
+  function pendMap(){ try{ var m = JSON.parse(localStorage.getItem(PNDK) || '{}') || {}, n = Date.now(), ch = false; Object.keys(m).forEach(function(k){ if(!m[k] || n - m[k].t > 864e5){ delete m[k]; ch = true; } }); if(ch) localStorage.setItem(PNDK, JSON.stringify(m)); return m; }catch(e){ return {}; } }
+  function pendSet(fsId, via){ try{ var m = pendMap(); m[fsId] = { via: via, t: Date.now() }; localStorage.setItem(PNDK, JSON.stringify(m)); }catch(e){} }
+  function pendDel(fsId){ try{ var m = pendMap(); delete m[fsId]; localStorage.setItem(PNDK, JSON.stringify(m)); }catch(e){} }
+  var ORD = ['', 'پہلا', 'دوسرا', 'تیسرا', 'چوتھا', 'پانچواں', 'چھٹا', 'ساتواں', 'آٹھواں', 'نواں', 'دسواں'];
+  function ord(n){ return ORD[n] || (n + 'واں'); }
   /* 10 مختصر، شائستہ پہلے پیغام — بغیر لنک کے؛ {n} = دکان / بندے کا نام، {c} = شہر */
   /* MCS2211SU631 (مالک کا حکم): کسی بندے / دکان کا نام نہیں — ہر پیغام «مائی سٹی شائنز ٹیم» کی طرف سے؛ جواب آئے تو جو بات کرے وہ اپنا نام خود بتائے */
   var MSGS = [
@@ -30419,6 +30442,7 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     if(!guard(true)) return;
     /* MCS2311MO638 (مالک کا حکم): گنتی / «پیغام جا چکا» صرف تب جب واپس آ کر «✅ ہاں، بھیج دیا» دبائیں — صرف چیٹ کھلنے پر نہیں */
     var txt = pick(x); PEND = { col: col, fsId: fsId, txt: txt, num: L[0].intl, t: Date.now(), via: 'wa' };
+    pendSet(fsId, 'wa'); redrawKeep();
     waOpen(L[0].intl, txt);
     showToast('✍️ پیغام لکھا ہے — بھیج کر واپس آئیں اور «✅ ہاں، بھیج دیا» دبائیں', 6000);
     setTimeout(function(){ if(PEND && PEND.fsId === fsId) showBar(); }, 1500);
@@ -30445,19 +30469,42 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     var txt = same ? PEND.txt : pick(x);
     /* MCS2311MO638: SMS بھی تب گنا جائے جب واپس آ کر «✅ ہاں، بھیج دیا» دبائیں */
     PEND = { col: col, fsId: fsId, txt: txt, num: L[0].intl, t: Date.now(), via: 'sms' }; hideBar();
+    pendSet(fsId, 'sms'); redrawKeep();
     smsOpen(L[0].intl, txt);
     showToast('✉️ SMS میں نمبر اور پیغام لکھا ہے — Send دبائیں (دوسری سم چنیں، 0320 نہیں)، پھر واپس آ کر «✅ ہاں، بھیج دیا»', 6000);
     setTimeout(function(){ if(PEND && PEND.fsId === fsId) showBar(); }, 1500);
   };
   function hideBar(){ var b = document.getElementById('ws630Bar'); if(b) b.remove(); }
   /* MCS2311MO638 (مالک کا حکم): واپس آنے پر پوچھے — «✅ ہاں، بھیج دیا» (تب گنتی + سلیٹی فہرست) / «✉️ SMS بھیجیں» / «✕ نہیں بھیجا» (کچھ نہیں گنا، بندہ فہرست میں ویسا) */
-  window.waitSent638 = function(){
-    if(!PEND) return hideBar(); var P = PEND, x = _wFind(P.col, P.fsId); PEND = null; hideBar(); if(!x) return;
+  /* MCS2311MO645: گنتی کا ایک ہی راستہ (نیچے کی پٹی اور کارڈ کا ٹک دونوں یہیں آتے ہیں) — دوبارہ ٹک / دبانے سے دوہری گنتی نہیں */
+  function sentCore(col, fsId, via){
+    var x = _wFind(col, fsId); pendDel(fsId);
+    if(PEND && PEND.fsId === fsId){ PEND = null; hideBar(); }
+    if(!x) return false;
     var inf = Math.max((_wInfMap()[x.fsId] || 0), x.waInfAt || 0);
-    lgAdd(); if(!inf) _wInfSet(x.fsId, true, P.col); if(P.via === 'sms') markNw(P.col, P.fsId);
-    waitDraw(); showToast(P.via === 'sms' ? '✅ SMS گنا گیا — سلیٹی فہرست میں چلا گیا' : '✅ پیغام گنا گیا — جواب آئے تو «📩 تفصیلی کارڈ» دبائیں', 4500);
+    if(inf) return false;
+    lgAdd(); _wInfSet(x.fsId, true, col); if(via === 'sms') markNw(col, fsId);
+    return true;
+  }
+  function redrawKeep(){ try{ var l = document.getElementById('waitList'), st = l ? l.scrollTop : 0; waitDraw(); if(l) l.scrollTop = st; }catch(e){} }
+  function popSent(){ try{ var m = document.querySelector('#ws632Tabs .p.m'); if(m){ m.classList.remove('pop645'); void m.offsetWidth; m.classList.add('pop645'); } }catch(e){} }
+  function sentToast(via){ var n = phoneToday(); showToast('✅ ' + (via === 'sms' ? 'SMS' : 'پیغام') + ' گنا گیا — آج کا ' + ord(n) + ' پیغام (' + n + ' / ' + PHONE_DAY + ')', 4500); }
+  window.waitSent638 = function(){
+    if(!PEND) return hideBar(); var P = PEND; sentCore(P.col, P.fsId, P.via);
+    waitDraw(); popSent(); sentToast(P.via);
   };
-  window.waitNotSent638 = function(){ PEND = null; hideBar(); showToast('👍 کچھ نہیں گنا — بندہ فہرست میں ویسا ہی ہے'); waitDraw(); };
+  window.waitNotSent638 = function(){ if(PEND) pendDel(PEND.fsId); PEND = null; hideBar(); showToast('👍 کچھ نہیں گنا — بندہ فہرست میں ویسا ہی ہے'); waitDraw(); };
+  /* ☑️ MCS2311MO645 (مالک کا حکم): کارڈ پر ٹک — پیغام / SMS چلا گیا تو ٹک لگائیں: کارڈ دھوئیں کی طرح گرے ہو کر غائب، «پیغام جا چکا» میں */
+  window.waitTick645 = function(col, fsId, cb){
+    if(!cb || !cb.checked) return;
+    var pm = pendMap()[fsId], via = (pm && pm.via) || 'wa';
+    var card = cb.closest ? cb.closest('[data-ws645]') : null;
+    var fin = function(){ sentCore(col, fsId, via); waitDraw(); popSent(); sentToast(via); };
+    if(!card){ fin(); return; }
+    var done = false, go = function(){ if(done) return; done = true; fin(); };
+    card.classList.add('ws645Go'); card.addEventListener('animationend', go); setTimeout(go, 1300);
+  };
+  window.waitTickNo645 = function(fsId){ pendDel(fsId); if(PEND && PEND.fsId === fsId){ PEND = null; hideBar(); } showToast('👍 کچھ نہیں گنا — پیغام نہیں گیا'); redrawKeep(); };
   function showBar(){
     if(!PEND || Date.now() - PEND.t > 30 * 60e3) return; hideBar();
     var x = _wFind(PEND.col, PEND.fsId), nm = x ? (x.nameUr || x.name || x.nameEn || '') : '', sms = PEND.via === 'sms';
@@ -30476,7 +30523,7 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     var x = _wFind(col, fsId); if(!x) return;
     if(!confirm('اس بندے کو «پیغام باقی» میں واپس لے آئیں؟ (پیغام اصل میں نہیں گیا تھا)')) return;
     var t = Math.max((_wInfMap()[x.fsId] || 0), x.waInfAt || 0);
-    _wInfSet(fsId, false, col); try{ x.waCardAt = 0; }catch(e){}
+    _wInfSet(fsId, false, col); try{ x.waCardAt = 0; }catch(e){} pendDel(fsId);
     if(t >= d0(Date.now())){ var a = lg(); if(a.length){ a.pop(); try{ localStorage.setItem(LOGK, JSON.stringify(a)); }catch(e){} } }
     showToast('↩️ واپس «پیغام باقی» میں — گنتی سے بھی ہٹ گیا'); waitDraw();
   };
@@ -30493,21 +30540,26 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
   /* ترتیب: نئے اوپر، اطلاع والے ان کے بعد، واٹس ایپ نہیں والے سب سے آخر */
   var _wr = window._waitRows;
   /* MCS2211SU632 (مالک کا حکم): اوپر چھانٹی کے بٹن — سب / پیغام باقی / پیغام جا چکا / واٹس ایپ نہیں (گنتی کے ساتھ) */
-  var FIL = 'all', CNT = { all: 0, todo: 0, sent: 0, nw: 0 };
+  var FIL = 'todo', CNT = { all: 0, todo: 0, sent: 0, nw: 0, today: 0 };   /* MCS2311MO645: شروع میں «باقی» — بھیجے ہوئے نظر نہ آئیں */
   function infOf(x){ return Math.max((_wInfMap()[x.fsId] || 0), x.waInfAt || 0); }
-  function kind(x){ return isNw(x) ? 'nw' : infOf(x) ? 'sent' : 'todo'; }
-  window._waitRows = _waitRows = function(){ var r = _wr.apply(this, arguments), a = [], b = []; r.forEach(function(o){ (isNw(o.x) ? b : a).push(o); }); var all = a.concat(b);
-    CNT = { all: all.length, todo: 0, sent: 0, nw: 0 }; all.forEach(function(o){ CNT[kind(o.x)]++; });
-    if(FIL === 'sent') return all.filter(function(o){ return kind(o.x) === 'sent'; }).sort(function(p, q){ return infOf(q.x) - infOf(p.x); });
-    if(FIL === 'todo') return all.filter(function(o){ return kind(o.x) !== 'sent'; });
-    return FIL === 'all' ? all : all.filter(function(o){ return kind(o.x) === FIL; }); };
+  function kind(x){ return infOf(x) ? 'sent' : isNw(x) ? 'nw' : 'todo'; }   /* MCS2311MO645: SMS سے گیا ہوا بھی «پیغام جا چکا» میں گنا جائے */
+  window._waitRows = _waitRows = function(){ var r = _wr.apply(this, arguments), td = [], nwl = [], sn = [], t0 = d0(Date.now());
+    r.forEach(function(o){ var k = kind(o.x); (k === 'sent' ? sn : k === 'nw' ? nwl : td).push(o); });
+    sn.sort(function(p, q){ return infOf(q.x) - infOf(p.x); });
+    CNT = { all: r.length, todo: td.length, nw: nwl.length, sent: sn.length, today: sn.filter(function(o){ return infOf(o.x) >= t0; }).length };
+    if(FIL === 'sent') return sn;
+    if(FIL === 'today') return sn.filter(function(o){ return infOf(o.x) >= t0; }).reverse();
+    if(FIL === 'todo') return td.concat(nwl);
+    if(FIL === 'nw') return nwl;
+    return td.concat(nwl, sn); };
   window.waitFil632 = function(f){ FIL = f; try{ _wst.page = 0; }catch(e){} waitDraw(); var l = document.getElementById('waitList'); if(l) l.scrollTop = 0; };
   function tabs(){
     var l = document.getElementById('waitList'); if(!l) return;
     var t = document.getElementById('ws632Tabs'); if(!t){ t = document.createElement('div'); t.id = 'ws632Tabs'; t.setAttribute('data-noen', '1'); t.style.cssText = 'display:flex;gap:5px;padding:6px 10px 0;direction:rtl;flex-wrap:wrap'; l.parentNode.insertBefore(t, document.getElementById('ws629Bar') || l); }
     /* MCS2311MO640 (مالک کا حکم): چار بڑے بٹن کی جگہ ایک کیپسول — کل · نیلے گول میں «پیغام جا چکا» · باقی (ہر حصہ دبانے سے وہی فہرست) */
-    function P(f, cls, lb, n){ return '<button type="button" class="p' + cls + (FIL === f ? ' on' : '') + '" onclick="waitFil632(\'' + f + '\')"><small>' + lb + '</small><b>' + n.toLocaleString() + '</b></button>'; }
-    t.innerHTML = '<div class="ic640">' + P('all', '', 'کل', CNT.all) + P('sent', ' m', '✅ پیغام جا چکا', CNT.sent) + P('todo', ' r', 'باقی', CNT.todo + CNT.nw) + '</div>'
+    function P(f, cls, lb, n){ return '<button type="button" class="p' + cls + (FIL === f ? ' on' : '') + '" onclick="waitFil632(\'' + f + '\')"><small>' + lb + '</small><b>' + (typeof n === 'number' ? n.toLocaleString() : n) + '</b></button>'; }
+    var pT = phoneToday(), full = pT >= PHONE_DAY;
+    t.innerHTML = '<div class="ic640">' + P('all', '', 'کل', CNT.all) + P('sent', ' m', '✅ پیغام جا چکا', CNT.sent) + P('today', ' t' + (full ? ' full' : ''), '📅 آج', pT + ' / ' + PHONE_DAY) + P('todo', ' r', 'باقی', CNT.todo + CNT.nw) + '</div>'
       + (CNT.nw ? '<div style="width:100%;text-align:center;margin-top:4px"><button type="button" onclick="waitFil632(\'' + (FIL === 'nw' ? 'all' : 'nw') + '\')" style="border:1px solid #94a3b8;border-radius:999px;padding:2px 12px;background:' + (FIL === 'nw' ? '#64748b' : '#fff') + ';color:' + (FIL === 'nw' ? '#fff' : '#475569') + ';font:inherit;font-weight:800;font-size:12px">📵 واٹس ایپ نہیں <b style="font-family:Arial,sans-serif">' + CNT.nw + '</b></button></div>' : '');
   }
   function bar(){
@@ -30516,7 +30568,8 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     var w = waitLeft(), p = phoneToday(), t = allToday(), done = p >= PHONE_DAY || t >= ALL_DAY;
     b.className = (!done && !w) ? 'ok' : '';
     b.innerHTML = '🛡️ واٹس ایپ کی حفاظت — آج: اس فون سے <b>' + p + ' / ' + PHONE_DAY + '</b> · سب ملا کر <b>' + t + ' / ' + ALL_DAY + '</b>'
-      + (done ? ' · ✋ آج کی حد پوری — کل' : w ? ' · ⏳ اگلا پیغام <b>' + mmss(w) + '</b> بعد' : ' · ✅ اگلا پیغام بھیج سکتے ہیں');
+      + (done ? ' · ✋ آج کی حد پوری — کل' : w ? ' · ⏳ اگلا پیغام <b>' + mmss(w) + '</b> بعد' : ' · ✅ اگلا پیغام بھیج سکتے ہیں')
+      + (done ? '' : ' — آج کا <b style="font-family:inherit">' + ord(p + 1) + '</b> پیغام');
   }
   function decorate(){
     var l = document.getElementById('waitList'); if(!l) return;
@@ -30544,6 +30597,22 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
           ub.textContent = '↩️ پیغام نہیں گیا'; sb.insertAdjacentElement('afterend', ub); }
       }
       var card = btn; while(card && card.parentElement !== l) card = card.parentElement;
+      /* MCS2311MO645: ☑️ ٹک والا خانہ — پیغام / SMS دبانے کے بعد جب تک ٹک نہ لگے، کارڈ پر رہے */
+      if(card) card.setAttribute('data-ws645', m[2]);
+      var pm = pendMap()[m[2]];
+      if(pm && !inf){
+        var row = document.createElement('label'); row.className = 'ws645Tick';
+        row.innerHTML = '<input type="checkbox" onchange="waitTick645(\'' + m[1] + '\',\'' + m[2] + '\',this)"><span>' + (pm.via === 'sms' ? 'SMS چلا گیا؟ ٹک لگائیں' : 'پیغام چلا گیا؟ ٹک لگائیں') + '</span><button type="button" class="x" title="نہیں بھیجا" onclick="event.preventDefault();event.stopPropagation();waitTickNo645(\'' + m[2] + '\')">✕</button>';
+        var anchor = pm.via === 'sms' ? btn.parentElement.querySelector('.ws630Sms') : btn;
+        (anchor || btn).insertAdjacentElement('afterend', row);
+      }
+      if(inf && card && !card.querySelector('.ws645Tag')){
+        var t0 = d0(Date.now()), tg2 = document.createElement('span'); tg2.className = 'ws645Tag';
+        if(inf >= t0){ var arr = []; ['services', 'doctors'].forEach(function(c2){ (WAIT[c2] || []).forEach(function(y){ if(y){ var ti = infOf(y); if(ti >= t0) arr.push(ti); } }); }); arr.sort(function(a, b){ return a - b; });
+          tg2.textContent = '✅ آج کا ' + ord(arr.indexOf(inf) + 1) + ' پیغام · ' + new Date(inf).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
+        else tg2.textContent = '✅ ' + new Date(inf).toLocaleDateString('en-GB');
+        var ft = card.querySelector('div > div'); if(ft) ft.appendChild(tg2);
+      }
       if(card && nw && !card.classList.contains('ws629Nw')){ card.classList.add('ws629Nw'); var tg = document.createElement('div'); tg.className = 'ws629Tag'; tg.textContent = '📵 واٹس ایپ نہیں — کارڈ ایپ میں رہے گا، کال ہو سکتی ہے'; card.appendChild(tg); }
     });
     bar();
