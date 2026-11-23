@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO660";
+const APP_VERSION = "MCS2311MO661";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO661":"🧭 ہیلپ ڈیسک #369: My Account کی 8 قطاریں (ذاتی معلومات، سیکیورٹی، ایڈمن پورٹل، ریفرل، ایڈمن 2، ایپ شیئر، میرے درج کیے، دعوتی میسج پیسٹ) اب Settings میں؛ #375: ہوم ہیڈر کی نئی بڑی سات حصوں والی (LED) گھڑی — سفید HH:MM، پیلا PM، نیچے سیکنڈ، لاگ آؤٹ بٹن کے عین اوپر",
   "MCS2311MO660":"💬 ایڈمن گفتگو ایک ہی ڈبہ: تازہ پیغام بڑا، ٹچ کریں تو پورا ڈبہ لکھنے کی تختی؛ بائیں طرف ➤ بھیجیں / 👁️ ویو / 📜 پرانے / ✕؛ سجاوٹ میں 🔲 بارڈر کے پانچ انداز",
   "MCS2311MO659":"💬 ایڈمن گفتگو کی سجاوٹ میں «📐 جگہ» — لکھائی دائیں / درمیان / بائیں؛ پیغام دوسرے ایڈمن کو بھی اسی جگہ",
   "MCS2311MO658":"💬 ایڈمن گفتگو: سجاوٹ کے بٹن سمٹے (کم جگہ) — لکھائی کا ڈبہ بڑا نظر آتا ہے",
@@ -9928,7 +9929,7 @@ function buildAppPromoCanvas(customText, opts){
       // user's text: size slider = biggest size wanted, always shrinks to stay inside the box
       ctx.fillStyle = txtColor;
       (function(){
-        const _jc = mcsJoinCounts(), _hasJ = (_jc.biz + _jc.pro) > 0;
+        const _jc = mcsJoinCounts(), _hasJ = _jc.total > 0;
         const boxTop = cardTop+45, boxH = _hasJ ? 250 : 350, maxW = W-190;
         const paras = promoBody.split(/\n+/);
         let fs = po.size, lines = [], lh = 0;
@@ -9950,10 +9951,10 @@ function buildAppPromoCanvas(customText, opts){
       // MCS1011TU287: دو کیپسول — اتنے کاروبار، اتنے پیشہ ور + ترغیب کی سطر
       {
         const jc = mcsJoinCounts();
-        if(jc.biz + jc.pro > 0){
+        if(jc.total > 0){
           const caps = [];
-          if(jc.biz) caps.push({n:jc.biz, t:'کاروبار', c1:'#22c55e', c2:'#15803d'});
-          if(jc.pro) caps.push({n:jc.pro, t:'پیشہ ور', c1:'#38bdf8', c2:'#0369a1'});
+          if(jc.biz) caps.push({n:jc.rb + '/' + jc.biz, t:'کاروبار رجسٹرڈ', c1:'#22c55e', c2:'#15803d'});
+          if(jc.pro) caps.push({n:jc.rp + '/' + jc.pro, t:'پیشہ ور رجسٹرڈ', c1:'#38bdf8', c2:'#0369a1'});
           const cw = 300, ch = 66, gap = 24, cy = cardTop+310;
           const totalW = caps.length*cw + (caps.length-1)*gap;
           caps.forEach((cp, i)=>{
@@ -9961,11 +9962,11 @@ function buildAppPromoCanvas(customText, opts){
             const cg = ctx.createLinearGradient(0,cy,0,cy+ch); cg.addColorStop(0,cp.c1); cg.addColorStop(1,cp.c2);
             ctx.save(); ctx.shadowColor='rgba(0,0,0,.4)'; ctx.shadowBlur=10; ctx.shadowOffsetY=4; ctx.fillStyle = cg; shareRoundRect(ctx, cx0, cy, cw, ch, ch/2); ctx.fill(); ctx.restore();
             ctx.save(); ctx.strokeStyle='rgba(255,255,255,.7)'; ctx.lineWidth=2.5; shareRoundRect(ctx, cx0, cy, cw, ch, ch/2); ctx.stroke(); ctx.restore();
-            ctx.save(); ctx.fillStyle='#fff'; ctx.direction='ltr'; ctx.textAlign='center'; ctx.font='800 38px Arial, sans-serif'; ctx.fillText(String(cp.n), cx0+cw*0.30, cy+ch/2+13); ctx.restore();
+            ctx.save(); ctx.fillStyle='#fff'; ctx.direction='ltr'; ctx.textAlign='center'; ctx.font='800 38px Arial, sans-serif'; ctx.fillText(String(cp.n), cx0+cw*0.28, cy+ch/2+13); ctx.restore();
             ctx.save(); ctx.fillStyle='#fff'; ctx.direction='rtl'; ctx.textAlign='center'; ctx.font=`800 30px "${FF}", sans-serif`; ctx.fillText(cp.t, cx0+cw*0.68, cy+ch/2+11); ctx.restore();
           });
           ctx.save(); ctx.direction='rtl'; ctx.textAlign='center'; ctx.fillStyle = txtColor; ctx.font = `700 25px "${FF}", sans-serif`;
-          ctx.fillText('شامل ہو چکے ہیں — تعداد روز بروز بڑھ رہی ہے، آپ بھی جلدی انٹری کریں!', W/2, cy+ch+34); ctx.restore();
+          ctx.fillText('کل ریکارڈ میں سے رجسٹرڈ — آپ بھی اپنا کاروبار رجسٹر کرائیں!', W/2, cy+ch+34); ctx.restore();
         }
       }
       // MCS0511TH163 (مالک کا حکم): پوسٹر پر ذاتی نمبر / ایڈمن کا نام / Gmail نہیں — مسئلہ / مشورہ صرف ایپ کے Help Desk سے
@@ -10018,24 +10019,24 @@ const DEFAULT_PROMO_TEXT = 'یہ آپ کی اپنی ایپ ہے — اپنے ع�
 const MCS_SHARE_MSG = "🌟 My City Shines — مائی سٹی شائنز\nآپ کے شہر کی ڈیجیٹل بزنس ڈائریکٹری!\n\nاب اپنے شہر اور علاقے کے دکانداروں، کاروباری افراد، سروس پرووائیڈرز اور ہنرمندوں کو ایک ہی پلیٹ فارم پر تلاش کریں۔\n\n🏪 اپنا کاروبار یا پیشہ رجسٹر کریں اور پورے پاکستان سے نئے صارفین اور آرڈرز حاصل کرنے کے مواقع پیدا کریں۔\n\n🤝 اپنے شہر کو ڈیجیٹل بنائیں!\nآپ جتنے کاروبار، دکانوں اور ہنرمندوں کے ریکارڈ شامل کریں گے، اتنا ہی آپ اور آپ کے علاقے کے لوگوں کو فائدہ ہوگا۔\n\nاہم خصوصیات:\n✅ مکمل مفت ایپ\n✅ لائیو اپڈیٹس اور ڈیجیٹل بزنس ڈائریکٹری\n✅ کاروبار، دکانوں اور خدمات کی تلاش\n✅ آسان رابطہ اور معلومات تک رسائی\n✅ اپنے کاروبار اور پیشے کی تشہیر\n✅ پورے پاکستان میں صارفین تک رسائی کے مواقع\n\n📲 ابھی ایپ انسٹال کریں:\nhttps://play.google.com/store/apps/details?id=com.pbtcodelabs.mycityshines\n\n🔍 یا Google Play Store پر My City Shines سرچ کریں۔\n\n🌟 آئیے! مل کر اپنے شہروں کو روشن، ڈیجیٹل اور کاروباری مواقع سے بھرپور بنائیں۔\n\nMy City Shines — آپ کا شہر، آپ کا کاروبار، آپ کا ڈیجیٹل پلیٹ فارم!";
 /* MCS1011TU287 (مالک کا حکم): ترغیب — «اب تک اتنے کاروبار اور اتنے پیشہ ور شامل ہو چکے ہیں، تعداد روز بڑھ رہی ہے، آپ بھی جلدی انٹری کریں» — شیئر متن، کارڈ بھیجنے والے پیغام اور پوسٹر (کیپسول) تینوں میں */
 function mcsJoinCounts(){
-  let biz = 0, pro = 0;
+  /* MCS2311MO661 (مالک کا حکم): شیئر میں «کل ریکارڈ» اور اس میں سے «رجسٹرڈ» دونوں — پہلے ہر ریکارڈ کو رجسٹرڈ کہہ دیتے تھے */
+  let biz = 0, pro = 0, rb = 0, rp = 0;
   try{
     const grpOf = k => (CATEGORY_META[k] && CATEGORY_META[k].group) || 'professional';
+    const isReg = r => { try{ return r.mcsLive === true || r.stage === 'registered' || (typeof pfActive === 'function' && pfActive(r)); }catch(e){ return false; } };
     (store.services || []).forEach(r=>{
       if(!r || r.approved === false || r.category === 'emergencyNumbers' || r.category === 'govOffices') return;
-      if(grpOf(r.category) === 'business') biz++; else pro++;
+      const rg = isReg(r);
+      if(grpOf(r.category) === 'business'){ biz++; if(rg) rb++; } else { pro++; if(rg) rp++; }
     });
-    (store.doctors || []).forEach(r=>{ if(r && r.approved !== false) pro++; });
+    (store.doctors || []).forEach(r=>{ if(r && r.approved !== false){ pro++; if(isReg(r)) rp++; } });
   }catch(e){}
-  return {biz, pro};
+  return {biz, pro, rb, rp, total: biz + pro, reg: rb + rp};
 }
 function mcsJoinLines(){
-  const c = mcsJoinCounts(); if(c.biz + c.pro < 1) return [];
-  const parts = [];
-  if(c.biz) parts.push(`🏪 *${c.biz}* کاروبار`);
-  if(c.pro) parts.push(`🧑‍🔧 *${c.pro}* پیشہ ور`);
-  return ['📈 اب تک ' + parts.join('  |  ') + ' مائی سٹی شائنز میں اپنا ریکارڈ درج کروا چکے ہیں — اور یہ تعداد روز بروز بڑھتی جا رہی ہے!',
-    '⏳ دیر نہ کریں — آپ بھی جلدی اپنی انٹری مکمل کریں اور اپنے شہر کے ساتھ شامل ہو جائیں۔'];
+  const c = mcsJoinCounts(); if(c.total < 1) return [];
+  return ['📈 مائی سٹی شائنز میں اس وقت کل *' + c.total + '* ریکارڈ ہیں (🏪 ' + c.biz + ' کاروبار  |  🧑‍🔧 ' + c.pro + ' پیشہ ور) — ان میں سے *' + c.reg + '* رجسٹرڈ ہو چکے ہیں (🏪 ' + c.rb + '  |  🧑‍🔧 ' + c.rp + ')۔',
+    '👉 آپ بھی اپنا کاروبار رجسٹر کرائیں تاکہ نئے نئے گاہک آپ کو دیکھ سکیں، آپ کا کاروبار پھلے پھولے، اور پورے علاقے میں آپ کا اشتہار، آپ کی خدمات اور سروسز آپ کے گاہکوں تک پہنچیں۔'];
 }
 function appPromoCaptionText(){
   const j = mcsJoinLines(); if(!j.length) return MCS_SHARE_MSG;
@@ -19213,7 +19214,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
   }
   const lgLbl = t => `<div class="lgLbl">${t}</div>`;
   /* MCS2311MO642 (ہیلپ ڈیسک #357، مالک کا حکم): My Account میں پوری تاریخِ پیدائش (صرف سال نہیں) — سائن اپ والا ہی خانہ */
-  function uaAccBack(){ try{ if(typeof window.mxAccOpen === 'function'){ window.mxAccOpen(typeof ptRole === 'function' ? ptRole() : ''); return; } }catch(e){} uaAccount(); }
+  function uaAccBack(){ try{ if(window.__mstFromSet && typeof window.mstOpen === 'function'){ window.mstOpen(); return; } }catch(e){} try{ if(typeof window.mxAccOpen === 'function'){ window.mxAccOpen(typeof ptRole === 'function' ? ptRole() : ''); return; } }catch(e){} uaAccount(); }
   window.uaDobForm = function(){
     lgCss(); const a = uaMe(); if(!a) return uaLogin(); const u = a.user || {}, cy = new Date().getFullYear();
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(u.dob || '')), v = m ? m[3] + ' / ' + m[2] + ' / ' + m[1] : '';
@@ -20597,11 +20598,32 @@ function mstOpen(){
     w.loggedIn ? ''
                : mstRow('linear-gradient(135deg,#3f8cf6,#1559d8)', MST_IC.login, 'Login / Sign Up', 'Sign in to your My City Shines account', 'uaLogin')
   ].join('');
+  /* MCS2311MO661 (ہیلپ ڈیسک #369): My Account کی قطاریں یہاں — وہی فنکشن، وہی آئیکن */
+  let acRows = '';
+  try{
+    const rlN = w.rl, isA1 = (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn), isA2 = (typeof codevOn === 'function' && codevOn()), me = w.ag || {};
+    const A = (grad, ic, t, sub, fn) => mstRow(grad, ic, t, sub, fn, '', 0).replace("mstGo('" + fn + "')", "window.__mstFromSet=1;mstGo('" + fn + "')");
+    acRows = [
+      w.ua ? A('linear-gradient(135deg,#7db8ff,#3d7fe6)', '👤', 'Personal Information', 'Name, mobile, email', 'uaAccount')
+           : (w.loggedIn ? A('linear-gradient(135deg,#7db8ff,#3d7fe6)', '🔐', 'Login / Sign Up', 'اکاؤنٹ بنائیں', 'uaLogin') : ''),
+      w.ua ? A('linear-gradient(135deg,#5fd48a,#1f9d55)', '🛡️', 'Security & Password', 'Create / change password', 'uaPwForm') : '',
+      (rlN === 'dev' || rlN === 'codev') ? A('linear-gradient(135deg,#a78bfa,#6d4bd8)', '🛠️', 'Admin Portal', 'ایڈمن پورٹل — ٹولز، روزانہ، بزنس / ایجنٹ', 'mxAgentOld') : '',
+      me.code ? A('linear-gradient(135deg,#a78bfa,#6d4bd8)', '🤝', 'Referral & Agent', 'Referral code: ' + me.code, 'agOpen') : '',
+      isA1 ? A('linear-gradient(135deg,#ffd76a,#f0a81c)', '👥', 'Admin 2 — PIN', 'عمران بھائی کا PIN بنائیں / بھیجیں', 'cdAdminOpen')
+           : isA2 ? A('linear-gradient(135deg,#ffd76a,#f0a81c)', '👥', 'Admin 2 — Log out', 'ایڈمن 2 سے باہر', 'cdLogout')
+           : (/3138469706$/.test(String((w.u && w.u.mobile) || '').replace(/\D/g, '')) ? A('linear-gradient(135deg,#ffd76a,#f0a81c)', '👥', 'Admin 2 Login', 'ایڈمن 2 — موبائل + PIN', 'cdLoginOpen') : ''),
+      A('linear-gradient(135deg,#5fd48a,#1f9d55)', '📤', 'Share this app', 'Send My City Shines to friends', 'openPromoText'),
+      w.ua ? A('linear-gradient(135deg,#7db8ff,#3d7fe6)', '📨', 'My Entries', 'Entered by me', 'fedListOpen') : '',
+      w.ua ? A('linear-gradient(135deg,#ffd76a,#f0a81c)', '📥', 'Paste Invite', 'Paste invite message', 'uaInvAsk') : ''
+    ].join('');
+  }catch(e){ acRows = ''; }
+  window.__mstFromSet = 0;
   mstShell('mySettingsModal', '', '',
     mstHead(w, true)
     + `<div class="mst-tpw"><div class="mst-tp">${MST_IC.gear}<b>Settings</b></div></div>`
     + `<div class="mst-sp">Manage Your ${ag ? 'Agent ' : ''}Account &amp; App Preferences</div>`
     + `<button type="button" class="mst-gp" onclick="mstGo('mcsPlayPackages')"><span class="mst-gpi">${MCS_GP_SVG}</span><span class="mst-gpt"><small>Google Play</small><b>Package Plans</b><em>گوگل پلے پیکج پلانز — قیمت اور سبسکرپشن</em></span><span class="mst-gpc">›</span></button>`
+    + (acRows ? `<div class="mst-sc"><div class="mst-st">My Account</div><div class="mst-ls">${acRows}</div></div>` : '')
     + `<div class="mst-sc"><div class="mst-st">Settings &amp; Preferences</div><div class="mst-ls">${rows}</div></div>`
     + `<div class="mst-vr">${typeof APP_VERSION !== 'undefined' ? 'Version ' + APP_VERSION : ''}</div>`);
 }
@@ -22837,21 +22859,10 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
         + row('⚙️', 'Admin panel', ID, 'openDevPanel', 'c3', 'ایڈمن کے باقی سب کام')
         + '</div>';
     }
-    h += '<div class="mx-sec pl">Account Management</div><div class="mx-card mx-list">'
-      + (ua ? row('👤', 'Personal Information', ID, 'uaAccount', 'c1', 'نام، موبائل، ای میل') : row('🔐', 'Login / Sign Up', ID, 'uaLogin', 'c1', 'اکاؤنٹ بنائیں'))
-      + (ua ? row('🛡️', 'Security &amp; Password', ID, 'uaPwForm', 'c2', 'پاس ورڈ بنائیں / بدلیں') : '')
-      + '</div>';
-    h += '<div class="mx-sec pl">More</div><div class="mx-card mx-list">'
-      + L.map(function(x, i){ try{ if(fpIsBasic(x.p.kind, x.rec)) return ''; var r = recOf(x); }catch(e){ return ''; } return '<button type="button" class="mx-li" onclick="mxGo(\'' + ID + '\',\'mxFp\',' + i + ')"><i class="c3">📄</i><span>My Profile<small>' + esc(r.nameUr || r.name || '') + '</small></span></button>'; }).join('')
-      + (rl === 'agent' ? row('🤝', 'Agent Portal', ID, 'mxAgentOld', 'c3', 'ایجنٹ پورٹل — رجسٹریشن، کاروبار') : '')
-      + (rlNow === 'dev' || rlNow === 'codev' ? row('🛠️', 'Admin Portal', ID, 'mxAgentOld', 'c3', 'ایڈمن پورٹل — ٹولز، روزانہ، بزنس / ایجنٹ') : '')
-      + (me.code ? row('🤝', 'Referral &amp; Agent', ID, 'agOpen', 'c3', 'ریفرل کوڈ: ' + esc(me.code)) : '')   /* MCS1411SA423: Earn with MCS صرف ہوم پر */
-      /* MCS1911TH567 (مالک کا حکم): پیسوں کا حساب ایپ میں نہیں — صرف الگ MCS Agents پورٹل (ویب سائٹ) پر */   /* MCS1511SU457 */
-      + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? '' + '' + '' + '' : '')   /* MCS1511SU460 */
-      + ((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) ? row('👥', 'Admin 2 — PIN', ID, 'cdAdminOpen', 'c4', 'عمران بھائی کا PIN بنائیں / بھیجیں') : (typeof codevOn === 'function' && codevOn()) ? row('👥', 'Admin 2 — Log out', ID, 'cdLogout', 'c4', 'ایڈمن 2 سے باہر') : (/3138469706$/.test(String(u.mobile || '').replace(/\D/g, '')) ? row('👥', 'Admin 2 Login', ID, 'cdLoginOpen', 'c4', 'ایڈمن 2 — موبائل + PIN') : ''))
-      + row('📤', 'Share this app', ID, 'openPromoText', 'c2', 'Send My City Shines to friends')   /* MCS1811WE532 (مالک کا حکم): ہیڈر کا شیئر بٹن اب یہاں */
-      + (ua ? row('📨', 'My Entries', ID, 'fedListOpen', 'c1', 'میرے درج کیے ہوئے') + row('📥', 'Paste Invite', ID, 'uaInvAsk', 'c4', 'دعوتی میسج پیسٹ کریں') : '')
-      + '</div>';
+    /* MCS2311MO661 (ہیلپ ڈیسک #369): ذاتی معلومات، سیکیورٹی، ایڈمن پورٹل، ریفرل، ایڈمن 2، شیئر، میرے درج کیے، دعوتی پیسٹ — اب Settings میں (mstOpen)؛ یہاں صرف «My Profile» اور «Agent Portal» رہے */
+    var moreH = L.map(function(x, i){ try{ if(fpIsBasic(x.p.kind, x.rec)) return ''; var r = recOf(x); }catch(e){ return ''; } return '<button type="button" class="mx-li" onclick="mxGo(\'' + ID + '\',\'mxFp\',' + i + ')"><i class="c3">📄</i><span>My Profile<small>' + esc(r.nameUr || r.name || '') + '</small></span></button>'; }).join('')
+      + (rl === 'agent' ? row('🤝', 'Agent Portal', ID, 'mxAgentOld', 'c3', 'ایجنٹ پورٹل — رجسٹریشن، کاروبار') : '');
+    if(moreH) h += '<div class="mx-sec pl">More</div><div class="mx-card mx-list">' + moreH + '</div>';
     /* MCS1511SU453 (مالک کا حکم): لاگ آؤٹ صرف یہاں — My Account کا آخری بٹن (سر والا سرخ Log Out ختم) */
     h += (ua || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || sf(function(){ return codevOn(); }, false) || (me && me.pin)) ? '' : '<button type="button" class="mx-out in" onclick="mxGo(\'' + ID + '\',\'uaLogin\')">🔐 Log In</button>';
     h += '<div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
@@ -29184,7 +29195,7 @@ html body #screen-home #hdr2.h229 .x-rad .xr-d,html body #screen-home #hdr2.h229
 </style>
 <script id="mcsClk646js">
 (function(){
-  var K = 'mcsClkClr646', DEF = { h: 48, s: 100, l: 70 };
+  var K = 'mcsClkClr646', DEF = { h: 0, s: 0, l: 100 };   /* MCS2311MO661: نئی گھڑی کا پہلا رنگ سفید */
   function get(){ try{ var v = JSON.parse(localStorage.getItem(K) || 'null'); if(v && isFinite(v.h) && isFinite(v.s) && isFinite(v.l)) return v; }catch(e){} return { h: DEF.h, s: DEF.s, l: DEF.l }; }
   function apply(v){ document.documentElement.style.setProperty('--clkClr', 'hsl(' + v.h + ' ' + v.s + '% ' + v.l + '%)'); }
   function save(v){ try{ localStorage.setItem(K, JSON.stringify(v)); }catch(e){} }
@@ -29198,7 +29209,7 @@ html body #screen-home #hdr2.h229 .x-rad .xr-d,html body #screen-home #hdr2.h229
       + '<label>🌈 رنگ</label><input type="range" id="clk646h" min="0" max="360" value="' + v.h + '" style="background:' + hue + '">'
       + '<label>✨ تیزی (پھیکا ← تیز)</label><input type="range" id="clk646s" min="0" max="100" value="' + v.s + '">'
       + '<label>💡 ہلکا / گہرا</label><input type="range" id="clk646l" min="15" max="95" value="' + v.l + '">'
-      + '<div class="sw"></div><button type="button" class="rs" id="clk646r">↩️ پہلا رنگ (سنہری)</button>';
+      + '<div class="sw"></div><button type="button" class="rs" id="clk646r">↩️ پہلا رنگ (سفید)</button>';
     document.body.appendChild(p);
     var H = p.querySelector('#clk646h'), S = p.querySelector('#clk646s'), L = p.querySelector('#clk646l');
     function bg(){ var c = get(); S.style.background = 'linear-gradient(to right,hsl(' + c.h + ' 0% ' + c.l + '%),hsl(' + c.h + ' 100% ' + c.l + '%))'; L.style.background = 'linear-gradient(to right,hsl(' + c.h + ' ' + c.s + '% 15%),hsl(' + c.h + ' ' + c.s + '% 55%),hsl(' + c.h + ' ' + c.s + '% 95%))'; }
@@ -31235,6 +31246,60 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
   window.waitDraw = waitDraw = function(){ var r = _wd.apply(this, arguments); try{ decorate(); }catch(e){} return r; };
   setInterval(function(){ try{ var ov = document.getElementById('waitOv'); if(ov && ov.style.display !== 'none') bar(); }catch(e){} }, 1000);
   window.mcsWaSafe629 = { MSGS: MSGS, pick: pick, phoneToday: phoneToday, allToday: allToday, waitLeft: waitLeft };
+})();
+</script>
+<style id="mcsClk661css">
+/* MCS2311MO661 (ہیلپ ڈیسک #375): ہیڈر کی نئی سات حصوں والی (LED) گھڑی — پرانی گھڑی ہٹا دی؛ سفید HH:MM، پیلا PM، نیچے سیکنڈ، لاگ آؤٹ بٹن کے عین اوپر */
+html body #screen-home #hdr2.h229 .x-rad{display:none !important}
+html body #screen-home #hdr2.h229 .xm{position:relative}
+#x661clk{position:absolute;left:50%;top:11.2cqw;transform:translateX(-50%) translate(calc(var(--clkX,0) * .6cqw),calc(var(--clkY,0) * .6cqw)) scale(var(--clkSz,1));transform-origin:50% 50%;display:flex;align-items:stretch;direction:ltr;gap:.45cqw;background:none;border:0;box-shadow:none;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;z-index:2;filter:drop-shadow(0 .25cqw .4cqw rgba(0,0,0,.35))}
+#x661clk .dg{height:7.4cqw;width:4.4cqw;display:block;overflow:visible}
+#x661clk .cl{height:7.4cqw;width:1.4cqw;display:block;overflow:visible}
+#x661clk .dg path,#x661clk .cl circle{fill:var(--clkClr,#fff)}#x661clk .dg path{stroke:var(--clkClr,#fff);stroke-width:calc(3 + (var(--clkW,2) - 2) * .8);stroke-linejoin:round}
+#x661clk .dg path.off{display:none}
+#x661clk .sd{display:flex;flex-direction:column;justify-content:space-between;height:7.4cqw;margin-left:.4cqw;font:900 3.3cqw/1 Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums;min-width:4cqw}
+#x661clk .sd b{display:block;font-weight:900}
+#x661clk .ap{color:#f2ee1c}
+#x661clk .ss{color:var(--clkClr,#fff)}
+</style>
+<script id="mcsClk661js">
+(function(){
+  var SEG = {a:'M10,5 L16,0 L48,0 L54,5 L48,10 L16,10Z', g:'M10,54 L16,49 L48,49 L54,54 L48,59 L16,59Z', d:'M10,103 L16,98 L48,98 L54,103 L48,108 L16,108Z',
+    f:'M5,7 L10,12 L10,46 L5,51 L0,46 L0,12Z', b:'M59,7 L64,12 L64,46 L59,51 L54,46 L54,12Z', e:'M5,57 L10,62 L10,96 L5,101 L0,96 L0,62Z', c:'M59,57 L64,62 L64,96 L59,101 L54,96 L54,62Z'};
+  var MAP = ['abcdef','bc','abged','abgcd','fgbc','afgcd','afgedc','abc','abcdefg','abcdfg'];
+  var KEYS = 'abcdefg'.split('');
+  function digit(){ var h = '<svg class="dg" viewBox="0 0 64 108" aria-hidden="true">'; KEYS.forEach(function(k){ h += '<path class="off" data-s="' + k + '" d="' + SEG[k] + '"/>'; }); return h + '</svg>'; }
+  function setD(svg, n){ var on = n < 0 ? '' : MAP[n]; var ps = svg.querySelectorAll('path'); for(var i = 0; i < ps.length; i++){ var k = ps[i].getAttribute('data-s'); ps[i].setAttribute('class', on.indexOf(k) >= 0 ? '' : 'off'); } }
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+  var last = '';
+  function build(){
+    var m = document.querySelector('#hdr2.h229 .xm'); if(!m) return null;
+    var c = document.getElementById('x661clk');
+    if(c && c.parentNode === m) return c;
+    if(c) c.remove();
+    c = document.createElement('div'); c.id = 'x661clk'; c.setAttribute('dir', 'ltr'); c.setAttribute('data-noen', '1');
+    c.innerHTML = digit() + digit() + '<svg class="cl" viewBox="0 0 20 108" aria-hidden="true"><circle cx="10" cy="34" r="7"/><circle cx="10" cy="74" r="7"/></svg>' + digit() + digit() + '<div class="sd"><b class="ap" id="x661ap"></b><b class="ss" id="x661ss"></b></div>';
+    m.appendChild(c); last = ''; return c;
+  }
+  function tick(){
+    var c = build(); if(!c) return;
+    var d = new Date(), h = d.getHours() % 12 || 12, mi = d.getMinutes(), hm = pad(h) + pad(mi);
+    if(hm !== last){ last = hm; var sv = c.querySelectorAll('svg.dg'); setD(sv[0], h < 10 ? -1 : 1); setD(sv[1], h % 10); setD(sv[2], Math.floor(mi / 10)); setD(sv[3], mi % 10); }
+    var ap = d.getHours() < 12 ? 'AM' : 'PM', a = document.getElementById('x661ap'), s = document.getElementById('x661ss'), sec = pad(d.getSeconds());
+    if(a && a.textContent !== ap) a.textContent = ap; if(s && s.textContent !== sec) s.textContent = sec;
+  }
+  /* مالک کا حکم: گھڑی کا رنگ / سائز / جگہ والا پینل صرف ایڈمن کے لیے اور صرف تین بار جلدی جلدی ٹچ پر — غلطی سے ہاتھ لگے تو نہ کھلے */
+  var taps = [];
+  document.addEventListener('click', function(e){
+    var t = e.target; if(!(t && t.closest && t.closest('#x661clk'))) return;
+    var adm = false; try{ adm = !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn())); }catch(x){}
+    if(!adm) return;
+    var n = Date.now(); taps = taps.filter(function(a){ return n - a < 900; }); taps.push(n);
+    if(taps.length >= 3){ taps = []; var o = document.getElementById('x229rad'); if(o) o.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })); }
+  }, true);
+  setInterval(function(){ try{ if(!document.hidden) tick(); }catch(e){} }, 1000);
+  document.addEventListener('visibilitychange', function(){ try{ if(!document.hidden) tick(); }catch(e){} });
+  try{ tick(); }catch(e){}
 })();
 </script>
 </body>
