@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO646";
+const APP_VERSION = "MCS2311MO647";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO647":"🔢 Home version now shows as Ver#647 (the last 3 digits of the zip number); it goes up by one with every new file",
   "MCS2311MO646":"🎨 Home clock text colour changed to soft gold; admin can tap the clock to change its colour with sliders (colour, vividness, light/dark) — saved on the phone",
   "MCS2311MO645":"✅ Invitation list: after sending, a tick box appears on the card (stays even if the app reloads) — tick it and the card fades like smoke, turns grey and moves to the Sent list; SMS-sent cards now count as Sent; new Today box (e.g. 1 / 5) with next message number",
   "MCS2311MO644":"🕒 Home clock: all seven day backgrounds removed — only emerald-green text (day, time, date), no box or background",
@@ -13662,9 +13663,11 @@ function saveTickerMessages(msgs){
 
 /* ---------- Version label in home header (سادہ متن) ---------- */
 function renderVersionLabel(){
+  /* MCS2311MO647 (مالک کا حکم): ہوم پر ورژن اب «Ver#647» (زپ کے آخری 3 ہندسے، ہر نئی زپ پر خود بڑھتا)؛ باقی سب جگہ / زپ کا نام وہی MCS... */
+  const vShow = 'Ver#' + String(APP_VERSION).slice(-3);
   const el = document.getElementById('hsVer');
-  if(el) el.textContent = APP_VERSION;
-  const e2 = document.getElementById('h2Ver'); if(e2) e2.textContent = APP_VERSION;   /* MCS0711SA201: ہیڈر میں ورژن چھوٹا سا — پہلے والا خانہ چھپا ہوا تھا */
+  if(el) el.textContent = vShow;
+  const e2 = document.getElementById('h2Ver'); if(e2) e2.textContent = vShow;   /* MCS0711SA201: ہیڈر میں ورژن چھوٹا سا — پہلے والا خانہ چھپا ہوا تھا */
 }
 try{ document.addEventListener('DOMContentLoaded', ()=>{ try{ renderVersionLabel(); }catch(e){} }); setTimeout(()=>{ try{ renderVersionLabel(); }catch(e){} }, 800); }catch(e){}
 
