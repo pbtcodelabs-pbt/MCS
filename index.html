@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO653";
+const APP_VERSION = "MCS2311MO654";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO654":"💬 ایڈمن گفتگو: اوپر 📞 کال اور 🟢 واٹس ایپ کے بٹن (دوسرے ایڈمن کا نمبر)؛ 🤖 Claude بٹن پوری گفتگو اور سب اسکرین شاٹ ایک ساتھ Claude میں بھیجتا ہے",
   "MCS2311MO653":"💬 ایڈمن گفتگو: نیچے کا ڈبہ ختم — اسی اسکرین پر ٹچ کر کے لکھائی؛ 🎨 سجاوٹ (کشیدہ / نستعلیق / English، سائز، موٹائی، لکھائی اور پس منظر کا رنگ)؛ 📎 تصویر (کھولیں، ڈیلیٹ)؛ 🧹 ایک ٹچ صاف؛ واٹس ایپ / Claude پر بھیجیں",
   "MCS2311MO652":"🕒 گھڑی کے رنگ والے پینل میں سائز / موٹائی کے ➖ ➕ بٹن اور گھڑی کو اوپر، نیچے، دائیں، بائیں سرکانے کے بٹن (فون میں محفوظ)",
   "MCS2311MO651":"🕒 ہوم کی گھڑی: اوپر دن اور نیچے تاریخ ختم — صرف بڑا موٹا وقت اور چلتے سیکنڈ؛ ایڈمن کے گھڑی پینل میں سائز اور موٹائی کے سلائیڈر بھی (فون میں محفوظ)",
@@ -29344,6 +29345,7 @@ body.adm648-unread #adm648 .mini .dt{display:block}
 /* MCS2311MO653 (مالک کا حکم): ایڈمن گفتگو — نیچے کا لکھائی والا ڈبہ ختم، اسی اسکرین پر لکھائی؛ 🧹 ایک ٹچ صاف؛ 🎨 سجاوٹ (فونٹ، سائز، موٹائی، لکھائی / پس منظر کا رنگ — پیغام اسی انداز میں دوسرے ایڈمن کو)؛ 📎 تصویر (کھولیں، ڈیلیٹ، واٹس ایپ / Claude) */
 @font-face{font-family:'MCSNoori653';src:url('./JameelNooriNastaleeqRegular.ttf') format('truetype');font-display:swap}
 #adm648 .in,#adm648 .tb{display:none !important}
+#adm648 .hd .cl654{background:#fff;color:#0f766e;font-size:13px;padding:6px 9px}#adm648 .hd b{white-space:nowrap}#adm648 .hd .cl654.wa{background:#dcfce7}
 #adm648 .t653{display:flex;flex-wrap:wrap;gap:5px;padding:6px 8px;background:#ecfdf5;border-bottom:1px solid #a7f3d0;direction:rtl}
 #adm648 .t653 button{border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:10px;font:800 13px/1 Arial,sans-serif;padding:7px 9px;white-space:nowrap}
 #adm648 .t653 button.on{background:#0f766e;color:#fff}
@@ -29392,6 +29394,7 @@ body.adm648-unread #adm648 .mini .dt{display:block}
   var BGC = ['#f1f5f9', '#ffffff', '#fef9c3', '#dcfce7', '#dbeafe', '#fce7f3', '#ede9fe', '#0f766e', '#1e293b', '#000000'];
   function who(){ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'a1'; }catch(e){} try{ if(typeof codevOn === 'function' && codevOn()) return 'a2'; }catch(e){} return ''; }
   function nmOf(f){ return f === 'a1' ? 'ایڈمن 1' : 'ایڈمن 2'; }
+  function other(){ return ME === 'a2' ? '3206793793' : '3138469706'; }
   function el(t, c, x){ var e = document.createElement(t); if(c) e.className = c; if(x != null) e.textContent = x; return e; }
   function hm(t){ var d = new Date(t), now = new Date(), s = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); return d.toDateString() === now.toDateString() ? s : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + s; }
   function hex(c, d){ return /^#[0-9a-f]{6}$/i.test(c || '') ? c : d; }
@@ -29406,13 +29409,16 @@ body.adm648-unread #adm648 .mini .dt{display:block}
     if(!b){
       b = el('div'); b.id = 'adm648'; b.setAttribute('data-noen', '1');
       b.innerHTML = '<div class="mini"><button type="button" id="adm648c">💬 ایڈمن گفتگو<i class="dt"></i></button></div>'
-        + '<div class="bx"><div class="hd"><b>💬 ایڈمن 1 ↔ ایڈمن 2 <small style="font-weight:700;opacity:.85">(نجی)</small></b><button type="button" id="adm648k">🪪 بزنس کارڈ</button></div>'
+        + '<div class="bx"><div class="hd"><b>💬 ' + nmOf(ME === 'a2' ? 'a1' : 'a2') + '</b><button type="button" class="cl654" id="adm654call" title="کال">📞 کال</button><button type="button" class="cl654 wa" id="adm654wa" title="واٹس ایپ">🟢 واٹس ایپ</button><button type="button" id="adm648k">🪪 کارڈ</button></div>'
         + '<div class="t653"><button type="button" data-t="sty">🎨 سجاوٹ</button><button type="button" data-t="img">📎 تصویر</button><button type="button" data-t="clr">🧹 صاف</button><button type="button" data-t="wa">🟢 واٹس ایپ</button><button type="button" data-t="cl">🤖 Claude</button><button type="button" class="d" data-t="del">🗑️ ساری</button></div>'
         + '<div class="bd" id="adm648bd"><div class="ls" id="adm648l"></div><div class="cp" id="adm648cp"><div class="rp" id="adm648r"><span id="adm648rt"></span><button type="button" id="adm648rc">✕</button></div><div class="ed" id="adm648e"><span>✏️ پیغام ایڈٹ ہو رہا ہے</span><button type="button" id="adm648ec">✕ منسوخ</button></div>'
         + '<div class="pi" id="adm653pi"><img alt=""><b title="ہٹائیں">✕</b></div><textarea id="adm648t" rows="1" dir="auto" enterkeyhint="enter" placeholder="✍️ یہاں ٹچ کر کے لکھیں… Type here"></textarea><button type="button" class="sd" id="adm648s" title="بھیجیں">➤</button></div></div>'
         + '<div class="p653" id="adm653p"></div><input type="file" id="adm653f" accept="image/*" style="display:none"></div>';
       mp.parentNode.insertBefore(b, mp);
       b.querySelector('#adm648k').onclick = function(){ document.body.classList.add('adm648-card'); };
+      /* MCS2311MO654: دوسرے ایڈمن کو سیدھی کال / واٹس ایپ — ایڈمن 1 کے پاس ایڈمن 2 کا نمبر، ایڈمن 2 کے پاس ایڈمن 1 کا */
+      b.querySelector('#adm654call').onclick = function(){ try{ location.href = 'tel:+92' + other(); }catch(e){} };
+      b.querySelector('#adm654wa').onclick = function(){ try{ if(typeof waOpen === 'function') waOpen('92' + other(), ''); else window.open('https://wa.me/92' + other(), '_blank'); }catch(e){} };
       b.querySelector('#adm648c').onclick = function(){ document.body.classList.remove('adm648-card'); seenNow(); draw(true); };
       b.querySelector('#adm648s').onclick = send;
       b.querySelector('#adm648ec').onclick = function(){ editId = ''; var t0 = document.getElementById('adm648t'); if(t0){ t0.value = ''; grow(); } editUi(); };
@@ -29555,6 +29561,17 @@ body.adm648-unread #adm648 .mini .dt{display:block}
     if(!confirm('ساری گفتگو (' + MSGS.length + ' پیغام) دونوں ایڈمن کے لیے ہمیشہ کے لیے ڈیلیٹ کریں؟')) return;
     Promise.all(MSGS.map(function(m){ return delOne(m.id); })).then(function(){ toast('🗑️ ساری گفتگو ڈیلیٹ ہو گئی'); }).catch(onErr);
   }
+  /* MCS2311MO654: پوری گفتگو + سب اسکرین شاٹ ایک ساتھ Claude میں (فون کی شیئر فہرست → Claude)؛ تحریر ساتھ کاپی بھی */
+  function allToClaude(){
+    var vis = MSGS.filter(function(m){ return m.t > clrT; }), files = [], n = 0;
+    var lines = vis.map(function(m){ var x = nmOf(m.from) + ' (' + hm(m.t) + '): ' + (m.text || '');
+      if(m.img){ n++; try{ var f = fileOf(m.img); files.push(new File([f], 'screenshot-' + n + '.jpg', { type: 'image/jpeg' })); }catch(e){} x += ' [📷 اسکرین شاٹ ' + n + ']'; } return x; });
+    var txt = 'My City Shines (MCS) ایپ — ایڈمن 1 اور ایڈمن 2 کی گفتگو' + (n ? ' (' + n + ' اسکرین شاٹ ساتھ ہیں)' : '') + ':\n\n' + lines.join('\n');
+    var shared = false;
+    try{ var data = files.length ? { text: txt, files: files } : { text: txt }; if(navigator.share && (!files.length || (navigator.canShare && navigator.canShare(data)))){ navigator.share(data).catch(function(){}); shared = true; } }catch(e){}
+    clip(txt).then(function(){ toast(shared ? '🤖 فہرست میں Claude چنیں — تحریر' + (n ? ' اور ' + n + ' اسکرین شاٹ' : '') + ' ساتھ جائیں گے (تحریر کاپی بھی ہو گئی)' : '📋 تحریر کاپی ہو گئی — Claude کھل رہا ہے'); });
+    if(!shared){ files.length && vis.forEach(function(m){ if(m.img) save(m.img); }); try{ window.open('https://claude.ai/new?q=' + encodeURIComponent(txt.slice(0, 1800)), '_blank'); }catch(e){} }
+  }
   function allText(){ return MSGS.filter(function(m){ return m.t > clrT; }).map(function(m){ return nmOf(m.from) + ' (' + hm(m.t) + '): ' + (m.text || '') + (m.img ? ' [📷 تصویر]' : ''); }).join('\n'); }
   function tool(k){
     if(k === 'sty') return panel();
@@ -29562,7 +29579,7 @@ body.adm648-unread #adm648 .mini .dt{display:block}
     if(k === 'clr'){ clrT = Date.now(); try{ localStorage.setItem(clrKey(), String(clrT)); }catch(e){} var t = document.getElementById('adm648t'); if(t) t.value = ''; pendImg = ''; editId = ''; replyTo = null; editUi(); replyUi(); imgUi(); grow(); draw(true); toast('🧹 اسکرین صاف — پیغام ڈیلیٹ نہیں ہوئے'); return; }
     if(k === 'del') return delAll();
     var txt = allText(); if(!txt){ toast('اسکرین پر کوئی پیغام نہیں'); return; }
-    if(k === 'wa') waText(txt); else if(k === 'cl') toClaude(txt);
+    if(k === 'wa') waText(txt); else if(k === 'cl') allToClaude();
   }
   /* 🎨 سجاوٹ — گفتگو کے نیچے کھلتا ہے تاکہ اوپر لکھائی اور پس منظر سامنے بدلتے نظر آئیں */
   function panel(){
