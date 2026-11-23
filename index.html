@@ -4820,10 +4820,13 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO640";
+const APP_VERSION = "MCS2311MO643";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO643":"🪪 Agent card: CNIC number, expiry and photos open only after your PIN, show only while you press and hold, carry a watermark and close by themselves",
+  "MCS2311MO642":"📅 My Account: full date of birth (day-month-year) now shows and can be added or edited — not just the year; only the first business is shown for now",
+  "MCS2311MO641":"🧾 My Account redesigned (Help Desk #357): four expandable cards — Account Information, Business Card Information, Subscription Information (Subscribe Now / Active / Expired) and Agent Information, plus a Registered As line on the profile card",
   "MCS2311MO640":"💊 Invitation counts in one capsule — Total · Sent (blue, middle) · Remaining — on the list and on the Home button",
   "MCS2311MO639":"🔢 Invitation list header: one clear line in bold Arial — Total · Message sent · Remaining",
   "MCS2311MO638":"✅ Invitation: a message is counted (and moves to the grey list) only after you return and tap «Yes, sent» — not when WhatsApp/SMS just opens; «↩️ Not sent» puts a wrongly counted person back",
@@ -19190,6 +19193,24 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     return { iso: yy + '-' + String(mm).padStart(2, '0') + '-' + String(dd).padStart(2, '0'), yob: String(yy) };
   }
   const lgLbl = t => `<div class="lgLbl">${t}</div>`;
+  /* MCS2311MO642 (ہیلپ ڈیسک #357، مالک کا حکم): My Account میں پوری تاریخِ پیدائش (صرف سال نہیں) — سائن اپ والا ہی خانہ */
+  function uaAccBack(){ try{ if(typeof window.mxAccOpen === 'function'){ window.mxAccOpen(typeof ptRole === 'function' ? ptRole() : ''); return; } }catch(e){} uaAccount(); }
+  window.uaDobForm = function(){
+    lgCss(); const a = uaMe(); if(!a) return uaLogin(); const u = a.user || {}, cy = new Date().getFullYear();
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(u.dob || '')), v = m ? m[3] + ' / ' + m[2] + ' / ' + m[1] : '';
+    show(`${lgHead()}<div class="uaCard"><div class="uaHd"><i>${IC.cal}</i><h2 style="font-size:22px">Date of Birth</h2></div><div class="uaSub">تاریخِ پیدائش</div>
+      ${lgLbl('Date of Birth')}<label class="uaF" style="position:relative">${IC.cal}<input id="uaDob" inputmode="numeric" placeholder="DD / MM / YYYY" maxlength="14" autocomplete="bday" value="${v}" oninput="lgDobIn(this)"><button type="button" class="lgCalB" onclick="lgDobPick()" aria-label="Pick date">${IC.cal}</button><input id="uaDobP" type="date" min="1920-01-01" max="${cy - 8}-12-31" onchange="lgDobSet(this)" tabindex="-1" aria-hidden="true" style="position:absolute;right:10px;bottom:0;width:1px;height:1px;opacity:0;pointer-events:none"></label>
+      <div class="uaErr" id="uaErr"></div>
+      <button class="uaBtn bB" onclick="uaDobSave()">✅ Save</button><button class="uaBtn bO" onclick="uaAccBackBtn()">← Back</button></div>`);
+  };
+  window.uaAccBackBtn = uaAccBack;
+  window.uaDobSave = async function(){
+    const a = uaMe(); if(!a) return uaLogin(); const d = lgDobParse($('uaDob')); if(!d) return lgErr('dob');
+    busy(1); const r = await api({ op:'setdob', tok: a.tok, dob: d.iso, yob: d.yob }); busy(0);
+    if(!r.ok){ if(r.reason === 'session') return uaDrop(); return lgErr(r.reason === 'yobmismatch' ? 'The year does not match the birth year saved earlier on this account — سال پہلے محفوظ کیے گئے سال سے مختلف ہے' : (r.reason || 'net')); }
+    try{ const k = JSON.parse(ls.get('mcsAuth') || 'null'); if(k){ k.user = Object.assign({}, k.user, r.user || { dob: d.iso, hasYob: true }); ls.set('mcsAuth', JSON.stringify(k)); } }catch(e){}
+    try{ showToast('✅ Date of birth saved'); }catch(e){} uaAccBack();
+  };
   window.uaSignup = function(){
     lgCss(); const cy = new Date().getFullYear();
     show(`${lgHead()}<div class="uaCard">
@@ -22616,6 +22637,50 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
   function row(ic, lb, hdl, fn, cls, sub){ return '<button type="button" class="mx-li" onclick="mxGo(\'' + hdl + '\',\'' + fn + '\')"><i class="' + cls + '">' + ic + '</i><span>' + lb + (sub ? '<small>' + sub + '</small>' : '') + '</span></button>'; }
   function recOf(x){ var r = x.p.kind === 'doctor' ? fhDoc(x.rec) : fhSvc(x.rec); return r; }
 
+  /* MCS2311MO643 (ہیلپ ڈیسک #357، مالک کا حکم): شناختی کارڈ کی تصویریں / تاریخ — پن کوڈ، دبا کر رکھنے پر نظر آئیں، واٹر مارک، خود بند۔
+     ⚠️ ویب ایپ میں اسکرین شاٹ مکمل بند کرنا ممکن نہیں (یہ صرف اینڈرائیڈ کے اپنے ایپ کوڈ میں ہوتا ہے) — یہ سب سے قریبی حفاظت ہے */
+  window.mxCnicOpen = function(){
+    try{
+      var me = (typeof agMe === 'function' && agMe()) || null; if(!me || !me.phone || !me.pin){ showToast('⚠️ یہ سہولت صرف رجسٹرڈ ایجنٹ کے لیے ہے'); return; }
+      var o = document.createElement('div'); o.className = 'mi-cv'; o.id = 'miCnicAsk';
+      o.innerHTML = '<div class="mi-cb"><b>🔒 CNIC Documents</b><small>Enter your Agent PIN to view</small><input id="miCnicPin" type="password" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="PIN"><div id="miCnicErr" class="mi-ce"></div><div class="mi-act"><button type="button" class="mi-ab-btn" id="miCnicNo">Cancel</button><button type="button" class="mi-ab-btn g" id="miCnicGo">View</button></div></div>';
+      document.body.appendChild(o);
+      document.getElementById('miCnicNo').onclick = function(){ o.remove(); };
+      document.getElementById('miCnicGo').onclick = async function(){
+        var pin = String(document.getElementById('miCnicPin').value || '').replace(/[۰-۹]/g, function(c){ return '۰۱۲۳۴۵۶۷۸۹'.indexOf(c); }).replace(/\D/g, ''), er = document.getElementById('miCnicErr');
+        if(!pin){ er.textContent = 'PIN لکھیں'; return; } if(String(me.pin) !== pin){ er.textContent = 'PIN غلط ہے'; return; }
+        er.textContent = '⏳ …';
+        try{
+          var r = await (await fetch(AG_API + '/agmydocs', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ phone: me.phone, pin: pin, dev: agDev() }) })).json();
+          if(!r || !r.ok){ er.textContent = r && r.reason === 'nodocs' ? 'ابھی کوئی دستاویز محفوظ نہیں' : 'PIN یا فون درست نہیں'; return; }
+          o.remove(); mxCnicShow(r, me);
+        }catch(e){ er.textContent = '⚠️ انٹرنیٹ چیک کریں'; }
+      };
+      setTimeout(function(){ try{ document.getElementById('miCnicPin').focus(); }catch(e){} }, 120);
+    }catch(e){}
+  };
+  window.mxCnicShow = function(r, me){
+    var o = document.createElement('div'); o.className = 'mi-cv'; o.id = 'miCnicView';
+    var stamp = String((me && (me.code || me.phone)) || '') + ' · ' + new Date().toLocaleString('en-GB'), svg = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="220" height="110"><text x="10" y="60" transform="rotate(-25 110 55)" font-family="Arial" font-size="15" font-weight="700" fill="rgba(220,38,38,.55)">' + stamp.replace(/[<>&"]/g, '') + '</text></svg>');
+    var dm = function(k, v){ return '<div class="mi-kv"><b>' + k + '</b><span data-noen="1">' + (v ? esc(String(v)) : '—') + '</span></div>'; };
+    var pic = function(k, t){ return r[k] ? '<div class="mi-hold"><div class="mi-ht">' + t + '</div><div class="mi-hw" data-k="' + k + '"><img src="' + escapeAttr(r[k]) + '" alt="" draggable="false"><div class="mi-wm" style="background-image:url(&quot;data:image/svg+xml,' + svg + '&quot;)"></div><div class="mi-cover">👆 Press &amp; hold to view<br><small>دبا کر رکھیں</small></div></div></div>' : ''; };
+    o.innerHTML = '<div class="mi-cb wide"><div class="mi-cx"><b>🪪 CNIC Documents</b><button type="button" id="miCnicX" aria-label="Close">✖</button></div>'
+      + dm('CNIC Number', r.cnic) + dm('CNIC Expiry Date', r.cnicExp) + dm('Father Name', r.father)
+      + pic('front', 'CNIC Front') + pic('back', 'CNIC Back') + pic('selfie', 'Selfie')
+      + '<div class="mi-note">Private — closes by itself in 45 seconds. Do not share or photograph.<br>نجی — ۴۵ سیکنڈ میں خود بند ہو جاتا ہے۔</div></div>';
+    document.body.appendChild(o);
+    var close = function(){ try{ clearTimeout(tm); document.removeEventListener('visibilitychange', vis); window.removeEventListener('blur', close); window.removeEventListener('pagehide', close); o.remove(); }catch(e){} };
+    var vis = function(){ if(document.hidden) close(); }, tm = setTimeout(close, 45000);
+    document.addEventListener('visibilitychange', vis); window.addEventListener('blur', close); window.addEventListener('pagehide', close);
+    document.getElementById('miCnicX').onclick = close;
+    o.oncontextmenu = function(e){ e.preventDefault(); return false; };
+    o.querySelectorAll('.mi-hw').forEach(function(w){
+      var on = function(e){ e.preventDefault(); w.classList.add('on'); }, off = function(){ w.classList.remove('on'); };
+      w.addEventListener('pointerdown', on); w.addEventListener('pointerup', off); w.addEventListener('pointerleave', off); w.addEventListener('pointercancel', off); w.addEventListener('touchend', off); w.addEventListener('touchcancel', off);
+    });
+  };
+  /* MCS2311MO641 (#357): تصویر پوری سائز میں دیکھنا */
+  window.mxPhotoView = function(el){ try{ var sr = el && el.src; if(!sr) return; var o = document.createElement('div'); o.className = 'mi-pv'; o.onclick = function(){ o.remove(); }; o.innerHTML = '<img src="' + sr + '" alt=""><button type="button" aria-label="Close">✖</button>'; document.body.appendChild(o); }catch(e){} };
   /* ---------- 👤 My Account (یوزر / کاروبار / پروفیشن) ---------- */
   var sf = function(f, d){ try{ var v = f(); return v == null ? d : v; }catch(e){ return d; } };
   window.mxAccOpen = function(rl, lite){
@@ -22652,7 +22717,88 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
       + '<div class="mi-row"><i>👤</i><b>Account ID</b><u>:</u><span data-noen="1">' + esc(acid || '—') + '</span></div>'
       + '<div class="mi-row"><i>🧑</i><b>Full Name</b><u>:</u><span class="w" data-noen="1">' + esc(nm) + '</span></div>'
       + (agId ? '<div class="mi-row"><i>🪪</i><b>Agent ID</b><u>:</u><span data-noen="1">' + esc(agId) + '</span></div>' : '')
+      + '<div class=\"mi-row\"><i>🛡️</i><b>Registered As</b><u>:</u><span data-noen=\"1\">' + esc(rT.replace(/^[^A-Za-z]+/, '')) + '</span></div>'   /* MCS2311MO641 (#357) */
       + '</div><button type="button" class="mi-ed" onclick="ptSelfieAsk()" aria-label="تصویر بدلیں">✏️</button></div>';
+    /* ===== MCS2311MO641 (ہیلپ ڈیسک #357، محمد عمران کی تجویز): My Account — چار کھلنے / سمٹنے والے کارڈ: Account · Business Card · Subscription · Agent ===== */
+    var cardsHtml = '';
+    try{
+      var acu = function(v){ return v == null || v === '' ? '—' : esc(String(v)); };
+      var kv = function(l, v){ return '<div class="mi-kv"><b>' + l + '</b><span data-noen="1">' + v + '</span></div>'; };
+      var bi = function(en, ur){ return esc(en || '') + (ur ? ' <span class="u">· ' + esc(ur) + '</span>' : ''); };
+      var acC = function(key, ic, ttl, chip, chipCls, prev, body, open){
+        return '<div class="mi-ac' + (open ? ' open' : '') + '" id="miac-' + key + '"><button type="button" class="mi-ah" onclick="this.parentNode.classList.toggle(\'open\')"><i>' + ic + '</i><span class="t"><b>' + ttl + '</b><small data-noen="1">' + prev + '</small></span>'
+          + (chip ? '<em class="mi-st ' + chipCls + '">' + chip + '</em>' : '') + '<s>▾</s></button><div class="mi-ab">' + body + '</div></div>'; };
+      var arr = function(v){ return Array.isArray(v) ? v.filter(Boolean).join(', ') : String(v || ''); };
+      var btn = function(cls, ic, txt, fn, a){ return '<button type="button" class="mi-ab-btn ' + cls + '" onclick="mxGo(\'' + ID + '\',\'' + fn + '\'' + (a != null ? ',' + a : '') + ')"><i>' + ic + '</i>' + txt + '</button>'; };
+      var rTxt = rT.replace(/^[^A-Za-z]+/, '');
+      /* 1) Account Information */
+      var aBody = kv('Account ID', acu(acid)) + kv('Account DP', sv ? '<img class="mi-bp" src="' + escapeAttr(sv) + '" alt="" onclick="mxPhotoView(this)">' : '—')
+        + kv('Full Name', acu(nm)) + kv('Contact Number', acu(mob)) + kv('Email', acu(u.email || u.gmail || ''))
+        + kv('Date of Birth', (function(){ var dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(u.dob || '')); return dm ? esc(dm[3] + '-' + dm[2] + '-' + dm[1]) : (u.hasYob ? 'Year only <small>(add full date)</small>' : '—'); })()) + kv('District', acu(u.district)) + kv('Registered As', acu(rTxt))
+        + '<div class="mi-act">' + (ua ? btn('', '✏️', 'Edit', 'uaAccount') + btn('', '📅', (u.dob ? 'Edit' : 'Add') + ' Date of Birth', 'uaDobForm') : btn('', '🔐', 'Log In / Sign Up', 'uaLogin')) + '</div>';
+      cardsHtml += acC('acc', '👤', 'Account Information', '', '', esc(nm) + ' · ' + esc(acid || ''), aBody, false);
+      /* 2) Business Card Information */
+      var bBody = '';
+      var LB = L.slice(0, 1);   /* MCS2311MO642 (مالک کا حکم): ایک سے زیادہ کاروبار فی الحال بند — صرف پہلا */
+      if(LB.length){
+        LB.forEach(function(x, i){
+          var r = sf(function(){ return recOf(x); }, x.rec) || x.rec, m = r.more || {}, pa = sf(function(){ return pfAct[x.p.rk]; }, null);
+          var pt = (typeof CLS_PTYPES !== 'undefined' && CLS_PTYPES.find(function(t){ return t[0] === m.ptype; })) || null;
+          var ct = (typeof CLS_CATS !== 'undefined' && CLS_CATS[(m.ptype || '') + '|' + (m.mcat || '')]) || null;
+          var subs = Array.isArray(m.subs) ? m.subs : [], subUr = subs.map(function(v){ return sf(function(){ return clsTitleUr(v); }, '') || ''; }).filter(Boolean).join('، ');
+          var prods = arr(m.prods) || arr(m.services);
+          var ph = pa ? '<img class="mi-bp" data-mxph="' + escapeAttr(x.p.rk + '_0') + '" data-ts="' + escapeAttr(String(pa.ts || '')) + '" alt="" style="display:none" onclick="mxPhotoView(this)"><span>—</span>' : '—';
+          bBody += '<div class="mi-bz">' + ''
+            + kv('Profile Type', pt ? bi(pt[2], String(pt[1]).replace(/^[^\u0600-\u06FF]+/, '')) : '—')
+            + kv('Profile Category', ct ? bi(ct.en, ct.ur) : acu(m.mcat || r.category))
+            + kv('Profile SubType', subs.length ? esc(subs.join(', ')) + (subUr ? ' <span class="u">· ' + esc(subUr) + '</span>' : '') : '—')
+            + kv('Products &amp; Services', acu(prods)) + kv('Associated Organization / Brand', acu(m.org || 'Independent'))
+            + kv('Business Name (English)', acu(r.nameEn)) + kv('Business Name (Urdu)', '<span class="u">' + acu(r.nameUr || r.name) + '</span>')
+            + kv('Locality / Area', acu(r.area || m.area || r.city)) + kv('Full Address', acu(m.address || r.address)) + kv('Business / Shop Photo', ph)
+            + '<div class="mi-act">' + btn('', '✏️', 'Edit', 'mpoEdit', i) + '</div></div>';
+        });
+      } else { bBody = '<div class="mi-emp">No business registered yet.</div><div class="mi-act">' + btn('', '➕', 'Register Your Business', 'd2AddOpen') + '</div>'; }
+      var b0 = L[0] ? sf(function(){ var r0 = recOf(L[0]); return r0.nameEn || r0.name || r0.nameUr || ''; }, '') : '';
+      cardsHtml += acC('biz', '🏪', 'Business Card Information', '', 'gr', b0 ? esc(b0) : 'No business yet', bBody, false);
+      /* 3) Subscription Information */
+      var sBody = '', sAct = 0, sPend = 0, sExp = 0;
+      if(LB.length){
+        LB.forEach(function(x){
+          var r = sf(function(){ return recOf(x); }, x.rec) || x.rec, lf = sf(function(){ return mpLeftOf(x.p); }, null), nmB = r.nameEn || r.name || r.nameUr || '';
+          var has = lf != null || x.p.pend || sf(function(){ return pfActive(x.rec); }, false);
+          if(has){
+            var st = x.p.pend ? ['Pending', 'wr'] : (lf != null && lf <= 0) ? ['Expired', 'er'] : ['Active', 'ok'];
+            if(st[0] === 'Active') sAct++; else if(st[0] === 'Pending') sPend++; else sExp++;
+            sBody += '<div class="mi-bz">' + kv('Business Name', acu(nmB)) + kv('Subscription ID', acu(subOf(x.rec, x.p.kind, x.p)))
+              + kv('Start Date', x.p.since ? esc(fmtDate(x.p.since)) : '—') + kv('End Date', x.p.until ? esc(fmtDate(x.p.until)) : '—')
+              + kv('Current Status', '<em class="mi-st ' + st[1] + '">● ' + st[0] + '</em>')
+              + (st[0] === 'Expired' ? '<div class="mi-act">' + btn('g', '▶', 'Renew — 1 Year @ Rs. 1,000', 'mcsWizOpen') + '</div>' : '') + '</div>';
+          } else {
+            sBody += '<div class="mi-bz mi-inv"><div class="mi-invh">📣 Subscribe Now</div>' + kv('Business Name', acu(nmB))
+              + '<div class="mi-price"><span>1 Year Subscription</span><em>@ Rs. 1,000</em></div>' + '<div class="mi-act">' + btn('g', '▶', 'Get Subscribe', 'mcsWizOpen') + '</div></div>';
+          }
+        });
+      } else { sBody = '<div class="mi-emp">Register your business first — each business has its own subscription.</div><div class="mi-act">' + btn('', '➕', 'Register Your Business', 'd2AddOpen') + '</div>'; }
+      var sChip = sAct ? ['Active', 'ok'] : sPend ? ['Pending', 'wr'] : sExp ? ['Expired', 'er'] : ['Not subscribed', 'gr'];
+      cardsHtml += acC('sub', '🧾', 'Subscription Information', sChip[0], sChip[1], L.length ? (sAct ? 'Active' : sPend ? 'Waiting for approval' : sExp ? 'Renewal needed' : '1 Year @ Rs. 1,000') : 'Register a business first', sBody, false);
+      /* 4) Agent Information */
+      var aG = '', gChip = ['Not registered', 'gr'], gPrev = 'Become an MCS Agent';
+      if(agId){
+        var gs = String((me && me.status) || ''), gst = /susp|block/i.test(gs) ? ['Suspended', 'er'] : /pend/i.test(gs) ? ['Pending', 'wr'] : /rej/i.test(gs) ? ['Rejected', 'er'] : ['Active', 'ok'];
+        var gd = me && (me.at || me.ts || me.since || me.date || me.created), gdTxt = gd ? (typeof gd === 'number' && gd > 1e9 ? fmtDate(gd < 1e12 ? gd * 1000 : gd) : String(gd).slice(0, 10)) : '—';
+        var cn = String((me && me.cnic) || '').replace(/\D/g, ''), cnTxt = cn.length === 13 ? cn.slice(0, 5) + '-*******-' + cn.slice(12) : '🔒 On file — private';
+        aG = kv('Agent ID', acu(agId)) + kv('Agent Registration Date', esc(gdTxt)) + kv('Current Status', '<em class="mi-st ' + gst[1] + '">● ' + gst[0] + '</em>')
+          + kv('CNIC Number', cnTxt) + kv('CNIC Expiry Date', me && me.cnicExp ? esc(String(me.cnicExp).slice(0, 10)) : '🔒 On file — private')
+          + kv('CNIC Front Photo', '🔒 Protected') + kv('CNIC Back Photo', '🔒 Protected')
+          + '<div class="mi-act">' + '<button type="button" class="mi-ab-btn" onclick="mxCnicOpen()"><i>🔒</i>View CNIC Documents (PIN)</button>' + '</div>';
+        gChip = gst; gPrev = agId;
+      } else {
+        aG = '<div class="mi-inv"><div class="mi-invh">🤝 Become an MCS Agent</div><div class="mi-emp">Register businesses, share your referral code and earn with MCS.</div></div><div class="mi-act">' + btn('g', '🤝', 'Apply for MCS Agent', 'agEarnOpen') + '</div>'
+          + '<div class="mi-note">Agent ID is given only after admin approval and verification. Your CNIC and documents stay private.</div>';
+      }
+      cardsHtml += acC('agt', '🤝', 'Agent Information', gChip[0], gChip[1], esc(gPrev), aG, false);
+    }catch(e){ cardsHtml = ''; }
+    h += cardsHtml;
     h += tbl('p', '💼', 'Personal Registered Business List', own, 'No business yet — Register your business');
     h += tbl('r', '👥', 'Referral Registered Business List', myRefs, agId ? 'No referral business yet' : 'Become an MCS Agent to refer businesses');
     h += '<div class="mi-btns"><button type="button" class="mi-b1" onclick="mxGo(\'' + ID + '\',\'d2AddOpen\')"><i>➕</i>Invite &amp; Register New Business</button>'
@@ -22691,6 +22837,7 @@ html.zoom-up body .doc-card,html body.zoom-up .doc-card,body.zoom-up .doc-card{h
     h += (ua || (typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || sf(function(){ return codevOn(); }, false) || (me && me.pin)) ? '' : '<button type="button" class="mx-out in" onclick="mxGo(\'' + ID + '\',\'uaLogin\')">🔐 Log In</button>';
     h += '<div class="mx-ver">' + esc(typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') + '</div></div>';
     shell(ID, h);
+    try{ var pvL = document.querySelectorAll('#' + ID + ' img[data-mxph]'); for(var pi = 0; pi < pvL.length; pi++){ (function(im){ Promise.resolve(pfImg(im.getAttribute('data-mxph'), im.getAttribute('data-ts'))).then(function(src){ if(src){ im.src = src; im.style.display = ''; var n = im.nextElementSibling; if(n) n.style.display = 'none'; } }).catch(function(){}); })(pvL[pi]); } }catch(e){}   /* MCS2311MO641: دکان کی تصویر */
   };
   /* MCS1911TH551: «View My Referrals» — ایڈمن کو اپنا ریفرل (ADMIN1/ADMIN2)، ایجنٹ کو اس کا کوڈ */
   window.mxRefsOpen = function(){ var r = sf(ptRole, ''), me = sf(agMe, {}) || {}; var c = r === 'dev' ? 'AG001' : r === 'codev' ? 'AG002' : (me.code || '');
@@ -28994,6 +29141,62 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
 .mx .mi-b1{background:linear-gradient(180deg,#2563eb,#1e40af);color:#fff;border:none;box-shadow:0 4px 12px rgba(37,99,235,.35)}
 .mx .mi-b2{background:#fff;color:#0b2f6b;border:2px solid #1d4ed8}
 @media (max-width:370px){ .mx .mi-id{gap:8px;padding:10px} .mx .mi-l{padding-right:8px} .mx .mi-row i{flex-basis:22px;height:22px;font-size:12px} .mx .mi-ph{width:72px;height:78px} .mx .mi-row b{font-size:12.5px} .mx .mi-row span{font-size:13px;padding:2px 7px} .mx .mi-bh b{font-size:13px} .mx .mi-t{font-size:12px} }
+</style>
+<style id="mcsAcc643">
+/* MCS2311MO643 (#357): شناختی کارڈ کی محفوظ اسکرین */
+.mi-cv{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.92);display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font-family:'Segoe UI',Selawik,Arial,sans-serif;direction:ltr}
+.mi-cb{background:#fff;border-radius:18px;padding:16px;width:100%;max-width:360px;display:flex;flex-direction:column;gap:8px;text-align:center;margin:auto}
+.mi-cb.wide{max-width:420px;text-align:left;max-height:96vh;overflow:auto}
+.mi-cb b{font-size:17px;color:#0b2f6b}.mi-cb small{color:#64748b;font-weight:600}
+.mi-cb input#miCnicPin{font:800 24px 'Segoe UI',Arial,sans-serif;text-align:center;letter-spacing:6px;border:2px solid #1d4ed8;border-radius:12px;padding:10px}
+.mi-ce{color:#b91c1c;font-weight:700;font-size:13px;min-height:16px}
+.mi-cx{display:flex;align-items:center;justify-content:space-between}
+.mi-cx button{border:none;border-radius:50%;width:36px;height:36px;font-size:16px;background:#e2e8f0;cursor:pointer}
+.mi-hold{margin-top:8px}.mi-ht{font-weight:800;font-size:13px;color:#475569;margin-bottom:4px}
+.mi-hw{position:relative;border-radius:12px;overflow:hidden;background:#000;touch-action:none;-webkit-user-select:none;user-select:none}
+.mi-hw img{display:block;width:100%;height:auto;pointer-events:none}
+.mi-wm{position:absolute;inset:0;background-repeat:repeat;pointer-events:none}
+.mi-cover{position:absolute;inset:0;background:#0f172a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;text-align:center;z-index:2}
+.mi-hw.on .mi-cover{display:none}
+@media print{.mi-cv{display:none !important}}
+</style>
+<style id="mcsAcc641">
+/* MCS2311MO641 (ہیلپ ڈیسک #357): My Account — چار کھلنے / سمٹنے والے کارڈ، موجودہ رنگ اور انداز وہی */
+.mx .mi-ac{background:#fff;border-radius:18px;margin:0 0 12px;box-shadow:0 3px 12px rgba(15,23,42,.10);direction:ltr;overflow:hidden;border:1px solid #e2e8f0}
+.mx .mi-ah{width:100%;display:flex;align-items:center;gap:10px;border:none;background:linear-gradient(90deg,#1d4ed8,#0f766e);color:#fff;padding:10px 12px;text-align:left;cursor:pointer;font-family:'Segoe UI',Selawik,Arial,sans-serif}
+.mx .mi-ah i{font-style:normal;font-size:20px;flex:0 0 auto}
+.mx .mi-ah .t{flex:1;min-width:0;display:flex;flex-direction:column}
+.mx .mi-ah .t b{font-weight:800;font-size:14.5px;line-height:1.25}
+.mx .mi-ah .t small{font-size:12px;font-weight:600;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mx .mi-ah s{text-decoration:none;font-size:16px;transition:transform .2s;flex:0 0 auto}
+.mx .mi-ac.open .mi-ah s{transform:rotate(180deg)}
+.mx .mi-ab{display:none;padding:10px 12px 12px;font-family:'Segoe UI',Selawik,Arial,sans-serif}
+.mx .mi-ac.open .mi-ab{display:block}
+.mx .mi-kv{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #eef2f7}
+.mx .mi-kv:last-of-type{border-bottom:none}
+.mx .mi-kv b{flex:0 0 42%;font-size:12.5px;font-weight:800;color:#475569}
+.mx .mi-kv span{flex:1;min-width:0;text-align:right;font-size:13.5px;font-weight:700;color:#0f172a;overflow-wrap:anywhere}
+.mx .mi-kv span small{font-weight:600;color:#64748b}
+.mx .u{font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif;font-weight:400}
+.mx .mi-st{font-style:normal;display:inline-block;border-radius:999px;padding:2px 10px;font-weight:900;font-size:12px;white-space:nowrap}
+.mx .mi-ah .mi-st{background:#fff}
+.mx .mi-st.ok{background:#dcfce7;color:#166534}.mx .mi-st.wr{background:#fef3c7;color:#92400e}.mx .mi-st.er{background:#fee2e2;color:#991b1b}.mx .mi-st.gr{background:#e2e8f0;color:#334155}
+.mx .mi-bz{border:1px solid #e2e8f0;border-radius:14px;padding:6px 10px 10px;margin:0 0 10px;background:#f8fafc}
+.mx .mi-bzh{font-weight:900;font-size:13px;color:#1d4ed8;padding:4px 0}
+.mx .mi-bp{width:64px;height:64px;object-fit:cover;border-radius:12px;border:2px solid #bfdbfe;cursor:zoom-in;display:inline-block}
+.mx .mi-act{display:flex;gap:8px;margin-top:10px}
+.mx .mi-ab-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:14px;padding:10px 8px;font:800 13.5px/1.2 'Segoe UI',Selawik,Arial,sans-serif;cursor:pointer;background:#fff;color:#0b2f6b;border:2px solid #1d4ed8}
+.mx .mi-ab-btn i{font-style:normal}
+.mx .mi-ab-btn.g{background:linear-gradient(180deg,#16a34a,#15803d);color:#fff;border:none;box-shadow:0 4px 12px rgba(22,163,74,.35);padding:12px 8px;font-size:15px}
+.mx .mi-emp{color:#475569;font-size:13px;font-weight:600;padding:6px 0}
+.mx .mi-note{color:#64748b;font-size:12px;font-weight:600;margin-top:8px;text-align:center}
+.mx .mi-inv{background:#fff7ed;border-radius:14px;padding:10px}
+.mx .mi-invh{font-weight:900;font-size:16px;color:#0b2f6b;margin-bottom:4px}
+.mx .mi-price{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#eff6ff;border-radius:12px;padding:8px 10px;margin-top:8px;font-weight:800;color:#0b2f6b}
+.mx .mi-price em{font-style:normal;background:#ea580c;color:#fff;border-radius:10px;padding:4px 12px;font-weight:900}
+.mi-pv{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:12px}
+.mi-pv img{max-width:100%;max-height:100%;border-radius:10px}
+.mi-pv button{position:absolute;top:12px;right:12px;border:none;border-radius:50%;width:40px;height:40px;font-size:18px;background:#fff;cursor:pointer}
 </style>
 <style id="mcsHome554">
 /* ===== MCS1911TH554 (ہیلپ ڈیسک #303، مالک کی منظوری): ہوم کی سمٹی ہوئی ترتیب — مواد / رنگ / حروف / کام وہی، صرف جگہ اور ترتیب (جگہ کم ہو تو ہوم کا zoom خود چھوٹا کرتا ہے) ===== */
