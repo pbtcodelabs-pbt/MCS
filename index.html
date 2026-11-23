@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU633";
+const APP_VERSION = "MCS2311MO634";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO634":"🕒 Home clock: taller box, day name on top, bold time with small seconds, date + month below (one line each), lighter background",
   "MCS2211SU633":"🟢 Invitation list: in grey (message sent / no WhatsApp) cards only the name & details are grey — Register and call buttons keep their real colour",
   "MCS2211SU632":"📋 Invitation list: filter buttons on top — All / Not messaged / Message sent (newest first) / No WhatsApp, with counts",
   "MCS2211SU631":"🛡️ Invitation messages now say «My City Shines Team» — no personal or shop name of the sender; still 10 random texts, 5 per phone a day",
@@ -25111,6 +25112,13 @@ html #screen-home #hdr2.h229 .xm .x-rad{order:1;flex:0 0 auto;display:flex;flex-
 html #screen-home #hdr2.h229 .x-rad .xr-t{display:block;width:100%;text-align:center;font:900 5.7cqw/1.05 Arial,Helvetica,sans-serif !important;font-variant-numeric:tabular-nums;color:#ffbf00;text-shadow:none !important;filter:none;white-space:nowrap;letter-spacing:0}
 html #screen-home #hdr2.h229 .x-rad .xr-a{display:block;font:800 2.6cqw/1.1 Arial,Helvetica,sans-serif !important;color:#ffbf00;text-shadow:none !important;margin-top:.4cqw}
 /* MCS2211SU628 (مالک کا حکم): رنگ ایمبر، ہندسے سالڈ (کوئی چمک / دھندلاہٹ نہیں)، فونٹ ذرا بڑا */
+/* MCS2311MO634 (مالک کا حکم): ڈبہ اونچا (پوری گھڑی نظر آئے)، اوپر دن کا نام، بیچ میں موٹا وقت (سیکنڈ آدھے)، نیچے «23 Nov» — ہر ایک ایک لائن میں؛ پس منظر ہلکا */
+html #screen-home #hdr2.h229 .xm .x-rad{margin:1cqw 0 0 !important;padding:1.1cqw 0 1.2cqw;width:28cqw;background:#1d5b53;border-color:#ffbf00}
+html #screen-home #hdr2.h229 .x-rad .xr-d,html #screen-home #hdr2.h229 .x-rad .xr-m{display:block;width:100%;text-align:center;white-space:nowrap;overflow:hidden;font:800 2.5cqw/1.25 Arial,Helvetica,sans-serif !important;color:#ffe08a;letter-spacing:.05cqw}
+html #screen-home #hdr2.h229 .x-rad .xr-r{display:flex;align-items:baseline;justify-content:center;gap:.6cqw;white-space:nowrap;margin:.3cqw 0}
+html #screen-home #hdr2.h229 .x-rad .xr-t{display:inline-block;width:auto;font-size:6cqw !important}
+html #screen-home #hdr2.h229 .x-rad .xr-s{display:inline-flex;flex-direction:column;align-items:flex-start;font:900 2.7cqw/1 Arial,Helvetica,sans-serif !important;font-variant-numeric:tabular-nums;color:#ffbf00}
+html #screen-home #hdr2.h229 .x-rad .xr-s .xr-a{margin:.3cqw 0 0;font-size:2.1cqw !important}
 </style>
 <script id="mcsAna474">
 /* MCS2211SU627 (مالک کا حکم، ہیلپ ڈیسک #340): گھڑیال (SVG) کی جگہ ریڈیم رنگ کی چمکتی ڈیجیٹل گھڑی — Arial، سیکنڈ سمیت، درمیانے سائز میں۔
@@ -25120,17 +25128,24 @@ html #screen-home #hdr2.h229 .x-rad .xr-a{display:block;font:800 2.6cqw/1.1 Aria
   function pad(n){ return n < 10 ? '0' + n : '' + n; }
   function tick(){
     var t = document.getElementById('x229rt'); if(!t) return;
-    var d = new Date(), h = d.getHours() % 12 || 12, v = pad(h) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    var d = new Date(), h = d.getHours() % 12 || 12, v = pad(h) + ':' + pad(d.getMinutes());
     if(t.textContent !== v) t.textContent = v;
+    /* MCS2311MO634: سیکنڈ الگ چھوٹے، اوپر دن، نیچے تاریخ + مہینہ */
+    var se = document.getElementById('x229rs'); if(se && se.textContent !== ':' + pad(d.getSeconds())) se.textContent = ':' + pad(d.getSeconds());
+    var DN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var de = document.getElementById('x229rd'), me = document.getElementById('x229rm');
+    if(de && de.textContent !== DN[d.getDay()]) de.textContent = DN[d.getDay()];
+    var mv = d.getDate() + ' ' + MN[d.getMonth()] + ' ' + d.getFullYear(); if(me && me.textContent !== mv) me.textContent = mv;
     var a = document.getElementById('x229ra'), ap = d.getHours() < 12 ? 'AM' : 'PM';
     if(a && a.textContent !== ap) a.textContent = ap;
   }
   function build(){
     var m = document.querySelector('#hdr2.h229 .xm'); if(!m) return false;
     var old = document.getElementById('x229ana'); if(old) old.remove();
+    var o2 = document.getElementById('x229rad'); if(o2 && !document.getElementById('x229rd')) o2.remove();
     if(!document.getElementById('x229rad')){
       var w = document.createElement('div'); w.className = 'x-rad'; w.id = 'x229rad'; w.setAttribute('data-noen', '1'); w.setAttribute('dir', 'ltr');
-      w.innerHTML = '<span class="xr-t" id="x229rt"></span><span class="xr-a" id="x229ra"></span>';
+      w.innerHTML = '<span class="xr-d" id="x229rd"></span><span class="xr-r"><span class="xr-t" id="x229rt"></span><span class="xr-s"><span id="x229rs"></span><span class="xr-a" id="x229ra"></span></span></span><span class="xr-m" id="x229rm"></span>';
       m.insertBefore(w, m.firstChild);
     }
     tick(); return true;
