@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO650";
+const APP_VERSION = "MCS2311MO651";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO651":"🕒 ہوم کی گھڑی: اوپر دن اور نیچے تاریخ ختم — صرف بڑا موٹا وقت اور چلتے سیکنڈ؛ ایڈمن کے گھڑی پینل میں سائز اور موٹائی کے سلائیڈر بھی (فون میں محفوظ)",
   "MCS2311MO650":"↩️ Admin chat: Reply button — your answer is sent with the quoted message above it (tap the quote to jump to the original)",
   "MCS2311MO649":"💬 Admin chat: every message now has always-visible Copy / Edit / Cut / Share (WhatsApp) / Delete buttons; the writing box has Select all / Cut / Copy / Paste / Clear; Delete-all for the whole chat",
   "MCS2311MO648":"💬 Home: private Admin 1 ↔ Admin 2 chat box (only the two admins see it) shown first in place of the business card; small 🪪 button brings the card, 💬 button brings the chat back",
@@ -29204,6 +29205,44 @@ html body #screen-home #hdr2.h229 .x-rad .xr-d,html body #screen-home #hdr2.h229
   }
   /* ایڈمن گھڑی دبائے تو پینل کھلے؛ عام صارف کے لیے کچھ نہیں */
   document.addEventListener('click', function(e){ var t = e.target; if(t && t.closest && t.closest('#x229rad') && isAdm()){ e.preventDefault(); e.stopPropagation(); open(); } }, true);
+})();
+</script>
+<style id="mcsClk651css">
+/* MCS2311MO651 (مالک کا حکم): ہوم کی گھڑی — اوپر دن اور نیچے تاریخ ختم؛ صرف وقت + چلتے سیکنڈ (رنگ ویسے بدلتا ہے)؛ گھڑی بڑی اور موٹی؛ ایڈمن کے پینل میں «سائز» اور «موٹائی» کے سلائیڈر (فون میں محفوظ) */
+html body #screen-home #hdr2.h229 .x-rad .xr-d,html body #screen-home #hdr2.h229 .x-rad .xr-m{display:none !important}
+html body #screen-home #hdr2.h229 .xm{align-items:center !important}
+html body #screen-home #hdr2.h229 .xm .x-rad{width:auto !important;min-width:23cqw;margin:0 !important;padding:0 !important}
+html body #screen-home #hdr2.h229 .x-rad .xr-r{margin:0 !important;gap:.8cqw}
+html body #screen-home #hdr2.h229 .x-rad .xr-t{font:900 calc(6.6cqw * var(--clkSz,1)) /1 Arial,Helvetica,sans-serif !important;font-variant-numeric:tabular-nums;-webkit-text-stroke:calc(var(--clkW,2) * .06cqw) currentColor;paint-order:stroke fill;letter-spacing:.1cqw}
+html body #screen-home #hdr2.h229 .x-rad .xr-s{font:900 calc(3cqw * var(--clkSz,1)) /1 Arial,Helvetica,sans-serif !important;-webkit-text-stroke:calc(var(--clkW,2) * .03cqw) currentColor}
+html body #screen-home #hdr2.h229 .x-rad .xr-s .xr-a{font-size:calc(2.2cqw * var(--clkSz,1)) !important;-webkit-text-stroke:0}
+#clk646 .pv{font-size:calc(34px * var(--clkSz,1));-webkit-text-stroke:calc(var(--clkW,2) * .35px) currentColor}
+#clk646{max-height:calc(100vh - 110px);overflow-y:auto}
+#clk646 .z651{border-top:1px dashed #cbd5e1;margin-top:10px;padding-top:4px}
+#clk646 .z651 input[type=range]{background:linear-gradient(to right,#e2e8f0,#0f766e)}
+</style>
+<script id="mcsClk651js">
+(function(){
+  var K = 'mcsClkSz651', DEF = { z: 100, w: 2 };
+  function get(){ try{ var v = JSON.parse(localStorage.getItem(K) || 'null'); if(v && isFinite(v.z) && isFinite(v.w)) return v; }catch(e){} return { z: DEF.z, w: DEF.w }; }
+  function apply(v){ var r = document.documentElement.style; r.setProperty('--clkSz', String(v.z / 100)); r.setProperty('--clkW', String(v.w)); }
+  function save(v){ try{ localStorage.setItem(K, JSON.stringify(v)); }catch(e){} }
+  apply(get());
+  /* 646 کا پینل کھلے تو اسی میں سائز / موٹائی کے سلائیڈر جوڑیں */
+  function add(){
+    var p = document.getElementById('clk646'); if(!p || p.querySelector('.z651')) return;
+    var v = get(), d = document.createElement('div'); d.className = 'z651';
+    d.innerHTML = '<label>🔠 گھڑی کا سائز (چھوٹا ← بڑا)</label><input type="range" id="clk651z" min="70" max="130" value="' + v.z + '">'
+      + '<label>🅱️ ہندسوں کی موٹائی (پتلا ← موٹا)</label><input type="range" id="clk651w" min="0" max="10" value="' + v.w + '">'
+      + '<button type="button" class="rs" id="clk651r">↩️ پہلا سائز / موٹائی</button>';
+    var rs = p.querySelector('#clk646r'); if(rs && rs.nextSibling) p.insertBefore(d, rs.nextSibling); else p.appendChild(d);
+    var Z = d.querySelector('#clk651z'), W = d.querySelector('#clk651w');
+    function set(){ var c = { z: +Z.value, w: +W.value }; save(c); apply(c); }
+    Z.addEventListener('input', set); W.addEventListener('input', set);
+    d.querySelector('#clk651r').onclick = function(){ Z.value = DEF.z; W.value = DEF.w; set(); };
+    p.querySelector('.hd span').textContent = '🎨 گھڑی — رنگ، سائز، موٹائی';
+  }
+  document.addEventListener('click', function(e){ var t = e.target; if(t && t.closest && t.closest('#x229rad')) setTimeout(add, 0); }, true);
 })();
 </script>
 <style id="mcsAdm648css">
