@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO635";
+const APP_VERSION = "MCS2311MO636";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO636":"🎨 Home clock: a different deep background colour for each day of the week — digits stay solid and sharp",
   "MCS2311MO635":"🕒 Home clock moved up and made slimmer — no longer covers the dates on the right",
   "MCS2311MO634":"🕒 Home clock: taller box, day name on top, bold time with small seconds, date + month below (one line each), lighter background",
   "MCS2211SU633":"🟢 Invitation list: in grey (message sent / no WhatsApp) cards only the name & details are grey — Register and call buttons keep their real colour",
@@ -25126,6 +25127,17 @@ html #screen-home #hdr2.h229 .xm .x-rad{width:23cqw;margin:-1.5cqw 0 0 !importan
 html #screen-home #hdr2.h229 .x-rad .xr-t{font-size:5.2cqw !important}
 html #screen-home #hdr2.h229 .x-rad .xr-d,html #screen-home #hdr2.h229 .x-rad .xr-m{font-size:2.2cqw !important}
 html #screen-home #hdr2.h229 .x-rad .xr-s{font-size:2.4cqw !important}
+/* MCS2311MO636 (مالک کا حکم): ہر دن کا اپنا گہرا رنگ (data-day 0=اتوار … 6=ہفتہ) — رنگ گہرے تاکہ سنہری ہندسے ٹھوس، صاف، بغیر سایہ / دھندلاہٹ */
+html #screen-home #hdr2.h229 .x-rad[data-day]{transition:none}
+html #screen-home #hdr2.h229 .x-rad[data-day="0"]{background:linear-gradient(160deg,#5a3a26,#3b2416)}
+html #screen-home #hdr2.h229 .x-rad[data-day="1"]{background:linear-gradient(160deg,#1f3f6e,#122847)}
+html #screen-home #hdr2.h229 .x-rad[data-day="2"]{background:linear-gradient(160deg,#6b2335,#45131f)}
+html #screen-home #hdr2.h229 .x-rad[data-day="3"]{background:linear-gradient(160deg,#0d5c40,#06392a)}
+html #screen-home #hdr2.h229 .x-rad[data-day="4"]{background:linear-gradient(160deg,#4a3278,#2e1d50)}
+html #screen-home #hdr2.h229 .x-rad[data-day="5"]{background:radial-gradient(circle at 50% 0%,#55551c 0%,#1a4631 55%,#0f3324 100%)}
+html #screen-home #hdr2.h229 .x-rad[data-day="6"]{background:linear-gradient(160deg,#3c4a60,#252f40)}
+html #screen-home #hdr2.h229 .x-rad .xr-t,html #screen-home #hdr2.h229 .x-rad .xr-s,html #screen-home #hdr2.h229 .x-rad .xr-a{color:#ffc107 !important;text-shadow:none !important;filter:none !important;opacity:1 !important;-webkit-font-smoothing:antialiased}
+html #screen-home #hdr2.h229 .x-rad .xr-d,html #screen-home #hdr2.h229 .x-rad .xr-m{color:#ffe7a3 !important;text-shadow:none !important;opacity:1 !important}
 </style>
 <script id="mcsAna474">
 /* MCS2211SU627 (مالک کا حکم، ہیلپ ڈیسک #340): گھڑیال (SVG) کی جگہ ریڈیم رنگ کی چمکتی ڈیجیٹل گھڑی — Arial، سیکنڈ سمیت، درمیانے سائز میں۔
@@ -25142,6 +25154,7 @@ html #screen-home #hdr2.h229 .x-rad .xr-s{font-size:2.4cqw !important}
     var DN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var de = document.getElementById('x229rd'), me = document.getElementById('x229rm');
     if(de && de.textContent !== DN[d.getDay()]) de.textContent = DN[d.getDay()];
+    var rb = document.getElementById('x229rad'); if(rb && rb.getAttribute('data-day') !== '' + d.getDay()) rb.setAttribute('data-day', '' + d.getDay());
     var mv = d.getDate() + ' ' + MN[d.getMonth()] + ' ' + d.getFullYear(); if(me && me.textContent !== mv) me.textContent = mv;
     var a = document.getElementById('x229ra'), ap = d.getHours() < 12 ? 'AM' : 'PM';
     if(a && a.textContent !== ap) a.textContent = ap;
