@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO651";
+const APP_VERSION = "MCS2311MO652";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO652":"🕒 گھڑی کے رنگ والے پینل میں سائز / موٹائی کے ➖ ➕ بٹن اور گھڑی کو اوپر، نیچے، دائیں، بائیں سرکانے کے بٹن (فون میں محفوظ)",
   "MCS2311MO651":"🕒 ہوم کی گھڑی: اوپر دن اور نیچے تاریخ ختم — صرف بڑا موٹا وقت اور چلتے سیکنڈ؛ ایڈمن کے گھڑی پینل میں سائز اور موٹائی کے سلائیڈر بھی (فون میں محفوظ)",
   "MCS2311MO650":"↩️ Admin chat: Reply button — your answer is sent with the quoted message above it (tap the quote to jump to the original)",
   "MCS2311MO649":"💬 Admin chat: every message now has always-visible Copy / Edit / Cut / Share (WhatsApp) / Delete buttons; the writing box has Select all / Cut / Copy / Paste / Clear; Delete-all for the whole chat",
@@ -29226,7 +29227,7 @@ html body #screen-home #hdr2.h229 .x-rad .xr-s .xr-a{font-size:calc(2.2cqw * var
   var K = 'mcsClkSz651', DEF = { z: 100, w: 2 };
   function get(){ try{ var v = JSON.parse(localStorage.getItem(K) || 'null'); if(v && isFinite(v.z) && isFinite(v.w)) return v; }catch(e){} return { z: DEF.z, w: DEF.w }; }
   function apply(v){ var r = document.documentElement.style; r.setProperty('--clkSz', String(v.z / 100)); r.setProperty('--clkW', String(v.w)); }
-  function save(v){ try{ localStorage.setItem(K, JSON.stringify(v)); }catch(e){} }
+  function save(v){ try{ var o = JSON.parse(localStorage.getItem(K) || 'null') || {}; o.z = v.z; o.w = v.w; localStorage.setItem(K, JSON.stringify(o)); }catch(e){} }
   apply(get());
   /* 646 کا پینل کھلے تو اسی میں سائز / موٹائی کے سلائیڈر جوڑیں */
   function add(){
@@ -29243,6 +29244,53 @@ html body #screen-home #hdr2.h229 .x-rad .xr-s .xr-a{font-size:calc(2.2cqw * var
     p.querySelector('.hd span').textContent = '🎨 گھڑی — رنگ، سائز، موٹائی';
   }
   document.addEventListener('click', function(e){ var t = e.target; if(t && t.closest && t.closest('#x229rad')) setTimeout(add, 0); }, true);
+})();
+</script>
+<style id="mcsClk652css">
+/* MCS2311MO652 (مالک کا حکم): اسی رنگ والے پینل میں سائز / موٹائی کے ➖ ➕ بٹن اور گھڑی کو اوپر / نیچے / دائیں / بائیں سرکانے کے بٹن (فون میں محفوظ) */
+html body #screen-home #hdr2.h229 .xm .x-rad{transform:translate(calc(var(--clkX,0) * .6cqw),calc(var(--clkY,0) * .6cqw)) !important}
+#clk646 .z652{display:flex;align-items:center;gap:8px;direction:ltr}
+#clk646 .z652 input[type=range]{flex:1}
+#clk646 .z652 button,#clk646 .mv652 button{flex:0 0 auto;width:40px;height:40px;border-radius:12px;border:2px solid #0f766e;background:#ecfdf5;color:#0f766e;font:900 22px/1 Arial,sans-serif;padding:0;touch-action:manipulation}
+#clk646 .z652 button:active,#clk646 .mv652 button:active{background:#0f766e;color:#fff}
+#clk646 .mv652{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:4px;justify-content:center;direction:ltr;margin-top:4px}
+#clk646 .mv652 button{width:44px;height:44px}
+#clk646 .mv652 .c{font-size:18px}
+#clk646 .mv652 .e{visibility:hidden}
+</style>
+<script id="mcsClk652js">
+(function(){
+  var K = 'mcsClkSz651', DEF = { z: 100, w: 2, x: 0, y: 0 }, LIM = { z: [70, 130], w: [0, 10], x: [-12, 12], y: [-6, 8] };
+  function cl(k, n){ return Math.max(LIM[k][0], Math.min(LIM[k][1], n)); }
+  function get(){ var v = {}; try{ v = JSON.parse(localStorage.getItem(K) || 'null') || {}; }catch(e){} var o = {}; Object.keys(DEF).forEach(function(k){ o[k] = isFinite(v[k]) ? cl(k, +v[k]) : DEF[k]; }); return o; }
+  function apply(v){ var r = document.documentElement.style; r.setProperty('--clkSz', String(v.z / 100)); r.setProperty('--clkW', String(v.w)); r.setProperty('--clkX', String(v.x)); r.setProperty('--clkY', String(v.y)); }
+  function save(v){ try{ localStorage.setItem(K, JSON.stringify(v)); }catch(e){} }
+  apply(get());
+  function setK(k, n){ var v = get(); v[k] = cl(k, n); save(v); apply(v); sync(); }
+  function sync(){ var v = get(), z = document.getElementById('clk651z'), w = document.getElementById('clk651w'); if(z) z.value = v.z; if(w) w.value = v.w; }
+  function up(){
+    var p = document.getElementById('clk646'); if(!p) return;
+    /* پینل ہیڈر کے نیچے سے شروع ہو تاکہ بدلتی گھڑی سامنے نظر آئے */
+    var h = document.getElementById('hdr2'), b = h && h.getBoundingClientRect().bottom;
+    if(b && b > 0 && b < innerHeight * 0.45){ p.style.top = Math.round(b + 6) + 'px'; p.style.bottom = '84px'; p.style.maxHeight = 'none'; p.style.overflowY = 'auto'; }
+    var d = p.querySelector('.z651'); if(!d || d.querySelector('.z652')) return;
+    var Z = d.querySelector('#clk651z'), W = d.querySelector('#clk651w');
+    [[Z, 'z', 5], [W, 'w', 1]].forEach(function(a){ if(!a[0]) return; var row = document.createElement('div'); row.className = 'z652';
+      var mi = document.createElement('button'); mi.type = 'button'; mi.textContent = '−'; var pl = document.createElement('button'); pl.type = 'button'; pl.textContent = '+';
+      a[0].parentNode.insertBefore(row, a[0]); row.appendChild(mi); row.appendChild(a[0]); row.appendChild(pl);
+      mi.onclick = function(){ setK(a[1], get()[a[1]] - a[2]); }; pl.onclick = function(){ setK(a[1], get()[a[1]] + a[2]); };
+      a[0].addEventListener('input', function(){ var v = get(); v[a[1]] = +a[0].value; save(v); apply(v); }); });
+    var lb = document.createElement('label'); lb.textContent = '✥ گھڑی کی جگہ (اوپر / نیچے / دائیں / بائیں)';
+    var g = document.createElement('div'); g.className = 'mv652';
+    g.innerHTML = '<button type="button" class="e"></button><button type="button" data-m="y,-1">▲</button><button type="button" class="e"></button>'
+      + '<button type="button" data-m="x,-1">◀</button><button type="button" class="c" data-m="0">⟲</button><button type="button" data-m="x,1">▶</button>'
+      + '<button type="button" class="e"></button><button type="button" data-m="y,1">▼</button><button type="button" class="e"></button>';
+    g.onclick = function(e){ var t = e.target.closest('[data-m]'); if(!t) return; var m = t.dataset.m;
+      if(m === '0'){ var v = get(); v.x = 0; v.y = 0; save(v); apply(v); return; } var q = m.split(','); setK(q[0], get()[q[0]] + (+q[1])); };
+    var rs = d.querySelector('#clk651r'); d.insertBefore(lb, rs); d.insertBefore(g, rs);
+    if(rs){ rs.textContent = '↩️ پہلا سائز / موٹائی / جگہ'; rs.onclick = function(){ save(DEF); apply(DEF); sync(); }; }
+  }
+  document.addEventListener('click', function(e){ var t = e.target; if(t && t.closest && t.closest('#x229rad')) setTimeout(up, 30); }, true);
 })();
 </script>
 <style id="mcsAdm648css">
