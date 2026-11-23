@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO658";
+const APP_VERSION = "MCS2311MO659";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO659":"💬 ایڈمن گفتگو کی سجاوٹ میں «📐 جگہ» — لکھائی دائیں / درمیان / بائیں؛ پیغام دوسرے ایڈمن کو بھی اسی جگہ",
   "MCS2311MO658":"💬 ایڈمن گفتگو: سجاوٹ کے بٹن سمٹے (کم جگہ) — لکھائی کا ڈبہ بڑا نظر آتا ہے",
   "MCS2311MO657":"💬 ایڈمن گفتگو کی سجاوٹ: سائز، موٹائی اور فونٹ (کشیدہ / نستعلیق / English) اب واقعی بدلتے ہیں — ہوم کا بڑا فونٹ انہیں نہیں دباتا",
   "MCS2311MO656":"✉️ دعوتی پیغام کی پٹی ہوم سے ہٹا دی — اب ایڈمن گفتگو کی بٹنوں والی قطار میں «✉️ دعوت» (صرف ایڈمن 1 / 2)",
@@ -29418,13 +29419,16 @@ body.adm648-on #adm648{margin:6px 12px}
 #adm648 .p653 .f button{padding:0 7px !important;font-size:13px !important;line-height:1.7 !important;border-radius:8px !important}
 #adm648 .p653 .pm{width:26px !important;height:26px !important;font-size:16px !important;border-radius:7px !important;flex:0 0 26px}
 #adm648 .p653 .r input[type=range]{min-width:60px !important;height:20px;margin:0}
-#adm648 .p653 .r:nth-child(4),#adm648 .p653 .r:nth-child(5){overflow-x:auto;scrollbar-width:none;padding:2px 0}
-#adm648 .p653 .r:nth-child(4)::-webkit-scrollbar,#adm648 .p653 .r:nth-child(5)::-webkit-scrollbar{display:none}
+#adm648 .p653 .r:nth-child(5),#adm648 .p653 .r:nth-child(6){overflow-x:auto;scrollbar-width:none;padding:2px 0}
+#adm648 .p653 .r:nth-child(5)::-webkit-scrollbar,#adm648 .p653 .r:nth-child(6)::-webkit-scrollbar{display:none}
 #adm648 .p653 .sw{width:22px !important;height:22px !important;flex:0 0 22px;border-width:1.5px !important}
 #adm648 .p653 .sw.on{outline-width:2px !important}
 #adm648 .p653 input[type=color]{width:26px !important;height:22px !important;flex:0 0 26px}
 #adm648 .p653 .ok{position:absolute;top:3px;left:8px;width:auto !important;margin:0 !important;padding:2px 12px !important;font-size:13px !important;border-radius:8px !important}
-body #adm648 .p653.on{max-height:150px;overflow-y:auto}
+body #adm648 .p653.on{max-height:180px;overflow-y:auto}
+#adm648 .p653 .alb{border:1.5px solid #94a3b8;background:#fff;border-radius:8px;padding:0 8px;font-size:12.5px;line-height:1.8;white-space:nowrap}
+#adm648 .p653 .alb.on{border-color:#0f766e;background:#ccfbf1;color:#0f766e;font-weight:800}
+#adm648 .w.al659{max-width:100% !important;align-self:stretch !important}
 #adm648 .bx:has(.p653.on) .bd{height:clamp(170px,26vh,230px) !important}   /* سجاوٹ کھلی ہو تو لکھائی کی جگہ بڑی — بدلتی لکھائی سامنے */
 </style>
 <script id="mcsAdm648js">
@@ -29441,13 +29445,14 @@ body #adm648 .p653.on{max-height:150px;overflow-y:auto}
   function el(t, c, x){ var e = document.createElement(t); if(c) e.className = c; if(x != null) e.textContent = x; return e; }
   function hm(t){ var d = new Date(t), now = new Date(), s = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); return d.toDateString() === now.toDateString() ? s : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + s; }
   function hex(c, d){ return /^#[0-9a-f]{6}$/i.test(c || '') ? c : d; }
-  function cleanSt(s){ if(!s || typeof s !== 'object') return null; return { f: FONTS[s.f] ? s.f : 'k', z: Math.max(12, Math.min(60, +s.z || 20)), w: Math.max(0, Math.min(10, +s.w || 0)), c: hex(s.c, '#0f172a') }; }
+  function cleanSt(s){ if(!s || typeof s !== 'object') return null; return { f: FONTS[s.f] ? s.f : 'k', z: Math.max(12, Math.min(60, +s.z || 20)), w: Math.max(0, Math.min(10, +s.w || 0)), c: hex(s.c, '#0f172a'), a: /^[rcl]$/.test(s.a || '') ? s.a : 'r' }; }   /* MCS2311MO659: a = دائیں / درمیان / بائیں */
   function getSt(){ var v = {}; try{ v = JSON.parse(localStorage.getItem(SK) || 'null') || {}; }catch(e){} var s = cleanSt(v) || cleanSt(DST); s.bg = hex(v.bg, DST.bg); return s; }
   function putSt(s){ try{ localStorage.setItem(SK, JSON.stringify(s)); }catch(e){} }
   /* MCS2311MO657: ہوم کا «بڑا فونٹ» (html.fs225) اور فونٹ کے عام اصول !important سے لگتے ہیں — سجاوٹ بھی important سے، ورنہ سائز / فونٹ دب جاتے تھے */
   function styleOf(node, s){ if(!s) return; var I = 'important', st = node.style, k = (s.w * s.z / 240).toFixed(2);
     st.setProperty('font-family', FONTS[s.f], I); st.setProperty('font-size', s.z + 'px', I); st.setProperty('color', s.c, I); st.setProperty('line-height', s.f === 'e' ? '1.4' : '1.9', I);
     st.setProperty('font-weight', s.f === 'e' && s.w >= 4 ? '800' : '400', I); st.setProperty('-webkit-text-stroke', s.w ? k + 'px ' + s.c : '0px', I); st.setProperty('paint-order', 'stroke fill', I);
+    st.setProperty('text-align', s.a === 'c' ? 'center' : s.a === 'l' ? 'left' : 'right', I); st.setProperty('unicode-bidi', 'plaintext', I);
     node.setAttribute('data-noen', '1'); node.setAttribute('data-fs', '0'); }
   function build(){
     var mp = document.getElementById('mpBar'); if(!mp || !mp.parentNode) return null;
@@ -29504,7 +29509,7 @@ body #adm648 .p653.on{max-height:150px;overflow-y:auto}
       if(m.from !== ME) d.appendChild(el('span', 'nm', nmOf(m.from)));
       if(m.reply && m.reply.text){ var q = el('span', 'q'); q.setAttribute('data-q', m.reply.id || ''); q.appendChild(el('b', '', nmOf(m.reply.from) + (m.reply.from === ME ? ' (آپ)' : ''))); q.appendChild(document.createTextNode(m.reply.text)); d.appendChild(q); }
       if(m.img){ var im = el('img', 'im'); im.src = m.img; im.alt = '📷'; im.setAttribute('data-i', m.id); d.appendChild(im); }
-      if(m.text){ var tx = el('span', 'tx', m.text); tx.dir = 'auto'; styleOf(tx, m.st); d.appendChild(tx); }
+      if(m.text){ var tx = el('span', 'tx', m.text); tx.dir = 'auto'; styleOf(tx, m.st); d.appendChild(tx); if(m.st && m.st.a && m.st.a !== 'r') w.classList.add('al659'); }
       d.appendChild(el('small', '', hm(m.t) + (m.edited ? ' · ایڈٹ شدہ' : '')));
       w.appendChild(d);
       var ac = el('div', 'ac');
@@ -29540,7 +29545,7 @@ body #adm648 .p653.on{max-height:150px;overflow-y:auto}
     try{ var q = FB.query(FB.collection(FB.db, COL), FB.where('t', '>', Date.now() - DAYS * 864e5)); un = FB.onSnapshot(q, onSnap, onErr) || function(){}; }catch(e){ onErr(e); }
   }
   function stop(){ try{ if(typeof un === 'function') un(); }catch(e){} un = null; MSGS = []; started = false; err = ''; document.body.classList.remove('adm648-unread'); }
-  function curSt(){ var s = getSt(); return { f: s.f, z: s.z, w: s.w, c: s.c }; }
+  function curSt(){ var s = getSt(); return { f: s.f, z: s.z, w: s.w, c: s.c, a: s.a }; }
   function send(){
     var t = document.getElementById('adm648t'), v = t ? t.value.trim() : ''; if((!v && !pendImg) || !ME) return;
     var FB = window.MCSFirebase; if(!FB || !FB.addDoc){ err = '⚠️ انٹرنیٹ / سرور تیار نہیں — تھوڑی دیر بعد'; draw(false); return; }
@@ -29637,6 +29642,7 @@ body #adm648 .p653.on{max-height:150px;overflow-y:auto}
     p.innerHTML = '<div class="r f"><span>🔤 فونٹ</span>' + [['k', 'نستعلیق کشیدہ', FONTS.k], ['n', 'نوری نستعلیق', FONTS.n], ['e', 'English', FONTS.e]].map(function(x){ return '<button type="button" data-f="' + x[0] + '" class="' + (s.f === x[0] ? 'on' : '') + '" style="font-family:' + x[2].replace(/"/g, '') + '">' + x[1] + '</button>'; }).join('') + '</div>'
       + '<div class="r"><span>🔠 سائز</span><button type="button" class="pm" data-pm="z,-2">−</button><input type="range" data-rg="z" min="12" max="56" value="' + s.z + '"><button type="button" class="pm" data-pm="z,2">+</button></div>'
       + '<div class="r"><span>🅱️ موٹائی</span><button type="button" class="pm" data-pm="w,-1">−</button><input type="range" data-rg="w" min="0" max="10" value="' + s.w + '"><button type="button" class="pm" data-pm="w,1">+</button></div>'
+      + '<div class="r al"><span>📐 جگہ</span>' + [['r', '➡️ دائیں'], ['c', '↔️ درمیان'], ['l', '⬅️ بائیں']].map(function(x){ return '<button type="button" class="alb' + (s.a === x[0] ? ' on' : '') + '" data-al="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'
       + '<div class="r"><span>🖍️ لکھائی</span>' + sw(TXC, 'c') + '</div>'
       + '<div class="r"><span>🖼️ پس منظر</span>' + sw(BGC, 'bg') + '</div>'
       + '<button type="button" class="ok" data-ok="1">✔ ٹھیک ہے</button>';
@@ -29646,10 +29652,12 @@ body #adm648 .p653.on{max-height:150px;overflow-y:auto}
       p.querySelectorAll('[data-f]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-f') === v.f); });
       p.querySelectorAll('[data-c]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-c') === v.c); });
       p.querySelectorAll('[data-bg]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-bg') === v.bg); });
+      p.querySelectorAll('[data-al]').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-al') === v.a); });
       var ci = p.querySelector('[data-cin]'), bi = p.querySelector('[data-bgin]'); if(ci) ci.value = v.c; if(bi) bi.value = v.bg; }
     p.onclick = function(e){ var b = e.target.closest('button'); if(!b) return;
       if(b.hasAttribute('data-ok')){ p.classList.remove('on'); if(btn) btn.classList.remove('on'); return; }
       if(b.hasAttribute('data-f')) return upd({ f: b.getAttribute('data-f') });
+      if(b.hasAttribute('data-al')) return upd({ a: b.getAttribute('data-al') });
       if(b.hasAttribute('data-c')) return upd({ c: b.getAttribute('data-c') });
       if(b.hasAttribute('data-bg')) return upd({ bg: b.getAttribute('data-bg') });
       if(b.hasAttribute('data-pm')){ var q = b.getAttribute('data-pm').split(','), o = {}; o[q[0]] = getSt()[q[0]] + (+q[1]); upd(o); } };
