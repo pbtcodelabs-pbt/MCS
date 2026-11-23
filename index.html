@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO639";
+const APP_VERSION = "MCS2311MO640";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO640":"💊 Invitation counts in one capsule — Total · Sent (blue, middle) · Remaining — on the list and on the Home button",
   "MCS2311MO639":"🔢 Invitation list header: one clear line in bold Arial — Total · Message sent · Remaining",
   "MCS2311MO638":"✅ Invitation: a message is counted (and moves to the grey list) only after you return and tap «Yes, sent» — not when WhatsApp/SMS just opens; «↩️ Not sent» puts a wrongly counted person back",
   "MCS2311MO637":"✨ Home clock: golden border removed — soft shadow makes it look raised",
@@ -29868,6 +29869,17 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
 #inv618 .t{flex:1;line-height:1.35}
 #inv618 .t small{display:block;font:700 11.5px Arial,sans-serif;opacity:.9;direction:ltr;text-align:right}
 #inv618 .b{flex:none;background:#fde047;color:#3a2600;border-radius:999px;padding:4px 11px;font:900 13px Arial,sans-serif;direction:ltr;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+/* MCS2311MO640 (مالک کا حکم): ایک ہی کیپسول — کل · بیچ میں نیلے گول میں «پیغام جا چکا» · باقی؛ ہندسے Arial موٹے */
+.ic640{display:flex;align-items:center;justify-content:space-between;gap:6px;direction:rtl;background:#0b4f48;color:#fff;border-radius:999px;padding:4px 6px;box-sizing:border-box;width:100%}
+.ic640 .p{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;line-height:1.15;padding:2px 4px;border-radius:999px;cursor:pointer;background:none;border:0;color:inherit;font:inherit}
+.ic640 .p small{font-size:11px;font-weight:800;opacity:.92;white-space:nowrap}
+.ic640 .p b{font:900 16px/1.15 Arial,Helvetica,sans-serif;direction:ltr;white-space:nowrap}
+.ic640 .p.m{flex:0 0 auto;background:#1d4ed8;padding:4px 14px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.ic640 .p.m b{font-size:19px}
+.ic640 .p.r b{color:#fde047}
+.ic640 .p.on{outline:2px solid #fde047;outline-offset:1px}
+#inv618 .ic640{flex:1 1 auto;width:auto;min-width:0;background:rgba(0,0,0,.22)}
+#inv618 .ic640 .p b{font-size:14px}#inv618 .ic640 .p.m b{font-size:16px}#inv618 .ic640 .p small{font-size:10px}
 </style>
 <script id="mcsInv618js">
 (function(){
@@ -29883,7 +29895,8 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
         var hero = home.querySelector('header.hero'); if(hero && hero.nextSibling) home.insertBefore(b, hero.nextSibling); else home.insertBefore(b, home.firstChild); }
       var c = counts();
       b.style.display = (isAdm() && c.t > 0) ? 'flex' : 'none';
-      b.innerHTML = '<span style="font-size:22px">📩</span><span class="t">دعوتی پیغام<small>Invitation Message</small></span><span class="b">' + c.s.toLocaleString() + ' / ' + c.t.toLocaleString() + ' ✓</span>';
+      b.innerHTML = '<span style="font-size:22px">📩</span><span class="t" style="flex:none">دعوتی پیغام<small>Invitation</small></span>'
+        + '<span class="ic640" data-noen="1"><span class="p"><small>کل</small><b>' + c.t.toLocaleString() + '</b></span><span class="p m"><small>✅ جا چکا</small><b>' + c.s.toLocaleString() + '</b></span><span class="p r"><small>باقی</small><b>' + (c.t - c.s).toLocaleString() + '</b></span></span>';
       var tt = document.getElementById('waitTitle');
       /* MCS2311MO639 (مالک کا حکم): عنوان کے نیچے ایک لائن، Arial بولڈ — کل · پیغام جا چکا · باقی (باقی گھٹتا نظر آئے) */
       if(tt && tt.getAttribute('data-inv') === '1'){
@@ -30276,13 +30289,16 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
   window._waitRows = _waitRows = function(){ var r = _wr.apply(this, arguments), a = [], b = []; r.forEach(function(o){ (isNw(o.x) ? b : a).push(o); }); var all = a.concat(b);
     CNT = { all: all.length, todo: 0, sent: 0, nw: 0 }; all.forEach(function(o){ CNT[kind(o.x)]++; });
     if(FIL === 'sent') return all.filter(function(o){ return kind(o.x) === 'sent'; }).sort(function(p, q){ return infOf(q.x) - infOf(p.x); });
+    if(FIL === 'todo') return all.filter(function(o){ return kind(o.x) !== 'sent'; });
     return FIL === 'all' ? all : all.filter(function(o){ return kind(o.x) === FIL; }); };
   window.waitFil632 = function(f){ FIL = f; try{ _wst.page = 0; }catch(e){} waitDraw(); var l = document.getElementById('waitList'); if(l) l.scrollTop = 0; };
   function tabs(){
     var l = document.getElementById('waitList'); if(!l) return;
     var t = document.getElementById('ws632Tabs'); if(!t){ t = document.createElement('div'); t.id = 'ws632Tabs'; t.setAttribute('data-noen', '1'); t.style.cssText = 'display:flex;gap:5px;padding:6px 10px 0;direction:rtl;flex-wrap:wrap'; l.parentNode.insertBefore(t, document.getElementById('ws629Bar') || l); }
-    var B = [['all', '📋 سب', CNT.all, '#0f766e'], ['todo', '👋 پیغام باقی', CNT.todo, '#16a34a'], ['sent', '✅ پیغام جا چکا', CNT.sent, '#475569'], ['nw', '📵 واٹس ایپ نہیں', CNT.nw, '#64748b']];
-    t.innerHTML = B.map(function(b){ var on = FIL === b[0]; return '<button type="button" onclick="waitFil632(\'' + b[0] + '\')" style="flex:1 1 auto;border:1.5px solid ' + b[3] + ';border-radius:999px;padding:5px 9px;font:inherit;font-weight:800;font-size:12.5px;white-space:nowrap;background:' + (on ? b[3] : '#fff') + ';color:' + (on ? '#fff' : b[3]) + '">' + b[1] + ' <b style="font-family:Arial,sans-serif">' + b[2].toLocaleString() + '</b></button>'; }).join('');
+    /* MCS2311MO640 (مالک کا حکم): چار بڑے بٹن کی جگہ ایک کیپسول — کل · نیلے گول میں «پیغام جا چکا» · باقی (ہر حصہ دبانے سے وہی فہرست) */
+    function P(f, cls, lb, n){ return '<button type="button" class="p' + cls + (FIL === f ? ' on' : '') + '" onclick="waitFil632(\'' + f + '\')"><small>' + lb + '</small><b>' + n.toLocaleString() + '</b></button>'; }
+    t.innerHTML = '<div class="ic640">' + P('all', '', 'کل', CNT.all) + P('sent', ' m', '✅ پیغام جا چکا', CNT.sent) + P('todo', ' r', 'باقی', CNT.todo + CNT.nw) + '</div>'
+      + (CNT.nw ? '<div style="width:100%;text-align:center;margin-top:4px"><button type="button" onclick="waitFil632(\'' + (FIL === 'nw' ? 'all' : 'nw') + '\')" style="border:1px solid #94a3b8;border-radius:999px;padding:2px 12px;background:' + (FIL === 'nw' ? '#64748b' : '#fff') + ';color:' + (FIL === 'nw' ? '#fff' : '#475569') + ';font:inherit;font-weight:800;font-size:12px">📵 واٹس ایپ نہیں <b style="font-family:Arial,sans-serif">' + CNT.nw + '</b></button></div>' : '');
   }
   function bar(){
     var l = document.getElementById('waitList'); if(!l) return;
