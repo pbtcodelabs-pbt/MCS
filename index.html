@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO638";
+const APP_VERSION = "MCS2311MO639";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO639":"🔢 Invitation list header: one clear line in bold Arial — Total · Message sent · Remaining",
   "MCS2311MO638":"✅ Invitation: a message is counted (and moves to the grey list) only after you return and tap «Yes, sent» — not when WhatsApp/SMS just opens; «↩️ Not sent» puts a wrongly counted person back",
   "MCS2311MO637":"✨ Home clock: golden border removed — soft shadow makes it look raised",
   "MCS2311MO636":"🎨 Home clock: a different deep background colour for each day of the week — digits stay solid and sharp",
@@ -29884,7 +29885,14 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
       b.style.display = (isAdm() && c.t > 0) ? 'flex' : 'none';
       b.innerHTML = '<span style="font-size:22px">📩</span><span class="t">دعوتی پیغام<small>Invitation Message</small></span><span class="b">' + c.s.toLocaleString() + ' / ' + c.t.toLocaleString() + ' ✓</span>';
       var tt = document.getElementById('waitTitle');
-      if(tt && tt.getAttribute('data-inv') === '1') tt.textContent = ' — 📩 دعوتی پیغام · ' + c.s + ' / ' + c.t + ' ✓';
+      /* MCS2311MO639 (مالک کا حکم): عنوان کے نیچے ایک لائن، Arial بولڈ — کل · پیغام جا چکا · باقی (باقی گھٹتا نظر آئے) */
+      if(tt && tt.getAttribute('data-inv') === '1'){
+        var A = 'font:900 15px Arial,Helvetica,sans-serif;direction:ltr;display:inline-block';
+        var h = ' — 📩 دعوتی پیغام<span data-noen="1" style="display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;font-size:13.5px;font-weight:800;white-space:nowrap">'
+          + '<span>کل <b style="' + A + '">' + c.t.toLocaleString() + '</b></span><span>· پیغام جا چکا <b style="' + A + ';color:#bbf7d0">' + c.s.toLocaleString() + '</b></span><span>· باقی <b style="' + A + ';color:#fde047">' + (c.t - c.s).toLocaleString() + '</b></span></span>';
+        if(tt.innerHTML !== h) tt.innerHTML = h;
+        var wn = document.getElementById('waitN'); if(wn) wn.style.display = 'none';
+      }
     }catch(e){}
   }
   window.invOpen618 = function(){
@@ -29894,7 +29902,7 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
   };
   /* کیٹگری سے کھلے تو عنوان ویسا */
   var _wo = window.waitOpen;
-  window.waitOpen = waitOpen = function(cat){ var r = _wo.apply(this, arguments); var tt = document.getElementById('waitTitle'); if(tt) tt.removeAttribute('data-inv'); return r; };
+  window.waitOpen = waitOpen = function(cat){ var r = _wo.apply(this, arguments); var tt = document.getElementById('waitTitle'); if(tt) tt.removeAttribute('data-inv'); var wn = document.getElementById('waitN'); if(wn) wn.style.display = ''; return r; };
   /* اطلاع نہ گئے اوپر، اطلاع ہو چکی سب سے آخر */
   var _wr = window._waitRows;
   window._waitRows = _waitRows = function(){ var r = _wr.apply(this, arguments); var a = [], b = []; r.forEach(function(o){ (infOf(o.x) ? b : a).push(o); }); return a.concat(b); };
