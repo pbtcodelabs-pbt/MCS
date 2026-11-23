@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2211SU631";
+const APP_VERSION = "MCS2211SU632";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2211SU632":"📋 Invitation list: filter buttons on top — All / Not messaged / Message sent (newest first) / No WhatsApp, with counts",
   "MCS2211SU631":"🛡️ Invitation messages now say «My City Shines Team» — no personal or shop name of the sender; still 10 random texts, 5 per phone a day",
   "MCS2211SU630":"✉️ Invitation list: one-tap SMS with the same message (number and text filled in) — button on every card, and a bar when you come back from WhatsApp",
   "MCS2211SU629":"🛡️ Invitation list: short random first message (no link), 2.5 min gap, 5/day per phone and 10/day in total; detailed card only after a reply; «No WhatsApp» mark keeps the card at the end",
@@ -30197,7 +30198,21 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
   };
   /* ترتیب: نئے اوپر، اطلاع والے ان کے بعد، واٹس ایپ نہیں والے سب سے آخر */
   var _wr = window._waitRows;
-  window._waitRows = _waitRows = function(){ var r = _wr.apply(this, arguments), a = [], b = []; r.forEach(function(o){ (isNw(o.x) ? b : a).push(o); }); return a.concat(b); };
+  /* MCS2211SU632 (مالک کا حکم): اوپر چھانٹی کے بٹن — سب / پیغام باقی / پیغام جا چکا / واٹس ایپ نہیں (گنتی کے ساتھ) */
+  var FIL = 'all', CNT = { all: 0, todo: 0, sent: 0, nw: 0 };
+  function infOf(x){ return Math.max((_wInfMap()[x.fsId] || 0), x.waInfAt || 0); }
+  function kind(x){ return isNw(x) ? 'nw' : infOf(x) ? 'sent' : 'todo'; }
+  window._waitRows = _waitRows = function(){ var r = _wr.apply(this, arguments), a = [], b = []; r.forEach(function(o){ (isNw(o.x) ? b : a).push(o); }); var all = a.concat(b);
+    CNT = { all: all.length, todo: 0, sent: 0, nw: 0 }; all.forEach(function(o){ CNT[kind(o.x)]++; });
+    if(FIL === 'sent') return all.filter(function(o){ return kind(o.x) === 'sent'; }).sort(function(p, q){ return infOf(q.x) - infOf(p.x); });
+    return FIL === 'all' ? all : all.filter(function(o){ return kind(o.x) === FIL; }); };
+  window.waitFil632 = function(f){ FIL = f; try{ _wst.page = 0; }catch(e){} waitDraw(); var l = document.getElementById('waitList'); if(l) l.scrollTop = 0; };
+  function tabs(){
+    var l = document.getElementById('waitList'); if(!l) return;
+    var t = document.getElementById('ws632Tabs'); if(!t){ t = document.createElement('div'); t.id = 'ws632Tabs'; t.setAttribute('data-noen', '1'); t.style.cssText = 'display:flex;gap:5px;padding:6px 10px 0;direction:rtl;flex-wrap:wrap'; l.parentNode.insertBefore(t, document.getElementById('ws629Bar') || l); }
+    var B = [['all', '📋 سب', CNT.all, '#0f766e'], ['todo', '👋 پیغام باقی', CNT.todo, '#16a34a'], ['sent', '✅ پیغام جا چکا', CNT.sent, '#475569'], ['nw', '📵 واٹس ایپ نہیں', CNT.nw, '#64748b']];
+    t.innerHTML = B.map(function(b){ var on = FIL === b[0]; return '<button type="button" onclick="waitFil632(\'' + b[0] + '\')" style="flex:1 1 auto;border:1.5px solid ' + b[3] + ';border-radius:999px;padding:5px 9px;font:inherit;font-weight:800;font-size:12.5px;white-space:nowrap;background:' + (on ? b[3] : '#fff') + ';color:' + (on ? '#fff' : b[3]) + '">' + b[1] + ' <b style="font-family:Arial,sans-serif">' + b[2].toLocaleString() + '</b></button>'; }).join('');
+  }
   function bar(){
     var l = document.getElementById('waitList'); if(!l) return;
     var b = document.getElementById('ws629Bar'); if(!b){ b = document.createElement('div'); b.id = 'ws629Bar'; l.parentNode.insertBefore(b, l); }
@@ -30208,6 +30223,7 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
   }
   function decorate(){
     var l = document.getElementById('waitList'); if(!l) return;
+    try{ tabs(); }catch(e){}
     l.querySelectorAll('button[onclick^="waitInvite("]').forEach(function(btn){
       var m = /waitInvite\('([^']+)',\s*'([^']+)'\)/.exec(btn.getAttribute('onclick') || ''); if(!m) return;
       var x = _wFind(m[1], m[2]); if(!x) return;
