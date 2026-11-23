@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO656";
+const APP_VERSION = "MCS2311MO657";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO657":"💬 ایڈمن گفتگو کی سجاوٹ: سائز، موٹائی اور فونٹ (کشیدہ / نستعلیق / English) اب واقعی بدلتے ہیں — ہوم کا بڑا فونٹ انہیں نہیں دباتا",
   "MCS2311MO656":"✉️ دعوتی پیغام کی پٹی ہوم سے ہٹا دی — اب ایڈمن گفتگو کی بٹنوں والی قطار میں «✉️ دعوت» (صرف ایڈمن 1 / 2)",
   "MCS2311MO655":"💬 ایڈمن گفتگو کا ڈبہ چھوٹا کیا (بزنس کارڈ جتنا) — نیچے اشتہار اپنی جگہ واپس؛ بٹنوں کی ایک پتلی قطار",
   "MCS2311MO654":"💬 ایڈمن گفتگو: اوپر 📞 کال اور 🟢 واٹس ایپ کے بٹن (دوسرے ایڈمن کا نمبر)؛ 🤖 Claude بٹن پوری گفتگو اور سب اسکرین شاٹ ایک ساتھ Claude میں بھیجتا ہے",
@@ -24267,7 +24268,7 @@ setInterval(() => { try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSi
     if(!sheet){ var st = document.createElement('style'); st.id = 'mcsHomeFont225css'; document.head.appendChild(st); sheet = st.sheet; }
     try{ sheet.insertRule('html.fs225 #screen-home [data-fs="' + v + '"][data-fk="' + k + '"]{font-size:' + (Math.round(v * KF[k] * 10) / 10) + 'px !important}', sheet.cssRules.length); }catch(e){}
   }
-  var EXCL = ':not([data-fs]):not(script):not(style):not(svg *):not(#hdr2):not(#hdr2 *)';
+  var EXCL = ':not([data-fs]):not(script):not(style):not(svg *):not(#hdr2):not(#hdr2 *):not(#adm648 *)';   /* MCS2311MO657: ایڈمن گفتگو کا اپنا سائز */
   function apply(list){
     if(!list.length) return;
     busy = true;
@@ -29425,8 +29426,11 @@ body.adm648-on #adm648{margin:6px 12px}
   function cleanSt(s){ if(!s || typeof s !== 'object') return null; return { f: FONTS[s.f] ? s.f : 'k', z: Math.max(12, Math.min(60, +s.z || 20)), w: Math.max(0, Math.min(10, +s.w || 0)), c: hex(s.c, '#0f172a') }; }
   function getSt(){ var v = {}; try{ v = JSON.parse(localStorage.getItem(SK) || 'null') || {}; }catch(e){} var s = cleanSt(v) || cleanSt(DST); s.bg = hex(v.bg, DST.bg); return s; }
   function putSt(s){ try{ localStorage.setItem(SK, JSON.stringify(s)); }catch(e){} }
-  function styleOf(node, s){ if(!s) return; node.style.fontFamily = FONTS[s.f]; node.style.fontSize = s.z + 'px'; node.style.color = s.c; node.style.lineHeight = s.f === 'e' ? '1.4' : '1.9';
-    node.style.fontWeight = s.f === 'e' && s.w >= 4 ? '800' : '400'; var k = (s.w * s.z / 240).toFixed(2); node.style.webkitTextStroke = s.w ? k + 'px ' + s.c : '0'; node.style.paintOrder = 'stroke fill'; }
+  /* MCS2311MO657: ہوم کا «بڑا فونٹ» (html.fs225) اور فونٹ کے عام اصول !important سے لگتے ہیں — سجاوٹ بھی important سے، ورنہ سائز / فونٹ دب جاتے تھے */
+  function styleOf(node, s){ if(!s) return; var I = 'important', st = node.style, k = (s.w * s.z / 240).toFixed(2);
+    st.setProperty('font-family', FONTS[s.f], I); st.setProperty('font-size', s.z + 'px', I); st.setProperty('color', s.c, I); st.setProperty('line-height', s.f === 'e' ? '1.4' : '1.9', I);
+    st.setProperty('font-weight', s.f === 'e' && s.w >= 4 ? '800' : '400', I); st.setProperty('-webkit-text-stroke', s.w ? k + 'px ' + s.c : '0px', I); st.setProperty('paint-order', 'stroke fill', I);
+    node.setAttribute('data-noen', '1'); node.setAttribute('data-fs', '0'); }
   function build(){
     var mp = document.getElementById('mpBar'); if(!mp || !mp.parentNode) return null;
     var b = document.getElementById('adm648');
