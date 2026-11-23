@@ -4820,10 +4820,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO645";
+const APP_VERSION = "MCS2311MO646";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO646":"🎨 Home clock text colour changed to soft gold; admin can tap the clock to change its colour with sliders (colour, vividness, light/dark) — saved on the phone",
   "MCS2311MO645":"✅ Invitation list: after sending, a tick box appears on the card (stays even if the app reloads) — tick it and the card fades like smoke, turns grey and moves to the Sent list; SMS-sent cards now count as Sent; new Today box (e.g. 1 / 5) with next message number",
   "MCS2311MO644":"🕒 Home clock: all seven day backgrounds removed — only emerald-green text (day, time, date), no box or background",
   "MCS2311MO643":"🪪 Agent card: CNIC number, expiry and photos open only after your PIN, show only while you press and hold, carry a watermark and close by themselves",
@@ -29148,8 +29149,57 @@ body.wz-on #wzW{padding-bottom:calc(var(--nav-h,64px) + 14px + env(safe-area-ins
 /* MCS2311MO644 (مالک کا حکم): ہوم کی گھڑی — ساتوں دن کے پس منظر، ڈبہ، بارڈر، سایہ سب ختم؛ صرف زمرد (emerald) رنگ کی تحریر: اوپر دن، بیچ میں وقت، نیچے تاریخ */
 html body #screen-home #hdr2.h229 .x-rad,html body #screen-home #hdr2.h229 .xm .x-rad,html body #screen-home #hdr2.h229 .x-rad[data-day],html body #screen-home #hdr2.h229 .xm .x-rad[data-day]{background:none !important;background-image:none !important;background-color:transparent !important;border:0 !important;box-shadow:none !important;outline:0 !important;border-radius:0 !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important}
 html body #screen-home #hdr2.h229 .x-rad::before,html body #screen-home #hdr2.h229 .x-rad::after{display:none !important;content:none !important}
-html body #screen-home #hdr2.h229 .x-rad .xr-d,html body #screen-home #hdr2.h229 .x-rad .xr-m,html body #screen-home #hdr2.h229 .x-rad .xr-r,html body #screen-home #hdr2.h229 .x-rad .xr-t,html body #screen-home #hdr2.h229 .x-rad .xr-s,html body #screen-home #hdr2.h229 .x-rad .xr-a,html body #screen-home #hdr2.h229 .x-rad span{color:#50C878 !important;text-shadow:none !important;filter:none !important;opacity:1 !important;background:none !important}
+html body #screen-home #hdr2.h229 .x-rad .xr-d,html body #screen-home #hdr2.h229 .x-rad .xr-m,html body #screen-home #hdr2.h229 .x-rad .xr-r,html body #screen-home #hdr2.h229 .x-rad .xr-t,html body #screen-home #hdr2.h229 .x-rad .xr-s,html body #screen-home #hdr2.h229 .x-rad .xr-a,html body #screen-home #hdr2.h229 .x-rad span{color:var(--clkClr,#FFE066) !important;text-shadow:none !important;filter:none !important;opacity:1 !important;background:none !important}
 </style>
+<style id="mcsClk646css">
+/* MCS2311MO646 (مالک کا حکم): گھڑی کا رنگ بدلا (نرم سنہری)؛ ایڈمن گھڑی دبائے تو سلائیڈر — رنگ، تیزی، ہلکا / گہرا */
+#x229rad{cursor:pointer}
+#clk646{position:fixed;left:10px;right:10px;bottom:90px;z-index:2147483000;background:#fff;border-radius:18px;padding:12px 14px 14px;box-shadow:0 8px 30px rgba(0,0,0,.4);direction:rtl;font-family:inherit;max-width:420px;margin:0 auto}
+#clk646 .hd{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:15px;color:#0f172a;margin-bottom:6px}
+#clk646 .hd button{border:0;background:#e2e8f0;border-radius:50%;width:32px;height:32px;font-size:15px;font-weight:900}
+#clk646 .pv{background:#0f766e;border-radius:12px;text-align:center;font:800 34px/1.5 Arial,sans-serif;direction:ltr;margin-bottom:8px;color:var(--clkClr,#FFE066)}
+#clk646 label{display:block;font-weight:800;font-size:13px;color:#334155;margin:8px 0 2px}
+#clk646 input[type=range]{width:100%;height:26px;margin:0;border-radius:13px;-webkit-appearance:none;appearance:none;outline:0;direction:ltr}
+#clk646 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid #0f172a;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+#clk646 input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #0f172a}
+#clk646 .sw{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+#clk646 .sw button{width:34px;height:34px;border-radius:50%;border:2px solid #cbd5e1}
+#clk646 .rs{margin-top:10px;width:100%;border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:12px;padding:8px;font:inherit;font-weight:800}
+</style>
+<script id="mcsClk646js">
+(function(){
+  var K = 'mcsClkClr646', DEF = { h: 48, s: 100, l: 70 };
+  function get(){ try{ var v = JSON.parse(localStorage.getItem(K) || 'null'); if(v && isFinite(v.h) && isFinite(v.s) && isFinite(v.l)) return v; }catch(e){} return { h: DEF.h, s: DEF.s, l: DEF.l }; }
+  function apply(v){ document.documentElement.style.setProperty('--clkClr', 'hsl(' + v.h + ' ' + v.s + '% ' + v.l + '%)'); }
+  function save(v){ try{ localStorage.setItem(K, JSON.stringify(v)); }catch(e){} }
+  function isAdm(){ try{ return !!((typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) || (typeof codevOn === 'function' && codevOn())); }catch(e){ return false; } }
+  apply(get());
+  function close(){ var p = document.getElementById('clk646'); if(p) p.remove(); }
+  function open(){
+    close(); var v = get(), p = document.createElement('div'); p.id = 'clk646'; p.setAttribute('data-noen', '1');
+    var hue = 'linear-gradient(to right,hsl(0 100% 50%),hsl(60 100% 50%),hsl(120 100% 50%),hsl(180 100% 50%),hsl(240 100% 50%),hsl(300 100% 50%),hsl(360 100% 50%))';
+    p.innerHTML = '<div class="hd"><span>🎨 گھڑی کا رنگ</span><button type="button" id="clk646x">✕</button></div><div class="pv">09:08</div>'
+      + '<label>🌈 رنگ</label><input type="range" id="clk646h" min="0" max="360" value="' + v.h + '" style="background:' + hue + '">'
+      + '<label>✨ تیزی (پھیکا ← تیز)</label><input type="range" id="clk646s" min="0" max="100" value="' + v.s + '">'
+      + '<label>💡 ہلکا / گہرا</label><input type="range" id="clk646l" min="15" max="95" value="' + v.l + '">'
+      + '<div class="sw"></div><button type="button" class="rs" id="clk646r">↩️ پہلا رنگ (سنہری)</button>';
+    document.body.appendChild(p);
+    var H = p.querySelector('#clk646h'), S = p.querySelector('#clk646s'), L = p.querySelector('#clk646l');
+    function bg(){ var c = get(); S.style.background = 'linear-gradient(to right,hsl(' + c.h + ' 0% ' + c.l + '%),hsl(' + c.h + ' 100% ' + c.l + '%))'; L.style.background = 'linear-gradient(to right,hsl(' + c.h + ' ' + c.s + '% 15%),hsl(' + c.h + ' ' + c.s + '% 55%),hsl(' + c.h + ' ' + c.s + '% 95%))'; }
+    function set(n){ var c = { h: +n.h, s: +n.s, l: +n.l }; save(c); apply(c); bg(); }
+    function sync(){ var c = get(); H.value = c.h; S.value = c.s; L.value = c.l; bg(); }
+    [H, S, L].forEach(function(r){ r.addEventListener('input', function(){ set({ h: H.value, s: S.value, l: L.value }); }); });
+    [[0, 0, 100], [48, 100, 70], [120, 70, 70], [190, 90, 70], [30, 100, 60], [330, 90, 75], [0, 90, 65], [0, 0, 20]].forEach(function(c){
+      var b = document.createElement('button'); b.type = 'button'; b.style.background = 'hsl(' + c[0] + ' ' + c[1] + '% ' + c[2] + '%)';
+      b.onclick = function(){ set({ h: c[0], s: c[1], l: c[2] }); sync(); }; p.querySelector('.sw').appendChild(b); });
+    p.querySelector('#clk646x').onclick = close;
+    p.querySelector('#clk646r').onclick = function(){ set(DEF); sync(); };
+    bg();
+  }
+  /* ایڈمن گھڑی دبائے تو پینل کھلے؛ عام صارف کے لیے کچھ نہیں */
+  document.addEventListener('click', function(e){ var t = e.target; if(t && t.closest && t.closest('#x229rad') && isAdm()){ e.preventDefault(); e.stopPropagation(); open(); } }, true);
+})();
+</script>
 <style id="mcsAcc643">
 /* MCS2311MO643 (#357): شناختی کارڈ کی محفوظ اسکرین */
 .mi-cv{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.92);display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font-family:'Segoe UI',Selawik,Arial,sans-serif;direction:ltr}
