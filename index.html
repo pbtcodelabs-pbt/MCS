@@ -4820,10 +4820,13 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2311MO647";
+const APP_VERSION = "MCS2311MO650";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2311MO650":"↩️ Admin chat: Reply button — your answer is sent with the quoted message above it (tap the quote to jump to the original)",
+  "MCS2311MO649":"💬 Admin chat: every message now has always-visible Copy / Edit / Cut / Share (WhatsApp) / Delete buttons; the writing box has Select all / Cut / Copy / Paste / Clear; Delete-all for the whole chat",
+  "MCS2311MO648":"💬 Home: private Admin 1 ↔ Admin 2 chat box (only the two admins see it) shown first in place of the business card; small 🪪 button brings the card, 💬 button brings the chat back",
   "MCS2311MO647":"🔢 Home version now shows as Ver#647 (the last 3 digits of the zip number); it goes up by one with every new file",
   "MCS2311MO646":"🎨 Home clock text colour changed to soft gold; admin can tap the clock to change its colour with sliders (colour, vividness, light/dark) — saved on the phone",
   "MCS2311MO645":"✅ Invitation list: after sending, a tick box appears on the card (stays even if the app reloads) — tick it and the card fades like smoke, turns grey and moves to the Sent list; SMS-sent cards now count as Sent; new Today box (e.g. 1 / 5) with next message number",
@@ -29201,6 +29204,190 @@ html body #screen-home #hdr2.h229 .x-rad .xr-d,html body #screen-home #hdr2.h229
   }
   /* ایڈمن گھڑی دبائے تو پینل کھلے؛ عام صارف کے لیے کچھ نہیں */
   document.addEventListener('click', function(e){ var t = e.target; if(t && t.closest && t.closest('#x229rad') && isAdm()){ e.preventDefault(); e.stopPropagation(); open(); } }, true);
+})();
+</script>
+<style id="mcsAdm648css">
+/* MCS2311MO648 (مالک کا حکم): ہوم پر بزنس کارڈ کی جگہ ایڈمن 1 ↔ ایڈمن 2 کی نجی گفتگو — صرف یہی دو دیکھیں؛ کارڈ چھوٹے بٹن سے، سکرین آن / ایپ کھلنے پر پہلے گفتگو */
+#adm648{display:none}
+body.adm648-on #adm648{display:block;margin:8px 12px}
+html body.adm648-on:not(.adm648-card) #screen-home #mpBar{display:none !important}
+#adm648 .bx{background:#fff;border:2px solid #0f766e;border-radius:18px;overflow:hidden;box-shadow:0 4px 14px rgba(15,118,110,.2);direction:rtl}
+#adm648 .hd{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,#0f766e,#0a4f4a);color:#fff;padding:8px 12px;font-weight:900;font-size:15px}
+#adm648 .hd b{flex:1}
+#adm648 .hd button,#adm648 .mini button{border:0;border-radius:999px;background:#fde047;color:#3a2600;font:inherit;font-weight:900;font-size:12.5px;padding:5px 11px;white-space:nowrap;position:relative}
+#adm648 .ls{height:clamp(220px,38vh,380px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 10px;background:#f1f5f9;display:flex;flex-direction:column;gap:6px}
+#adm648 .m{max-width:84%;padding:6px 10px 4px;border-radius:14px;font-size:16px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif}
+#adm648 .m small{display:block;font:700 10.5px Arial,sans-serif;opacity:.65;direction:ltr;text-align:left;margin-top:1px}
+#adm648 .m.me{background:#bbf7d0;border-bottom-right-radius:4px}
+#adm648 .m.ot{background:#fff;border:1px solid #cbd5e1;border-bottom-left-radius:4px}
+#adm648 .m .nm{display:block;font:800 11px Arial,sans-serif;color:#0f766e;direction:ltr;text-align:right}
+#adm648 .w{max-width:92%;display:flex;flex-direction:column;gap:2px}
+#adm648 .w.me{align-self:flex-start}#adm648 .w.ot{align-self:flex-end}
+#adm648 .w .m{max-width:100%;align-self:stretch}
+#adm648 .ac{display:flex;flex-wrap:wrap;gap:4px;direction:rtl}
+#adm648 .ac button,#adm648 .tb button{border:1px solid #94a3b8;background:#fff;color:#0f172a;border-radius:9px;font:800 11.5px/1 inherit;font-family:inherit;padding:5px 7px;white-space:nowrap}
+#adm648 .ac button.d,#adm648 .hd button.da{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+#adm648 .ac button.s{background:#dcfce7;border-color:#86efac;color:#166534}
+#adm648 .tb{display:flex;flex-wrap:wrap;gap:5px;padding:6px 8px 0;background:#fff;border-top:1px solid #e2e8f0;direction:rtl}
+#adm648 .tb button{padding:6px 9px;font-size:12.5px}
+#adm648 .ed{padding:4px 10px;background:#fef9c3;color:#713f12;font-weight:800;font-size:12.5px;display:none;align-items:center;justify-content:space-between}
+#adm648 .ed.on{display:flex}
+#adm648 .ed button{border:0;background:#fde047;border-radius:8px;font:inherit;font-weight:900;padding:2px 9px}
+#adm648 .q{display:block;background:rgba(15,118,110,.12);border-right:4px solid #0f766e;border-radius:8px;padding:2px 8px;margin:2px 0 4px;font-size:13px;line-height:1.6;color:#334155;cursor:pointer;overflow:hidden;max-height:3.4em}
+#adm648 .q b{display:block;font:800 10.5px Arial,sans-serif;color:#0f766e;direction:ltr;text-align:right}
+#adm648 .rp{padding:4px 10px;background:#dcfce7;color:#14532d;font-weight:700;font-size:12.5px;display:none;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #bbf7d0}
+#adm648 .rp.on{display:flex}#adm648 .rp span{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#adm648 .rp button{border:0;background:#86efac;border-radius:8px;font:inherit;font-weight:900;padding:2px 9px}
+#adm648 .m.hl{outline:3px solid #fde047}
+#adm648 .em{margin:auto;color:#64748b;font-weight:700;font-size:13px;text-align:center}
+#adm648 .er{margin:6px 0;background:#fef2f2;border:1px solid #fecaca;color:#7f1d1d;border-radius:10px;padding:6px 8px;font-size:12.5px;font-weight:700;line-height:1.6;direction:ltr;text-align:left}
+#adm648 .in{display:flex;gap:6px;padding:8px;background:#fff;border-top:1px solid #e2e8f0;align-items:flex-end}
+#adm648 textarea{flex:1;min-width:0;resize:none;border:1.5px solid #94a3b8;border-radius:12px;padding:8px 10px;font:inherit;font-size:16px;line-height:1.6;height:46px;max-height:110px;direction:rtl;font-family:'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq',serif}
+#adm648 .in button{border:0;border-radius:12px;background:#16a34a;color:#fff;font:inherit;font-weight:900;font-size:15px;padding:0 16px;height:46px}
+#adm648 .mini{display:none;justify-content:flex-start;margin:0 0 6px}
+#adm648 .mini button{background:#0f766e;color:#fff;font-size:13.5px;padding:7px 14px}
+#adm648 .dt{position:absolute;top:-4px;right:-3px;min-width:12px;height:12px;border-radius:50%;background:#ef4444;border:2px solid #fff;display:none}
+body.adm648-card #adm648 .bx{display:none}
+body.adm648-card #adm648 .mini{display:flex}
+body.adm648-card #adm648{margin-bottom:0}
+body.adm648-unread #adm648 .mini .dt{display:block}
+</style>
+<script id="mcsAdm648js">
+(function(){
+  var COL = 'adminChat', DAYS = 30, un = null, box = null, ME = '', MSGS = [], seenT = 0, err = '', started = false, editId = '', replyTo = null;
+  function who(){ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return 'a1'; }catch(e){} try{ if(typeof codevOn === 'function' && codevOn()) return 'a2'; }catch(e){} return ''; }
+  function nmOf(f){ return f === 'a1' ? 'ایڈمن 1' : 'ایڈمن 2'; }
+  function el(t, c, x){ var e = document.createElement(t); if(c) e.className = c; if(x != null) e.textContent = x; return e; }
+  function hm(t){ var d = new Date(t), now = new Date(), s = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); return d.toDateString() === now.toDateString() ? s : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + s; }
+  function build(){
+    var mp = document.getElementById('mpBar'); if(!mp || !mp.parentNode) return null;
+    var b = document.getElementById('adm648');
+    if(!b){
+      b = el('div'); b.id = 'adm648'; b.setAttribute('data-noen', '1');
+      b.innerHTML = '<div class="mini"><button type="button" id="adm648c">💬 ایڈمن گفتگو<i class="dt"></i></button></div>'
+        + '<div class="bx"><div class="hd"><b>💬 ایڈمن 1 ↔ ایڈمن 2 <small style="font-weight:700;opacity:.85">(نجی)</small></b><button type="button" class="da" id="adm648x" title="ساری گفتگو">🗑️ ساری</button><button type="button" id="adm648k">🪪 بزنس کارڈ</button></div>'
+        + '<div class="ls" id="adm648l"></div><div class="rp" id="adm648r"><span id="adm648rt"></span><button type="button" id="adm648rc">✕</button></div><div class="ed" id="adm648e"><span>✏️ پیغام ایڈٹ ہو رہا ہے</span><button type="button" id="adm648ec">✕ منسوخ</button></div>'
+        + '<div class="tb"><button type="button" data-k="all">☑️ سب چنیں</button><button type="button" data-k="cut">✂️ کاٹیں</button><button type="button" data-k="copy">📋 کاپی</button><button type="button" data-k="paste">📥 چسپاں</button><button type="button" data-k="clr">✖ صاف</button></div>'
+        + '<div class="in"><textarea id="adm648t" rows="1" lang="ur" dir="rtl" enterkeyhint="enter" placeholder="اردو میں لکھیں…"></textarea><button type="button" id="adm648s">بھیجیں ➤</button></div></div>';
+      mp.parentNode.insertBefore(b, mp);
+      b.querySelector('#adm648k').onclick = function(){ document.body.classList.add('adm648-card'); };
+      b.querySelector('#adm648c').onclick = function(){ document.body.classList.remove('adm648-card'); seenNow(); draw(true); };
+      b.querySelector('#adm648s').onclick = send;
+      b.querySelector('#adm648ec').onclick = function(){ editId = ''; var t0 = document.getElementById('adm648t'); if(t0){ t0.value = ''; t0.style.height = '46px'; } editUi(); };
+      b.querySelector('#adm648x').onclick = delAll;
+      b.querySelector('#adm648rc').onclick = function(){ replyTo = null; replyUi(); };
+      b.querySelector('.tb').onclick = function(e){ var k = e.target && e.target.getAttribute && e.target.getAttribute('data-k'); if(k) tool(k); };
+      b.querySelector('#adm648l').onclick = function(e){ var bt = e.target.closest && e.target.closest('button[data-a]'); if(bt){ act(bt.getAttribute('data-a'), bt.getAttribute('data-i')); return; }
+        var q = e.target.closest && e.target.closest('.q[data-q]'); if(q){ var tg = document.querySelector('#adm648l [data-id="' + q.getAttribute('data-q') + '"]'); if(tg){ tg.scrollIntoView({ block: 'center' }); tg.classList.add('hl'); setTimeout(function(){ tg.classList.remove('hl'); }, 1400); } } };
+      var t = b.querySelector('#adm648t'); t.addEventListener('input', function(){ t.style.height = '46px'; t.style.height = Math.min(110, t.scrollHeight) + 'px'; });
+    }
+    return b;
+  }
+  function chatShown(){ return document.body.classList.contains('adm648-on') && !document.body.classList.contains('adm648-card') && !document.hidden; }
+  function seenNow(){ var m = MSGS.length ? MSGS[MSGS.length - 1].t : 0; if(m > seenT) seenT = m; document.body.classList.remove('adm648-unread'); }
+  function draw(stick){
+    var l = document.getElementById('adm648l'); if(!l) return;
+    var near = l.scrollHeight - l.scrollTop - l.clientHeight < 60;
+    l.textContent = '';
+    if(err){ var e = el('div', 'er', err); l.appendChild(e); }
+    if(!MSGS.length && !err) l.appendChild(el('div', 'em', 'ابھی کوئی پیغام نہیں — یہاں لکھیں، دوسرا ایڈمن فوراً پڑھ لے گا'));
+    MSGS.slice(-80).forEach(function(m){
+      var w = el('div', 'w ' + (m.from === ME ? 'me' : 'ot')), d = el('div', 'm ' + (m.from === ME ? 'me' : 'ot'));
+      d.setAttribute('data-id', m.id);
+      if(m.from !== ME) d.appendChild(el('span', 'nm', nmOf(m.from)));
+      if(m.reply && m.reply.text){ var q = el('span', 'q'); q.setAttribute('data-q', m.reply.id || ''); q.appendChild(el('b', '', nmOf(m.reply.from) + (m.reply.from === ME ? ' (آپ)' : ''))); q.appendChild(document.createTextNode(m.reply.text)); d.appendChild(q); }
+      d.appendChild(document.createTextNode(m.text));
+      d.appendChild(el('small', '', hm(m.t) + (m.edited ? ' · ایڈٹ شدہ' : '')));
+      w.appendChild(d);
+      var ac = el('div', 'ac');
+      [['reply', '↩️ جواب', 's'], ['copy', '📋 کاپی', ''], ['edit', '✏️ ایڈٹ', ''], ['cut', '✂️ کٹ', ''], ['share', '🟢 شیئر', 's'], ['del', '🗑️ ڈیلیٹ', 'd']].forEach(function(x){
+        if(x[0] === 'edit' && m.from !== ME) return;
+        var bt = el('button', x[2], x[1]); bt.type = 'button'; bt.setAttribute('data-a', x[0]); bt.setAttribute('data-i', m.id); ac.appendChild(bt); });
+      w.appendChild(ac);
+      l.appendChild(w);
+    });
+    if(stick || near) l.scrollTop = l.scrollHeight;
+  }
+  function onSnap(snap){
+    var arr = []; snap.forEach(function(d){ var x = d.data(); if(x && typeof x.text === 'string' && (x.from === 'a1' || x.from === 'a2')) arr.push({ id: d.id, from: x.from, text: x.text, t: +x.t || 0, edited: !!x.edited, reply: (x.reply && typeof x.reply.text === 'string') ? { id: String(x.reply.id || ''), from: x.reply.from === 'a1' ? 'a1' : 'a2', text: x.reply.text.slice(0, 140) } : null }); });
+    arr.sort(function(a, b){ return a.t - b.t; });
+    var prev = MSGS.length ? MSGS[MSGS.length - 1].t : 0, first = !started; started = true; err = '';
+    MSGS = arr;
+    var last = arr.length ? arr[arr.length - 1] : null;
+    if(last && last.from !== ME && last.t > prev && !first){ try{ if(navigator.vibrate) navigator.vibrate(120); }catch(e){} }
+    if(chatShown()){ seenNow(); draw(true); }
+    else { draw(false); if(first && seenT === 0){ seenT = last ? last.t : 0; } else if(last && last.from !== ME && last.t > seenT) document.body.classList.add('adm648-unread'); }
+  }
+  function onErr(e){
+    err = (e && e.code === 'permission-denied')
+      ? '⚠️ Firestore rules میں adminChat کی اجازت نہیں — Firebase ← Firestore ← Rules میں: match /adminChat/{id} { allow read, create: if true; }'
+      : '⚠️ گفتگو نہیں کھلی (' + ((e && (e.code || e.message)) || '') + ')';
+    draw(false);
+  }
+  function start(){
+    if(un) return; var FB = window.MCSFirebase; if(!FB || !FB.onSnapshot || !FB.query || !FB.where) return;
+    try{ var q = FB.query(FB.collection(FB.db, COL), FB.where('t', '>', Date.now() - DAYS * 864e5)); un = FB.onSnapshot(q, onSnap, onErr) || function(){}; }catch(e){ onErr(e); }
+  }
+  function stop(){ try{ if(typeof un === 'function') un(); }catch(e){} un = null; MSGS = []; started = false; err = ''; document.body.classList.remove('adm648-unread'); }
+  function send(){
+    var t = document.getElementById('adm648t'), v = t ? t.value.trim() : ''; if(!v || !ME) return;
+    var FB = window.MCSFirebase; if(!FB || !FB.addDoc){ err = '⚠️ انٹرنیٹ / سرور تیار نہیں — تھوڑی دیر بعد'; draw(false); return; }
+    var btn = document.getElementById('adm648s'); if(btn) btn.disabled = true;
+    var pr = editId ? FB.updateDoc(FB.doc(FB.db, COL, editId), { text: v.slice(0, 1500), edited: true }) : FB.addDoc(FB.collection(FB.db, COL), { text: v.slice(0, 1500), from: ME, t: Date.now(), reply: replyTo || null });
+    pr.then(function(){ if(t){ t.value = ''; t.style.height = '46px'; } err = ''; editId = ''; replyTo = null; editUi(); replyUi(); })
+      .catch(onErr).then(function(){ if(btn) btn.disabled = false; });
+  }
+  function toast(x){ try{ showToast(x, 2200); }catch(e){} }
+  function clip(txt){
+    try{ if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(txt).then(function(){ return true; }, function(){ return legacy(txt); }); }catch(e){}
+    return Promise.resolve(legacy(txt));
+  }
+  function legacy(txt){ try{ var a = document.createElement('textarea'); a.value = txt; a.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(a); a.focus(); a.select(); var ok = document.execCommand('copy'); a.remove(); return ok; }catch(e){ return false; } }
+  function msgOf(id){ for(var i = 0; i < MSGS.length; i++) if(MSGS[i].id === id) return MSGS[i]; return null; }
+  function editUi(){ var e = document.getElementById('adm648e'), s = document.getElementById('adm648s'); if(e) e.classList.toggle('on', !!editId); if(s) s.textContent = editId ? 'محفوظ ✔' : 'بھیجیں ➤'; }
+  function replyUi(){ var r = document.getElementById('adm648r'), x = document.getElementById('adm648rt'); if(r) r.classList.toggle('on', !!replyTo); if(x) x.textContent = replyTo ? '↩️ جواب: ' + nmOf(replyTo.from) + ' — ' + replyTo.text.slice(0, 60) : ''; }
+  function delOne(id){ var FB = window.MCSFirebase; if(!FB || !FB.deleteDoc) return Promise.reject({ message: 'no server' }); return FB.deleteDoc(FB.doc(FB.db, COL, id)); }
+  function act(a, id){
+    var m = msgOf(id); if(!m) return;
+    if(a === 'reply'){ replyTo = { id: id, from: m.from, text: m.text.slice(0, 140) }; editId = ''; editUi(); replyUi(); var t1 = document.getElementById('adm648t'); if(t1) t1.focus(); }
+    else if(a === 'copy') clip(m.text).then(function(ok){ toast(ok ? '📋 کاپی ہو گیا' : '⚠️ کاپی نہیں ہوا'); });
+    else if(a === 'cut') clip(m.text).then(function(ok){ if(!ok){ toast('⚠️ کاپی نہیں ہوا'); return; } delOne(id).then(function(){ toast('✂️ کٹ ہو گیا — اب کہیں بھی چسپاں کریں'); }).catch(onErr); });
+    else if(a === 'del') delOne(id).then(function(){ toast('🗑️ ڈیلیٹ ہو گیا'); }).catch(onErr);
+    else if(a === 'share'){ try{ if(typeof waOpen === 'function') waOpen('', m.text); else window.open('https://wa.me/?text=' + encodeURIComponent(m.text), '_blank'); }catch(e){} }
+    else if(a === 'edit'){ editId = id; var t = document.getElementById('adm648t'); if(t){ t.value = m.text; t.style.height = Math.min(110, t.scrollHeight) + 'px'; t.focus(); } editUi(); }
+  }
+  function delAll(){
+    if(!MSGS.length){ toast('گفتگو پہلے ہی خالی ہے'); return; }
+    if(!confirm('ساری گفتگو (' + MSGS.length + ' پیغام) دونوں ایڈمن کے لیے ہمیشہ کے لیے ڈیلیٹ کریں؟')) return;
+    Promise.all(MSGS.map(function(m){ return delOne(m.id); })).then(function(){ toast('🗑️ ساری گفتگو ڈیلیٹ ہو گئی'); }).catch(onErr);
+  }
+  function tool(k){
+    var t = document.getElementById('adm648t'); if(!t) return;
+    if(k === 'all'){ t.focus(); t.select(); try{ t.setSelectionRange(0, t.value.length); }catch(e){} return; }
+    if(k === 'clr'){ t.value = ''; t.style.height = '46px'; return; }
+    if(k === 'paste'){
+      if(navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(function(x){ var s0 = t.selectionStart || 0, e0 = t.selectionEnd || 0; t.value = t.value.slice(0, s0) + x + t.value.slice(e0); t.focus(); t.dispatchEvent(new Event('input')); }, function(){ toast('⚠️ فون نے چسپاں کی اجازت نہیں دی — خانے پر انگلی دبا کر Paste کریں'); });
+      else toast('⚠️ یہاں چسپاں کی سہولت نہیں — خانے پر انگلی دبا کر Paste کریں');
+      return;
+    }
+    var s1 = t.selectionStart, e1 = t.selectionEnd, has = s1 !== e1, txt = has ? t.value.slice(s1, e1) : t.value;
+    if(!txt){ toast('خانہ خالی ہے'); return; }
+    clip(txt).then(function(ok){ if(!ok){ toast('⚠️ کاپی نہیں ہوا'); return; }
+      if(k === 'cut'){ t.value = has ? t.value.slice(0, s1) + t.value.slice(e1) : ''; t.dispatchEvent(new Event('input')); toast('✂️ کٹ ہو گیا'); } else toast('📋 کاپی ہو گیا'); });
+  }
+  function sync(){
+    var w = who();
+    if(!w){ if(document.body.classList.contains('adm648-on')){ document.body.classList.remove('adm648-on', 'adm648-card'); } if(un || MSGS.length || ME){ stop(); ME = ''; var b0 = document.getElementById('adm648'); if(b0) b0.remove(); } return; }
+    if(ME && ME !== w){ stop(); var b1 = document.getElementById('adm648'); if(b1) b1.remove(); }
+    ME = w;
+    if(!build()) return;
+    document.body.classList.add('adm648-on');
+    start();
+  }
+  /* سکرین آف کر کے آن کریں / ایپ پر واپس آئیں تو پہلے گفتگو */
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'visible' && ME){ document.body.classList.remove('adm648-card'); seenNow(); draw(true); } });
+  setInterval(function(){ try{ sync(); }catch(e){} }, 1500);
+  try{ window.addEventListener('mcs-firebase-ready', function(){ try{ sync(); }catch(e){} }); }catch(e){}
 })();
 </script>
 <style id="mcsAcc643">
