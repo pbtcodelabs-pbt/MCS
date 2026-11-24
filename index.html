@@ -4807,7 +4807,7 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2411TU667";
+const APP_VERSION = "MCS2411TU668";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
@@ -4835,6 +4835,7 @@ const UPDATE_NOTES = {
   "MCS2311MO644":"🕒 Home clock: all seven day backgrounds removed — only emerald-green text (day, time, date), no box or background",
   "MCS2311MO643":"🪪 Agent card: CNIC number, expiry and photos open only after your PIN, show only while you press and hold, carry a watermark and close by themselves",
   "MCS2311MO642":"📅 My Account: full date of birth (day-month-year) now shows and can be added or edited — not just the year; only the first business is shown for now",
+  "MCS2411TU668":"✏️ Admin edit → Save fixed: the record's own copy in the pending list is no longer treated as a duplicate number (save was blocked); real errors now show a message",
   "MCS2411TU667":"🧭 Bottom bar captions fixed: no more cut / torn / overlapping names — each button equal width, long names wrap on two lines inside the button, font scales with the screen",
   "MCS2311MO641":"🧾 My Account redesigned (Help Desk #357): four expandable cards — Account Information, Business Card Information, Subscription Information (Subscribe Now / Active / Expired) and Agent Information, plus a Registered As line on the profile card",
   "MCS2311MO640":"💊 Invitation counts in one capsule — Total · Sent (blue, middle) · Remaining — on the list and on the Home button",
@@ -8989,7 +8990,8 @@ function saveDoctor(approve){
   if(!document.getElementById('docCity').value){ showToast('شہر منتخب کریں'); return; }
   if(!document.getElementById('docDept').value){ showToast('شعبہ منتخب کریں'); return; }
   /* MCS11OCTSU0913AM: ایک ہی کیٹگری میں ایک نمبر دو بار نہیں */
-  const dup = findDupPhone('doctors', 'doctor', whatsapp, editingDoctorId, null);
+  const _selfFsD = editingDoctorId ? ((store.doctors.find(x=>x.id===editingDoctorId)||{}).fsId || null) : null;   /* MCS2411TU667 */
+  const dup = findDupPhone('doctors', 'doctor', whatsapp, editingDoctorId, _selfFsD);
   if(dup){ dupBlock('docWhatsapp', dup); return; }
   const loc = readLocationFormValues('doc');
   const data = {
@@ -11838,7 +11840,8 @@ function saveService(approve){
     if(sel && sel.value && CATEGORY_META[sel.value] && sel.value!==_ownCat){ data.category = sel.value; movedTo = sel.value; }
   }
   /* MCS11OCTSU0913AM: ایک ہی کیٹگری میں ایک موبائل نمبر دو مختلف ناموں سے نہیں — ریکارڈ محفوظ نہیں ہوگا */
-  const dup = findDupPhone('services', data.category, whatsapp, editingServiceId, null);
+  const _selfFsS = editingServiceId ? ((store.services.find(x=>x.id===editingServiceId)||{}).fsId || null) : null;   /* MCS2411TU667: اپنا ہی ریکارڈ (سرور کی زیر منظوری فہرست میں اسی کی کاپی) ڈپلیکیٹ نہ سمجھا جائے */
+  const dup = findDupPhone('services', data.category, whatsapp, editingServiceId, _selfFsS);
   if(dup){ dupBlock('svcWhatsapp', dup); return; }
   rememberArea(loc.area);
   if(!editingServiceId) setLastLocation(loc);   /* MCS1310TU004: ترمیم سے پچھلا مقام نہیں بدلتا */
@@ -15784,7 +15787,7 @@ function dupBlock(inputId, dup){
 function formDupFound(pre){
   const v = (document.getElementById(pre+'Whatsapp')||{}).value || '';
   const selfId = pre==='doc' ? editingDoctorId : editingServiceId;
-  const selfFs = pendingFormCtx && pendingFormCtx.fsId;
+  const selfFs = (pendingFormCtx && pendingFormCtx.fsId) || (selfId ? ((((pre==='doc' ? store.doctors : store.services)||[]).find(x=>x.id===selfId))||{}).fsId : '') || '';   /* MCS2411TU667 */
   return findAllByPhone(v).filter(r=> !(selfId && r.rec.id===selfId) && !(selfFs && (r.rec.fsId===selfFs || r.rec.id===selfFs)));
 }
 function formDupShow(pre){
@@ -15806,11 +15809,11 @@ function livePhoneDupCheck(pre){
   const v = document.getElementById(pre+'Whatsapp').value;
   let dup = null;
   if(phoneKey(v).length===11){
-    if(pre==='doc') dup = findDupPhone('doctors','doctor', v, editingDoctorId, pendingFormCtx && pendingFormCtx.fsId);
+    if(pre==='doc') dup = findDupPhone('doctors','doctor', v, editingDoctorId, (pendingFormCtx && pendingFormCtx.fsId) || (editingDoctorId ? ((store.doctors.find(x=>x.id===editingDoctorId)||{}).fsId || null) : null));
     else {
       const sel = document.getElementById('svcCategory');
       const cat = (pendingFormCtx || editingServiceId) && sel && sel.value ? sel.value : currentServiceCategory;
-      dup = findDupPhone('services', cat, v, editingServiceId, pendingFormCtx && pendingFormCtx.fsId);
+      dup = findDupPhone('services', cat, v, editingServiceId, (pendingFormCtx && pendingFormCtx.fsId) || (editingServiceId ? ((store.services.find(x=>x.id===editingServiceId)||{}).fsId || null) : null));
     }
   }
   if(formDupShow(pre)) return true;
@@ -16734,7 +16737,7 @@ function draftRestore(pre){
     const rec = pendingRec || (id ? store.services.find(x=>x.id===id) : null);
     if(rec && CATEGORY_META[rec.category]) currentServiceCategory = rec.category;
     const r = _open.apply(this, arguments); svcOwnerSplit(); if(!id && !pendingRec) setTimeout(()=>draftRestore('svc'), 60); return r; };
-  saveService = function(){ if(formDupBlock('svc')) return; svcOwnerMerge(); const r = _save.apply(this, arguments); svcOwnerSplit(); catRefreshSearches(); return r; };
+  saveService = function(){ if(formDupBlock('svc')) return; svcOwnerMerge(); let r; try{ r = _save.apply(this, arguments); }catch(e){ try{ svcOwnerSplit(); }catch(_){} alert('محفوظ کرتے وقت خرابی آئی — اس پیغام کا اسکرین شاٹ بھیج دیں۔\n' + ((e && e.message) || e)); throw e; } svcOwnerSplit(); try{ catRefreshSearches(); }catch(e){} return r; };   /* MCS2411TU667: خرابی خاموش نہیں */
   const _saveDoc = saveDoctor;
   saveDoctor = function(){ if(formDupBlock('doc')) return; return _saveDoc.apply(this, arguments); };
   const _openDoc = openDoctorForm;
