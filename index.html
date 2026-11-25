@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <style id="mcsCrit678">
-/* MCS2511WE678: ایپ کھلتے ہی (باقی CSS پہنچنے سے پہلے) کالے بڑے آئیکن نہ بنیں اور ◀ ▶ تیر نہ آئیں */
+/* MCS2511WE680: ایپ کھلتے ہی (باقی CSS پہنچنے سے پہلے) کالے بڑے آئیکن نہ بنیں اور ◀ ▶ تیر نہ آئیں */
 #screen-home .hx-head,#screen-home #bizPromo{display:none !important}
 #screen-home .hx-b svg{width:clamp(40px,13vw,58px);height:clamp(40px,13vw,58px);flex:none;max-width:58px;max-height:58px}
 #bnBack,#bnFwd{display:none !important}
@@ -4813,11 +4813,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2511WE678";
+const APP_VERSION = "MCS2511WE680";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
-  "MCS2511WE678":"🔎 تلاش: 3,725 «ان رجسٹرڈ» ریکارڈ اب تلاش (Explore) اور Business Community کی تلاش میں بھی آتے ہیں — رجسٹرڈ کے نیچے، «ان رجسٹرڈ» نشان کے ساتھ؛ ہوم / فہرستوں پر بوجھ نہیں • نیچے کی پٹی سے ◀ ▶ تیر ختم، بٹن برابر پھیل گئے • ایپ کھلتے وقت کالے ڈبے (آئیکن) نظر آنا ختم",
+  "MCS2511WE680":"🔎 تلاش: 3,725 «ان رجسٹرڈ» ریکارڈ اب تلاش (Explore) اور Business Community کی تلاش میں بھی آتے ہیں — رجسٹرڈ کے نیچے، «ان رجسٹرڈ» نشان کے ساتھ؛ ہوم / فہرستوں پر بوجھ نہیں • نیچے کی پٹی سے ◀ ▶ تیر ختم، بٹن برابر پھیل گئے • ایپ کھلتے وقت کالے ڈبے (آئیکن) نظر آنا ختم",
   "MCS2511WE677":"🏠 ہوم: «Explore Business Community» والی اوپر کی چوڑی پٹی اور «Business Promotion» والی پٹی ختم؛ تین ڈبے اوپر آ گئے تاکہ نیچے کا اشتہار پورا نظر آئے",
   "MCS2511WE676":"🔔 ہوم کا اوپر والا حصہ نئے ڈیزائن پر: گہرا سبز ہیڈر، بیچ میں بڑی سنہری ریمائنڈر گھنٹی (سرخ گنتی) اور اس کے نیچے پیلی گولی میں وقت، دائیں «Admin 1» نام اور تصویر؛ گھنٹی دبانے پر سب ریمائنڈر اور نئی اطلاعات ایک پاپ اپ میں؛ گھڑی کو تین بار ٹچ کرنے والے پینل میں 10 خوبصورت انگلش فونٹ — جو چنیں گھڑی اسی میں چلے (LED والا پرانا انداز بھی موجود)",
   "MCS2511WE675":"⭐ نیا My Favorites صفحہ (ایڈمن 2 کا ڈیزائن): پروفائل کی قسم کا فلٹر، My Favorite Business Numbers (Directory میں ☆ سے) کی ٹیبل اور My Favorite Profiles (Community میں ☆ Favorite سے) کے کارڈ — View Profile / Call Now؛ ہوم پر Business Promotion اونچا (بھونپو، دو سطریں، پیلا Order Now) اور «Explore Business Community» پٹی کی لکھائی اب نہیں کٹتی",
@@ -18165,6 +18165,7 @@ if('serviceWorker' in navigator){
       </div>
       <div class="bc-tot"><div>Total Profiles:<span id="bcCnt">0</span></div>
         <div>Sort By: <select id="bcSort" onchange="bcSet('sort',this.value)"><option value="new">Latest First</option><option value="old">Oldest First</option><option value="name">Name A-Z</option><option value="reg">Registered First</option></select></div></div>
+      <button type="button" id="bcUnregBar" onclick="window.mcsWtToggle678()" style="display:none;width:100%;margin:6px 0;border:1.5px solid #f59e0b;background:#fff7ed;color:#9a3412;border-radius:12px;padding:10px;font:800 14px inherit;text-align:center;direction:rtl"></button>
       <div id="bcList"></div>
     </div>
   </div>
@@ -32459,7 +32460,7 @@ html body #screen-home #hdr2.h229 .h2-d #h2H{font-size:3cqw !important;text-alig
 </script>
 
 <style id="mcsNoArrows678">
-/* MCS2511WE678 (مالک کا حکم): نیچے کی پٹی سے ◀ ▶ تیر ختم؛ بٹن پوری پٹی برابر بانٹ لیں */
+/* MCS2511WE680 (مالک کا حکم): نیچے کی پٹی سے ◀ ▶ تیر ختم؛ بٹن پوری پٹی برابر بانٹ لیں */
 html body.d2 #bnav #bnBack,html body.d2 #bnav #bnFwd,html body #bnav #bnBack,html body #bnav #bnFwd{display:none !important;width:0 !important;flex:0 0 0 !important;margin:0 !important;padding:0 !important;border:0 !important}
 html body.d2 #bnav{gap:4px !important;padding-left:4px !important;padding-right:4px !important}
 html body.d2 #bnav .d2n{flex:1 1 0 !important}
@@ -32479,22 +32480,23 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
 .wt-more{width:100%;margin:6px 0 12px;border:1.5px solid #0f766e;background:#fff;color:#0f766e;border-radius:12px;padding:9px;font:800 14px inherit}
 </style>
 <script id="mcsWaitSearch678js">
-/* MCS2511WE678 (مالک کا حکم): ویٹنگ / ان رجسٹرڈ ریکارڈ (WAIT) ہوم اور فہرستوں میں نہیں آتے (بوجھ نہ پڑے) — مگر تلاش کرنے پر رجسٹرڈ کے نیچے «ان رجسٹرڈ» نشان کے ساتھ نظر آئیں */
+/* MCS2511WE680 (مالک کا حکم): ویٹنگ / ان رجسٹرڈ ریکارڈ (WAIT) ہوم اور فہرستوں میں نہیں آتے (بوجھ نہ پڑے) — مگر تلاش کرنے پر رجسٹرڈ کے نیچے «ان رجسٹرڈ» نشان کے ساتھ نظر آئیں */
 (function(){
   var shown = { sr: 30, bc: 30 };
   function cm(x){ try{ return (typeof CATEGORY_META !== 'undefined' && CATEGORY_META[x.category]) || {}; }catch(e){ return {}; } }
-  function find(q, pass){
+  function find(q, pass, all){
     var out = [];
     try{
-      if(!q || q.length < 2 || typeof WAIT === 'undefined' || !WAIT.loaded) return out;
-      var srch = ubParseQuery(q); if(!srch || srch.empty) return out;
+      if(typeof WAIT === 'undefined' || !WAIT.loaded) return out;
+      var srch = null;
+      if(!all || q){ if(!q || q.length < 2) return out; srch = ubParseQuery(q); if(!srch || srch.empty) return out; }
       [['services', 'service'], ['doctors', 'doctor']].forEach(function(p){
         (WAIT[p[0]] || []).forEach(function(x){
           if(!x) return;
           var c = p[1] === 'service' ? cm(x) : {};
           var it = { kind: p[1], cat: p[1] === 'doctor' ? 'doctor' : x.category, rec: x, col: p[0] };
           var ok = false;
-          try{ ok = ubMatch(srch, [x.nameUr, x.name, x.nameEn, x.owner, x.more && x.more.owner, x.type, x.address, x.intro, x.city, x.area, x.district, x.province, x.dept, x.specialty, x.hospital, c.ur, c.en, p[1] === 'doctor' ? 'ڈاکٹر doctor dr' : ''], srNums(x)); }catch(e){}
+          try{ ok = !srch || ubMatch(srch, [x.nameUr, x.name, x.nameEn, x.owner, x.more && x.more.owner, x.type, x.address, x.intro, x.city, x.area, x.district, x.province, x.dept, x.specialty, x.hospital, c.ur, c.en, p[1] === 'doctor' ? 'ڈاکٹر doctor dr' : ''], srNums(x)); }catch(e){}
           if(ok && (!pass || pass(it))) out.push(it);
         });
       });
@@ -32537,17 +32539,28 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
     try{ var cnt = document.getElementById('srCnt'); if(cnt) cnt.insertAdjacentHTML('beforeend', ' <span dir="ltr" data-noen="1">+ <b>' + rows.length + '</b> unregistered</span>'); }catch(e){}
   }
   /* ---- Business Community ---- */
+  var bcAll678 = false;
+  function wtTotal(){ try{ return (WAIT.services || []).length + (WAIT.doctors || []).length; }catch(e){ return 0; } }
+  window.mcsWtToggle678 = function(){ bcAll678 = !bcAll678; shown.bc = 30; try{ bcRender(); }catch(e){} };
   function bcWait(){
     var old = document.getElementById('bcWaitSec'); if(old) old.remove();
-    var qa = document.getElementById('bcQ'), qb = document.getElementById('bcName'), box = document.getElementById('bcList'); if(!box) return;
+    var qa = document.getElementById('bcQ'), qb = document.getElementById('bcName'), box = document.getElementById('bcList'), bar = document.getElementById('bcUnregBar'); if(!box) return;
     var q = ((qa && qa.value) || '').trim() || ((qb && qb.value) || '').trim();
+    var tot = wtTotal();
+    if(bar){
+      if(tot > 0 && typeof WAIT !== 'undefined' && WAIT.loaded){
+        var reg = 0; try{ reg = parseInt(document.getElementById('bcCnt').textContent, 10) || 0; }catch(e){}
+        bar.style.display = 'block';
+        bar.innerHTML = '⏳ ایپ میں ان رجسٹرڈ ریکارڈ: <b style="font-family:Arial,sans-serif">' + tot.toLocaleString() + '</b> &nbsp;|&nbsp; رجسٹرڈ: <b style="font-family:Arial,sans-serif">' + reg.toLocaleString() + '</b><br><small>' + (bcAll678 ? '▲ ان رجسٹرڈ چھپائیں' : '▼ ان رجسٹرڈ دکھائیں (یا اوپر نام / علاقہ لکھ کر تلاش کریں)') + '</small>';
+      } else bar.style.display = 'none';
+    }
     var rows = find(q, function(it){ try{ var r = it.rec;
       if(bcF.sub) return false;
       if(bcF.district && (r.district || '') !== bcF.district) return false;
       if(bcF.area && (r.area || '') !== bcF.area) return false;
       if(bcF.type && ubGroupOf(it.cat) !== bcF.type) return false;
       if(bcF.cat && it.cat !== bcF.cat) return false;
-      return true; }catch(e){ return true; } });
+      return true; }catch(e){ return true; } }, bcAll678);
     if(!rows.length) return;
     var none = box.querySelector('.bc-none'); if(none) none.remove();
     var sec = document.createElement('div'); sec.id = 'bcWaitSec'; sec.innerHTML = section('bc', rows, 'bc');
@@ -32560,6 +32573,35 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
   wrap('srRender', srWait); wrap('bcRender', bcWait);
   /* ویٹنگ فہرست دیر سے لوڈ ہو تو کھلی تلاش دوبارہ بنے */
   var _t = setInterval(function(){ try{ if(typeof WAIT !== 'undefined' && WAIT.loaded){ clearInterval(_t); var m = document.getElementById('srModal'); if(m && m.classList.contains('on') && document.getElementById('srQ').value.trim()) srRender(); } }catch(e){} }, 1500);
+})();
+</script>
+
+<style id="mcsTileCnt680css">
+#screen-home .hx-o{position:relative !important}
+#screen-home .hx-o .hx-cnt{position:absolute;top:7px;left:50%;transform:translateX(-50%);background:#ea580c;color:#fff;border-radius:999px;padding:2px 12px;font:900 clamp(12px,3.6vw,15px)/1.4 Arial,sans-serif;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.25);direction:ltr}
+</style>
+<script id="mcsTileCnt680js">
+/* MCS2511WE680 (مالک کا حکم): ہوم پر «Explore Business Community» ٹائل کے اوپر ایپ کے اندر کل ریکارڈ (رجسٹرڈ + ان رجسٹرڈ) کی تعداد */
+(function(){
+  function total(){
+    var n = 0;
+    try{ n += bcAll().length; }catch(e){ try{ n += ubAllRecords().length; }catch(e2){} }
+    try{ if(typeof WAIT !== 'undefined'){ n += (WAIT.services || []).length + (WAIT.doctors || []).length; } }catch(e){}
+    return n;
+  }
+  function paint(){
+    try{
+      var t = document.querySelector('#screen-home .hx-o'); if(!t) return;
+      var n = total(); if(!n) return;
+      var b = t.querySelector('.hx-cnt');
+      if(!b){ b = document.createElement('i'); b.className = 'hx-cnt'; b.setAttribute('data-noen', '1'); t.insertBefore(b, t.firstChild); }
+      var txt = n.toLocaleString('en-US') + ' Records';
+      if(b.textContent !== txt) b.textContent = txt;
+    }catch(e){}
+  }
+  setInterval(paint, 2000);
+  setTimeout(paint, 800);
+  if(document.readyState === 'complete') setTimeout(paint, 1500); else window.addEventListener('load', function(){ setTimeout(paint, 1500); });
 })();
 </script>
 </body>
