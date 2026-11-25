@@ -4807,10 +4807,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2511WE672";
+const APP_VERSION = "MCS2511WE673";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2511WE673":"🎉 ممبرشپ کی مبارکباد کا کارڈ مالک کے ڈیزائن پر نیا: آسمان اور شہر والا بینر، سبز ہیرو میں سنہری تمغہ، ممبرشپ کی تاریخ و ID، ٹیم کا شکریہ اور تین بٹن؛ اوپر والا انگلش جملہ درست",
   "MCS2511WE672":"🎉 ممبرشپ لینے پر مبارکباد کے کارڈ میں ٹیم My City Shines کی طرف سے شکریہ اور پیلا Help Desk بٹن — کوئی نمبر یا ذاتی نام نہیں",
   "MCS2511WE671":"📞 Phone Directory صاف: اردو دائیں اور انگلش بائیں، لکھائی گہری اور موٹی، زیبرا قطاریں ہلکی نیلی ٹیل میں گہری",
   "MCS2511WE670":"📩 ہوم پر بزنس کارڈ کے اوپر باریک پٹی واپس (صرف ایڈمن 1): کل، گئے، باقی، آج کی حد، اگلے پیغام کی الٹی گنتی — دبانے سے دعوتی فہرست؛ ایڈمن 2 کے لیے پورٹل میں «دعوتی پیغام»",
@@ -6685,7 +6686,7 @@ async function mcsPlayProbe(token){ try{ const r = await fetch(PF_API + '/mcsbuy
    ادائیگی کے بعد کوئی خرابی آئے تو Play کی فہرست سے خریداری ڈھونڈ کر خود مکمل؛ تصدیق رکے تو پیچھے بار بار (mcsPlayPending) */
 /* MCS1511SU440 (مالک کا حکم): گوگل پلے خریداری ہوتے ہی — کاروبار لائیو، مبارکباد، GPA نمبر کاروبار پر محفوظ، اور ایپ کے کل ریکارڈ کی گنتی
    («3,563 کاروبار اور 280 پروفیشنلز اب آپ کا ریکارڈ دیکھ سکتے ہیں»)؛ فارم ایڈمن کو صرف جائزے کے لیے (memAutoSend via mcsGoLive) — منظوری کی شرط نہیں */
-function mcsCongrats(rk, j){
+function mcsCongrats(rk, j){   /* MCS2511WE673 (مالک کا حکم): مالک کے دیے ڈیزائن کے مطابق نیا مبارکباد کارڈ — ٹیم My City Shines، کوئی نمبر / ذاتی نام نہیں */
   const num = id => { const e = document.getElementById(id); const n = e ? parseInt(String(e.textContent).replace(/\D/g, ''), 10) : 0; return isFinite(n) ? n : 0; };
   let biz = num('homeCount_business'), pro = num('homeCount_professional');
   if(!biz){ try{ biz = (store.services || []).filter(r => r && r.approved !== false && r.category !== 'emergencyNumbers' && r.category !== 'govOffices').length; pro = (store.doctors || []).length; }catch(e){} }
@@ -6695,23 +6696,53 @@ function mcsCongrats(rk, j){
   const until = j && j.until ? new Date(j.until).toLocaleDateString('en-GB') : '';
   const sid = (j && (j.subid || j.sid)) ? String(j.subid || j.sid).replace(/-/g, '') : '';
   const f = n => Number(n || 0).toLocaleString('en-US');
-  agModal(`<div style="text-align:center;font-size:54px;line-height:1.1">🎉</div>
-    <div class="ag-hd" style="text-align:center">Congratulations! Your business is now LIVE</div>
-    <div style="text-align:center;font-weight:700;color:#334155;margin:0 0 6px">Your business now shines across your city — welcome to the new horizons of digital business.</div>
-    <div style="text-align:center;font-size:20px;font-weight:800;color:#0f766e;margin:2px 0 8px" data-noen>${escapeHtml(r0.nameUr || r0.nameEn || r0.name || '')}</div>
-    <div style="margin:8px 0;padding:12px;border-radius:16px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #10b981;text-align:center">
-      <div style="font:900 28px Arial,sans-serif;color:#065f46">${f(biz)} <small style="font-size:14px">businesses</small> + ${f(pro)} <small style="font-size:14px">professionals</small></div>
-      <div style="font-weight:700;color:#065f46;margin-top:4px">can now see your business on My City Shines</div></div>
-    <div style="display:grid;gap:6px;font-size:14px;margin:8px 0">
-      ${until ? `<div>⭐ <b>One-year membership</b> — active until <b dir="ltr">${until}</b></div>` : ''}
-      ${sid ? `<div>🆔 Membership ID: <b dir="ltr">${escapeHtml(sid)}</b></div>` : ''}
-      ${gpa ? `<div>🧾 Google Play order: <b dir="ltr">${escapeHtml(gpa)}</b></div>` : ''}
-      <div>✅ Public listing • category & area search • call / WhatsApp</div></div>
-    <div style="text-align:center;font-size:14px;color:#475569;line-height:1.6;margin:6px 0 2px">Thank you for choosing My City Shines. We are with you at every step — for any question or suggestion, just write to us on the Help Desk and our team will reply.</div>
-    <div style="text-align:center;font-weight:800;color:#0f766e;margin:2px 0 10px">— Team My City Shines</div>
-    <button type="button" class="btn block" onclick="closeModal('agModal');try{pfOpen('${r0.kind === 'doctor' ? 'doctor' : 'service'}','${escapeAttr(r0.id || '')}')}catch(e){}">🏪 Open my business</button>
-    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agModal');try{shareProfileCardById('service','${escapeAttr(r0.id || '')}')}catch(e){}">📤 Share my business</button>
-    <button type="button" class="btn block secondary" style="margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;background:#fef9c3;border:1.5px solid #eab308;color:#422006" onclick="closeModal('agModal');try{openHelpDesk()}catch(e){}"><span class="pbthd-sos" style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(#fde047,#facc15);color:#111;border-radius:999px;padding:2px 9px;font:800 12px/1.35 Arial,sans-serif;box-shadow:0 2px 0 #ca8a04;white-space:nowrap;vertical-align:middle;direction:ltr"><b style="background:#111;color:#facc15;border-radius:50%;width:15px;height:15px;display:inline-flex;align-items:center;justify-content:center;font-size:11px">?</b>Help Desk</span> Support</button>`);   /* MCS2511WE672 (مالک کا حکم): ٹیم کی طرف سے شکریہ + Help Desk — کوئی نمبر / ذاتی نام نہیں */
+  const tot = biz + pro, totS = tot >= 1e6 ? (Math.floor(tot / 1e5) / 10) + 'M' : tot >= 1e4 ? Math.floor(tot / 1e3) + 'K' : f(tot);
+  const kind = r0.kind === 'doctor' ? 'doctor' : 'service', id = escapeAttr(r0.id || '');
+  const bizName = r0.nameEn || r0.nameUr || r0.name || '';
+  const sky = `<svg class="sk" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true">
+    <g fill="#fff" opacity=".85"><ellipse cx="70" cy="22" rx="26" ry="8"/><ellipse cx="92" cy="18" rx="18" ry="9"/><ellipse cx="300" cy="16" rx="24" ry="7"/><ellipse cx="320" cy="13" rx="15" ry="8"/></g>
+    <g fill="#9ccf6f"><rect x="0" y="86" width="400" height="34"/></g>
+    <g fill="#5fa84a" opacity=".75"><rect x="10" y="52" width="14" height="40"/><rect x="28" y="40" width="12" height="52"/><rect x="44" y="58" width="16" height="34"/><rect x="190" y="66" width="12" height="26"/><rect x="206" y="58" width="10" height="34"/></g>
+    <g fill="#e9f3dc"><rect x="262" y="70" width="110" height="22"/></g>
+    <g fill="#2f8f4e"><path d="M296 70 a21 21 0 0 1 42 0z"/><rect x="315" y="44" width="2" height="7"/><circle cx="316" cy="43" r="2.4" fill="#e7b416"/>
+      <rect x="268" y="40" width="6" height="52"/><path d="M266 40 l5 -10 l5 10z"/><rect x="360" y="40" width="6" height="52"/><path d="M358 40 l5 -10 l5 10z"/>
+      <path d="M280 72 a8 8 0 0 1 16 0z"/><path d="M338 72 a8 8 0 0 1 16 0z"/></g>
+    <g fill="#3f9b3c"><circle cx="150" cy="92" r="12"/><circle cx="168" cy="94" r="10"/><circle cx="236" cy="93" r="11"/><circle cx="388" cy="92" r="12"/><circle cx="6" cy="94" r="10"/><circle cx="90" cy="95" r="9"/></g>
+  </svg>`;
+  let o = document.getElementById('mcsCg673'); if(o) o.remove();
+  o = document.createElement('div'); o.id = 'mcsCg673'; o.setAttribute('data-noen', '');
+  o.innerHTML = `<div class="w">
+    <div class="bn">${sky}
+      <button type="button" class="x" aria-label="Close">✕</button>
+      <div class="lg"><img src="icons/icon-192.png" alt=""><b>My City<br>Shines</b></div>
+      <div class="tx"><b>Congratulations!</b> Your business is now live and shining across your city. Welcome to new horizons in digital business.</div>
+    </div>
+    ${bizName ? `<div class="bz">🏪 ${escapeHtml(bizName)}</div>` : ''}
+    <div class="hr">
+      <div class="md"><span class="cr">👑</span><div class="mc"><span>${totS}</span></div><div class="rb">My City Shines</div></div>
+      <div class="ht"><div class="n"><b>${f(biz)}</b> businesses <i>+</i> <b>${f(pro)}</b> professionals</div><div class="s">can now see your business on</div><div class="g">My City Shines</div></div>
+      <div class="ch"><i style="height:30%"></i><i style="height:50%"></i><i style="height:72%"></i><i style="height:95%"></i><em>↗</em></div>
+    </div>
+    <div class="ms">
+      <div class="t">⭐ <b>One-year membership</b> — active until</div>
+      ${until ? `<div class="dt"><span class="ci">📅</span><span class="dp" dir="ltr">${until}</span></div>` : ''}
+      <div class="rw">${sid ? `<div class="id"><span class="ic">🪪</span>Membership ID: <b dir="ltr">${escapeHtml(sid)}</b></div>` : ''}<div class="pl"><span class="ok">✓</span>Public listing • category &amp; area search • call / WhatsApp</div></div>
+      ${gpa ? `<div class="gp">🧾 Google Play order: <b dir="ltr">${escapeHtml(gpa)}</b></div>` : ''}
+    </div>
+    <div class="th"><span class="in">i</span><div>Thank you for choosing My City Shines. We are with you at every step — for any question or suggestion, just write to us on the Help Desk and our team will reply.</div><span class="ag">🎧</span></div>
+    <div class="tm"><i></i>Team My City Shines<i></i></div>
+    <button type="button" class="b1"><span class="bi">💼</span>Open my business<span class="cv">›</span></button>
+    <button type="button" class="b2"><span class="bi"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="18" cy="5" r="3" fill="#0f5132"/><circle cx="6" cy="12" r="3" fill="#0f5132"/><circle cx="18" cy="19" r="3" fill="#0f5132"/><path d="M8.6 10.7l6.8-4M8.6 13.3l6.8 4" stroke="#0f5132" stroke-width="2"/></svg></span>Share my business<span class="cv">›</span></button>
+    <button type="button" class="b3"><span class="pbthd-sos" style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(#fde047,#facc15);color:#111;border-radius:999px;padding:2px 9px;font:800 12px/1.35 Arial,sans-serif;box-shadow:0 2px 0 #ca8a04;white-space:nowrap;vertical-align:middle;direction:ltr"><b style="background:#111;color:#facc15;border-radius:50%;width:15px;height:15px;display:inline-flex;align-items:center;justify-content:center;font-size:11px">?</b>Help Desk</span><span class="sp"></span>🎧 Support</button>
+  </div>`;
+  document.body.appendChild(o);
+  const close = () => o.remove();
+  o.querySelector('.x').onclick = close;
+  o.querySelector('.b1').onclick = () => { close(); try{ pfOpen(kind, r0.id || ''); }catch(e){} };
+  o.querySelector('.b2').onclick = () => { close(); try{ shareProfileCardById('service', r0.id || ''); }catch(e){} };
+  o.querySelector('.b3').onclick = () => { close(); try{ openHelpDesk(); }catch(e){} };
+  const cols = ['#f5c518', '#16a34a', '#0f766e', '#ef4444', '#3b82f6'];
+  for(let i = 0; i < 30; i++){ const c = document.createElement('i'); c.className = 'cf'; c.style.left = (Math.random() * 100) + '%'; c.style.background = cols[i % cols.length]; c.style.animationDuration = (2.4 + Math.random() * 2) + 's'; c.style.animationDelay = (Math.random() * .8) + 's'; o.appendChild(c); }
 }
 async function mcsPlayFinish(token, sku, rk){
   try{ await mcsEnsureCloud(rk); }catch(e){}
@@ -31715,6 +31746,63 @@ html body.d2 #bnav #d2nHome b{font-size:clamp(9px,3vw,13px) !important}
 html body.d2 #bnav .d2n span:not(.mcBadge){display:none !important}
 html body.d2 #bnav .d2n svg{width:clamp(19px,5.6vw,25px) !important;height:clamp(19px,5.6vw,25px) !important;flex:none !important}
 @media (min-width:700px){ html body.d2 #bnav .d2n b{font-size:13px !important} }
+</style>
+<style id="mcsCg673css">
+/* MCS2511WE673: مبارکباد کارڈ — مالک کا ڈیزائن (آسمان + شہر، سبز ہیرو + سنہری تمغہ، ممبرشپ، شکریہ، Team، تین بٹن) */
+#mcsCg673{position:fixed;inset:0;z-index:2147483400;background:#eef5ec;overflow:auto;-webkit-overflow-scrolling:touch;font-family:'Segoe UI',Selawik,Arial,sans-serif;color:#0f2e1f;animation:mcg673f .25s ease}
+#mcsCg673 *{box-sizing:border-box}
+#mcsCg673 .w{max-width:520px;margin:0 auto;padding:0 12px calc(18px + env(safe-area-inset-bottom,0px));background:linear-gradient(#f7fbf3,#eef5ec)}
+#mcsCg673 .bn{position:relative;margin:0 -12px;height:150px;background:linear-gradient(#bfe3fb,#e3f3fd 60%,#eef8e8);overflow:hidden;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 34px}
+#mcsCg673 .sk{position:absolute;left:0;right:0;bottom:0;width:100%;height:70px}
+#mcsCg673 .x{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:10px;z-index:3;width:36px;height:36px;border-radius:50%;border:0;background:#0f5132;color:#fff;font-size:17px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+#mcsCg673 .lg{position:relative;z-index:2;flex:none;display:flex;flex-direction:column;align-items:center;width:84px}
+#mcsCg673 .lg img{width:50px;height:50px;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,.18);background:#fff}
+#mcsCg673 .lg b{font-size:15px;line-height:1.05;font-weight:900;color:#0f3d24;text-align:center;margin-top:3px;text-shadow:0 1px 0 #fff}
+#mcsCg673 .tx{position:relative;z-index:2;flex:1;padding-right:34px;font-style:italic;font-size:13.5px;line-height:1.4;color:#123b2a;text-align:center}
+#mcsCg673 .tx b{display:block;font-style:normal;font-size:17px;color:#0f5132}
+#mcsCg673 .bz{text-align:center;font-weight:800;font-size:16px;color:#0f5132;margin:8px 0 0}
+#mcsCg673 .hr{position:relative;display:flex;align-items:center;gap:10px;margin:10px 0 0;padding:14px 12px;border-radius:22px;background:radial-gradient(circle at 80% 30%,#1f7a46,#0d4a2a 70%);border:3px solid #e2b93b;box-shadow:0 6px 16px rgba(13,74,42,.3),inset 0 0 0 2px rgba(255,255,255,.08);color:#fff}
+#mcsCg673 .md{position:relative;flex:none;width:84px;display:flex;flex-direction:column;align-items:center}
+#mcsCg673 .md .cr{font-size:22px;line-height:1;margin-bottom:-6px;z-index:2}
+#mcsCg673 .md .mc{width:70px;height:70px;border-radius:50%;background:conic-gradient(from 0deg,#f7d354,#c8901a,#f7d354,#c8901a,#f7d354);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+#mcsCg673 .md .mc span{width:52px;height:52px;border-radius:50%;background:radial-gradient(#22a050,#0d5a2f);display:flex;align-items:center;justify-content:center;font:900 22px Arial,sans-serif;color:#fff;border:2px solid #fde68a}
+#mcsCg673 .md .rb{margin-top:-8px;z-index:2;background:linear-gradient(#fde68a,#e2b93b);color:#3b2a05;font-size:10px;font-weight:900;padding:2px 7px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+#mcsCg673 .ht{flex:1;min-width:0;text-align:center;border-left:1px solid rgba(255,255,255,.25);padding-left:10px}
+#mcsCg673 .ht .n{font-size:13.5px;font-weight:700}
+#mcsCg673 .ht .n b{font:900 26px Arial,sans-serif;color:#fde047;vertical-align:-2px}
+#mcsCg673 .ht .n i{font-style:normal;color:#fde047;font-weight:900;font-size:18px;margin:0 2px}
+#mcsCg673 .ht .s{font-size:13px;opacity:.95;margin-top:2px}
+#mcsCg673 .ht .g{font-size:22px;font-weight:900;color:#fde047;line-height:1.15;text-shadow:0 2px 0 rgba(0,0,0,.25)}
+#mcsCg673 .ch{position:absolute;right:10px;bottom:8px;display:flex;align-items:flex-end;gap:3px;height:34px;opacity:.55}
+#mcsCg673 .ch i{width:6px;background:linear-gradient(#86efac,#22c55e);border-radius:2px 2px 0 0}
+#mcsCg673 .ch em{position:absolute;right:-2px;top:-12px;font-style:normal;color:#86efac;font-weight:900;font-size:16px}
+#mcsCg673 .ms{margin:12px 0 0;padding:14px;border-radius:20px;background:#fff;box-shadow:0 3px 12px rgba(15,46,31,.1)}
+#mcsCg673 .ms .t{font-size:15px}#mcsCg673 .ms .t b{font-size:17px;color:#0f3d24}
+#mcsCg673 .dt{display:flex;align-items:center;gap:8px;margin:8px 0}
+#mcsCg673 .dt .ci{font-size:22px}
+#mcsCg673 .dt .dp{background:#dcf5e3;color:#0f3d24;border-radius:12px;padding:5px 16px;font:900 21px Arial,sans-serif}
+#mcsCg673 .rw{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+#mcsCg673 .id{flex:1 1 150px;white-space:nowrap;display:flex;align-items:center;gap:7px;background:#f1edfd;border-radius:14px;padding:8px 10px;font-size:13px}
+#mcsCg673 .id .ic{font-size:18px}#mcsCg673 .id b{font-size:15px}
+#mcsCg673 .pl{flex:1 1 170px;display:flex;align-items:center;gap:8px;background:#eafaef;border-radius:14px;padding:8px 10px;font-size:12.5px;line-height:1.35}
+#mcsCg673 .pl .ok{flex:none;width:26px;height:26px;border-radius:7px;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900}
+#mcsCg673 .gp{font-size:12.5px;margin-top:8px;color:#334155}
+#mcsCg673 .th{display:flex;align-items:center;gap:10px;margin:12px 0 0;padding:12px;border-radius:18px;background:linear-gradient(135deg,#fffbe8,#fdf3c4);border:1.5px solid #f2dc8a;font-size:13.5px;line-height:1.5;color:#1f2937}
+#mcsCg673 .th .in{flex:none;width:32px;height:32px;border-radius:50%;background:#0f5132;color:#fff;font:900 18px Georgia,serif;display:flex;align-items:center;justify-content:center;border:2px solid #e2b93b}
+#mcsCg673 .th .ag{flex:none;font-size:30px}
+#mcsCg673 .tm{display:flex;align-items:center;gap:10px;justify-content:center;margin:12px 0 8px;font-size:19px;font-weight:900;color:#0f5132}
+#mcsCg673 .tm i{flex:0 1 50px;height:2px;background:#0f5132}
+#mcsCg673 button.b1,#mcsCg673 button.b2,#mcsCg673 button.b3{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;border-radius:16px;padding:13px 40px;font:800 18px 'Segoe UI',Selawik,Arial,sans-serif;cursor:pointer;margin-top:9px}
+#mcsCg673 .b1{background:linear-gradient(#17683c,#0d4a2a);color:#fff;border:2.5px solid #e2b93b;box-shadow:0 4px 10px rgba(13,74,42,.3)}
+#mcsCg673 .b2{background:#fff;color:#0f5132;border:2.5px solid #0f5132}
+#mcsCg673 .b3{background:linear-gradient(#fef08a,#fde047);color:#1f2937;border:2px solid #eab308}
+#mcsCg673 .bi{font-size:22px;display:inline-flex}
+#mcsCg673 .cv{position:absolute;right:16px;top:50%;transform:translateY(-54%);font-size:30px;line-height:1;font-weight:400}
+#mcsCg673 .b3 .sp{width:1.5px;height:24px;background:#a16207;opacity:.6}
+#mcsCg673 i.cf{position:fixed;top:-14px;width:9px;height:14px;border-radius:2px;pointer-events:none;animation:mcg673c linear forwards;z-index:3}
+@media (max-width:380px){#mcsCg673 .ht .g{font-size:19px}#mcsCg673 .ht .n b{font-size:22px}#mcsCg673 .tx{font-size:12.5px}#mcsCg673 .tx b{font-size:15.5px}#mcsCg673 .md{width:72px}#mcsCg673 .md .mc{width:62px;height:62px}#mcsCg673 .md .mc span{width:46px;height:46px;font-size:19px}}
+@keyframes mcg673f{from{opacity:0}to{opacity:1}}
+@keyframes mcg673c{to{transform:translateY(110vh) rotate(720deg)}}
 </style>
 </body>
 
