@@ -9,7 +9,7 @@
 /* Same version string as index.html's APP_VERSION and the release zip
    filename (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS0311TU125) — keep these three in sync
    on every release so it's always clear which files go together. */
-const CACHE_NAME = 'mcs-cache-MCS2511WE673';
+const CACHE_NAME = 'mcs-cache-MCS2511WE674';
 /* MCS0311TU125: فونٹ (10-13MB) الگ مستقل کیش میں — ہر ورژن پر مٹتے نہیں تھے تو ہر اپڈیٹ کے بعد دوبارہ
    ڈاؤن لوڈ ہوتے اور تب تک نوری نستعلیق/کشیدہ نظر نہیں آتا تھا۔ */
 const FONT_CACHE = 'mcs-fonts-v1';
@@ -120,4 +120,22 @@ self.addEventListener('fetch', (event) => {
       return cached || networkFetch;
     })
   );
+});
+
+/* MCS2511WE674 (مالک کا حکم): فون کے اوپر اطلاع (Web Push) — سرور /mcsrem یاد دہانی کا وقت آنے پر بھیجتا ہے؛ ایپ بند ہو تب بھی */
+self.addEventListener('push', (event) => {
+  let d = {};
+  try { d = event.data ? event.data.json() : {}; } catch (e) { d = { t: 'My City Shines', b: event.data ? event.data.text() : '' }; }
+  event.waitUntil(self.registration.showNotification(d.t || 'My City Shines', {
+    body: d.b || '', icon: 'icons/icon-192.png', badge: 'icons/icon-192-maskable.png', tag: d.tag || 'mcs', renotify: true,
+    data: { url: d.u || './' }
+  }));
+});
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = new URL((event.notification.data && event.notification.data.url) || './', self.registration.scope).href;
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    for (const c of list) { if (c.url.startsWith(self.registration.scope) && 'focus' in c) { try { c.postMessage({ mnote: url }); } catch (e) {} return c.focus(); } }
+    return self.clients.openWindow ? self.clients.openWindow(url) : null;
+  }));
 });
