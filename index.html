@@ -4807,10 +4807,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2511WE671";
+const APP_VERSION = "MCS2511WE672";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2511WE672":"🎉 ممبرشپ لینے پر مبارکباد کے کارڈ میں ٹیم My City Shines کی طرف سے شکریہ اور پیلا Help Desk بٹن — کوئی نمبر یا ذاتی نام نہیں",
   "MCS2511WE671":"📞 Phone Directory صاف: اردو دائیں اور انگلش بائیں، لکھائی گہری اور موٹی، زیبرا قطاریں ہلکی نیلی ٹیل میں گہری",
   "MCS2511WE670":"📩 ہوم پر بزنس کارڈ کے اوپر باریک پٹی واپس (صرف ایڈمن 1): کل، گئے، باقی، آج کی حد، اگلے پیغام کی الٹی گنتی — دبانے سے دعوتی فہرست؛ ایڈمن 2 کے لیے پورٹل میں «دعوتی پیغام»",
   "MCS2511WE669":"🏙️ Business Community اور 📞 Phone Directory مکمل: ہیڈر میں لوگو اور ⓘ آئیکن، ضلع پہلے آپ کا اپنا، تصدیق شدہ نشان صرف تصدیق شدہ پروفائل پر، ڈائریکٹری میں موبائل نمبر دبا کر سیدھی کال",
@@ -6706,8 +6707,11 @@ function mcsCongrats(rk, j){
       ${sid ? `<div>🆔 Membership ID: <b dir="ltr">${escapeHtml(sid)}</b></div>` : ''}
       ${gpa ? `<div>🧾 Google Play order: <b dir="ltr">${escapeHtml(gpa)}</b></div>` : ''}
       <div>✅ Public listing • category & area search • call / WhatsApp</div></div>
+    <div style="text-align:center;font-size:14px;color:#475569;line-height:1.6;margin:6px 0 2px">Thank you for choosing My City Shines. We are with you at every step — for any question or suggestion, just write to us on the Help Desk and our team will reply.</div>
+    <div style="text-align:center;font-weight:800;color:#0f766e;margin:2px 0 10px">— Team My City Shines</div>
     <button type="button" class="btn block" onclick="closeModal('agModal');try{pfOpen('${r0.kind === 'doctor' ? 'doctor' : 'service'}','${escapeAttr(r0.id || '')}')}catch(e){}">🏪 Open my business</button>
-    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agModal');try{shareProfileCardById('service','${escapeAttr(r0.id || '')}')}catch(e){}">📤 Share my business</button>`);
+    <button type="button" class="btn block secondary" style="margin-top:6px" onclick="closeModal('agModal');try{shareProfileCardById('service','${escapeAttr(r0.id || '')}')}catch(e){}">📤 Share my business</button>
+    <button type="button" class="btn block secondary" style="margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;background:#fef9c3;border:1.5px solid #eab308;color:#422006" onclick="closeModal('agModal');try{openHelpDesk()}catch(e){}"><span class="pbthd-sos" style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(#fde047,#facc15);color:#111;border-radius:999px;padding:2px 9px;font:800 12px/1.35 Arial,sans-serif;box-shadow:0 2px 0 #ca8a04;white-space:nowrap;vertical-align:middle;direction:ltr"><b style="background:#111;color:#facc15;border-radius:50%;width:15px;height:15px;display:inline-flex;align-items:center;justify-content:center;font-size:11px">?</b>Help Desk</span> Support</button>`);   /* MCS2511WE672 (مالک کا حکم): ٹیم کی طرف سے شکریہ + Help Desk — کوئی نمبر / ذاتی نام نہیں */
 }
 async function mcsPlayFinish(token, sku, rk){
   try{ await mcsEnsureCloud(rk); }catch(e){}
