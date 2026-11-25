@@ -4807,10 +4807,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2411TU668";
+const APP_VERSION = "MCS2511WE669";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2511WE669":"🏙️ Business Community اور 📞 Phone Directory مکمل: ہیڈر میں لوگو اور ⓘ آئیکن، ضلع پہلے آپ کا اپنا، تصدیق شدہ نشان صرف تصدیق شدہ پروفائل پر، ڈائریکٹری میں موبائل نمبر دبا کر سیدھی کال",
   "MCS2411TU666":"📞 Business Phone Directory: نیا ٹیبل پیج — اکاؤنٹ ID، نام، موبائل، ضلع، علاقہ، سرچ اور پیج نمبر",
   "MCS2411TU665":"🏘️ Business Community: نئی کمپیکٹ اسکرین — فلٹرز، ٹوٹل، ترتیب، تصویر والے کارڈ، View Profile اور Call Now",
   "MCS2311MO663":"🏪 ہیلپ ڈیسک #387: اپنا کاروبار ہو تو «Add New» = نیا «Add New Profile» صفحہ (Already Subscribed + نام، Business Card | Subscription) — دوسرا کاروبار «Coming Soon، محبت اور صبر سے انتظار فرمائیں»؛ ایجنٹ / ایڈمن کو «Invite & Register» ویسا",
@@ -7251,7 +7252,7 @@ function bcCardHtml(it){
   const loc = [r.area, r.city || r.district].filter(Boolean).filter((x, i, A) => A.indexOf(x) === i).join('، ') || r.address || '';
   let num = ''; try{ num = normalizePkNumber(r.whatsapp || r.phone || r.mobile || ''); }catch(e){}
   const dg = String(num || '').replace(/[^0-9]/g, '');
-  let reg = false; try{ reg = !!pfActive(it.rec); }catch(e){}
+  let reg = false; try{ reg = !!(vfIs(stKey(r.whatsapp || it.rec.whatsapp)) || vfIs(stKey(num))); }catch(e){}   /* MCS2511WE669: «Verified» صرف ایپ کی موجودہ تصدیق (ایڈمن ✅ تصدیق شدہ) پر */
   return '<div class="bc-c"><div class="bc-im"' + (img ? ' style="background-image:url(\'' + escapeAttr(img) + '\')"' : '') + '>' + (img ? '' : meta.emoji) + '</div>'
     + '<div class="bc-in"><div class="bc-nm">' + escapeHtml(r.nameUr || bcNameOf(r)) + (reg ? '<span class="bc-tk">✓</span>' : '') + '</div>'
     + '<div class="bc-ln">' + meta.emoji + ' ' + escapeHtml(sub) + ' | ' + grp + '</div>'
@@ -7261,6 +7262,9 @@ function bcCardHtml(it){
     + (dg ? '<a class="c" href="tel:' + dg + '">📞 Call Now</a>' : '') + '</div></div>';
 }
 function bcView(k, id){ try{ hlOpen(k, id); }catch(e){} }
+/* MCS2511WE669 (ہیلپ ڈیسک #409): ضلع پہلے صارف کا اپنا رجسٹرڈ ضلع (اکاؤنٹ سے)؛ ڈیٹا میں اس ضلع کا کوئی ریکارڈ نہ ہو تو «All Districts» */
+function bcUserDist(){ try{ const a = typeof uaMe === 'function' && uaMe(); const d = a && a.user && a.user.district; if(d) return String(d).trim(); }catch(e){} try{ return String(localStorage.getItem('mcsMyDist') || '').trim(); }catch(e){} return ''; }
+function bcInfo(){ showToast('Search registered Business & Professional profiles. Filter by district, area, category and sub-type, then tap View Profile or Call Now.', 6500); }
 function bcRender(){
   const q = (document.getElementById('bcQ').value || '').trim();
   const nm = (document.getElementById('bcName').value || '').trim().toLowerCase();
@@ -7291,7 +7295,7 @@ function bcBind(){
   document.getElementById('bcName').addEventListener('input', go);
   document.getElementById('bcQ').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); e.target.blur(); } });
 }
-function bcOpen(){ bcBind(); bcShown = 40; openModal('bcModal'); bcRender(); }
+function bcOpen(){ bcBind(); bcShown = 40; if(!bcOpen.init){ bcOpen.init = 1; try{ const d = bcUserDist(); if(d && bcAll().some(it => (it.rec.district || '') === d)) bcF.district = d; }catch(e){} } openModal('bcModal'); bcRender(); }
 
 /* ===== MCS2411TU666: Business Phone Directory ===== */
 let bdPage = 1, bdT = 0; const BD_N = 10;
@@ -7317,7 +7321,7 @@ function bdRender(){
   const pages = Math.max(1, Math.ceil(L.length / BD_N)); if(bdPage > pages) bdPage = pages;
   const st = (bdPage - 1) * BD_N, rows = L.slice(st, st + BD_N);
   document.getElementById('bdBody').innerHTML = rows.length ? rows.map((x, i) => { const r = x.it.kind === 'doctor' ? fhDoc(x.it.rec) : fhSvc(x.it.rec);
-    return '<tr onclick="bdView(\'' + x.it.kind + '\',\'' + escapeAttr(x.it.rec.id) + '\')"><td>' + (st + i + 1) + '</td><td>' + escapeHtml(x.id) + '</td><td>' + escapeHtml(bdOwner(x.it)) + '</td><td>' + escapeHtml(r.nameEn || r.nameUr || r.name || '') + '</td><td dir="ltr" style="white-space:nowrap">' + escapeHtml(bdFmt(bdMobOf(r))) + '</td><td>' + escapeHtml(r.district || '') + '</td><td>' + escapeHtml(r.area || r.city || '') + '</td></tr>'; }).join('')
+    return '<tr onclick="bdView(\'' + x.it.kind + '\',\'' + escapeAttr(x.it.rec.id) + '\')"><td>' + (st + i + 1) + '</td><td>' + escapeHtml(x.id) + '</td><td>' + escapeHtml(bdOwner(x.it)) + '</td><td>' + escapeHtml(r.nameEn || r.nameUr || r.name || '') + '</td><td dir="ltr" style="white-space:nowrap">' + (bdMobOf(r) ? '<a class="bd-tel" href="tel:' + escapeAttr(bdMobOf(r)) + '" onclick="event.stopPropagation()">' + escapeHtml(bdFmt(bdMobOf(r))) + '</a>' : '') + '</td><td>' + escapeHtml(r.district || '') + '</td><td>' + escapeHtml(r.area || r.city || '') + '</td></tr>'; }).join('')
     : '<tr><td colspan="7" class="bd-none">🔎 No records found</td></tr>';
   document.getElementById('bdInfo').textContent = L.length ? 'Showing ' + (st + 1) + ' – ' + (st + rows.length) + ' of ' + L.length : 'Showing 0 of 0';
   const set = new Set([1, pages, bdPage - 1, bdPage, bdPage + 1]); const nums = [...set].filter(n => n >= 1 && n <= pages).sort((a, b) => a - b);
@@ -7327,6 +7331,7 @@ function bdRender(){
   document.getElementById('bdPb').innerHTML = h;
 }
 function bdView(k, id){ try{ hlOpen(k, id); }catch(e){} }
+function bdInfo(){ showToast('Registered businesses with Account ID, owner name and mobile number. Search by business name or mobile number; tap a mobile number to call.', 6500); }
 function bdBind(){
   if(bdBind.done) return; bdBind.done = true;
   const go = () => { clearTimeout(bdT); bdT = setTimeout(bdGo, 200); };
@@ -18057,9 +18062,14 @@ if('serviceWorker' in navigator){
 #bcModal .bc-page{width:100%;max-width:820px;margin:0 auto;height:100%;background:#eef6f5;display:flex;flex-direction:column;direction:ltr;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 #bcModal .bc-hd{background:linear-gradient(135deg,#0f766e,#047857);color:#fff;display:flex;align-items:center;gap:8px;padding:8px 10px;flex:none}
 #bcModal .bc-back{width:28px;height:28px;border-radius:50%;border:1.5px solid #fff;background:transparent;color:#fff;font-size:15px;line-height:1;padding:0}
-#bcModal .bc-hd b{font-size:15px;font-weight:800;flex:1}
+#bcModal .bc-hd b{font-size:14px;font-weight:800;flex:1;min-width:0}
 #bcModal .bc-hd b i{font-style:normal;color:#fde047}
 #bcModal .bc-hd small{font-size:11px;opacity:.9}
+#bcModal .bc-lg{width:30px;height:30px;border-radius:8px;flex:none;background:#fff}
+#bcModal .bc-br{font-size:13px;font-weight:800;font-style:italic;white-space:nowrap}
+#bcModal .bc-br i{color:#fde047}
+#bcModal .bc-sp{width:1.5px;height:24px;background:#fde047;flex:none}
+#bcModal .bc-info{width:28px;height:28px;border-radius:50%;border:1.5px solid #fff;background:transparent;color:#fff;font-size:17px;line-height:1;padding:0;flex:none}
 #bcModal .bc-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 8px 20px}
 #bcModal .bc-srch{display:flex;background:#fff;border:1px solid #93c5c0;border-radius:10px;overflow:hidden;margin-bottom:6px}
 #bcModal .bc-srch input{flex:1;min-width:0;border:0;outline:0;padding:7px 9px;font-size:13px;background:transparent}
@@ -18091,7 +18101,7 @@ if('serviceWorker' in navigator){
 <!-- MCS2411TU665: Business Community اسکرین -->
 <div class="modal-overlay" id="bcModal">
   <div class="bc-page">
-    <div class="bc-hd"><button type="button" class="bc-back" onclick="closeModal('bcModal')" aria-label="Back">←</button><b>My City Shines &nbsp;|&nbsp; Business <i>Community</i></b></div>
+    <div class="bc-hd"><button type="button" class="bc-back" onclick="closeModal('bcModal')" aria-label="Back">←</button><img class="bc-lg" src="icons/icon-192.png?v=MCS0711SA179" alt=""><span class="bc-br">My City <i>Shines</i></span><span class="bc-sp"></span><b>Business <i>Community</i></b><button type="button" class="bc-info" onclick="bcInfo()" aria-label="Information">ⓘ</button></div>
     <div class="bc-scroll">
       <div class="bc-srch"><input type="search" id="bcQ" placeholder="Search your Profile (Business or Professional)" autocomplete="off" enterkeyhint="search"><button type="button" onclick="bcRender()" aria-label="Search">🔍</button></div>
       <div class="bc-fl">
@@ -18116,7 +18126,13 @@ if('serviceWorker' in navigator){
 #bdModal .bd-page{width:100%;max-width:820px;margin:0 auto;height:100%;background:#eef6f5;display:flex;flex-direction:column;direction:ltr;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 #bdModal .bd-hd{background:linear-gradient(135deg,#0f766e,#047857);color:#fff;display:flex;align-items:center;gap:8px;padding:8px 10px;flex:none}
 #bdModal .bd-back{width:28px;height:28px;border-radius:50%;border:1.5px solid #fff;background:transparent;color:#fff;font-size:15px;line-height:1;padding:0}
-#bdModal .bd-hd b{font-size:15px;font-weight:800;flex:1}
+#bdModal .bd-hd b{font-size:14px;font-weight:800;flex:1;min-width:0}
+#bdModal .bd-lg{width:30px;height:30px;border-radius:8px;flex:none;background:#fff}
+#bdModal .bd-br{font-size:13px;font-weight:800;font-style:italic;white-space:nowrap}
+#bdModal .bd-br i{color:#fde047}
+#bdModal .bd-sp{width:1.5px;height:24px;background:#fde047;flex:none}
+#bdModal .bd-info{width:28px;height:28px;border-radius:50%;border:1.5px solid #fff;background:transparent;color:#fff;font-size:17px;line-height:1;padding:0;flex:none}
+#bdModal td a.bd-tel{color:#0f766e;font-weight:800;text-decoration:none}
 #bdModal .bd-sc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 6px 20px}
 #bdModal .bd-top{display:flex;align-items:center;gap:8px;background:#fff;border-radius:11px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
 #bdModal .bd-ic{width:32px;height:32px;border-radius:8px;background:#0f766e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
@@ -18145,7 +18161,7 @@ if('serviceWorker' in navigator){
 <!-- MCS2411TU666: Business Phone Directory -->
 <div class="modal-overlay" id="bdModal">
   <div class="bd-page">
-    <div class="bd-hd"><button type="button" class="bd-back" onclick="closeModal('bdModal')" aria-label="Back">←</button><b>My City Shines &nbsp;|&nbsp; Business Phone Directory</b></div>
+    <div class="bd-hd"><button type="button" class="bd-back" onclick="closeModal('bdModal')" aria-label="Back">←</button><img class="bd-lg" src="icons/icon-192.png?v=MCS0711SA179" alt=""><span class="bd-br">My City <i>Shines</i></span><span class="bd-sp"></span><b>Business Phone Directory</b><button type="button" class="bd-info" onclick="bdInfo()" aria-label="Information">ⓘ</button></div>
     <div class="bd-sc">
       <div class="bd-top"><span class="bd-ic">📞</span><b>Business Phone Directory</b><div class="bd-tot">Total Registered Business:<span id="bdTot">0</span></div></div>
       <div class="bd-ex"><h4>📒 Explore Directory</h4>
