@@ -4807,10 +4807,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2511WE669";
+const APP_VERSION = "MCS2511WE671";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2511WE671":"📞 Phone Directory صاف: اردو دائیں اور انگلش بائیں، لکھائی گہری اور موٹی، زیبرا قطاریں ہلکی نیلی ٹیل میں گہری",
+  "MCS2511WE670":"📩 ہوم پر بزنس کارڈ کے اوپر باریک پٹی واپس (صرف ایڈمن 1): کل، گئے، باقی، آج کی حد، اگلے پیغام کی الٹی گنتی — دبانے سے دعوتی فہرست؛ ایڈمن 2 کے لیے پورٹل میں «دعوتی پیغام»",
   "MCS2511WE669":"🏙️ Business Community اور 📞 Phone Directory مکمل: ہیڈر میں لوگو اور ⓘ آئیکن، ضلع پہلے آپ کا اپنا، تصدیق شدہ نشان صرف تصدیق شدہ پروفائل پر، ڈائریکٹری میں موبائل نمبر دبا کر سیدھی کال",
   "MCS2411TU666":"📞 Business Phone Directory: نیا ٹیبل پیج — اکاؤنٹ ID، نام، موبائل، ضلع، علاقہ، سرچ اور پیج نمبر",
   "MCS2411TU665":"🏘️ Business Community: نئی کمپیکٹ اسکرین — فلٹرز، ٹوٹل، ترتیب، تصویر والے کارڈ، View Profile اور Call Now",
@@ -7314,6 +7316,7 @@ function bdList(){
 }
 function bdGo(){ bdPage = 1; bdRender(); }
 function bdTo(p){ bdPage = p; bdRender(); const s = document.querySelector('#bdModal .bd-sc'); if(s) s.scrollTop = 0; }
+function bdCell(s){ s = String(s == null ? '' : s); const m = s.match(/[A-Za-z\u0600-\u06FF]/); const ur = !!(m && /[\u0600-\u06FF]/.test(m[0])); return '<td class="' + (ur ? 'bdu' : 'bde') + '">' + escapeHtml(s) + '</td>'; }   /* MCS2511WE671: پہلا حرف اردو تو دائیں، ورنہ بائیں */
 function bdFmt(d){ return d.length === 11 ? d.slice(0, 4) + '-' + d.slice(4) : d; }
 function bdRender(){
   const {L, total} = bdList();
@@ -7321,7 +7324,7 @@ function bdRender(){
   const pages = Math.max(1, Math.ceil(L.length / BD_N)); if(bdPage > pages) bdPage = pages;
   const st = (bdPage - 1) * BD_N, rows = L.slice(st, st + BD_N);
   document.getElementById('bdBody').innerHTML = rows.length ? rows.map((x, i) => { const r = x.it.kind === 'doctor' ? fhDoc(x.it.rec) : fhSvc(x.it.rec);
-    return '<tr onclick="bdView(\'' + x.it.kind + '\',\'' + escapeAttr(x.it.rec.id) + '\')"><td>' + (st + i + 1) + '</td><td>' + escapeHtml(x.id) + '</td><td>' + escapeHtml(bdOwner(x.it)) + '</td><td>' + escapeHtml(r.nameEn || r.nameUr || r.name || '') + '</td><td dir="ltr" style="white-space:nowrap">' + (bdMobOf(r) ? '<a class="bd-tel" href="tel:' + escapeAttr(bdMobOf(r)) + '" onclick="event.stopPropagation()">' + escapeHtml(bdFmt(bdMobOf(r))) + '</a>' : '') + '</td><td>' + escapeHtml(r.district || '') + '</td><td>' + escapeHtml(r.area || r.city || '') + '</td></tr>'; }).join('')
+    return '<tr onclick="bdView(\'' + x.it.kind + '\',\'' + escapeAttr(x.it.rec.id) + '\')"><td>' + (st + i + 1) + '</td><td class="bde">' + escapeHtml(x.id) + '</td>' + bdCell(bdOwner(x.it)) + bdCell(r.nameEn || r.nameUr || r.name || '') + '<td dir="ltr" style="white-space:nowrap">' + (bdMobOf(r) ? '<a class="bd-tel" href="tel:' + escapeAttr(bdMobOf(r)) + '" onclick="event.stopPropagation()">' + escapeHtml(bdFmt(bdMobOf(r))) + '</a>' : '') + '</td>' + bdCell(r.district || '') + bdCell(r.area || r.city || '') + '</tr>'; }).join('')
     : '<tr><td colspan="7" class="bd-none">🔎 No records found</td></tr>';
   document.getElementById('bdInfo').textContent = L.length ? 'Showing ' + (st + 1) + ' – ' + (st + rows.length) + ' of ' + L.length : 'Showing 0 of 0';
   const set = new Set([1, pages, bdPage - 1, bdPage, bdPage + 1]); const nums = [...set].filter(n => n >= 1 && n <= pages).sort((a, b) => a - b);
@@ -14436,7 +14439,7 @@ function ptOpen(editProf, prev){
       day: [['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🛡️','زیر منظوری','نئے اندراجات','ptDevPend', pend],['⏳','نئے کاروبار','ممبرشپ منظوری','pfPendOpen', pfn],['✏️','ترمیم درخواستیں','','edOpen'],['❓','Help Desk','رپورٹس / تجاویز','ptHelp'],['❓','غیر مختص','کیٹگری بدلیں','unOpen'],['👀','وزیٹرز','کون کتنی بار','vlOpen']],
       biz: [['🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen'],['🤝','ایجنٹس کی لسٹ','AG نمبر · نام · تصویر','agRosterOpen'],['🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen'],['🏪','رجسٹرڈ بزنس','ممبرشپ / دن','devBizOpen'],['🤝','ایجنٹ اور ریفرل','فہرست','agAdminOpen'],['📈','کارکردگی','سست / ایکٹو','agPerfOpen'],['📋','واٹس ایپ فارم','نیا ایجنٹ','agWaOpen'],['👁️','ایجنٹ پورٹل','دیکھیں','ptPrevAgent'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen']],
       cod: [['👥','ایڈمنز','فہرست / PIN / آخری لاگ اِن','cdAdminOpen'],['👁️','ایڈمن پورٹل','دیکھیں','ptPrevCodev'],['❓','ان کی رپورٹس','Help Desk','ptHelp']],
-      rep: [['📊','سرور کا استعمال','Firebase / Cloudflare — آج کتنا ٪','usOpen'],['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📰','خبروں کی پٹی','','openTickerAdmin']],
+      rep: [['📊','سرور کا استعمال','Firebase / Cloudflare — آج کتنا ٪','usOpen'],['🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen'],['📊','کالوں کی رپورٹ','','stOpenAdmin'],['📢','اشتہار','','adOpenAdmin'],['📩','اطلاع','دکانداروں کو','ntOpen'],['📨','دعوتی پیغام','Invitation','invOpen618'],['📰','خبروں کی پٹی','','openTickerAdmin']],
       more: [['💳','Play پیکج','5 پیکج','mcsPlayPackages'],['📞','نمبروں کے بزنس','تینوں نمبر · حذف','pnOpen'],['🗂️','کیٹگری / امپورٹ','ایڈمن پینل','openDevPanel'],['⚙️','سیٹنگز','بیک اپ','openControlPanel']]
     };
     body = `<div class="pt-tabs">${tabs.map(t=>`<button type="button" class="pt-tab${t[0]===tab?' on':''}" onclick="ptDevTabGo('${t[0]}')"><i>${t[1]}</i>${t[2]}</button>`).join('')}</div>`
@@ -14444,7 +14447,7 @@ function ptOpen(editProf, prev){
       + (tab === 'cod' ? `` : '')
       + (tab === 'more' ? `<details class="pt-card pt-f" ${(p.name && !editProf) ? '' : 'open'}><summary>🪪 میرا پروفائل ${p.name ? '' : '<small style="color:#dc2626">— پہلی بار بھر دیں</small>'}</summary><input id="ptN" placeholder="نام" value="${escapeAttr(p.name||'')}"><input id="ptP" dir="ltr" inputmode="tel" placeholder="موبائل نمبر" value="${escapeAttr(p.phone||'')}"><input id="ptC" placeholder="شہر" value="${escapeAttr(p.city||'')}"><div class="r"><button type="button" class="p" onclick="ptDevSave()">✅ محفوظ</button></div></details>` : '');
   } else if(rl === 'codev'){ nm = cd.name || 'Admin 2'; sub = cd.phone ? '0' + String(cd.phone).slice(2) : '';
-    body = `<div class="pt-grid">${ptT('🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen')}${ptT('🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen')}${ptT('📩','اطلاع','دکانداروں کو','ntOpen')}${ptT('📈','ایجنٹ کارکردگی','سست / ایکٹو','agPerfOpen')}${ptT('🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen')}${ptT('📊','کالوں کی رپورٹ','','stOpenAdmin')}${ptT('📢','اشتہار اور آمدنی','','adOpenAdmin')}${ptT('👀','وزیٹرز','کون کتنی بار','vlOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
+    body = `<div class="pt-grid">${ptT('🏪','کاروبار','نیا · پہلے سے درج · ایجنٹ','bzHubOpen')}${ptT('🏆','کارکردگی رپورٹ','پراگریس بار','pbOpen')}${ptT('📩','اطلاع','دکانداروں کو','ntOpen')}${ptT('📨','دعوتی پیغام','Invitation','invOpen618')}${ptT('📈','ایجنٹ کارکردگی','سست / ایکٹو','agPerfOpen')}${ptT('🤝','رجسٹرڈ ایجنٹس','فہرست','devAgentsOpen')}${ptT('📊','کالوں کی رپورٹ','','stOpenAdmin')}${ptT('📢','اشتہار اور آمدنی','','adOpenAdmin')}${ptT('👀','وزیٹرز','کون کتنی بار','vlOpen')}${ptT('❓','Help Desk','مسئلہ / تجویز','cdReport')}${ptT('🏠','ہوم','','ptHome')}${ptT('⚙️','سیٹنگز','','openControlPanel')}${ptT('✖','جانچ موڈ بند','','cdLogout','', 'red')}</div>`;
   } else if(rl === 'agent'){ nm = me.name || 'ایجنٹ'; sub = me.phone ? '0' + String(me.phone).slice(2) : ''; { const am = (ptPrev && ptPrev.a) ? {name: ptPrev.a.name, phone: ptPrev.a.phone, code: ptPrev.a.code} : me; nm = am.name || 'ایجنٹ'; sub = am.phone ? '0' + String(am.phone).slice(2) : ''; body = apBody(am, !!pv); }
   } else {
     const L = mpListReal(); nm = (a && a.user && a.user.name) || me.name || (L[0] && (L[0].rec.nameUr || L[0].rec.name)) || 'خوش آمدید';
@@ -18126,7 +18129,7 @@ if('serviceWorker' in navigator){
 #bdModal .bd-page{width:100%;max-width:820px;margin:0 auto;height:100%;background:#eef6f5;display:flex;flex-direction:column;direction:ltr;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 #bdModal .bd-hd{background:linear-gradient(135deg,#0f766e,#047857);color:#fff;display:flex;align-items:center;gap:8px;padding:8px 10px;flex:none}
 #bdModal .bd-back{width:28px;height:28px;border-radius:50%;border:1.5px solid #fff;background:transparent;color:#fff;font-size:15px;line-height:1;padding:0}
-#bdModal .bd-hd b{font-size:14px;font-weight:800;flex:1;min-width:0}
+#bdModal .bd-hd b{font-size:14px;font-weight:800;flex:1;min-width:0;line-height:1.3}
 #bdModal .bd-lg{width:30px;height:30px;border-radius:8px;flex:none;background:#fff}
 #bdModal .bd-br{font-size:13px;font-weight:800;font-style:italic;white-space:nowrap}
 #bdModal .bd-br i{color:#fde047}
@@ -18136,7 +18139,7 @@ if('serviceWorker' in navigator){
 #bdModal .bd-sc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 6px 20px}
 #bdModal .bd-top{display:flex;align-items:center;gap:8px;background:#fff;border-radius:11px;padding:6px 8px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
 #bdModal .bd-ic{width:32px;height:32px;border-radius:8px;background:#0f766e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
-#bdModal .bd-top b{flex:1;font-size:13.5px;font-weight:800;color:#0f172a}
+#bdModal .bd-top b{flex:1;font-size:13.5px;font-weight:800;color:#0f172a;line-height:1.3}
 #bdModal .bd-tot{background:#0f766e;color:#fff;border-radius:16px;padding:4px 10px;font-size:11px;font-weight:700;white-space:nowrap}
 #bdModal .bd-tot span{color:#fde047;font-size:14px;font-weight:800;margin-left:4px}
 #bdModal .bd-ex{background:#d1fae5;border:1px solid #6ee7b7;border-radius:11px;padding:6px;margin-bottom:6px}
@@ -18146,10 +18149,15 @@ if('serviceWorker' in navigator){
 #bdModal .bd-s input{flex:1;min-width:0;border:0;outline:0;padding:6px 7px;font-size:12px;background:transparent}
 #bdModal .bd-s button{border:0;background:#16a34a;color:#fff;padding:0 9px;font-size:13px}
 #bdModal .bd-tw{background:#fff;border-radius:10px;overflow-x:auto;box-shadow:0 1px 4px rgba(0,0,0,.1)}
-#bdModal table{width:100%;border-collapse:collapse;font-size:10.5px;color:#0f172a}
+#bdModal table{width:100%;border-collapse:collapse;font-size:12px;color:#0a1020}
 #bdModal th{background:#0f5f57;color:#fff;font-weight:700;padding:6px 4px;text-align:left;white-space:nowrap;border-left:1px solid rgba(255,255,255,.2)}
-#bdModal td{padding:6px 4px;border-top:1px solid #e2e8f0;border-left:1px solid #e2e8f0;vertical-align:middle}
-#bdModal tbody tr:nth-child(even){background:#f1f8fa}
+#bdModal td{padding:7px 5px;border-top:1px solid #a9c3cf;border-left:1px solid #a9c3cf;vertical-align:middle;font-weight:700;line-height:1.5}
+/* MCS2511WE671 (مالک کا حکم): اردو دائیں، انگلش بائیں؛ لکھائی گہری اور موٹی؛ زیبرا ہلکی نیلی ٹیل */
+#bdModal td.bdu{direction:rtl;text-align:right;font-size:13.5px;font-weight:800;line-height:2;color:#050b18}
+#bdModal td.bde{direction:ltr;text-align:left;font-weight:800;color:#050b18}
+#bdModal td.bdc{text-align:center}
+#bdModal tbody tr:nth-child(odd){background:#f3f8fa}
+#bdModal tbody tr:nth-child(even){background:#d4e6ee}
 #bdModal td:first-child,#bdModal td:first-child+td{white-space:nowrap}
 #bdModal .bd-pg{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;background:#dff0f3;border-radius:10px;padding:6px 8px;margin-top:6px;font-size:11px;font-weight:700;color:#0f3d3a}
 #bdModal .bd-pb{display:flex;gap:3px;flex-wrap:wrap}
@@ -29652,6 +29660,41 @@ body.adm648-unread #adm648 .mini .dt{display:block}
 #adm653v .bt button{border:0;border-radius:12px;padding:10px 12px;font:800 14px Arial,sans-serif;background:#fff;color:#0f172a}
 #adm653v .bt button.d{background:#fee2e2;color:#991b1b}
 </style>
+<style id="mcsInv670css">
+/* MCS2511WE670 (مالک کا حکم): ہوم پر بزنس کارڈ کے اوپر باریک پٹی — صرف ایڈمن 1 کو؛ کل · جا چکا · باقی · آج کی حد · اگلے پیغام کی الٹی گنتی؛ دبانے سے دعوتی فہرست۔ ایڈمن 2 کے لیے پورٹل میں «📨 دعوتی پیغام» */
+#invStrip{display:none;width:calc(100% - 20px);margin:4px 10px 6px;padding:5px 9px;border:0;border-radius:12px;background:linear-gradient(135deg,#0f766e,#0a4f4a);color:#fff;font-family:inherit;font-weight:800;font-size:12px;line-height:1.5;align-items:center;justify-content:space-between;gap:4px 8px;flex-wrap:wrap;direction:rtl;box-shadow:0 2px 8px rgba(15,118,110,.3)}
+#invStrip b{font:900 13px Arial,Helvetica,sans-serif;direction:ltr;display:inline-block}
+#invStrip .g b{color:#bbf7d0}#invStrip .r b{color:#fde047}
+#invStrip .w{background:rgba(0,0,0,.25);border-radius:999px;padding:1px 8px}
+#invStrip .w.ok{background:#16a34a}#invStrip .w.no{background:#b45309}
+</style>
+<script id="mcsInv670js">
+(function(){
+  function isAd1(){ try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn) return false; }catch(e){ return false; } try{ if(typeof codevOn === 'function' && codevOn()) return false; }catch(e){} return true; }
+  function cnt(){ var m = {}; try{ m = _wInfMap(); }catch(e){} var t = 0, s = 0; ['services', 'doctors'].forEach(function(col){ ((typeof WAIT !== 'undefined' && WAIT[col]) || []).forEach(function(x){ if(!x) return; t++; if(Math.max(m[x.fsId] || 0, x.waInfAt || 0)) s++; }); }); return { t: t, s: s }; }
+  function mmss(ms){ var s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+  function mount(){ var bar = document.getElementById('mpBar'); if(!bar || !bar.parentNode) return null; var b = document.getElementById('invStrip');
+    if(!b){ b = document.createElement('button'); b.type = 'button'; b.id = 'invStrip'; b.setAttribute('data-noen', '1'); b.onclick = function(){ try{ invOpen618(); }catch(e){} }; }
+    if(b.nextSibling !== bar) bar.parentNode.insertBefore(b, bar); return b; }
+  var C = { t: 0, s: 0 };
+  function paint(full){
+    try{
+      var b = mount(); if(!b) return;
+      if(!isAd1()){ b.style.display = 'none'; return; }
+      if(full){ C = cnt(); }
+      if(!(C.t > 0)){ b.style.display = 'none'; return; }
+      var I = (typeof window.wsInfo670 === 'function') ? window.wsInfo670() : { p: 0, pd: 5, t: 0, ad: 10, w: 0 };
+      var done = I.p >= I.pd || I.t >= I.ad;
+      var wl = done ? '<span class="w no">✋ آج کی حد پوری</span>' : I.w > 0 ? '<span class="w no">⏳ <b>' + mmss(I.w) + '</b></span>' : '<span class="w ok">✅ اگلا بھیجیں</span>';
+      b.style.display = 'flex';
+      b.innerHTML = '<span>📩 دعوت</span><span>کل <b>' + C.t.toLocaleString() + '</b></span><span class="g">✅ گئے <b>' + C.s.toLocaleString() + '</b></span><span class="r">باقی <b>' + (C.t - C.s).toLocaleString() + '</b></span><span>📅 آج <b>' + I.p + ' / ' + I.pd + '</b></span>' + wl;
+    }catch(e){}
+  }
+  setInterval(function(){ paint(false); }, 1000);
+  setInterval(function(){ paint(true); }, 5000);
+  try{ if(document.readyState === 'complete') setTimeout(function(){ paint(true); }, 1200); else window.addEventListener('load', function(){ setTimeout(function(){ paint(true); }, 1200); }); }catch(e){}
+})();
+</script>
 <style id="mcsInv656css">
 /* MCS2311MO656 (مالک کا حکم — ایڈمن 2 کی شکایت): ہوم سے «📩 دعوتی پیغام» کی پٹی ہٹائی؛ اب صرف ایڈمن گفتگو کی بٹنوں والی قطار میں «✉️ دعوت» (صرف ایڈمن 1 / 2 کو نظر) */
 html body #screen-home #inv618{display:none !important}
@@ -31304,6 +31347,8 @@ html body .screen-head .mcsAdd588{flex:1 0 100%;border:0;border-radius:99px;padd
     if(first && allToday() >= ALL_DAY){ showToast('✋ آج کے ' + ALL_DAY + ' پیغام (سب ایڈمن ملا کر) پورے — باقی کل', 5000); return false; }
     return true;
   }
+  /* MCS2511WE670: ہوم کی ایڈمن پٹی اسی گنتی / وقفے سے چلتی ہے (دوسری نقل نہیں) */
+  window.wsInfo670 = function(){ return { p: phoneToday(), pd: PHONE_DAY, t: allToday(), ad: ALL_DAY, w: waitLeft() }; };
   var lastIx = -1;
   function pick(x){ var i; do { i = Math.floor(Math.random() * MSGS.length); } while(i === lastIx && MSGS.length > 1); lastIx = i;
     var nm = String(x.owner || x.nameUr || x.name || x.nameEn || '').trim().replace(/\s+(بھائی|صاحب)$/, ''), c = String(x.city || '').trim();
