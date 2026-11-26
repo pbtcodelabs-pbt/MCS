@@ -4848,10 +4848,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2611TH684";
+const APP_VERSION = "MCS2611TH685";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2611TH685":"📇 سارے پرانے ریکارڈ (ہزاروں) اب عام فہرستوں، تلاش اور ضلع / شہر کے فلٹر میں — رجسٹرڈ اوپر، باقی پر سرخ «Register Now» ربن؛ الگ «ویٹنگ فار رجسٹریشن» پٹی ختم؛ کارڈ 14-14 کر کے، ایپ ہلکی",
   "MCS2611TH684":"✨ نئی ابتدائی اسکرین: سفید پس منظر، بیچ میں چھوٹا اصل لوگو اور ستارے کے گرد سنہری گھومتا مدار — اینیمیشن کے بعد ایپ (ہیلپ ڈیسک #431)",
   "MCS2611TH683":"🧰 ہوم پر نیا «Business Tools» بٹن (چاروں بٹن ایک قطار میں) + 6 ٹولز کا صفحہ؛ 🚪 ہوم پر فون کا «پیچھے» = «Exit My City Shines?» (Cancel / Okay) — لاگ آؤٹ نہیں",
   "MCS2611TH682":"🔔 ریمائنڈر مکمل ٹھیک: اب ہر لاگ اِن پر کام کرتا ہے — ایڈمن، ایجنٹ، کوڈیو، یوزر، بزنس؛ «لاگ اِن کریں» کا مطالبہ صرف تب جب کوئی بھی لاگ اِن نہ ہو • ریمائنڈر عین مقررہ وقت پر بجتا ہے (آواز، کپکپی، فون کے اوپر اطلاع اور درمیان میں پاپ اپ) — چاہے ایپ میں کسی بھی صفحے پر ہوں • ہوم پر گھنٹی کی گنتی، سنوز، ڈیلیٹ اور دہرائے جانے والے ریمائنڈر (روزانہ / ہفتہ وار / ماہانہ) سب ٹھیک",
@@ -32857,6 +32858,44 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
   setInterval(paint, 2000);
   setTimeout(paint, 800);
   if(document.readyState === 'complete') setTimeout(paint, 1500); else window.addEventListener('load', function(){ setTimeout(paint, 1500); });
+})();
+</script>
+<style id="mcsWait688css">
+/* MCS2611TH685 (Admin 1 کا حکم): پرانے امپورٹ شدہ ریکارڈ عام فہرستوں میں (سرخ «Register Now» ربن MCS2011FR590 والا خود لگتا ہے)؛ الگ «Waiting for registration» بٹن / پٹی ختم */
+.waitBtn,.waitCatBtn{display:none!important}
+</style>
+<script id="mcsWait688">
+/* MCS2611TH685 (Admin 1 کا حکم — «سارے ریکارڈ حلوہ ملائی کی طرح، ایپ ہینگ نہ ہو»):
+   • پرانے ریکارڈ فون کی الگ الماری (WAIT، IndexedDB) میں ہی رہتے ہیں — ایپ کا اصل خانہ ہلکا، کھلنا تیز؛
+   • ہر فہرست / تلاش / فلٹر (ضلع، شہر، تحصیل…) بنتے وقت انہیں ساتھ جوڑا جاتا ہے، رجسٹرڈ اوپر، پرانے نیچے؛ کارڈ 14-14 کر کے (mcsChunk) — ہزاروں ہوں تب بھی ہلکا؛
+   • کارڈ پر بائیں اوپر وہی سرخ ترچھا «Register Now» ربن (MCS2011FR590)؛ کال / واٹس ایپ / شیئر / فیورٹ / پروفائل ویسے (دبانے پر وہ ریکارڈ اصل خانے میں آ جاتا ہے)۔ */
+(function(){
+  if(typeof WAIT === 'undefined') return;
+  var idSet = null, idVer = -1;
+  function ids(){ if(idVer === WAIT.ver && idSet) return idSet; idSet = new Set(); ['services', 'doctors'].forEach(function(c){ (WAIT[c] || []).forEach(function(x){ if(x && x.id) idSet.add(x.id); }); }); idVer = WAIT.ver; return idSet; }
+  window.mcsIsWait = function(rec){ return !!(rec && rec.id && ids().has(rec.id)); };
+  function withWait(fn){ return function(){
+    if(!WAIT.loaded || !(WAIT.services.length + WAIT.doctors.length)) return fn.apply(this, arguments);
+    var s0 = store.services, d0 = store.doctors;
+    store.services = s0.concat(WAIT.services); store.doctors = d0.concat(WAIT.doctors);
+    try{ return fn.apply(this, arguments); } finally { if(store.services.length === s0.length + WAIT.services.length) store.services = s0; if(store.doctors.length === d0.length + WAIT.doctors.length) store.doctors = d0; }
+  }; }
+  ['renderServiceList', 'renderDoctorList', 'renderUserSearch'].forEach(function(n){ if(typeof window[n] === 'function') window[n] = withWait(window[n]); });
+  /* رجسٹرڈ / لائیو اوپر، پرانے نیچے (اپنی اپنی ترتیب میں) */
+  if(typeof window.sortRecords === 'function'){ var sr0 = window.sortRecords; window.sortRecords = function(items){ var r = sr0.apply(this, arguments); try{ var S = ids(); if(!S.size) return r; var a = [], b = []; r.forEach(function(x){ (x && S.has(x.id) ? b : a).push(x); }); return a.concat(b); }catch(e){ return r; } }; }
+  /* کسی پرانے کارڈ پر کوئی کام (پروفائل، شیئر، فیورٹ، شکایت، ترمیم، حذف) — پہلے ریکارڈ اصل خانے میں */
+  function promote(kind, id){
+    try{ var col = kind === 'doctor' ? 'doctors' : 'services', arr = store[col]; if(!id || arr.some(function(x){ return x.id === id; })) return;
+      var w = WAIT[col], i = w.findIndex(function(x){ return x && x.id === id; }); if(i < 0) return;
+      var rec = w.splice(i, 1)[0]; arr.push(rec); WAIT.ver++; }catch(e){}
+  }
+  ['pfCardTap', 'pfOpen', 'shareProfileCardById', 'openReportChoice', 'toggleFav', 'cardEdit', 'cardDel'].forEach(function(n){
+    var f = window[n]; if(typeof f !== 'function') return;
+    window[n] = function(){ var a = arguments, ev = n === 'pfCardTap'; promote(a[ev ? 1 : 0], a[ev ? 2 : 1]); return f.apply(this, a); };
+  });
+  var opr = window.pfRecById; if(typeof opr === 'function') window.pfRecById = function(kind, id){ var r = opr.apply(this, arguments); if(r) return r; try{ var col = kind === 'doctor' ? 'doctors' : 'services'; return (WAIT[col] || []).find(function(x){ return x && x.id === id; }); }catch(e){ return r; } };
+  /* الماری لوڈ ہوتے ہی کھلی فہرست دوبارہ (پرانے ریکارڈ بھی آ جائیں) */
+  var seenN = -1; setInterval(function(){ try{ if(!WAIT.loaded) return; var n = WAIT.services.length + WAIT.doctors.length; if(seenN === -1 || n > seenN){ seenN = n; refreshVisibleLists(); } else seenN = n; }catch(e){} }, 1500);   /* صرف پہلی بار اور نئے ریکارڈ آنے پر — کسی کارڈ کو دبانے سے فہرست اوپر نہیں جاتی */
 })();
 </script>
 </body>
