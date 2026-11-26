@@ -4813,10 +4813,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2511WE681";
+const APP_VERSION = "MCS2611TH682";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2611TH682":"🔔 ریمائنڈر مکمل ٹھیک: اب ہر لاگ اِن پر کام کرتا ہے — ایڈمن، ایجنٹ، کوڈیو، یوزر، بزنس؛ «لاگ اِن کریں» کا مطالبہ صرف تب جب کوئی بھی لاگ اِن نہ ہو • ریمائنڈر عین مقررہ وقت پر بجتا ہے (آواز، کپکپی، فون کے اوپر اطلاع اور درمیان میں پاپ اپ) — چاہے ایپ میں کسی بھی صفحے پر ہوں • ہوم پر گھنٹی کی گنتی، سنوز، ڈیلیٹ اور دہرائے جانے والے ریمائنڈر (روزانہ / ہفتہ وار / ماہانہ) سب ٹھیک",
   "MCS2511WE681":"🔎 تلاش: 3,725 «ان رجسٹرڈ» ریکارڈ اب تلاش (Explore) اور Business Community کی تلاش میں بھی آتے ہیں — رجسٹرڈ کے نیچے، «ان رجسٹرڈ» نشان کے ساتھ؛ ہوم / فہرستوں پر بوجھ نہیں • نیچے کی پٹی سے ◀ ▶ تیر ختم، بٹن برابر پھیل گئے • ایپ کھلتے وقت کالے ڈبے (آئیکن) نظر آنا ختم",
   "MCS2511WE677":"🏠 ہوم: «Explore Business Community» والی اوپر کی چوڑی پٹی اور «Business Promotion» والی پٹی ختم؛ تین ڈبے اوپر آ گئے تاکہ نیچے کا اشتہار پورا نظر آئے",
   "MCS2511WE676":"🔔 ہوم کا اوپر والا حصہ نئے ڈیزائن پر: گہرا سبز ہیڈر، بیچ میں بڑی سنہری ریمائنڈر گھنٹی (سرخ گنتی) اور اس کے نیچے پیلی گولی میں وقت، دائیں «Admin 1» نام اور تصویر؛ گھنٹی دبانے پر سب ریمائنڈر اور نئی اطلاعات ایک پاپ اپ میں؛ گھڑی کو تین بار ٹچ کرنے والے پینل میں 10 خوبصورت انگلش فونٹ — جو چنیں گھڑی اسی میں چلے (LED والا پرانا انداز بھی موجود)",
@@ -31920,9 +31921,137 @@ html body.d2 #bnav .d2n svg{width:clamp(19px,5.6vw,25px) !important;height:clamp
   const API = (typeof AG_API !== 'undefined' ? AG_API : 'https://aio-pos-verify.pbtcodelabs.workers.dev') + '/mcsrem';
   const E = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const toast = (m, ms) => { try{ showToast(m, ms || 3500); }catch(e){} };
-  const me = () => { try{ return (typeof uaMe === 'function' && uaMe()) || null; }catch(e){ return null; } };
-  async function call(body){ const a = me(); if(!a) return { ok: false, reason: 'session' };
-    try{ const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(Object.assign({ tok: a.tok }, body)) }); return await r.json(); }catch(e){ return { ok: false, reason: 'net' }; } }
+  /* MCS2611TH682 (مالک کا حکم): ریمائنڈر ہر لاگ اِن پر — ایڈمن / کوڈیو / ایجنٹ / یوزر / بزنس؛ اور عین وقت پر (فون میں ہی ٹائمر) */
+  function ident(){
+    try{
+      let tok = ''; try{ const ua = typeof uaMe === 'function' && uaMe(); if(ua && ua.tok) tok = ua.tok; }catch(e){}
+      if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return { key: 'dev', tok };
+      const cd = typeof codevMe === 'function' && codevMe(); if(cd && cd.phone) return { key: 'cd:' + cd.phone, tok };
+      const ag = typeof agMe === 'function' && agMe(); if(ag && ag.phone && (ag.pin || ag.code)) return { key: 'ag:' + ag.phone, tok };
+      if(tok){ const u = (uaMe() || {}).user || {}; return { key: 'ua:' + (u.id || u.sid || u.mobile || tok.slice(0, 16)), tok }; }
+      const bz = typeof mpListReal === 'function' ? mpListReal().find(x => x.p && x.p.rk && x.p.key) : null; if(bz) return { key: 'biz:' + bz.p.rk, tok };
+    }catch(e){}
+    return null;
+  }
+  const me = () => { const i = ident(); return i ? { tok: i.tok || '', key: i.key } : null; };
+  const LSK = 'mcsRemLocal682';
+  const ldAll = () => { try{ return JSON.parse(localStorage.getItem(LSK) || '{}') || {}; }catch(e){ return {}; } };
+  const mine = () => { const i = ident(); if(!i) return null; const m = ldAll()[i.key]; return m && Array.isArray(m.rems) ? m : { rems: [], prefs: {}, gone: [] }; };
+  function put(fn){ const i = ident(); if(!i) return; const all = ldAll(); const m = all[i.key] || (all[i.key] = { rems: [], prefs: {}, gone: [] }); if(!m.prefs) m.prefs = {}; if(!m.gone) m.gone = []; fn(m); try{ localStorage.setItem(LSK, JSON.stringify(all)); }catch(e){} }
+  async function srv(body){ const i = ident(); if(!i || !i.tok) return { ok: false, reason: 'session' };
+    try{ const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(Object.assign({ tok: i.tok }, body)) }); return await r.json(); }catch(e){ return { ok: false, reason: 'net' }; } }
+  function stepNext(r, from){
+    const base = new Date(r.sched || r.at); let d = new Date(base.getTime()), t = d.getTime(), n = 0; const day = base.getDate();
+    while(t <= from && n++ < 4000){
+      if(r.rep === 'daily') d.setDate(d.getDate() + 1);
+      else if(r.rep === 'weekly') d.setDate(d.getDate() + 7);
+      else if(r.rep === 'monthly'){ d.setDate(1); d.setMonth(d.getMonth() + 1); d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())); }
+      else return 0;
+      t = d.getTime();
+    }
+    return t;
+  }
+  const localDue = () => { const m = mine(); if(!m || (m.prefs || {}).personal === false) return []; const now = Date.now();
+    return m.rems.filter(r => r.active && r.at <= now && r.inapp !== false).map(r => ({ id: 'lr:' + r.id, typ: 'personal', title: r.title, msg: r.descr, due: r.at, ts: r.at, mand: true, st: 'due', rel: '' })); };
+  const localRemsUI = () => { const m = mine(); if(!m) return []; const now = Date.now();
+    return m.rems.filter(r => r.active).map(r => ({ id: r.id, title: r.title, descr: r.descr, nxt: r.at, rep: r.rep, active: true, st: r.at <= now ? 'due' : 'wait', push: r.push, inapp: r.inapp })); };
+  function mergeLocal(r){
+    const i = ident(), m = mine() || { prefs: {} };
+    const base = r && r.ok ? r : { ok: true, unread: 0, due: [], rems: [], notes: [], prefs: {}, push: 0 };
+    base.due = (base.due || []).filter(x => x.typ !== 'personal').concat(localDue());
+    let gone = 0; const pend = n => n.mand && ['due', 'displayed', 'snoozed'].includes(n.st);
+    base.notes = (base.notes || []).filter(n => { if(n.typ === 'personal' && pend(n)){ if(!n.rd) gone++; return false; } return true; });
+    base.unread = Math.max(0, (base.unread || 0) - gone);
+    base.rems = localRemsUI();
+    base.prefs = Object.assign({}, base.prefs || {}, m.prefs || {});
+    if(!(i && i.tok)){ let g = false; try{ g = !!window.Notification && Notification.permission === 'granted'; }catch(e){} base.push = g && base.prefs.push !== false ? 1 : 0; }
+    base.__k = i ? i.key : '';
+    return base;
+  }
+  /* پرانے (سرور والے) ذاتی ریمائنڈر بھی فون میں لے آؤ تاکہ ضائع نہ ہوں */
+  function adopt(list){
+    if(!Array.isArray(list)) return;
+    const m = mine(); if(!m) return;
+    list.filter(sr => sr && (sr.active || sr.st === 'due') && sr.title).forEach(sr => {
+      if((m.gone || []).includes(sr.id)) return;
+      if(m.rems.some(x => x.sid === sr.id || (x.title === sr.title && (x.rep || 'once') === (sr.rep || 'once')))) return;
+      const at = +sr.nxt || 0; if(!at) return;
+      put(mm => { mm.rems.push({ id: 's' + sr.id, sid: sr.id, title: sr.title, descr: sr.descr || '', at, sched: at, rep: sr.rep || 'once', inapp: sr.inapp !== false, push: !!sr.push, active: true }); });
+    });
+  }
+  function localAct(id, a, mins){
+    put(m => { const r = m.rems.find(x => 'lr:' + x.id === id); if(!r) return;
+      if(a === 'snooze'){ r.at = Date.now() + (+mins || 15) * 60e3; return; }
+      if(r.rep && r.rep !== 'once'){ const nx = stepNext(r, Date.now()); if(nx){ r.at = nx; r.sched = nx; return; } }
+      r.active = false; r.st = a; if(r.sid) m.gone.push(r.sid); });
+    schedule();
+  }
+  async function srvCancelMatch(rem){
+    try{ const r = await srv({ act: 'list' }); if(!(r && r.ok)) return;
+      for(const sr of (r.rems || [])){ if(sr.active && (sr.id === rem.sid || (sr.title === rem.title && (sr.rep || 'once') === (rem.rep || 'once')))) await srv({ act: 'cancel', id: sr.id }); }
+    }catch(e){}
+  }
+  async function call(body){
+    const i = ident(); if(!i) return { ok: false, reason: 'session' };
+    const a = body && body.act;
+    if(a === 'add'){
+      const at = +body.at; if(!body.title) return { ok: false, reason: 'title' }; if(!isFinite(at) || at < Date.now()) return { ok: false, reason: 'past' };
+      const m = mine(); if(m && m.rems.filter(x => x.active).length >= 100) return { ok: false, reason: 'limit' };
+      const rem = { id: 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title: String(body.title).slice(0, 120), descr: String(body.descr || '').slice(0, 600), at, sched: at, rep: body.rep || 'once', inapp: body.inapp !== false, push: body.push !== false, active: true, sid: '' };
+      put(mm => { mm.rems.push(rem); });
+      if(i.tok){ srv(body).then(r => { const sid = r && r.ok && (r.id || (r.rem && r.rem.id)); if(sid) put(mm => { const x = mm.rems.find(z => z.id === rem.id); if(x) x.sid = sid; }); }); }
+      schedule(); return { ok: true, id: rem.id };
+    }
+    if(a === 'cancel'){
+      const m = mine(), rem = m && m.rems.find(x => x.id === body.id);
+      put(mm => { const r = mm.rems.find(x => x.id === body.id); if(r){ r.active = false; r.st = 'cancel'; if(r.sid) mm.gone.push(r.sid); } });
+      if(rem && i.tok) srvCancelMatch(rem);
+      schedule(); return { ok: true };
+    }
+    if(a === 'act' && /^lr:/.test(String(body.id))){ localAct(body.id, body.a, body.mins); return { ok: true }; }
+    if(a === 'prefs'){
+      put(m => { Object.assign(m.prefs, body.prefs || {}); });
+      if(i.tok){ const r = await srv(body); if(r && r.ok) return r; }
+      return { ok: true, prefs: Object.assign({}, (mine() || {}).prefs || {}) };
+    }
+    if(!i.tok) return (a === 'vapid' || a === 'sub') ? { ok: false, reason: 'local' } : { ok: true };
+    return srv(body);
+  }
+  /* ——— عین وقت پر: آواز + کپکپی + فون کے اوپر اطلاع + درمیانی پاپ اپ ——— */
+  function beep(){ try{ const C = window.AudioContext || window.webkitAudioContext; if(!C) return; const c = new C(); [0, .35, .7].forEach(s => { const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = 880; o.connect(g); g.connect(c.destination); g.gain.setValueAtTime(.0001, c.currentTime + s); g.gain.exponentialRampToValueAtTime(.35, c.currentTime + s + .03); g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + s + .28); o.start(c.currentTime + s); o.stop(c.currentTime + s + .3); }); setTimeout(() => { try{ c.close(); }catch(e){} }, 1500); }catch(e){} }
+  async function sysNotify(r){
+    try{ if(navigator.vibrate) navigator.vibrate([400, 150, 400, 150, 400]); }catch(e){}
+    beep();
+    try{
+      const pf = (mine() || {}).prefs || {}; if(pf.push === false || pf.personal === false) return;
+      const i = ident(); if(i && i.tok && localStorage.getItem('mcsPush674') === '1') return;   /* سرور کی push پہلے سے آتی ہے — دوہری نہ ہو */
+      if(!(window.Notification && Notification.permission === 'granted') || r.push === false) return;
+      const opt = { body: (r.descr ? r.descr + ' · ' : '') + fmtT(r.at), tag: 'mcsrem-' + r.id + '-' + r.at, renotify: true, requireInteraction: true, icon: 'icons/icon-192.png', badge: 'icons/icon-192-maskable.png', vibrate: [300, 150, 300], data: { url: './' } };
+      const reg = navigator.serviceWorker && navigator.serviceWorker.getRegistration ? await navigator.serviceWorker.getRegistration() : null;
+      if(reg && reg.showNotification) await reg.showNotification('⏰ ' + r.title, opt); else new Notification('⏰ ' + r.title, opt);
+    }catch(e){}
+  }
+  let tmr = 0;
+  function schedule(){
+    clearTimeout(tmr); const m = mine(); if(!m) return;
+    const nx = m.rems.filter(r => r.active && r.fat !== r.at).map(r => r.at); if(!nx.length) return;
+    const ms = Math.min.apply(null, nx) - Date.now();
+    tmr = setTimeout(tick, Math.max(0, Math.min(ms, 20 * 60e3)) + 30);
+  }
+  function tick(){
+    const m = mine(); if(!m){ return; } const now = Date.now(); const fire = [];
+    m.rems.forEach(r => { if(r.active && r.at <= now && r.fat !== r.at) fire.push(r); });
+    if(fire.length){
+      put(mm => { mm.rems.forEach(r => { if(fire.some(f => f.id === r.id && f.at === r.at)) r.fat = r.at; }); });
+      fire.forEach(r => sysNotify(r));
+      L = mergeLocal(L); bell(); if(document.getElementById('rm674lst')) drawList(); if(document.getElementById('rm674nc')) drawCenter();
+      showDue();
+    }
+    schedule();
+  }
+  setInterval(tick, 4000); setTimeout(tick, 1200);
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') tick(); });
+  window.addEventListener('focus', tick);
   let L = null, busy = false, popOpen = null;
   const fmtD = t => { try{ return new Date(t).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); }catch(e){ return ''; } };
   const fmtT = t => { try{ return new Date(t).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); }catch(e){ return ''; } };
@@ -31941,18 +32070,25 @@ html body.d2 #bnav .d2n svg{width:clamp(19px,5.6vw,25px) !important;height:clamp
 
   /* ——— سرور سے فہرست؛ ہوم پر لازمی یاد دہانی ہو تو فوراً درمیان میں ——— */
   async function refresh(){
-    if(busy || !me()) { bell(); return; } busy = true;
-    const r = await call({ act: 'list' }); busy = false;
-    if(r && r.ok){ L = r; try{ localStorage.setItem('mcsRemCache674', JSON.stringify({ unread: r.unread, due: r.due, rems: (r.rems || []).filter(x => x.active || x.st === 'due').length })); }catch(e){} }
-    else if(r && r.reason === 'session'){ L = null; }
-    bell(); showDue(); if(document.getElementById('rm674nc')) drawCenter(); if(document.getElementById('rm674lst')) drawList();
+    const i = ident(); if(!i){ L = null; bell(); return; } if(busy){ bell(); return; } busy = true;
+    let r = null; if(i.tok) r = await srv({ act: 'list' });
+    busy = false;
+    if(ident() && ident().key !== i.key){ L = null; setTimeout(refresh, 200); return; }
+    if(r && r.ok) adopt(r.rems);
+    L = mergeLocal(r && r.ok ? r : null);
+    try{ localStorage.setItem('mcsRemCache674', JSON.stringify({ unread: L.unread, due: L.due, rems: L.rems.length })); }catch(e){}
+    bell(); schedule(); showDue(); if(document.getElementById('rm674nc')) drawCenter(); if(document.getElementById('rm674lst')) drawList();
   }
   function homeOn(){ const h = document.getElementById('screen-home'); if(!h || !h.offsetParent && getComputedStyle(h).display === 'none') return false;
     const ua = document.getElementById('uaOv'); if(ua && ua.classList.contains('on')) return false; if(document.getElementById('wzOv')) { const w = document.getElementById('wzOv'); if(w.offsetParent) return false; }
     return !document.querySelector('.rm674pg') && !document.getElementById('mcsCg673'); }
   function showDue(){
-    if(popOpen || !L || !(L.due || []).length || !homeOn()) return;
-    const skip = window.__rm674skip || {}; const n = L.due.find(x => !skip[x.id]); if(n) pop(n, L.due.length);
+    if(popOpen || !L || !(L.due || []).length) return;
+    const skip = window.__rm674skip || {};
+    const loc = L.due.find(x => !skip[x.id] && /^lr:/.test(x.id));   /* اپنا ریمائنڈر: کسی بھی صفحے پر، عین وقت پر */
+    if(loc){ const ua = document.getElementById('uaOv'); if(!(ua && ua.classList.contains('on'))){ pop(loc, L.due.length); return; } }
+    if(!homeOn()) return;
+    const n = L.due.find(x => !skip[x.id]); if(n) pop(n, L.due.length);
   }
 
   /* ——— لازمی پاپ اپ (پہلی تصویر جیسا) — باہر دبانے سے بند نہیں، خود بند نہیں؛ ایک وقت میں ایک ——— */
@@ -31994,8 +32130,10 @@ html body.d2 #bnav .d2n svg{width:clamp(19px,5.6vw,25px) !important;height:clamp
   /* MCS2511WE676 (مالک کا حکم): گھنٹی پر گنتی = فعال ریمائنڈر + نہ پڑھی اطلاعات؛ دبانے پر پاپ اپ میں سب ریمائنڈر ایک ساتھ */
   const activeRems = () => ((L && L.rems) || []).filter(r => r.active || r.st === 'due');
   function cnt(){
-    if(L) return (L.unread || 0) + activeRems().length;
-    try{ const c = JSON.parse(localStorage.getItem('mcsRemCache674') || 'null'); return c ? (c.unread || 0) + (c.rems || 0) : 0; }catch(e){ return 0; } }
+    const i = ident(); if(L && (!i || L.__k !== i.key)) L = null;
+    if(!i) return 0;
+    if(!L){ if(!busy) setTimeout(refresh, 200); const m = mine(); return m ? m.rems.filter(r => r.active).length : 0; }
+    return (L.unread || 0) + activeRems().length; }
   function listPop(){
     if(!me()) return needLogin();
     const old = document.getElementById('rm674lst'); if(old) old.remove();
@@ -32007,7 +32145,7 @@ html body.d2 #bnav .d2n svg{width:clamp(19px,5.6vw,25px) !important;height:clamp
   function drawList(){
     const w = document.getElementById('rm674lst'); if(!w) return; const cd = w.querySelector('.cd');
     const due = (L && L.due) || [], dueIds = {}; due.forEach(x => { dueIds[x.id] = 1; });
-    const rems = activeRems().slice().sort((a, b) => (a.nxt || 0) - (b.nxt || 0));
+    const rems = activeRems().filter(r => !dueIds['lr:' + r.id]).sort((a, b) => (a.nxt || 0) - (b.nxt || 0));
     const notes = ((L && L.notes) || []).filter(n => !n.rd && !dueIds[n.id]).slice(0, 8);
     const total = due.length + rems.length + notes.length;
     let h = `<div class="hd">My City <span>Shines</span><button type="button" class="x" aria-label="Close">✕</button></div>
@@ -32093,6 +32231,15 @@ html body.d2 #bnav .d2n svg{width:clamp(19px,5.6vw,25px) !important;height:clamp
   /* ——— فون کے اوپر اطلاع (push): پہلے فائدہ بتائیں، پھر اجازت؛ انکار ہو تو ایپ ویسے ہی چلے ——— */
   const b64 = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)), c => c.charCodeAt(0));
   async function pushOn(quiet, test){
+    if(!(ident() || {}).tok){   /* ایڈمن / ایجنٹ / کوڈیو / بزنس: فون کی اطلاع بغیر سرور */
+      try{
+        if(!window.Notification){ if(!quiet) toast('⚠️ This phone / browser cannot show mobile notifications — in-app reminders will still work.', 5000); return false; }
+        if(Notification.permission === 'denied'){ deniedHelp(); return false; }
+        if(Notification.permission !== 'granted'){ if(!(await explain())) return false; const pr = await Notification.requestPermission(); if(pr !== 'granted'){ if(pr === 'denied') deniedHelp(); return false; } }
+        if(test) sysNotify({ id: 'test', title: 'Notifications are on', descr: 'My City Shines will remind you on time', at: Date.now(), push: true });
+        return true;
+      }catch(e){ return false; }
+    }
     try{
       if(!('serviceWorker' in navigator) || !('PushManager' in window) || !window.Notification){ if(!quiet) toast('⚠️ This phone / browser cannot show mobile notifications — in-app reminders will still work.', 5000); return false; }
       if(Notification.permission === 'denied'){ deniedHelp(); return false; }
