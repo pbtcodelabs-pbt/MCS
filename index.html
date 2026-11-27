@@ -458,6 +458,7 @@ label .ur-cap::before{content:attr(data-ur);display:block;font-size:.78em;font-w
 })();
 
 </script>
+<style id="mcsCashNm693">html body .k4-r .k4-n b{font-family:MCSDigits,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif !important}</style>
 <style id="mcsDigitsFont">
 /* MCS0711SA206: ہندسے ہمیشہ Arial (انگلش) — صرف 0-9 کے لیے */
 @font-face{font-family:MCSDigits;src:local('Arial'),local('ArialMT'),local('Arimo'),local('Liberation Sans'),local('Helvetica'),local('Roboto'),local('Noto Sans');unicode-range:U+0030-0039;font-display:swap}
@@ -3273,6 +3274,15 @@ html body #mcsSplash .wl{font-family:Georgia,'Palatino Linotype','Times New Roma
 html body #mcsSplash .wl:before,html body #mcsSplash .wl:after{content:'✦';font-style:normal;font-size:.6em;color:#f59e0b;margin:0 .6em;vertical-align:middle}
 html body #mcsSplash .wc{font-family:Georgia,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif!important;font-weight:800;font-size:clamp(36px,12vw,60px);line-height:1.5;text-align:center;max-width:92vw;overflow-wrap:anywhere;color:#0d3b66;background:linear-gradient(90deg,#0d9488,#0d3b66 55%,#b45309);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 #mcsSplash.out{opacity:0;pointer-events:none}
+#mcsHello{position:fixed;inset:0;z-index:2147483646;background:#fff;display:flex;align-items:center;justify-content:center;padding:16px}
+#mcsHello .wt{display:flex;flex-direction:column;align-items:center}
+html body #mcsHello .wl{font-family:Georgia,serif!important;font-style:italic;font-weight:600;font-size:clamp(18px,5.4vw,27px);color:#b45309;text-align:center}
+html body #mcsHello .wc{font-family:Georgia,'Jameel Noori Nastaleeq Kasheeda',serif!important;font-weight:800;font-size:clamp(36px,12vw,60px);line-height:1.6;color:#0d3b66;text-align:center;overflow-wrap:anywhere}
+#mcsHello .ask{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;text-align:center;color:#0d3b66}
+#mcsHello input{font-size:17px;padding:8px 10px;border:1.5px solid #0d3b66;border-radius:8px;text-align:center;color:#111;background:#fff}
+#mcsHello .ask div{display:flex;gap:8px;justify-content:center}
+#mcsHello button{padding:6px 16px;border:0;border-radius:8px;background:#0d3b66;color:#fff;font-size:15px}
+#mcsHello button+button{background:#e5e7eb;color:#111}
 #mcsSplash .lg{position:relative;width:46vw;max-width:280px;min-width:170px}
 #mcsSplash .lg img{display:block;width:100%;height:auto}
 #mcsSplash .orb{position:absolute;left:50%;top:13.2%;width:78%;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none}
@@ -3297,8 +3307,34 @@ html body #mcsSplash .wc{font-family:Georgia,'Jameel Noori Nastaleeq Kasheeda','
 <style>@keyframes mcsOrbI{to{transform:rotate(360deg)}}</style>
 <script id="mcsSplash431">
 /* MCS2711FR689 (#435): لوگو بڑا؛ نیچے «Welcome to <لوکل شہر>» — شہر وہی جو بندے نے سائن اپ پر لکھا (ضلع نہیں)؛ نہ ملے تو کچھ نہیں دکھتا */
-(function(){ try{ var a = JSON.parse(localStorage.getItem('mcsAuth') || 'null'), u = (a && a.user) || {}, c = String(localStorage.getItem('mcsLocalCity') || u.locality || '').trim(), sp = document.getElementById('mcsSplash');
-  if(c && sp){ var w = document.createElement('div'); w.className = 'wt'; w.setAttribute('data-noen', '1'); var l = document.createElement('div'); l.className = 'wl'; l.textContent = 'Welcome to Your City'; var n = document.createElement('div'); n.className = 'wc'; n.setAttribute('dir', 'auto'); n.textContent = c; w.appendChild(l); w.appendChild(n); sp.appendChild(w); } }catch(e){} })();
+/* MCS2711FR692: لوکل شہر ایک ہی جگہ سے — ① سائن اپ کا لوکل شہر ② خود لکھا ہوا ③ اپنے کاروبار کا شہر؛ ضلع کبھی نہیں */
+(function(){
+  function g(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } }
+  function user(){ try{ return (JSON.parse(g('mcsAuth') || 'null') || {}).user || {}; }catch(e){ return {}; } }
+  function mob(){ var m = user().mobile; if(!m){ try{ m = JSON.parse(g('mcsAgent') || g('mcsCodev') || 'null').phone; }catch(e){} } return String(m || g('mcsLastMob') || '').replace(/\D/g, '').slice(-10); }
+  window.mcsMyCity = function(){
+    var c = String(user().locality || g('mcsLocalCity') || g('mcsCityTyped_' + mob()) || '').trim();
+    if(!c){ try{ if(typeof mpCity === 'function') c = String(mpCity() || '').trim(); }catch(e){} }
+    if(c){ try{ localStorage.setItem('mcsSplashCity', c); }catch(e){} }
+    return c;
+  };
+  function box(c){ var w = document.createElement('div'); w.className = 'wt'; w.setAttribute('data-noen', '1'); var l = document.createElement('div'); l.className = 'wl'; l.textContent = 'Welcome to Your Beautiful City'; var n = document.createElement('div'); n.className = 'wc'; n.setAttribute('dir', 'auto'); n.textContent = c; w.appendChild(l); w.appendChild(n); return w; }
+  function splash(){ var sp = document.getElementById('mcsSplash'); if(!sp) return false; if(sp.querySelector('.wt')) return false; var c = window.mcsMyCity() || (g('mcsLoggedOut') === '1' ? '' : g('mcsSplashCity')); if(c) sp.appendChild(box(c)); return !c; }
+  if(splash()){ var t = setInterval(function(){ if(!splash()) clearInterval(t); }, 300); setTimeout(function(){ clearInterval(t); }, 6000); }
+  /* لاگ اِن کے فوراً بعد خوش آمدید؛ شہر معلوم نہ ہو تو ایک بار پوچھیں */
+  window.mcsCityHello = function(){
+    if(document.getElementById('mcsHello') || document.getElementById('mcsSplash')) return;
+    var o = document.createElement('div'); o.id = 'mcsHello'; o.setAttribute('data-noen', '1');
+    function close(){ o.remove(); }
+    function show(c){ o.innerHTML = ''; o.appendChild(box(c)); o.onclick = close; setTimeout(close, 3000); try{ if(typeof ccShowCity === 'function') ccShowCity(); }catch(e){} }
+    document.body.appendChild(o);
+    var c = window.mcsMyCity(); if(c) return show(c);
+    o.innerHTML = '<div class="ask"><b>اپنا لوکل شہر لکھیں</b><input maxlength="60" dir="auto" placeholder="City / Town"><div><button type="button">محفوظ کریں</button><button type="button">بعد میں</button></div></div>';
+    var i = o.querySelector('input'), k = o.querySelectorAll('button');
+    k[0].onclick = function(e){ e.stopPropagation(); var v = i.value.replace(/[<>"]/g, '').trim(); if(v.length < 2){ i.focus(); return; } try{ localStorage.setItem('mcsCityTyped_' + mob(), v); localStorage.setItem('mcsSplashCity', v); }catch(x){} show(v); };
+    k[1].onclick = close;
+  };
+})();
 /* MCS2611TH684 (#431): اینیمیشن کم از کم 2.4 سیکنڈ اور صفحہ لوڈ ہونے تک؛ پھر نرمی سے غائب — اس سے پہلے ہوم نظر نہیں آتا (زیادہ سے زیادہ 6 سیکنڈ) */
 (function(){ var t0 = Date.now(), done = false, MIN = 2400;
   function hide(){ if(done) return; done = true; var e = document.getElementById('mcsSplash'); if(!e) return; e.classList.add('out'); setTimeout(function(){ try{ e.remove(); }catch(x){} }, 600); }
@@ -4857,10 +4893,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2711FR691";
+const APP_VERSION = "MCS2711FR693";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2711FR693":"🧮 Cash Counter: نوٹوں کے نام ہندسوں میں — 5000 والے، 1000 والے، 500 والے (نوری نستعلیق کشیدہ)",
+  "MCS2711FR692":"🏙️ «Welcome to Your Beautiful City» اور آپ کا لوکل شہر: ایپ کھلتے وقت اور لاگ اِن کے بعد؛ شہر محفوظ نہ ہو تو ایک بار پوچھا جائے گا؛ ہوم پر بھی لوکل شہر",
   "MCS2711FR691":"✨ ابتدائی اسکرین: لوگو کے نیچے خوبصورت تحریر «Welcome to Your City» اور اس کے نیچے آپ کا لوکل شہر (سائن اپ والا — ضلع نہیں) — پرانے اکاؤنٹس میں دوبارہ لاگ اِن کے بعد (سرور کی نئی worker.js کے ساتھ) (ہیلپ ڈیسک #435)",
   "MCS2711FR690":"🧮 Cash Counter: اوپر والا زوم (− %  +) اب کام کرتا ہے — سائز بڑا چھوٹا، لکھائی ڈبے سے باہر نہیں؛ نوٹ چھپنے پر لائنوں کی اونچائی وہی رہتی ہے • تاریخ / وقت کی لائن ختم (پرنٹ اور شیئر میں سسٹم کی تاریخ و وقت خود) • اردو / ترتیب / محفوظ کے بٹن اب نظر آتے ہیں (زوم بٹن کے نیچے چھپے تھے) • عام سائز پر پورا صفحہ بغیر اسکرول (ہیلپ ڈیسک #433 / #434)",
   "MCS2711FR689":"🧮 Cash Counter: نوٹ چھپانے کا بٹن اب آنکھ 👁 کا آئیکن • اردو / English کا بٹن (اردو میں سب کچھ اردو، دائیں سے بائیں) • ↕ ترتیب (بڑا یا چھوٹا نوٹ اوپر) • 📤 شیئر: چھوٹا خوبصورت پوسٹر (تصویر) • ابتدائی اسکرین: لوگو بڑا اور نیچے «Welcome to <آپ کا لوکل شہر>» (ہیلپ ڈیسک #435) • نوٹ کی تصویریں ختم، صرف نام؛ پورا صفحہ بغیر اسکرول؛ محفوظ ریکارڈ 🗂 بٹن سے (ہیلپ ڈیسک #433, #434)",
@@ -17907,7 +17945,8 @@ function ccShowCity(){
   const pick = ccPickValid();
   const viaNear = !pick && act && g && g.near && g.near.city === act && !ccMatchCity(g.cands||[]);
   /* اوپر بڑا نام: جہاں بندہ اس وقت ہے (اس جگہ کا ریکارڈ نہ ہو تو نیچے قریب ترین ریکارڈ والا شہر) */
-  e.textContent = viaNear ? ccCleanName(g.city) : (act || (g && g.city ? ccCleanName(g.city) : 'شہر چنیں'));
+  let mine = ''; try{ if(!pick) mine = mcsMyCity(); }catch(x){}   /* MCS2711FR692: اوپر لوکل شہر، ضلع نہیں */
+  e.textContent = mine ? mine : viaNear ? ccCleanName(g.city) : (act || (g && g.city ? ccCleanName(g.city) : 'شہر چنیں'));
   const nc = document.getElementById('ccNoCity'); if(nc) nc.textContent = viaNear ? `📋 ریکارڈ: ${act} (${g.near.km} کلومیٹر)` : ((!act && g && g.city && ccCityList().length) ? 'اس شہر کا ابھی ریکارڈ نہیں — ٹچ کر کے شہر چنیں' : '');
 }
 let ccLastApplied = null;
@@ -18575,6 +18614,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
     try{ if(r.tok && r.user && r.user.mobile) ls.set('mcsKeep', JSON.stringify({ tok: r.tok, m: String(r.user.mobile).replace(/\D/g, '').slice(-10), at: Date.now() })); }catch(e){}   /* MCS1611MO477: اسی فون پر صرف موبائل نمبر سے دوبارہ اندر */   /* MCS1411SA422: اب لاگ اِن ہمیشہ قائم، صرف خود لاگ آؤٹ سے جائے گا */
     uaHide(); try{ showToast(msg || ('✅ خوش آمدید، ' + (r.user && r.user.name || ''))); }catch(e){}
     uaSync();
+    setTimeout(() => { try{ mcsCityHello(); }catch(e){} }, 150);
     try{ if(invGet()) setTimeout(fedApplyPending, 300); }catch(e){}
     if(next) setTimeout(() => { try{ next(); }catch(e){} }, 250);
   }
@@ -19578,7 +19618,7 @@ function pkLoginBox(){ try{ const o = JSON.parse(ls.get('mcsMyPk') || 'null'); i
     const top = r.top || 'reg', nm = (r.user && r.user.name) || (r.codev && r.codev.name) || (r.agent && r.agent.name) || '';
     try{ localStorage.setItem('mcsRoleTop', top); localStorage.removeItem('mcsLoggedOut'); }catch(e){}   /* MCS2011FR578 */
     if(r.tok && r.user) done(r, '✅ ' + (top === 'dev' || top === 'codev' ? 'Admin' : top === 'agent' ? 'Agent' : 'Welcome') + (nm ? ' — ' + nm : ''));
-    else uaRoleDone(top === 'codev' ? 'codev' : top === 'agent' ? 'agent' : 'user', nm);
+    else { uaRoleDone(top === 'codev' ? 'codev' : top === 'agent' ? 'agent' : 'user', nm); try{ localStorage.setItem('mcsLastMob', ph10); localStorage.removeItem('mcsLocalCity'); }catch(e){} setTimeout(() => { try{ mcsCityHello(); }catch(e){} }, 150); }
     try{ cdBar(); }catch(e){} try{ mpRender(); hlRenderSoon(); }catch(e){} try{ uaSync(); h2Sync(); }catch(e){}
     if(r.synced && r.synced.length) try{ setTimeout(() => showToast('🔑 One PIN now works for all your roles', 4000), 1500); }catch(e){}
   };
@@ -33072,7 +33112,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   'use strict';
   var KEY='mcsCashCounter_v1', ACCK='mcsCashAcc_v1', LK='mcsCashLang_v1', OK='mcsCashOrd_v1';
   var D=[5000,1000,500,100,50,20,10];
-  var URN={5000:'پانچ ہزار والا نوٹ',1000:'ہزار والا نوٹ',500:'پانچ سو والا نوٹ',100:'سو والا نوٹ',50:'پچاس والا نوٹ',20:'بیس والا نوٹ',10:'دس والا نوٹ'};
+  var URN={5000:'5000 والے',1000:'1000 والے',500:'500 والے',100:'100 والے',50:'50 والے',20:'20 والے',10:'10 والے'};
   var T={en:{ti:'🧮 Cash Counter',acc:'🏪 Shop / Account',d:'📅 Date:',t:'🕒 Time:',h1:'Currency Note',h2:'Quantity',h3:'Amount (Rs.)',gt:'GRAND TOTAL',rs:'↻ Reset',sh:'📤 Share',pr:'🖨️ Print',sv:'💾 Save',hist:'🗂️ Saved Records',none:'No saved records yet — count cash and tap «Save».',hide:'Hide this note',all:'Show all',hd:' hidden',nw:'➕ New count',vw:'👁 Viewing saved record — ',lang:'اردو',ordB:'↕ Order',hb:'🗂 Saved',ord:'Order: biggest note on top',ord2:'Order: smallest note on top'},
         ur:{ti:'🧮 کیش کاؤنٹر',acc:'🏪 دکان / کھاتہ',d:'📅 تاریخ:',t:'🕒 وقت:',h1:'نوٹ',h2:'تعداد',h3:'رقم (روپے)',gt:'کل رقم',rs:'↻ ری سیٹ',sh:'📤 شیئر',pr:'🖨️ پرنٹ',sv:'💾 محفوظ',hist:'🗂️ محفوظ ریکارڈ',none:'ابھی کوئی ریکارڈ محفوظ نہیں — نوٹ گن کر «محفوظ» دبائیں۔',hide:'یہ نوٹ چھپائیں',all:'سب دکھائیں',hd:' نوٹ چھپے ہیں',nw:'➕ نئی گنتی',vw:'👁 محفوظ ریکارڈ — ',lang:'English',ordB:'↕ ترتیب',hb:'🗂 محفوظ',ord:'ترتیب: بڑا نوٹ اوپر',ord2:'ترتیب: چھوٹا نوٹ اوپر'}};
   var URM=['جنوری','فروری','مارچ','اپریل','مئی','جون','جولائی','اگست','ستمبر','اکتوبر','نومبر','دسمبر'], URD=['اتوار','پیر','منگل','بدھ','جمعرات','جمعہ','ہفتہ'];
@@ -33127,7 +33167,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   function shown(){return ord().filter(function(v){return !(hid[v]&&!(q[v]||0));});}
   function printIt(){
     var acct=$('k4Acc').value,t=viewing?viewing.at:Date.now(),l=L();
-    var body=shown().map(function(v){var n=q[v]||0;return '<tr><td>'+esc(nm(v))+'</td><td style="text-align:center">'+n+'</td><td style="text-align:'+(ur()?'left':'right')+'">'+rs(n*v)+'</td></tr>';}).join('');
+    var body=shown().map(function(v){var n=q[v]||0;return '<tr><td>'+esc(nm(v)).replace(/^(\d+)/,'<span style="font-family:Arial">$1</span>')+'</td><td style="text-align:center">'+n+'</td><td style="text-align:'+(ur()?'left':'right')+'">'+rs(n*v)+'</td></tr>';}).join('');
     var html='<!doctype html><html dir="'+(ur()?'rtl':'ltr')+'"><head><meta charset="utf-8"><title>Cash Counter</title><style>body{font-family:'+(ur()?"'Jameel Noori Nastaleeq Regular',":'')+'Arial,sans-serif;margin:18px;color:#000}h1{font-size:20px;margin:0}p{margin:3px 0;font-size:13px}table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}th,td{border:1px solid #000;padding:6px 8px}th{background:#eee}tfoot td{font-weight:900;font-size:16px}</style></head><body>'
       +'<h1>'+esc(l.ti.replace('🧮 ',''))+'</h1><p><b>'+esc(l.acc.replace('🏪 ',''))+':</b> '+esc(acct)+'</p><p><b>'+esc(l.d.replace('📅 ',''))+'</b> '+esc(fmtD(t))+' &nbsp; <b>'+esc(l.t.replace('🕒 ',''))+'</b> '+esc(fmtT(t))+'</p>'
       +'<table><thead><tr><th>'+esc(l.h1)+'</th><th>'+esc(l.h2)+'</th><th>'+esc(l.h3)+'</th></tr></thead><tbody>'+body+'</tbody><tfoot><tr><td colspan="2">'+esc(l.gt)+'</td><td style="text-align:'+(ur()?'left':'right')+'">'+rs(total())+'</td></tr></tfoot></table></body></html>';
@@ -33148,7 +33188,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
     if(!rowsV.length){toast(ur()?'پہلے کسی نوٹ کی تعداد لکھیں':'Enter at least one note quantity first');return;}
     var u=ur(),W=1080,RH=104,H=250+rowsV.length*RH+230,t=viewing?viewing.at:Date.now(),acct=$('k4Acc').value;
     var FK='"Jameel Noori Nastaleeq Kasheeda","Jameel Noori Nastaleeq Regular",serif',FR='"Jameel Noori Nastaleeq Regular",serif',FA='Arial,sans-serif';
-    try{await Promise.race([Promise.all([document.fonts.load('40px "Jameel Noori Nastaleeq Kasheeda"','کیش'),document.fonts.load('40px "Jameel Noori Nastaleeq Regular"','نوٹ')]),new Promise(function(r){setTimeout(r,1500);})]);}catch(e){}
+    try{await Promise.race([Promise.all([document.fonts.load('40px "Jameel Noori Nastaleeq Kasheeda"','کیش'),document.fonts.load('40px "Jameel Noori Nastaleeq Regular"','نوٹ'),document.fonts.load('bold 40px MCSDigits','5000')]),new Promise(function(r){setTimeout(r,1500);})]);}catch(e){}
     var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
     var g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0f2a5c');g.addColorStop(1,'#166534');x.fillStyle=g;x.fillRect(0,0,W,H);
     x.fillStyle='#fff';rr(x,36,36,W-72,H-72,36);x.fill();
@@ -33160,7 +33200,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
     var PAD=76,y=250;
     rowsV.forEach(function(v,i){
       x.fillStyle=i%2?'#ffffff':'#f1f5f9';x.fillRect(56,y,W-112,RH);
-      var mid=y+RH/2;x.fillStyle='#0f172a';x.textAlign=u?'right':'left';x.font=u?'42px '+FR:'bold 38px '+FA;x.fillText(nm(v),u?W-PAD:PAD,mid);
+      var mid=y+RH/2;x.fillStyle='#0f172a';x.textAlign=u?'right':'left';x.font=u?'bold 46px MCSDigits,'+FK:'bold 38px '+FA;x.fillText(nm(v),u?W-PAD:PAD,mid);
       x.textAlign='center';x.fillStyle='#1e3a8a';x.font='bold 66px '+FA;x.direction='ltr';x.fillText('× '+q[v],W/2+(u?-10:30),mid);
       x.direction=u?'rtl':'ltr';x.textAlign=u?'left':'right';x.fillStyle='#14532d';x.font='bold 36px '+FA;x.fillText(rs(q[v]*v),u?PAD:W-PAD,mid);
       y+=RH;});
