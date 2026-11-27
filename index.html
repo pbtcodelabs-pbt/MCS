@@ -3266,9 +3266,12 @@ html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !im
 <style id="mcsSplash431css">
 /* MCS2611TH684 (ہیلپ ڈیسک #431 — Admin 2، Admin 1 کی منظوری): کھلتے ہی سفید صفحہ، بیچ میں چھوٹا اصل لوگو، ستارے کے گرد سنہری گھومتا مدار — اینیمیشن کے بعد ہی ایپ */
 #mcsSplash{position:fixed;inset:0;z-index:2147483647;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s ease}
-#mcsSplash .wl{font:700 clamp(18px,5vw,24px)/1.3 Arial,sans-serif;color:#64748b;text-align:center;margin-top:6px}
-#mcsSplash .wc{font:900 clamp(30px,9.5vw,50px)/1.4 Arial,sans-serif;color:#0d3b66;text-align:center;max-width:92vw;overflow-wrap:anywhere;text-shadow:0 2px 0 #fde68a}
-#mcsSplash .wt{display:flex;flex-direction:column;align-items:center;min-height:0}
+#mcsSplash .wt{display:flex;flex-direction:column;align-items:center;min-height:0;animation:mcsWelIn .9s ease-out both .25s}
+#mcsSplash .wt:after{content:'';width:110px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#f59e0b,transparent);margin-top:8px}
+@keyframes mcsWelIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+html body #mcsSplash .wl{font-family:Georgia,'Palatino Linotype','Times New Roman',serif!important;font-style:italic;font-weight:600;font-size:clamp(20px,6.2vw,29px);line-height:1.4;color:#b45309;text-align:center;letter-spacing:.6px}
+html body #mcsSplash .wl:before,html body #mcsSplash .wl:after{content:'✦';font-style:normal;font-size:.6em;color:#f59e0b;margin:0 .6em;vertical-align:middle}
+html body #mcsSplash .wc{font-family:Georgia,'Jameel Noori Nastaleeq Kasheeda','Jameel Noori Nastaleeq Regular',serif!important;font-weight:800;font-size:clamp(36px,12vw,60px);line-height:1.5;text-align:center;max-width:92vw;overflow-wrap:anywhere;color:#0d3b66;background:linear-gradient(90deg,#0d9488,#0d3b66 55%,#b45309);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 #mcsSplash.out{opacity:0;pointer-events:none}
 #mcsSplash .lg{position:relative;width:46vw;max-width:280px;min-width:170px}
 #mcsSplash .lg img{display:block;width:100%;height:auto}
@@ -3294,8 +3297,8 @@ html body #homeAds .ad-go a,html body #homeAds .ad-go button{min-height:32px !im
 <style>@keyframes mcsOrbI{to{transform:rotate(360deg)}}</style>
 <script id="mcsSplash431">
 /* MCS2711FR689 (#435): لوگو بڑا؛ نیچے «Welcome to <لوکل شہر>» — شہر وہی جو بندے نے سائن اپ پر لکھا (ضلع نہیں)؛ نہ ملے تو کچھ نہیں دکھتا */
-(function(){ try{ var a = JSON.parse(localStorage.getItem('mcsAuth') || 'null'), u = (a && a.user) || {}, c = String(u.locality || u.city || '').trim(), sp = document.getElementById('mcsSplash');
-  if(c && sp){ var w = document.createElement('div'); w.className = 'wt'; w.setAttribute('data-noen', '1'); var l = document.createElement('div'); l.className = 'wl'; l.textContent = 'Welcome to'; var n = document.createElement('div'); n.className = 'wc'; n.setAttribute('dir', 'auto'); n.textContent = c; w.appendChild(l); w.appendChild(n); sp.appendChild(w); } }catch(e){} })();
+(function(){ try{ var a = JSON.parse(localStorage.getItem('mcsAuth') || 'null'), u = (a && a.user) || {}, c = String(localStorage.getItem('mcsLocalCity') || u.locality || '').trim(), sp = document.getElementById('mcsSplash');
+  if(c && sp){ var w = document.createElement('div'); w.className = 'wt'; w.setAttribute('data-noen', '1'); var l = document.createElement('div'); l.className = 'wl'; l.textContent = 'Welcome to Your City'; var n = document.createElement('div'); n.className = 'wc'; n.setAttribute('dir', 'auto'); n.textContent = c; w.appendChild(l); w.appendChild(n); sp.appendChild(w); } }catch(e){} })();
 /* MCS2611TH684 (#431): اینیمیشن کم از کم 2.4 سیکنڈ اور صفحہ لوڈ ہونے تک؛ پھر نرمی سے غائب — اس سے پہلے ہوم نظر نہیں آتا (زیادہ سے زیادہ 6 سیکنڈ) */
 (function(){ var t0 = Date.now(), done = false, MIN = 2400;
   function hide(){ if(done) return; done = true; var e = document.getElementById('mcsSplash'); if(!e) return; e.classList.add('out'); setTimeout(function(){ try{ e.remove(); }catch(x){} }, 600); }
@@ -4854,10 +4857,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2711FR690";
+const APP_VERSION = "MCS2711FR691";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2711FR691":"✨ ابتدائی اسکرین: لوگو کے نیچے خوبصورت تحریر «Welcome to Your City» اور اس کے نیچے آپ کا لوکل شہر (سائن اپ والا — ضلع نہیں) — پرانے اکاؤنٹس میں دوبارہ لاگ اِن کے بعد (سرور کی نئی worker.js کے ساتھ) (ہیلپ ڈیسک #435)",
   "MCS2711FR690":"🧮 Cash Counter: اوپر والا زوم (− %  +) اب کام کرتا ہے — سائز بڑا چھوٹا، لکھائی ڈبے سے باہر نہیں؛ نوٹ چھپنے پر لائنوں کی اونچائی وہی رہتی ہے • تاریخ / وقت کی لائن ختم (پرنٹ اور شیئر میں سسٹم کی تاریخ و وقت خود) • اردو / ترتیب / محفوظ کے بٹن اب نظر آتے ہیں (زوم بٹن کے نیچے چھپے تھے) • عام سائز پر پورا صفحہ بغیر اسکرول (ہیلپ ڈیسک #433 / #434)",
   "MCS2711FR689":"🧮 Cash Counter: نوٹ چھپانے کا بٹن اب آنکھ 👁 کا آئیکن • اردو / English کا بٹن (اردو میں سب کچھ اردو، دائیں سے بائیں) • ↕ ترتیب (بڑا یا چھوٹا نوٹ اوپر) • 📤 شیئر: چھوٹا خوبصورت پوسٹر (تصویر) • ابتدائی اسکرین: لوگو بڑا اور نیچے «Welcome to <آپ کا لوکل شہر>» (ہیلپ ڈیسک #435) • نوٹ کی تصویریں ختم، صرف نام؛ پورا صفحہ بغیر اسکرول؛ محفوظ ریکارڈ 🗂 بٹن سے (ہیلپ ڈیسک #433, #434)",
   "MCS2711FR688":"🧮 Cash Counter: ہر نوٹ کے بائیں طرف چھوٹا ⓘ بٹن — دبائیں تو وہ نوٹ (جو آپ کے پاس نہیں) اس گنتی کے لیے چھپ جائے، صرف گنے جانے والے نوٹ رہیں؛ کیلکولیٹر دوبارہ کھولیں تو سب نوٹ پھر نظر آئیں (ہیلپ ڈیسک #433)",
@@ -18566,7 +18570,7 @@ body.d2 #homeAds .ad-ribbon{display:none}
   function busy(b){ document.querySelectorAll('#uaOv .uaBtn').forEach(x => x.disabled = !!b); }
   function done(r, msg){ ls.set('mcsFreshOut', null);
     const next = uaPending; uaPending = null;
-    ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); ls.set('mcsGuest', null); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){}
+    ls.set('mcsAuth', JSON.stringify({ tok: r.tok, user: r.user, at: Date.now() })); try{ ls.set('mcsLocalCity', (r.user && r.user.locality) ? String(r.user.locality) : null); }catch(e){} ls.set('mcsGuest', null); try{ if(r.user && (r.user.sid || r.user.id)) ls.set('mcsMyPk', JSON.stringify({ sid: r.user.sid || r.user.id, pk: r.user.pk || '', name: r.user.name, mobile: r.user.mobile || '', at: Date.now() })); }catch(e){}
     ls.set('mcsAuthTmp', null); ls.set('mcsLoggedOut', null); try{ sessionStorage.setItem('mcsAuthLive', '1'); }catch(e){}
     try{ if(r.tok && r.user && r.user.mobile) ls.set('mcsKeep', JSON.stringify({ tok: r.tok, m: String(r.user.mobile).replace(/\D/g, '').slice(-10), at: Date.now() })); }catch(e){}   /* MCS1611MO477: اسی فون پر صرف موبائل نمبر سے دوبارہ اندر */   /* MCS1411SA422: اب لاگ اِن ہمیشہ قائم، صرف خود لاگ آؤٹ سے جائے گا */
     uaHide(); try{ showToast(msg || ('✅ خوش آمدید، ' + (r.user && r.user.name || ''))); }catch(e){}
