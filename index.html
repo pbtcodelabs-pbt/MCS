@@ -4893,10 +4893,12 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2711FR694";
+const APP_VERSION = "MCS2811SA696";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2811SA696":"🧾 پرانا «Bill Maker» ہٹا دیا گیا — اب Business Tools میں صرف نیا «Simple Bill (Free)» ہے",
+  "MCS2811SA695":"🧾 Business Tools میں نیا «Simple Bill (Free)» — کاغذی طرز کا سادہ بل: خودکار نئی لائنیں (Add Item بٹن نہیں)، پرانے آئٹم اور ریٹ کی تجویز، خودکار ڈرافٹ جو کبھی ضائع نہیں ہوتا، صرف آج کے بل، انگلش / اردو (دائیں سے بائیں)، پرنٹ اور تصویر؛ ہر اکاؤنٹ کا اپنا ڈیٹا اسی فون میں۔ پرانا Bill Maker جوں کا توں",
   "MCS2711FR694":"🧾 Business Tools میں نیا «Bill Maker» (سیلز بل / انوائس، ہر دکان کا الگ بل نمبر، کسٹمر، کوئیک آئٹمز، ڈسکاؤنٹ اور ٹیکس، پرنٹ اور شیئر) • 🧮 Cash Counter: «والے» ختم، تعداد کا ڈبہ چوڑا (4 ہندسے)، پرنٹ بٹن ختم، شیئر کی جگہ «پوسٹر» بٹن (5000 × تعداد = رقم)",
   "MCS2711FR693":"🧮 Cash Counter: نوٹوں کے نام ہندسوں میں — 5000 والے، 1000 والے، 500 والے (نوری نستعلیق کشیدہ)",
   "MCS2711FR692":"🏙️ «Welcome to Your Beautiful City» اور آپ کا لوکل شہر: ایپ کھلتے وقت اور لاگ اِن کے بعد؛ شہر محفوظ نہ ہو تو ایک بار پوچھا جائے گا؛ ہوم پر بھی لوکل شہر",
@@ -7492,7 +7494,7 @@ function bdOpen(){ bdBind(); bdPage = 1; openModal('bdModal'); bdRender(); }
 const BT_TOOLS = [
   ['cash', 'Cash Counter', 'Count currency notes & get total amount', '🧮', '#1d4ed8', '#e0edff', '#93c5fd'],
   ['calc', 'Shop Calculator', 'Business calculator with profit, discount & tax', '🔢', '#7c3aed', '#f3e8ff', '#c4b5fd'],
-  ['bill', 'Bill Maker', 'Create sale bills / invoices with print & share', '🧾', '#16a34a', '#e8f8ee', '#86efac'],
+  ['sbill', 'Simple Bill (Free)', 'Quick paper-style shop bill — free for every user', '📃', '#15803d', '#f0fdf4', '#86efac'],
   ['cv', 'CV Maker', 'Create professional CV / Resume', '📄', '#2563eb', '#e6f0ff', '#93c5fd'],
   ['fx', 'Currency Converter', 'Convert between currencies using exchange rates', '💱', '#ea580c', '#fff1e6', '#fdba74'],
   ['photo', 'Passport Photo Maker', 'Prepare passport, visa & ID photographs', '🪪', '#db2777', '#fde8f1', '#f9a8d4']
@@ -33253,419 +33255,413 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   };
 })();
 </script>
-<!-- MCS2711FR694 (#437): Business Tools → Bill Maker — Sales Bill / Invoice (shop-wise bill numbers, bills + bill items stored separately) -->
+
+
+<!-- MCS2811SA695: Business Tools → Simple Bill (Free) — paper-style bill, auto rows, auto draft, today's bills only. Separate from the existing Bill Maker (#bmModal); own keys mcsSB_v1_* -->
 <style>
-#bmModal.modal-overlay{padding:0;align-items:stretch;justify-content:stretch}
-#bmModal .bm-page{width:100%;max-width:820px;margin:0 auto;height:100%;background:#eef3fb;display:flex;flex-direction:column;direction:ltr;color:#0f172a;position:relative;overflow:hidden;font-family:Arial,sans-serif}
-#bmModal .bm-hd{background:linear-gradient(135deg,#1e3a8a,#1d4ed8);color:#fff;display:flex;align-items:center;gap:8px;padding:8px 150px 8px 8px;flex:none}
-#bmModal .bm-back{width:30px;height:30px;border-radius:50%;border:1.5px solid #fff;background:transparent;color:#fff;font-size:16px;line-height:1;padding:0;cursor:pointer;flex:none}
-#bmModal .bm-ti{flex:1;min-width:0;line-height:1.15}
-#bmModal .bm-ti b{display:block;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#bmModal .bm-ti small{display:block;font-size:11px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#bmModal .bm-sc{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 8px 12px}
-#bmModal .bm-in{zoom:var(--ui-zoom,1);display:flex;flex-direction:column;gap:6px}
-#bmModal .bm-box{background:#fff;border:1.5px solid #cbd5e1;border-radius:12px;padding:6px 8px}
-#bmModal .bm-acc{display:flex;align-items:center;gap:6px;border-color:#93c5fd}
-#bmModal .bm-acc span{flex:none;font-size:13px;font-weight:800;color:#1e3a8a}
-#bmModal select,#bmModal input{font-family:Arial,sans-serif}
-#bmModal .bm-acc select{flex:1;min-width:0;border:1.5px solid #cbd5e1;border-radius:8px;padding:3px 6px;font-size:14px;font-weight:700;color:#0f172a;background:#f8fafc;height:32px}
-#bmModal .bm-tl{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-#bmModal .bm-tl button{height:32px;border-radius:10px;border:1.5px solid #60a5fa;background:#dbeafe;color:#1e3a8a;font-size:13.5px;font-weight:800;cursor:pointer;touch-action:manipulation}
-#bmModal .bm-info{display:grid;grid-template-columns:1.25fr 1.2fr .9fr;gap:5px}
-#bmModal .bm-info div{background:#fff;border:1.5px solid #cbd5e1;border-radius:10px;padding:4px 6px;font-size:12px;font-weight:700;line-height:1.35;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#bmModal .bm-info b{color:#1e3a8a;font-size:12.5px}
-#bmModal .bm-cu{display:flex;align-items:center;gap:6px;position:relative}
-#bmModal .bm-cu>span{flex:none;font-size:13px;font-weight:800;color:#1e3a8a;line-height:1.1}
-#bmModal .bm-cu>span small{display:block;font-size:10px;font-weight:700;color:#64748b}
-#bmModal .bm-fld{flex:1;min-width:0;position:relative}
-#bmModal .bm-fld input{width:100%;box-sizing:border-box;height:36px;border:1.5px solid #94a3b8;border-radius:9px;padding:0 30px 0 9px;font-size:14px;color:#0f172a;background:#fff}
-#bmModal .bm-fld i{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-style:normal;font-size:15px;cursor:pointer}
-#bmModal .bm-grn{flex:none;height:36px;border:0;border-radius:9px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-size:13px;font-weight:800;padding:0 10px;cursor:pointer;touch-action:manipulation}
-#bmModal .bm-dd{position:absolute;left:0;right:0;top:38px;z-index:8;background:#fff;border:1.5px solid #93c5fd;border-radius:10px;box-shadow:0 6px 16px rgba(15,23,42,.18);max-height:190px;overflow-y:auto;display:none}
-#bmModal .bm-dd.on{display:block}
-#bmModal .bm-dd button{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;border:0;border-bottom:1px solid #e2e8f0;background:#fff;padding:8px 10px;font-size:13.5px;color:#0f172a;cursor:pointer}
-#bmModal .bm-dd button small{color:#64748b;font-weight:700}
-#bmModal .bm-dd .none{padding:8px 10px;font-size:12.5px;color:#64748b}
-#bmModal .bm-ad{display:flex;flex-direction:column;gap:5px}
-#bmModal .bm-ad .r2{display:grid;grid-template-columns:.7fr 1fr 1.1fr 1.25fr;gap:5px;align-items:end}
-#bmModal .bm-ad label{display:block;font-size:11.5px;font-weight:800;color:#1e3a8a;margin-bottom:2px}
-#bmModal .bm-ad input{width:100%;box-sizing:border-box;height:34px;border:1.5px solid #94a3b8;border-radius:9px;padding:0 6px;font-size:14px;color:#0f172a;background:#fff;text-align:center;min-width:0}
-#bmModal .bm-ad #bmIn{text-align:left;padding:0 30px 0 9px}
-#bmModal .bm-ad #bmA{background:#dcfce7;border-color:#86efac;font-weight:800;color:#14532d;display:flex;align-items:center;justify-content:center;height:34px;border:1.5px solid #86efac;border-radius:9px;font-size:13.5px;overflow:hidden}
-#bmModal .bm-tb{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #dbe3ee;box-shadow:0 2px 6px rgba(15,23,42,.08)}
-#bmModal .bm-th,#bmModal .bm-r{display:grid;grid-template-columns:30px minmax(0,1fr) 42px 62px 74px 56px;align-items:center}
-#bmModal .bm-th{background:#1e3a8a;color:#fff;font-size:11.5px;font-weight:800;text-align:center}
-#bmModal .bm-th>div{padding:6px 2px}
-#bmModal .bm-r{border-top:1px solid #e2e8f0;font-size:12.5px;min-height:36px}
-#bmModal .bm-r>span{padding:3px 3px;min-width:0;overflow-wrap:anywhere;text-align:center}
-#bmModal .bm-r>span.n{text-align:left;font-weight:700}
-#bmModal .bm-r>span.m{text-align:right;direction:ltr}
-#bmModal .bm-r .a{display:flex;gap:3px;justify-content:center}
-#bmModal .bm-r .a button{width:24px;height:24px;border-radius:7px;border:1.5px solid #93c5fd;background:#eff6ff;font-size:12px;padding:0;cursor:pointer}
-#bmModal .bm-r .a button.d{border-color:#fca5a5;background:#fff1f2}
-#bmModal .bm-none{text-align:center;color:#64748b;font-size:13px;padding:14px}
-#bmModal .bm-mid{display:grid;grid-template-columns:1fr 1.15fr;gap:6px;align-items:start}
-@media (max-width:470px){#bmModal .bm-mid{grid-template-columns:1fr}}
-#bmModal .bm-qh{display:flex;align-items:center;justify-content:space-between;background:#1e3a8a;color:#fff;border-radius:9px;padding:5px 8px;font-size:14px;font-weight:800;margin-bottom:6px}
-#bmModal .bm-qh button{border:1.5px solid #fff;background:transparent;color:#fff;border-radius:7px;font-size:11.5px;font-weight:700;padding:2px 7px;cursor:pointer}
-#bmModal .bm-qg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-#bmModal .bm-qg button{min-height:36px;border-radius:9px;border:1.5px solid #93c5fd;background:linear-gradient(#f1f7ff,#dbeafe);color:#0f172a;font-size:13px;font-weight:800;cursor:pointer;padding:3px 4px;line-height:1.15;touch-action:manipulation}
-#bmModal .bm-qg button small{display:block;font-size:10.5px;color:#475569;font-weight:700}
-#bmModal .bm-qg button.add{border-style:dashed;color:#1d4ed8}
-#bmModal .bm-tt{display:flex;flex-direction:column;gap:5px}
-#bmModal .bm-tr{display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:800;min-height:34px}
-#bmModal .bm-tr>b{flex:1;min-width:0}
-#bmModal .bm-tr select{height:30px;border:1.5px solid #94a3b8;border-radius:8px;background:#f8fafc;font-size:13px;font-weight:700;width:54px}
-#bmModal .bm-tr input{height:30px;width:62px;box-sizing:border-box;border:1.5px solid #94a3b8;border-radius:8px;text-align:center;font-size:14px}
-#bmModal .bm-tr em{font-style:normal;min-width:78px;text-align:right;direction:ltr;overflow-wrap:anywhere}
-#bmModal .bm-gt{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#bbf7d0,#86efac);border-radius:11px;padding:7px 10px;color:#14532d}
-#bmModal .bm-gt b{font-size:16px;font-weight:900}
-#bmModal .bm-gt div{flex:1;min-width:0;text-align:right;font:900 clamp(17px,5.4vw,25px)/1.2 Arial,sans-serif;overflow-wrap:anywhere;direction:ltr}
-#bmModal .bm-bt{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-#bmModal .bm-bt button{min-height:46px;border-radius:11px;font-size:11.5px;font-weight:800;line-height:1.1;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:2px;touch-action:manipulation;border:1.5px solid #94a3b8;background:#e2e8f0;color:#0f172a}
-#bmModal .bm-bt button span{font-size:16px;line-height:1}
-#bmModal .bm-bt .nb{background:#eff6ff;border-color:#93c5fd;color:#1e3a8a}
-#bmModal .bm-bt .sv{background:linear-gradient(135deg,#16a34a,#15803d);border:0;color:#fff}
-#bmModal .bm-bt .pr{background:linear-gradient(135deg,#2563eb,#1d4ed8);border:0;color:#fff}
-#bmModal .bm-bt .sh{background:linear-gradient(135deg,#7c3aed,#6d28d9);border:0;color:#fff}
-#bmModal .bm-bt .cl{background:#fff1f2;border-color:#fca5a5;color:#b91c1c}
-#bmModal .bm-view{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fef9c3;border:1.5px solid #facc15;border-radius:10px;padding:3px 8px;font-size:12.5px;font-weight:700;color:#713f12}
-#bmModal .bm-view button{border:0;background:#1e3a8a;color:#fff;border-radius:8px;padding:3px 9px;font-size:12px;font-weight:700;cursor:pointer}
-#bmModal .bm-hp{position:absolute;inset:0;background:#eef3fb;display:none;flex-direction:column;z-index:5}
-#bmModal .bm-hp.on{display:flex}
-#bmModal .bm-hl{flex:1;min-height:0;overflow-y:auto;padding:8px}
-#bmModal .bm-h{background:#fff;border:1px solid #dbe3ee;border-radius:11px;padding:7px 9px;margin-bottom:6px;display:flex;align-items:center;gap:8px;cursor:pointer}
-#bmModal .bm-h .t{flex:1;min-width:0;font-size:12px;color:#334155;line-height:1.4}
-#bmModal .bm-h .t b{display:block;font-size:13.5px;color:#0f172a;overflow-wrap:anywhere}
-#bmModal .bm-h .m{font:900 14px Arial,sans-serif;color:#14532d;direction:ltr;text-align:right}
-#bmModal .bm-h .x{flex:none;width:30px;height:30px;border-radius:50%;border:1.5px solid #fca5a5;background:#fff1f2;color:#b91c1c;font-size:14px;padding:0;cursor:pointer}
-#bmModal .bm-sh{position:absolute;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:9;padding:14px}
-#bmModal .bm-sh.on{display:flex}
-#bmModal .bm-shc{background:#fff;border-radius:16px;width:100%;max-width:380px;padding:14px;display:flex;flex-direction:column;gap:8px;max-height:92%;overflow-y:auto}
-#bmModal .bm-shc>b{font-size:16px;color:#1e3a8a}
-#bmModal .bm-shc p{margin:0;font-size:13.5px;color:#334155}
-#bmModal .bm-shc label{font-size:12px;font-weight:800;color:#1e3a8a;display:block;margin-bottom:2px}
-#bmModal .bm-shc input{width:100%;box-sizing:border-box;height:38px;border:1.5px solid #94a3b8;border-radius:9px;padding:0 9px;font-size:15px}
-#bmModal .bm-shb{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
-#bmModal .bm-shb button{height:38px;border-radius:10px;border:1.5px solid #94a3b8;background:#e2e8f0;font-size:14px;font-weight:800;padding:0 14px;cursor:pointer}
-#bmModal .bm-shb button.ok{background:linear-gradient(135deg,#16a34a,#15803d);border:0;color:#fff}
-#bmModal .bm-shb button.dn{background:#fff1f2;border-color:#fca5a5;color:#b91c1c}
+#sbModal.modal-overlay{padding:0;align-items:stretch;justify-content:stretch}
+#sbModal .sb-page{width:100%;max-width:560px;margin:0 auto;height:100%;background:#f3f8f4;display:flex;flex-direction:column;color:#14301f;position:relative;overflow:hidden;font-family:Arial,Tahoma,sans-serif;direction:ltr}
+#sbModal .sb-page[dir=rtl]{direction:rtl}
+#sbModal .sb-page.ur{font-family:'Jameel Noori Nastaleeq Regular','Noto Nastaliq Urdu','Noto Naskh Arabic',Tahoma,serif}
+#sbModal .sb-hd{background:#15803d;color:#fff;display:flex;align-items:center;gap:8px;padding:8px 150px 8px 8px;flex:none;direction:ltr}
+#sbModal .sb-back{width:30px;height:30px;border-radius:50%;border:1.5px solid #fff;background:transparent;color:#fff;font-size:16px;line-height:1;padding:0;cursor:pointer;flex:none}
+#sbModal .sb-ti{flex:1;min-width:0;line-height:1.2;text-align:left;font-family:Arial,sans-serif}
+#sbModal .sb-ti b{display:block;font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sbModal .sb-ti small{display:block;font-size:11px;opacity:.9}
+#sbModal .sb-sc{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 8px 100px}
+#sbModal .sb-r:not(.f) input.q::placeholder{color:transparent}
+#sbModal .sb-in{zoom:var(--ui-zoom,1);display:flex;flex-direction:column;gap:8px}
+#sbModal .sb-bar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#sbModal .sb-lang{display:inline-flex;border:1px solid #15803d;border-radius:8px;overflow:hidden}
+#sbModal .sb-lang button{border:0;background:#fff;color:#15803d;font-size:12.5px;padding:3px 10px;cursor:pointer;font-weight:700;font-family:inherit;line-height:1.5}
+#sbModal .sb-lang button.on{background:#15803d;color:#fff}
+#sbModal .sb-st{font-size:12px;color:#15803d;font-weight:700;display:inline-flex;align-items:center;gap:4px}
+#sbModal .sb-st.bad{color:#b91c1c}
+#sbModal .sb-st:before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+#sbModal .sb-biz{width:100%;box-sizing:border-box;border:1px solid #bbd7c4;border-radius:8px;padding:5px 8px;font-size:13px;background:#fff;color:#14301f;font-family:inherit}
+#sbModal .sb-paper{background:#fff;border:1px solid #cfe3d5;border-radius:6px;box-shadow:0 1px 4px rgba(20,48,31,.08);padding:10px 10px 8px}
+#sbModal .sb-shop{text-align:center;font-size:20px;font-weight:800;color:#15803d;line-height:1.5;word-break:break-word}
+#sbModal .sb-shopin{width:100%;box-sizing:border-box;border:0;border-bottom:1px dashed #15803d;text-align:center;font-size:18px;font-weight:700;color:#15803d;background:transparent;padding:4px;font-family:inherit}
+#sbModal .sb-meta{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:#4b5f52;border-top:1px solid #cfe3d5;border-bottom:1px solid #cfe3d5;margin:6px 0;padding:4px 0;flex-wrap:wrap}
+#sbModal .sb-meta b{color:#14301f}
+#sbModal .sb-cu{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+#sbModal .sb-cu label{display:block;min-width:0}
+#sbModal .sb-cu span{display:block;font-size:11.5px;color:#4b5f52;margin-bottom:1px}
+#sbModal .sb-cu input,#sbModal .sb-r input{width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #b7cfbf;background:transparent;font-size:14px;color:#14301f;padding:5px 3px;min-width:0;font-family:inherit;border-radius:0;outline:0}
+#sbModal .sb-cu input:focus,#sbModal .sb-r input:focus,#sbModal .sb-shopin:focus{border-bottom-color:#15803d;background:#f0fdf4}
+#sbModal .sb-th,#sbModal .sb-r{display:grid;grid-template-columns:minmax(0,1fr) 46px 62px 74px 26px;align-items:center;column-gap:2px}
+#sbModal .sb-th{font-size:11.5px;color:#fff;background:#15803d;font-weight:700;text-align:center;padding:4px 2px;border-radius:3px 3px 0 0}
+#sbModal .sb-th div:first-child{text-align:start;padding-inline-start:4px}
+#sbModal .sb-r{border-bottom:1px solid #dcebe1;min-height:36px}
+#sbModal .sb-r input.n{text-align:start}
+#sbModal .sb-r input.q,#sbModal .sb-r input.r{text-align:center;direction:ltr;padding:5px 1px}
+#sbModal .sb-r .a{text-align:center;font-size:13px;font-weight:700;direction:ltr;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#sbModal .sb-r .x{border:0;background:transparent;color:#b91c1c;font-size:17px;line-height:1;padding:0;cursor:pointer;width:26px;height:30px;visibility:hidden}
+#sbModal .sb-r.f .x{visibility:visible}
+#sbModal .sb-gt{display:flex;justify-content:space-between;align-items:center;border-top:2px solid #15803d;margin-top:2px;padding:7px 4px 2px;font-size:16px;font-weight:800}
+#sbModal .sb-gt b{direction:ltr;color:#15803d;font-family:Arial,sans-serif}
+#sbModal .sb-act{display:grid;grid-template-columns:1fr 1.3fr 44px;gap:6px}
+#sbModal .sb-act button{height:40px;border-radius:8px;border:1.5px solid #15803d;background:#fff;color:#15803d;font-size:14px;font-weight:800;cursor:pointer;touch-action:manipulation;font-family:inherit;line-height:1.2;padding:0 4px}
+#sbModal .sb-act button.pri{background:#15803d;color:#fff}
+#sbModal .sb-act button:disabled{opacity:.6}
+#sbModal .sb-lnk{text-align:center}
+#sbModal .sb-lnk button{border:0;background:transparent;color:#6b7f72;font-size:12px;text-decoration:underline;cursor:pointer;font-family:inherit}
+#sbModal h3.sb-h{margin:6px 2px 0;font-size:13.5px;color:#15803d;font-weight:800;border-bottom:1px solid #cfe3d5;padding-bottom:3px}
+#sbModal .sb-ls{display:flex;flex-direction:column;gap:5px}
+#sbModal .sb-ls .none{font-size:12.5px;color:#6b7f72;padding:6px 2px}
+#sbModal .sb-b{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid #cfe3d5;border-radius:8px;padding:7px 9px;cursor:pointer;width:100%;box-sizing:border-box;font-family:inherit;color:#14301f;text-align:start}
+#sbModal .sb-b .l{min-width:0;flex:1;font-size:13px;line-height:1.5}
+#sbModal .sb-b .l b{font-family:Arial,sans-serif;font-size:12.5px;color:#15803d;display:block}
+#sbModal .sb-b .l span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#sbModal .sb-b .rr{flex:none;text-align:end;font-size:12.5px;direction:ltr;font-family:Arial,sans-serif}
+#sbModal .sb-b .rr b{display:block;font-size:13.5px}
+#sbModal .sb-b .rr small{color:#6b7f72}
+#sbModal .sb-pro{border:1px dashed #86c79b;border-radius:10px;background:#fff;padding:9px 10px;text-align:center;margin-top:4px}
+#sbModal .sb-pro b{display:block;font-size:13.5px;color:#15803d;line-height:1.6}
+#sbModal .sb-pro p{margin:2px 0 7px;font-size:12px;color:#4b5f52;line-height:1.7}
+#sbModal .sb-pro button{border:1.5px solid #15803d;background:#fff;color:#15803d;border-radius:8px;padding:5px 14px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit}
+#sbModal .sb-dd{position:absolute;z-index:20;background:#fff;border:1px solid #86c79b;border-radius:8px;box-shadow:0 6px 16px rgba(20,48,31,.2);max-height:210px;overflow-y:auto;display:none}
+#sbModal .sb-dd.on{display:block}
+#sbModal .sb-dd button{display:flex;justify-content:space-between;gap:10px;width:100%;border:0;border-bottom:1px solid #e5efe8;background:#fff;padding:8px 10px;font-size:13.5px;color:#14301f;cursor:pointer;font-family:inherit;text-align:start}
+#sbModal .sb-dd button small{color:#15803d;font-weight:700;direction:ltr;font-family:Arial,sans-serif;flex:none}
+#sbModal .sb-ov{position:absolute;inset:0;background:rgba(15,40,25,.55);display:none;align-items:center;justify-content:center;z-index:30;padding:10px}
+#sbModal .sb-ov.on{display:flex}
+#sbModal .sb-ovc{background:#fff;border-radius:12px;width:100%;max-width:400px;max-height:94%;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}
+#sbModal .sb-ovc p{margin:0;font-size:14px}
+#sbModal .sb-ovb{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+#sbModal .sb-ovb button{height:38px;border-radius:8px;border:1.5px solid #15803d;background:#fff;color:#15803d;font-size:13.5px;font-weight:800;padding:0 14px;cursor:pointer;font-family:inherit}
+#sbModal .sb-ovb button.pri{background:#15803d;color:#fff}
+#sbModal .sb-ovb button.dn{border-color:#dc2626;color:#dc2626}
+.sb-rc{background:#fff;border:1px solid #cfe3d5;border-radius:6px;padding:10px;color:#111}
+.rc{font-family:Arial,Tahoma,sans-serif;color:#111;font-size:13px}
+.rc.ur{font-family:'Jameel Noori Nastaleeq Regular','Noto Nastaliq Urdu','Noto Naskh Arabic',Tahoma,serif}
+.rc .s{text-align:center;font-size:19px;font-weight:800;line-height:1.5;word-break:break-word}
+.rc .m{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;border-top:1px solid #999;border-bottom:1px solid #999;margin:6px 0;padding:4px 0;font-size:12px}
+.rc .c{font-size:12.5px;margin-bottom:6px;line-height:1.7}
+.rc table{width:100%;border-collapse:collapse;font-size:12.5px}
+.rc th{border-bottom:1px solid #111;padding:3px 3px;font-weight:700;text-align:center}
+.rc td{border-bottom:1px solid #ddd;padding:3px 3px;text-align:center;vertical-align:top}
+.rc th:first-child,.rc td:first-child{text-align:start;width:46%;word-break:break-word}
+.rc td.n{direction:ltr;font-family:Arial,sans-serif}
+.rc .g{display:flex;justify-content:space-between;border-top:2px solid #111;margin-top:4px;padding-top:5px;font-weight:800;font-size:15px}
+.rc .g b{direction:ltr;font-family:Arial,sans-serif}
+.rc .f{text-align:center;font-size:11.5px;color:#555;margin-top:8px}
 </style>
-<div class="modal-overlay" id="bmModal" data-noen="1">
-  <div class="bm-page" id="bmPage">
-    <div class="bm-hd"><button type="button" class="bm-back" onclick="closeModal('bmModal')" aria-label="Back">←</button>
-      <div class="bm-ti"><b>🧾 Bill Maker</b><small>Sales Bill / Invoice for Shop</small></div>
-    </div>
-    <div class="bm-sc"><div class="bm-in">
-      <div class="bm-tl"><button type="button" id="bmNewTop">➕ New Bill</button><button type="button" id="bmHb">🗂 Saved Bills</button></div>
-      <label class="bm-box bm-acc"><span>🏪 Shop / Account</span><select id="bmAcc"></select></label>
-      <div id="bmView"></div>
-      <div class="bm-info"><div>Bill No: <b id="bmNo">—</b></div><div>📅 <b id="bmDate"></b></div><div>🕒 <b id="bmTime"></b></div></div>
-      <div class="bm-box bm-cu"><span>👤 Customer<small>(Optional)</small></span>
-        <div class="bm-fld"><input id="bmCust" type="text" placeholder="Name / Mobile No." autocomplete="off" maxlength="60"><i id="bmCustI">🔍</i><div class="bm-dd" id="bmCustDd"></div></div>
-        <button type="button" class="bm-grn" id="bmCustNew">➕ New</button></div>
-      <div class="bm-box bm-ad">
-        <div class="bm-fld" style="flex:none"><label>Item Name</label><input id="bmIn" type="text" placeholder="Search / Select Item" autocomplete="off" maxlength="60"><i style="top:70%">🔍</i><div class="bm-dd" id="bmItDd" style="top:56px"></div></div>
-        <div class="r2"><div><label>Qty</label><input id="bmQ" type="text" inputmode="decimal" value="1" autocomplete="off"></div>
-          <div><label>Rate (Rs.)</label><input id="bmR" type="text" inputmode="decimal" placeholder="0.00" autocomplete="off"></div>
-          <div><label>Amount (Rs.)</label><div id="bmA">0.00</div></div>
-          <button type="button" class="bm-grn" id="bmAdd" style="height:34px">➕ Add Item</button></div>
+<div class="modal-overlay" id="sbModal" data-noen="1">
+  <div class="sb-page" id="sbPage">
+    <div class="sb-hd"><button type="button" class="sb-back" onclick="closeModal('sbModal')" aria-label="Back">←</button>
+      <div class="sb-ti"><b>🧾 Simple Bill (Free)</b><small>My City Shines</small></div></div>
+    <div class="sb-sc" id="sbSc"><div class="sb-in">
+      <div class="sb-bar"><div class="sb-lang"><button type="button" data-l="en">English</button><button type="button" data-l="ur">اردو</button></div><span class="sb-st" id="sbSt"></span></div>
+      <select id="sbBiz" class="sb-biz" hidden></select>
+      <div class="sb-paper">
+        <div class="sb-shop" id="sbShop"></div><input class="sb-shopin" id="sbShopIn" maxlength="50" hidden data-tp="shopPh">
+        <div class="sb-meta"><span><span data-t="billNo"></span>: <b id="sbNo"></b></span><span dir="ltr"><b id="sbDt"></b></span></div>
+        <div class="sb-cu"><label><span data-t="cust"></span><input id="sbCn" list="sbCuL" maxlength="60" autocomplete="off" data-tp="walkin"></label>
+          <label><span data-t="mob"></span><input id="sbCm" inputmode="tel" dir="ltr" maxlength="16" autocomplete="off" data-tp="optional"></label></div>
+        <datalist id="sbCuL"></datalist>
+        <div class="sb-th"><div data-t="item"></div><div data-t="qty"></div><div data-t="rate"></div><div data-t="amt"></div><div></div></div>
+        <div id="sbRows"></div>
+        <div class="sb-gt"><span data-t="gt"></span><b id="sbGt"></b></div>
       </div>
-      <div class="bm-tb"><div class="bm-th"><div>S.No</div><div>Item Name</div><div>Qty</div><div>Rate</div><div>Amount</div><div>Action</div></div><div id="bmRows"></div></div>
-      <div class="bm-mid">
-        <div class="bm-box"><div class="bm-qh"><span>⚡ Quick Items</span><button type="button" id="bmQEd">⚙ Edit</button></div><div class="bm-qg" id="bmQG"></div></div>
-        <div class="bm-box bm-tt">
-          <div class="bm-tr"><b>Sub Total</b><em id="bmSub">Rs. 0.00</em></div>
-          <div class="bm-tr"><b>Discount</b><select id="bmDT"><option value="%">%</option><option value="Rs">Rs.</option></select><input id="bmDV" type="text" inputmode="decimal" value="0" autocomplete="off"><em id="bmDA">Rs. 0.00</em></div>
-          <div class="bm-tr"><b>GST / Tax</b><select id="bmTT"><option value="%">%</option><option value="Rs">Rs.</option></select><input id="bmTV" type="text" inputmode="decimal" value="0" autocomplete="off"><em id="bmTA">Rs. 0.00</em></div>
-          <div class="bm-gt"><b>Grand Total</b><div id="bmGT">Rs. 0.00</div></div>
-        </div>
-      </div>
-      <div class="bm-bt"><button type="button" class="nb" id="bmNew"><span>📄</span>New Bill</button><button type="button" class="sv" id="bmSave"><span>💾</span>Save</button><button type="button" class="pr" id="bmPrint"><span>🖨️</span>Print Bill</button><button type="button" class="sh" id="bmShare"><span>📤</span>Share</button><button type="button" class="cl" id="bmClear"><span>🔄</span>Clear</button></div>
+      <div class="sb-act"><button type="button" id="sbPrint" data-t="print"></button><button type="button" class="pri" id="sbSave" data-t="save"></button><button type="button" id="sbImg" aria-label="Save as image">🖼</button></div>
+      <div class="sb-lnk"><button type="button" id="sbClear" data-t="clear"></button></div>
+      <h3 class="sb-h" data-t="pv"></h3><div class="sb-rc" id="sbPv"></div>
+      <h3 class="sb-h" data-t="today"></h3><div class="sb-ls" id="sbList"></div>
+      <div class="sb-pro"><b data-t="proH"></b><p data-t="proD"></p><button type="button" id="sbPro" data-t="proB"></button></div>
     </div></div>
-    <div class="bm-hp" id="bmHp"><div class="bm-hd"><button type="button" class="bm-back" id="bmHback" aria-label="Back">←</button><div class="bm-ti"><b>🗂️ Saved Bills</b></div></div><div class="bm-hl" id="bmHist"></div></div>
-    <div class="bm-sh" id="bmSh"></div>
+    <div class="sb-dd" id="sbDd"></div>
+    <div class="sb-ov" id="sbOv"></div>
   </div>
 </div>
-<script id="mcsBill437">
+<script id="mcsSimpleBill695">
 (function(){
   'use strict';
-  /* Storage: bills and bill items are separate lists linked by bill_id (Bills 1 → N Bill Items) */
-  var K_B='mcsBillMaker_bills_v1', K_I='mcsBillMaker_billitems_v1', K_C='mcsBillMaker_customers_v1', K_Q='mcsBillMaker_quick_v1', K_N='mcsBillMaker_counter_v1', K_P='mcsBillMaker_prefix_v1', K_CAT='mcsBillMaker_catalog_v1', ACCK='mcsBillMaker_acc_v1';
-  var MAXQ=99999, MAXR=9999999;
-  var DEFQ=[{n:'Samosa',r:30},{n:'Chana Plate',r:150},{n:'Tea',r:50},{n:'Roll',r:120},{n:'Kadhi Pakora',r:100}];
-  var items=[], cust=null, viewing=null, editIdx=-1, qEdit=false, billNo='', billSeq=0, bound=false, tmr=0;
+  /* ===== CONFIG: put the real My City Shines PRO link (Play Store / website) between the quotes below ===== */
+  var SB_PRO_URL = '';
+  /* ========================================================================================================= */
+  var P='mcsSB_v1_';
+  var T={
+    en:{title:'Simple Bill (Free)',billNo:'Bill No',cust:'Customer Name',mob:'Mobile Number',walkin:'Walk-in Customer',optional:'Optional',item:'Item Name',qty:'Qty',rate:'Rate (Rs.)',amt:'Amount (Rs.)',gt:'Grand Total',print:'Print Bill',save:'Save Bill',clear:'Clear unfinished bill',pv:'Live Preview',today:"Today's Bills",none:'No bills saved today',draft:'Draft Saved',nodraft:'Draft NOT saved',itemPh:'Type item name',saved:'Bill saved',needItem:'Enter at least one item first',cc:'Clear this unfinished bill? This cannot be undone.',yes:'Yes, clear',cancel:'Cancel',close:'Close',del:'Delete item',shopPh:'Enter your shop name',proNo:'Pro link is not set yet',thanks:'Thank you!',date:'Date',time:'Time',cust2:'Customer',mob2:'Mobile',printB:'Print Bill',imgB:'Save as Image',imgFail:'Could not create image',proH:'Need Complete Business Management?',proD:'Upgrade to the Pro Version of My City Shines for advanced billing, complete bill history, customer accounts, business management, reports and more.',proB:'Explore Pro Version',shop:'Shop'},
+    ur:{title:'سادہ بل (مفت)',billNo:'بل نمبر',cust:'گاہک کا نام',mob:'موبائل نمبر',walkin:'عام گاہک',optional:'اختیاری',item:'آئٹم کا نام',qty:'تعداد',rate:'ریٹ (روپے)',amt:'رقم (روپے)',gt:'کل رقم',print:'بل پرنٹ کریں',save:'بل محفوظ کریں',clear:'نامکمل بل صاف کریں',pv:'لائیو پیش منظر',today:'آج کے بل',none:'آج کوئی بل محفوظ نہیں',draft:'ڈرافٹ محفوظ ہے',nodraft:'ڈرافٹ محفوظ نہیں ہوا',itemPh:'آئٹم کا نام لکھیں',saved:'بل محفوظ ہو گیا',needItem:'پہلے کم از کم ایک آئٹم درج کریں',cc:'یہ نامکمل بل صاف کریں؟ یہ واپس نہیں ہو گا۔',yes:'جی، صاف کریں',cancel:'منسوخ',close:'بند کریں',del:'آئٹم ہٹائیں',shopPh:'اپنی دکان کا نام لکھیں',proNo:'پرو ورژن کا لنک ابھی سیٹ نہیں',thanks:'شکریہ!',date:'تاریخ',time:'وقت',cust2:'گاہک',mob2:'موبائل',printB:'بل پرنٹ کریں',imgB:'تصویر محفوظ کریں',imgFail:'تصویر نہیں بن سکی',proH:'مکمل کاروباری سافٹ ویئر چاہتے ہیں؟',proD:'ایڈوانس بلنگ، مکمل بل ہسٹری، کسٹمر اکاؤنٹس، کاروباری انتظام اور مزید سہولیات کے لیے My City Shines کے پرو ورژن کو سبسکرائب کریں۔',proB:'پرو ورژن دیکھیں',shop:'دکان'}
+  };
+  var lang='en', D=null, KEY='', uidv='guest', bizs=[], bizI=0, saving=false, curDay='', wt=0, bound=false, tmr=0, ddRow=-1, ddItems=[], rafId=0;
   function $(i){return document.getElementById(i);}
+  function t(k){return (T[lang]&&T[lang][k])||T.en[k]||k;}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  function rj(k,d){try{var v=JSON.parse(localStorage.getItem(k)||'null');return v==null?d:v;}catch(e){return d;}}
-  function wj(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
   function toast(m){try{showToast(m);}catch(e){}}
+  function p2(n){return n<10?'0'+n:''+n;}
+  function dayKey(ts){var d=new Date(ts);return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}   /* LOCAL calendar day, never UTC */
+  function fmtD(ts){return new Date(ts).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+  function fmtT(ts){return new Date(ts).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
   function r2(n){return Math.round((Number(n)||0)*100)/100;}
   function money(n){return r2(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
   function rs(n){return 'Rs. '+money(n);}
-  function clean(v,dec){v=String(v==null?'':v).replace(/[۰-۹]/g,function(c){return c.charCodeAt(0)-0x06F0;}).replace(/[٠-٩]/g,function(c){return c.charCodeAt(0)-0x0660;}).replace(/[^0-9.]/g,'');var i=v.indexOf('.');if(i>=0)v=v.slice(0,i+1)+v.slice(i+1).replace(/\./g,'').slice(0,dec);return v.slice(0,12);}
-  function fnum(v){var n=parseFloat(v);return isFinite(n)&&n>0?n:0;}
-  function fmtD(t){return new Date(t).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
-  function fmtT(t){return new Date(t).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});}
-  function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-  function accs(){var A=[];try{(typeof mpListReal==='function'?mpListReal():[]).forEach(function(x){var r=x.rec||{};var n=String(r.nameEn||r.nameUr||r.name||'').trim();if(n&&A.indexOf(n)<0)A.push(n);});}catch(e){}return A.concat(['Home / Personal']);}
-  function acct(){return $('bmAcc').value||'Home / Personal';}
-  function ak(m){return m&&m[acct()]?m[acct()]:null;}
-  /* ---- per-shop settings ---- */
-  function prefix(a){
-    var m=rj(K_P,{});if(m[a])return m[a];
-    var w=a.replace(/[^A-Za-z0-9 ]/g,' ').trim().split(/\s+/).filter(Boolean),p=(w.length>1?w.map(function(x){return x[0];}).join(''):(w[0]||'B').slice(0,2)).toUpperCase().slice(0,3);
-    var used=Object.keys(m).map(function(k){return m[k];}),b=p,i=2;while(used.indexOf(p)>=0)p=b+(i++);
-    m[a]=p;wj(K_P,m);return p;
+  function clean(v,dec){v=String(v==null?'':v).replace(/[۰-۹]/g,function(c){return c.charCodeAt(0)-0x06F0;}).replace(/[٠-٩]/g,function(c){return c.charCodeAt(0)-0x0660;}).replace(/،/g,'.').replace(/[^0-9.]/g,'');var i=v.indexOf('.');if(i>=0)v=v.slice(0,i+1)+v.slice(i+1).replace(/\./g,'').slice(0,dec);return v.slice(0,10);}
+  function num(v){var n=parseFloat(v);return isFinite(n)&&n>0?n:0;}
+  function nid(){return 'd'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+  function rj(k){try{var v=JSON.parse(localStorage.getItem(k)||'null');return v;}catch(e){return null;}}
+  function wj(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
+
+  /* ---------- identity / scope: each registered account (and each of its businesses) has its own data ---------- */
+  function getUid(){try{var a=JSON.parse(localStorage.getItem('mcsAuth')||'null');var m=a&&a.user&&String(a.user.mobile||'').replace(/\D/g,'').slice(-10);if(m)return m;}catch(e){}return 'guest';}
+  function getBizs(){var A=[],seen={};try{(typeof mpListReal==='function'?mpListReal():[]).forEach(function(x){var r=x.rec||{};var en=String(r.nameEn||'').trim(),ur=String(r.nameUr||r.name||'').trim();if(!en&&!ur)return;var id=String(x.p.id||x.p.rk||en||ur);if(seen[id])return;seen[id]=1;A.push({id:id,en:en,ur:ur});});}catch(e){}return A;}
+  function bizName(){var b=bizs[bizI];if(b)return lang==='ur'?(b.ur||b.en):(b.en||b.ur);return D&&D.shop?D.shop:'';}
+  function freshDraft(){return {id:nid(),cn:'',cm:'',rows:[{n:'',q:'',r:''},{n:'',q:'',r:''},{n:'',q:'',r:''},{n:'',q:'',r:''}]};}
+  function loadScope(){
+    uidv=getUid();bizs=getBizs();
+    var last=localStorage.getItem(P+uidv+'_biz')||'';bizI=0;
+    for(var i=0;i<bizs.length;i++){if(bizs[i].id===last){bizI=i;break;}}
+    KEY=P+uidv+'_'+(bizs[bizI]?bizs[bizI].id:'own');
+    var d=rj(KEY);
+    if(!d||typeof d!=='object'){d={v:1};}
+    if(!d.draft||!Array.isArray(d.draft.rows)){d.draft=freshDraft();}
+    if(!d.cat||typeof d.cat!=='object')d.cat={};
+    if(!d.cu||typeof d.cu!=='object')d.cu={};
+    if(!Array.isArray(d.bills))d.bills=[];
+    d.seq=Math.max(parseInt(d.seq,10)||0,0);d.shop=d.shop||'';
+    D=d;
+    var gl=localStorage.getItem(P+uidv+'_lang');lang=gl==='ur'?'ur':'en';
+    padRows();pruneOld();
   }
-  function pad(n){var s=String(n);while(s.length<6)s='0'+s;return s;}
-  function nextNo(){
-    var a=acct(),c=rj(K_N,{}),n=(c[a]||0)+1,p=prefix(a),bills=rj(K_B,[]),ex={};
-    bills.forEach(function(b){ex[b.bill_no]=1;});
-    while(ex[p+'-'+pad(n)])n++;
-    billSeq=n;billNo=p+'-'+pad(n);
+  function persist(){
+    var ok=wj(KEY,D);
+    var s=$('sbSt');if(s){s.textContent=ok?t('draft'):t('nodraft');s.className='sb-st'+(ok?'':' bad');}
+    return ok;
   }
-  function quick(){var m=rj(K_Q,{});return m[acct()]||DEFQ.map(function(x){return {n:x.n,r:x.r};});}
-  function setQuick(a){var m=rj(K_Q,{});m[acct()]=a;wj(K_Q,m);}
-  function catalog(){var m=rj(K_CAT,{});return m[acct()]||{};}
-  function learn(n,r){var m=rj(K_CAT,{}),c=m[acct()]||{};c[n.toLowerCase()]={n:n,r:r};var ks=Object.keys(c);if(ks.length>500)delete c[ks[0]];m[acct()]=c;wj(K_CAT,m);}
-  function custs(){var m=rj(K_C,{});return m[acct()]||[];}
-  function setCusts(a){var m=rj(K_C,{});m[acct()]=a;wj(K_C,m);}
-  /* ---- calculation ---- */
-  function calc(){
-    var sub=r2(items.reduce(function(s,x){return s+x.amount;},0));
-    var dv=fnum($('bmDV').value),disc=$('bmDT').value==='%'?r2(sub*Math.min(dv,100)/100):Math.min(r2(dv),sub);
-    var tv=fnum($('bmTV').value),base=r2(sub-disc),tax=$('bmTT').value==='%'?r2(base*Math.min(tv,100)/100):Math.min(r2(tv),MAXR);
-    return {sub:sub,disc:disc,tax:tax,total:r2(base+tax),dv:Math.min(dv,$('bmDT').value==='%'?100:sub),tv:Math.min(tv,$('bmTT').value==='%'?100:MAXR)};
+  function flush(){clearTimeout(wt);wt=0;if(D&&KEY)persist();}
+  function later(){clearTimeout(wt);wt=setTimeout(function(){wt=0;persist();},120);}
+  function pruneOld(){var d=dayKey(Date.now());curDay=d;var n=D.bills.length;D.bills=D.bills.filter(function(b){return b.day===d;});if(D.bills.length!==n)wj(KEY,D);}   /* completed bills of earlier days vanish; the DRAFT is never touched */
+
+  /* ---------- rows ---------- */
+  function blank(r){return !String(r.n).trim()&&!String(r.q).trim()&&!String(r.r).trim();}
+  function padRows(){var R=D.draft.rows;while(R.length<4)R.push({n:'',q:'',r:''});if(!blank(R[R.length-1]))R.push({n:'',q:'',r:''});}
+  function counted(r){return !!String(r.n).trim()||num(r.r)>0;}
+  function qtyOf(r){return String(r.q).trim()===''?1:num(r.q);}
+  function amtOf(r){return counted(r)?r2(qtyOf(r)*num(r.r)):0;}
+  function total(){return r2(D.draft.rows.reduce(function(s,r){return s+amtOf(r);},0));}
+  function rowHtml(r,i){var f=!blank(r);
+    return '<div class="sb-r'+(f?' f':'')+'" data-i="'+i+'"><input class="n" maxlength="60" autocomplete="off" autocapitalize="words" placeholder="'+esc(i===0?t('itemPh'):'')+'" value="'+esc(r.n)+'"><input class="q" inputmode="decimal" placeholder="1" value="'+esc(r.q)+'"><input class="r" inputmode="decimal" value="'+esc(r.r)+'"><span class="a">'+(num(r.r)>0?money(amtOf(r)):'')+'</span><button type="button" class="x" aria-label="'+esc(t('del'))+'">×</button></div>';}
+  function renderRows(){$('sbRows').innerHTML=D.draft.rows.map(rowHtml).join('');}
+  function rowEl(i){return $('sbRows').children[i];}
+  function syncRow(i){var r=D.draft.rows[i],el=rowEl(i);if(!el)return;el.classList.toggle('f',!blank(r));el.querySelector('.a').textContent=num(r.r)>0?money(amtOf(r)):'';}
+  function afterEdit(){
+    var R=D.draft.rows;
+    if(!blank(R[R.length-1])){R.push({n:'',q:'',r:''});$('sbRows').insertAdjacentHTML('beforeend',rowHtml(R[R.length-1],R.length-1));}
+    paintTotals();later();
   }
-  function paint(){
-    $('bmRows').innerHTML=items.length?items.map(function(x,i){return '<div class="bm-r"><span>'+(i+1)+'</span><span class="n">'+esc(x.name)+'</span><span>'+x.qty+'</span><span class="m">'+money(x.rate)+'</span><span class="m">'+money(x.amount)+'</span><span class="a"><button type="button" data-ed="'+i+'" aria-label="Edit">✏️</button><button type="button" class="d" data-del="'+i+'" aria-label="Delete">🗑</button></span></div>';}).join(''):'<div class="bm-none">No items added yet — search an item or tap a Quick Item.</div>';
-    var c=calc();$('bmSub').textContent=rs(c.sub);$('bmDA').textContent=rs(c.disc);$('bmTA').textContent=rs(c.tax);$('bmGT').textContent=rs(c.total);
-    $('bmAdd').textContent=editIdx>=0?'✔ Update':'➕ Add Item';
+
+  /* ---------- paint ---------- */
+  function paintTotals(){$('sbGt').textContent=rs(total());schedPv();}
+  function schedPv(){if(rafId)return;rafId=requestAnimationFrame(function(){rafId=0;paintPv();});}
+  function snapBill(){
+    var items=[];D.draft.rows.forEach(function(r){if(!counted(r))return;var q=qtyOf(r),rt=num(r.r);items.push({n:String(r.n).trim()||'Item',q:q,r:rt,a:r2(q*rt)});});
+    return {id:'',no:nextNo(),at:Date.now(),biz:bizName(),cn:D.draft.cn.trim(),cm:D.draft.cm.trim(),items:items,total:r2(items.reduce(function(s,x){return s+x.a;},0))};
   }
-  function entryAmt(){$('bmA').textContent=money(r2(fnum($('bmQ').value)*fnum($('bmR').value)));}
-  function resetEntry(){editIdx=-1;$('bmIn').value='';$('bmQ').value='1';$('bmR').value='';entryAmt();$('bmItDd').classList.remove('on');}
-  function head(){
-    $('bmNo').textContent=billNo;
-    var t=viewing?viewing.at:Date.now();$('bmDate').textContent=fmtD(t);$('bmTime').textContent=fmtT(t);
+  function pad6(n){var s=String(n);while(s.length<6)s='0'+s;return s;}
+  function nextNo(){var n=D.seq+1,ex={};D.bills.forEach(function(b){ex[b.no]=1;});while(ex['PB-'+pad6(n)])n++;return 'PB-'+pad6(n);}
+  function receipt(b){
+    var u=lang==='ur',rows=b.items.map(function(x){return '<tr><td>'+esc(x.n)+'</td><td class="n">'+esc(String(x.q))+'</td><td class="n">'+money(x.r)+'</td><td class="n">'+money(x.a)+'</td></tr>';}).join('');
+    return '<div class="rc'+(u?' ur':'')+'" dir="'+(u?'rtl':'ltr')+'"><div class="s">'+esc(b.biz||'')+'</div>'
+      +'<div class="m"><span>'+esc(t('billNo'))+': <b dir="ltr">'+esc(b.no)+'</b></span><span dir="ltr">'+esc(fmtD(b.at))+' · '+esc(fmtT(b.at))+'</span></div>'
+      +'<div class="c">'+esc(t('cust2'))+': <b>'+esc(b.cn||t('walkin'))+'</b>'+(b.cm?'<br>'+esc(t('mob2'))+': <b dir="ltr">'+esc(b.cm)+'</b>':'')+'</div>'
+      +'<table><thead><tr><th>'+esc(t('item'))+'</th><th>'+esc(t('qty'))+'</th><th>'+esc(t('rate'))+'</th><th>'+esc(t('amt'))+'</th></tr></thead><tbody>'+rows+'</tbody></table>'
+      +'<div class="g"><span>'+esc(t('gt'))+'</span><b>'+rs(b.total)+'</b></div><div class="f">'+esc(t('thanks'))+' — My City Shines</div></div>';
   }
-  function viewBar(){$('bmView').innerHTML=viewing?'<div class="bm-view"><span>👁 Saved bill '+esc(viewing.bill_no)+'</span><button type="button" id="bmVNew">➕ New Bill</button></div>':'';}
-  function custLabel(c){return c.name+(c.mobile?' · '+c.mobile:'');}
-  function setCust(c){cust=c;$('bmCust').value=c?custLabel(c):'';$('bmCustI').textContent=c?'✖':'🔍';$('bmCustDd').classList.remove('on');}
-  function quickPaint(){
-    var q=quick();
-    $('bmQG').innerHTML=q.map(function(x,i){return '<button type="button" data-qi="'+i+'">'+esc(x.n)+'<small>Rs. '+money(x.r)+'</small></button>';}).join('')
-      +(qEdit?'<button type="button" class="add" data-qadd="1">➕ Add quick item</button>':'<button type="button" data-qoth="1">Other …</button>');
-    $('bmQEd').textContent=qEdit?'✔ Done':'⚙ Edit';
+  function paintPv(){var b=snapBill();$('sbPv').innerHTML=receipt(b);$('sbNo').textContent=b.no;$('sbDt').textContent=fmtD(b.at)+' · '+fmtT(b.at);}
+  function paintShop(){
+    var has=!!bizs[bizI],inp=$('sbShopIn'),sh=$('sbShop');
+    sh.textContent=bizName();sh.style.display=has?'':'none';
+    inp.hidden=has;if(!has&&document.activeElement!==inp)inp.value=D.shop||'';
   }
-  /* ---- small dialogs inside the page ---- */
-  function sheet(title,body,btns){
-    var sh=$('bmSh');
-    sh.innerHTML='<div class="bm-shc"><b>'+esc(title)+'</b>'+body+'<div class="bm-shb">'+btns.map(function(b,i){return '<button type="button" class="'+(b.c||'')+'" data-b="'+i+'">'+esc(b.t)+'</button>';}).join('')+'</div></div>';
-    sh.classList.add('on');
-    sh.onclick=function(e){
-      var b=e.target.closest('button[data-b]');
-      if(!b){if(e.target===sh)sh.classList.remove('on');return;}
-      var d=btns[+b.dataset.b];if(!d.f||d.f()!==false)sh.classList.remove('on');
-    };
-    var f=sh.querySelector('input');if(f)setTimeout(function(){try{f.focus();f.select();}catch(e){}},60);
+  function paintList(){
+    var d=dayKey(Date.now()),L=D.bills.filter(function(b){return b.day===d;}).sort(function(a,b){return b.at-a.at;});
+    $('sbList').innerHTML=L.length?L.map(function(b){return '<button type="button" class="sb-b" data-id="'+esc(b.id)+'"><span class="l"><b>'+esc(b.no)+'</b><span>'+esc(b.cn||t('walkin'))+'</span></span><span class="rr"><b>'+rs(b.total)+'</b><small>'+esc(fmtT(b.at))+'</small></span></button>';}).join(''):'<div class="none">'+esc(t('none'))+'</div>';
   }
-  function confirmBox(msg,yes,cb){sheet('Please confirm','<p>'+esc(msg)+'</p>',[{t:'Cancel'},{t:yes,c:'ok',f:cb}]);}
-  function numIn(id){var e=$(id);e.addEventListener('input',function(){var d=id==='bmShQ'?3:2,v=clean(e.value,d);if(v!==e.value)e.value=v;});}
-  /* ---- items ---- */
-  function addItem(name,qty,rate,idx){
-    name=String(name||'').replace(/\s+/g,' ').trim();
-    if(!name){toast('⚠️ Enter the item name');return false;}
-    qty=Math.round(qty*1000)/1000;
-    if(!(qty>0)){toast('⚠️ Quantity must be more than 0');return false;}
-    if(qty>MAXQ){toast('⚠️ Quantity is too large');return false;}
-    if(!(rate>0)){toast('⚠️ Rate must be more than 0');return false;}
-    if(rate>MAXR){toast('⚠️ Rate is too large');return false;}
-    var it={name:name,qty:qty,rate:r2(rate),amount:r2(qty*r2(rate))};
-    if(it.amount>999999999){toast('⚠️ Amount is too large');return false;}
-    if(idx>=0&&idx<items.length)items[idx]=it;else items.push(it);
-    learn(name,it.rate);
-    paint();return true;
+  function paintBiz(){
+    var s=$('sbBiz');s.hidden=bizs.length<2;
+    if(bizs.length>1){s.innerHTML=bizs.map(function(b,i){return '<option value="'+i+'"'+(i===bizI?' selected':'')+'>'+esc(lang==='ur'?(b.ur||b.en):(b.en||b.ur))+'</option>';}).join('');}
   }
-  function itemSheet(name,rate,fixedName){
-    sheet(fixedName?name:'Other item',(fixedName?'':'<label>Item name</label><input id="bmShN" type="text" maxlength="60" autocomplete="off" value="">')+'<label>Quantity</label><input id="bmShQ" type="text" inputmode="decimal" value="1" autocomplete="off"><label>Rate (Rs.)</label><input id="bmShR" type="text" inputmode="decimal" value="'+(rate?esc(String(rate)):'')+'" autocomplete="off">',
-      [{t:'Cancel'},{t:'➕ Add',c:'ok',f:function(){return addItem(fixedName?name:$('bmShN').value,fnum($('bmShQ').value),fnum($('bmShR').value),-1);}}]);
-    numIn('bmShQ');numIn('bmShR');
+  function paintCustList(){var k=Object.keys(D.cu).slice(-100);$('sbCuL').innerHTML=k.map(function(n){return '<option value="'+esc(n)+'"></option>';}).join('');}
+  function applyLang(){
+    var pg=$('sbPage'),u=lang==='ur';pg.classList.toggle('ur',u);pg.setAttribute('dir',u?'rtl':'ltr');
+    [].forEach.call(pg.querySelectorAll('[data-t]'),function(e){e.textContent=t(e.getAttribute('data-t'));});
+    [].forEach.call(pg.querySelectorAll('[data-tp]'),function(e){e.placeholder=t(e.getAttribute('data-tp'));});
+    [].forEach.call(pg.querySelectorAll('.sb-lang button'),function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});
+    $('sbImg').title=t('imgB');
   }
-  function quickSheet(i){
-    var q=quick(),x=i>=0?q[i]:{n:'',r:''};
-    sheet(i>=0?'Edit quick item':'New quick item','<label>Item name</label><input id="bmShN" type="text" maxlength="30" autocomplete="off" value="'+esc(x.n)+'"><label>Rate (Rs.)</label><input id="bmShR" type="text" inputmode="decimal" value="'+esc(String(x.r))+'" autocomplete="off">',
-      (i>=0?[{t:'🗑 Delete',c:'dn',f:function(){var a=quick();a.splice(i,1);setQuick(a);quickPaint();}}]:[]).concat([{t:'Cancel'},{t:'💾 Save',c:'ok',f:function(){
-        var n=$('bmShN').value.replace(/\s+/g,' ').trim(),r=fnum($('bmShR').value);
-        if(!n){toast('⚠️ Enter the item name');return false;}
-        if(!(r>0)||r>MAXR){toast('⚠️ Enter a valid rate');return false;}
-        var a=quick();if(i>=0)a[i]={n:n,r:r2(r)};else{if(a.length>=12){toast('⚠️ Maximum 12 quick items');return false;}a.push({n:n,r:r2(r)});}
-        setQuick(a);quickPaint();}}]));
-    numIn('bmShR');
+  function paintAll(){
+    applyLang();paintBiz();paintShop();paintCustList();
+    $('sbCn').value=D.draft.cn;$('sbCm').value=D.draft.cm;
+    renderRows();paintTotals();paintList();
   }
-  function custSheet(){
-    sheet('New customer','<label>Name *</label><input id="bmShN" type="text" maxlength="60" autocomplete="off"><label>Mobile No. (optional)</label><input id="bmShM" type="tel" inputmode="tel" maxlength="16" autocomplete="off" placeholder="03xx xxxxxxx">',
-      [{t:'Cancel'},{t:'💾 Save',c:'ok',f:function(){
-        var n=$('bmShN').value.replace(/\s+/g,' ').trim(),m=$('bmShM').value.replace(/[^0-9+]/g,'');
-        if(n.length<2){toast('⚠️ Enter the customer name');return false;}
-        if(m&&!/^\+?[0-9]{10,15}$/.test(m)){toast('⚠️ Mobile number is not valid');return false;}
-        var a=custs(),dup=m?a.filter(function(c){return c.mobile===m;})[0]:null;
-        if(dup){setCust(dup);toast('ℹ️ This mobile is already saved — selected');return;}
-        var c={id:uid('c'),name:n,mobile:m};a.unshift(c);if(a.length>1000)a.length=1000;setCusts(a);setCust(c);toast('✅ Customer saved');}}]);
+
+  /* ---------- suggestions ---------- */
+  function suggest(q){
+    q=String(q||'').trim().toLowerCase();if(!q)return [];
+    var out=[];Object.keys(D.cat).forEach(function(k){var e=D.cat[k];if(!e||!e.n)return;var nl=String(e.n).toLowerCase(),ix=nl.indexOf(q);if(ix<0)return;out.push({e:e,s:(ix===0?0:1)*1e13-(e.t||0)});});
+    out.sort(function(a,b){return a.s-b.s;});return out.slice(0,6).map(function(x){return x.e;});
   }
-  function showDd(box,rowsHtml){box.innerHTML=rowsHtml;box.classList.toggle('on',!!rowsHtml);}
-  /* ---- save / history ---- */
-  function build(){
-    var c=calc();
-    return {bill:{bill_no:billNo,seq:billSeq,acct:acct(),at:viewing?viewing.at:Date.now(),customer_id:cust?cust.id:'',customer_name:cust?cust.name:'',customer_mobile:cust?cust.mobile:'',subtotal:c.sub,discount_type:$('bmDT').value,discount_value:c.dv,discount_amount:c.disc,tax_type:$('bmTT').value,tax_value:c.tv,tax_amount:c.tax,total:c.total,item_count:items.length},c:c};
+  function showDd(i,inp){
+    var items=suggest(inp.value);var dd=$('sbDd');
+    items=items.filter(function(e){return String(e.n).toLowerCase()!==String(inp.value).trim().toLowerCase()||true;});
+    if(!items.length){hideDd();return;}
+    ddRow=i;ddItems=items;
+    dd.innerHTML=items.map(function(e,k){return '<button type="button" data-k="'+k+'"><span>'+esc(e.n)+'</span><small>'+(e.r>0?rs(e.r):'')+'</small></button>';}).join('');
+    var pr=$('sbPage').getBoundingClientRect(),ir=inp.getBoundingClientRect();
+    var w=Math.max(ir.width,230),left=Math.min(Math.max(ir.left-pr.left,4),Math.max(pr.width-w-4,4));
+    dd.style.width=w+'px';dd.style.left=left+'px';dd.classList.add('on');
+    var h=Math.min(items.length*38+2,212),top=ir.bottom-pr.top+2;
+    if(top+h>pr.height-6)top=Math.max(ir.top-pr.top-h-2,4);
+    dd.style.top=top+'px';
   }
-  function save(){
-    if(!items.length){toast('⚠️ Add at least one item first');return;}
-    var B=rj(K_B,[]),I=rj(K_I,[]),o=build().bill,id;
-    if(viewing){
-      id=viewing.id;o.id=id;o.bill_no=viewing.bill_no;o.seq=viewing.seq;
-      B=B.map(function(b){return b.id===id?o:b;});I=I.filter(function(x){return x.bill_id!==id;});
-    }else{
-      nextNo();o.bill_no=billNo;o.seq=billSeq;o.id=id=uid('b');
-      B.unshift(o);var cn=rj(K_N,{});cn[o.acct]=Math.max(cn[o.acct]||0,billSeq);wj(K_N,cn);
-    }
-    items.forEach(function(x,i){I.push({id:uid('i'),bill_id:id,sn:i+1,name:x.name,qty:x.qty,rate:x.rate,amount:x.amount});});
-    if(!wj(K_B,B)||!wj(K_I,I)){toast('⚠️ Could not save — phone storage is full');return;}
-    viewing=o;billNo=o.bill_no;head();viewBar();hist();toast('✅ Bill saved — '+o.bill_no+' · '+rs(o.total));
+  function hideDd(){var dd=$('sbDd');dd.classList.remove('on');ddRow=-1;ddItems=[];}
+  function pick(k){
+    var e=ddItems[k],i=ddRow;hideDd();if(!e||i<0)return;
+    var r=D.draft.rows[i];r.n=e.n;if(e.r>0)r.r=String(e.r);
+    var el=rowEl(i);if(el){el.querySelector('.n').value=r.n;el.querySelector('.r').value=r.r;syncRow(i);var q=el.querySelector('.q');setTimeout(function(){try{q.focus();q.select();}catch(x){}},0);}
+    afterEdit();
   }
-  function newBill(){
-    items=[];cust=null;viewing=null;setCust(null);$('bmDT').value='%';$('bmTT').value='%';$('bmDV').value='0';$('bmTV').value='0';
-    resetEntry();nextNo();head();viewBar();paint();
-  }
-  function loadBill(b){
-    var I=rj(K_I,[]).filter(function(x){return x.bill_id===b.id;}).sort(function(a,c){return a.sn-c.sn;});
-    var s=$('bmAcc');if(![].some.call(s.options,function(o){return o.value===b.acct;})){var o=document.createElement('option');o.value=o.textContent=b.acct;s.appendChild(o);}s.value=b.acct;
-    items=I.map(function(x){return {name:x.name,qty:x.qty,rate:x.rate,amount:x.amount};});
-    cust=b.customer_name?{id:b.customer_id,name:b.customer_name,mobile:b.customer_mobile}:null;setCust(cust);
-    $('bmDT').value=b.discount_type;$('bmDV').value=String(b.discount_value||0);$('bmTT').value=b.tax_type;$('bmTV').value=String(b.tax_value||0);
-    viewing=b;billNo=b.bill_no;billSeq=b.seq;resetEntry();quickPaint();head();viewBar();paint();
-  }
-  function hist(){
-    var a=rj(K_B,[]);
-    $('bmHist').innerHTML=a.length?a.map(function(x){return '<div class="bm-h" data-id="'+esc(x.id)+'"><div class="t"><b>'+esc(x.bill_no)+' · '+esc(x.acct)+'</b>'+esc(fmtD(x.at))+' · '+esc(fmtT(x.at))+(x.customer_name?' · '+esc(x.customer_name):'')+' · '+x.item_count+' item(s)</div><span class="m">'+rs(x.total)+'</span><button type="button" class="x" data-del="'+esc(x.id)+'" aria-label="Delete">🗑</button></div>';}).join(''):'<div class="bm-none">No saved bills yet — make a bill and tap «Save».</div>';
-  }
-  /* ---- print / share ---- */
-  function snap(){var o=build();return {b:o.bill,items:items.slice()};}
-  function printIt(){
-    if(!items.length){toast('⚠️ Add at least one item first');return;}
-    var s=snap(),b=s.b;
-    var rows=s.items.map(function(x,i){return '<tr><td style="text-align:center">'+(i+1)+'</td><td>'+esc(x.name)+'</td><td style="text-align:center">'+x.qty+'</td><td style="text-align:right">'+money(x.rate)+'</td><td style="text-align:right">'+money(x.amount)+'</td></tr>';}).join('');
-    var dl=b.discount_type==='%'?' ('+b.discount_value+'%)':'',tl=b.tax_type==='%'?' ('+b.tax_value+'%)':'';
-    var html='<!doctype html><html><head><meta charset="utf-8"><title>'+esc(b.bill_no)+'</title><style>body{font-family:Arial,sans-serif;margin:18px;color:#000;max-width:720px}h1{font-size:22px;margin:0}h2{font-size:14px;margin:2px 0 10px;font-weight:400}p{margin:3px 0;font-size:13px}table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13.5px}th,td{border:1px solid #000;padding:5px 7px}th{background:#eee}.t td{border:0;padding:3px 7px;text-align:right}.g td{font-weight:900;font-size:16px;border-top:2px solid #000}.f{text-align:center;margin-top:16px;font-size:12px;color:#444}</style></head><body>'
-      +'<h1>'+esc(b.acct)+'</h1><h2>Sales Bill / Invoice</h2><p><b>Bill No:</b> '+esc(b.bill_no)+' &nbsp; <b>Date:</b> '+esc(fmtD(b.at))+' &nbsp; <b>Time:</b> '+esc(fmtT(b.at))+'</p>'
-      +(b.customer_name?'<p><b>Customer:</b> '+esc(b.customer_name)+(b.customer_mobile?' · '+esc(b.customer_mobile):'')+'</p>':'')
-      +'<table><thead><tr><th>S.No</th><th>Item</th><th>Qty</th><th>Rate (Rs.)</th><th>Amount (Rs.)</th></tr></thead><tbody>'+rows+'</tbody></table>'
-      +'<table class="t"><tr><td>Sub Total</td><td style="width:140px">'+rs(b.subtotal)+'</td></tr><tr><td>Discount'+dl+'</td><td>- '+rs(b.discount_amount)+'</td></tr><tr><td>GST / Tax'+tl+'</td><td>'+rs(b.tax_amount)+'</td></tr><tr class="g"><td>Grand Total</td><td>'+rs(b.total)+'</td></tr></table><div class="f">Thank you! — My City Shines</div></body></html>';
-    var f=document.createElement('iframe');f.style.cssText='position:fixed;width:0;height:0;border:0;right:0;bottom:0';document.body.appendChild(f);
-    var w=f.contentWindow;w.document.open();w.document.write(html);w.document.close();
-    setTimeout(function(){try{w.focus();w.print();}catch(e){}setTimeout(function(){try{f.remove();}catch(e){}},60000);},250);
-  }
-  function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
-  function fit(x,t,mw){while(t.length>1&&x.measureText(t).width>mw)t=t.slice(0,-2)+'…';return t;}
-  function share(){
-    if(!items.length){toast('⚠️ Add at least one item first');return;}
-    var s=snap(),b=s.b,W=1080,RH=74,H=520+s.items.length*RH+360,c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d'),A='Arial,sans-serif';
-    x.fillStyle='#fff';x.fillRect(0,0,W,H);
-    var g=x.createLinearGradient(0,0,W,170);g.addColorStop(0,'#1e3a8a');g.addColorStop(1,'#1d4ed8');x.fillStyle=g;x.fillRect(0,0,W,170);
-    x.textBaseline='middle';x.textAlign='left';x.fillStyle='#fff';x.font='bold 54px '+A;x.fillText(fit(x,b.acct,W-100),50,70);x.font='30px '+A;x.fillText('Sales Bill / Invoice',50,127);
-    x.fillStyle='#0f172a';x.font='bold 34px '+A;x.fillText('Bill No: '+b.bill_no,50,225);x.textAlign='right';x.font='30px '+A;x.fillText(fmtD(b.at)+'  '+fmtT(b.at),W-50,225);
-    var y=270;x.textAlign='left';
-    if(b.customer_name){x.font='bold 32px '+A;x.fillText(fit(x,'Customer: '+b.customer_name+(b.customer_mobile?' · '+b.customer_mobile:''),W-100),50,y);}
-    y=320;x.fillStyle='#1e3a8a';x.fillRect(40,y,W-80,64);x.fillStyle='#fff';x.font='bold 28px '+A;
-    x.textAlign='center';x.fillText('#',75,y+32);x.textAlign='left';x.fillText('Item',120,y+32);x.textAlign='center';x.fillText('Qty',560,y+32);x.textAlign='right';x.fillText('Rate',770,y+32);x.fillText('Amount',W-60,y+32);
-    y+=64;
-    s.items.forEach(function(it,i){
-      x.fillStyle=i%2?'#fff':'#f1f5f9';x.fillRect(40,y,W-80,RH);x.fillStyle='#0f172a';x.font='28px '+A;
-      x.textAlign='center';x.fillText(String(i+1),75,y+RH/2);x.textAlign='left';x.font='bold 29px '+A;x.fillText(fit(x,it.name,380),120,y+RH/2);
-      x.font='28px '+A;x.textAlign='center';x.fillText(String(it.qty),560,y+RH/2);x.textAlign='right';x.fillText(money(it.rate),770,y+RH/2);x.font='bold 28px '+A;x.fillText(money(it.amount),W-60,y+RH/2);y+=RH;});
-    y+=30;x.font='30px '+A;x.fillStyle='#334155';
-    function line(l,v){x.textAlign='left';x.fillText(l,60,y);x.textAlign='right';x.fillText(v,W-60,y);y+=56;}
-    line('Sub Total',rs(b.subtotal));line('Discount'+(b.discount_type==='%'?' ('+b.discount_value+'%)':''),'- '+rs(b.discount_amount));line('GST / Tax'+(b.tax_type==='%'?' ('+b.tax_value+'%)':''),rs(b.tax_amount));
-    y+=6;var gg=x.createLinearGradient(0,y,W,y+120);gg.addColorStop(0,'#16a34a');gg.addColorStop(1,'#14532d');x.fillStyle=gg;rr(x,40,y,W-80,120,26);x.fill();
-    x.fillStyle='#fff';x.textAlign='left';x.font='bold 44px '+A;x.fillText('Grand Total',80,y+60);x.textAlign='right';x.font='900 52px '+A;x.fillText(fit(x,rs(b.total),560),W-80,y+60);
-    x.fillStyle='#64748b';x.textAlign='center';x.font='bold 26px '+A;x.fillText('Thank you! — My City Shines',W/2,H-50);
-    c.toBlob(async function(bl){
-      if(!bl){toast('⚠️ Could not make the image');return;}
-      var f;try{f=new File([bl],'bill-'+b.bill_no+'.png',{type:'image/png'});}catch(e){f=null;}
-      try{if(f&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Bill '+b.bill_no});return;}}catch(e){if(e&&e.name==='AbortError')return;}
-      var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='bill-'+b.bill_no+'.png';document.body.appendChild(a);a.click();setTimeout(function(){try{URL.revokeObjectURL(a.href);a.remove();}catch(e){}},4000);
-      toast('📥 Bill image saved — now share it');
-    },'image/png');
-  }
-  /* ---- events ---- */
-  function accRefresh(){
-    var s=$('bmAcc'),cur=s.value,last='';try{last=localStorage.getItem(ACCK)||'';}catch(e){}
-    s.innerHTML=accs().map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>';}).join('');
-    var pick=cur||last;if(pick&&[].some.call(s.options,function(o){return o.value===pick;}))s.value=pick;
-  }
+  function learn(n,r){n=String(n||'').trim();r=num(r);if(!n||!(r>0))return;var k=n.toLowerCase();D.cat[k]={n:n,r:r,t:Date.now()};var ks=Object.keys(D.cat);if(ks.length>600){ks.sort(function(a,b){return (D.cat[a].t||0)-(D.cat[b].t||0);});for(var j=0;j<ks.length-600;j++)delete D.cat[ks[j]];}}
+
+  /* ---------- events ---------- */
   function bind(){
     if(bound)return;bound=true;
-    $('bmAcc').onchange=function(){
-      var sel=this,nv=sel.value,old=sel.dataset.cur||nv;
-      function apply(){sel.value=nv;sel.dataset.cur=nv;try{localStorage.setItem(ACCK,nv);}catch(e){}newBill();quickPaint();}
-      if(items.length||viewing){sel.value=old;confirmBox('Switch shop / account? The current bill will be cleared.','Switch',apply);}else apply();
-    };
-    ['bmQ','bmR'].forEach(function(id){$(id).addEventListener('input',function(){var v=clean(this.value,id==='bmQ'?3:2);if(v!==this.value)this.value=v;entryAmt();});$(id).addEventListener('focus',function(){try{this.select();}catch(e){}});});
-    $('bmAdd').onclick=function(){if(addItem($('bmIn').value,fnum($('bmQ').value),fnum($('bmR').value),editIdx))resetEntry();};
-    $('bmIn').addEventListener('input',function(){
-      var q=this.value.trim().toLowerCase(),cat=catalog(),seen={},list=[];
-      quick().forEach(function(x){cat[x.n.toLowerCase()]=cat[x.n.toLowerCase()]||{n:x.n,r:x.r};});
-      Object.keys(cat).forEach(function(k){if(!q||k.indexOf(q)>=0)list.push(cat[k]);});
-      list=list.slice(0,8);
-      showDd($('bmItDd'),list.length?list.map(function(x,i){return '<button type="button" data-i="'+esc(x.n)+'" data-r="'+x.r+'">'+esc(x.n)+'<small>Rs. '+money(x.r)+'</small></button>';}).join(''):(q?'<div class="none">New item — enter its rate and tap Add Item.</div>':''));
+    var rows=$('sbRows');
+    rows.addEventListener('input',function(e){
+      var el=e.target,row=el.closest('.sb-r');if(!row)return;var i=+row.dataset.i,r=D.draft.rows[i];if(!r)return;
+      if(el.classList.contains('n')){r.n=el.value;showDd(i,el);}
+      else if(el.classList.contains('q')){var v=clean(el.value,3);if(v!==el.value)el.value=v;r.q=v;}
+      else if(el.classList.contains('r')){var w=clean(el.value,2);if(w!==el.value)el.value=w;r.r=w;}
+      syncRow(i);afterEdit();
     });
-    $('bmIn').addEventListener('focus',function(){var e=document.createEvent('Event');e.initEvent('input',true,true);this.dispatchEvent(e);});
-    $('bmItDd').addEventListener('click',function(e){var b=e.target.closest('button[data-i]');if(!b)return;$('bmIn').value=b.dataset.i;$('bmR').value=b.dataset.r;$('bmItDd').classList.remove('on');entryAmt();$('bmQ').focus();});
-    $('bmCust').addEventListener('input',function(){
-      cust=null;$('bmCustI').textContent='🔍';
-      var q=this.value.trim().toLowerCase().replace(/\s+/g,' ');if(!q){$('bmCustDd').classList.remove('on');return;}
-      var list=custs().filter(function(c){return c.name.toLowerCase().indexOf(q)>=0||(c.mobile&&c.mobile.indexOf(q.replace(/[^0-9+]/g,''))>=0&&q.replace(/[^0-9+]/g,'')!=='');}).slice(0,8);
-      showDd($('bmCustDd'),list.length?list.map(function(c){return '<button type="button" data-c="'+esc(c.id)+'">'+esc(c.name)+'<small>'+esc(c.mobile||'')+'</small></button>';}).join(''):'<div class="none">No customer found — tap «New» to add.</div>');
+    rows.addEventListener('change',function(e){var el=e.target,row=el.closest('.sb-r');if(!row)return;var r=D.draft.rows[+row.dataset.i];if(!r)return;if(el.classList.contains('r')){learn(r.n,r.r);later();}});
+    rows.addEventListener('focusout',function(e){
+      var el=e.target,row=el.closest('.sb-r');if(!row)return;
+      if(el.classList.contains('n')){var i=+row.dataset.i,r=D.draft.rows[i];
+        setTimeout(function(){var a=document.activeElement;if(a&&a.classList&&a.classList.contains('n')&&a.closest&&a.closest('#sbRows'))return;hideDd();},180);
+        var m=D.cat[String(r.n).trim().toLowerCase()];
+        if(m&&!String(r.r).trim()){r.r=String(m.r);var re=row.querySelector('.r');re.value=r.r;syncRow(i);afterEdit();}}
     });
-    $('bmCustDd').addEventListener('click',function(e){var b=e.target.closest('button[data-c]');if(!b)return;var c=custs().filter(function(x){return x.id===b.dataset.c;})[0];if(c)setCust(c);});
-    $('bmCustI').onclick=function(){if(cust||$('bmCust').value){setCust(null);}};
-    $('bmCustNew').onclick=custSheet;
-    ['bmDV','bmTV'].forEach(function(id){$(id).addEventListener('input',function(){var v=clean(this.value,2);if(v!==this.value)this.value=v;paint();});$(id).addEventListener('blur',function(){var c=calc(),t=id==='bmDV'?c.dv:c.tv;this.value=String(t||0);paint();});$(id).addEventListener('focus',function(){try{this.select();}catch(e){}});});
-    ['bmDT','bmTT'].forEach(function(id){$(id).onchange=function(){var v=$(id==='bmDT'?'bmDV':'bmTV');v.value='0';paint();};});
-    $('bmRows').addEventListener('click',function(e){
-      var ed=e.target.closest('[data-ed]'),dl=e.target.closest('[data-del]');
-      if(ed){var i=+ed.dataset.ed,x=items[i];if(!x)return;editIdx=i;$('bmIn').value=x.name;$('bmQ').value=String(x.qty);$('bmR').value=String(x.rate);entryAmt();paint();try{$('bmQ').focus();}catch(e2){}}
-      else if(dl){var j=+dl.dataset.del;confirmBox('Delete "'+(items[j]?items[j].name:'this item')+'" from the bill?','Delete',function(){items.splice(j,1);if(editIdx===j)resetEntry();else if(editIdx>j)editIdx--;paint();});}
+    rows.addEventListener('focusin',function(e){var el=e.target;if(el.classList&&(el.classList.contains('q')||el.classList.contains('r'))){setTimeout(function(){try{el.select();}catch(x){}},0);}});
+    rows.addEventListener('keydown',function(e){
+      if(e.key!=='Enter')return;var el=e.target,row=el.closest('.sb-r');if(!row)return;e.preventDefault();hideDd();
+      var nx=el.classList.contains('n')?'.q':el.classList.contains('q')?'.r':null;
+      if(nx){row.querySelector(nx).focus();return;}
+      var nr=row.nextElementSibling;if(nr)nr.querySelector('.n').focus();else el.blur();
     });
-    $('bmQG').addEventListener('click',function(e){
-      var b=e.target.closest('button');if(!b)return;
-      if(b.dataset.qadd)return quickSheet(-1);
-      if(b.dataset.qoth)return itemSheet('',0,false);
-      var i=+b.dataset.qi,q=quick()[i];if(!q)return;
-      if(qEdit)quickSheet(i);else itemSheet(q.n,q.r,true);
+    rows.addEventListener('click',function(e){
+      var x=e.target.closest('.x');if(!x)return;var row=x.closest('.sb-r'),i=+row.dataset.i;
+      D.draft.rows.splice(i,1);padRows();renderRows();hideDd();paintTotals();later();
     });
-    $('bmQEd').onclick=function(){qEdit=!qEdit;quickPaint();};
-    $('bmSave').onclick=save;$('bmPrint').onclick=printIt;$('bmShare').onclick=share;
-    function askNew(){if(items.length&&!viewing)confirmBox('Start a new bill? The current unsaved bill will be cleared.','New Bill',function(){newBill();});else newBill();}
-    $('bmNew').onclick=askNew;$('bmNewTop').onclick=askNew;
-    $('bmClear').onclick=function(){if(!items.length&&!cust&&!viewing){return;}confirmBox('Clear the current bill?','Clear',function(){newBill();});};
-    $('bmView').addEventListener('click',function(e){if(e.target.id==='bmVNew')newBill();});
-    $('bmHb').onclick=function(){hist();$('bmHp').classList.add('on');};
-    $('bmHback').onclick=function(){$('bmHp').classList.remove('on');};
-    $('bmHist').addEventListener('click',function(e){
-      var del=e.target.closest('[data-del]');
-      if(del){e.stopPropagation();var id=del.dataset.del;confirmBox('Delete this saved bill and its items?','Delete',function(){wj(K_B,rj(K_B,[]).filter(function(b){return b.id!==id;}));wj(K_I,rj(K_I,[]).filter(function(x){return x.bill_id!==id;}));if(viewing&&viewing.id===id)newBill();hist();});return;}
-      var h=e.target.closest('.bm-h');if(!h)return;var b=rj(K_B,[]).filter(function(x){return x.id===h.dataset.id;})[0];if(!b)return;
-      loadBill(b);$('bmHp').classList.remove('on');
+    $('sbDd').addEventListener('pointerdown',function(e){e.preventDefault();var b=e.target.closest('button[data-k]');if(b)pick(+b.dataset.k);});
+    $('sbSc').addEventListener('scroll',hideDd,{passive:true});
+    $('sbCn').addEventListener('input',function(){D.draft.cn=this.value;later();schedPv();});
+    $('sbCn').addEventListener('change',function(){var n=this.value.trim(),m=n&&D.cu[n];if(m&&!$('sbCm').value.trim()){$('sbCm').value=m;D.draft.cm=m;later();schedPv();}});
+    $('sbCm').addEventListener('input',function(){var v=this.value.replace(/[۰-۹]/g,function(c){return c.charCodeAt(0)-0x06F0;}).replace(/[٠-٩]/g,function(c){return c.charCodeAt(0)-0x0660;}).replace(/[^0-9+\-\s]/g,'');if(v!==this.value)this.value=v;D.draft.cm=v;later();schedPv();});
+    $('sbShopIn').addEventListener('input',function(){D.shop=this.value.trim();later();schedPv();});
+    [].forEach.call(document.querySelectorAll('#sbPage .sb-lang button'),function(b){b.addEventListener('click',function(){
+      var l=b.getAttribute('data-l')==='ur'?'ur':'en';if(l===lang)return;flush();lang=l;try{localStorage.setItem(P+uidv+'_lang',lang);}catch(e){}paintAll();});});
+    $('sbBiz').addEventListener('change',function(){flush();try{localStorage.setItem(P+uidv+'_biz',bizs[+this.value].id);}catch(e){}loadScope();paintAll();});
+    $('sbSave').addEventListener('click',save);
+    $('sbPrint').addEventListener('click',function(){var b=snapBill();if(!b.items.length){toast('⚠️ '+t('needItem'));return;}printBill(b);});
+    $('sbImg').addEventListener('click',function(){var b=snapBill();if(!b.items.length){toast('⚠️ '+t('needItem'));return;}saveImage(b);});
+    $('sbClear').addEventListener('click',function(){dialog('<p>'+esc(t('cc'))+'</p>',[{t:t('cancel')},{t:t('yes'),c:'dn',f:function(){D.draft=freshDraft();padRows();persist();paintAll();}}]);});
+    $('sbList').addEventListener('click',function(e){var b=e.target.closest('.sb-b');if(!b)return;var x=D.bills.filter(function(y){return y.id===b.dataset.id;})[0];if(x)openBill(x);});
+    $('sbPro').addEventListener('click',function(){
+      var u=String(SB_PRO_URL||'').trim();if(!/^https?:\/\//i.test(u)){toast('ℹ️ '+t('proNo'));return;}
+      try{window.open(u,'_blank','noopener');}catch(e){location.href=u;}
     });
-    document.addEventListener('click',function(e){if(!e.target.closest('.bm-fld')){$('bmItDd').classList.remove('on');$('bmCustDd').classList.remove('on');}});
+    document.addEventListener('visibilitychange',function(){if(document.hidden)flush();else rollover();});
+    window.addEventListener('pagehide',flush);window.addEventListener('beforeunload',flush);
+    $('sbOv').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
   }
-  window.bt_bill=function(){
-    bind();qEdit=false;accRefresh();$('bmAcc').dataset.cur=$('bmAcc').value;
-    $('bmHp').classList.remove('on');$('bmSh').classList.remove('on');
-    newBill();quickPaint();hist();
-    openModal('bmModal');
-    clearInterval(tmr);tmr=setInterval(function(){var m=$('bmModal');if(!m||!m.classList.contains('active')){clearInterval(tmr);return;}if(!viewing)head();},15000);
+  function rollover(){if(!D)return;var m=$('sbModal');if(!m||!m.classList.contains('active'))return;if(dayKey(Date.now())!==curDay){pruneOld();paintList();}paintPv();}
+
+  /* ---------- save (explicit, once) ---------- */
+  function save(){
+    if(saving)return;
+    var b=snapBill();
+    if(!b.items.length){toast('⚠️ '+t('needItem'));return;}
+    if(D.bills.some(function(x){return x.did===D.draft.id;})){toast('ℹ️ Already saved');return;}
+    saving=true;var btn=$('sbSave');btn.disabled=true;setTimeout(function(){saving=false;btn.disabled=false;},900);
+    var n=D.seq+1,ex={};D.bills.forEach(function(x){ex[x.no]=1;});
+    while(ex['PB-'+pad6(n)])n++;
+    var now=Date.now();
+    var bill={id:nid(),did:D.draft.id,no:'PB-'+pad6(n),at:now,day:dayKey(now),biz:b.biz,cn:b.cn,cm:b.cm,items:b.items,total:b.total,lang:lang};
+    D.draft.rows.forEach(function(r){learn(r.n,r.r);});
+    if(bill.cn){D.cu[bill.cn]=bill.cm||D.cu[bill.cn]||'';var ck=Object.keys(D.cu);if(ck.length>200)delete D.cu[ck[0]];}
+    D.seq=n;D.bills.unshift(bill);D.draft=freshDraft();padRows();
+    var ok=persist();
+    if(!ok){D.bills.shift();toast('⚠️ '+t('nodraft'));return;}
+    paintAll();toast('✅ '+t('saved')+' '+bill.no);
+    try{$('sbSc').scrollTo({top:0,behavior:'smooth'});}catch(e){}
+  }
+
+  /* ---------- dialogs / viewer ---------- */
+  function dialog(body,btns){
+    var ov=$('sbOv');ov.innerHTML='<div class="sb-ovc">'+body+'<div class="sb-ovb">'+btns.map(function(b,i){return '<button type="button" class="'+(b.c||'')+'" data-b="'+i+'">'+esc(b.t)+'</button>';}).join('')+'</div></div>';
+    ov.classList.add('on');
+    ov.onclick=function(e){var bt=e.target.closest('button[data-b]');if(!bt){if(e.target===ov)ov.classList.remove('on');return;}var d=btns[+bt.dataset.b];ov.classList.remove('on');if(d.f)d.f();};
+  }
+  function openBill(b){   /* read-only view of a COPY; the stored bill and the draft are never modified */
+    var c=JSON.parse(JSON.stringify(b));
+    dialog(receipt(c),[{t:t('close')},{t:t('imgB'),f:function(){saveImage(c);}},{t:t('printB'),c:'pri',f:function(){printBill(c);}}]);
+  }
+
+  /* ---------- print (invoice only, in a hidden frame — app screens/buttons are never printed) ---------- */
+  var RC_CSS='body{margin:0;padding:14px;background:#fff}.wrap{max-width:420px;margin:0 auto}'+
+   '.rc{font-family:Arial,Tahoma,sans-serif;color:#111;font-size:13px}.rc.ur{font-family:"Jameel Noori Nastaleeq Regular","Noto Nastaliq Urdu","Noto Naskh Arabic",Tahoma,serif}'+
+   '.rc .s{text-align:center;font-size:20px;font-weight:800;line-height:1.5}.rc .m{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;border-top:1px solid #999;border-bottom:1px solid #999;margin:6px 0;padding:4px 0;font-size:12px}'+
+   '.rc .c{font-size:12.5px;margin-bottom:6px;line-height:1.7}.rc table{width:100%;border-collapse:collapse;font-size:12.5px}.rc th{border-bottom:1px solid #111;padding:3px;font-weight:700;text-align:center}'+
+   '.rc td{border-bottom:1px solid #ddd;padding:3px;text-align:center;vertical-align:top}.rc th:first-child,.rc td:first-child{text-align:start;width:46%;word-break:break-word}.rc td.n{direction:ltr;font-family:Arial,sans-serif}'+
+   '.rc .g{display:flex;justify-content:space-between;border-top:2px solid #111;margin-top:4px;padding-top:5px;font-weight:800;font-size:15px}.rc .g b{direction:ltr;font-family:Arial,sans-serif}.rc .f{text-align:center;font-size:11.5px;color:#555;margin-top:8px}@page{margin:8mm}';
+  function printBill(b){
+    var fu='';try{fu=new URL('./JameelNooriNastaleeqRegular.ttf',location.href).href;}catch(e){}
+    var html='<!doctype html><html lang="'+(lang==='ur'?'ur':'en')+'" dir="'+(lang==='ur'?'rtl':'ltr')+'"><head><meta charset="utf-8"><title>'+esc(b.no)+'</title><style>'+(fu?'@font-face{font-family:"Jameel Noori Nastaleeq Regular";src:url("'+fu+'") format("truetype")}':'')+RC_CSS+'</style></head><body><div class="wrap">'+receipt(b)+'</div></body></html>';
+    var f=document.createElement('iframe');f.style.cssText='position:fixed;width:0;height:0;border:0;right:0;bottom:0';document.body.appendChild(f);
+    var w=f.contentWindow;w.document.open();w.document.write(html);w.document.close();
+    setTimeout(function(){try{w.focus();w.print();}catch(e){toast('⚠️ Print not available');}setTimeout(function(){try{f.remove();}catch(e){}},60000);},400);
+  }
+
+  /* ---------- save as image (PNG) ---------- */
+  function saveImage(b){
+    var u=lang==='ur',FA='Arial,sans-serif',FU='"Jameel Noori Nastaleeq Regular","Noto Nastaliq Urdu","Noto Naskh Arabic",Tahoma,serif',F=u?FU:FA;
+    var go=function(){
+      try{
+        var W=600,rowH=u?46:36,H=330+b.items.length*rowH,sc=2,c=document.createElement('canvas');c.width=W*sc;c.height=H*sc;var x=c.getContext('2d');x.scale(sc,sc);
+        x.fillStyle='#fff';x.fillRect(0,0,W,H);x.direction=u?'rtl':'ltr';
+        var S=function(px){return u?W-px:px;},A=function(a){return u?(a==='left'?'right':a==='right'?'left':a):a;};
+        var tx=function(s,px,py,a,font,col,mw){x.font=font;x.fillStyle=col||'#111';x.textAlign=A(a);s=String(s);if(mw){while(s.length>1&&x.measureText(s).width>mw)s=s.slice(0,-2)+'…';}x.fillText(s,S(px),py);};
+        var y=52;tx(b.biz||'',W/2,y,'center','bold 30px '+F,'#15803d',W-60);
+        y+=(u?46:34);x.strokeStyle='#999';x.lineWidth=1;x.beginPath();x.moveTo(24,y-22);x.lineTo(W-24,y-22);x.stroke();
+        tx(t('billNo')+': '+b.no,24,y,'left','bold 18px '+F);tx(fmtD(b.at)+'  '+fmtT(b.at),W-24,y,'right','16px '+FA);
+        y+=(u?44:32);tx(t('cust2')+': '+(b.cn||t('walkin')),24,y,'left','17px '+F,'#111',W-48);
+        if(b.cm){y+=(u?40:28);tx(t('mob2')+': '+b.cm,24,y,'left','17px '+F);}
+        y+=(u?36:26);x.fillStyle='#15803d';x.fillRect(24,y,W-48,u?40:30);
+        var hy=y+(u?28:21),hf='bold 15px '+F;tx(t('item'),32,hy,'left',hf,'#fff');tx(t('qty'),330,hy,'center',hf,'#fff');tx(t('rate'),425,hy,'center',hf,'#fff');tx(t('amt'),W-32,hy,'right',hf,'#fff');
+        y+=(u?40:30);
+        b.items.forEach(function(it){var ry=y+(u?30:23);tx(it.n,32,ry,'left','16px '+F,'#111',250);tx(String(it.q),330,ry,'center','16px '+FA);tx(money(it.r),425,ry,'center','16px '+FA);tx(money(it.a),W-32,ry,'right','bold 16px '+FA);
+          x.strokeStyle='#ddd';x.beginPath();x.moveTo(24,y+rowH);x.lineTo(W-24,y+rowH);x.stroke();y+=rowH;});
+        y+=10;x.strokeStyle='#111';x.lineWidth=2;x.beginPath();x.moveTo(24,y);x.lineTo(W-24,y);x.stroke();
+        y+=(u?46:34);tx(t('gt'),24,y,'left','bold 22px '+F);tx(rs(b.total),W-24,y,'right','bold 24px '+FA,'#15803d');
+        y+=(u?52:40);tx(t('thanks')+' — My City Shines',W/2,y,'center','14px '+F,'#666');
+        c.toBlob(function(bl){
+          if(!bl){toast('⚠️ '+t('imgFail'));return;}
+          var fn=b.no+'.png',file=null;try{file=new File([bl],fn,{type:'image/png'});}catch(e){}
+          if(file&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:b.no}).catch(function(){});return;}
+          var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},4000);
+        },'image/png');
+      }catch(e){toast('⚠️ '+t('imgFail'));}
+    };
+    try{if(u&&document.fonts&&document.fonts.load){document.fonts.load('16px "Jameel Noori Nastaleeq Regular"').then(go,go);return;}}catch(e){}
+    go();
+  }
+
+  window.bt_sbill=function(){
+    bind();loadScope();hideDd();$('sbOv').classList.remove('on');paintAll();persist();
+    openModal('sbModal');
+    clearInterval(tmr);tmr=setInterval(function(){var m=$('sbModal');if(!m||!m.classList.contains('active')){clearInterval(tmr);return;}rollover();},30000);
   };
 })();
 </script>
