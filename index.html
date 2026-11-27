@@ -4848,10 +4848,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2611TH687";
+const APP_VERSION = "MCS2711FR688";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2711FR688":"🧮 Cash Counter: ہر نوٹ کے بائیں طرف چھوٹا ⓘ بٹن — دبائیں تو وہ نوٹ (جو آپ کے پاس نہیں) اس گنتی کے لیے چھپ جائے، صرف گنے جانے والے نوٹ رہیں؛ کیلکولیٹر دوبارہ کھولیں تو سب نوٹ پھر نظر آئیں (ہیلپ ڈیسک #433)",
   "MCS2611TH687":"🧮 Business Tools → Cash Counter: 7 notes (5000 to 10), + / − or type the quantity, amounts and Grand Total update instantly; Reset, Print and Save Record (shop / account, date, time) with saved history on this phone",
   "MCS2611TH686":"🔎 سارے ریکارڈ (رجسٹرڈ + پرانے) اب Business Community، Phone Directory اور ہوم کی عام تلاش میں بھی کارڈ کی شکل میں — رجسٹرڈ اوپر، پرانوں پر سرخ «Register Now» ربن؛ تلاش 40 ہزار ریکارڈ میں بھی فوری (ہینگ نہیں)، دہرے ریکارڈ ختم؛ «Explore» ڈبے کی تعداد اب ڈبے کے اندر لکھائی کے نیچے چھوٹے ابھرے کیپسول میں",
   "MCS2611TH685":"📇 سارے پرانے ریکارڈ (ہزاروں) اب عام فہرستوں، تلاش اور ضلع / شہر کے فلٹر میں — رجسٹرڈ اوپر، باقی پر سرخ «Register Now» ربن؛ الگ «ویٹنگ فار رجسٹریشن» پٹی ختم؛ کارڈ 14-14 کر کے، ایپ ہلکی",
@@ -33008,6 +33009,9 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
 #k4Modal .k4-note i{position:absolute;right:2px;bottom:0;font:900 9px/1.1 Arial,sans-serif;font-style:normal;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.55)}
 #k4Modal .k4-note em{position:absolute;left:30%;top:3px;width:12px;height:16px;border-radius:50% 50% 40% 40%;background:rgba(0,0,0,.28)}
 #k4Modal .k4-n b{font-size:13.5px;font-weight:800;white-space:nowrap}
+#k4Modal .k4-eye{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid #93c5fd;background:#eff6ff;color:#1e3a8a;font:900 14px/1 Georgia,'Times New Roman',serif;font-style:italic;padding:0;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:center}
+#k4Modal .k4-hn{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fef9c3;border:1.5px solid #facc15;border-radius:11px;padding:6px 9px;margin-bottom:8px;font-size:12.5px;font-weight:700;color:#713f12}
+#k4Modal .k4-hn button{border:0;background:#1e3a8a;color:#fff;border-radius:8px;padding:5px 9px;font:700 12px inherit;cursor:pointer}
 #k4Modal .k4-q{display:flex;align-items:center;justify-content:center;gap:4px}
 #k4Modal .k4-q button{flex:none;width:30px;height:30px;border-radius:9px;border:1.5px solid #93c5fd;background:linear-gradient(#eff6ff,#dbeafe);color:#1e3a8a;font:900 18px/1 Arial,sans-serif;padding:0;cursor:pointer;touch-action:manipulation}
 #k4Modal .k4-q input{width:100%;max-width:58px;min-width:0;height:32px;border:1.5px solid #94a3b8;border-radius:9px;text-align:center;font:800 16px Arial,sans-serif;color:#0f172a;padding:0 2px;background:#fff}
@@ -33042,6 +33046,7 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
       <label class="k4-acc"><span>🏪 Shop / Account</span><select id="k4Acc"></select></label>
       <div id="k4View"></div>
       <div class="k4-dt"><div>📅 Date: <b id="k4Date"></b></div><div>🕒 Time: <b id="k4Time"></b></div></div>
+      <div id="k4Hidn"></div>
       <div class="k4-tb"><div class="k4-th"><div>Currency Note</div><div>Quantity</div><div>Amount (Rs.)</div></div><div id="k4Rows"></div></div>
       <div class="k4-gt"><span>💰</span><b>GRAND TOTAL</b><div id="k4Tot">Rs. 0</div></div>
       <div class="k4-bt"><button type="button" class="k4-rs" id="k4Reset">↻ Reset</button><button type="button" class="k4-pr" id="k4Print">🖨️ Print</button><button type="button" class="k4-sv" id="k4Save">💾 Save Record</button></div>
@@ -33057,7 +33062,7 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
   'use strict';
   var KEY = 'mcsCashCounter_v1', ACCK = 'mcsCashAcc_v1';
   var D = [[5000,'#f59e0b','#b45309'],[1000,'#6366f1','#3730a3'],[500,'#22c55e','#15803d'],[100,'#ef4444','#991b1b'],[50,'#a855f7','#6b21a8'],[20,'#84cc16','#c2410c'],[10,'#a16207','#3f6212']];
-  var q = {}, viewing = null, tmr = 0;
+  var q = {}, viewing = null, tmr = 0, hid = {};   /* #433: چھپائے ہوئے نوٹ — صرف اسی کھلے سیشن کے لیے (حافظے میں)، دوبارہ کھولنے پر سب واپس */
   function $(i){ return document.getElementById(i); }
   function rs(n){ return 'Rs. ' + Number(n || 0).toLocaleString('en-US'); }
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -33075,15 +33080,18 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
   function clock(){ var t = viewing ? viewing.at : Date.now(); $('k4Date').textContent = fmtD(t); $('k4Time').textContent = fmtT(t); }
   function rows(){
     $('k4Rows').innerHTML = D.map(function(d){ var v = d[0];
-      return '<div class="k4-r" data-v="' + v + '"><div class="k4-n"><span class="k4-note" style="background:linear-gradient(135deg,' + d[1] + ',' + d[2] + ')"><em></em><i>' + v + '</i></span><b>Rs. ' + v.toLocaleString('en-US') + '</b></div>'
+      return '<div class="k4-r" data-v="' + v + '"><div class="k4-n"><button type="button" class="k4-eye" data-hide="' + v + '" aria-label="Hide Rs. ' + v + ' note" title="Hide this note">i</button><span class="k4-note" style="background:linear-gradient(135deg,' + d[1] + ',' + d[2] + ')"><em></em><i>' + v + '</i></span><b>Rs. ' + v.toLocaleString('en-US') + '</b></div>'
         + '<div class="k4-q"><button type="button" data-m="-1" aria-label="Minus">−</button><input type="text" inputmode="numeric" autocomplete="off" aria-label="Quantity of Rs. ' + v + '" value=""><button type="button" data-m="1" aria-label="Plus">+</button></div>'
         + '<div class="k4-a">Rs. 0</div></div>'; }).join('');
   }
   function paint(skipInput){
     D.forEach(function(d){ var r = $('k4Rows').querySelector('[data-v="' + d[0] + '"]'); if(!r) return; var n = q[d[0]] || 0;
+      r.style.display = (hid[d[0]] && !n) ? 'none' : '';
       var inp = r.querySelector('input'); if(inp !== skipInput) inp.value = n ? String(n) : '';
       r.querySelector('.k4-a').textContent = rs(n * d[0]); });
     $('k4Tot').textContent = rs(total());
+    var hc = D.filter(function(d){ return hid[d[0]] && !(q[d[0]] || 0); }).length;
+    $('k4Hidn').innerHTML = hc ? '<div class="k4-hn"><span>' + hc + ' note' + (hc > 1 ? 's' : '') + ' hidden</span><button type="button" id="k4ShowAll">Show all</button></div>' : '';
   }
   function hist(){
     var a = load(); $('k4Hn').textContent = a.length ? '(' + a.length + ')' : '';
@@ -33094,7 +33102,7 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
   function setQ(v, n){ if(viewing){ viewing = null; viewBar(); clock(); } q[v] = Math.max(0, Math.min(99999, n | 0)); }
   function printIt(){
     var acct = $('k4Acc').value, t = viewing ? viewing.at : Date.now();
-    var body = D.map(function(d){ var n = q[d[0]] || 0; return '<tr><td>Rs. ' + d[0].toLocaleString('en-US') + '</td><td style="text-align:center">' + n + '</td><td style="text-align:right">' + rs(n * d[0]) + '</td></tr>'; }).join('');
+    var body = D.filter(function(d){ return !(hid[d[0]] && !(q[d[0]] || 0)); }).map(function(d){ var n = q[d[0]] || 0; return '<tr><td>Rs. ' + d[0].toLocaleString('en-US') + '</td><td style="text-align:center">' + n + '</td><td style="text-align:right">' + rs(n * d[0]) + '</td></tr>'; }).join('');
     var html = '<!doctype html><html><head><meta charset="utf-8"><title>Cash Counter</title><style>body{font-family:Arial,sans-serif;margin:18px;color:#000}h1{font-size:20px;margin:0}p{margin:3px 0;font-size:13px}table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}th,td{border:1px solid #000;padding:6px 8px}th{background:#eee}tfoot td{font-weight:900;font-size:16px}</style></head><body>'
       + '<h1>Cash Counter Report</h1><p><b>Shop / Account:</b> ' + esc(acct) + '</p><p><b>Date:</b> ' + fmtD(t) + ' &nbsp; <b>Time:</b> ' + fmtT(t) + '</p>'
       + '<table><thead><tr><th>Currency Note</th><th>Quantity</th><th>Amount (Rs.)</th></tr></thead><tbody>' + body + '</tbody><tfoot><tr><td colspan="2">GRAND TOTAL</td><td style="text-align:right">' + rs(total()) + '</td></tr></tfoot></table></body></html>';
@@ -33114,11 +33122,15 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
   function bind(){
     if(bound) return; bound = true;
     var R = $('k4Rows');
-    R.addEventListener('click', function(e){ var b = e.target.closest('button[data-m]'); if(!b) return; var v = +b.closest('.k4-r').dataset.v; setQ(v, (q[v] || 0) + (+b.dataset.m)); paint(); });
+    R.addEventListener('click', function(e){
+      var h = e.target.closest('button[data-hide]');
+      if(h){ var hv = +h.dataset.hide; if(q[hv]){ try{ showToast('Quantity is entered for this note — set it to 0 first to hide it'); }catch(x){} return; } hid[hv] = true; paint(); return; }
+      var b = e.target.closest('button[data-m]'); if(!b) return; var v = +b.closest('.k4-r').dataset.v; setQ(v, (q[v] || 0) + (+b.dataset.m)); paint(); });
     R.addEventListener('input', function(e){ var i = e.target; if(i.tagName !== 'INPUT') return; var v = +i.closest('.k4-r').dataset.v, n = num(i.value); setQ(v, n); if(i.value !== (n ? String(n) : '')) i.value = n ? String(n) : ''; paint(i); });
     R.addEventListener('focusin', function(e){ if(e.target.tagName === 'INPUT') try{ e.target.select(); }catch(x){} });
     $('k4Reset').onclick = function(){ q = {}; viewing = null; viewBar(); paint(); clock(); };
     $('k4Print').onclick = printIt;
+    $('k4Hidn').addEventListener('click', function(e){ if(e.target.id === 'k4ShowAll'){ hid = {}; paint(); } });
     $('k4Save').onclick = save;
     $('k4Acc').onchange = function(){ try{ localStorage.setItem(ACCK, this.value); }catch(e){} };
     $('k4View').addEventListener('click', function(e){ if(e.target.id === 'k4New'){ q = {}; viewing = null; viewBar(); paint(); clock(); } });
@@ -33133,6 +33145,7 @@ html body.d2 #bnav .d2n{flex:1 1 0 !important}
   }
   window.bt_cash = function(){
     if(!$('k4Rows').children.length) rows();
+    hid = {};
     bind();
     var s = $('k4Acc'), L = accs(), last = ''; try{ last = localStorage.getItem(ACCK) || ''; }catch(e){}
     s.innerHTML = L.map(function(n){ return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('');
