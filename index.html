@@ -4893,10 +4893,16 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2811SA698";
+const APP_VERSION = "MCS2811SA704";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2811SA704":"🧾 Bill Maker: قیمت اور تعداد لکھ کر کی بورڈ کا Next دبائیں تو کرسر اگلی رو کے آئٹم نام میں",
+  "MCS2811SA703":"🧾 Bill Maker: آئٹم کے نام اردو ہوں یا انگلش، ہمیشہ دائیں طرف • AIO POS کا اصل آئیکن اور «پلے سٹور پر دستیاب» کی پٹی",
+  "MCS2811SA702":"🧾 Bill Maker: آئٹم کے نام ہر حال میں اپنی لکھائی کے مطابق — اردو نام دائیں، انگلش نام بائیں؛ بل اردو سیٹنگ میں ہو یا انگلش میں، سکرین اور پوسٹر دونوں پر ایک جیسا",
+  "MCS2811SA701":"🧾 Bill Maker: AIO POS کے کارڈ اور پوسٹر میں تاج کی جگہ AIO POS کا اپنا اصل آئیکن • «Get AIO POS on Play Store» بٹن میں Play Store کا اپنا لوگو",
+  "MCS2811SA700":"📩 ہوم پر بزنس کارڈ کے اوپر دعوتی پیغام کی باریک پٹی (کل • گئے • باقی • آج کی حد • اگلا پیغام) اب ایڈمن 2 کو بھی ایڈمن 1 کی طرح اسی جگہ اور اسی سائز میں نظر آتی ہے",
+  "MCS2811SA699":"🧾 Bill Maker: اوپر کا زوم (− 100% +) بٹن ختم، سائز 100% پر فکس • انگلش / اردو کا بٹن سیٹنگ سے نکال کر اوپر سامنے لگا دیا • تعداد / ریٹ کا خانہ ٹچ کرتے ہی خالی ہوتا ہے (1 کے ساتھ 15 نہیں بنتا) • آئٹم کی تجویز چننے پر کرسر تعداد میں، اور انٹر دبانے پر نئی لائن کے آئٹم نام میں",
   "MCS2811SA698":"🧾 Bill Maker (Free) نئے ڈیزائن میں: ہرا ہیڈر، دکان کا بینر، رقم / ریٹ / تعداد / آئٹم / نمبر والا جدول اور کل رقم کی پٹی • بل کے نیچے والا پری ویو ختم • «واٹس ایپ پوسٹر» اور «بل محفوظ کریں» بٹن • پرنٹ کی جگہ «AIO POS» کا بٹن جو AIO کا خوبصورت پوسٹر کھولتا ہے • آج کے بل الگ بٹن میں • زبان اور کاروبار کی ترتیب ⚙ میں",
   "MCS2811SA697":"📋 Business Tools میں نیا «Budget Maker» (ماہانہ آمدن / خرچ، جزوی وصولی اور ادائیگی، اصل کیش بیلنس، ریکرنگ اگلے مہینے میں کاپی، بجٹ ہسٹری) • CV Maker اور Passport Photo Maker کارڈ ہٹا دیے گئے • Simple Bill: بل اور اندراج ہمیشہ دائیں سے بائیں (سیریل نمبر دائیں)، نیچے والا بڑا پری ویو ختم، «پوسٹر» بٹن (واٹس ایپ شیئر)، پرنٹ کی جگہ AIO POS کی رہنمائی اور پلے سٹور لنک، بل صرف آج کے لیے محفوظ کی وضاحت",
   "MCS2811SA696":"🧾 پرانا «Bill Maker» ہٹا دیا گیا — اب Business Tools میں صرف نیا «Simple Bill (Free)» ہے",
@@ -29896,7 +29902,7 @@ body.adm648-unread #adm648 .mini .dt{display:block}
 </style>
 <script id="mcsInv670js">
 (function(){
-  function isAd1(){ try{ if(typeof isAdminSignedIn === 'undefined' || !isAdminSignedIn) return false; }catch(e){ return false; } try{ if(typeof codevOn === 'function' && codevOn()) return false; }catch(e){} return true; }
+  function isAd1(){ /* MCS2811SA700: ایڈمن 1 اور ایڈمن 2 دونوں کو ایک ہی پٹی (ایڈمن 2 = موبائل + PIN) */ try{ if(typeof isAdminSignedIn !== 'undefined' && isAdminSignedIn) return true; }catch(e){} try{ return typeof codevOn === 'function' && !!codevOn(); }catch(e){ return false; } }
   function cnt(){ var m = {}; try{ m = _wInfMap(); }catch(e){} var t = 0, s = 0; ['services', 'doctors'].forEach(function(col){ ((typeof WAIT !== 'undefined' && WAIT[col]) || []).forEach(function(x){ if(!x) return; t++; if(Math.max(m[x.fsId] || 0, x.waInfAt || 0)) s++; }); }); return { t: t, s: s }; }
   function mmss(ms){ var s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
   function mount(){ var bar = document.getElementById('mpBar'); if(!bar || !bar.parentNode) return null; var b = document.getElementById('invStrip');
@@ -33266,7 +33272,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
 #sbModal .sb-page{width:100%;max-width:560px;margin:0 auto;height:100%;background:#f4f7e9;display:flex;flex-direction:column;color:#12301a;position:relative;overflow:hidden;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr}
 #sbModal .sb-page.ur{font-family:'Jameel Noori Nastaleeq Regular','Noto Nastaliq Urdu','Noto Naskh Arabic',Tahoma,serif}
 #sbModal .sb-hd{flex:none;background:linear-gradient(180deg,#2f9d38 0%,#15701c 100%);color:#fff;padding:6px 10px 10px;border-radius:0 0 24px 24px;box-shadow:0 3px 8px rgba(8,60,14,.35);direction:ltr}
-#sbModal .sb-h1{height:36px;display:flex;align-items:center}   /* دائیں طرف اوپر کا زوم (− % +) بٹن آتا ہے، اس لیے پہلی پٹی میں صرف بیک */
+#sbModal .sb-h1{height:38px;display:flex;align-items:center;justify-content:space-between}   /* دائیں طرف اوپر کا زوم (− % +) بٹن آتا ہے، اس لیے پہلی پٹی میں صرف بیک */
 #sbModal .sb-back{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,.9);background:rgba(255,255,255,.12);color:#fff;font-size:17px;line-height:1;padding:0;cursor:pointer}
 #sbModal .sb-h2{display:flex;align-items:center;gap:8px}
 #sbModal .sb-lg{width:46px;height:46px;flex:none;display:block}
@@ -33277,7 +33283,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
 #sbModal .sb-gear{width:40px;height:40px;flex:none;border:0;background:transparent;color:#fff;padding:4px;cursor:pointer}
 #sbModal .sb-gear svg{width:100%;height:100%;fill:currentColor;display:block}
 #sbModal .sb-sc{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 10px 100px}
-#sbModal .sb-in{zoom:var(--ui-zoom,1);display:flex;flex-direction:column;gap:10px}
+#sbModal .sb-in{zoom:1;display:flex;flex-direction:column;gap:10px}
 #sbModal .sb-ban{display:flex;align-items:center;gap:12px;background:linear-gradient(100deg,#e3f4d0 0%,#fbfaf0 24%,#fbfaf0 70%,#d3efbc 100%);border:1.5px solid #cfe5bd;border-radius:20px;padding:8px 14px;box-shadow:0 2px 5px rgba(20,80,25,.12);min-height:64px}
 #sbModal .sb-ban .ic{width:50px;height:50px;flex:none;display:block}
 #sbModal .sb-ban .dv{width:1.5px;align-self:stretch;background:#c9d6bd;margin:4px 0;flex:none}
@@ -33311,8 +33317,18 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
 #sbModal .sb-r .nw{position:relative;display:flex;align-items:center;padding:5px}
 #sbModal .sb-r input.n{width:100%;box-sizing:border-box;height:32px;border:1.5px solid #cfd6c8;border-radius:16px;background:#fff;padding:0 28px 0 10px;font-size:13.5px;font-weight:700;color:#13261a;font-family:inherit;outline:0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 #sbModal .sb-r input.n:focus{border-color:#1d7a24}
+/* MCS2811SA702: آئٹم کا نام اپنی لکھائی کے حساب سے — اردو دائیں، انگلش بائیں؛ بل کی زبان (اردو / انگلش) کچھ بھی ہو */
+#sbModal .sb-r input.n{unicode-bidi:plaintext;text-align:right;direction:rtl;padding:0 8px 0 26px}
+#sbModal .sb-r .nw svg{left:12px;right:auto}
+#sbModal .sb-dd button{direction:rtl}
+#sbModal .sb-dd button span{unicode-bidi:plaintext;text-align:right;flex:1}
+#sbModal .aio-pl{display:block;width:20px;height:20px}
+#sbModal .sb-aio .ps{display:flex;align-items:center;gap:6px;margin-top:3px;font-size:12.5px;font-weight:800;color:#0f4d16}
+#sbModal .sb-aio .ps .aio-pl{width:16px;height:16px}
+#sbModal .aio-av{display:flex;align-items:center;justify-content:center;gap:7px;width:max-content;max-width:100%;margin:0 auto 10px;background:#fff;color:#14301f;border-radius:20px;padding:5px 14px;font-size:13.5px;font-weight:800}
+#sbModal .sb-page.ur .sb-r input.n:placeholder-shown{direction:rtl;text-align:right}
 #sbModal .sb-r input.n::placeholder{color:#8a928a;font-weight:500}
-#sbModal .sb-r .nw svg{position:absolute;right:12px;top:50%;margin-top:-8px;width:16px;height:16px;stroke:#1d7a24;fill:none;stroke-width:2.4;pointer-events:none}
+#sbModal .sb-r .nw svg{position:absolute;top:50%;margin-top:-8px;width:16px;height:16px;stroke:#1d7a24;fill:none;stroke-width:2.4;pointer-events:none}
 #sbModal .sb-r .s{display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#13261a;font-family:Arial,sans-serif}
 #sbModal .sb-gt{display:flex;align-items:center;justify-content:space-between;gap:8px;background:linear-gradient(180deg,#e3f8cf,#c9ecae);border:1.5px solid #b6dd9a;border-radius:22px;padding:8px 16px 8px 8px;box-shadow:0 2px 5px rgba(20,80,25,.15)}
 #sbModal .sb-gt b{background:linear-gradient(180deg,#228a2b,#136a1a);color:#fff;border-radius:18px;padding:8px 18px;font-size:21px;font-weight:800;font-family:Arial,sans-serif;direction:ltr;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
@@ -33322,8 +33338,11 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
 #sbModal .sb-btn svg{width:26px;height:26px;fill:#fff;flex:none}
 #sbModal .sb-btn:disabled{opacity:.6}
 #sbModal .sb-aio{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;border:1.5px solid #e7c768;background:linear-gradient(180deg,#fffbe8,#fdf1c4);border-radius:18px;padding:8px 12px;cursor:pointer;font-family:inherit;color:#14301f;text-align:start;box-shadow:0 2px 5px rgba(120,90,10,.18);touch-action:manipulation}
-#sbModal .sb-aio .cr{width:42px;height:42px;border-radius:50%;background:linear-gradient(180deg,#ffd75a,#f0a817);display:flex;align-items:center;justify-content:center;flex:none}
-#sbModal .sb-aio .cr svg{width:24px;height:24px;fill:#fff}
+#sbModal .sb-aio .cr{width:46px;height:46px;border-radius:12px;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;flex:none}
+#sbModal .sb-aio .cr img{width:100%;height:100%;object-fit:cover;display:block}
+#sbModal .sb-aio .cr.fb{border-radius:50%;background:linear-gradient(180deg,#ffd75a,#f0a817)}
+#sbModal .sb-aio .cr svg{display:none;width:24px;height:24px;fill:#fff}
+#sbModal .sb-aio .cr.fb svg{display:block}
 #sbModal .sb-aio .tx{flex:1;min-width:0;line-height:1.35}
 #sbModal .sb-aio .tx b{display:block;font-size:17px;color:#0f4d16;font-weight:800}
 #sbModal .sb-aio .tx small{display:block;font-size:13px;color:#5b5a3a;font-weight:600}
@@ -33369,19 +33388,29 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
 #sbModal .sb-ovb button.dn{border-color:#dc2626;color:#dc2626}
 #sbModal .aio{position:relative;border-radius:26px;background:radial-gradient(circle at 85% 0%,#33b13e 0,#15701c 48%,#0a4511 100%);color:#fff;padding:22px 18px 18px;box-shadow:0 12px 32px rgba(0,0,0,.45);border:2.5px solid #f2c94c;box-sizing:border-box;text-align:center}
 #sbModal .aio-x{position:absolute;top:8px;left:10px;width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.8);background:rgba(0,0,0,.18);color:#fff;font-size:15px;line-height:1;padding:0;cursor:pointer}
-#sbModal .aio-cr{width:62px;height:62px;border-radius:50%;margin:0 auto 6px;background:linear-gradient(180deg,#ffe07a,#f0a817);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.3)}
-#sbModal .aio-cr svg{width:36px;height:36px;fill:#fff}
+#sbModal .aio-cr{width:72px;height:72px;border-radius:18px;margin:0 auto 6px;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.aio-cr img{width:100%;height:100%;object-fit:cover;display:block}
+.aio-cr.fb{border-radius:50%;background:linear-gradient(180deg,#ffe07a,#f0a817)}
+.aio-pl{width:24px;height:24px;flex:none}
+#sbModal .aio-cr svg{display:none;width:36px;height:36px;fill:#fff}
+.aio-cr.fb svg{display:block}
 #sbModal .aio-nm{font-size:30px;font-weight:900;letter-spacing:1px;font-family:Arial,sans-serif;color:#ffe07a;text-shadow:0 2px 4px rgba(0,0,0,.35);line-height:1.3}
 #sbModal .aio-sb{font-size:14.5px;font-weight:700;margin-bottom:12px;line-height:1.5}
 #sbModal .aio-ls{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:7px;text-align:start}
 #sbModal .aio-ls li{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border-radius:12px;padding:7px 10px;font-size:14px;font-weight:600;line-height:1.5}
 #sbModal .aio-ls i{width:22px;height:22px;border-radius:50%;background:#ffd75a;color:#3b2a00;font-style:normal;font-weight:900;font-size:13px;line-height:22px;text-align:center;flex:none;font-family:Arial,sans-serif}
-#sbModal a.aio-go{display:block;border-radius:16px;background:linear-gradient(180deg,#ffe07a,#f0a817);color:#3b2a00;font-size:16px;font-weight:900;text-decoration:none;padding:12px 8px;font-family:inherit;line-height:1.4;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+#sbModal a.aio-go{display:flex;align-items:center;justify-content:center;gap:10px;border-radius:16px;background:linear-gradient(180deg,#ffe07a,#f0a817);color:#3b2a00;font-size:16px;font-weight:900;text-decoration:none;padding:12px 8px;font-family:inherit;line-height:1.4;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+html.sb-open #fzCtl{display:none!important}
+#sbModal .sb-hd .sb-lang{border-color:#fff;background:rgba(255,255,255,.12);border-radius:18px}
+#sbModal .sb-hd .sb-lang button{background:transparent;color:#fff;font-size:14.5px;padding:5px 15px}
+#sbModal .sb-hd .sb-lang button.on{background:#fff;color:#15701c}
+#sbModal .sb-r input.q:focus::placeholder,#sbModal .sb-r input.r:focus::placeholder{color:transparent}
 </style>
 <div class="modal-overlay" id="sbModal" data-noen="1">
   <div class="sb-page" id="sbPage">
     <div class="sb-hd">
-      <div class="sb-h1"><button type="button" class="sb-back" onclick="closeModal('sbModal')" aria-label="Back">←</button></div>
+      <div class="sb-h1"><button type="button" class="sb-back" onclick="closeModal('sbModal')" aria-label="Back">←</button>
+        <div class="sb-lang" id="sbLangT"><button type="button" data-l="en">English</button><button type="button" data-l="ur">اردو</button></div></div>
       <div class="sb-h2">
         <svg class="sb-lg" id="sbLg" viewBox="0 0 64 64" aria-hidden="true"></svg>
         <div class="sb-ti"><b>My City Shines</b><small data-t="hdr"></small></div>
@@ -33408,7 +33437,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
         <button type="button" class="sb-btn" id="sbImg"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span data-t="poster"></span></button>
         <button type="button" class="sb-btn" id="sbSave"><svg viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zM15 9H6V5h9v4z"/></svg><span data-t="save"></span></button>
       </div>
-      <button type="button" class="sb-aio" id="sbAio"><span class="cr"><svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3a1 1 0 01-1 1H6a1 1 0 01-1-1v-1h14v1z"/></svg></span><span class="tx"><b data-t="aioT"></b><small data-t="aioS"></small></span><span class="ch">›</span></button>
+      <button type="button" class="sb-aio" id="sbAio"><span class="cr"><img src="data:image/webp;base64,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" alt="AIO POS" onerror="aioFb(this)"><svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3a1 1 0 01-1 1H6a1 1 0 01-1-1v-1h14v1z"/></svg></span><span class="tx"><b data-t="aioT"></b><small data-t="aioS"></small><span class="ps"><svg class="aio-pl" viewBox="0 0 24 24" aria-hidden="true"><path fill="#2196F3" d="M3.6 2.2c-.4.2-.6.6-.6 1.1v17.4c0 .5.2.9.6 1.1L13.4 12 3.6 2.2z"/><path fill="#34A853" d="M16.7 8.7 5.2 2.2c-.6-.3-1.1-.3-1.6 0L13.4 12l3.3-3.3z"/><path fill="#EA4335" d="M13.4 12 3.6 21.8c.5.3 1 .3 1.6 0l11.5-6.5-3.3-3.3z"/><path fill="#FBBC04" d="M16.7 8.7 13.4 12l3.3 3.3 4-2.3c.9-.5.9-1.4 0-2l-4-2.3z"/></svg><span data-t="aioAv"></span></span></span><span class="ch">›</span></button>
       <button type="button" class="sb-td" id="sbToday"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zM7 12h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg><span class="lb" data-t="today"></span><span class="cn" id="sbTdN" hidden></span><span class="ch">›</span></button>
     </div></div>
     <div class="sb-dd" id="sbDd"></div>
@@ -33418,11 +33447,12 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
 <script id="mcsSimpleBill698">
 (function(){
   'use strict';
-  var AIO_URL='https://play.google.com/store/apps/details?id=com.pbtcodelabs.aiopos';   /* AIO POS — Play Store (opens the app page directly) */
+  var AIO_URL='https://play.google.com/store/apps/details?id=com.pbtcodelabs.aiopos';
+  window.aioFb=function(i){try{var p=i.parentNode;p.className+=' fb';i.remove();}catch(e){}};   /* MCS2811SA701: اصل آئیکن نہ کھلے تو پرانا تاج */   /* AIO POS — Play Store (opens the app page directly) */
   var P='mcsSB_v1_';
   var T={
-    en:{hdr:'Bill Maker (Free)',amt:'Amount',rate:'Rate (Rs.)',qty:'Qty',item:'Item Name',sno:'S.No',gt:'Grand Total:',mobPh:'Mobile No. (Optional)',cnPh:'Customer Name (Optional)',walkin:'Walk-in Customer',save:'Save Bill',poster:'WhatsApp Poster',today:"Today's Bills",keep:'Saved bills are kept for today only — they are deleted automatically tomorrow.',keepShort:'saved for today only (auto-deleted tomorrow)',none:'No bills saved today',draft:'Draft saved',nodraft:'Draft NOT saved',itemPh:'Type item name',saved:'Bill saved',needItem:'Enter at least one item first',cc:'Clear this unfinished bill? This cannot be undone.',yes:'Yes, clear',cancel:'Cancel',close:'Close',del:'Delete item',shopPh:'Enter your shop name',adrPh:'Address (optional)',thanks:'Thank you!',billNo:'Bill No',cust2:'Customer',mob2:'Mobile',saveImg:'Save Image',wa:'Share on WhatsApp',imgFail:'Could not create poster',shared:'Poster saved — attach it in WhatsApp',already:'Already saved',aioT:'AIO POS',aioS:'for Professional Billing Software',aioH:'Professional Billing Software',aioB:'Get AIO POS on Play Store',f1:'Stock & inventory management',f2:'Bill printing & thermal printing',f3:'Invoice making',f4:'Customer record & recovery management',f5:'Retail & wholesale rates',f6:'Same data on more than one mobile, synced',set:'Settings',lang:'Language',biz:'Business',clear:'Clear unfinished bill'},
-    ur:{hdr:'بل میکر (مفت)',amt:'رقم',rate:'ریٹ (روپے)',qty:'تعداد',item:'آئٹم کا نام',sno:'نمبر',gt:'کل رقم',mobPh:'موبائل نمبر (اختیاری)',cnPh:'گاہک کا نام (اختیاری)',walkin:'عام گاہک',save:'بل محفوظ کریں',poster:'واٹس ایپ پوسٹر',today:'آج کے بل',keep:'محفوظ کیا ہوا بل صرف آج کے لیے ہے — کل خودکار ڈیلیٹ ہو جائے گا۔',keepShort:'صرف آج کے لیے محفوظ ہے (کل خودکار ڈیلیٹ)',none:'آج کوئی بل محفوظ نہیں',draft:'ڈرافٹ محفوظ ہے',nodraft:'ڈرافٹ محفوظ نہیں ہوا',itemPh:'آئٹم کا نام لکھیں',saved:'بل محفوظ ہو گیا',needItem:'پہلے کم از کم ایک آئٹم درج کریں',cc:'یہ نامکمل بل صاف کریں؟ یہ واپس نہیں ہو گا۔',yes:'جی، صاف کریں',cancel:'منسوخ',close:'بند کریں',del:'آئٹم ہٹائیں',shopPh:'اپنی دکان کا نام لکھیں',adrPh:'پتہ (اختیاری)',thanks:'شکریہ!',billNo:'بل نمبر',cust2:'گاہک',mob2:'موبائل',saveImg:'تصویر محفوظ کریں',wa:'واٹس ایپ پر شیئر کریں',imgFail:'پوسٹر نہیں بن سکا',shared:'پوسٹر محفوظ ہو گیا — واٹس ایپ میں لگا کر بھیجیں',already:'پہلے ہی محفوظ ہے',aioT:'اے آئی او پی او ایس',aioS:'پروفیشنل بلنگ سافٹ ویئر کے لیے',aioH:'پروفیشنل بلنگ سافٹ ویئر',aioB:'پلے سٹور سے AIO POS حاصل کریں',f1:'اسٹاک اور انوینٹری مینجمنٹ',f2:'بل پرنٹنگ اور تھرمل پرنٹنگ',f3:'انوائس بنانا',f4:'گاہک کا ریکارڈ اور وصولی کا انتظام',f5:'ریٹیل اور ہول سیل ریٹ',f6:'ایک ہی ڈیٹا ایک سے زیادہ موبائل پر، سنک شدہ',set:'ترتیبات',lang:'زبان',biz:'کاروبار',clear:'نامکمل بل صاف کریں'}
+    en:{hdr:'Bill Maker (Free)',amt:'Amount',rate:'Rate (Rs.)',qty:'Qty',item:'Item Name',sno:'S.No',gt:'Grand Total:',mobPh:'Mobile No. (Optional)',cnPh:'Customer Name (Optional)',walkin:'Walk-in Customer',save:'Save Bill',poster:'WhatsApp Poster',today:"Today's Bills",keep:'Saved bills are kept for today only — they are deleted automatically tomorrow.',keepShort:'saved for today only (auto-deleted tomorrow)',none:'No bills saved today',draft:'Draft saved',nodraft:'Draft NOT saved',itemPh:'Type item name',saved:'Bill saved',needItem:'Enter at least one item first',cc:'Clear this unfinished bill? This cannot be undone.',yes:'Yes, clear',cancel:'Cancel',close:'Close',del:'Delete item',shopPh:'Enter your shop name',adrPh:'Address (optional)',thanks:'Thank you!',billNo:'Bill No',cust2:'Customer',mob2:'Mobile',saveImg:'Save Image',wa:'Share on WhatsApp',imgFail:'Could not create poster',shared:'Poster saved — attach it in WhatsApp',already:'Already saved',aioAv:'AIO POS — Available on Play Store',aioT:'AIO POS',aioS:'for Professional Billing Software',aioH:'Professional Billing Software',aioB:'Get AIO POS on Play Store',f1:'Stock & inventory management',f2:'Bill printing & thermal printing',f3:'Invoice making',f4:'Customer record & recovery management',f5:'Retail & wholesale rates',f6:'Same data on more than one mobile, synced',set:'Settings',lang:'Language',biz:'Business',clear:'Clear unfinished bill'},
+    ur:{hdr:'بل میکر (مفت)',amt:'رقم',rate:'ریٹ (روپے)',qty:'تعداد',item:'آئٹم کا نام',sno:'نمبر',gt:'کل رقم',mobPh:'موبائل نمبر (اختیاری)',cnPh:'گاہک کا نام (اختیاری)',walkin:'عام گاہک',save:'بل محفوظ کریں',poster:'واٹس ایپ پوسٹر',today:'آج کے بل',keep:'محفوظ کیا ہوا بل صرف آج کے لیے ہے — کل خودکار ڈیلیٹ ہو جائے گا۔',keepShort:'صرف آج کے لیے محفوظ ہے (کل خودکار ڈیلیٹ)',none:'آج کوئی بل محفوظ نہیں',draft:'ڈرافٹ محفوظ ہے',nodraft:'ڈرافٹ محفوظ نہیں ہوا',itemPh:'آئٹم کا نام لکھیں',saved:'بل محفوظ ہو گیا',needItem:'پہلے کم از کم ایک آئٹم درج کریں',cc:'یہ نامکمل بل صاف کریں؟ یہ واپس نہیں ہو گا۔',yes:'جی، صاف کریں',cancel:'منسوخ',close:'بند کریں',del:'آئٹم ہٹائیں',shopPh:'اپنی دکان کا نام لکھیں',adrPh:'پتہ (اختیاری)',thanks:'شکریہ!',billNo:'بل نمبر',cust2:'گاہک',mob2:'موبائل',saveImg:'تصویر محفوظ کریں',wa:'واٹس ایپ پر شیئر کریں',imgFail:'پوسٹر نہیں بن سکا',shared:'پوسٹر محفوظ ہو گیا — واٹس ایپ میں لگا کر بھیجیں',already:'پہلے ہی محفوظ ہے',aioAv:'AIO POS پلے سٹور پر دستیاب ہے',aioT:'اے آئی او پی او ایس',aioS:'پروفیشنل بلنگ سافٹ ویئر کے لیے',aioH:'پروفیشنل بلنگ سافٹ ویئر',aioB:'پلے سٹور سے AIO POS حاصل کریں',f1:'اسٹاک اور انوینٹری مینجمنٹ',f2:'بل پرنٹنگ اور تھرمل پرنٹنگ',f3:'انوائس بنانا',f4:'گاہک کا ریکارڈ اور وصولی کا انتظام',f5:'ریٹیل اور ہول سیل ریٹ',f6:'ایک ہی ڈیٹا ایک سے زیادہ موبائل پر، سنک شدہ',set:'ترتیبات',lang:'زبان',biz:'کاروبار',clear:'نامکمل بل صاف کریں'}
   };
   var STORE='<path d="M10 28h44v28H10z" fill="#fff" stroke="#1b7a22" stroke-width="2.5" stroke-linejoin="round"/><rect x="38" y="36" width="10" height="20" fill="#3cb043"/><rect x="16" y="36" width="16" height="12" fill="#bfe9c3" stroke="#1b7a22" stroke-width="1.5"/>'
     +[0,1,2,3,4,5].map(function(i){return '<path d="M'+(8+8*i)+' 10h8L'+(12+10*i)+' 28H'+(2+10*i)+'z" fill="'+(i%2?'#fff':'#3cb043')+'" stroke="#1b7a22" stroke-width="1.5" stroke-linejoin="round"/>';}).join('');
@@ -33487,7 +33517,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   function amtOf(r){return counted(r)?r2(qtyOf(r)*num(r.r)):0;}
   function total(){return r2(D.draft.rows.reduce(function(s,r){return s+amtOf(r);},0));}
   function rowHtml(r,i){var a=amtOf(r);
-    return '<div class="sb-r" data-i="'+i+'"><button type="button" class="x" aria-label="'+esc(t('del'))+'"><i>×</i></button><span class="a'+(a>0?'':' z')+'">'+money(a)+'</span><input class="r" inputmode="decimal" placeholder="0.00" value="'+esc(r.r)+'"><input class="q" inputmode="decimal" placeholder="1" value="'+esc(r.q)+'"><div class="nw"><input class="n" dir="auto" maxlength="60" autocomplete="off" autocapitalize="words" placeholder="'+esc(i===0?t('itemPh'):'')+'" value="'+esc(r.n)+'">'+SEARCH+'</div><span class="s">'+(i+1)+'</span></div>';}
+    return '<div class="sb-r" data-i="'+i+'"><button type="button" class="x" aria-label="'+esc(t('del'))+'"><i>×</i></button><span class="a'+(a>0?'':' z')+'">'+money(a)+'</span><input class="r" enterkeyhint="next" inputmode="decimal" placeholder="0.00" value="'+esc(r.r)+'"><input class="q" enterkeyhint="next" inputmode="decimal" placeholder="1" value="'+esc(r.q)+'"><div class="nw"><input class="n" enterkeyhint="next" dir="auto" maxlength="60" autocomplete="off" autocapitalize="words" placeholder="'+esc(i===0?t('itemPh'):'')+'" value="'+esc(r.n)+'">'+SEARCH+'</div><span class="s">'+(i+1)+'</span></div>';}
   function renderRows(){$('sbRows').innerHTML=D.draft.rows.map(rowHtml).join('');}
   function rowEl(i){return $('sbRows').children[i];}
   function syncRow(i){var r=D.draft.rows[i],el=rowEl(i);if(!el)return;var a=el.querySelector('.a'),v=amtOf(r);a.textContent=money(v);a.classList.toggle('z',!(v>0));}
@@ -33523,6 +33553,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
     var pg=$('sbPage'),u=lang==='ur';pg.classList.toggle('ur',u);
     [].forEach.call(pg.querySelectorAll('[data-t]'),function(e){e.textContent=t(e.getAttribute('data-t'));});
     [].forEach.call(pg.querySelectorAll('[data-tp]'),function(e){e.placeholder=t(e.getAttribute('data-tp'));});
+    [].forEach.call(pg.querySelectorAll('#sbLangT button'),function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});
   }
   function paintAll(){
     applyLang();paintShop();paintCustList();
@@ -33552,7 +33583,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   function pick(k){
     var e=ddItems[k],i=ddRow;hideDd();if(!e||i<0)return;
     var r=D.draft.rows[i];r.n=e.n;if(e.r>0)r.r=String(e.r);
-    var el=rowEl(i);if(el){el.querySelector('.n').value=r.n;el.querySelector('.r').value=r.r;syncRow(i);var q=el.querySelector('.q');setTimeout(function(){try{q.focus();q.select();}catch(x){}},0);}
+    var el=rowEl(i);if(el){el.querySelector('.n').value=r.n;el.querySelector('.r').value=r.r;syncRow(i);var q=el.querySelector('.q');setTimeout(function(){try{q.focus();}catch(x){}},0);}
     afterEdit();
   }
   function learn(n,r){n=String(n||'').trim();r=num(r);if(!n||!(r>0))return;var k=n.toLowerCase();D.cat[k]={n:n,r:r,t:Date.now()};var ks=Object.keys(D.cat);if(ks.length>600){ks.sort(function(a,b){return (D.cat[a].t||0)-(D.cat[b].t||0);});for(var j=0;j<ks.length-600;j++)delete D.cat[ks[j]];}}
@@ -33567,22 +33598,24 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
       if(el.classList.contains('n')){r.n=el.value;showDd(i,el);}
       else if(el.classList.contains('q')){var v=clean(el.value,3);if(v!==el.value)el.value=v;r.q=v;}
       else if(el.classList.contains('r')){var w=clean(el.value,2);if(w!==el.value)el.value=w;r.r=w;}
-      syncRow(i);afterEdit();
+      el._ty=true;syncRow(i);afterEdit();
     });
     rows.addEventListener('change',function(e){var el=e.target,row=el.closest('.sb-r');if(!row)return;var r=D.draft.rows[+row.dataset.i];if(!r)return;if(el.classList.contains('r')){learn(r.n,r.r);later();}});
     rows.addEventListener('focusout',function(e){
       var el=e.target,row=el.closest('.sb-r');if(!row)return;
+      if(el.classList.contains('q')||el.classList.contains('r')){var rw=D.draft.rows[+row.dataset.i];if(rw&&!el._ty&&el.value===''){el.value=el.classList.contains('q')?rw.q:rw.r;}el._ty=false;return;}
       if(el.classList.contains('n')){var i=+row.dataset.i,r=D.draft.rows[i];
         setTimeout(function(){var a=document.activeElement;if(a&&a.classList&&a.classList.contains('n')&&a.closest&&a.closest('#sbRows'))return;hideDd();},180);
         var m=D.cat[String(r.n).trim().toLowerCase()];
         if(m&&!String(r.r).trim()){r.r=String(m.r);var re=row.querySelector('.r');re.value=r.r;syncRow(i);afterEdit();}}
     });
-    rows.addEventListener('focusin',function(e){var el=e.target;if(el.classList&&(el.classList.contains('q')||el.classList.contains('r'))){setTimeout(function(){try{el.select();}catch(x){}},0);}});
+    rows.addEventListener('focusin',function(e){var el=e.target;if(el.classList&&(el.classList.contains('q')||el.classList.contains('r'))){el._ty=false;el.value='';}   /* خانہ خالی: جو لکھیں گے وہی بنے گا (1 کے ساتھ 15 / 10 نہیں بنے گا)؛ کچھ نہ لکھا تو پرانی قیمت واپس */});
     rows.addEventListener('keydown',function(e){
       if(e.key!=='Enter')return;var el=e.target,row=el.closest('.sb-r');if(!row)return;e.preventDefault();hideDd();
-      var nx=el.classList.contains('n')?'.q':el.classList.contains('q')?'.r':null;
+      var ri=D.draft.rows[+row.dataset.i];
+      var nx=el.classList.contains('n')?'.q':(el.classList.contains('q')&&ri&&!(num(ri.r)>0))?'.r':(el.classList.contains('r')&&ri&&!String(ri.q||'').trim())?'.q':null;   /* MCS2811SA704: قیمت اور تعداد دونوں لکھی جائیں تو اگلی رو */
       if(nx){row.querySelector(nx).focus();return;}
-      var nr=row.nextElementSibling;if(nr)nr.querySelector('.n').focus();else el.blur();
+      var nr=row.nextElementSibling;if(nr){var ni=nr.querySelector('.n');ni.focus();try{var sc=$('sbSc'),rt=ni.getBoundingClientRect(),sr=sc.getBoundingClientRect();if(rt.bottom>sr.bottom-160||rt.top<sr.top+10)sc.scrollTop+=rt.top-sr.top-sr.height/4;$('sbPage').scrollTop=0;}catch(x){}}else el.blur();   /* آئٹم مکمل ہوتے ہی کرسر نئی لائن کے آئٹم نام میں */
     });
     rows.addEventListener('click',function(e){
       var x=e.target.closest('.x');if(!x)return;var row=x.closest('.sb-r'),i=+row.dataset.i;
@@ -33595,6 +33628,9 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
     $('sbCm').addEventListener('input',function(){var v=this.value.replace(/[۰-۹]/g,function(c){return c.charCodeAt(0)-0x06F0;}).replace(/[٠-٩]/g,function(c){return c.charCodeAt(0)-0x0660;}).replace(/[^0-9+\-\s]/g,'');if(v!==this.value)this.value=v;D.draft.cm=v;later();});
     $('sbShopIn').addEventListener('input',function(){D.shop=this.value.trim();later();});
     $('sbAdrIn').addEventListener('input',function(){D.adr=this.value.trim();later();});
+    [].forEach.call(document.querySelectorAll('#sbLangT button'),function(b){b.addEventListener('click',function(){
+      var l=b.getAttribute('data-l')==='ur'?'ur':'en';if(l===lang)return;flush();lang=l;try{localStorage.setItem(P+uidv+'_lang',lang);}catch(e){}paintAll();});});
+    try{var mo=new MutationObserver(function(){document.documentElement.classList.toggle('sb-open',$('sbModal').classList.contains('active'));});mo.observe($('sbModal'),{attributes:true,attributeFilter:['class']});}catch(e){}
     $('sbSave').addEventListener('click',save);
     $('sbImg').addEventListener('click',function(){showPoster(snapBill());});
     $('sbAio').addEventListener('click',openAio);
@@ -33648,13 +33684,11 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   /* settings (gear): language, business, clear unfinished bill */
   function openSettings(){
     var h='<h3 class="sb-ti2">⚙ '+esc(t('set'))+'</h3>'
-      +'<div class="sb-sr"><span>'+esc(t('lang'))+'</span><div class="sb-lang"><button type="button" data-lg="en"'+(lang==='en'?' class="on"':'')+'>English</button><button type="button" data-lg="ur"'+(lang==='ur'?' class="on"':'')+'>اردو</button></div></div>';
+      ;
     if(bizs.length>1)h+='<div class="sb-sr"><span>'+esc(t('biz'))+'</span><select id="sbBizSel">'+bizs.map(function(b,i){return '<option value="'+i+'"'+(i===bizI?' selected':'')+'>'+esc(lang==='ur'?(b.ur||b.en):(b.en||b.ur))+'</option>';}).join('')+'</select></div>';
     h+='<button type="button" class="sb-clr" id="sbClr">'+esc(t('clear'))+'</button><div class="sb-stx" id="sbStx"></div>';
     dialog(h,[{t:t('close')}],function(ov){
       persist();
-      [].forEach.call(ov.querySelectorAll('[data-lg]'),function(b){b.addEventListener('click',function(){
-        var l=b.getAttribute('data-lg')==='ur'?'ur':'en';if(l===lang)return;flush();lang=l;try{localStorage.setItem(P+uidv+'_lang',lang);}catch(e){}paintAll();openSettings();});});
       var s=ov.querySelector('#sbBizSel');if(s)s.addEventListener('change',function(){flush();try{localStorage.setItem(P+uidv+'_biz',bizs[+this.value].id);}catch(e){}loadScope();paintAll();closeOv();});
       ov.querySelector('#sbClr').addEventListener('click',function(){dialog('<p>'+esc(t('cc'))+'</p>',[{t:t('cancel')},{t:t('yes'),c:'dn',f:function(){D.draft=freshDraft();padRows();persist();paintAll();}}]);});
     });
@@ -33664,10 +33698,11 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   function openAio(){
     var L=[1,2,3,4,5,6].map(function(n){return '<li><i>✓</i><span>'+esc(t('f'+n))+'</span></li>';}).join('');
     dialog('<div class="aio" dir="'+(lang==='ur'?'rtl':'ltr')+'"><button type="button" class="aio-x" aria-label="'+esc(t('close'))+'">✕</button>'
-      +'<div class="aio-cr"><svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3a1 1 0 01-1 1H6a1 1 0 01-1-1v-1h14v1z"/></svg></div>'
+      +'<div class="aio-cr"><img src="data:image/webp;base64,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" alt="AIO POS" onerror="aioFb(this)"><svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3a1 1 0 01-1 1H6a1 1 0 01-1-1v-1h14v1z"/></svg></div>'
       +'<div class="aio-nm">AIO POS</div><div class="aio-sb">'+esc(t('aioH'))+'</div>'
+      +'<div class="aio-av"><svg class="aio-pl" viewBox="0 0 24 24" aria-hidden="true"><path fill="#2196F3" d="M3.6 2.2c-.4.2-.6.6-.6 1.1v17.4c0 .5.2.9.6 1.1L13.4 12 3.6 2.2z"/><path fill="#34A853" d="M16.7 8.7 5.2 2.2c-.6-.3-1.1-.3-1.6 0L13.4 12l3.3-3.3z"/><path fill="#EA4335" d="M13.4 12 3.6 21.8c.5.3 1 .3 1.6 0l11.5-6.5-3.3-3.3z"/><path fill="#FBBC04" d="M16.7 8.7 13.4 12l3.3 3.3 4-2.3c.9-.5.9-1.4 0-2l-4-2.3z"/></svg><span>'+esc(t('aioAv'))+'</span></div>'
       +'<ul class="aio-ls">'+L+'</ul>'
-      +'<a class="aio-go" href="'+AIO_URL+'" target="_blank" rel="noopener">'+esc(t('aioB'))+'</a></div>',[],function(ov){
+      +'<a class="aio-go" href="'+AIO_URL+'" target="_blank" rel="noopener"><svg class="aio-pl" viewBox="0 0 24 24" aria-hidden="true"><path fill="#2196F3" d="M3.6 2.2c-.4.2-.6.6-.6 1.1v17.4c0 .5.2.9.6 1.1L13.4 12 3.6 2.2z"/><path fill="#34A853" d="M16.7 8.7 5.2 2.2c-.6-.3-1.1-.3-1.6 0L13.4 12l3.3-3.3z"/><path fill="#EA4335" d="M13.4 12 3.6 21.8c.5.3 1 .3 1.6 0l11.5-6.5-3.3-3.3z"/><path fill="#FBBC04" d="M16.7 8.7 13.4 12l3.3 3.3 4-2.3c.9-.5.9-1.4 0-2l-4-2.3z"/></svg><span>'+esc(t('aioB'))+'</span></a></div>',[],function(ov){
       ov.querySelector('.aio-x').addEventListener('click',closeOv);
     },'flat');
   }
@@ -33718,7 +33753,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
         b.items.forEach(function(it,i){var ry=tTop+tH+i*rowH;x.fillStyle=i%2?'#f4f8ea':'#fbfcf4';x.fillRect(24,ry,W-48,rowH);
           var by=ry+(u?33:26);
           tx(money(it.a),74,by,'center','bold 16px '+FA,'#13261a',96);tx(money(it.r),169,by,'center','16px '+FA,'#13261a',86);tx(String(it.q),244,by,'center','16px '+FA,'#13261a',56);
-          var iu=isU(it.n);tx(it.n,iu?504:284,by,iu?'right':'left','17px '+F,'#13261a',216);tx(String(i+1),545,by,'center','bold 16px '+FA,'#13261a');
+          tx(it.n,506,by,'right','17px '+F,'#13261a',222);tx(String(i+1),545,by,'center','bold 16px '+FA,'#13261a');
           x.strokeStyle='#dfe6cf';x.lineWidth=1;x.beginPath();x.moveTo(24,ry);x.lineTo(W-24,ry);x.stroke();});
         x.strokeStyle='#e0e7d2';x.lineWidth=1;for(var k=1;k<bx.length-1;k++){x.beginPath();x.moveTo(bx[k],tTop+tH);x.lineTo(bx[k],tTop+tB);x.stroke();}
         x.restore();
