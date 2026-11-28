@@ -9,7 +9,7 @@
 /* Same version string as index.html's APP_VERSION and the release zip
    filename (MCS+DD+MM+DAYLETTERS+3-digit serial, e.g. MCS0311TU125) — keep these three in sync
    on every release so it's always clear which files go together. */
-const CACHE_NAME = 'mcs-cache-MCS2811SA705';
+const CACHE_NAME = 'mcs-cache-MCS2811SA706';
 /* MCS0311TU125: فونٹ (10-13MB) الگ مستقل کیش میں — ہر ورژن پر مٹتے نہیں تھے تو ہر اپڈیٹ کے بعد دوبارہ
    ڈاؤن لوڈ ہوتے اور تب تک نوری نستعلیق/کشیدہ نظر نہیں آتا تھا۔ */
 const FONT_CACHE = 'mcs-fonts-v1';
@@ -55,7 +55,9 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) =>
         freshIndex(cache).then(() =>
-          cache.addAll(APP_SHELL.filter((u) => u !== './' && u !== './index.html').map((u) => new Request(u, { cache: 'reload' })))
+          /* MCS2811SA706: آئیکن وغیرہ فون میں پہلے سے ہوں تو وہی کاپی — دوبارہ ڈاؤن لوڈ نہیں */
+          Promise.all(APP_SHELL.filter((u) => u !== './' && u !== './index.html').map((u) =>
+            (/\.png$/.test(u) ? caches.match(u) : Promise.resolve(null)).then((old) => old ? cache.put(u, old) : cache.add(new Request(u, { cache: 'reload' })))))
         )
       )
       .then(() => self.skipWaiting())
