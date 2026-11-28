@@ -4893,10 +4893,11 @@ details.clsb-cat{margin:5px 0 5px 4px;border:1px solid #cbd5e1;border-radius:10p
    home page badge, so the on-screen text always matches the zip/GitHub
    file that produced it. Update this to match the zip name on every release. */
 try{ if(/^android-app:\/\//.test(document.referrer)) sessionStorage.setItem('mcsTwaRef', '1'); }catch(e){}   /* MCS2211SU612: Play Store سے کھلنے کا نشان — ایپ کے اندر ری لوڈ ہو تو referrer مٹ جاتا ہے */
-const APP_VERSION = "MCS2811SA697";
+const APP_VERSION = "MCS2811SA698";
 /* ہر ریلیز پر ایک چھوٹی لائن — اپڈیٹ مکمل والے کارڈ میں دکھتی ہے */
 /* ⚠️ نوٹ اردو میں لکھنا لازمی ہے (مالک کا حکم)۔ ہر نئی ریلیز پر یہاں اسی ورژن کے نام سے نئی سطر لکھنا لازمی ہے — جو کام ہوا وہی لکھیں، پرانی سطر دوبارہ نہ دکھے */
 const UPDATE_NOTES = {
+  "MCS2811SA698":"🧾 Bill Maker (Free) نئے ڈیزائن میں: ہرا ہیڈر، دکان کا بینر، رقم / ریٹ / تعداد / آئٹم / نمبر والا جدول اور کل رقم کی پٹی • بل کے نیچے والا پری ویو ختم • «واٹس ایپ پوسٹر» اور «بل محفوظ کریں» بٹن • پرنٹ کی جگہ «AIO POS» کا بٹن جو AIO کا خوبصورت پوسٹر کھولتا ہے • آج کے بل الگ بٹن میں • زبان اور کاروبار کی ترتیب ⚙ میں",
   "MCS2811SA697":"📋 Business Tools میں نیا «Budget Maker» (ماہانہ آمدن / خرچ، جزوی وصولی اور ادائیگی، اصل کیش بیلنس، ریکرنگ اگلے مہینے میں کاپی، بجٹ ہسٹری) • CV Maker اور Passport Photo Maker کارڈ ہٹا دیے گئے • Simple Bill: بل اور اندراج ہمیشہ دائیں سے بائیں (سیریل نمبر دائیں)، نیچے والا بڑا پری ویو ختم، «پوسٹر» بٹن (واٹس ایپ شیئر)، پرنٹ کی جگہ AIO POS کی رہنمائی اور پلے سٹور لنک، بل صرف آج کے لیے محفوظ کی وضاحت",
   "MCS2811SA696":"🧾 پرانا «Bill Maker» ہٹا دیا گیا — اب Business Tools میں صرف نیا «Simple Bill (Free)» ہے",
   "MCS2811SA695":"🧾 Business Tools میں نیا «Simple Bill (Free)» — کاغذی طرز کا سادہ بل: خودکار نئی لائنیں (Add Item بٹن نہیں)، پرانے آئٹم اور ریٹ کی تجویز، خودکار ڈرافٹ جو کبھی ضائع نہیں ہوتا، صرف آج کے بل، انگلش / اردو (دائیں سے بائیں)، پرنٹ اور تصویر؛ ہر اکاؤنٹ کا اپنا ڈیٹا اسی فون میں۔ پرانا Bill Maker جوں کا توں",
@@ -33259,140 +33260,173 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
 </script>
 
 
-<!-- MCS2811SA695: Business Tools → Simple Bill (Free) — paper-style bill, auto rows, auto draft, today's bills only. Separate from the existing Bill Maker (#bmModal); own keys mcsSB_v1_* -->
+<!-- MCS2811SA698: Business Tools → Bill Maker (Free) — redesigned to the owner's picture (green header, shop banner, Amount|Rate|Qty|Item|S.No table, Grand Total pill). No preview under the bill; poster + WhatsApp share; AIO POS button → AIO poster. Own keys mcsSB_v1_* (unchanged, old drafts and bills keep working) -->
 <style>
 #sbModal.modal-overlay{padding:0;align-items:stretch;justify-content:stretch}
-#sbModal .sb-page{width:100%;max-width:560px;margin:0 auto;height:100%;background:#f3f8f4;display:flex;flex-direction:column;color:#14301f;position:relative;overflow:hidden;font-family:Arial,Tahoma,sans-serif;direction:ltr}
-#sbModal .sb-page[dir=rtl]{direction:rtl}
+#sbModal .sb-page{width:100%;max-width:560px;margin:0 auto;height:100%;background:#f4f7e9;display:flex;flex-direction:column;color:#12301a;position:relative;overflow:hidden;font-family:'Segoe UI',Roboto,Arial,sans-serif;direction:ltr}
 #sbModal .sb-page.ur{font-family:'Jameel Noori Nastaleeq Regular','Noto Nastaliq Urdu','Noto Naskh Arabic',Tahoma,serif}
-#sbModal .sb-hd{background:#15803d;color:#fff;display:flex;align-items:center;gap:8px;padding:8px 150px 8px 8px;flex:none;direction:ltr}
-#sbModal .sb-back{width:30px;height:30px;border-radius:50%;border:1.5px solid #fff;background:transparent;color:#fff;font-size:16px;line-height:1;padding:0;cursor:pointer;flex:none}
-#sbModal .sb-ti{flex:1;min-width:0;line-height:1.2;text-align:left;font-family:Arial,sans-serif}
-#sbModal .sb-ti b{display:block;font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#sbModal .sb-ti small{display:block;font-size:11px;opacity:.9}
-#sbModal .sb-sc{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 8px 100px}
-#sbModal .sb-r:not(.f) input.q::placeholder{color:transparent}
-#sbModal .sb-in{zoom:var(--ui-zoom,1);display:flex;flex-direction:column;gap:8px}
-#sbModal .sb-bar{display:flex;align-items:center;justify-content:space-between;gap:8px}
-#sbModal .sb-lang{display:inline-flex;border:1px solid #15803d;border-radius:8px;overflow:hidden}
-#sbModal .sb-lang button{border:0;background:#fff;color:#15803d;font-size:12.5px;padding:3px 10px;cursor:pointer;font-weight:700;font-family:inherit;line-height:1.5}
-#sbModal .sb-lang button.on{background:#15803d;color:#fff}
-#sbModal .sb-st{font-size:12px;color:#15803d;font-weight:700;display:inline-flex;align-items:center;gap:4px}
-#sbModal .sb-st.bad{color:#b91c1c}
-#sbModal .sb-st:before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
-#sbModal .sb-biz{width:100%;box-sizing:border-box;border:1px solid #bbd7c4;border-radius:8px;padding:5px 8px;font-size:13px;background:#fff;color:#14301f;font-family:inherit}
-#sbModal .sb-paper{direction:rtl;background:#fff;border:1px solid #cfe3d5;border-radius:6px;box-shadow:0 1px 4px rgba(20,48,31,.08);padding:10px 10px 8px}
-#sbModal .sb-shop{text-align:center;font-size:20px;font-weight:800;color:#15803d;line-height:1.5;word-break:break-word}
-#sbModal .sb-shopin{width:100%;box-sizing:border-box;border:0;border-bottom:1px dashed #15803d;text-align:center;font-size:18px;font-weight:700;color:#15803d;background:transparent;padding:4px;font-family:inherit}
-#sbModal .sb-meta{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:#4b5f52;border-top:1px solid #cfe3d5;border-bottom:1px solid #cfe3d5;margin:6px 0;padding:4px 0;flex-wrap:wrap}
-#sbModal .sb-meta b{color:#14301f}
-#sbModal .sb-cu{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-#sbModal .sb-cu label{display:block;min-width:0}
-#sbModal .sb-cu span{display:block;font-size:11.5px;color:#4b5f52;margin-bottom:1px}
-#sbModal .sb-cu input{text-align:right}
-#sbModal .sb-cu input,#sbModal .sb-r input{width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #b7cfbf;background:transparent;font-size:14px;color:#14301f;padding:5px 3px;min-width:0;font-family:inherit;border-radius:0;outline:0}
-#sbModal .sb-cu input:focus,#sbModal .sb-r input:focus,#sbModal .sb-shopin:focus{border-bottom-color:#15803d;background:#f0fdf4}
-#sbModal .sb-th,#sbModal .sb-r{display:grid;grid-template-columns:24px minmax(0,1fr) 46px 62px 74px 26px;align-items:center;column-gap:2px}
-#sbModal .sb-th{font-size:11.5px;color:#fff;background:#15803d;font-weight:700;text-align:center;padding:4px 2px;border-radius:3px 3px 0 0}
-#sbModal .sb-th div:nth-child(2){text-align:start;padding-inline-start:4px}
-#sbModal .sb-r .s{text-align:center;font-size:11.5px;color:#6b7f72;font-family:Arial,sans-serif}
-#sbModal .sb-r:not(.f) .s{visibility:hidden}
-#sbModal .sb-r{border-bottom:1px solid #dcebe1;min-height:36px}
-#sbModal .sb-r input.n{text-align:start}
-#sbModal .sb-r input.q,#sbModal .sb-r input.r{text-align:center;direction:ltr;padding:5px 1px}
-#sbModal .sb-r .a{text-align:center;font-size:13px;font-weight:700;direction:ltr;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#sbModal .sb-r .x{border:0;background:transparent;color:#b91c1c;font-size:17px;line-height:1;padding:0;cursor:pointer;width:26px;height:30px;visibility:hidden}
-#sbModal .sb-r.f .x{visibility:visible}
-#sbModal .sb-gt{display:flex;justify-content:space-between;align-items:center;border-top:2px solid #15803d;margin-top:2px;padding:7px 4px 2px;font-size:16px;font-weight:800}
-#sbModal .sb-gt b{direction:ltr;color:#15803d;font-family:Arial,sans-serif}
-#sbModal .sb-act{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:6px}
-#sbModal .sb-act button{height:40px;border-radius:8px;border:1.5px solid #15803d;background:#fff;color:#15803d;font-size:13px;font-weight:800;cursor:pointer;touch-action:manipulation;font-family:inherit;line-height:1.2;padding:0 4px}
-#sbModal .sb-act button.pri{background:#15803d;color:#fff}
-#sbModal .sb-act button:disabled{opacity:.6}
-#sbModal .sb-lnk{text-align:center}
-#sbModal .sb-lnk button{border:0;background:transparent;color:#6b7f72;font-size:12px;text-decoration:underline;cursor:pointer;font-family:inherit}
-#sbModal h3.sb-h{margin:6px 2px 0;font-size:13.5px;color:#15803d;font-weight:800;border-bottom:1px solid #cfe3d5;padding-bottom:3px}
+#sbModal .sb-hd{flex:none;background:linear-gradient(180deg,#2f9d38 0%,#15701c 100%);color:#fff;padding:6px 10px 10px;border-radius:0 0 24px 24px;box-shadow:0 3px 8px rgba(8,60,14,.35);direction:ltr}
+#sbModal .sb-h1{height:36px;display:flex;align-items:center}   /* دائیں طرف اوپر کا زوم (− % +) بٹن آتا ہے، اس لیے پہلی پٹی میں صرف بیک */
+#sbModal .sb-back{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,.9);background:rgba(255,255,255,.12);color:#fff;font-size:17px;line-height:1;padding:0;cursor:pointer}
+#sbModal .sb-h2{display:flex;align-items:center;gap:8px}
+#sbModal .sb-lg{width:46px;height:46px;flex:none;display:block}
+#sbModal .sb-ti{flex:1;min-width:0;text-align:center;line-height:1.2;font-family:'Segoe UI',Roboto,Arial,sans-serif}
+#sbModal .sb-ti b{display:block;font-size:22px;font-weight:800;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.25);white-space:nowrap}
+#sbModal .sb-ti small{display:block;font-size:15px;font-weight:600;margin-top:1px}
+#sbModal .sb-page.ur .sb-ti small{font-family:'Jameel Noori Nastaleeq Regular','Noto Nastaliq Urdu','Noto Naskh Arabic',Tahoma,serif}
+#sbModal .sb-gear{width:40px;height:40px;flex:none;border:0;background:transparent;color:#fff;padding:4px;cursor:pointer}
+#sbModal .sb-gear svg{width:100%;height:100%;fill:currentColor;display:block}
+#sbModal .sb-sc{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 10px 100px}
+#sbModal .sb-in{zoom:var(--ui-zoom,1);display:flex;flex-direction:column;gap:10px}
+#sbModal .sb-ban{display:flex;align-items:center;gap:12px;background:linear-gradient(100deg,#e3f4d0 0%,#fbfaf0 24%,#fbfaf0 70%,#d3efbc 100%);border:1.5px solid #cfe5bd;border-radius:20px;padding:8px 14px;box-shadow:0 2px 5px rgba(20,80,25,.12);min-height:64px}
+#sbModal .sb-ban .ic{width:50px;height:50px;flex:none;display:block}
+#sbModal .sb-ban .dv{width:1.5px;align-self:stretch;background:#c9d6bd;margin:4px 0;flex:none}
+#sbModal .sb-bt{flex:1;min-width:0}
+#sbModal .sb-shop{font-size:22px;font-weight:800;color:#0e1c10;line-height:1.35;word-break:break-word}
+#sbModal .sb-adr{font-size:15px;color:#2a3a2c;line-height:1.5;word-break:break-word}
+#sbModal .sb-shopin,#sbModal .sb-adrin{width:100%;box-sizing:border-box;border:0;border-bottom:1.5px dashed #2a8a32;background:transparent;font-family:inherit;color:#0e1c10;padding:3px 2px;outline:0;border-radius:0}
+#sbModal .sb-shopin{font-size:19px;font-weight:800}
+#sbModal .sb-adrin{font-size:14.5px;margin-top:3px}
+#sbModal .sb-cu{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#sbModal .sb-pill{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #d3d8cc;border-radius:22px;padding:0 10px;height:46px;box-shadow:0 2px 4px rgba(0,0,0,.08);min-width:0}
+#sbModal .sb-pill svg{width:22px;height:22px;flex:none;fill:#1d7a24}
+#sbModal .sb-pill input{flex:1;min-width:0;width:100%;border:0;outline:0;background:transparent;font-size:12px;color:#14301f;font-family:inherit;padding:0;border-radius:0}
+#sbModal .sb-pill input::placeholder{color:#7a8478;opacity:1}
+#sbModal .sb-tb{border-radius:14px;overflow:hidden;border:1px solid #cfdcc3;box-shadow:0 2px 5px rgba(20,80,25,.12);background:#fbfcf4}
+#sbModal .sb-th,#sbModal .sb-r{display:grid;grid-template-columns:30px 54px 56px 44px minmax(0,1fr) 40px;direction:ltr;align-items:stretch}
+#sbModal .sb-th{background:linear-gradient(180deg,#2c9535,#17751e);color:#fff;font-weight:700;font-size:13.5px;text-align:center;height:40px}
+#sbModal .sb-th>div{border-left:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;line-height:1.1;padding:0 2px}
+#sbModal .sb-th>div:first-child{border-left:0;grid-column:1/3}
+#sbModal .sb-r{min-height:42px;border-top:1px solid #dfe6cf;background:#fbfcf4}
+#sbModal .sb-r:nth-child(even){background:#f4f8ea}
+#sbModal .sb-r>*{min-width:0;border-left:1px solid #e0e7d2}
+#sbModal .sb-r>*:first-child{border-left:0}
+#sbModal .sb-r .x{border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation}
+#sbModal .sb-r .x i{width:22px;height:22px;border-radius:50%;background:#e02424;color:#fff;font-style:normal;font-size:15px;font-weight:800;line-height:22px;text-align:center;display:block;font-family:Arial,sans-serif}
+#sbModal .sb-r .a{display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:700;color:#13261a;direction:ltr;font-family:Arial,sans-serif;overflow:hidden;white-space:nowrap}
+#sbModal .sb-r .a.z{color:#8a928a;font-weight:500}
+#sbModal .sb-r input.q,#sbModal .sb-r input.r{width:100%;box-sizing:border-box;border:0;border-radius:0;background:transparent;text-align:center;direction:ltr;font-size:13.5px;font-weight:700;color:#13261a;padding:0 1px;height:100%;min-height:40px;outline:0;font-family:Arial,sans-serif}
+#sbModal .sb-r input.q::placeholder,#sbModal .sb-r input.r::placeholder{color:#13261a;opacity:1;font-weight:700}
+#sbModal .sb-r input.q:focus,#sbModal .sb-r input.r:focus{background:#eaf8dc}
+#sbModal .sb-r .nw{position:relative;display:flex;align-items:center;padding:5px}
+#sbModal .sb-r input.n{width:100%;box-sizing:border-box;height:32px;border:1.5px solid #cfd6c8;border-radius:16px;background:#fff;padding:0 28px 0 10px;font-size:13.5px;font-weight:700;color:#13261a;font-family:inherit;outline:0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+#sbModal .sb-r input.n:focus{border-color:#1d7a24}
+#sbModal .sb-r input.n::placeholder{color:#8a928a;font-weight:500}
+#sbModal .sb-r .nw svg{position:absolute;right:12px;top:50%;margin-top:-8px;width:16px;height:16px;stroke:#1d7a24;fill:none;stroke-width:2.4;pointer-events:none}
+#sbModal .sb-r .s{display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#13261a;font-family:Arial,sans-serif}
+#sbModal .sb-gt{display:flex;align-items:center;justify-content:space-between;gap:8px;background:linear-gradient(180deg,#e3f8cf,#c9ecae);border:1.5px solid #b6dd9a;border-radius:22px;padding:8px 16px 8px 8px;box-shadow:0 2px 5px rgba(20,80,25,.15)}
+#sbModal .sb-gt b{background:linear-gradient(180deg,#228a2b,#136a1a);color:#fff;border-radius:18px;padding:8px 18px;font-size:21px;font-weight:800;font-family:Arial,sans-serif;direction:ltr;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+#sbModal .sb-gt span{color:#136a1a;font-size:21px;font-weight:800;text-align:right}
+#sbModal .sb-act{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#sbModal .sb-btn{height:56px;border-radius:18px;border:0;background:linear-gradient(180deg,#2b9a34,#126619);color:#fff;font-size:16.5px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 3px 6px rgba(10,70,15,.35),inset 0 1px 0 rgba(255,255,255,.25);font-family:inherit;padding:0 8px;line-height:1.25;touch-action:manipulation}
+#sbModal .sb-btn svg{width:26px;height:26px;fill:#fff;flex:none}
+#sbModal .sb-btn:disabled{opacity:.6}
+#sbModal .sb-aio{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;border:1.5px solid #e7c768;background:linear-gradient(180deg,#fffbe8,#fdf1c4);border-radius:18px;padding:8px 12px;cursor:pointer;font-family:inherit;color:#14301f;text-align:start;box-shadow:0 2px 5px rgba(120,90,10,.18);touch-action:manipulation}
+#sbModal .sb-aio .cr{width:42px;height:42px;border-radius:50%;background:linear-gradient(180deg,#ffd75a,#f0a817);display:flex;align-items:center;justify-content:center;flex:none}
+#sbModal .sb-aio .cr svg{width:24px;height:24px;fill:#fff}
+#sbModal .sb-aio .tx{flex:1;min-width:0;line-height:1.35}
+#sbModal .sb-aio .tx b{display:block;font-size:17px;color:#0f4d16;font-weight:800}
+#sbModal .sb-aio .tx small{display:block;font-size:13px;color:#5b5a3a;font-weight:600}
+#sbModal .sb-aio .ch{font-size:26px;line-height:1;color:#0f4d16;flex:none}
+#sbModal .sb-td{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;background:linear-gradient(180deg,#e9f9d8,#d3f0bb);border:1.5px solid #bfe0a5;border-radius:22px;padding:0 16px;height:58px;font-family:inherit;color:#136a1a;font-size:19px;font-weight:800;cursor:pointer;text-align:start;box-shadow:0 2px 5px rgba(20,80,25,.12);touch-action:manipulation}
+#sbModal .sb-td svg{width:30px;height:30px;fill:#1b7a22;flex:none}
+#sbModal .sb-td .lb{flex:1}
+#sbModal .sb-td .cn{background:#1b7a22;color:#fff;border-radius:12px;min-width:24px;height:24px;font-size:13px;line-height:24px;text-align:center;padding:0 6px;font-family:Arial,sans-serif}
+#sbModal .sb-td .ch{font-size:26px;line-height:1;flex:none}
 #sbModal .sb-ls{display:flex;flex-direction:column;gap:5px}
-#sbModal .sb-ls .none{font-size:12.5px;color:#6b7f72;padding:6px 2px}
-#sbModal .sb-b{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid #cfe3d5;border-radius:8px;padding:7px 9px;cursor:pointer;width:100%;box-sizing:border-box;font-family:inherit;color:#14301f;text-align:start}
+#sbModal .sb-ls .none{font-size:13px;color:#6b7f72;padding:6px 2px}
+#sbModal .sb-b{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid #cfe3d5;border-radius:10px;padding:7px 9px;cursor:pointer;width:100%;box-sizing:border-box;font-family:inherit;color:#14301f;text-align:start}
 #sbModal .sb-b .l{min-width:0;flex:1;font-size:13px;line-height:1.5}
 #sbModal .sb-b .l b{font-family:Arial,sans-serif;font-size:12.5px;color:#15803d;display:block}
 #sbModal .sb-b .l span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #sbModal .sb-b .rr{flex:none;text-align:end;font-size:12.5px;direction:ltr;font-family:Arial,sans-serif}
 #sbModal .sb-b .rr b{display:block;font-size:13.5px}
 #sbModal .sb-b .rr small{color:#6b7f72}
-#sbModal .sb-pro{border:1px dashed #86c79b;border-radius:10px;background:#fff;padding:9px 10px;text-align:center;margin-top:4px}
-#sbModal .sb-pro b{display:block;font-size:13.5px;color:#15803d;line-height:1.6}
-#sbModal .sb-pro p{margin:2px 0 7px;font-size:12px;color:#4b5f52;line-height:1.7}
-#sbModal .sb-pro a.sb-play{padding:7px 14px;font-size:12.5px}
-#sbModal .sb-pro button{border:1.5px solid #15803d;background:#fff;color:#15803d;border-radius:8px;padding:5px 14px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit}
 #sbModal .sb-note{font-size:11.5px;color:#92400e;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;padding:5px 8px;line-height:1.7}
-#sbModal a.sb-play{display:inline-block;border:1.5px solid #15803d;background:#15803d;color:#fff;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:800;text-decoration:none;font-family:inherit;line-height:1.5}
-#sbModal .sb-pimg{width:100%;height:auto;display:block;border:1px solid #cfe3d5;border-radius:6px}
+#sbModal .sb-ti2{margin:0;font-size:16px;color:#15803d;font-weight:800}
+#sbModal .sb-sr{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:700}
+#sbModal .sb-sr select{flex:1;min-width:0;max-width:200px;border:1px solid #bbd7c4;border-radius:8px;padding:5px 6px;font-size:13.5px;background:#fff;color:#14301f;font-family:inherit}
+#sbModal .sb-lang{display:inline-flex;border:1px solid #15803d;border-radius:8px;overflow:hidden}
+#sbModal .sb-lang button{border:0;background:#fff;color:#15803d;font-size:13px;padding:4px 12px;cursor:pointer;font-weight:700;font-family:inherit;line-height:1.5}
+#sbModal .sb-lang button.on{background:#15803d;color:#fff}
+#sbModal .sb-clr{width:100%;height:38px;border-radius:8px;border:1.5px solid #dc2626;background:#fff;color:#dc2626;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit}
+#sbModal .sb-stx{font-size:12px;color:#15803d;font-weight:700;text-align:center}
+#sbModal .sb-stx.bad{color:#b91c1c}
+#sbModal .sb-pimg{width:100%;height:auto;display:block;border:1px solid #cfe3d5;border-radius:8px}
 #sbModal .sb-dd{position:absolute;z-index:20;background:#fff;border:1px solid #86c79b;border-radius:8px;box-shadow:0 6px 16px rgba(20,48,31,.2);max-height:210px;overflow-y:auto;display:none}
 #sbModal .sb-dd.on{display:block}
 #sbModal .sb-dd button{display:flex;justify-content:space-between;gap:10px;width:100%;border:0;border-bottom:1px solid #e5efe8;background:#fff;padding:8px 10px;font-size:13.5px;color:#14301f;cursor:pointer;font-family:inherit;text-align:start}
 #sbModal .sb-dd button small{color:#15803d;font-weight:700;direction:ltr;font-family:Arial,sans-serif;flex:none}
 #sbModal .sb-ov{position:absolute;inset:0;background:rgba(15,40,25,.55);display:none;align-items:center;justify-content:center;z-index:30;padding:10px}
 #sbModal .sb-ov.on{display:flex}
-#sbModal .sb-ovc{background:#fff;border-radius:12px;width:100%;max-width:400px;max-height:94%;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}
+#sbModal .sb-ovc{background:#fff;border-radius:14px;width:100%;max-width:400px;max-height:94%;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;box-sizing:border-box}
+#sbModal .sb-page.ur .sb-ovc{direction:rtl}
+#sbModal .sb-ovc.flat{background:transparent;padding:0;overflow:visible;max-width:370px}
 #sbModal .sb-ovc p{margin:0;font-size:14px}
 #sbModal .sb-ovb{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
-#sbModal .sb-ovb button{height:38px;border-radius:8px;border:1.5px solid #15803d;background:#fff;color:#15803d;font-size:13.5px;font-weight:800;padding:0 14px;cursor:pointer;font-family:inherit}
+#sbModal .sb-ovb button{height:40px;border-radius:10px;border:1.5px solid #15803d;background:#fff;color:#15803d;font-size:13.5px;font-weight:800;padding:0 14px;cursor:pointer;font-family:inherit}
 #sbModal .sb-ovb button.pri{background:#15803d;color:#fff}
 #sbModal .sb-ovb button.dn{border-color:#dc2626;color:#dc2626}
-.sb-rc{background:#fff;border:1px solid #cfe3d5;border-radius:6px;padding:10px;color:#111}
-.rc{font-family:Arial,Tahoma,sans-serif;color:#111;font-size:13px}
-.rc.ur{font-family:'Jameel Noori Nastaleeq Regular','Noto Nastaliq Urdu','Noto Naskh Arabic',Tahoma,serif}
-.rc .s{text-align:center;font-size:19px;font-weight:800;line-height:1.5;word-break:break-word}
-.rc .m{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;border-top:1px solid #999;border-bottom:1px solid #999;margin:6px 0;padding:4px 0;font-size:12px}
-.rc .c{font-size:12.5px;margin-bottom:6px;line-height:1.7}
-.rc table{width:100%;border-collapse:collapse;font-size:12.5px}
-.rc th{border-bottom:1px solid #111;padding:3px 3px;font-weight:700;text-align:center}
-.rc td{border-bottom:1px solid #ddd;padding:3px 3px;text-align:center;vertical-align:top}
-.rc th:first-child,.rc td:first-child{text-align:center;width:9%}
-.rc th:nth-child(2),.rc td:nth-child(2){text-align:start;width:37%;word-break:break-word}
-.rc td.n{direction:ltr;font-family:Arial,sans-serif}
-.rc .g{display:flex;justify-content:space-between;border-top:2px solid #111;margin-top:4px;padding-top:5px;font-weight:800;font-size:15px}
-.rc .g b{direction:ltr;font-family:Arial,sans-serif}
-.rc .f{text-align:center;font-size:11.5px;color:#555;margin-top:8px}
+#sbModal .aio{position:relative;border-radius:26px;background:radial-gradient(circle at 85% 0%,#33b13e 0,#15701c 48%,#0a4511 100%);color:#fff;padding:22px 18px 18px;box-shadow:0 12px 32px rgba(0,0,0,.45);border:2.5px solid #f2c94c;box-sizing:border-box;text-align:center}
+#sbModal .aio-x{position:absolute;top:8px;left:10px;width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.8);background:rgba(0,0,0,.18);color:#fff;font-size:15px;line-height:1;padding:0;cursor:pointer}
+#sbModal .aio-cr{width:62px;height:62px;border-radius:50%;margin:0 auto 6px;background:linear-gradient(180deg,#ffe07a,#f0a817);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+#sbModal .aio-cr svg{width:36px;height:36px;fill:#fff}
+#sbModal .aio-nm{font-size:30px;font-weight:900;letter-spacing:1px;font-family:Arial,sans-serif;color:#ffe07a;text-shadow:0 2px 4px rgba(0,0,0,.35);line-height:1.3}
+#sbModal .aio-sb{font-size:14.5px;font-weight:700;margin-bottom:12px;line-height:1.5}
+#sbModal .aio-ls{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:7px;text-align:start}
+#sbModal .aio-ls li{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border-radius:12px;padding:7px 10px;font-size:14px;font-weight:600;line-height:1.5}
+#sbModal .aio-ls i{width:22px;height:22px;border-radius:50%;background:#ffd75a;color:#3b2a00;font-style:normal;font-weight:900;font-size:13px;line-height:22px;text-align:center;flex:none;font-family:Arial,sans-serif}
+#sbModal a.aio-go{display:block;border-radius:16px;background:linear-gradient(180deg,#ffe07a,#f0a817);color:#3b2a00;font-size:16px;font-weight:900;text-decoration:none;padding:12px 8px;font-family:inherit;line-height:1.4;box-shadow:0 3px 8px rgba(0,0,0,.35)}
 </style>
 <div class="modal-overlay" id="sbModal" data-noen="1">
   <div class="sb-page" id="sbPage">
-    <div class="sb-hd"><button type="button" class="sb-back" onclick="closeModal('sbModal')" aria-label="Back">←</button>
-      <div class="sb-ti"><b data-t="hdr"></b><small>My City Shines</small></div></div>
-    <div class="sb-sc" id="sbSc"><div class="sb-in">
-      <div class="sb-bar"><div class="sb-lang"><button type="button" data-l="en">English</button><button type="button" data-l="ur">اردو</button></div><span class="sb-st" id="sbSt"></span></div>
-      <select id="sbBiz" class="sb-biz" hidden></select>
-      <div class="sb-paper">
-        <div class="sb-shop" id="sbShop"></div><input class="sb-shopin" id="sbShopIn" maxlength="50" hidden data-tp="shopPh">
-        <div class="sb-meta"><span><span data-t="billNo"></span>: <b id="sbNo"></b></span><span dir="ltr"><b id="sbDt"></b></span></div>
-        <div class="sb-cu"><label><span data-t="cust"></span><input id="sbCn" list="sbCuL" maxlength="60" autocomplete="off" data-tp="walkin"></label>
-          <label><span data-t="mob"></span><input id="sbCm" inputmode="tel" dir="ltr" maxlength="16" autocomplete="off" data-tp="optional"></label></div>
-        <datalist id="sbCuL"></datalist>
-        <div class="sb-th"><div data-t="sno"></div><div data-t="item"></div><div data-t="qty"></div><div data-t="rate"></div><div data-t="amt"></div><div></div></div>
-        <div id="sbRows"></div>
-        <div class="sb-gt"><span data-t="gt"></span><b id="sbGt"></b></div>
+    <div class="sb-hd">
+      <div class="sb-h1"><button type="button" class="sb-back" onclick="closeModal('sbModal')" aria-label="Back">←</button></div>
+      <div class="sb-h2">
+        <svg class="sb-lg" id="sbLg" viewBox="0 0 64 64" aria-hidden="true"></svg>
+        <div class="sb-ti"><b>My City Shines</b><small data-t="hdr"></small></div>
+        <button type="button" class="sb-gear" id="sbGear" aria-label="Settings"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.61 3.61 0 0112 15.6z"/></svg></button>
       </div>
-      <div class="sb-act"><button type="button" id="sbPrint" data-t="print"></button><button type="button" class="pri" id="sbSave" data-t="save"></button><button type="button" id="sbImg" data-t="poster"></button></div>
-      <div class="sb-lnk"><button type="button" id="sbClear" data-t="clear"></button></div>
-      <h3 class="sb-h" data-t="today"></h3><div class="sb-note" data-t="keep"></div><div class="sb-ls" id="sbList"></div>
-      <div class="sb-pro"><b data-t="proH"></b><p data-t="proD"></p><a class="sb-play" id="sbPro" href="https://play.google.com/store/apps/details?id=com.pbtcodelabs.aiopos" target="_blank" rel="noopener" data-t="proB"></a></div>
+    </div>
+    <div class="sb-sc" id="sbSc"><div class="sb-in">
+      <div class="sb-ban">
+        <svg class="ic" id="sbIc" viewBox="0 0 64 64" aria-hidden="true"></svg><div class="dv"></div>
+        <div class="sb-bt"><div class="sb-shop" id="sbShop"></div><div class="sb-adr" id="sbAdr"></div>
+          <input class="sb-shopin" id="sbShopIn" maxlength="50" hidden data-tp="shopPh"><input class="sb-adrin" id="sbAdrIn" maxlength="80" hidden data-tp="adrPh"></div>
+      </div>
+      <div class="sb-cu">
+        <label class="sb-pill"><svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"/></svg><input id="sbCm" inputmode="tel" dir="ltr" maxlength="16" autocomplete="off" data-tp="mobPh"></label>
+        <label class="sb-pill"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5z"/></svg><input id="sbCn" list="sbCuL" dir="auto" maxlength="60" autocomplete="off" data-tp="cnPh"></label>
+      </div>
+      <datalist id="sbCuL"></datalist>
+      <div class="sb-tb">
+        <div class="sb-th"><div data-t="amt"></div><div data-t="rate"></div><div data-t="qty"></div><div data-t="item"></div><div data-t="sno"></div></div>
+        <div id="sbRows"></div>
+      </div>
+      <div class="sb-gt"><b id="sbGt"></b><span data-t="gt"></span></div>
+      <div class="sb-act">
+        <button type="button" class="sb-btn" id="sbImg"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span data-t="poster"></span></button>
+        <button type="button" class="sb-btn" id="sbSave"><svg viewBox="0 0 24 24"><path d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zM15 9H6V5h9v4z"/></svg><span data-t="save"></span></button>
+      </div>
+      <button type="button" class="sb-aio" id="sbAio"><span class="cr"><svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3a1 1 0 01-1 1H6a1 1 0 01-1-1v-1h14v1z"/></svg></span><span class="tx"><b data-t="aioT"></b><small data-t="aioS"></small></span><span class="ch">›</span></button>
+      <button type="button" class="sb-td" id="sbToday"><svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 16H5V10h14v10zM7 12h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"/></svg><span class="lb" data-t="today"></span><span class="cn" id="sbTdN" hidden></span><span class="ch">›</span></button>
     </div></div>
     <div class="sb-dd" id="sbDd"></div>
     <div class="sb-ov" id="sbOv"></div>
   </div>
 </div>
-<script id="mcsSimpleBill695">
+<script id="mcsSimpleBill698">
 (function(){
   'use strict';
   var AIO_URL='https://play.google.com/store/apps/details?id=com.pbtcodelabs.aiopos';   /* AIO POS — Play Store (opens the app page directly) */
   var P='mcsSB_v1_';
   var T={
-    en:{hdr:'🧾 Simple Bill (Free)',sno:'S.No',billNo:'Bill No',cust:'Customer Name',mob:'Mobile Number',walkin:'Walk-in Customer',optional:'Optional',item:'Item Name',qty:'Qty',rate:'Rate (Rs.)',amt:'Amount (Rs.)',gt:'Grand Total',print:'Print Bill',save:'Save Bill',poster:'🖼 Poster',clear:'Clear unfinished bill',today:"Today's Bills",keep:'Saved bills are kept for today only — they are deleted automatically tomorrow.',keepShort:'saved for today only (auto-deleted tomorrow)',none:'No bills saved today',draft:'Draft Saved',nodraft:'Draft NOT saved',itemPh:'Type item name',saved:'Bill saved',needItem:'Enter at least one item first',cc:'Clear this unfinished bill? This cannot be undone.',yes:'Yes, clear',cancel:'Cancel',close:'Close',del:'Delete item',shopPh:'Enter your shop name',thanks:'Thank you!',cust2:'Customer',mob2:'Mobile',printB:'Print Bill',saveImg:'Save Image',wa:'Share on WhatsApp',imgFail:'Could not create poster',shared:'Poster saved — attach it in WhatsApp',already:'Already saved',printH:'Printing is available in AIO POS',printD:'To print this bill, first download our AIO POS app from the Play Store, then print from there.',proH:'Need a complete business app?',proD:'For more features like this — stock management, inventory, bill printing, thermal bill printing, invoice making, customer record and recovery management, and everything else in AIO POS — download or subscribe to our complete business app AIO POS from the Play Store. Use the same customer data on more than one mobile, synchronised across devices.',proB:'Get AIO POS on Play Store',shop:'Shop'},
-    ur:{hdr:'🧾 سادہ بل (مفت)',sno:'نمبر',billNo:'بل نمبر',cust:'گاہک کا نام',mob:'موبائل نمبر',walkin:'عام گاہک',optional:'اختیاری',item:'آئٹم کا نام',qty:'تعداد',rate:'ریٹ (روپے)',amt:'رقم (روپے)',gt:'کل رقم',print:'بل پرنٹ کریں',save:'بل محفوظ کریں',poster:'🖼 پوسٹر',clear:'نامکمل بل صاف کریں',today:'آج کے بل',keep:'محفوظ کیا ہوا بل صرف آج کی تاریخ کے لیے محفوظ ہے — کل خودکار طور پر ڈیلیٹ ہو جائے گا۔',keepShort:'صرف آج کے لیے محفوظ ہے (کل خودکار ڈیلیٹ)',none:'آج کوئی بل محفوظ نہیں',draft:'ڈرافٹ محفوظ ہے',nodraft:'ڈرافٹ محفوظ نہیں ہوا',itemPh:'آئٹم کا نام لکھیں',saved:'بل محفوظ ہو گیا',needItem:'پہلے کم از کم ایک آئٹم درج کریں',cc:'یہ نامکمل بل صاف کریں؟ یہ واپس نہیں ہو گا۔',yes:'جی، صاف کریں',cancel:'منسوخ',close:'بند کریں',del:'آئٹم ہٹائیں',shopPh:'اپنی دکان کا نام لکھیں',thanks:'شکریہ!',cust2:'گاہک',mob2:'موبائل',printB:'بل پرنٹ کریں',saveImg:'تصویر محفوظ کریں',wa:'واٹس ایپ پر شیئر کریں',imgFail:'پوسٹر نہیں بن سکا',shared:'پوسٹر محفوظ ہو گیا — واٹس ایپ میں لگا کر بھیجیں',already:'پہلے ہی محفوظ ہے',printH:'پرنٹنگ AIO POS میں ہے',printD:'یہ بل پرنٹ کرنے کے لیے پہلے ہماری AIO POS ایپ پلے سٹور سے ڈاؤن لوڈ کریں، پھر وہیں سے پرنٹ کریں۔',proH:'مکمل کاروباری ایپ چاہیے؟',proD:'اس جیسی مزید سہولیات کے لیے — اسٹاک مینجمنٹ، انوینٹری، بل پرنٹنگ، تھرمل بل پرنٹنگ، انوائس میکنگ، کسٹمر ریکارڈ اور ریکوری مینجمنٹ اور AIO POS کی تمام سہولیات — ہماری مکمل بزنس ایپ AIO POS پلے سٹور سے ڈاؤن لوڈ کریں یا سبسکرائب کریں۔ ایک ہی کسٹمر ڈیٹا ایک سے زیادہ موبائلوں پر سنکرونائز ہو کر چلتا ہے۔',proB:'پلے سٹور سے AIO POS ڈاؤن لوڈ کریں',shop:'دکان'}
+    en:{hdr:'Bill Maker (Free)',amt:'Amount',rate:'Rate (Rs.)',qty:'Qty',item:'Item Name',sno:'S.No',gt:'Grand Total:',mobPh:'Mobile No. (Optional)',cnPh:'Customer Name (Optional)',walkin:'Walk-in Customer',save:'Save Bill',poster:'WhatsApp Poster',today:"Today's Bills",keep:'Saved bills are kept for today only — they are deleted automatically tomorrow.',keepShort:'saved for today only (auto-deleted tomorrow)',none:'No bills saved today',draft:'Draft saved',nodraft:'Draft NOT saved',itemPh:'Type item name',saved:'Bill saved',needItem:'Enter at least one item first',cc:'Clear this unfinished bill? This cannot be undone.',yes:'Yes, clear',cancel:'Cancel',close:'Close',del:'Delete item',shopPh:'Enter your shop name',adrPh:'Address (optional)',thanks:'Thank you!',billNo:'Bill No',cust2:'Customer',mob2:'Mobile',saveImg:'Save Image',wa:'Share on WhatsApp',imgFail:'Could not create poster',shared:'Poster saved — attach it in WhatsApp',already:'Already saved',aioT:'AIO POS',aioS:'for Professional Billing Software',aioH:'Professional Billing Software',aioB:'Get AIO POS on Play Store',f1:'Stock & inventory management',f2:'Bill printing & thermal printing',f3:'Invoice making',f4:'Customer record & recovery management',f5:'Retail & wholesale rates',f6:'Same data on more than one mobile, synced',set:'Settings',lang:'Language',biz:'Business',clear:'Clear unfinished bill'},
+    ur:{hdr:'بل میکر (مفت)',amt:'رقم',rate:'ریٹ (روپے)',qty:'تعداد',item:'آئٹم کا نام',sno:'نمبر',gt:'کل رقم',mobPh:'موبائل نمبر (اختیاری)',cnPh:'گاہک کا نام (اختیاری)',walkin:'عام گاہک',save:'بل محفوظ کریں',poster:'واٹس ایپ پوسٹر',today:'آج کے بل',keep:'محفوظ کیا ہوا بل صرف آج کے لیے ہے — کل خودکار ڈیلیٹ ہو جائے گا۔',keepShort:'صرف آج کے لیے محفوظ ہے (کل خودکار ڈیلیٹ)',none:'آج کوئی بل محفوظ نہیں',draft:'ڈرافٹ محفوظ ہے',nodraft:'ڈرافٹ محفوظ نہیں ہوا',itemPh:'آئٹم کا نام لکھیں',saved:'بل محفوظ ہو گیا',needItem:'پہلے کم از کم ایک آئٹم درج کریں',cc:'یہ نامکمل بل صاف کریں؟ یہ واپس نہیں ہو گا۔',yes:'جی، صاف کریں',cancel:'منسوخ',close:'بند کریں',del:'آئٹم ہٹائیں',shopPh:'اپنی دکان کا نام لکھیں',adrPh:'پتہ (اختیاری)',thanks:'شکریہ!',billNo:'بل نمبر',cust2:'گاہک',mob2:'موبائل',saveImg:'تصویر محفوظ کریں',wa:'واٹس ایپ پر شیئر کریں',imgFail:'پوسٹر نہیں بن سکا',shared:'پوسٹر محفوظ ہو گیا — واٹس ایپ میں لگا کر بھیجیں',already:'پہلے ہی محفوظ ہے',aioT:'اے آئی او پی او ایس',aioS:'پروفیشنل بلنگ سافٹ ویئر کے لیے',aioH:'پروفیشنل بلنگ سافٹ ویئر',aioB:'پلے سٹور سے AIO POS حاصل کریں',f1:'اسٹاک اور انوینٹری مینجمنٹ',f2:'بل پرنٹنگ اور تھرمل پرنٹنگ',f3:'انوائس بنانا',f4:'گاہک کا ریکارڈ اور وصولی کا انتظام',f5:'ریٹیل اور ہول سیل ریٹ',f6:'ایک ہی ڈیٹا ایک سے زیادہ موبائل پر، سنک شدہ',set:'ترتیبات',lang:'زبان',biz:'کاروبار',clear:'نامکمل بل صاف کریں'}
   };
-  var lang='en', D=null, KEY='', uidv='guest', bizs=[], bizI=0, saving=false, curDay='', wt=0, bound=false, tmr=0, ddRow=-1, ddItems=[], rafId=0;
+  var STORE='<path d="M10 28h44v28H10z" fill="#fff" stroke="#1b7a22" stroke-width="2.5" stroke-linejoin="round"/><rect x="38" y="36" width="10" height="20" fill="#3cb043"/><rect x="16" y="36" width="16" height="12" fill="#bfe9c3" stroke="#1b7a22" stroke-width="1.5"/>'
+    +[0,1,2,3,4,5].map(function(i){return '<path d="M'+(8+8*i)+' 10h8L'+(12+10*i)+' 28H'+(2+10*i)+'z" fill="'+(i%2?'#fff':'#3cb043')+'" stroke="#1b7a22" stroke-width="1.5" stroke-linejoin="round"/>';}).join('');
+  var lang='en', D=null, KEY='', uidv='guest', bizs=[], bizI=0, saving=false, curDay='', wt=0, bound=false, tmr=0, ddRow=-1, ddItems=[];
   function $(i){return document.getElementById(i);}
   function t(k){return (T[lang]&&T[lang][k])||T.en[k]||k;}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -33412,9 +33446,12 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
 
   /* ---------- identity / scope: each registered account (and each of its businesses) has its own data ---------- */
   function getUid(){try{var a=JSON.parse(localStorage.getItem('mcsAuth')||'null');var m=a&&a.user&&String(a.user.mobile||'').replace(/\D/g,'').slice(-10);if(m)return m;}catch(e){}return 'guest';}
-  function getBizs(){var A=[],seen={};try{(typeof mpListReal==='function'?mpListReal():[]).forEach(function(x){var r=x.rec||{};var en=String(r.nameEn||'').trim(),ur=String(r.nameUr||r.name||'').trim();if(!en&&!ur)return;var id=String(x.p.id||x.p.rk||en||ur);if(seen[id])return;seen[id]=1;A.push({id:id,en:en,ur:ur});});}catch(e){}return A;}
+  function getBizs(){var A=[],seen={};try{(typeof mpListReal==='function'?mpListReal():[]).forEach(function(x){var r=x.rec||{};var en=String(r.nameEn||'').trim(),ur=String(r.nameUr||r.name||'').trim();if(!en&&!ur)return;var id=String(x.p.id||x.p.rk||en||ur);if(seen[id])return;seen[id]=1;
+    var ad=[];[r.address,r.area,r.city].forEach(function(v){v=String(v==null?'':v).trim();if(!v)return;try{if(typeof isBlankVal==='function'&&isBlankVal(v))return;}catch(e){}if(ad.indexOf(v)<0)ad.push(v);});
+    A.push({id:id,en:en,ur:ur,ad:ad.join('، ')});});}catch(e){}return A;}
   function bizName(){var b=bizs[bizI];if(b)return lang==='ur'?(b.ur||b.en):(b.en||b.ur);return D&&D.shop?D.shop:'';}
-  function freshDraft(){return {id:nid(),cn:'',cm:'',rows:[{n:'',q:'',r:''},{n:'',q:'',r:''},{n:'',q:'',r:''},{n:'',q:'',r:''}]};}
+  function bizAddr(){var b=bizs[bizI];if(b)return b.ad||'';return D&&D.adr?D.adr:'';}
+  function freshDraft(){var R=[];for(var i=0;i<6;i++)R.push({n:'',q:'',r:''});return {id:nid(),cn:'',cm:'',rows:R};}
   function loadScope(){
     uidv=getUid();bizs=getBizs();
     var last=localStorage.getItem(P+uidv+'_biz')||'';bizI=0;
@@ -33426,14 +33463,14 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
     if(!d.cat||typeof d.cat!=='object')d.cat={};
     if(!d.cu||typeof d.cu!=='object')d.cu={};
     if(!Array.isArray(d.bills))d.bills=[];
-    d.seq=Math.max(parseInt(d.seq,10)||0,0);d.shop=d.shop||'';
+    d.seq=Math.max(parseInt(d.seq,10)||0,0);d.shop=d.shop||'';d.adr=d.adr||'';
     D=d;
     var gl=localStorage.getItem(P+uidv+'_lang');lang=gl==='ur'?'ur':'en';
     padRows();pruneOld();
   }
   function persist(){
     var ok=wj(KEY,D);
-    var s=$('sbSt');if(s){s.textContent=ok?t('draft'):t('nodraft');s.className='sb-st'+(ok?'':' bad');}
+    var s=$('sbStx');if(s){s.textContent=ok?t('draft'):t('nodraft');s.className='sb-stx'+(ok?'':' bad');}
     return ok;
   }
   function flush(){clearTimeout(wt);wt=0;if(D&&KEY)persist();}
@@ -33441,17 +33478,19 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   function pruneOld(){var d=dayKey(Date.now());curDay=d;var n=D.bills.length;D.bills=D.bills.filter(function(b){return b.day===d;});if(D.bills.length!==n)wj(KEY,D);}   /* completed bills of earlier days vanish; the DRAFT is never touched */
 
   /* ---------- rows ---------- */
+  var MINROWS=6;
+  var SEARCH='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>';
   function blank(r){return !String(r.n).trim()&&!String(r.q).trim()&&!String(r.r).trim();}
-  function padRows(){var R=D.draft.rows;while(R.length<4)R.push({n:'',q:'',r:''});if(!blank(R[R.length-1]))R.push({n:'',q:'',r:''});}
+  function padRows(){var R=D.draft.rows;while(R.length<MINROWS)R.push({n:'',q:'',r:''});if(!blank(R[R.length-1]))R.push({n:'',q:'',r:''});}
   function counted(r){return !!String(r.n).trim()||num(r.r)>0;}
   function qtyOf(r){return String(r.q).trim()===''?1:num(r.q);}
   function amtOf(r){return counted(r)?r2(qtyOf(r)*num(r.r)):0;}
   function total(){return r2(D.draft.rows.reduce(function(s,r){return s+amtOf(r);},0));}
-  function rowHtml(r,i){var f=!blank(r);
-    return '<div class="sb-r'+(f?' f':'')+'" data-i="'+i+'"><span class="s">'+(i+1)+'</span><input class="n" maxlength="60" autocomplete="off" autocapitalize="words" placeholder="'+esc(i===0?t('itemPh'):'')+'" value="'+esc(r.n)+'"><input class="q" inputmode="decimal" placeholder="1" value="'+esc(r.q)+'"><input class="r" inputmode="decimal" value="'+esc(r.r)+'"><span class="a">'+(num(r.r)>0?money(amtOf(r)):'')+'</span><button type="button" class="x" aria-label="'+esc(t('del'))+'">×</button></div>';}
+  function rowHtml(r,i){var a=amtOf(r);
+    return '<div class="sb-r" data-i="'+i+'"><button type="button" class="x" aria-label="'+esc(t('del'))+'"><i>×</i></button><span class="a'+(a>0?'':' z')+'">'+money(a)+'</span><input class="r" inputmode="decimal" placeholder="0.00" value="'+esc(r.r)+'"><input class="q" inputmode="decimal" placeholder="1" value="'+esc(r.q)+'"><div class="nw"><input class="n" dir="auto" maxlength="60" autocomplete="off" autocapitalize="words" placeholder="'+esc(i===0?t('itemPh'):'')+'" value="'+esc(r.n)+'">'+SEARCH+'</div><span class="s">'+(i+1)+'</span></div>';}
   function renderRows(){$('sbRows').innerHTML=D.draft.rows.map(rowHtml).join('');}
   function rowEl(i){return $('sbRows').children[i];}
-  function syncRow(i){var r=D.draft.rows[i],el=rowEl(i);if(!el)return;el.classList.toggle('f',!blank(r));el.querySelector('.a').textContent=num(r.r)>0?money(amtOf(r)):'';}
+  function syncRow(i){var r=D.draft.rows[i],el=rowEl(i);if(!el)return;var a=el.querySelector('.a'),v=amtOf(r);a.textContent=money(v);a.classList.toggle('z',!(v>0));}
   function afterEdit(){
     var R=D.draft.rows;
     if(!blank(R[R.length-1])){R.push({n:'',q:'',r:''});$('sbRows').insertAdjacentHTML('beforeend',rowHtml(R[R.length-1],R.length-1));}
@@ -33459,47 +33498,36 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   }
 
   /* ---------- paint ---------- */
-  function paintTotals(){$('sbGt').textContent=rs(total());schedPv();}
-  function schedPv(){if(rafId)return;rafId=requestAnimationFrame(function(){rafId=0;paintPv();});}
+  function paintTotals(){$('sbGt').textContent=rs(total());}
   function snapBill(){
     var items=[];D.draft.rows.forEach(function(r){if(!counted(r))return;var q=qtyOf(r),rt=num(r.r);items.push({n:String(r.n).trim()||'Item',q:q,r:rt,a:r2(q*rt)});});
-    return {id:'',no:nextNo(),at:Date.now(),biz:bizName(),cn:D.draft.cn.trim(),cm:D.draft.cm.trim(),items:items,total:r2(items.reduce(function(s,x){return s+x.a;},0))};
+    return {id:'',no:nextNo(),at:Date.now(),biz:bizName(),ad:bizAddr(),cn:D.draft.cn.trim(),cm:D.draft.cm.trim(),items:items,total:r2(items.reduce(function(s,x){return s+x.a;},0))};
   }
   function pad6(n){var s=String(n);while(s.length<6)s='0'+s;return s;}
   function nextNo(){var n=D.seq+1,ex={};D.bills.forEach(function(b){ex[b.no]=1;});while(ex['PB-'+pad6(n)])n++;return 'PB-'+pad6(n);}
-  function receipt(b){   /* the bill is always laid out right-to-left (serial no. on the right); only the captions follow the chosen language */
-    var u=lang==='ur',rows=b.items.map(function(x,i){return '<tr><td class="n">'+(i+1)+'</td><td>'+esc(x.n)+'</td><td class="n">'+esc(String(x.q))+'</td><td class="n">'+money(x.r)+'</td><td class="n">'+money(x.a)+'</td></tr>';}).join('');
-    return '<div class="rc'+(u?' ur':'')+'" dir="rtl"><div class="s">'+esc(b.biz||'')+'</div>'
-      +'<div class="m"><span>'+esc(t('billNo'))+': <b dir="ltr">'+esc(b.no)+'</b></span><span dir="ltr">'+esc(fmtD(b.at))+' · '+esc(fmtT(b.at))+'</span></div>'
-      +'<div class="c">'+esc(t('cust2'))+': <b>'+esc(b.cn||t('walkin'))+'</b>'+(b.cm?'<br>'+esc(t('mob2'))+': <b dir="ltr">'+esc(b.cm)+'</b>':'')+'</div>'
-      +'<table><thead><tr><th>'+esc(t('sno'))+'</th><th>'+esc(t('item'))+'</th><th>'+esc(t('qty'))+'</th><th>'+esc(t('rate'))+'</th><th>'+esc(t('amt'))+'</th></tr></thead><tbody>'+rows+'</tbody></table>'
-      +'<div class="g"><span>'+esc(t('gt'))+'</span><b>'+rs(b.total)+'</b></div><div class="f">'+esc(t('thanks'))+'</div><div class="f" dir="ltr">My City Shines</div></div>';
-  }
-  function paintPv(){var b=snapBill();$('sbNo').textContent=b.no;$('sbDt').textContent=fmtD(b.at)+' · '+fmtT(b.at);}
   function paintShop(){
-    var has=!!bizs[bizI],inp=$('sbShopIn'),sh=$('sbShop');
+    var has=!!bizs[bizI],sh=$('sbShop'),ad=$('sbAdr'),si=$('sbShopIn'),ai=$('sbAdrIn');
     sh.textContent=bizName();sh.style.display=has?'':'none';
-    inp.hidden=has;if(!has&&document.activeElement!==inp)inp.value=D.shop||'';
+    var a=bizAddr();ad.textContent=a;ad.style.display=has&&a?'':'none';
+    si.hidden=has;ai.hidden=has;
+    if(!has){if(document.activeElement!==si)si.value=D.shop||'';if(document.activeElement!==ai)ai.value=D.adr||'';}
   }
-  function paintList(){
-    var d=dayKey(Date.now()),L=D.bills.filter(function(b){return b.day===d;}).sort(function(a,b){return b.at-a.at;});
-    $('sbList').innerHTML=L.length?L.map(function(b){return '<button type="button" class="sb-b" data-id="'+esc(b.id)+'"><span class="l"><b>'+esc(b.no)+'</b><span>'+esc(b.cn||t('walkin'))+'</span></span><span class="rr"><b>'+rs(b.total)+'</b><small>'+esc(fmtT(b.at))+'</small></span></button>';}).join(''):'<div class="none">'+esc(t('none'))+'</div>';
-  }
-  function paintBiz(){
-    var s=$('sbBiz');s.hidden=bizs.length<2;
-    if(bizs.length>1){s.innerHTML=bizs.map(function(b,i){return '<option value="'+i+'"'+(i===bizI?' selected':'')+'>'+esc(lang==='ur'?(b.ur||b.en):(b.en||b.ur))+'</option>';}).join('');}
+  function todayList(){var d=dayKey(Date.now());return D.bills.filter(function(b){return b.day===d;}).sort(function(a,b){return b.at-a.at;});}
+  function paintCount(){var n=todayList().length,e=$('sbTdN');e.hidden=!n;e.textContent=n;}
+  function listHtml(){
+    var L=todayList();
+    return L.length?L.map(function(b){return '<button type="button" class="sb-b" data-id="'+esc(b.id)+'"><span class="l"><b>'+esc(b.no)+'</b><span>'+esc(b.cn||t('walkin'))+'</span></span><span class="rr"><b>'+rs(b.total)+'</b><small>'+esc(fmtT(b.at))+'</small></span></button>';}).join(''):'<div class="none">'+esc(t('none'))+'</div>';
   }
   function paintCustList(){var k=Object.keys(D.cu).slice(-100);$('sbCuL').innerHTML=k.map(function(n){return '<option value="'+esc(n)+'"></option>';}).join('');}
   function applyLang(){
-    var pg=$('sbPage'),u=lang==='ur';pg.classList.toggle('ur',u);pg.setAttribute('dir',u?'rtl':'ltr');
+    var pg=$('sbPage'),u=lang==='ur';pg.classList.toggle('ur',u);
     [].forEach.call(pg.querySelectorAll('[data-t]'),function(e){e.textContent=t(e.getAttribute('data-t'));});
     [].forEach.call(pg.querySelectorAll('[data-tp]'),function(e){e.placeholder=t(e.getAttribute('data-tp'));});
-    [].forEach.call(pg.querySelectorAll('.sb-lang button'),function(b){b.classList.toggle('on',b.getAttribute('data-l')===lang);});
   }
   function paintAll(){
-    applyLang();paintBiz();paintShop();paintCustList();
+    applyLang();paintShop();paintCustList();
     $('sbCn').value=D.draft.cn;$('sbCm').value=D.draft.cm;
-    renderRows();paintTotals();paintList();
+    renderRows();paintTotals();paintCount();
   }
 
   /* ---------- suggestions ---------- */
@@ -33510,7 +33538,6 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   }
   function showDd(i,inp){
     var items=suggest(inp.value);var dd=$('sbDd');
-    items=items.filter(function(e){return String(e.n).toLowerCase()!==String(inp.value).trim().toLowerCase()||true;});
     if(!items.length){hideDd();return;}
     ddRow=i;ddItems=items;
     dd.innerHTML=items.map(function(e,k){return '<button type="button" data-k="'+k+'"><span>'+esc(e.n)+'</span><small>'+(e.r>0?rs(e.r):'')+'</small></button>';}).join('');
@@ -33533,6 +33560,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
   /* ---------- events ---------- */
   function bind(){
     if(bound)return;bound=true;
+    $('sbLg').innerHTML=STORE;$('sbIc').innerHTML=STORE;
     var rows=$('sbRows');
     rows.addEventListener('input',function(e){
       var el=e.target,row=el.closest('.sb-r');if(!row)return;var i=+row.dataset.i,r=D.draft.rows[i];if(!r)return;
@@ -33562,23 +33590,21 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
     });
     $('sbDd').addEventListener('pointerdown',function(e){e.preventDefault();var b=e.target.closest('button[data-k]');if(b)pick(+b.dataset.k);});
     $('sbSc').addEventListener('scroll',hideDd,{passive:true});
-    $('sbCn').addEventListener('input',function(){D.draft.cn=this.value;later();schedPv();});
-    $('sbCn').addEventListener('change',function(){var n=this.value.trim(),m=n&&D.cu[n];if(m&&!$('sbCm').value.trim()){$('sbCm').value=m;D.draft.cm=m;later();schedPv();}});
-    $('sbCm').addEventListener('input',function(){var v=this.value.replace(/[۰-۹]/g,function(c){return c.charCodeAt(0)-0x06F0;}).replace(/[٠-٩]/g,function(c){return c.charCodeAt(0)-0x0660;}).replace(/[^0-9+\-\s]/g,'');if(v!==this.value)this.value=v;D.draft.cm=v;later();schedPv();});
-    $('sbShopIn').addEventListener('input',function(){D.shop=this.value.trim();later();schedPv();});
-    [].forEach.call(document.querySelectorAll('#sbPage .sb-lang button'),function(b){b.addEventListener('click',function(){
-      var l=b.getAttribute('data-l')==='ur'?'ur':'en';if(l===lang)return;flush();lang=l;try{localStorage.setItem(P+uidv+'_lang',lang);}catch(e){}paintAll();});});
-    $('sbBiz').addEventListener('change',function(){flush();try{localStorage.setItem(P+uidv+'_biz',bizs[+this.value].id);}catch(e){}loadScope();paintAll();});
+    $('sbCn').addEventListener('input',function(){D.draft.cn=this.value;later();});
+    $('sbCn').addEventListener('change',function(){var n=this.value.trim(),m=n&&D.cu[n];if(m&&!$('sbCm').value.trim()){$('sbCm').value=m;D.draft.cm=m;later();}});
+    $('sbCm').addEventListener('input',function(){var v=this.value.replace(/[۰-۹]/g,function(c){return c.charCodeAt(0)-0x06F0;}).replace(/[٠-٩]/g,function(c){return c.charCodeAt(0)-0x0660;}).replace(/[^0-9+\-\s]/g,'');if(v!==this.value)this.value=v;D.draft.cm=v;later();});
+    $('sbShopIn').addEventListener('input',function(){D.shop=this.value.trim();later();});
+    $('sbAdrIn').addEventListener('input',function(){D.adr=this.value.trim();later();});
     $('sbSave').addEventListener('click',save);
-    $('sbPrint').addEventListener('click',printInfo);
     $('sbImg').addEventListener('click',function(){showPoster(snapBill());});
-    $('sbClear').addEventListener('click',function(){dialog('<p>'+esc(t('cc'))+'</p>',[{t:t('cancel')},{t:t('yes'),c:'dn',f:function(){D.draft=freshDraft();padRows();persist();paintAll();}}]);});
-    $('sbList').addEventListener('click',function(e){var b=e.target.closest('.sb-b');if(!b)return;var x=D.bills.filter(function(y){return y.id===b.dataset.id;})[0];if(x)openBill(x);});
+    $('sbAio').addEventListener('click',openAio);
+    $('sbToday').addEventListener('click',openToday);
+    $('sbGear').addEventListener('click',openSettings);
     document.addEventListener('visibilitychange',function(){if(document.hidden)flush();else rollover();});
     window.addEventListener('pagehide',flush);window.addEventListener('beforeunload',flush);
     $('sbOv').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
   }
-  function rollover(){if(!D)return;var m=$('sbModal');if(!m||!m.classList.contains('active'))return;if(dayKey(Date.now())!==curDay){pruneOld();paintList();}paintPv();}
+  function rollover(){if(!D)return;var m=$('sbModal');if(!m||!m.classList.contains('active'))return;if(dayKey(Date.now())!==curDay){pruneOld();paintCount();}}
 
   /* ---------- save (explicit, once) ---------- */
   function save(){
@@ -33590,7 +33616,7 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
     var n=D.seq+1,ex={};D.bills.forEach(function(x){ex[x.no]=1;});
     while(ex['PB-'+pad6(n)])n++;
     var now=Date.now();
-    var bill={id:nid(),did:D.draft.id,no:'PB-'+pad6(n),at:now,day:dayKey(now),biz:b.biz,cn:b.cn,cm:b.cm,items:b.items,total:b.total,lang:lang};
+    var bill={id:nid(),did:D.draft.id,no:'PB-'+pad6(n),at:now,day:dayKey(now),biz:b.biz,ad:b.ad,cn:b.cn,cm:b.cm,items:b.items,total:b.total,lang:lang};
     D.draft.rows.forEach(function(r){learn(r.n,r.r);});
     if(bill.cn){D.cu[bill.cn]=bill.cm||D.cu[bill.cn]||'';var ck=Object.keys(D.cu);if(ck.length>200)delete D.cu[ck[0]];}
     D.seq=n;D.bills.unshift(bill);D.draft=freshDraft();padRows();
@@ -33600,44 +33626,112 @@ html body #k4Modal .k4-page.ur .k4-q button{line-height:1}
     try{$('sbSc').scrollTo({top:0,behavior:'smooth'});}catch(e){}
   }
 
-  /* ---------- dialogs / viewer ---------- */
-  function dialog(body,btns){
-    var ov=$('sbOv');ov.innerHTML='<div class="sb-ovc">'+body+'<div class="sb-ovb">'+btns.map(function(b,i){return '<button type="button" class="'+(b.c||'')+'" data-b="'+i+'">'+esc(b.t)+'</button>';}).join('')+'</div></div>';
+  /* ---------- dialogs ---------- */
+  function dialog(body,btns,init,cls){
+    var ov=$('sbOv');btns=btns||[];
+    ov.innerHTML='<div class="sb-ovc'+(cls?' '+cls:'')+'">'+body+(btns.length?'<div class="sb-ovb">'+btns.map(function(b,i){return '<button type="button" class="'+(b.c||'')+'" data-b="'+i+'">'+esc(b.t)+'</button>';}).join('')+'</div>':'')+'</div>';
     ov.classList.add('on');
     ov.onclick=function(e){var bt=e.target.closest('button[data-b]');if(!bt){if(e.target===ov)ov.classList.remove('on');return;}var d=btns[+bt.dataset.b];ov.classList.remove('on');if(d.f)d.f();};
+    if(init)init(ov);
   }
-  function openBill(b){   /* read-only view of a COPY; the stored bill and the draft are never modified */
-    var c=JSON.parse(JSON.stringify(b));
-    dialog(receipt(c),[{t:t('close')},{t:t('poster'),f:function(){showPoster(c);}},{t:t('printB'),c:'pri',f:printInfo}]);
+  function closeOv(){$('sbOv').classList.remove('on');}
+
+  /* today's bills — a list inside a dialog (nothing is previewed under the bill) */
+  function openToday(){
+    dialog('<h3 class="sb-ti2">'+esc(t('today'))+'</h3><div class="sb-note">'+esc(t('keep'))+'</div><div class="sb-ls" id="sbList">'+listHtml()+'</div>',[{t:t('close')}],function(ov){
+      var l=ov.querySelector('#sbList');if(!l)return;
+      l.addEventListener('click',function(e){var b=e.target.closest('.sb-b');if(!b)return;var x=D.bills.filter(function(y){return y.id===b.dataset.id;})[0];if(x)openBill(x);});
+    });
+  }
+  function openBill(b){showPoster(JSON.parse(JSON.stringify(b)));}   /* a saved bill opens as its poster (a COPY; the stored bill is never modified) */
+
+  /* settings (gear): language, business, clear unfinished bill */
+  function openSettings(){
+    var h='<h3 class="sb-ti2">⚙ '+esc(t('set'))+'</h3>'
+      +'<div class="sb-sr"><span>'+esc(t('lang'))+'</span><div class="sb-lang"><button type="button" data-lg="en"'+(lang==='en'?' class="on"':'')+'>English</button><button type="button" data-lg="ur"'+(lang==='ur'?' class="on"':'')+'>اردو</button></div></div>';
+    if(bizs.length>1)h+='<div class="sb-sr"><span>'+esc(t('biz'))+'</span><select id="sbBizSel">'+bizs.map(function(b,i){return '<option value="'+i+'"'+(i===bizI?' selected':'')+'>'+esc(lang==='ur'?(b.ur||b.en):(b.en||b.ur))+'</option>';}).join('')+'</select></div>';
+    h+='<button type="button" class="sb-clr" id="sbClr">'+esc(t('clear'))+'</button><div class="sb-stx" id="sbStx"></div>';
+    dialog(h,[{t:t('close')}],function(ov){
+      persist();
+      [].forEach.call(ov.querySelectorAll('[data-lg]'),function(b){b.addEventListener('click',function(){
+        var l=b.getAttribute('data-lg')==='ur'?'ur':'en';if(l===lang)return;flush();lang=l;try{localStorage.setItem(P+uidv+'_lang',lang);}catch(e){}paintAll();openSettings();});});
+      var s=ov.querySelector('#sbBizSel');if(s)s.addEventListener('change',function(){flush();try{localStorage.setItem(P+uidv+'_biz',bizs[+this.value].id);}catch(e){}loadScope();paintAll();closeOv();});
+      ov.querySelector('#sbClr').addEventListener('click',function(){dialog('<p>'+esc(t('cc'))+'</p>',[{t:t('cancel')},{t:t('yes'),c:'dn',f:function(){D.draft=freshDraft();padRows();persist();paintAll();}}]);});
+    });
   }
 
-  /* ---------- print: the Android print box is NOT opened — the customer is guided to AIO POS instead ---------- */
-  function playBtn(){return '<a class="sb-play" href="'+AIO_URL+'" target="_blank" rel="noopener">'+esc(t('proB'))+'</a>';}
-  function printInfo(){dialog('<p><b>'+esc(t('printH'))+'</b></p><p>'+esc(t('printD'))+'</p>'+playBtn(),[{t:t('close')}]);}
+  /* ---------- AIO POS poster (one poster, one button) ---------- */
+  function openAio(){
+    var L=[1,2,3,4,5,6].map(function(n){return '<li><i>✓</i><span>'+esc(t('f'+n))+'</span></li>';}).join('');
+    dialog('<div class="aio" dir="'+(lang==='ur'?'rtl':'ltr')+'"><button type="button" class="aio-x" aria-label="'+esc(t('close'))+'">✕</button>'
+      +'<div class="aio-cr"><svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3a1 1 0 01-1 1H6a1 1 0 01-1-1v-1h14v1z"/></svg></div>'
+      +'<div class="aio-nm">AIO POS</div><div class="aio-sb">'+esc(t('aioH'))+'</div>'
+      +'<ul class="aio-ls">'+L+'</ul>'
+      +'<a class="aio-go" href="'+AIO_URL+'" target="_blank" rel="noopener">'+esc(t('aioB'))+'</a></div>',[],function(ov){
+      ov.querySelector('.aio-x').addEventListener('click',closeOv);
+    },'flat');
+  }
 
-  /* ---------- poster (picture of the bill) + WhatsApp share ---------- */
+  /* ---------- poster (picture of the bill, same look as the screen) + WhatsApp share ---------- */
+  function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+  function rbot(c,x,y,w,h,r){c.beginPath();c.moveTo(x,y);c.lineTo(x+w,y);c.lineTo(x+w,y+h-r);c.arcTo(x+w,y+h,x+w-r,y+h,r);c.lineTo(x+r,y+h);c.arcTo(x,y+h,x,y+h-r,r);c.closePath();}
+  function drawStore(c,x,y,s){
+    c.save();c.translate(x,y);c.scale(s/64,s/64);c.lineJoin='round';
+    c.fillStyle='#fff';c.strokeStyle='#1b7a22';c.lineWidth=2.5;c.beginPath();c.rect(10,28,44,28);c.fill();c.stroke();
+    c.fillStyle='#3cb043';c.fillRect(38,36,10,20);
+    c.fillStyle='#bfe9c3';c.lineWidth=1.5;c.fillRect(16,36,16,12);c.strokeRect(16,36,16,12);
+    for(var i=0;i<6;i++){c.beginPath();c.moveTo(8+8*i,10);c.lineTo(16+8*i,10);c.lineTo(12+10*i,28);c.lineTo(2+10*i,28);c.closePath();c.fillStyle=i%2?'#fff':'#3cb043';c.fill();c.lineWidth=1.5;c.strokeStyle='#1b7a22';c.stroke();}
+    c.restore();
+  }
   function posterBlob(b,cb){
     var u=lang==='ur',FA='Arial,sans-serif',FU='"Jameel Noori Nastaleeq Regular","Noto Nastaliq Urdu","Noto Naskh Arabic",Tahoma,serif',F=u?FU:FA;
     var go=function(){
       try{
-        var W=600,rowH=u?46:36,H=375+b.items.length*rowH,sc=2,c=document.createElement('canvas');c.width=W*sc;c.height=H*sc;var x=c.getContext('2d');x.scale(sc,sc);
-        x.fillStyle='#fff';x.fillRect(0,0,W,H);x.direction='rtl';
-        var S=function(px){return W-px;},A=function(a){return a==='left'?'right':a==='right'?'left':a;};   /* always right-to-left */
-        var tx=function(s,px,py,a,font,col,mw){x.font=font;x.fillStyle=col||'#111';x.textAlign=A(a);s=String(s);x.direction=/[\u0600-\u06FF]/.test(s)?'rtl':'ltr';if(mw){while(s.length>1&&x.measureText(s).width>mw)s=s.slice(0,-2)+'…';}x.fillText(s,S(px),py);};
-        var y=52;tx(b.biz||'',W/2,y,'center','bold 30px '+F,'#15803d',W-60);
-        y+=(u?46:34);x.strokeStyle='#999';x.lineWidth=1;x.beginPath();x.moveTo(24,y-22);x.lineTo(W-24,y-22);x.stroke();
-        tx(t('billNo')+': '+b.no,24,y,'left','bold 18px '+F);tx(fmtD(b.at)+'  '+fmtT(b.at),W-24,y,'right','16px '+FA);
-        y+=(u?44:32);tx(t('cust2')+': '+(b.cn||t('walkin')),24,y,'left','17px '+F,'#111',W-48);
-        if(b.cm){y+=(u?40:28);tx(t('mob2')+': '+b.cm,24,y,'left','17px '+F);}
-        y+=(u?36:26);x.fillStyle='#15803d';x.fillRect(24,y,W-48,u?40:30);
-        var hy=y+(u?28:21),hf='bold 14px '+F;tx(t('sno'),42,hy,'center',hf,'#fff');tx(t('item'),68,hy,'left',hf,'#fff');tx(t('qty'),340,hy,'center',hf,'#fff');tx(t('rate'),430,hy,'center',hf,'#fff');tx(t('amt'),515,hy,'center',hf,'#fff');
-        y+=(u?40:30);
-        b.items.forEach(function(it,i){var ry=y+(u?30:23);tx(String(i+1),42,ry,'center','15px '+FA);tx(it.n,68,ry,'left','16px '+F,'#111',225);tx(String(it.q),340,ry,'center','16px '+FA);tx(money(it.r),430,ry,'center','15px '+FA);tx(money(it.a),515,ry,'center','bold 15px '+FA);
-          x.strokeStyle='#ddd';x.beginPath();x.moveTo(24,y+rowH);x.lineTo(W-24,y+rowH);x.stroke();y+=rowH;});
-        y+=10;x.strokeStyle='#111';x.lineWidth=2;x.beginPath();x.moveTo(24,y);x.lineTo(W-24,y);x.stroke();
-        y+=(u?46:34);tx(t('gt'),24,y,'left','bold 22px '+F);tx(rs(b.total),W-24,y,'right','bold 24px '+FA,'#15803d');
-        y+=(u?52:40);tx(t('thanks'),W/2,y,'center','15px '+F,'#666');
-        y+=24;tx('My City Shines',W/2,y,'center','14px '+FA,'#666');
+        var W=600,rowH=u?50:40,bh=b.ad?96:80,n=b.items.length;
+        var H=118+bh+14+68+40+n*rowH+16+70+16+62+14,sc=2,c=document.createElement('canvas');c.width=W*sc;c.height=H*sc;var x=c.getContext('2d');x.scale(sc,sc);
+        var isU=function(s){return /[\u0620-\u06FF]/.test(String(s));};
+        var tx=function(s,px,py,a,font,col,mw){x.font=font;x.fillStyle=col||'#111';x.textAlign=a;s=String(s);x.direction=isU(s)?'rtl':'ltr';if(mw){while(s.length>1&&x.measureText(s).width>mw)s=s.slice(0,-2)+'…';}x.fillText(s,px,py);};
+        x.fillStyle='#f4f7e9';x.fillRect(0,0,W,H);
+        /* header */
+        var g=x.createLinearGradient(0,0,0,104);g.addColorStop(0,'#2f9d38');g.addColorStop(1,'#15701c');x.fillStyle=g;rbot(x,0,0,W,104,28);x.fill();
+        drawStore(x,26,24,58);
+        tx('My City Shines',W/2+20,58,'center','bold 36px '+FA,'#fff');tx(t('hdr'),W/2+20,88,'center','600 20px '+F,'#fff');
+        /* shop banner */
+        var y=118,bg=x.createLinearGradient(24,0,W-24,0);bg.addColorStop(0,'#e3f4d0');bg.addColorStop(.24,'#fbfaf0');bg.addColorStop(.7,'#fbfaf0');bg.addColorStop(1,'#d3efbc');
+        x.fillStyle=bg;rr(x,24,y,W-48,bh,24);x.fill();x.strokeStyle='#cfe5bd';x.lineWidth=2;x.stroke();
+        drawStore(x,38,y+(bh-58)/2,58);x.strokeStyle='#c9d6bd';x.lineWidth=2;x.beginPath();x.moveTo(110,y+14);x.lineTo(110,y+bh-14);x.stroke();
+        var nm=b.biz||'',ru=isU(nm);
+        tx(nm,ru?W-40:126,y+(b.ad?40:bh/2+10),ru?'right':'left','bold 29px '+F,'#0e1c10',W-176);
+        if(b.ad){tx(b.ad,isU(b.ad)?W-40:126,y+74,isU(b.ad)?'right':'left','18px '+F,'#2a3a2c',W-176);}
+        y+=bh+14;
+        /* bill no / date / customer */
+        tx(t('billNo')+': '+b.no,32,y+22,'left','bold 18px '+FA,'#14301f');tx(fmtD(b.at)+'  '+fmtT(b.at),W-32,y+22,'right','17px '+FA,'#14301f');
+        y+=34;
+        if(b.cm)tx(t('mob2')+': '+b.cm,32,y+22,'left','18px '+FA,'#14301f');
+        tx(t('cust2')+': '+(b.cn||t('walkin')),W-32,y+22,'right','bold 18px '+F,'#14301f',b.cm?330:W-64);
+        y+=34;
+        /* table */
+        var tH=40,tTop=y,tB=tH+n*rowH,bx=[24,124,214,274,514,576];
+        x.save();rr(x,24,tTop,W-48,tB,14);x.clip();
+        var th=x.createLinearGradient(0,tTop,0,tTop+tH);th.addColorStop(0,'#2c9535');th.addColorStop(1,'#17751e');x.fillStyle=th;x.fillRect(24,tTop,W-48,tH);
+        var hf='bold 16px '+F;tx(t('amt'),74,tTop+26,'center',hf,'#fff');tx(t('rate'),169,tTop+26,'center',hf,'#fff',86);tx(t('qty'),244,tTop+26,'center',hf,'#fff');tx(t('item'),394,tTop+26,'center',hf,'#fff');tx(t('sno'),545,tTop+26,'center',hf,'#fff');
+        b.items.forEach(function(it,i){var ry=tTop+tH+i*rowH;x.fillStyle=i%2?'#f4f8ea':'#fbfcf4';x.fillRect(24,ry,W-48,rowH);
+          var by=ry+(u?33:26);
+          tx(money(it.a),74,by,'center','bold 16px '+FA,'#13261a',96);tx(money(it.r),169,by,'center','16px '+FA,'#13261a',86);tx(String(it.q),244,by,'center','16px '+FA,'#13261a',56);
+          var iu=isU(it.n);tx(it.n,iu?504:284,by,iu?'right':'left','17px '+F,'#13261a',216);tx(String(i+1),545,by,'center','bold 16px '+FA,'#13261a');
+          x.strokeStyle='#dfe6cf';x.lineWidth=1;x.beginPath();x.moveTo(24,ry);x.lineTo(W-24,ry);x.stroke();});
+        x.strokeStyle='#e0e7d2';x.lineWidth=1;for(var k=1;k<bx.length-1;k++){x.beginPath();x.moveTo(bx[k],tTop+tH);x.lineTo(bx[k],tTop+tB);x.stroke();}
+        x.restore();
+        rr(x,24,tTop,W-48,tB,14);x.strokeStyle='#cfdcc3';x.lineWidth=1.5;x.stroke();
+        y=tTop+tB+16;
+        /* grand total */
+        var gb=x.createLinearGradient(0,y,0,y+70);gb.addColorStop(0,'#e3f8cf');gb.addColorStop(1,'#c9ecae');x.fillStyle=gb;rr(x,24,y,W-48,70,26);x.fill();x.strokeStyle='#b6dd9a';x.lineWidth=1.5;x.stroke();
+        var gp=x.createLinearGradient(0,y+9,0,y+61);gp.addColorStop(0,'#228a2b');gp.addColorStop(1,'#136a1a');x.fillStyle=gp;rr(x,34,y+9,240,52,24);x.fill();
+        tx(rs(b.total),154,y+45,'center','bold 29px '+FA,'#fff',220);
+        tx(t('gt'),W-40,y+46,'right','bold 28px '+F,'#136a1a',280);
+        y+=70+16;
+        tx(t('thanks'),W/2,y+26,'center','18px '+F,'#555');tx('My City Shines',W/2,y+52,'center','15px '+FA,'#777');
+        x.strokeStyle='#2a8a32';x.lineWidth=3;rr(x,3,3,W-6,H-6,28);x.stroke();
         c.toBlob(function(bl){cb(bl||null);},'image/png');
       }catch(e){cb(null);}
     };
